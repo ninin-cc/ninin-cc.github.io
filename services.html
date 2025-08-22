@@ -1,16 +1,79 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>サービス一覧</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+            background-color: #fdfdfd;
+            color: #333;
+            line-height: 1.7;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            background-color: #a8dadc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        nav ul li {
+            flex: 1;
+        }
+        nav ul li a {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+        }
+        nav ul li a:hover {
+            background-color: #457b9d;
+        }
+        h1, h2, h3 {
+            color: #1d3557;
+        }
+        section {
+            background: #f8f9fa;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        table {
+            border-collapse: collapse;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9f5f2;
+        }
+        tr:nth-child(even) td {
+            background-color: #fefefe;
+        }
+        tr:nth-child(odd) td {
+            background-color: #f9fdfc;
+        }
+        a {
+            color: #1d3557;
+        }
+        a:hover {
+            color: #e63946;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>合同会社ninin</h1>
-    </header>
     <nav>
         <ul>
             <li><a href="index.html">ホーム</a></li>
@@ -21,11 +84,171 @@
         </ul>
     </nav>
     <main>
-        <h2>サービス一覧</h2>
-        <p>準備中</p>
+        <h1>🌱 サービス一覧</h1>
+        <section>
+            <h2>① ナラティブエフィカシー論に基づく執筆支援サービス ✍️</h2>
+            <p>キャリアデザイン、核語の明確化による自己効力感増進のための執筆支援サービス（詳しくは下記のページへ）。</p>
+        </section>
+
+        <section>
+            <h2>② カウンセリング / 1on1トレーニング 💬</h2>
+            <p>使える心理学を物語形式で紹介しています。一度読んでみてください。それだけで心が楽になるかもしれません。</p>
+            <p><a href="https://note.com" target="_blank">【物語で心理学】ハルカとリフレム｜note</a></p>
+
+            <h3>受付時間 ⏰</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>曜日</th>
+                        <th>時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>平日</td>
+                        <td>19:00 ～ 22:00</td>
+                    </tr>
+                    <tr>
+                        <td>土日祝</td>
+                        <td>10:00 ～ 21:00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>料金 💰</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>サービス</th>
+                        <th>時間</th>
+                        <th>料金</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>対面カウンセリング</td>
+                        <td>60分</td>
+                        <td>22,000円</td>
+                        <td>山手線沿線にて対面で実施</td>
+                    </tr>
+                    <tr>
+                        <td>オンライン対面カウンセリング</td>
+                        <td>50分</td>
+                        <td>11,000円</td>
+                        <td>ZOOM等を使用し、遠方や継続利用におすすめ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>ご依頼の流れ 🌸</h3>
+            <ol>
+                <li>LINE[カウンセリングルームninin公式アカウント]を友達追加後、フォームに必要事項をご記入ください。</li>
+                <li>原則24時間以内にカウンセラーより日程調整のメールが届きます。</li>
+                <li>日程調整・ご入金確認後、ご希望の日時でカウンセリング/トレーニングを行います。</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>③ 逐語記録・事例記録作成 📑</h2>
+            <p>ChatGPTと心理学理論、架空ケースに基づき「逐語記録、事例記録、スーパーバイズ記録」を作成します。共に学び、カウンセリングの質を高めていきましょう。</p>
+
+            <h3>料金 💡</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>プラン</th>
+                        <th>料金</th>
+                        <th>備考</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>事例非公開</td>
+                        <td>40,000円～ / 1件</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>note共有可</td>
+                        <td>10,000円～ / 1件</td>
+                        <td>共有条件による割引あり</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>ご依頼の流れ 🌷</h3>
+            <ol>
+                <li>LINE[カウンセリングルームninin公式アカウント]を友達追加後、フォームに必要事項をご記入ください。</li>
+                <li>原則24時間以内にカウンセラーより日程調整のメールが届きます。</li>
+                <li>日程調整・ご入金確認後、ご希望の日時で事例記録を送信いたします。</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>住所・アクセス 📍</h2>
+            <p>東京都荒川区西日暮里<br>
+            京成新三河島駅から徒歩5分圏内<br>
+            ※ご予約を頂きましたら個別に詳細をご連絡いたします。</p>
+        </section>
+
+        <section>
+            <h2>カウンセリング規定・個人情報保護方針 🔒</h2>
+            <ol>
+                <li>現在、精神科・心療内科に通院、または服薬されている方は、事前にお知らせください。又、ご依頼者の状態によっては、カウンセリングをお受け出来ない場合がございますので、ご了承ください。</li>
+                <li>カウンセリングによって、必ずしも症状の改善をお約束するものではございません。</li>
+                <li>カウンセリングの過程で、様々な不快な感情が起きることがあります。そのことについて話し合う場合もありますのでご了承ください。</li>
+                <li>ご相談の内容がカウンセラーの能力を超える場合、災害や事故、施設内のトラブルなど、状況的にカウンセリングが難しい場合は、カウンセリングをお断りさせていただくことがございます。</li>
+                <li>ご依頼者に重大な約束違反があった場合、またはカウンセリングの継続が不適切となるような事態が生じた場合は、以後のカウンセリングをお断りすることがございます。</li>
+            </ol>
+            <h3>キャンセル料金について</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>区分</th>
+                        <th>タイミング</th>
+                        <th>料金</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>平日</td>
+                        <td>前々日</td>
+                        <td>1,000円</td>
+                    </tr>
+                    <tr>
+                        <td>平日</td>
+                        <td>前日</td>
+                        <td>料金の50%</td>
+                    </tr>
+                    <tr>
+                        <td>平日</td>
+                        <td>当日</td>
+                        <td>料金の100%</td>
+                    </tr>
+                    <tr>
+                        <td>土日祝</td>
+                        <td>1週間前～前々日</td>
+                        <td>1,000円</td>
+                    </tr>
+                    <tr>
+                        <td>土日祝</td>
+                        <td>前日</td>
+                        <td>料金の50%</td>
+                    </tr>
+                    <tr>
+                        <td>土日祝</td>
+                        <td>当日</td>
+                        <td>料金の100%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <ol start="7">
+                <li>ご依頼者に自傷他害の恐れがある場合には、人命を守るためにご依頼者の承諾を得ずに、適切な人または他機関に知らせる場合がありますので、ご了承ください。</li>
+                <li>カウンセリングご利用の際に、ご依頼者様の行為により生じた損害全てに対して、いかなる理由があれ、当方は一切責任を負わないものとし、損害賠償義務を一切負いません。</li>
+                <li>当カウンセリングのセミナー等において、参加者同士の宗教やマルチ商法等への勧誘、またはセミナーの円滑な進行に支障をきたすと思われる行為を禁止しております。なお参加者に対して、上記のような勧誘等をした方には、セミナーへの出入を禁止する場合もございますので予めご了承ください。<br>※ご参加にあたり、何かお困りの際は、プレムスタッフに速やかにご相談くださいますようお願い致します。</li>
+                <li>オンラインを利用したカウンセリングにて発生したご自身の通信費等の費用はクライアント様負担になります。また、設備不備等による不具合において、こちらでは弁済や保証は致しかねます。</li>
+            </ol>
+        </section>
     </main>
-    <footer>
-        <p>&copy; 2025 合同会社ninin</p>
-    </footer>
 </body>
 </html>
