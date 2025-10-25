@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お花の処方箋 〜言葉と花でこころを整える〜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: 藤色 (#D8BFD8), 生成り (#F8F4E6), 淡ピンク (#F5E6E8), グリーングレー (#B2C2B1) -->
+    <!-- Application Structure Plan: 訪問者の関心を引き、講演の価値を深く理解させ、最終的にお問い合わせ（CTA）に導くための、縦スクロール型LP構造を採用。ナビゲーションバーによるセクション間移動、および「講演テーマ」セクションでのインタラクティブなタブ切り替えを実装。これにより、ユーザーは情報を体系的に、かつ能動的に探索できる。 -->
+    <!-- Visualization & Content Choices: 質的情報（テキスト）が中心のため、グラフ（Chart.js等）は不使用。代わりに、[講演テーマ] -> Goal:詳細理解 -> Viz:インタラクティブ・タブ -> Interaction:クリックで内容表示 -> Justification:情報整理と能動的探索, [プログラム概要] -> Goal:流れの理解 -> Viz:HTML/CSSステップダイアグラム -> Interaction:なし(静的表示) -> Justification:講演の構成を視覚的に提示, [ベネフィット] -> Goal:利点の強調 -> Viz:カード型グリッド -> Interaction:ホバーエフェクト -> Justification:各利点を際立たせる。 -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: #F8F4E6;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .text-primary-deep { color: #6a516d; }
+        .bg-primary-light { background-color: #F5E6E8; }
+        .bg-primary-accent { background-color: #D8BFD8; }
+        .border-primary-accent { border-color: #D8BFD8; }
+        .border-primary-deep { border-color: #6a516d; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .tracking-widest { letter-spacing: 0.1em; }
+
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: #6a516d;
+            border-color: #6a516d;
+        }
+
+        .tab-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #6a516d;
+            color: #F8F4E6;
+        }
+        .tab-button:not(.active):hover {
+            background-color: #E6D9E7;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .benefit-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        }
+        
+        .step-item:not(:last-child)::after {
+            content: '▼';
+            display: block;
+            margin: 1rem auto;
+            color: #D8BFD8;
+            font-size: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .step-item {
+                position: relative;
+                padding-bottom: 2rem;
+            }
+            .step-item:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                bottom: -1rem;
+                transform: translateX(-50%);
+                width: 2px;
+                height: 3rem;
+                background-color: #D8BFD8;
+                margin: 0;
+            }
+        }
+
+        .cta-button {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .cta-button:hover {
+            background-color: #5b455e;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-primary-deep tracking-widest">
+                お花の処方箋
+            </div>
+            <div class="hidden md:flex space-x-6 lg:space-x-8">
+                <a href="#concept" class="nav-link pb-1">コンセプト</a>
+                <a href="#theme" class="nav-link pb-1">講演テーマ</a>
+                <a href="#benefits" class="nav-link pb-1">得られる気づき</a>
+                <a href="#program" class="nav-link pb-1">プログラム</a>
+                <a href="#profile" class="nav-link pb-1">講師</a>
+                <a href="#contact" class="nav-link pb-1">お問い合わせ</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-primary-deep focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2">
+            <a href="#concept" class="block py-2 text-primary-deep">コンセプト</a>
+            <a href="#theme" class="block py-2 text-primary-deep">講演テーマ</a>
+            <a href="#benefits" class="block py-2 text-primary-deep">得られる気づき</a>
+            <a href="#program" class="block py-2 text-primary-deep">プログラム</a>
+            <a href="#profile" class="block py-2 text-primary-deep">講師</a>
+            <a href="#contact" class="block py-2 text-primary-deep">お問い合わせ</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- I. ファーストビュー -->
+        <section id="fv" class="h-[85vh] md:h-[90vh] flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#F8F4E6] to-[#F5E6E8]">
+            <div class="absolute inset-0 opacity-30">
+                <img src="https://placehold.co/1920x1080/F5E6E8/D8BFD8?text=+" alt="背景の花のイメージ" class="w-full h-full object-cover object-center opacity-50">
+            </div>
+            <div class="text-center z-10 p-6">
+                <h1 class="text-4xl md:text-6xl font-bold text-primary-deep leading-tight tracking-wider">
+                    🌸
+                    <br class="md:hidden">
+                    「あなたの心にも、
+                    <br class="hidden md:block">
+                    花の処方箋を。」
+                </h1>
+                <p class="mt-6 text-lg md:text-xl text-primary-deep max-w-2xl mx-auto tracking-wider">
+                    花言葉は、遥か昔から人々の心に寄り添ってきた、目に見えない「心の薬」です。
+                </p>
+                <p class="mt-8 text-base md:text-lg text-gray-700 tracking-wider">
+                    フラワーカウンセラー けー が贈る、<br>
+                    言葉と花でこころを癒し、本来の力を取り戻す、特別な時間。
+                </p>
+            </div>
+        </section>
+
+        <!-- II. コンセプト -->
+        <section id="concept" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest">
+                    🌿
+                    <br>
+                    花には、言葉がある。
+                    <br>
+                    言葉には、力がある。
+                </h2>
+                <div class="mt-12 text-base md:text-lg leading-loose text-left md:text-center text-gray-800 space-y-6 tracking-wider">
+                    <p>花はただ美しいだけではありません。その色、形、そして一つひとつに宿る**「花言葉」**は、私たち自身の内面に響く、力強いメッセージを秘めています。</p>
+                    <p>「お花の処方箋」は、この花言葉を“心の薬”として活用する、けー独自のカウンセリングメソッドです。</p>
+                    <p>たとえば、「勇気」という言葉を持つガーベラのブローチを胸につける。「信念」を宿すアイリスの香水をひと吹きする。</p>
+                    <p class="font-semibold text-primary-deep">花を身につけるという行為は、“言葉を身にまとう”こと。それは、目に見えない心の力を、あなた自身の味方につけるための、最も優しく、最も効果的な儀式なのです。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- III. お花の処方箋とは（講演テーマ） -->
+        <section id="theme" class="py-20 md:py-28 bg-primary-light">
+            <div class="container mx-auto px-6 max-w-5xl">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest text-center mb-12">
+                    🌸 お花の処方箋とは
+                </h2>
+                <p class="text-center text-base md:text-lg text-gray-700 mb-12 max-w-3xl mx-auto tracking-wider">
+                    本講演では、単なる花言葉の知識に留まらず、行動心理学や色彩心理学の視点から、花が持つ象徴的な意味を深く掘り下げます。
+                </p>
+
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                    <div class="flex md:flex-col justify-start overflow-x-auto md:overflow-x-visible mb-6 md:mb-0 md:w-1/3">
+                        <button class="tab-button active w-full text-left p-4 md:p-6 rounded-t-lg md:rounded-l-lg md:rounded-tr-none whitespace-nowrap text-lg text-primary-deep font-semibold" onclick="showTab(event, 'tab1')">
+                            💠 花言葉の心理学
+                        </button>
+                        <button class="tab-button w-full text-left p-4 md:p-6 whitespace-nowrap text-lg text-primary-deep font-semibold" onclick="showTab(event, 'tab2')">
+                            🌷 花とエンパワーメント
+                        </button>
+                        <button class="tab-button w-full text-left p-4 md:p-6 whitespace-nowrap text-lg text-primary-deep font-semibold" onclick="showTab(event, 'tab3')">
+                            🌼 癒しの象徴としての花
+                        </button>
+                        <button class="tab-button w-full text-left p-4 md:p-6 rounded-b-lg md:rounded-bl-none md:rounded-r-lg whitespace-nowrap text-lg text-primary-deep font-semibold" onclick="showTab(event, 'tab4')">
+                            🌹 自分に花を処方する方法
+                        </button>
+                    </div>
+
+                    <div class="md:w-2/3 bg-white p-6 md:p-10 rounded-lg shadow-lg">
+                        <div id="tab1" class="tab-content active tracking-wider">
+                            <h3 class="text-2xl font-bold text-primary-deep mb-4">💠 花言葉の心理学</h3>
+                            <p class="text-base md:text-lg leading-relaxed text-gray-700">花に込められた象徴・色彩・形の意味を心理学的に紐解き、自己理解を深めます。なぜ特定の形や色に惹かれるのか、それがあなたの心とどう繋がっているのかを発見します。</p>
+                        </div>
+                        <div id="tab2" class="tab-content tracking-wider">
+                            <h3 class="text-2xl font-bold text-primary-deep mb-4">🌷 花とエンパワーメント</h3>
+                            <p class="text-base md:text-lg leading-relaxed text-gray-700">花を通して自分を励ます「行動リフレーミング」の実践的な方法を伝授。花を選ぶ、飾る、身につけるという小さな行動が、いかにして大きな自信と活力に繋がるのかを学びます。</p>
+                        </div>
+                        <div id="tab3" class="tab-content tracking-wider">
+                            <h3 class="text-2xl font-bold text-primary-deep mb-4">🌼 癒しの象徴としての花</h3>
+                            <p class="text-base md:text-lg leading-relaxed text-gray-700">花がもつ“受容と変化”のメタファーを体験的に学び、心を軽くします。咲き、そして枯れていく花の姿から、ありのままの自分を受け入れ、変化を恐れない強さを見出します。</p>
+                        </div>
+                        <div id="tab4" class="tab-content tracking-wider">
+                            <h3 class="text-2xl font-bold text-primary-deep mb-4">🌹 自分に花を処方する方法</h3>
+                            <p class="text-base md:text-lg leading-relaxed text-gray-700">実生活での具体的な取り入れ方を解説します。日常使いできるブローチや香水、心を整えるための日記、さらにはファッションへの応用まで、すぐに始められるヒントをお伝えします。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IV. 講演で得られる気づき（ベネフィット） -->
+        <section id="benefits" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto px-6 max-w-6xl">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest text-center mb-16">
+                    🌻 あなたが持ち帰るもの
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                    <div class="benefit-card bg-primary-light p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-primary-deep mb-4 tracking-wider">日常に活かす「言葉の力」</h3>
+                        <p class="text-base text-gray-700 leading-relaxed tracking-wider">花の持つ言葉の力を、日常のあらゆる瞬間に活かす具体的な方法がわかります。</p>
+                    </div>
+                    <div class="benefit-card bg-primary-light p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-primary-deep mb-4 tracking-wider">優しい「おまもり習慣」</h3>
+                        <p class="text-base text-gray-700 leading-relaxed tracking-wider">自分を励まし、そっと見守る、あなただけの優しいおまもり習慣が身につきます。</p>
+                    </div>
+                    <div class="benefit-card bg-primary-light p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-primary-deep mb-4 tracking-wider">育まれる「優しさの眼差し」</h3>
+                        <p class="text-base text-gray-700 leading-relaxed tracking-wider">自分自身や他者への“優しさの眼差し”が育まれ、人間関係がより温かいものになります。</p>
+                    </div>
+                    <div class="benefit-card bg-primary-light p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-primary-deep mb-4 tracking-wider">新しい「自己理解のアプローチ」</h3>
+                        <p class="text-base text-gray-700 leading-relaxed tracking-wider">感情に寄り添い、ありのままの自分を受け入れる、新しい自己理解のアプローチを体験できます。</p>
+                    </div>
+                </div>
+                <blockquote class="mt-20 text-center text-xl md:text-2xl font-semibold text-primary-deep tracking-wider leading-relaxed max-w-3xl mx-auto">
+                    <p>🌸「花は枯れても、あなたの中で咲き続ける。」</p>
+                    <p class="mt-4">——そんな“こころの花”を持ち帰っていただく講演です。</p>
+                </blockquote>
+            </div>
+        </section>
+
+        <!-- V. 講演プログラム概要 -->
+        <section id="program" class="py-20 md:py-28 bg-primary-light">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest text-center mb-8">
+                    💐 講演プログラム概要
+                </h2>
+                <h3 class="text-center text-xl md:text-2xl text-gray-800 tracking-wider mb-16">
+                    「お花の処方箋 〜言葉と花でこころを整える〜」
+                </h3>
+                <div class="flex flex-col md:flex-row justify-center md:space-x-8 text-center">
+                    <div class="step-item md:w-1/5 mb-6 md:mb-0">
+                        <div class="bg-white rounded-full border-4 border-primary-accent w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <span class="text-2xl font-bold text-primary-deep">1</span>
+                        </div>
+                        <h4 class="font-bold text-primary-deep tracking-wider">導入</h4>
+                        <p class="text-sm text-gray-700 tracking-wider">花が語る心の物語</p>
+                    </div>
+                    <div class="step-item md:w-1/5 mb-6 md:mb-0">
+                        <div class="bg-white rounded-full border-4 border-primary-accent w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <span class="text-2xl font-bold text-primary-deep">2</span>
+                        </div>
+                        <h4 class="font-bold text-primary-deep tracking-wider">講義</h4>
+                        <p class="text-sm text-gray-700 tracking-wider">花言葉の心理学</p>
+                    </div>
+                    <div class="step-item md:w-1/5 mb-6 md:mb-0">
+                        <div class="bg-white rounded-full border-4 border-primary-accent w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <span class="text-2xl font-bold text-primary-deep">3</span>
+                        </div>
+                        <h4 class="font-bold text-primary-deep tracking-wider">ワーク</h4>
+                        <p class="text-sm text-gray-700 tracking-wider">お花の処方箋 実践</p>
+                    </div>
+                    <div class="step-item md:w-1/5 mb-6 md:mb-0">
+                        <div class="bg-white rounded-full border-4 border-primary-accent w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <span class="text-2xl font-bold text-primary-deep">4</span>
+                        </div>
+                        <h4 class="font-bold text-primary-deep tracking-wider">対話</h4>
+                        <p class="text-sm text-gray-700 tracking-wider">気づきのシェア</p>
+                    </div>
+                    <div class="step-item md:w-1/5">
+                        <div class="bg-white rounded-full border-4 border-primary-accent w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <span class="text-2xl font-bold text-primary-deep">5</span>
+                        </div>
+                        <h4 class="font-bold text-primary-deep tracking-wider">おわりに</h4>
+                        <p class="text-sm text-gray-700 tracking-wider">「花を身にまとう」生き方</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VI. 対象・開催形態 -->
+        <section id="details" class="py-20 md:py-28 bg-white">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest text-center mb-12">
+                    🌹 対象・開催形態
+                </h2>
+                <div class="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
+                    <table class="w-full text-left">
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="divide-x divide-gray-200">
+                                <td class="font-semibold text-primary-deep p-4 md:p-6 w-1/3 tracking-wider">主な対象</td>
+                                <td class="text-gray-700 p-4 md:p-6 tracking-wider">一般企業・教育機関・医療・福祉関係者・女性向けイベントなど</td>
+                            </tr>
+                            <tr class="divide-x divide-gray-200 bg-primary-light/30">
+                                <td class="font-semibold text-primary-deep p-4 md:p-6 w-1/3 tracking-wider">開催形式</td>
+                                <td class="text-gray-700 p-4 md:p-6 tracking-wider">講演、ワークショップ、オンラインセミナー（全て対応可能）</td>
+                            </tr>
+                            <tr class="divide-x divide-gray-200">
+                                <td class="font-semibold text-primary-deep p-4 md:p-6 w-1/3 tracking-wider">所要時間</td>
+                                <td class="text-gray-700 p-4 md:p-6 tracking-wider">60分〜90分（ご要望に応じて調整いたします）</td>
+                            </tr>
+                            <tr class="divide-x divide-gray-200 bg-primary-light/30">
+                                <td class="font-semibold text-primary-deep p-4 md:p-6 w-1/3 tracking-wider">定員</td>
+                                <td class="text-gray-700 p-4 md:p-6 tracking-wider">20名〜200名（規模はご相談ください）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- VII. 講師プロフィール -->
+        <section id="profile" class="py-20 md:py-28 bg-primary-light">
+            <div class="container mx-auto px-6 max-w-5xl">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest text-center mb-16">
+                    🌼 講師プロフィール
+                </h2>
+                <div class="bg-white shadow-xl rounded-lg overflow-hidden md:flex">
+                    <div class="md:w-1/3">
+                        <img src="https://placehold.co/600x600/F5E6E8/6a516d?text=K" alt="フラワーカウンセラー けー プロフィール写真" class="w-full h-full object-cover">
+                    </div>
+                    <div class="md:w-2/3 p-8 md:p-12 flex flex-col justify-center">
+                        <h3 class="text-3xl font-bold text-primary-deep tracking-wider">フラワーカウンセラー　けー</h3>
+                        <p class="mt-4 text-base text-gray-600 font-semibold tracking-wider">
+                            産業カウンセラー／キャリアコンサルタント／草月流華道師範
+                        </p>
+                        <p class="mt-6 text-base md:text-lg leading-relaxed text-gray-700 tracking-wider">
+                            医療現場での人間理解と、長年にわたる花を通じた心理支援を融合させ、「お花の処方箋」メソッドを確立。言葉と花が持つ深い癒しの力を通して、聴講者が本来持つ力を取り戻す時間を提供しています。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIII. お申込み・お問い合わせ -->
+        <section id="contact" class="py-20 md:py-32 bg-gradient-to-br from-[#F8F4E6] to-[#F5E6E8]">
+            <div class="container mx-auto px-6 max-w-3xl text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary-deep tracking-widest">
+                    🌷
+                    <br>
+                    “あなたの心に、
+                    <br class="md:hidden">
+                    今必要な花を処方します。”
+                </h2>
+                <p class="mt-8 text-base md:text-lg text-gray-700 tracking-wider">
+                    講演のご依頼・ご質問は、下記よりお気軽にお問い合わせください。
+                </p>
+                <div class="mt-12 space-y-4 flex flex-col items-center">
+                    <a href="#" class="cta-button w-full md:w-2/3 bg-primary-deep text-white text-lg font-bold py-4 px-8 rounded-lg shadow-lg tracking-wider">
+                        講演依頼フォーム
+                    </a>
+                    <div class="flex space-x-6 pt-4">
+                        <a href="#" class="text-gray-600 hover:text-primary-deep transition-colors">Instagram</a>
+                        <a href="#" class="text-gray-600 hover:text-primary-deep transition-colors">note</a>
+                        <a href="#" class="text-gray-600 hover:text-primary-deep transition-colors">X (Twitter)</a>
+                    </div>
+                    <p class="pt-4 text-gray-600 tracking-wider">
+                        または E-mail: <a href="mailto:example@example.com" class="hover:text-primary-deep">info@example.com</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary-deep text-center p-6">
+        <p class="text-sm text-primary-light/70 tracking-wider">&copy; 2025 お花の処方箋. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function showTab(event, tabID) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(tabID).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>
