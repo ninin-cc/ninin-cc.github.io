@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【ninin式】キャリア・コア発掘＆リフレーミング・セッション</title>
+    <!-- Tailwind CSSの読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1D4ED8', // Tailwind indigo-700に近い
+                        'secondary-orange': '#F59E0B', // Tailwind amber-500
+                        'bg-light': '#F9FAFB', // Tailwind gray-50
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'inter', sans-serif;
+            background-color: #F9FAFB;
+        }
+        .hero-bg {
+            background-color: #314051; /* ダークブルーグレー */
+            background-image: linear-gradient(135deg, #1C304A 0%, #314051 100%);
+            color: white;
+            padding-bottom: 3rem;
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 80%;
+            height: 4px;
+            background-color: #F59E0B;
+            border-radius: 9999px;
+        }
+        .shadow-custom {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 4px #F59E0B;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ヘッダー / ナビゲーション -->
+    <header class="py-4 px-6 md:px-12 bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-primary-blue">
+                ninin | キャリア支援
+            </h1>
+            <a href="#contact" class="px-4 py-2 bg-secondary-orange text-white text-sm font-semibold rounded-lg hover:bg-yellow-600 transition duration-300">
+                無料相談に申し込む
+            </a>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="hero-bg text-white pt-12 pb-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <p class="text-secondary-orange text-lg font-semibold mb-3">【国家資格キャリアコンサルタント / 産業カウンセラー】</p>
+            <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+                あなたの<span class="text-secondary-orange">「モヤモヤ」</span>を、<br class="sm:hidden">
+                採用される<span class="text-secondary-orange">「ゆるぎない強み」</span>に変える
+            </h2>
+            <p class="text-xl mb-10 opacity-90">
+                単なる自己分析では見つからない、<strong>あなたの人生の「核」</strong>を言語化。<br class="hidden sm:inline">
+                世界的権威サビカスの理論に基づく<strong>ninin式リフレーミング支援</strong>で、経験に価値を与えます。
+            </p>
+            
+            <!-- CTAボタン -->
+            <a href="#course" class="inline-block px-10 py-4 bg-secondary-orange text-white text-xl font-bold rounded-xl shadow-lg hover:bg-yellow-600 transition duration-300 transform hover:scale-105">
+                選ばれる物語（ナラティブ）を今すぐ手に入れる
+            </a>
+        </div>
+    </section>
+
+    <!-- 課題提起セクション -->
+    <section class="py-16 md:py-24 max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl sm:text-4xl font-bold text-center text-primary-blue mb-12">
+            こんな「モヤモヤ」を抱えていませんか？
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-white rounded-xl shadow-lg border-t-4 border-secondary-orange transition hover:shadow-2xl">
+                <div class="text-4xl text-secondary-orange mb-4">
+                    <!-- Icon: Question Mark -->
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c0-3.333 4.228-5 4.228-5s4.228 1.667 4.228 5m-8.456 0c0 3.333 4.228 5 4.228 5s4.228-1.667 4.228-5M12 21v-4M4 12H3m17 0h-1m-4 10h-2m-3-3h-2M4 16h3m13 0h-3M4 8h3m13 0h-3M16 16h-3M8 8h-3"></path></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">自己PRが「ありきたり」になる</h3>
+                <p class="text-gray-600">強みを発見しても、言葉が浅く、面接官に響かない。自分の経験に自信が持てず、他の人の例文を参考にしすぎてしまう。</p>
+            </div>
+            <div class="p-6 bg-white rounded-xl shadow-lg border-t-4 border-secondary-orange transition hover:shadow-2xl">
+                <div class="text-4xl text-secondary-orange mb-4">
+                    <!-- Icon: Disconnected -->
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5.5h2M16 5.5h2M12 5.5v13M12 18.5h2M12 18.5h-2M18 12.5h-2M6 12.5h2M18 12.5V11M6 12.5V11M12 8.5v3M12 15.5v3M6 8.5h2M16 8.5h2M6 15.5h2M16 15.5h2"></path></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">経験に「一貫性」が見当たらない</h3>
+                <p class="text-gray-600">アルバイト、サークル、転職...これまでの経験がバラバラで、自分のキャリアの「軸」が何なのか、言語化できない。</p>
+            </div>
+            <div class="p-6 bg-white rounded-xl shadow-lg border-t-4 border-secondary-orange transition hover:shadow-2xl">
+                <div class="text-4xl text-secondary-orange mb-4">
+                    <!-- Icon: Frustration -->
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 1.343 3 3v2a3 3 0 01-3 3m0-8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">失敗や苦労を強みにできない</h3>
+                <p class="text-gray-600">「頑張っただけ」の経験や、悔しい思いをした過去を、面接で評価される<strong>「課題解決能力」</strong>に変換する方法がわからない。</p>
+            </div>
+        </div>
+        <div class="text-center mt-12">
+            <p class="text-xl text-gray-700">そのモヤモヤ、私にお任せください。それは、あなたの<strong>「強みの原石」</strong>です。</p>
+        </div>
+    </section>
+
+    <!-- 独自メソッド紹介セクション -->
+    <section class="bg-primary-blue py-16 md:py-24 text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold section-title mx-auto text-white">
+                    理論的基盤【ninin式 ナラティブ・リフレーミング・メソッド（NRM）】
+                </h2>
+                <p class="text-xl mt-4 opacity-90">
+                    本メソッドは、<strong>キャリア理論の世界的権威マーク・サビカス博士</strong>が提唱する「キャリア構築インタビュー（CCI）」を基盤とし、<br class="hidden sm:inline">
+                    当社の産業カウンセリングと企業経験を融合させた、<strong>理論に裏付けされた</strong>独自支援です。
+                </p>
+            </div>
+            
+            <!-- サビカス博士とテツオさんの著作 -->
+            <div class="flex flex-col md:flex-row justify-center items-stretch gap-8 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 md:w-1/2">
+                    <h3 class="text-lg font-bold text-primary-blue mb-3">理論的基盤: キャリア構築インタビュー (CCI)</h3>
+                    <div class="flex items-center space-x-4">
+                        <!-- サビカス博士の画像 -->
+                        <div class="flex-shrink-0 w-20 h-20 rounded-full overflow-hidden border-2 border-secondary-orange">
+                            <img src="https://placehold.co/80x80/2563EB/ffffff?text=Savickas" alt="マーク・サビカス博士の肖像" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-sm">マーク・サビカス博士が提唱。キャリアを「人生の物語（ナラティブ）」として捉え、5つの質問から自己概念を抽出する手法です。</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 md:w-1/2">
+                    <h3 class="text-lg font-bold text-primary-blue mb-3">nininのオリジナル: 著作「あなたの物語には価値が在る」</h3>
+                    <div class="flex items-center space-x-4">
+                        <!-- テツオさんの著作の画像 -->
+                        <div class="flex-shrink-0 w-20 h-20 overflow-hidden border-2 border-secondary-orange">
+                            <img src="https://placehold.co/60x80/2563EB/ffffff?text=Your%0AStory" alt="著作の表紙「あなたの物語には価値が在る」" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-sm">CCIを日本の中堅ビジネスパーソン向けに再構成し、自己理解とキャリア構築の<strong>羅針盤</strong>とするための方法論をまとめました。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-12 bg-white/10 p-6 rounded-xl">
+                <h3 class="text-2xl font-bold text-secondary-orange mb-3">対話だけで終わらない！「あなたの物語」を記事としてお届け</h3>
+                <p class="text-lg opacity-90">あなたの言葉に、カウンセリングの知見と企業視点を加え、**ナラティブレポート（キャリア記事）**として編集し、PDFでお渡しします。これは、面接の度に読み返し、自信を深めるための**「ゆるぎない羅針盤」**です。</p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- ステップ1 -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 text-center">
+                    <div class="text-4xl text-secondary-orange font-extrabold mb-3">STEP 1</div>
+                    <h3 class="text-xl font-bold mb-3">自己検閲の解放と傾聴</h3>
+                    <p class="text-sm">沈黙・非言語も大切にする<strong>来談者中心療法</strong>で、安心して本音を語れる環境を構築。心の檻を外し、真の物語の断片を拾います。</p>
+                </div>
+                <!-- ステップ2 -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 text-center">
+                    <div class="text-4xl text-secondary-orange font-extrabold mb-3">STEP 2</div>
+                    <h3 class="text-xl font-bold mb-3">S-CCIによるコア抽出</h3>
+                    <p class="text-sm">「憧れの人物」「好きな物語」「一番古い記憶」など、5つの質問（CCI）を通じて、バラバラな経験の裏に隠された<strong>一貫した価値観の核（コア）</strong>を抽出します。</p>
+                </div>
+                <!-- ステップ3 -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 text-center">
+                    <div class="text-4xl text-secondary-orange font-extrabold mb-3">STEP 3</div>
+                    <h3 class="text-xl font-bold mb-3">経験のリフレーミング</h3>
+                    <p class="text-sm">「失敗」「苦労」「モヤモヤ」といった経験を、<strong>企業が求める「推進力」「問題解決能力」</strong>へとポジティブに意味付けし直します。</p>
+                </div>
+                <!-- ステップ4 -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-gray-800 text-center">
+                    <div class="text-4xl text-secondary-orange font-extrabold mb-3">STEP 4</div>
+                    <h3 class="text-xl font-bold mb-3">企業視点での構造化</h3>
+                    <p class="text-sm">大手通信キャリア課長経験を活かし、抽出したナラティブを<strong>「STAR法」</strong>に落とし込み、<strong>書類選考を突破する論理的なガクチカ</strong>を完成させます。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 成功事例セクション -->
+    <section class="py-16 md:py-24 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-blue section-title mx-auto">
+                支援事例：あなたのモヤモヤは、こう変わります
+            </h2>
+            <p class="text-xl text-gray-700 mt-4">当メソッドでキャリアの軸を再構築したクライアント様の声（匿名化済み）</p>
+        </div>
+
+        <div class="space-y-12">
+            
+            <!-- NEW 事例 4: いちかさん (学生/就職活動) -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-8 border-secondary-orange md:flex md:space-x-8 items-start">
+                <div class="md:w-1/3 mb-4 md:mb-0">
+                    <p class="text-lg font-bold text-secondary-orange">Case 4：<strong>「企業選びの軸」</strong>に悩む就活生</p>
+                    <p class="text-4xl font-extrabold text-primary-blue mt-2">就職活動支援</p>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="mb-4">
+                        <p class="font-semibold text-lg text-gray-800">【Before】モヤモヤ</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-red-500 italic">「就活が本格化し、給与などの**『条件』**とやりがいなどの**『価値観』**、どちらを優先すべきか分からず、企業選びに迷いが生じている。」</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-lg text-gray-800">【After】ナラティブ（成果）</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-green-500 font-medium">「『条件』と『価値観』を分けて整理し、<strong>過去に一番頑張れた瞬間</strong>から<strong>『価値観の伏線』</strong>を発見。<strong>心が温かくなる軸</strong>を第一に企業を選ぶことで、**納得感のある次の物語の章**を選べるようになった」</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 事例 1: 根本さんのケース (若手/転職) -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-8 border-primary-blue md:flex md:space-x-8 items-start">
+                <div class="md:w-1/3 mb-4 md:mb-0">
+                    <p class="text-lg font-bold text-primary-blue">Case 1：<strong>「軸のない経験」</strong>に悩んだ若手社員</p>
+                    <p class="text-4xl font-extrabold text-secondary-orange mt-2">昇格・転職支援</p>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="mb-4">
+                        <p class="font-semibold text-lg text-gray-800">【Before】モヤモヤ</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-red-500 italic">「ショップ、支援、総務と部署が変わり、自分のキャリアに一貫性が見えない。『今の立場では影響力が限定的でモヤモヤする』」</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-lg text-gray-800">【After】ナラティブ（成果）</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-green-500 font-medium">「<strong>『従業員起点』</strong>の課題発見力こそが私の軸。経験の全てが、組織の<strong>分かりにくさ解消</strong>という一つの貢献に繋がっていた。今後は、その視点を活かし<strong>部門横断の業務改善</strong>を主導する」</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 事例 2: 高橋さんのケース (ミドル/役職定年) -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-8 border-primary-blue md:flex md:space-x-8 items-start">
+                <div class="md:w-1/3 mb-4 md:mb-0">
+                    <p class="text-lg font-bold text-primary-blue">Case 2：<strong>「自己犠牲」</strong>で疲弊したベテラン管理職</p>
+                    <p class="text-4xl font-extrabold text-secondary-orange mt-2">キャリア再定義</p>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="mb-4">
+                        <p class="font-semibold text-lg text-gray-800">【Before】モヤモヤ</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-red-500 italic">「昔は現場を回すために『人の三倍やらなきゃ』と思い、全て自分で背負い込んでいた。この先、自分の力が使えるのか不安。」</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-lg text-gray-800">【After】ナラティブ（成果）</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-green-500 font-medium">「『三倍魂』は<strong>組織の最終砦</strong>としての責任感。過去の奮闘があったからこそ、今は<strong>『任せる勇気』</strong>という次のステージのマネジメント能力が生まれた。役職定年後もこの<strong>推進力</strong>を活かす」</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 事例 3: 北村さんのケース (マネジメント/哲学構築) -->
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-8 border-primary-blue md:flex md:space-x-8 items-start">
+                <div class="md:w-1/3 mb-4 md:mb-0">
+                    <p class="text-lg font-bold text-primary-blue">Case 3：<strong>「リーダー哲学」</strong>に悩むマネージャー</p>
+                    <p class="text-4xl font-extrabold text-secondary-orange mt-2">リーダー哲学構築</p>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="mb-4">
+                        <p class="font-semibold text-lg text-gray-800">【Before】モヤモヤ</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-red-500 italic">「リーダーとは部下を導くものだと考えてきたが、若手の主体性をどう引き出すか、今のやり方に限界を感じている。」</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-lg text-gray-800">【After】ナラティブ（成果）</p>
+                        <p class="text-gray-600 pl-4 border-l-2 border-green-500 font-medium">「子育て（音楽）の経験から学んだ<strong>『伝えるタイミングを待つ力』</strong>こそが、私のリーダーシップの本質。部下の<strong>成長機会とウェルビーイング</strong>を追求する哲学へと昇華した」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 記事としてのフィードバックのメリットセクションを追加 -->
+    <section class="bg-primary-blue/5 py-16 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-blue section-title mx-auto">
+                nininの支援は「成果物」として残ります
+            </h2>
+            <p class="text-xl text-gray-700 mt-4">面接対策だけで終わらない！あなたのキャリアを支える<strong>「ナラティブレポート」</strong></p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-blue hover:shadow-xl">
+                <h3 class="text-xl font-semibold text-primary-blue mb-3">1. 客観的な「自分の羅針盤」に</h3>
+                <p class="text-gray-600">セッションで発見した軸を、客観的な<strong>記事形式</strong>で再構成。自己理解が深まり、自己否定や「自己検閲の檻」から解放されます。</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-blue hover:shadow-xl">
+                <h3 class="text-xl font-semibold text-primary-blue mb-3">2. 採用担当者に伝わる論理構造</h3>
+                <p class="text-gray-600">あなたの「物語」を、企業が理解しやすい<strong>STAR法や貢献軸</strong>で編集。説得力が飛躍的に向上し、書類選考の通過率を高めます。</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-blue hover:shadow-xl">
+                <h3 class="text-xl font-semibold text-primary-blue mb-3">3. 迷った時に立ち返る「自信」</h3>
+                <p class="text-gray-600">転職後やキャリアの節目で迷った時、このレポートを読み返すことで、<strong>自分の原点と強み</strong>を確認し、自信を持って前に進めます。</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- コース案内と料金 (プランを5つに更新) -->
+    <section class="py-16 md:py-24 max-w-7xl mx-auto px-6" id="course">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-blue section-title mx-auto">
+                選べる5つのセッションプラン
+            </h2>
+            <p class="text-xl text-gray-700 mt-4">キャリアのステージと目的に合わせてお選びください。</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8">
+            
+            <!-- NEW プラン 0: 超ライト体験版 -->
+            <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col border-t-8 border-gray-400">
+                <h3 class="text-2xl font-bold mb-2 text-gray-700">超ライト体験版</h3>
+                <p class="text-sm text-gray-500 mb-4">傾聴体験、または<strong>保護者の方の事前体験</strong>に</p>
+                <div class="text-4xl font-extrabold text-secondary-orange mb-4">
+                    ¥3,000<span class="text-xl font-normal text-gray-500">（税込）</span>
+                </div>
+                <p class="text-lg font-semibold text-gray-800 mb-4">【セッション概要】</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                    <li><strong>傾聴セッション</strong>（30分×1回）</li>
+                    <li>キャリアの「モヤモヤ」を言語化</li>
+                    <li>次のステップへのアドバイス</li>
+                    <li>※レポート作成は含まれません</li>
+                </ul>
+                <a href="#contact" class="mt-6 w-full py-3 bg-secondary-orange/80 text-white font-bold rounded-lg hover:bg-secondary-orange transition duration-300 text-center">
+                    このプランに申し込む
+                </a>
+            </div>
+
+            <!-- NEW プラン 1: 学生ES向け学割コース -->
+            <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col border-t-8 border-primary-blue">
+                <h3 class="text-2xl font-bold mb-2 text-primary-blue">学生ES向け学割</h3>
+                <p class="text-sm text-gray-500 mb-4">就活生・学生限定！コア発見＆ES作成</p>
+                <div class="text-4xl font-extrabold text-secondary-orange mb-4">
+                    ¥15,000<span class="text-xl font-normal text-gray-500">（税込）</span>
+                </div>
+                <p class="text-lg font-semibold text-gray-800 mb-4">【セッション概要】</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                    <li><strong>【NRM】キャリア・コア抽出（60分×1回）</strong></li>
+                    <li><strong>学生目線でのES作成指導</strong></li>
+                    <li>「条件と価値観」の軸整理</li>
+                    <li><strong>【記事形式】PDFレポート進呈</strong></li>
+                </ul>
+                <a href="#contact" class="mt-6 w-full py-3 bg-primary-blue text-white font-bold rounded-lg hover:bg-indigo-600 transition duration-300 text-center">
+                    このプランに申し込む
+                </a>
+            </div>
+
+            <!-- プラン 2: キャリア・コア完成コース (90分完成) -->
+            <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col border-t-8 border-gray-400">
+                <h3 class="text-2xl font-bold mb-2 text-gray-700">キャリア・コア完成コース</h3>
+                <p class="text-sm text-gray-500 mb-4"><strong>90分で強みの核を完成</strong>させたい方へ</p>
+                <div class="text-4xl font-extrabold text-secondary-orange mb-4">
+                    ¥25,000<span class="text-xl font-normal text-gray-500">（税込）</span>
+                </div>
+                <p class="text-lg font-semibold text-gray-800 mb-4">【セッション概要】</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                    <li><strong>【NRM】キャリア・コア抽出（90分×1回）</strong></li>
+                    <li><strong>キャリアの軸（ナラティブ）が完成</strong></li>
+                    <li><strong>【記事形式】PDFレポート進呈</strong></li>
+                    <li>自己検閲を外す傾聴体験</li>
+                </ul>
+                <a href="#contact" class="mt-6 w-full py-3 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600 transition duration-300 text-center">
+                    このプランに申し込む
+                </a>
+            </div>
+
+            <!-- プラン 3: ナラティブ実践＆徹底ブラッシュアップコース (主力) -->
+            <div class="bg-primary-blue text-white p-8 rounded-xl shadow-2xl shadow-primary-blue/50 flex flex-col border-t-8 border-secondary-orange transform lg:scale-105">
+                <p class="text-sm font-semibold mb-2 bg-secondary-orange px-3 py-1 rounded-full w-max mx-auto">【最も選ばれています】</p>
+                <h3 class="text-3xl font-bold mb-2">ナラティブ実践＆徹底ブラッシュアップコース</h3>
+                <p class="text-sm opacity-90 mb-4"><strong>完成した軸</strong>を基に、書類・面接回答を完璧に磨き上げたい方へ</p>
+                <div class="text-5xl font-extrabold text-secondary-orange mb-4">
+                    ¥90,000<span class="text-xl font-normal text-white opacity-80">（税込）</span>
+                </div>
+                <p class="text-lg font-semibold mb-4">【セッション概要】</p>
+                <ul class="list-disc list-inside space-y-2 flex-grow opacity-90">
+                    <li><strong>NRM全ステップ</strong>による軸の確立（90分×4回）</li>
+                    <li>ガクチカ・強みの<strong>リフレーミングとSTAR法構造化</strong></li>
+                    <li><strong>ES添削無制限</strong>（期間中）</li>
+                    <li>大手企業視点でのフィードバック</li>
+                    <li><strong>【記事形式】ナラティブレポート（完全版）</strong>進呈</li>
+                </ul>
+                <a href="#contact" class="mt-6 w-full py-3 bg-secondary-orange text-white font-bold rounded-lg hover:bg-yellow-600 transition duration-300 text-center shadow-lg">
+                    今すぐ内定に繋がる軸を確立する
+                </a>
+            </div>
+
+            <!-- プラン 4: リーダー哲学 -->
+            <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col border-t-8 border-gray-400">
+                <h3 class="text-2xl font-bold mb-2 text-gray-700">リーダー哲学構築コース</h3>
+                <p class="text-sm text-gray-500 mb-4">マネジメント・ベテラン層のキャリア再定義・哲学構築</p>
+                <div class="text-4xl font-extrabold text-secondary-orange mb-4">
+                    ¥75,000<span class="text-xl font-normal text-gray-500">（税込）</span>
+                </div>
+                <p class="text-lg font-semibold text-gray-800 mb-4">【セッション概要】</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 flex-grow">
+                    <li>マネジメント経験の深掘り（120分×3回）</li>
+                    <li><strong>私的経験</strong>と<strong>リーダー哲学</strong>の接続支援</li>
+                    <li>ウェルビーイング、ラインケア視点での再定義</li>
+                    <li>役職定年・次のキャリアへの<strong>ビジョン構築</strong></li>
+                    <li><strong>【記事形式】リーダー哲学レポート</strong>進呈</li>
+                </ul>
+                <a href="#contact" class="mt-6 w-full py-3 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600 transition duration-300 text-center">
+                    このプランに申し込む
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- テツオさんのプロフィールセクション -->
+    <section class="bg-bg-light py-16 md:py-24" id="about">
+        <div class="max-w-4xl mx-auto px-6 bg-white p-8 rounded-xl shadow-2xl shadow-primary-blue/20">
+            <h2 class="text-3xl sm:text-4xl font-bold text-primary-blue text-center mb-8 section-title mx-auto">
+                支援者紹介：柏崎 哲生（テツオ）
+            </h2>
+            <div class="md:flex md:space-x-8">
+                <div class="md:w-1/3 flex justify-center mb-6 md:mb-0">
+                    <!-- 著者・テツオさんのアイコンを想像させる画像 -->
+                    <img src="https://placehold.co/200x200/1D4ED8/ffffff?text=Narrative%0APartner" alt="柏崎哲生のイメージ画像" class="rounded-full shadow-custom object-cover">
+                </div>
+                <div class="md:w-2/3">
+                    <p class="text-xl font-semibold text-secondary-orange mb-3">現役キャリアコンサルタント / 合同会社ninin 代表</p>
+                    <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
+                        <li><strong>国家資格キャリアコンサルタント</strong> / <strong>産業カウンセラー</strong></li>
+                        <li>大手通信キャリア（NTT系）**技術職**（20年）を経て**営業職課長**として現役で活躍</li>
+                        <li><strong>技術の論理思考</strong>と<strong>心理学の共感力</strong>を両立</li>
+                        <li><strong>来談者中心療法</strong>に基づく、深い共感と内省を重視</li>
+                        <li>著書：「あなたの物語には価値が在る」</li>
+                        <li>合同会社nininを<strong>現役会社員</strong>として設立・運営</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed border-l-4 border-secondary-orange pl-4 italic">
+                        「キャリアは、誰かに与えられるものではなく、<strong>自分で紡ぐ物語</strong>です。技術職・営業職の両方を経験した私が、論理と心理の両面から、あなただけの<strong>ゆるぎない強み</strong>を一緒に見つけ出します。」
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 申し込みフォームセクション (ダミー) -->
+    <section class="bg-primary-blue py-16 md:py-24 text-white" id="contact">
+        <div class="max-w-xl mx-auto px-6 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold section-title mx-auto text-white">
+                一歩踏み出すための無料相談
+            </h2>
+            <p class="text-xl mt-4 mb-8 opacity-90">
+                まずはテツオが直接、あなたの「モヤモヤ」をお聴きします。
+            </p>
+            <div class="bg-white p-8 rounded-xl text-gray-800 shadow-2xl">
+                <p class="text-xl font-bold mb-4">【お申し込みの流れ】</p>
+                <ol class="list-decimal list-inside text-left mb-6 space-y-1">
+                    <li>下記ボタンより無料相談を申し込む</li>
+                    <li>テツオより日程調整のご連絡</li>
+                    <li>オンライン（Zoom等）にて30分間のヒアリング実施</li>
+                    <li>最適なプランをご提案（強引な勧誘は一切ありません）</li>
+                </ol>
+                <a href="mailto:tetsuo.kashiwazaki@gmail.com" class="inline-block px-8 py-3 bg-secondary-orange text-white text-lg font-bold rounded-lg hover:bg-yellow-600 transition duration-300 transform hover:scale-105">
+                    無料ヒアリングに申し込む（メールでのお問い合わせ）
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="py-8 bg-gray-800 text-white text-center text-sm">
+        <div class="max-w-7xl mx-auto px-6">
+            <p>&copy; 2025 合同会社ninin. All Rights Reserved.</p>
+            <p class="mt-2">【著者】柏崎 哲生 | 産業カウンセラー / 国家資格キャリアコンサルタント</p>
+        </div>
+    </footer>
+
+    <script>
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
