@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIESM（リズム）受検のご案内</title>
+    <style>
+        /* 基本スタイル */
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        /* ヘッダー・ロゴ */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo {
+            max-width: 240px; /* ロゴのサイズはお好みに合わせて調整してください */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        /* 導入文 */
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        /* プランセクション */
+        .plan-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .plan-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        /* おすすめプランの強調 */
+        .plan-card.recommended {
+            border-color: #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        .badge {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #3498db;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .plan-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .price {
+            font-size: 1.6rem;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .price span {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .description {
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .benefit {
+            background: #f0f7ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        /* ボタン */
+        .btn {
+            display: block;
+            text-align: center;
+            background: #2c3e50;
+            color: #fff;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #34495e;
+        }
+        .btn-recommended {
+            background: #3498db;
+        }
+        .btn-recommended:hover {
+            background: #2980b9;
+        }
+        /* フッター */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <section class="intro">
+        <img src="./riesm.png" alt="RIESM" class="logo">
+        <h1>【自分を知り、相手を知る】</h1>
+        <p>理解を通じて、よりよい関係性を築くための<br>アセスメントツール 「RIESM（リズム）」</p>
+        <p>あなたの状況に合わせて、最適なプランをお選びください。</p>
+    </section>
+
+    <div class="plan-container">
+        
+        <div class="plan-card">
+            <div class="plan-title">
+                （個人受検）セルフ理解プラン
+            </div>
+            <div class="price">5,000円 <span>（税込 / 1名様分）</span></div>
+            <p class="description">
+                自分自身の内面を深く見つめ、キャリアや行動特性を整理したい方向け。
+                まずは自分自身の 「現在地」 を客観的に把握することから始めましょう。
+            </p>
+            <a href="#" class="btn">このプランで申し込む</a>
+        </div>
+
+        <div class="plan-card recommended">
+            <div class="badge">一番人気・おすすめ</div>
+            <div class="plan-title">
+                （ペア受検）相互理解プラン
+            </div>
+            <div class="price">5,000円 <span>（税込 / 2名様分セット）</span></div>
+            <div class="benefit">
+                一人あたり <strong>2,500円</strong> と、最もお得に受検いただける推奨プランです。
+            </div>
+            <p class="description">
+                お二人で受けることで、共通言語が生まれます。<br>
+                ご夫婦、パートナー、職場の同僚など、大切な誰かとの対話にお役立てください。
+            </p>
+            <a href="#" class="btn btn-recommended">ペアで申し込む</a>
+        </div>
+
+        <div class="plan-card">
+            <div class="plan-title">
+                （個人受検）ご紹介優待プラン
+            </div>
+            <div class="price">3,000円 <span>（税込 / 1名様分）</span></div>
+            <p class="description">
+                すでにRIESMを受けられた方からのご紹介、または特定の窓口からお申し込みの方専用のプランです。
+            </p>
+            <a href="#" class="btn">ご紹介優待で申し込む</a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 合同会社ninin consulting＆counseling. All Rights Reserved.</p>
+    </footer>
+</div>
+
+</body>
+</html>
