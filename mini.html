@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIESM 簡易診断</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useRef } = React;
+
+    // アイコンをSVGで直接定義（外部ファイル不要で美しく表示させるための工夫）
+    const Icon = ({ path, className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {path}
+      </svg>
+    );
+    const Sparkles = ({className}) => <Icon className={className} path={<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>} />;
+    const Rocket = ({className}) => <Icon className={className} path={<><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 3.82-13 1.5 1.5 0 0 0 2.18 2.18A22 22 0 0 1 12 15Z"/><path d="M9 11.5 7.5 13"/><path d="M15 15l1.5-1.5"/><path d="M11 19l-1.5 1.5"/><path d="M15 19l3 3"/><path d="M19 15l3 3"/></>} />;
+    const Shield = ({className}) => <Icon className={className} path={<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-2 7-2 2.5 0 4.5 1 6.5 2a1 1 0 0 1 1 1z"/>} />;
+    const Heart = ({className}) => <Icon className={className} path={<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>} />;
+    const Radar = ({className}) => <Icon className={className} path={<><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6h.01"/><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"/><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"/><path d="M12 18h.01"/><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67"/><circle cx="12" cy="12" r="2"/><path d="m13.41 10.59 5.66-5.66"/></>} />;
+    const ArrowRight = ({className}) => <Icon className={className} path={<><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>} />;
+    const RefreshCw = ({className}) => <Icon className={className} path={<><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></>} />;
+    const ExternalLink = ({className}) => <Icon className={className} path={<><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></>} />;
+    const Share2 = ({className}) => <Icon className={className} path={<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></>} />;
+    const Loader2 = ({className}) => <Icon className={className} path={<path d="M21 12a9 9 0 1 1-6.219-8.56"/>} />;
+
+    // html2canvasをCDNから動的に読み込む関数
+    const loadHtml2Canvas = () => {
+      return new Promise((resolve, reject) => {
+        if (window.html2canvas) {
+          resolve(window.html2canvas);
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => resolve(window.html2canvas);
+        script.onerror = () => reject(new Error('html2canvasの読み込みに失敗しました'));
+        document.head.appendChild(script);
+      });
+    };
+
+    // 6軸 × 2問 = 12問のトレードオフ設問
+    const QUESTIONS = [
+      { id: 1, typeA: 'W', typeB: 'K', text: '新しいアイデアを思いついたとき', optA: 'まず試したくなる', optB: '実現性やリスクを考える' },
+      { id: 2, typeA: 'W', typeB: 'K', text: '仕事での優先順位は', optA: '面白さ・可能性', optB: '正確さ・確実性' },
+      { id: 3, typeA: 'N', typeB: 'A', text: '人が悩んでいるとき', optA: '気持ちに寄り添う', optB: '状況を分析して対処を考える' },
+      { id: 4, typeA: 'N', typeB: 'A', text: '初対面の人との会話', optA: '自然に話しかけられる', optB: '様子を見ながら慎重に入る' },
+      { id: 5, typeA: 'W', typeB: 'A', text: '知らないことに出会ったとき', optA: 'ワクワクする', optB: '少し警戒する' },
+      { id: 6, typeA: 'W', typeB: 'A', text: '変化が起きたとき', optA: 'チャンスと感じる', optB: 'リスクを感じる' },
+      { id: 7, typeA: 'W', typeB: 'N', text: '人との関わりで大事なのは', optA: '一緒に楽しむこと', optB: '安心させること' },
+      { id: 8, typeA: 'W', typeB: 'N', text: 'チームでの役割は', optA: '盛り上げる・広げる', optB: '支える・整える' },
+      { id: 9, typeA: 'K', typeB: 'N', text: '誰かがミスしたとき', optA: '正すことが大事', optB: '気持ちを守ることが大事' },
+      { id: 10, typeA: 'K', typeB: 'N', text: 'フィードバックするとき', optA: '正確に指摘する', optB: '相手が受け取りやすくする' },
+      { id: 11, typeA: 'K', typeB: 'A', text: '判断するとき', optA: '正しいかどうかを重視', optB: '安全かどうかを重視' },
+      { id: 12, typeA: 'K', typeB: 'A', text: '意見が対立したとき', optA: '論理で整理する', optB: '衝突を避ける' },
+    ];
+
+    const RESULTS = {
+      W: {
+        name: 'ワンダー',
+        color: 'bg-orange-500',
+        lightColor: 'bg-orange-50',
+        borderColor: 'border-orange-500',
+        textColor: 'text-orange-600',
+        icon: Rocket,
+        subtitle: '自由・発見・挑戦を愛する冒険家',
+        description: 'あなたのフロントモードは「ワンダー」です。直感や好奇心を原動力に、新しい世界を切り開く力を持っています。ルーチンワークよりも、ゼロからイチを生み出す環境でこそ輝きます。あなたの「とりあえずやってみよう！」という純粋なエネルギーが、周りの空気を動かし、チームに希望の光をもたらします。',
+      },
+      K: {
+        name: 'キーパー',
+        color: 'bg-blue-800',
+        lightColor: 'bg-blue-50',
+        borderColor: 'border-blue-800',
+        textColor: 'text-blue-800',
+        icon: Shield,
+        subtitle: '信念・論理・規律を重んじる守護者',
+        description: 'あなたのフロントモードは「キーパー」です。荒波の中でも正確なコンパスを持ち、論理的な分析と計画でチームを安全に導く力があります。感情論に流されず、「どうすべきか」を冷静に判断できる存在です。あなたのその誠実さと厳しさは、大切なものを守るための深い「愛」と「責任感」に基づいています。',
+      },
+      N: {
+        name: 'ナーチャー',
+        color: 'bg-pink-400',
+        lightColor: 'bg-pink-50',
+        borderColor: 'border-pink-400',
+        textColor: 'text-pink-500',
+        icon: Heart,
+        subtitle: '保護・調和を大切にする癒やしの泉',
+        description: 'あなたのフロントモードは「ナーチャー」です。誰かの笑顔のために心を砕き、チームに安心感と温かさをもたらすオアシスのような存在です。他者の感情の機微を察知し、ありのままを受容するその力は、人が安心して挑戦し、生きていくために不可欠な「安全基地」となります。',
+      },
+      A: {
+        name: 'アダプター',
+        color: 'bg-cyan-400',
+        lightColor: 'bg-cyan-50',
+        borderColor: 'border-cyan-400',
+        textColor: 'text-cyan-600',
+        icon: Radar,
+        subtitle: '洞察・適応・安全を確保するレーダー',
+        description: 'あなたのフロントモードは「アダプター」です。周囲の環境や人の感情を瞬時にスキャンし、波風を立てずに的確に対応する力を持っています。あなたのその慎重さと細やかな配慮が、見えないところでチームを危機から守っています。確かな手順と安心できる環境があれば、最強の実務能力を発揮します。',
+      },
+    };
+
+    function App() {
+      const [step, setStep] = useState('start');
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [scores, setScores] = useState({ W: 0, K: 0, N: 0, A: 0 });
+      const [resultTypes, setResultTypes] = useState([]);
+      const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+      const resultRef = useRef(null);
+
+      const startQuiz = () => {
+        setScores({ W: 0, K: 0, N: 0, A: 0 });
+        setCurrentIndex(0);
+        setStep('question');
+      };
+
+      const handleAnswer = (choice, value) => {
+        const currentQ = QUESTIONS[currentIndex];
+        const newScores = { ...scores };
+        
+        if (choice === 'A') {
+          newScores[currentQ.typeA] += value;
+        } else if (choice === 'B') {
+          newScores[currentQ.typeB] += value;
+        }
+
+        setScores(newScores);
+
+        if (currentIndex < QUESTIONS.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+        } else {
+          calculateResult(newScores);
+        }
+      };
+
+      const calculateResult = (finalScores) => {
+        const maxScore = Math.max(...Object.values(finalScores));
+        const topTypes = Object.keys(finalScores).filter(type => finalScores[type] === maxScore);
+        
+        if (maxScore === 0) {
+          setResultTypes(['A']); 
+        } else {
+          setResultTypes(topTypes);
+        }
+        setStep('result');
+      };
+
+      const maxScore = Math.max(...Object.values(scores));
+      const minScore = Math.min(...Object.values(scores));
+      
+      const getRelativePercentage = (score) => {
+        if (maxScore === minScore) return 100;
+        const percentage = 30 + ((score - minScore) / (maxScore - minScore)) * 70;
+        return Math.round(percentage);
+      };
+
+      const chartData = [
+        { id: 'W', name: 'ワンダー', score: scores.W, percentage: getRelativePercentage(scores.W), color: 'bg-orange-500' },
+        { id: 'K', name: 'キーパー', score: scores.K, percentage: getRelativePercentage(scores.K), color: 'bg-blue-800' },
+        { id: 'N', name: 'ナーチャー', score: scores.N, percentage: getRelativePercentage(scores.N), color: 'bg-pink-400' },
+        { id: 'A', name: 'アダプター', score: scores.A, percentage: getRelativePercentage(scores.A), color: 'bg-cyan-400' },
+      ];
+
+      const sortedChartData = [...chartData].sort((a, b) => b.percentage - a.percentage);
+
+      const handleShare = async () => {
+        if (!resultRef.current || isGeneratingImage) return;
+        
+        setIsGeneratingImage(true);
+        try {
+          const html2canvas = await loadHtml2Canvas();
+
+          const canvas = await html2canvas(resultRef.current, { 
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: '#ffffff'
+          });
+          
+          const dataUrl = canvas.toDataURL('image/png');
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], 'riesm-result.png', { type: 'image/png' });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'RIESM簡易診断結果',
+              text: '私の今のフロントモード（心のコックピット）はこちら！ #RIESM',
+            });
+          } else {
+            const link = document.createElement('a');
+            link.download = 'riesm-result.png';
+            link.href = dataUrl;
+            link.click();
+          }
+        } catch (error) {
+          console.error("画像の生成・シェアに失敗しました", error);
+          alert("画像の保存に失敗しました。お手数ですが、画面のスクリーンショット機能をご利用ください。");
+        } finally {
+          setIsGeneratingImage(false);
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+            
+            {step === 'start' && (
+              <div className="p-8 text-center space-y-6">
+                <div className="flex justify-center mb-4">
+                  <Sparkles className="w-16 h-16 text-yellow-500" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">RIESM 簡易診断</h1>
+                <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                  自分という乗り物を最適に運転するためのコックピット説明書「RIESM」。<br/>
+                  2つの状況から<span className="font-semibold text-indigo-600">「どちらの対応に近いか」</span>を直感で12問答えて、今のあなたの<br/><span className="font-semibold text-gray-800">「フロントモード」</span>を見つけましょう！
+                </p>
+                <button
+                  onClick={startQuiz}
+                  className="w-full py-4 px-6 bg-gray-900 text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md"
+                >
+                  診断をスタート <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {step === 'question' && (
+              <div className="p-6 md:p-8 flex flex-col h-full">
+                <div className="mb-6">
+                  <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
+                    <span>質問 {currentIndex + 1} / {QUESTIONS.length}</span>
+                  </div>
+                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gray-900 transition-all duration-300 ease-out"
+                      style={{ width: `${((currentIndex + 1) / QUESTIONS.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="text-center mb-4 md:mb-6">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-snug">
+                    {QUESTIONS[currentIndex].text}
+                  </h2>
+                </div>
+
+                <div className="flex flex-col gap-2 md:gap-3 mt-auto">
+                  <button onClick={() => handleAnswer('A', 2)} className="w-full py-3 px-4 bg-indigo-50 border-2 border-indigo-100 hover:border-indigo-300 rounded-xl text-indigo-900 font-bold text-center text-sm md:text-base transition-all active:scale-[0.98]">
+                    「{QUESTIONS[currentIndex].optA}」にとても近い
+                  </button>
+                  <button onClick={() => handleAnswer('A', 1)} className="w-full py-2.5 px-4 bg-white border-2 border-indigo-50 hover:border-indigo-200 rounded-xl text-indigo-700 font-medium text-center text-sm transition-all active:scale-[0.98]">
+                    「{QUESTIONS[currentIndex].optA}」にやや近い
+                  </button>
+                  <button onClick={() => handleAnswer('none', 0)} className="w-full py-2 px-4 bg-gray-50 border-2 border-gray-100 hover:border-gray-200 rounded-xl text-gray-500 font-medium text-center text-xs md:text-sm transition-all active:scale-[0.98]">
+                    どちらでもない / 状況による
+                  </button>
+                  <button onClick={() => handleAnswer('B', 1)} className="w-full py-2.5 px-4 bg-white border-2 border-emerald-50 hover:border-emerald-200 rounded-xl text-emerald-700 font-medium text-center text-sm transition-all active:scale-[0.98]">
+                    「{QUESTIONS[currentIndex].optB}」にやや近い
+                  </button>
+                  <button onClick={() => handleAnswer('B', 2)} className="w-full py-3 px-4 bg-emerald-50 border-2 border-emerald-100 hover:border-emerald-300 rounded-xl text-emerald-900 font-bold text-center text-sm md:text-base transition-all active:scale-[0.98]">
+                    「{QUESTIONS[currentIndex].optB}」にとても近い
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === 'result' && resultTypes.length > 0 && (
+              <div className="pb-8 animate-in fade-in duration-500">
+                <div ref={resultRef} className="bg-white">
+                  <div className={`${resultTypes.length > 1 ? 'bg-gradient-to-br from-slate-800 to-slate-900' : RESULTS[resultTypes[0]].color} p-8 text-center text-white`}>
+                    <div className="flex justify-center gap-4 mb-4">
+                      {resultTypes.map((type) => (
+                        <div key={type} className={`${resultTypes.length > 1 ? RESULTS[type].color : 'bg-white/20'} p-3 rounded-full backdrop-blur-sm shadow-md`}>
+                          {React.createElement(RESULTS[type].icon, { className: "w-8 h-8 text-white" })}
+                        </div>
+                      ))}
+                    </div>
+                    <h2 className="text-lg font-medium opacity-90 mb-1">
+                      今のあなたのフロントモードは
+                    </h2>
+                    <h1 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-wider leading-tight">
+                      {resultTypes.map(t => RESULTS[t].name).join(' ＆ ')}
+                    </h1>
+                    <p className="font-medium opacity-90 text-sm md:text-base leading-relaxed">
+                      {resultTypes.length > 1 ? '複数のモードが同率で一番前に出ています！' : RESULTS[resultTypes[0]].subtitle}
+                    </p>
+                  </div>
+
+                  <div className="p-6 md:p-8 pb-4 space-y-8">
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                      <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">あなたのモード・バランス</h3>
+                      <div className="flex flex-col gap-4">
+                        {sortedChartData.map((data) => (
+                          <div key={data.id} className="flex flex-col gap-1.5 group">
+                            <div className="flex justify-between items-end px-1">
+                              <span className="text-sm font-bold text-gray-700">{data.name}</span>
+                              <span className="text-sm font-bold text-gray-500 opacity-80 group-hover:opacity-100 transition-opacity">{data.percentage}%</span>
+                            </div>
+                            <div className="w-full h-6 bg-gray-50 rounded-full relative flex items-center overflow-hidden shadow-inner">
+                              <div className={`h-full ${data.color} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${data.percentage}%` }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-6 pt-5 border-t border-gray-100">
+                        <p className="text-[13px] text-gray-500 text-center leading-relaxed">
+                          ※このバランスは固定された性格ではなく、環境やストレス状況によっても変化します。<br className="hidden md:block" />
+                          <span className="font-semibold text-gray-700">「今の自分のフロントは何なのか」</span>を日々感じることが大切です。
+                        </p>
+                      </div>
+                    </div>
+
+                    {resultTypes.length === 1 ? (
+                      <div className="prose prose-gray">
+                        <p className="text-gray-600 leading-relaxed text-[15px]">{RESULTS[resultTypes[0]].description}</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="text-sm text-gray-600 font-medium px-2 leading-relaxed">
+                          同率一位のモードが複数あります。状況や関わる人によって、これらのモードを器用に（または無意識に）切り替えて第一線で使っている状態です。
+                        </p>
+                        {resultTypes.map((type) => (
+                          <div key={type} className={`${RESULTS[type].lightColor} border-l-4 ${RESULTS[type].borderColor} p-4 rounded-r-xl`}>
+                            <h3 className={`font-bold flex items-center gap-2 mb-2 ${RESULTS[type].textColor}`}>
+                              {React.createElement(RESULTS[type].icon, { className: "w-5 h-5" })}
+                              {RESULTS[type].name}の特徴
+                            </h3>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {RESULTS[type].description.replace(`あなたのフロントモードは「${RESULTS[type].name}」です。`, '')}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="px-6 md:px-8 space-y-4">
+                  <button onClick={handleShare} disabled={isGeneratingImage} className="w-full py-4 px-6 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:bg-slate-800 disabled:bg-slate-400 disabled:cursor-not-allowed shadow-md">
+                    {isGeneratingImage ? <><Loader2 className="w-5 h-5 animate-spin" /> 画像を生成中...</> : <><Share2 className="w-5 h-5" /> 結果を画像で保存・シェア</>}
+                  </button>
+
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center space-y-4">
+                    <h3 className="font-bold text-lg text-slate-800">🌈 RIESM -リズム- についてもっと知る</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      自分の強みやストレスの対処法、大切な人とのコミュニケーションのヒントなど、より詳しい解説はこちらをご覧ください。
+                    </p>
+                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold transition-all hover:bg-slate-100 shadow-sm">
+                      詳しく知りたい人はこちらへ <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+
+                  <button onClick={startQuiz} className="w-full py-3 px-6 bg-transparent text-gray-500 rounded-xl font-bold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
+                    <RefreshCw className="w-4 h-4" /> もう一度診断する
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+          <div className="mt-8 text-center text-sm text-gray-400">
+            <p>Based on RIESM (Roll(Role)_Interest & EgoStresscare Model)</p>
+            <p>© 2025 ninin consulting & counseling</p>
+          </div>
+        </div>
+      );
+    }
+
+    // アプリを画面に表示する処理
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
