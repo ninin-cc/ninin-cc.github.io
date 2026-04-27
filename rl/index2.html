@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIESM light</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+
+  <style>
+    /* 読み込み中のアニメーション */
+    .loading-screen { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #4b5563; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <div id="error-log" style="color: red; padding: 20px; font-weight: bold; background: #fee2e2; display: none;"></div>
+  
+  <div id="root">
+    <div class="loading-screen">
+      <div>システムを読み込んでいます。数秒お待ちください...🚀</div>
+    </div>
+  </div>
+
+  <script>
+    // 画面が真っ白になるのを防ぐためのエラー監視
+    window.onerror = function(msg, url, line, col, error) {
+      var errDiv = document.getElementById('error-log');
+      errDiv.style.display = 'block';
+      errDiv.innerHTML = "【エラーが発生しました】<br>" + msg + "<br>※お手数ですが、この画面をスクリーンショットしてジェミーに見せてください！";
+    };
+  </script>
+
+  <script type="text/babel" data-presets="react,env">
+    const { useState, useRef } = React;
+
+    // --- アイコンの設定（lucide-reactの代わり） ---
+    const IconBase = ({ children, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        {children}
+      </svg>
+    );
+    const Rocket = ({className}) => <IconBase className={className}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></IconBase>;
+    const Shield = ({className}) => <IconBase className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></IconBase>;
+    const Heart = ({className}) => <IconBase className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></IconBase>;
+    const Radar = ({className}) => <IconBase className={className}><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"></path><path d="M4 6h.01"></path><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"></path><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"></path><path d="M12 18h.01"></path><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67"></path><circle cx="12" cy="12" r="2"></circle><path d="m13.41 10.59 5.66-5.66"></path></IconBase>;
+    const ArrowRight = ({className}) => <IconBase className={className}><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></IconBase>;
+    const ArrowLeft = ({className}) => <IconBase className={className}><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></IconBase>;
+    const RefreshCw = ({className}) => <IconBase className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></IconBase>;
+    const ExternalLink = ({className}) => <IconBase className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></IconBase>;
+    const Sparkles = ({className}) => <IconBase className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></IconBase>;
+    const Share2 = ({className}) => <IconBase className={className}><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></IconBase>;
+    const Loader2 = ({className}) => <IconBase className={className}><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></IconBase>;
+    const Compass = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></IconBase>;
+
+    const loadHtml2Canvas = () => {
+      return new Promise((resolve, reject) => {
+        if (window.html2canvas) {
+          resolve(window.html2canvas);
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => resolve(window.html2canvas);
+        script.onerror = () => reject(new Error('html2canvasの読み込みに失敗しました'));
+        document.head.appendChild(script);
+      });
+    };
+
+    const ALL_QUESTIONS = [
+      { id: 1, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'K', text: '新しいアイデアを思いついたとき', optA: 'まず試したくなる', optB: '実現性やリスクを考える' },
+      { id: 4, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'N', text: '初対面の人との会話', optA: '様子を見ながら慎重に入る', optB: '自然に話しかけられる' },
+      { id: 14, format: 'tradeoff', category: 'interest', typeA: 'realistic', typeB: 'social', text: 'チームで任されたい役割は', optA: 'データや道具を使った専門的な実務', optB: 'メンバーのサポートやコミュニケーション' },
+      { id: 5, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'W', text: '知らないことに出会ったとき', optA: '少し警戒する', optB: 'ワクワクする' },
+      { id: 9, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'N', text: '誰かがミスしたとき', optA: '正すことが大事', optB: '気持ちを守ることが大事' },
+      { id: 16, format: 'tradeoff', category: 'interest', typeA: 'enterprising', typeB: 'investigative', text: '困難な課題に直面したとき', optA: '「どうすれば突破できるか」結果を求めたい', optB: '「なぜそうなるのか」原因を深く突き詰めたい' },
+      { id: 2, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'W', text: '仕事での優先順位は', optA: '正確さ・確実性', optB: '面白さ・可能性' },
+      { id: 8, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'N', text: 'チームでの役割は', optA: '盛り上げる・広げる', optB: '支える・整える' },
+      { id: 17, format: 'tradeoff', category: 'interest', typeA: 'artistic', typeB: 'conventional', text: '理想的な作業環境は', optA: 'マニュアルがなく、自分の直感や感性を活かせる', optB: 'ルールや手順が明確で、計画通りに進められる' },
+      { id: 12, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'K', text: '意見が対立したとき', optA: '衝突を避ける', optB: '論理で整理する' },
+      { id: 3, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'A', text: '人が悩んでいるとき', optA: '気持ちに寄り添う', optB: '状況を分析して対処を考える' },
+      { id: 13, format: 'tradeoff', category: 'interest', typeA: 'social', typeB: 'realistic', text: '仕事や活動でやりがいを感じるのは', optA: '人の役に立ち、直接喜ばれたとき', optB: '目に見える成果やモノを作ったとき' },
+      { id: 7, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'W', text: '人との関わりで大事なのは', optA: '安心させること', optB: '一緒に楽しむこと' },
+      { id: 10, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'K', text: 'フィードバックするとき', optA: '相手が受け取りやすくする', optB: '正確に指摘する' },
+      { id: 18, format: 'tradeoff', category: 'interest', typeA: 'conventional', typeB: 'artistic', text: '何かに取り組むとき', optA: '既存の優れた仕組みを使い、正確に仕上げたい', optB: '型にはまらず、全く新しいアイデアを形にしたい' },
+      { id: 6, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'A', text: '変化が起きたとき', optA: 'チャンスと感じる', optB: 'リスクを感じる' },
+      { id: 11, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'A', text: '判断するとき', optA: '正しいかどうかを重視', optB: '安全かどうかを重視' },
+      { id: 15, format: 'tradeoff', category: 'interest', typeA: 'investigative', typeB: 'enterprising', text: '新しいプロジェクトが始まったら', optA: 'まずは情報収集し、深く分析・研究したい', optB: 'まずは目標を立てて、周りを巻き込んで動きたい' },
+      { 
+        id: 19, format: 'select6', category: 'interest', text: '会社で新しい仕事を頼まれたり、チームで動くとき。あなたが一番「やりがいを感じる」役割はどれですか？', 
+        options: [
+          { type: 'social', text: 'メンバーの話を聞き、チームの雰囲気を良くするサポート役' },
+          { type: 'conventional', text: '計画通りに進むよう、スケジュールやルールを整える管理役' },
+          { type: 'realistic', text: '実際に現場で手を動かして、目に見える形にする実務担当' },
+          { type: 'investigative', text: '必要なデータや情報を集め、原因や仕組みを分析する役割' },
+          { type: 'enterprising', text: '目標を掲げ、周りを巻き込んでプロジェクトを引っ張るリーダー役' },
+          { type: 'artistic', text: '既存の枠にとらわれず、新しいアイデアや企画を考える役割' }
+        ]
+      },
+      { 
+        id: 20, format: 'select4', category: 'mode', text: 'プライベートで、周りの人から言われて「一番嬉しい・自分らしい」と感じる言葉はどれですか？', 
+        options: [
+          { type: 'W', text: '「いつも面白くて、一緒にいるとワクワクするよ！」' },
+          { type: 'K', text: '「いつも冷静で、いざという時に本当に頼りになるね。」' },
+          { type: 'N', text: '「いつも気遣ってくれて、一緒にいると安心するよ。」' },
+          { type: 'A', text: '「いつも周りをよく見ていて、細やかな配慮が助かるよ。」' }
+        ]
+      }
+    ];
+
+    const INTEREST_LABELS = {
+      social: '社会', conventional: '慣習', realistic: '体感', 
+      investigative: '研究', enterprising: '達成', artistic: '創造'
+    };
+
+    const ROLE_DESCRIPTIONS = {
+      'W-social': { name: 'ムードメーカー役', desc: '場を明るくする。支援や協働そのものを楽しむ。' },
+      'K-social': { name: 'アクティビスト役', desc: '道徳的・社会的正しさを重んじる。導き手・メンターとして群れを守る。' },
+      'N-social': { name: 'サポーター役', desc: '社会や相手の気持ちに寄り添い、支援・貢献する。' },
+      'A-social': { name: 'フォロワー役', desc: '協調し、周囲に合わせる。波風を立てずに裏方として貢献する。' },
+      'W-conventional': { name: 'ライフハッカー役', desc: '工夫する。制約の中での創造や改善活動（QC活動）を楽しむ。' },
+      'K-conventional': { name: '管理人・監査役', desc: 'ルールを作り、組織の秩序を厳格に維持する。' },
+      'N-conventional': { name: '総務・秘書役', desc: '人のため、みんなのために心地よい環境や仕組みを整える。' },
+      'A-conventional': { name: '庶務・精密作業者役', desc: '決まった手順や構成を絶対に変えず、正確にこなす作業者。' },
+      'W-realistic': { name: '冒険家役', desc: '行動で世界を感じる。自分で新しい世界を発見しに行く。' },
+      'K-realistic': { name: '守護者役', desc: '自ら体を動かし、規律や生活・信念を現場で守り抜く。' },
+      'N-realistic': { name: 'バディ役', desc: '現場で双方の行動を支援し、助け合う。相棒・仲間・OJT担当。' },
+      'A-realistic': { name: 'オペレーター役', desc: 'モノ・データを問わず、丁寧にミスなく正確に作業を実行する。' },
+      'W-investigative': { name: '探究者役', desc: '考える事がワクワク。調べる事がドキドキする好奇心の塊。' },
+      'K-investigative': { name: '博士・研究者役', desc: '正解を求め、原理を見つけていく。理念を追求していく学者。' },
+      'N-investigative': { name: 'ナレッジ・ギバー役', desc: '知識や理論・仕組みなど、人が喜ぶ事を知り、皆と分かち合いたい。' },
+      'A-investigative': { name: '研究員役', desc: '定められた手順や方法を厳格に守り、考察・実験・検証を行う。' },
+      'W-enterprising': { name: 'イノベーター役', desc: '革新で周囲を巻き込む。先頭に立って道を切り開くリーダー。' },
+      'K-enterprising': { name: 'マネージャー役', desc: '結果と目標達成のために組織を導き、守るリーダー。' },
+      'N-enterprising': { name: 'コーチ役', desc: 'メンバーの達成を心理的に支援し、伴走するリーダー。' },
+      'A-enterprising': { name: '補佐役', desc: '組織の目的や成果に向け、確実にリーダーを補佐する右腕。' },
+      'W-artistic': { name: 'クリエイター役', desc: '既存の枠を超えて、モノや考えを自由に表現・発明する。' },
+      'K-artistic': { name: '求道者役', desc: '作品の完成度に極めて厳しい。失敗作品は絶対に許したくない。' },
+      'N-artistic': { name: '詩人・作家役', desc: '人の心へ向かう、感情や温かさを込めた創造・表現を行う。' },
+      'A-artistic': { name: '工芸職人役', desc: 'モノ・データを問わず、指示された枠組みの中で確実な創造性を発揮する。' },
+    };
+
+    const RESULTS = {
+      W: { name: 'ワンダー', shortEng: 'W', color: 'bg-orange-500', lightColor: 'bg-orange-50', borderColor: 'border-orange-500', textColor: 'text-orange-600', icon: Rocket, subtitle: '自由・発見・挑戦を愛する冒険家', description: 'あなたのフロントモードは「ワンダー」です。直感や好奇心を原動力に、新しい世界を切り開く力を持っています。ルーチンワークよりも、ゼロからイチを生み出す環境でこそ輝きます。あなたの「とりあえずやってみよう！」という純粋なエネルギーが、周りの空気を動かし、チームに希望の光をもたらします。' },
+      K: { name: 'キーパー', shortEng: 'K', color: 'bg-blue-900', lightColor: 'bg-blue-50', borderColor: 'border-blue-900', textColor: 'text-blue-900', icon: Shield, subtitle: '信念・論理・規律を重んじる守護者', description: 'あなたのフロントモードは「キーパー」です。荒波の中でも正確なコンパスを持ち、論理的な分析と計画でチームを安全に導く力があります。感情論に流されず、「どうすべきか」を冷静に判断できる存在です。あなたのその誠実さと厳しさは、大切なものを守るための深い「愛」と「責任感」に基づいています。' },
+      N: { name: 'ナーチャー', shortEng: 'N', color: 'bg-pink-500', lightColor: 'bg-pink-50', borderColor: 'border-pink-500', textColor: 'text-pink-600', icon: Heart, subtitle: '保護・調和を大切にする癒やしの泉', description: 'あなたのフロントモードは「ナーチャー」です。誰かの笑顔のために心を砕き、チームに安心感と温かさをもたらすオアシスのような存在です。他者の感情の機微を察知し、ありのままを受容するその力は、人が安心して挑戦し、生きていくために不可欠な「安全基地」となります。' },
+      A: { name: 'アダプター', shortEng: 'A', color: 'bg-sky-600', lightColor: 'bg-sky-50', borderColor: 'border-sky-600', textColor: 'text-sky-700', icon: Radar, subtitle: '洞察・適応・安全を確保するレーダー', description: 'あなたのフロントモードは「アダプター」です。周囲の環境や人の感情を瞬時にスキャンし、波風を立てずに的確に対応する力を持っています。あなたのその慎重さと細やかな配慮が、見えないところでチームを危機から守っています。確かな手順と安心できる環境があれば、最強の実務能力を発揮します。' },
+    };
+
+    function App() {
+      const [step, setStep] = useState('start');
+      const [currentIndex, setCurrentIndex] = useState(0);
+      
+      const [modeScores, setModeScores] = useState({ W: 0, K: 0, N: 0, A: 0 });
+      const [interestScores, setInterestScores] = useState({ social: 1, conventional: 1, realistic: 1, investigative: 1, enterprising: 1, artistic: 1 });
+      
+      const [history, setHistory] = useState([]);
+      const [resultTypes, setResultTypes] = useState([]);
+      const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+      const resultRef = useRef(null);
+      const [questions, setQuestions] = useState(ALL_QUESTIONS);
+
+      const startQuiz = () => {
+        setModeScores({ W: 0, K: 0, N: 0, A: 0 });
+        setInterestScores({ social: 1, conventional: 1, realistic: 1, investigative: 1, enterprising: 1, artistic: 1 });
+        setHistory([]);
+        setCurrentIndex(0);
+        
+        const tradeoffs = ALL_QUESTIONS.filter(q => q.format === 'tradeoff').sort(() => Math.random() - 0.5);
+        const directs = ALL_QUESTIONS.filter(q => q.format !== 'tradeoff').sort(() => Math.random() - 0.5);
+        setQuestions([...tradeoffs, ...directs]);
+        setStep('question');
+      };
+
+      const handleAnswer = (choice, value, directType = null) => {
+        const currentQ = questions[currentIndex];
+        const format = currentQ.format || 'tradeoff';
+        
+        setHistory([...history, { modeScores, interestScores }]);
+        
+        let newModeScores = { ...modeScores };
+        let newInterestScores = { ...interestScores };
+
+        if (format === 'select6' || format === 'select4') {
+          if (currentQ.category === 'mode') {
+            newModeScores[directType] += 1;
+          } else {
+            newInterestScores[directType] += 3;
+          }
+        } else {
+          if (currentQ.category === 'mode') {
+            if (choice === 'A') newModeScores[currentQ.typeA] += value;
+            else if (choice === 'B') newModeScores[currentQ.typeB] += value;
+          } else if (currentQ.category === 'interest') {
+            if (choice === 'A') newInterestScores[currentQ.typeA] += value;
+            else if (choice === 'B') newInterestScores[currentQ.typeB] += value;
+          }
+        }
+
+        setModeScores(newModeScores);
+        setInterestScores(newInterestScores);
+
+        if (currentIndex < ALL_QUESTIONS.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+        } else {
+          calculateResult(newModeScores);
+        }
+      };
+
+      const handleBack = () => {
+        if (currentIndex > 0) {
+          const prevScores = history[history.length - 1];
+          setModeScores(prevScores.modeScores);
+          setInterestScores(prevScores.interestScores);
+          setHistory(history.slice(0, -1));
+          setCurrentIndex(currentIndex - 1);
+        }
+      };
+
+      const calculateResult = (finalModeScores) => {
+        const maxScore = Math.max(...Object.values(finalModeScores));
+        const topTypes = Object.keys(finalModeScores).filter(type => finalModeScores[type] === maxScore);
+        
+        if (maxScore === 0) setResultTypes(['A']); 
+        else setResultTypes(topTypes);
+        
+        setStep('result');
+      };
+
+      const getRelativePercentage = (score) => {
+        const MAX_POSSIBLE_SCORE = 14; 
+        const percentage = 30 + (score / MAX_POSSIBLE_SCORE) * 70;
+        return Math.round(Math.min(percentage, 100)); 
+      };
+
+      const modeChartData = [
+        { id: 'W', name: RESULTS.W.name, score: modeScores.W, percentage: getRelativePercentage(modeScores.W), color: RESULTS.W.color },
+        { id: 'K', name: RESULTS.K.name, score: modeScores.K, percentage: getRelativePercentage(modeScores.K), color: RESULTS.K.color },
+        { id: 'N', name: RESULTS.N.name, score: modeScores.N, percentage: getRelativePercentage(modeScores.N), color: RESULTS.N.color },
+        { id: 'A', name: RESULTS.A.name, score: modeScores.A, percentage: getRelativePercentage(modeScores.A), color: RESULTS.A.color },
+      ];
+      const sortedModeChartData = [...modeChartData].sort((a, b) => b.percentage - a.percentage);
+
+      const generateMatrixData = () => {
+        const modeKeys = ['W', 'K', 'N', 'A'];
+        const interestKeys = ['social', 'conventional', 'realistic', 'investigative', 'enterprising', 'artistic'];
+        
+        let cells = [];
+        modeKeys.forEach(mKey => {
+          const modePercentage = modeChartData.find(d => d.id === mKey).percentage;
+          interestKeys.forEach(iKey => {
+            const modeWeight = Math.pow(modePercentage, 1.2);
+            const interestWeight = Math.pow(interestScores[iKey], 0.8);
+            const value = modeWeight * interestWeight;
+            cells.push({ id: `${mKey}-${iKey}`, mode: mKey, interest: iKey, value });
+          });
+        });
+
+        const sortedCells = [...cells].sort((a, b) => b.value - a.value);
+        return { cells, sortedCells, modeKeys, interestKeys };
+      };
+
+      // --- 修正箇所：余白をなくし、そのまま縦長で出力・シェアURLの変更 ---
+      const handleShare = async () => {
+        if (!resultRef.current || isGeneratingImage) return;
+        setIsGeneratingImage(true);
+        try {
+          const html2canvas = await loadHtml2Canvas();
+          // 対象エリアをそのままキャプチャ（余白追加なし）
+          const originalCanvas = await html2canvas(resultRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+
+          // キャプチャした画像をそのままデータ化
+          const dataUrl = originalCanvas.toDataURL('image/png');
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], 'riesm-result.png', { type: 'image/png' });
+
+          const shareText = `私のフロントモードと「コックピット」はこちら！\nあなたもやってみませんか？\nhttps://note.com/ninin2025/n/n236a6f29ad63\n\n#RIESM_light`;
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: 'RIESM light 診断結果', text: shareText });
+          } else {
+            const link = document.createElement('a');
+            link.download = 'riesm-result.png';
+            link.href = dataUrl;
+            link.click();
+          }
+        } catch (error) {
+          console.error(error);
+          alert("画像の保存に失敗しました。お手数ですがスクリーンショットをご利用ください。");
+        } finally {
+          setIsGeneratingImage(false);
+        }
+      };
+
+      const renderQuestionButtons = () => {
+        const currentQ = questions[currentIndex];
+        const format = currentQ.format || 'tradeoff';
+
+        if (format === 'select6' || format === 'select4') {
+          return (
+            <div className="flex flex-col gap-2 mt-auto">
+              {currentQ.options.map((opt) => (
+                <button key={opt.type} onClick={() => handleAnswer(null, 0, opt.type)} className="w-full py-3 px-4 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98] text-left shadow-sm flex items-center">
+                  <span className="flex-1">{opt.text}</span>
+                </button>
+              ))}
+            </div>
+          );
+        }
+
+        return (
+          <div className="flex flex-col gap-2 mt-auto">
+            <button onClick={() => handleAnswer('A', 2)} className="w-full py-3 px-4 bg-gray-100 border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-800 font-bold text-sm transition-all active:scale-[0.98]">
+              「{currentQ.optA}」にとても近い
+            </button>
+            <button onClick={() => handleAnswer('A', 1)} className="w-full py-2.5 px-4 bg-gray-50 border-2 border-gray-100 hover:border-gray-200 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98]">
+              「{currentQ.optA}」にやや近い
+            </button>
+            <button onClick={() => handleAnswer('none', 0)} className="w-full py-2 px-4 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-600 font-medium text-xs transition-all active:scale-[0.98] shadow-sm">
+              どちらでもない / 状況による
+            </button>
+            <button onClick={() => handleAnswer('B', 1)} className="w-full py-2.5 px-4 bg-gray-50 border-2 border-gray-100 hover:border-gray-200 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98]">
+              「{currentQ.optB}」にやや近い
+            </button>
+            <button onClick={() => handleAnswer('B', 2)} className="w-full py-3 px-4 bg-gray-100 border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-800 font-bold text-sm transition-all active:scale-[0.98]">
+              「{currentQ.optB}」にとても近い
+            </button>
+          </div>
+        );
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+            
+            {step === 'start' && (
+              <div className="p-8 text-center space-y-6">
+                <div className="flex justify-center mb-4">
+                  <Sparkles className="w-16 h-16 text-yellow-500" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">RIESM light<br/><span className="text-xl text-indigo-600 mt-2 flex items-center justify-center gap-2"><Compass className="w-5 h-5"/> コックピット</span></h1>
+                <div className="text-gray-600 leading-relaxed text-sm md:text-base space-y-4">
+                  <p>自分という乗り物を最適に運転するための「RIESM」の簡易版です。</p>
+                  <p>あなたの「フロントモード」と「興味の蛇口」を掛け合わせて、自分が自然にいられる状態（コックピット）を見つけましょう！</p>
+                  <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-indigo-800 text-sm mt-4">
+                    <p className="font-bold mb-2 flex items-center justify-center gap-1"><Rocket className="w-4 h-4"/> 診断のポイント</p>
+                    <p className="mb-2">全部で20問なので、5分ほどでおわります。</p>
+                    <p>ただ、回答に葛藤するような設問もあるので、時にはゆっくりと悩みながら回答してください。</p>
+                  </div>
+                </div>
+                <button onClick={startQuiz} className="w-full py-4 px-6 bg-gray-900 text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md mt-6">
+                  診断をスタート <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {step === 'question' && (
+              <div className="p-6 md:p-8 flex flex-col h-full animate-in fade-in">
+                <div className="mb-6">
+                  <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
+                    <span className="flex items-center gap-1"><Compass className="w-4 h-4 text-gray-700"/> 診断</span>
+                    <span>{currentIndex + 1} / {questions.length}</span>
+                  </div>
+                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full transition-all duration-300 bg-gray-900" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}></div>
+                  </div>
+                </div>
+                <div className="text-center mb-6">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-snug">{questions[currentIndex].text}</h2>
+                </div>
+                {renderQuestionButtons()}
+                <div className="mt-4 pt-2">
+                  <button onClick={handleBack} disabled={currentIndex === 0} className={`w-full py-2 px-4 font-medium text-sm rounded-xl transition-all flex items-center justify-center gap-1 ${currentIndex === 0 ? 'text-transparent cursor-default' : 'text-gray-500 hover:bg-gray-100'}`}>
+                    {currentIndex > 0 && <><ArrowLeft className="w-4 h-4" /> 前の質問に戻る</>}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === 'result' && resultTypes.length > 0 && (
+              <div className="pb-8 animate-in fade-in duration-500">
+                <div ref={resultRef} className="bg-white">
+                  <div className={`${resultTypes.length > 1 ? 'bg-gradient-to-br from-slate-800 to-slate-900' : RESULTS[resultTypes[0]].color} p-8 text-center text-white`}>
+                    <div className="flex justify-center gap-4 mb-4">
+                      {resultTypes.map((type) => {
+                        const IconElement = RESULTS[type].icon;
+                        return (
+                          <div key={type} className={`${resultTypes.length > 1 ? RESULTS[type].color : 'bg-white/20'} p-3 rounded-full backdrop-blur-sm shadow-md`}>
+                            <IconElement className="w-8 h-8 text-white" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <h2 className="text-lg font-medium opacity-90 mb-1">今のあなたのフロントモードは</h2>
+                    <h1 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-wider leading-tight">
+                      {resultTypes.map(t => RESULTS[t].name).join(' ＆ ')}
+                    </h1>
+                    <p className="font-medium opacity-90 text-sm md:text-base leading-relaxed">
+                      {resultTypes.length > 1 ? '複数のモードが同率で一番前に出ています！' : RESULTS[resultTypes[0]].subtitle}
+                    </p>
+                  </div>
+
+                  <div className="p-4 md:p-8 pb-4 space-y-6 md:space-y-8">
+                    <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
+                      <h3 className="text-base md:text-lg font-bold text-gray-800 mb-5 text-center">あなたのモード・バランス</h3>
+                      <div className="flex flex-col gap-4">
+                        {sortedModeChartData.map((data) => (
+                          <div key={data.id} className="flex flex-col gap-1.5 group">
+                            <div className="flex justify-between items-end px-1">
+                              <span className="text-xs md:text-sm font-bold text-gray-700 tracking-wide">{data.name}</span>
+                              <span className="text-xs md:text-sm font-bold text-gray-500">{data.percentage}%</span>
+                            </div>
+                            <div className="w-full h-5 md:h-6 bg-gray-50 rounded-full relative flex items-center overflow-hidden shadow-inner">
+                              <div className={`h-full ${data.color} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${data.percentage}%` }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-5 pt-4 border-t border-gray-100">
+                        <p className="text-[11px] md:text-xs text-gray-500 text-center leading-relaxed">
+                          ※このバランスは固定されたものではなく、状況によって変化します。<br className="hidden md:block" />
+                          「今の自分のフロントは何なのか」を日々感じることが大切です。<br />
+                          また、フロントだけではなく２番目３番目（スタンド）がどう働くか、働かせるかが良いコミュニケーションのポイントです。
+                        </p>
+                      </div>
+                    </div>
+
+                    {resultTypes.length === 1 ? (
+                      <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <p className="text-gray-700 leading-relaxed text-sm md:text-[15px] m-0">{RESULTS[resultTypes[0]].description}</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="text-sm text-gray-600 font-medium px-2 leading-relaxed">同率一位のモードが複数あります。状況によって器用に切り替えている状態です。</p>
+                        {resultTypes.map((type) => {
+                          const IconComponent = RESULTS[type].icon;
+                          return (
+                            <div key={type} className={`${RESULTS[type].lightColor} border-l-4 ${RESULTS[type].borderColor} p-4 rounded-r-xl`}>
+                              <h3 className={`font-bold flex items-center gap-2 mb-2 ${RESULTS[type].textColor}`}>
+                                <IconComponent className="w-5 h-5" /> {RESULTS[type].name}の特徴
+                              </h3>
+                              <p className="text-sm text-gray-700 leading-relaxed">{RESULTS[type].description.replace(`あなたのフロントモードは「${RESULTS[type].name}」です。`, '')}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    
+                    {(() => {
+                      const matrix = generateMatrixData();
+                      return (
+                        <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
+                          <div className="text-center mb-5 md:mb-6">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-800 flex items-center justify-center gap-2">
+                              <Compass className="w-5 h-5 md:w-6 md:h-6 text-indigo-600" /> コックピット
+                            </h3>
+                            <p className="text-xs md:text-sm text-gray-600 mt-1 md:mt-2 leading-relaxed">
+                              色のある場所が、あなたが「自然にいられる」エリアです。
+                            </p>
+                          </div>
+                          <div className="w-full">
+                            <table className="w-full table-fixed border-separate border-spacing-1">
+                              <thead>
+                                <tr>
+                                  <th className="w-6 md:w-8"></th>
+                                  {matrix.modeKeys.map(mKey => {
+                                    const fullKatakana = { W: 'ワンダー', K: 'キーパー', N: 'ナーチャー', A: 'アダプター' }[mKey];
+                                    return (
+                                      <th key={mKey} className={`p-0 align-bottom pb-1 font-extrabold ${RESULTS[mKey].textColor} text-[10px] sm:text-xs md:text-sm whitespace-nowrap tracking-tighter`}>
+                                        {fullKatakana}
+                                      </th>
+                                    );
+                                  })}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {matrix.interestKeys.map(iKey => (
+                                  <tr key={iKey}>
+                                    <td className="p-0 text-center align-middle">
+                                      {INTEREST_LABELS[iKey].split('').map((char, index) => (
+                                        <div key={index} className={index === 0 ? "mb-0.5 font-black text-gray-900 text-xs sm:text-sm" : "font-medium text-gray-400 text-[10px] sm:text-xs"}>
+                                          {char}
+                                        </div>
+                                      ))}
+                                    </td>
+                                    {matrix.modeKeys.map(mKey => {
+                                      const cellId = `${mKey}-${iKey}`;
+                                      const rank = matrix.sortedCells.findIndex(c => c.id === cellId);
+                                      let bgColor = ""; let opacityClass = "opacity-90";
+                                      if (rank < 5) { bgColor = "bg-orange-500 shadow-sm"; opacityClass = "opacity-100"; }
+                                      else if (rank < 12) { bgColor = "bg-orange-100"; }
+                                      else if (rank < 19) { bgColor = "bg-stone-100"; }
+                                      else { bgColor = "bg-stone-300 shadow-sm"; opacityClass = "opacity-80"; }
+                                      let rankContent = null; let rankClass = "";
+                                      if (rank === 0) { rankContent = '①'; rankClass = "text-white font-bold"; }
+                                      else if (rank === 1) { rankContent = '②'; rankClass = "text-white font-bold"; }
+                                      else if (rank === 2) { rankContent = '③'; rankClass = "text-white font-bold"; }
+                                      else if (rank === 23) { rankContent = '❶'; rankClass = "text-stone-700 font-bold"; }
+                                      else if (rank === 22) { rankContent = '❷'; rankClass = "text-stone-700 font-bold"; }
+                                      else if (rank === 21) { rankContent = '❸'; rankClass = "text-stone-700 font-bold"; }
+                                      return (
+                                        <td key={mKey} className="p-0 align-middle">
+                                          <div className={`w-full h-8 sm:h-10 rounded transition-all duration-300 ${bgColor} ${opacityClass} flex items-center justify-center text-sm md:text-base`}>
+                                            {rankContent && <span className={rankClass}>{rankContent}</span>}
+                                          </div>
+                                        </td>
+                                      );
+                                    })}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-[11px] md:text-sm text-gray-600 font-medium">
+                            <div className="flex items-center gap-1.5"><span className="w-3 h-3 md:w-4 md:h-4 bg-orange-500 rounded-[3px] shadow-sm"></span><span>自然な役割</span></div>
+                            <div className="flex items-center gap-1"><div className="flex gap-0.5"><span className="w-3 h-3 md:w-4 md:h-4 bg-orange-100 rounded-[3px]"></span><span className="w-3 h-3 md:w-4 md:h-4 bg-stone-100 rounded-[3px]"></span></div><span className="ml-1">状況による役割</span></div>
+                            <div className="flex items-center gap-1.5"><span className="w-3 h-3 md:w-4 md:h-4 bg-stone-300 rounded-[3px] shadow-sm"></span><span>疲れる役割</span></div>
+                          </div>
+                          <div className="mt-8 text-left border-t border-gray-100 pt-6">
+                            <p className="text-xs md:text-sm text-gray-600 leading-relaxed mb-6">
+                              以下の結果は「あなたがどんな性格か」を断定するものではありません。フロントは状況によって変化します。<br className="hidden md:block"/>
+                              大切なのは、「今のあなたが最も自然に力を発揮できる役割」を知り、それを活かすことです。
+                            </p>
+                            <div className="space-y-6">
+                              <div className="bg-orange-50 border-l-4 border-orange-500 p-4 md:p-5 rounded-r-xl">
+                                <h4 className="font-bold text-orange-800 mb-4 text-sm md:text-base flex items-center gap-2">✨ 自然に力を発揮できる役割</h4>
+                                <div className="space-y-4">
+                                  {[0, 1].map((idx) => {
+                                    const cell = matrix.sortedCells[idx];
+                                    const role = ROLE_DESCRIPTIONS[cell.id];
+                                    const rankMark = ['①', '②'][idx];
+                                    return (
+                                      <div key={`top-${idx}`} className="text-xs md:text-sm text-gray-700">
+                                        <div className="font-bold text-orange-700 mb-1">{rankMark} 【{role.name}】</div>
+                                        <div className="pl-5 leading-relaxed">{role.desc}</div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                              <div className="bg-stone-100 border-l-4 border-stone-400 p-4 md:p-5 rounded-r-xl">
+                                <h4 className="font-bold text-stone-700 mb-4 text-sm md:text-base flex items-center gap-2">⚠️ 今はエネルギーを消費しやすく、疲れる役割</h4>
+                                <div className="space-y-4">
+                                  {[1, 2].map((idx) => {
+                                    const cell = matrix.sortedCells[matrix.sortedCells.length - idx];
+                                    const role = ROLE_DESCRIPTIONS[cell.id];
+                                    const rankMark = ['❶', '❷'][idx - 1];
+                                    return (
+                                      <div key={`bottom-${idx}`} className="text-xs md:text-sm text-gray-700">
+                                        <div className="font-bold text-stone-600 mb-1">{rankMark} 【{role.name}】</div>
+                                        <div className="pl-5 leading-relaxed">{role.desc}</div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                <div className="px-4 md:px-8 space-y-4">
+                  <button onClick={handleShare} disabled={isGeneratingImage} className="w-full py-4 px-6 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:bg-slate-800 disabled:bg-slate-400 shadow-md text-sm md:text-base">
+                    {isGeneratingImage ? <><Loader2 className="w-5 h-5 animate-spin" /> 画像を生成中...</> : <><Share2 className="w-5 h-5" /> 結果を画像で保存・シェア</>}
+                  </button>
+                  <div className="bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-200 text-center space-y-4">
+                    <h3 className="font-bold text-base md:text-lg text-slate-800">🌈 RIESM -リズム- についてもっと知る</h3>
+                    <p className="text-[13px] md:text-sm text-slate-600 leading-relaxed">自分の強みやストレスの対処法など、詳しい解説はこちら。</p>
+                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-100 shadow-sm text-sm md:text-base">
+                      詳しく知りたい人はこちらへ <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                  <button onClick={startQuiz} className="w-full py-3 px-6 bg-transparent text-gray-500 rounded-xl font-bold hover:bg-gray-100 flex items-center justify-center gap-2 text-sm md:text-base">
+                    <RefreshCw className="w-4 h-4" /> もう一度診断する
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="mt-8 text-center text-[11px] md:text-sm text-gray-400">
+            <p>Based on RIESM (Roll(Role)_Interest & EgoStresscare Model)</p>
+            <p>© 2026 ninin consulting & counseling</p>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
