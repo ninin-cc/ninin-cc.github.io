@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIESM light 診断</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    .loading-screen { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #666; }
+    [v-cloak] { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <div id="root">
+    <div class="loading-screen">
+      <div class="text-center">
+        <p class="text-lg mb-2">システムを起動しています...🚀</p>
+        <p class="text-sm text-gray-400">（10秒以上かかる場合は、ページを再読み込みしてください）</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/babel" data-presets="react,env">
+    const { useState, useRef, useEffect } = React;
+
+    // アイコンコンポーネント (Lucideの代わりにSVGで自作)
+    const IconBase = ({ children, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        {children}
+      </svg>
+    );
+    const Rocket = ({className}) => <IconBase className={className}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></IconBase>;
+    const Shield = ({className}) => <IconBase className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></IconBase>;
+    const Heart = ({className}) => <IconBase className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></IconBase>;
+    const Radar = ({className}) => <IconBase className={className}><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"></path><path d="M4 6h.01"></path><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"></path><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"></path><path d="M12 18h.01"></path><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67"></path><circle cx="12" cy="12" r="2"></circle><path d="m13.41 10.59 5.66-5.66"></path></IconBase>;
+    const ArrowRight = ({className}) => <IconBase className={className}><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></IconBase>;
+    const ArrowLeft = ({className}) => <IconBase className={className}><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></IconBase>;
+    const RefreshCw = ({className}) => <IconBase className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></IconBase>;
+    const ExternalLink = ({className}) => <IconBase className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></IconBase>;
+    const Sparkles = ({className}) => <IconBase className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></IconBase>;
+    const Share2 = ({className}) => <IconBase className={className}><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></IconBase>;
+    const Loader2 = ({className}) => <IconBase className={className}><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></IconBase>;
+    const Compass = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></IconBase>;
+
+    // データ定義
+    const ALL_QUESTIONS = [
+      { id: 1, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'K', text: '新しいアイデアを思いついたとき', optA: 'まず試したくなる', optB: '実現性やリスクを考える' },
+      { id: 4, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'N', text: '初対面の人との会話', optA: '様子を見ながら慎重に入る', optB: '自然に話しかけられる' },
+      { id: 14, format: 'tradeoff', category: 'interest', typeA: 'realistic', typeB: 'social', text: 'チームで任されたい役割は', optA: 'データや道具を使った専門的な実務', optB: 'メンバーのサポートやコミュニケーション' },
+      { id: 5, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'W', text: '知らないことに出会ったとき', optA: '少し警戒する', optB: 'ワクワクする' },
+      { id: 9, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'N', text: '誰かがミスしたとき', optA: '正すことが大事', optB: '気持ちを守ることが大事' },
+      { id: 16, format: 'tradeoff', category: 'interest', typeA: 'enterprising', typeB: 'investigative', text: '困難な課題に直面したとき', optA: '「どうすれば突破できるか」結果を求めたい', optB: '「なぜそうなるのか」原因を深く突き詰めたい' },
+      { id: 2, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'W', text: '仕事での優先順位は', optA: '正確さ・確実性', optB: '面白さ・可能性' },
+      { id: 8, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'N', text: 'チームでの役割は', optA: '盛り上げる・広げる', optB: '支える・整える' },
+      { id: 17, format: 'tradeoff', category: 'interest', typeA: 'artistic', typeB: 'conventional', text: '理想的な作業環境は', optA: 'マニュアルがなく、自分の直感や感性を活かせる', optB: 'ルールや手順が明確で、計画通りに進められる' },
+      { id: 12, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'K', text: '意見が対立したとき', optA: '衝突を避ける', optB: '論理で整理する' },
+      { id: 3, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'A', text: '人が悩んでいるとき', optA: '気持ちに寄り添う', optB: '状況を分析して対処を考える' },
+      { id: 13, format: 'tradeoff', category: 'interest', typeA: 'social', typeB: 'realistic', text: '仕事や活動でやりがいを感じるのは', optA: '人の役に立ち、直接喜ばれたとき', optB: '目に見える成果やモノを作ったとき' },
+      { id: 7, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'W', text: '人との関わりで大事なのは', optA: '安心させること', optB: '一緒に楽しむこと' },
+      { id: 10, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'K', text: 'フィードバックするとき', optA: '相手が受け取りやすくする', optB: '正確に指摘する' },
+      { id: 18, format: 'tradeoff', category: 'interest', typeA: 'conventional', typeB: 'artistic', text: '何かに取り組むとき', optA: '既存の優れた仕組みを使い、正確に仕上げたい', optB: '型にはまらず、全く新しいアイデアを形にしたい' },
+      { id: 6, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'A', text: '変化が起きたとき', optA: 'チャンスと感じる', optB: 'リスクを感じる' },
+      { id: 11, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'A', text: '判断するとき', optA: '正しいかどうかを重視', optB: '安全かどうかを重視' },
+      { id: 15, format: 'tradeoff', category: 'interest', typeA: 'investigative', typeB: 'enterprising', text: '新しいプロジェクトが始まったら', optA: 'まずは情報収集し、深く分析・研究したい', optB: 'まずは目標を立てて、周りを巻き込んで動きたい' },
+      { 
+        id: 19, format: 'select6', category: 'interest', text: 'あなたが一番「やりがいを感じる」役割はどれですか？', 
+        options: [
+          { type: 'social', text: 'メンバーの話を聞き、雰囲気を良くするサポート役' },
+          { type: 'conventional', text: 'スケジュールやルールを整える管理役' },
+          { type: 'realistic', text: '現場で手を動かして形にする実務担当' },
+          { type: 'investigative', text: 'データや情報を集め、原因や仕組みを分析する役割' },
+          { type: 'enterprising', text: '目標を掲げ、周りを巻き込んで引っ張るリーダー役' },
+          { type: 'artistic', text: '既存の枠にとらわれず、新しいアイデアを考える役割' }
+        ]
+      },
+      { 
+        id: 20, format: 'select4', category: 'mode', text: '周りの人から言われて「一番嬉しい・自分らしい」言葉はどれですか？', 
+        options: [
+          { type: 'W', text: '「いつも面白くて、一緒にいるとワクワクするよ！」' },
+          { type: 'K', text: '「いつも冷静で、いざという時に本当に頼りになるね。」' },
+          { type: 'N', text: '「いつも気遣ってくれて、一緒にいると安心するよ。」' },
+          { type: 'A', text: '「いつも周りをよく見ていて、細やかな配慮が助かるよ。」' }
+        ]
+      }
+    ];
+
+    const INTEREST_LABELS = { social: '社会', conventional: '慣習', realistic: '体感', investigative: '研究', enterprising: '達成', artistic: '創造' };
+    const ROLE_DESCRIPTIONS = {
+      'W-social': { name: 'ムードメーカー役', desc: '場を明るくする。支援や協働そのものを楽しむ。' },
+      'K-social': { name: 'アクティビスト役', desc: '道徳的・社会的正しさを重んじる。導き手として群れを守る。' },
+      'N-social': { name: 'サポーター役', desc: '社会や相手の気持ちに寄り添い、支援・貢献する。' },
+      'A-social': { name: 'フォロワー役', desc: '協調し、周囲に合わせる。波風を立てずに裏方として貢献する。' },
+      'W-conventional': { name: 'ライフハッカー役', desc: '工夫する。制約の中での創造や改善活動を楽しむ。' },
+      'K-conventional': { name: '管理人・監査役', desc: 'ルールを作り、組織の秩序を厳格に維持する。' },
+      'N-conventional': { name: '総務・秘書役', desc: '人のため、みんなのために心地よい環境や仕組みを整える。' },
+      'A-conventional': {
