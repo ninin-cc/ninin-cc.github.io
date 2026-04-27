@@ -7,15 +7,36 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body>
-  <div id="root"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
 
-  <script type="text/babel">
+  <style>
+    /* 読み込み中のアニメーション */
+    .loading-screen { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #4b5563; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <div id="error-log" style="color: red; padding: 20px; font-weight: bold; background: #fee2e2; display: none;"></div>
+  
+  <div id="root">
+    <div class="loading-screen">
+      <div>システムを読み込んでいます。数秒お待ちください...🚀</div>
+    </div>
+  </div>
+
+  <script>
+    // 画面が真っ白になるのを防ぐためのエラー監視
+    window.onerror = function(msg, url, line, col, error) {
+      var errDiv = document.getElementById('error-log');
+      errDiv.style.display = 'block';
+      errDiv.innerHTML = "【エラーが発生しました】<br>" + msg + "<br>※お手数ですが、この画面をスクリーンショットしてジェミーに見せてください！";
+    };
+  </script>
+
+  <script type="text/babel" data-presets="react,env">
     const { useState, useRef } = React;
 
     // --- アイコンの設定（lucide-reactの代わり） ---
@@ -37,7 +58,6 @@
     const Loader2 = ({className}) => <IconBase className={className}><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></IconBase>;
     const Compass = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></IconBase>;
 
-    // --- テツオさんの元のコード ---
     const loadHtml2Canvas = () => {
       return new Promise((resolve, reject) => {
         if (window.html2canvas) {
@@ -283,7 +303,7 @@
           const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], 'riesm-result.png', { type: 'image/png' });
 
-          const shareText = `私のフロントモードと「コックピット」はこちら！\nあなたもやってみませんか？\nhttp://\n\n#RIESM_light`;
+          const shareText = `私のフロントモードと「コックピット」はこちら！\nあなたもやってみませんか？\nhttps://ninin-cc.github.io/RIESM_light.html\n\n#RIESM_light`;
 
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: 'RIESM light 診断結果', text: shareText });
@@ -347,151 +367,4 @@
                 <div className="flex justify-center mb-4">
                   <Sparkles className="w-16 h-16 text-yellow-500" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">RIESM light<br/><span className="text-xl text-indigo-600 mt-2 flex items-center justify-center gap-2"><Compass className="w-5 h-5"/> コックピット</span></h1>
-                <div className="text-gray-600 leading-relaxed text-sm md:text-base space-y-4">
-                  <p>自分という乗り物を最適に運転するための「RIESM」の簡易版です。</p>
-                  <p>あなたの「フロントモード」と「興味の蛇口」を掛け合わせて、自分が自然にいられる状態（コックピット）を見つけましょう！</p>
-                  <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-indigo-800 text-sm mt-4">
-                    <p className="font-bold mb-2 flex items-center justify-center gap-1"><Rocket className="w-4 h-4"/> 診断のポイント</p>
-                    <p className="mb-2">全部で20問なので、5分ほどでおわります。</p>
-                    <p>ただ、回答に葛藤するような設問もあるので、時にはゆっくりと悩みながら回答してください。</p>
-                  </div>
-                </div>
-                <button onClick={startQuiz} className="w-full py-4 px-6 bg-gray-900 text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md mt-6">
-                  診断をスタート <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-
-            {step === 'question' && (
-              <div className="p-6 md:p-8 flex flex-col h-full animate-in fade-in">
-                <div className="mb-6">
-                  <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
-                    <span className="flex items-center gap-1"><Compass className="w-4 h-4 text-gray-700"/> 診断</span>
-                    <span>{currentIndex + 1} / {questions.length}</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full transition-all duration-300 bg-gray-900" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}></div>
-                  </div>
-                </div>
-                <div className="text-center mb-6">
-                  <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-snug">{questions[currentIndex].text}</h2>
-                </div>
-                {renderQuestionButtons()}
-                <div className="mt-4 pt-2">
-                  <button onClick={handleBack} disabled={currentIndex === 0} className={`w-full py-2 px-4 font-medium text-sm rounded-xl transition-all flex items-center justify-center gap-1 ${currentIndex === 0 ? 'text-transparent cursor-default' : 'text-gray-500 hover:bg-gray-100'}`}>
-                    {currentIndex > 0 && <><ArrowLeft className="w-4 h-4" /> 前の質問に戻る</>}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 'result' && resultTypes.length > 0 && (
-              <div className="pb-8 animate-in fade-in duration-500">
-                <div ref={resultRef} className="bg-white">
-                  <div className={`${resultTypes.length > 1 ? 'bg-gradient-to-br from-slate-800 to-slate-900' : RESULTS[resultTypes[0]].color} p-8 text-center text-white`}>
-                    <div className="flex justify-center gap-4 mb-4">
-                      {resultTypes.map((type) => {
-                        const IconElement = RESULTS[type].icon;
-                        return (
-                          <div key={type} className={`${resultTypes.length > 1 ? RESULTS[type].color : 'bg-white/20'} p-3 rounded-full backdrop-blur-sm shadow-md`}>
-                            <IconElement className="w-8 h-8 text-white" />
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <h2 className="text-lg font-medium opacity-90 mb-1">今のあなたのフロントモードは</h2>
-                    <h1 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-wider leading-tight">
-                      {resultTypes.map(t => RESULTS[t].name).join(' ＆ ')}
-                    </h1>
-                    <p className="font-medium opacity-90 text-sm md:text-base leading-relaxed">
-                      {resultTypes.length > 1 ? '複数のモードが同率で一番前に出ています！' : RESULTS[resultTypes[0]].subtitle}
-                    </p>
-                  </div>
-
-                  <div className="p-4 md:p-8 pb-4 space-y-6 md:space-y-8">
-                    <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                      <h3 className="text-base md:text-lg font-bold text-gray-800 mb-5 text-center">あなたのモード・バランス</h3>
-                      <div className="flex flex-col gap-4">
-                        {sortedModeChartData.map((data) => (
-                          <div key={data.id} className="flex flex-col gap-1.5 group">
-                            <div className="flex justify-between items-end px-1">
-                              <span className="text-xs md:text-sm font-bold text-gray-700 tracking-wide">{data.name}</span>
-                              <span className="text-xs md:text-sm font-bold text-gray-500">{data.percentage}%</span>
-                            </div>
-                            <div className="w-full h-5 md:h-6 bg-gray-50 rounded-full relative flex items-center overflow-hidden shadow-inner">
-                              <div className={`h-full ${data.color} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${data.percentage}%` }}></div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-5 pt-4 border-t border-gray-100">
-                        <p className="text-[11px] md:text-xs text-gray-500 text-center leading-relaxed">
-                          ※このバランスは固定されたものではなく、状況によって変化します。<br className="hidden md:block" />
-                          「今の自分のフロントは何なのか」を日々感じることが大切です。<br />
-                          また、フロントだけではなく２番目３番目（スタンド）がどう働くか、働かせるかが良いコミュニケーションのポイントです。
-                        </p>
-                      </div>
-                    </div>
-
-                    {resultTypes.length === 1 ? (
-                      <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <p className="text-gray-700 leading-relaxed text-sm md:text-[15px] m-0">{RESULTS[resultTypes[0]].description}</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-medium px-2 leading-relaxed">同率一位のモードが複数あります。状況によって器用に切り替えている状態です。</p>
-                        {resultTypes.map((type) => {
-                          const IconComponent = RESULTS[type].icon;
-                          return (
-                            <div key={type} className={`${RESULTS[type].lightColor} border-l-4 ${RESULTS[type].borderColor} p-4 rounded-r-xl`}>
-                              <h3 className={`font-bold flex items-center gap-2 mb-2 ${RESULTS[type].textColor}`}>
-                                <IconComponent className="w-5 h-5" /> {RESULTS[type].name}の特徴
-                              </h3>
-                              <p className="text-sm text-gray-700 leading-relaxed">{RESULTS[type].description.replace(`あなたのフロントモードは「${RESULTS[type].name}」です。`, '')}</p>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    
-                    {(() => {
-                      const matrix = generateMatrixData();
-                      return (
-                        <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                          <div className="text-center mb-5 md:mb-6">
-                            <h3 className="text-lg md:text-xl font-bold text-gray-800 flex items-center justify-center gap-2">
-                              <Compass className="w-5 h-5 md:w-6 md:h-6 text-indigo-600" /> コックピット
-                            </h3>
-                            <p className="text-xs md:text-sm text-gray-600 mt-1 md:mt-2 leading-relaxed">
-                              色のある場所が、あなたが「自然にいられる」エリアです。
-                            </p>
-                          </div>
-                          <div className="w-full">
-                            <table className="w-full table-fixed border-separate border-spacing-1">
-                              <thead>
-                                <tr>
-                                  <th className="w-6 md:w-8"></th>
-                                  {matrix.modeKeys.map(mKey => {
-                                    const fullKatakana = { W: 'ワンダー', K: 'キーパー', N: 'ナーチャー', A: 'アダプター' }[mKey];
-                                    return (
-                                      <th key={mKey} className={`p-0 align-bottom pb-1 font-extrabold ${RESULTS[mKey].textColor} text-[10px] sm:text-xs md:text-sm whitespace-nowrap tracking-tighter`}>
-                                        {fullKatakana}
-                                      </th>
-                                    );
-                                  })}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {matrix.interestKeys.map(iKey => (
-                                  <tr key={iKey}>
-                                    <td className="p-0 text-center align-middle">
-                                      {INTEREST_LABELS[iKey].split('').map((char, index) => (
-                                        <div key={index} className={index === 0 ? "mb-0.5 font-black text-gray-900 text-xs sm:text-sm" : "font-medium text-gray-400 text-[10px] sm:text-xs"}>
-                                          {char}
-                                        </div>
-                                      ))}
-                                    </td>
-                                    {matrix.modeKeys.map(mKey => {
-                                      const cellId = `${mKey}-${iKey}`;
-                                      const rank = matrix.sortedCells.
+                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">RIESM light<br/><span className="text-xl text
