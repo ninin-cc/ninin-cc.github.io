@@ -110,6 +110,24 @@
           { type: 'N', text: '「いつも気遣ってくれて、一緒にいると安心するよ。」' },
           { type: 'A', text: '「いつも周りをよく見ていて、細やかな配慮が助かるよ。」' }
         ]
+      },
+      { 
+        id: 21, format: 'select4', category: 'mode', text: '心や時間に余裕がないとき、ついやってしまう「マイナスの反応」はどれに近いですか？', 
+        options: [
+          { type: 'W', text: '「もういいや！」と投げ出したり、一人で勝手に行動してしまう' },
+          { type: 'K', text: '「それは違う」と批判的になり、つい語気が荒くなってしまう' },
+          { type: 'N', text: '「自分が我慢すれば」と無理をして、人に言えず一人で抱え込んでしまう' },
+          { type: 'A', text: '自分の意見を飲み込み、周りの顔色をうかがって従ってしまう' }
+        ]
+      },
+      { 
+        id: 22, format: 'select4', category: 'mode', text: 'あなたが一番「エネルギーが湧いてくる」のはどんな状況ですか？', 
+        options: [
+          { type: 'W', text: '誰もやったことのない新しいアイデアや、面白そうなことを見つけたとき' },
+          { type: 'K', text: '物事の筋道を立てて、問題を根本から正しく解決しようとしているとき' },
+          { type: 'N', text: '困っている人を助けたり、誰かに心から喜んでもらえたとき' },
+          { type: 'A', text: '周りの状況を素早く察知し、的確に空気を読んで場をうまく回せたとき' }
+        ]
       }
     ];
 
@@ -149,7 +167,6 @@
       W: { name: 'ワンダー', shortEng: 'W', color: 'bg-orange-500', lightColor: 'bg-orange-50', borderColor: 'border-orange-500', textColor: 'text-orange-600', icon: Rocket, subtitle: '自由・発見・挑戦を愛する冒険家', description: 'あなたのフロントモードは「ワンダー」です。直感や好奇心を原動力に、新しい世界を切り開く力を持っています。ルーチンワークよりも、ゼロからイチを生み出す環境でこそ輝きます。あなたの「とりあえずやってみよう！」という純粋なエネルギーが、周りの空気を動かし、チームに希望の光をもたらします。', backsDescription: 'ノリとか勢いを強要されるようなシーンでは疲れやすいかもしれません。' },
       K: { name: 'キーパー', shortEng: 'K', color: 'bg-blue-900', lightColor: 'bg-blue-50', borderColor: 'border-blue-900', textColor: 'text-blue-900', icon: Shield, subtitle: '信念・論理・規律を重んじる守護者', description: 'あなたのフロントモードは「キーパー」です。荒波の中でも正確なコンパスを持ち、論理的な分析と計画でチームを安全に導く力があります。感情論に流されず、「どうすべきか」を冷静に判断できる存在です。あなたのその誠実さと厳しさは、大切なものを守るための深い「愛」と「責任感」に基づいています。', backsDescription: 'ルールを守らせるような役割や、厳格な進行を求められるシーンでは疲れやすいかもしれません。' },
       N: { name: 'ナーチャー', shortEng: 'N', color: 'bg-pink-500', lightColor: 'bg-pink-50', borderColor: 'border-pink-500', textColor: 'text-pink-600', icon: Heart, subtitle: '保護・調和を大切にする癒やしの泉', description: 'あなたのフロントモードは「ナーチャー」です。誰かの笑顔のために心を砕き、チームに安心感と温かさをもたらすオアシスのような存在です。他者の感情の機微を察知し、ありのままを受容するその力は、人が安心して挑戦し、生きていくために不可欠な「安全基地」となります。', backsDescription: '気遣いを長い時間しないといけないシーンでは疲れやすいかもしれません。' },
-      // アダプターの色を優しく薄い水色に変更
       A: { name: 'アダプター', shortEng: 'A', color: 'bg-sky-400', lightColor: 'bg-sky-50', borderColor: 'border-sky-400', textColor: 'text-sky-700', icon: Radar, subtitle: '洞察・適応・安全を確保するレーダー', description: 'あなたのフロントモードは「アダプター」です。周囲の環境や人の感情を瞬時にスキャンし、波風を立てずに的確に対応する力を持っています。あなたのその慎重さと細やかな配慮が、見えないところでチームを危機から守っています。確かな手順と安心できる環境があれば、最強の実務能力を発揮します。', backsDescription: '空気を読んで人に合わせなくてはいけないシーンでは疲れやすいかもしれません。' },
     };
 
@@ -240,7 +257,8 @@
       };
 
       const getRelativePercentage = (score) => {
-        const MAX_POSSIBLE_SCORE = 14; 
+        // 全22問になったことでモードの最大可能スコアが14から15に変更されました
+        const MAX_POSSIBLE_SCORE = 15; 
         const percentage = 30 + (score / MAX_POSSIBLE_SCORE) * 70;
         return Math.round(Math.min(percentage, 100)); 
       };
@@ -414,7 +432,7 @@
                       <Rocket className="w-4 h-4"/> 診断のポイント
                     </p>
                     <div className="space-y-2 text-indigo-700/80 font-medium">
-                      <p>全部で20問なので、5分ほどでおわります。</p>
+                      <p>全部で22問なので、5分ほどでおわります。</p>
                       <p>ただ、回答に葛藤するような設問もあるので、時にはゆっくりと悩みながら回答してください。</p>
                     </div>
                   </div>
