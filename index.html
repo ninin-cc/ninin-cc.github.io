@@ -1,31 +1,122 @@
+import React, { useState } from 'react';
+import { ExternalLink, BookOpen, Linkedin, Twitter, Globe, FileText } from 'lucide-react';
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>ようこそ！nininの公式サイトへ。</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>合同会社ninin</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="index.html">ホーム</a></li>
-            <li><a href="about.html">わたしたちについて</a></li>
-            <li><a href="services.html">サービス</a></li>
-            <li><a href="contact.html">お問い合わせ</a></li>
-            <li><a href="koukoku.html">公告</a></li>
-        </ul>
-    </nav>
-    <main>
-        <h2>ようこそ！nininの公式サイトへ。</h2>
-        <p>ようこそ！nininの公式サイトへ。</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 合同会社ninin</p>
-    </footer>
-</body>
-</html>
+const App = () => {
+  const [imageError, setImageError] = useState(false);
+
+  // リンク先URLの設定
+  const links = [
+    {
+      title: '🌈RIESM',
+      description: 'RIESM（リズム）受検のご案内',
+      url: 'https://riesm.jp/', 
+      icon: <Globe className="w-6 h-6" />,
+      color: 'bg-slate-800'
+    },
+    {
+      title: 'note',
+      description: '日々の気づきや「人生の物語化」を綴る場所',
+      url: 'https://note.com/ninin2025', 
+      icon: <BookOpen className="w-6 h-6" />,
+      color: 'bg-green-600'
+    },
+    {
+      title: 'LinkedIn',
+      description: 'ビジネスプロフィール・キャリアコンサルティング',
+      url: 'https://www.linkedin.com/in/ninin2025/', 
+      icon: <Linkedin className="w-6 h-6" />,
+      color: 'bg-blue-700'
+    },
+    {
+      title: 'X (Twitter)',
+      description: 'リアルタイムな発信と対話の場',
+      url: 'https://x.com/', 
+      icon: <Twitter className="w-6 h-6" />,
+      color: 'bg-black'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-800 flex flex-col items-center">
+      {/* ヒーローセクション */}
+      <header className="w-full max-w-2xl pt-20 pb-12 px-6 text-center flex flex-col items-center">
+        <div className="mb-8 flex justify-center min-h-[96px] items-center">
+          {!imageError ? (
+            <img 
+              src="https://ninin-cc.github.io/img/ninin.png" 
+              alt="ninin logo" 
+              className="h-24 w-auto object-contain transition-opacity duration-500"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-24 h-24 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2 animate-pulse">
+              <span className="text-xl font-light tracking-widest text-stone-300 italic">ninin</span>
+            </div>
+          )}
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight mb-2 text-stone-900">合同会社ninin</h1>
+        <p className="text-lg text-stone-500 font-medium mb-6">consulting ＆ counseling</p>
+        
+        <div className="max-w-xs w-full h-px bg-stone-200"></div>
+      </header>
+
+      {/* 導入メッセージ */}
+      <section className="w-full max-w-2xl px-6 mb-12 text-center">
+        <p className="text-stone-600 leading-relaxed italic text-sm md:text-base px-4">
+          「相互理解・リフレーミング・人生の意味を再認識する『伏線回収』」<br className="hidden md:block" />
+          対話を通じて、あなたの人生の物語を共に編み直します。
+        </p>
+      </section>
+
+      {/* メインリンク一覧 */}
+      <main className="w-full max-w-md px-6 flex-grow">
+        <div className="space-y-4">
+          {links.map((link, index) => (
+            <a
+              key={index}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95"
+            >
+              <div className="flex items-center space-x-4">
+                <div className={`p-3 rounded-xl text-white ${link.color} shadow-sm transition-transform group-hover:scale-110`}>
+                  {link.icon}
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold">{link.title}</h2>
+                    <ExternalLink className="w-4 h-4 text-stone-300 group-hover:text-stone-500" />
+                  </div>
+                  <p className="text-sm text-stone-400 mt-1 leading-snug">{link.description}</p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* 公告リンク */}
+        <div className="mt-12 mb-20 text-center">
+          <a
+            href="https://ninin-cc.github.io/koukoku.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 border border-stone-200 rounded-full text-sm bg-white/50"
+          >
+            <FileText className="w-4 h-4" />
+            <span>電子公告はこちら</span>
+          </a>
+        </div>
+      </main>
+
+      {/* フッター */}
+      <footer className="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <p className="text-xs text-stone-400 tracking-widest uppercase">
+          © {new Date().getFullYear()} ninin LLC. All Rights Reserved.
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
