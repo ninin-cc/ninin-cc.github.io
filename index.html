@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>合同会社ninin</title>
+    
+    <!-- ファビコン（ブラウザのタブ用アイコン）の設定 -->
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <!-- スマホのホーム画面に追加した時などのアイコン設定 -->
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +18,10 @@
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+            /* 和紙のような温かみのあるベースカラー（生成り色） */
+            background-color: #fdfcf9;
+            /* SVGを用いた微細なノイズ（繊維感）で和紙のテクスチャを表現。ノイズを強めに調整 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
         }
         .fade-in {
             animation: fadeIn 0.8s ease-out forwards;
@@ -22,39 +32,36 @@
         }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col items-center">
+<body class="text-stone-800 min-h-screen flex flex-col items-center">
 
     <!-- ヒーローセクション -->
-    <header class="w-full max-w-2xl pt-20 pb-6 px-6 text-center flex flex-col items-center">
-        <div class="mb-6 flex justify-center min-h-[80px] items-center">
+    <header class="w-full max-w-2xl pt-10 pb-4 px-6 text-center flex flex-col items-center">
+        <div class="mb-4 flex justify-center min-h-[80px] items-center">
             <!-- ninin ロゴ画像 -->
             <img 
                 src="https://ninin-cc.github.io/img/ninin.png" 
                 alt="ninin logo" 
-                class="h-16 w-auto object-contain transition-opacity duration-500"
-                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-16 h-16 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-base font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
+                class="h-20 w-20 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
+                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
             >
         </div>
-        <h1 class="text-3xl font-bold tracking-tight mb-2 text-stone-900 font-sans">合同会社ninin</h1>
-        <p class="text-lg text-stone-500 font-medium mb-6">consulting ＆ counseling</p>
         
-        <div class="max-w-xs w-full h-px bg-stone-200"></div>
+        <div class="max-w-xs w-full h-px bg-stone-200 mt-2"></div>
     </header>
 
     <!-- 企業理念 (Philosophy) -->
-    <section class="w-full max-w-2xl px-6 mb-8 text-center fade-in">
-        <div class="bg-white p-6 md:p-8 rounded-2xl border border-stone-100 shadow-sm relative mt-4">
-            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-stone-50 border border-stone-100 px-4 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
+    <section class="w-full max-w-2xl px-6 mb-6 text-center fade-in">
+        <div class="bg-white px-5 pt-5 pb-3 md:px-6 md:pt-6 md:pb-4 rounded-2xl border border-stone-100 shadow-sm relative mt-3">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-4 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
                 Philosophy
             </div>
-            <p class="text-stone-700 font-medium leading-loose md:text-lg mb-6 mt-2">
+            <p class="text-stone-700 font-medium leading-relaxed md:text-base mt-2">
                 私たちは、自分らしく生きていける<br class="hidden md:block"/>
                 社会 / 心理支援を<br class="hidden md:block"/>
                 「日本のあたり前」にしてゆきます
             </p>
-            <div class="text-xs text-stone-400 space-y-1">
-                <p>※社名由来は「二人三脚」</p>
-                <p>法人番号 9011503006532</p>
+            <div class="text-right mt-2 md:mt-3 leading-none">
+                <span class="text-[10px] text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
             </div>
         </div>
     </section>
@@ -76,12 +83,16 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
-                            <h2 class="text-xl font-bold">🌈RIESM受検</h2>
+                            <h2 class="text-xl font-bold">🌈あなたの心のコックピット</h2>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-stone-400 group-hover:text-stone-600"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                     </div>
                     <p class="text-sm text-stone-500 leading-relaxed mt-2">
-                        一人ひとりの特性を可視化し、より自分らしい生き方・働き方を見つけるためのアセスメントツールです。お互いに心地よいコミュニケーションを送るための考え方も学べます。大手企業（通信会社系列）での導入実績もあり、安心してご活用いただけます。
+                        RIESMは一人ひとりの個性を可視化し【人生のパイロットとしてのあなた】をナビゲートするためのアセスメントツールです。
+
+<BR>
+
+<BR>また、RIESMでは私たちがお互いに心地よいコミュニケーションを送るためのスキルも使えるようになります。大手企業（通信会社系列）での導入実績もあり、安心してご活用いただけます。
                     </p>
                 </div>
             </a>
@@ -148,11 +159,9 @@
                 <a href="https://note.com/ninin2025" target="_blank" rel="noopener noreferrer" 
                    class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
                     <div class="flex items-center space-x-4">
-                        <div class="p-3 rounded-xl bg-white border border-stone-200 text-stone-800 shadow-sm transition-transform group-hover:scale-110">
-                            <!-- note SVG アイコン -->
-                            <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20.254 13.916c-.033.056-.056.124-.078.192c-.1.35-.11.758-.11 1.256c0 3.018-1.503 4.544-4.524 4.544h-.134c-1.396 0-2.613-.248-3.664-.733c-.09-.044-.135-.056-.168-.056c-.057 0-.08.012-.136.056c-.463.317-1.12.713-1.956 1.176c-.225.124-.462.248-.71.362c-.225.101-.428.18-.62.226c-.19.045-.372.067-.53.067c-.204 0-.373-.067-.497-.18c-.124-.125-.192-.305-.192-.544v-1.175c0-.125.023-.226.068-.317c.045-.09.113-.158.203-.192c.622-.272 1.154-.532 1.605-.803c.453-.26.848-.543 1.176-.848c.034-.034.056-.079.056-.135c0-.034-.01-.068-.033-.102c-.893-1.028-1.345-2.227-1.345-3.56c0-2.34 1.345-3.867 4.025-4.59c1.074-.294 2.238-.44 3.493-.44h.146c3.007 0 4.51 1.526 4.51 4.532c0 .486-.01.893-.112 1.243c-.023.068-.046.136-.08.192M14.659 13.52c.034.034.08.056.136.056c.056 0 .09-.022.124-.056c1.152-1.153 1.73-2.634 1.73-4.432c0-1.288-.306-2.283-.916-2.973c-.61-.7-1.503-1.05-2.668-1.05h-.135c-.938 0-1.877.124-2.815.372c-2.453.644-3.674 2.057-3.674 4.25c0 1.583.565 2.928 1.684 4.047c.034.034.08.045.136.045c.045 0 .09-.011.124-.045c1.458-1.458 3.516-2.193 6.173-2.193c.124 0 .203.045.248.135c.045.09.045.192 0 .305c-.328.667-.497 1.311-.497 1.944c0 1.074.339 1.605 1.017 1.605c.328 0 .59-.113.78-.34c.192-.214.282-.542.282-.971c0-.407-.034-.78-.102-1.108c-.022-.056-.056-.113-.079-.158zm9.324-1.514A11.97 11.97 0 0 1 12 24C5.37 24 0 18.63 0 12S5.37 0 12 0s12 5.37 12 12"/>
-                            </svg>
+                        <div class="w-12 h-12 rounded-xl bg-white border border-stone-200 text-stone-900 shadow-sm transition-transform group-hover:scale-110 flex items-center justify-center">
+                            <!-- 文字で note アイコンを表現（太字で大きく） -->
+                            <span class="text-[34px] leading-none pb-1" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900;">n</span>
                         </div>
                         <div class="flex-grow">
                             <div class="flex items-center justify-between">
@@ -214,6 +223,11 @@
 
     <!-- フッター -->
     <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <div class="text-xs text-stone-400 space-y-1 mb-3">
+            <p>合同会社ninin consulting ＆ counseling</p>
+            <p>法人番号 9011503006532</p>
+            <p>※社名由来は「二人三脚」</p>
+        </div>
         <p class="text-xs text-stone-400 tracking-widest uppercase">
             © 2025 ninin LLC. All Rights Reserved.
         </p>
