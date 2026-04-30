@@ -1,174 +1,167 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIESM（リズム）受検のご案内</title>
+    <title>RIESM（リズム）受検のご案内 | 合同会社ninin</title>
+    
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
+            font-family: 'Noto Sans JP', sans-serif;
+            /* 和紙のような温かみのあるベースカラー（生成り色） */
+            background-color: #fdfcf9;
+            /* SVGを用いた微細なノイズ（繊維感）で和紙のテクスチャを表現。ノイズを強めに調整 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
         }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .logo {
-            max-width: 240px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-        .intro {
-            text-align: center;
-            margin-bottom: 40px;
-            background: #fff;
-            padding: 40px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        h1 {
-            font-size: 1.6rem;
-            color: #2c3e50;
-            margin-bottom: 25px;
-        }
-        .plan-card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 35px;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        .plan-card.recommended {
-            border: 2px solid #3498db;
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.15);
-        }
-        .badge {
-            position: absolute;
-            top: -15px;
-            left: 20px;
-            background: #3498db;
-            color: #fff;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        .plan-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .price {
-            font-size: 1.8rem;
-            color: #e74c3c;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .price span {
-            font-size: 0.95rem;
-            color: #666;
-            font-weight: normal;
-        }
-        .benefit {
-            background: #f0f7ff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            color: #2c3e50;
-        }
-        .description {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 30px;
-        }
-        .btn {
-            display: block;
-            text-align: center;
-            background: #34495e;
-            color: #fff;
-            text-decoration: none;
-            padding: 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        .btn-recommended {
-            background: #3498db;
-        }
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-bottom: 30px;
-            font-size: 0.85rem;
-            color: #888;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body>
+<body class="text-stone-800 min-h-screen flex flex-col items-center">
 
-<div class="container">
-    <section class="intro">
-        <img src="./riesm.png" alt="RIESM" class="logo">
-        <h1>【自分を知り、相手を知る】</h1>
-        <p>理解を通じて、よりよい関係性を築くための<br>アセスメントツール「RIESM（リズム）」</p>
-        <p>あなたの状況に合わせて、最適なプランをお選びください。受験後おおよそ一週間程度でアセスメント結果をレポートＰＤＦファイルにてお送りいたします。</p>
-    </section>
-
-    <div class="plan-card">
-        <div class="plan-title">（個人受検）セルフ理解プラン</div>
-        <div class="price">5,000円 <span>（税込 / 1名様分）</span></div>
-        <p class="description">
-            自分自身の内面を深く見つめ、キャリアや行動特性を整理したい方向け。まずは自分自身の「現在地」を客観的に把握することから始めましょう。
-        </p>
-        <a href="https://buy.stripe.com/28E00i1ynct9cFG3NM9Zm02" class="btn">このプランで申し込む</a>
-    </div>
-
-
-
-    <div class="plan-card">
-        <div class="plan-title">（個人受検）ご紹介優待プラン</div>
-        <div class="price">3,000円 <span>（税込 / 1名様分）</span></div>
-        <p class="description">
-            すでにRIESMを受けられた方からのご紹介、または特定の窓口からお申し込みの方専用のプランです。
-        </p>
-        <a href="https://buy.stripe.com/8x25kCfpd1Ov8pqgAy9Zm00" class="btn">ご紹介優待で申し込む</a>
-    </div>
-
-    <div class="plan-card recommended">
-        <div class="badge">一番人気・おすすめ</div>
-        <div class="plan-title">（ペア受検）相互理解プラン</div>
-        <div class="price">5,000円 <span>（税込 / 2名様分セット）</span></div>
-        <div class="benefit">
-            一人あたり <strong>2,500円</strong> と、最もお得に受検いただける推奨プランです。
+    <!-- ヘッダー / イントロダクション -->
+    <header class="w-full max-w-2xl pt-12 pb-4 px-6 text-center flex flex-col items-center fade-in">
+        <div class="mb-6 flex justify-center items-center">
+            <!-- RIESM ロゴ画像 -->
+            <img 
+                src="https://ninin-cc.github.io/img/riesm.png" 
+                alt="RIESM logo" 
+                class="w-full max-w-[220px] h-auto object-contain transition-opacity duration-500"
+            >
         </div>
-        <p class="description">
-            お二人で受けることで、共通言語が生まれます。<br>
-            ご夫婦、パートナー、職場の同僚など、あなたの大切な方との対話にお役立てください。レポートは申し込み代表者様に合わせてお送りいたします。
+        
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-stone-800">
+            【自分を知り、相手を知る】
+        </h1>
+        <p class="text-base md:text-lg text-stone-600 font-medium leading-relaxed mb-6">
+            理解を通じて、よりよい関係性を築くための<br class="hidden md:block"/>
+            アセスメントツール「RIESM（リズム）」
         </p>
-        <a href="https://buy.stripe.com/bJebJ0b8X50H8pqfwu9Zm01" class="btn btn-recommended">ペアで申し込む</a>
-    </div>
+        
+        <div class="bg-white/60 p-4 rounded-xl border border-stone-200/50 mb-4 max-w-md w-full">
+            <p class="text-sm text-stone-500 leading-relaxed text-left">
+                あなたの状況に合わせて、最適なプランをお選びください。<br>
+                受検後おおよそ一週間程度で、アセスメント結果をレポート（PDFファイル）にてお送りいたします。
+                
+                <a href="#cockpit-image" class="block mt-3 text-sky-600 hover:text-sky-700 transition-colors font-medium text-xs md:text-sm">
+                    <span class="inline-flex items-center border-b border-sky-300 hover:border-sky-500 pb-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+                        ページ最下部でレポートのイメージ画像をご覧いただけます
+                    </span>
+                </a>
+            </p>
+        </div>
 
-    <footer>
-        <p>&copy; 2025 合同会社ninin consulting＆counseling. All Rights Reserved.</p>
+        <div class="max-w-xs w-full h-px bg-stone-200 mt-4 mb-2"></div>
+    </header>
+
+    <!-- プラン一覧と画像 -->
+    <main class="w-full max-w-md px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+        <div class="space-y-6">
+
+            <!-- (個人受検) セルフ理解プラン -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md">
+                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2">（個人受検）セルフ理解プラン</h2>
+                <div class="mb-5 flex items-baseline space-x-2">
+                    <span class="text-3xl font-black text-rose-600 tracking-tight">5,000<span class="text-2xl">円</span></span>
+                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 1名様分）</span>
+                </div>
+                <p class="text-sm text-stone-500 mb-6 leading-relaxed">
+                    自分自身の内面を深く見つめ、キャリアや行動特性を整理したい方向け。まずは自分自身の「現在地」を客観的に把握することから始めましょう。
+                </p>
+                <a href="https://buy.stripe.com/28E00i1ynct9cFG3NM9Zm02" class="block w-full text-center bg-stone-800 hover:bg-stone-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm active:scale-95">
+                    このプランで申し込む
+                </a>
+            </div>
+
+            <!-- (個人受検) ご紹介優待プラン -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md">
+                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2">（個人受検）ご紹介優待プラン</h2>
+                <div class="mb-5 flex items-baseline space-x-2">
+                    <span class="text-3xl font-black text-rose-600 tracking-tight">3,000<span class="text-2xl">円</span></span>
+                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 1名様分）</span>
+                </div>
+                <p class="text-sm text-stone-500 mb-6 leading-relaxed">
+                    すでにRIESMを受けられた方からのご紹介、または特定の窓口からお申し込みの方専用のプランです。
+                </p>
+                <a href="https://buy.stripe.com/8x25kCfpd1Ov8pqgAy9Zm00" class="block w-full text-center bg-stone-800 hover:bg-stone-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm active:scale-95">
+                    ご紹介優待で申し込む
+                </a>
+            </div>
+
+            <!-- (ペア受検) 相互理解プラン [おすすめ] -->
+            <div class="bg-white rounded-2xl shadow-md border-2 border-sky-400 p-6 md:p-8 relative mt-10 transition-all hover:shadow-lg">
+                <!-- バッジ -->
+                <div class="absolute -top-3.5 left-5 bg-sky-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest shadow-sm">
+                    一番人気・おすすめ
+                </div>
+                
+                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2 mt-1">（ペア受検）相互理解プラン</h2>
+                <div class="mb-4 flex items-baseline space-x-2">
+                    <span class="text-3xl font-black text-rose-600 tracking-tight">5,000<span class="text-2xl">円</span></span>
+                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 2名様分セット）</span>
+                </div>
+                
+                <div class="bg-sky-50 p-3.5 rounded-xl mb-5 border border-sky-100/50">
+                    <p class="text-sm text-sky-900 font-medium leading-snug">
+                        一人あたり <span class="text-lg font-black text-sky-700 tracking-tight mx-0.5">2,500円</span> と、最もお得に受検いただける推奨プランです。
+                    </p>
+                </div>
+                
+                <p class="text-sm text-stone-500 mb-6 leading-relaxed">
+                    お二人で受けることで、共通言語が生まれます。<br>
+                    ご夫婦、パートナー、職場の同僚など、あなたの大切な方との対話にお役立てください。レポートは申し込み代表者様に合わせてお送りいたします。
+                </p>
+                
+                <a href="https://buy.stripe.com/bJebJ0b8X50H8pqfwu9Zm01" class="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
+                    ペアで申し込む
+                </a>
+            </div>
+
+        </div>
+
+        <!-- cockpit画像 -->
+        <div id="cockpit-image" class="mt-12 mb-10 w-full fade-in scroll-mt-6" style="animation-delay: 0.3s;">
+            <img 
+                src="https://ninin-cc.github.io/img/cockpit.png" 
+                alt="RIESM Cockpit - あなたの心のコックピット" 
+                class="w-full h-auto object-contain rounded-2xl shadow-sm border border-stone-200"
+            >
+        </div>
+
+        <!-- トップへ戻るリンク（おまけ） -->
+        <div class="mb-12 text-center fade-in" style="animation-delay: 0.4s;">
+            <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
+                <span>トップページへ戻る</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <div class="text-xs text-stone-400 space-y-1 mb-3">
+            <p>合同会社ninin consulting ＆ counseling</p>
+            <p>法人番号 9011503006532</p>
+        </div>
+        <p class="text-xs text-stone-400 tracking-widest uppercase">
+            © 2025 ninin LLC. All Rights Reserved.
+        </p>
     </footer>
-</div>
 
 </body>
 </html>
