@@ -1,31 +1,85 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>公告ページ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>電子公告 | 合同会社ninin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <h1>合同会社ninin</h1>
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col items-center">
+
+    <!-- ヒーローセクション / ロゴ -->
+    <header class="w-full max-w-2xl pt-20 pb-12 px-6 text-center flex flex-col items-center">
+        <div class="mb-8 flex justify-center min-h-[96px] items-center">
+            <a href="index.html">
+                <img 
+                    src="https://ninin-cc.github.io/img/ninin.png" 
+                    alt="ninin logo" 
+                    class="h-24 w-auto object-contain hover:opacity-80 transition-opacity"
+                    onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-xl font-light tracking-widest text-stone-300 italic\'>ninin</span>';"
+                >
+            </a>
+        </div>
+        <h1 class="text-3xl font-bold tracking-tight mb-2 text-stone-900">電子公告</h1>
+        <p class="text-lg text-stone-500 font-medium mb-6 italic text-sm md:text-base">Public Notice</p>
+        <div class="max-w-xs w-full h-px bg-stone-200"></div>
     </header>
-    <nav>
-        <ul>
-            <li><a href="index.html">ホーム</a></li>
-            <li><a href="about.html">わたしたちについて</a></li>
-            <li><a href="services.html">サービス</a></li>
-            <li><a href="contact.html">お問い合わせ</a></li>
-            <li><a href="koukoku.html">公告</a></li>
-        </ul>
-    </nav>
-    <main>
-        <h2>公告ページ</h2>
-        <p>準備中（決算情報掲載予定）</p>
+
+    <!-- メインコンテンツ -->
+    <main class="w-full max-w-2xl px-6 flex-grow flex flex-col items-center fade-in">
+        <div class="w-full bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-stone-100 mb-12">
+            <section class="mb-10">
+                <h2 class="text-sm font-bold text-stone-400 uppercase tracking-widest mb-4 border-l-2 border-stone-300 pl-3">
+                    決算公告
+                </h2>
+                <div class="py-6 px-4 bg-stone-50 rounded-xl border border-stone-100">
+                    <p class="text-stone-700 leading-loose">
+                        2025年度決算については<br />
+                        <span class="font-medium text-stone-900 underline decoration-stone-200 underline-offset-8">公告の準備中</span>です。
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-sm font-bold text-stone-400 uppercase tracking-widest mb-4 border-l-2 border-stone-300 pl-3">
+                    その他の公告
+                </h2>
+                <p class="text-stone-500 text-sm">
+                    現在、決算公告以外の公告事項はございません。
+                </p>
+            </section>
+        </div>
+
+        <!-- 戻るボタン -->
+        <div class="mb-20">
+            <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-3 px-8 border border-stone-200 rounded-full text-sm bg-white shadow-sm hover:shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                <span>トップページへ戻る</span>
+            </a>
+        </div>
     </main>
-    <footer>
-        <p>&copy; 2025 合同会社ninin</p>
+
+    <!-- フッター -->
+    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <p class="text-xs text-stone-400 tracking-widest uppercase">
+            © <script>document.write(new Date().getFullYear())</script> ninin LLC. All Rights Reserved.
+        </p>
     </footer>
+
 </body>
 </html>
