@@ -344,7 +344,7 @@
           const file = new File([blob], 'riesm_result.png', { type: 'image/png' });
           
           // ▼ SNS投稿用のテキストをアップデートしました
-          const shareText = "やるたびに設問が替わり今の自分を感じれる #RIESM_mini🌈\n私のいまの「心のフロント」はこんな感じでした✨皆さんも体験してみて！🔍\nhttps://ninin-cc.github.io/rm/";
+          const shareText = "やるたびに設問が替わり今の自分を感じれる #RIESM_mini🌈\n私のいまの「心のフロント」はこんな感じでした✨皆さんも体験してみて！🔍#自己理解\nhttps://ninin-cc.github.io/rm/";
           
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ text: shareText, files: [file] });
