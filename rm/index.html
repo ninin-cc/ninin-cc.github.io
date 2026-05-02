@@ -327,13 +327,24 @@
           return;
         }
         try {
-          const canvas = await window.html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+          const canvas = await window.html2canvas(element, { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: '#ffffff',
+            onclone: (clonedDoc) => {
+              // キャプチャ時のみウォーターマークを表示する隠し処理
+              const watermark = clonedDoc.getElementById('capture-watermark');
+              if (watermark) {
+                watermark.style.display = 'block';
+              }
+            }
+          });
           const dataUrl = canvas.toDataURL('image/png');
           const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], 'riesm_result.png', { type: 'image/png' });
           
           // ▼ SNS投稿用のテキストにメッセージを組み込みました
-          const shareText = "やるたびに設問が替わって今の自分を感じれる🌈RIESM_mini🌈私のいまの「心のフロント」はこんな感じでした✨\n皆さんも体験してみて！🔍\n\n#RIESM_mini #自己理解\nhttps://ninin-cc.github.io/rm/";
+          const shareText = "私のいまの「心のフロント」はこんな感じでした🌈✨\n細かな説明については皆さんご自身で実施してみて！🔍\n\n#RIESM_mini #自己理解\nhttps://ninin-cc.github.io/rm/";
           
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ text: shareText, files: [file] });
@@ -477,6 +488,14 @@
                           );
                         })}
                       </div>
+                    </div>
+                    {/* 画像にのみ残るアピールメッセージ（Web上でも控えめに表示） */}
+                    <p className="text-center text-[10px] sm:text-xs font-bold text-slate-400 mt-3 mb-1">
+                      細かな説明については、皆さんご自身で実施してみて！🔍
+                    </p>
+                    {/* キャプチャ画像にのみ表示されるウォーターマーク */}
+                    <div id="capture-watermark" style={{ display: 'none' }} className="text-center text-[9px] sm:text-[10px] text-slate-400/80 font-medium mt-2 pb-1">
+                      🌈 RIESM_mini ©2026ninin consulting＆counseling
                     </div>
                   </div>
                 </div>
