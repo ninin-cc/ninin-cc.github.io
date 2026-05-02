@@ -12,489 +12,632 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
 
+  <!-- 画像生成用のライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
-    /* 読み込み中のアニメーション */
-    .loading-screen { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #4b5563; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    .loading-screen { 
+      display: flex; justify-content: center; align-items: center; 
+      height: 100vh; font-family: sans-serif; color: #4b5563; 
+    }
   </style>
 </head>
-<body class="bg-gray-50">
-
-  <div id="error-log" style="color: red; padding: 20px; font-weight: bold; background: #fee2e2; display: none;"></div>
+<body class="bg-gray-50 text-slate-800 font-sans">
   
   <div id="root">
     <div class="loading-screen">
-      <div>システムを読み込んでいます。数秒お待ちください...🚀</div>
+      <div>システムを起動中...</div>
     </div>
   </div>
 
-  <script>
-    // 画面が真っ白になるのを防ぐためのエラー監視
-    window.onerror = function(msg, url, line, col, error) {
-      var errDiv = document.getElementById('error-log');
-      errDiv.style.display = 'block';
-      errDiv.innerHTML = "【エラーが発生しました】<br>" + msg + "<br>※お手数ですが、この画面をスクリーンショットしてジェミーに見せてください！";
-    };
-  </script>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-  <script type="text/babel" data-presets="react,env">
-    const { useState, useRef } = React;
-
-    // --- アイコンの設定 ---
-    const IconBase = ({ children, className = "" }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        {children}
+    // --- RIESM モードアイコン (SVG) ---
+    
+    // ワンダー: 🚀
+    const WonderIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+        <path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"/>
+        <path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"/>
       </svg>
     );
-    const Rocket = ({className}) => <IconBase className={className}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></IconBase>;
-    const Shield = ({className}) => <IconBase className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></IconBase>;
-    const Heart = ({className}) => <IconBase className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></IconBase>;
-    const Radar = ({className}) => <IconBase className={className}><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"></path><path d="M4 6h.01"></path><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"></path><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"></path><path d="M12 18h.01"></path><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67"></path><circle cx="12" cy="12" r="2"></circle><path d="m13.41 10.59 5.66-5.66"></path></IconBase>;
-    const ArrowRight = ({className}) => <IconBase className={className}><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></IconBase>;
-    const ArrowLeft = ({className}) => <IconBase className={className}><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></IconBase>;
-    const RefreshCw = ({className}) => <IconBase className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></IconBase>;
-    const ExternalLink = ({className}) => <IconBase className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></IconBase>;
-    const Sparkles = ({className}) => <IconBase className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></IconBase>;
-    const Share2 = ({className}) => <IconBase className={className}><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></IconBase>;
-    const Loader2 = ({className}) => <IconBase className={className}><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></IconBase>;
-    const Compass = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></IconBase>;
 
-    const loadHtml2Canvas = () => {
-      return new Promise((resolve, reject) => {
-        if (window.html2canvas) {
-          resolve(window.html2canvas);
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.onload = () => resolve(window.html2canvas);
-        script.onerror = () => reject(new Error('html2canvasの読み込みに失敗しました'));
-        document.head.appendChild(script);
-      });
+    // キーパー: 🛡️
+    const KeeperIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    );
+
+    // ナーチャー: 💗 (Heart)
+    const NurturerIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </svg>
+    );
+
+    // アダプター: レーダー
+    const AdapterIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19.07 4.93a10 10 0 0 0-14.14 0"/>
+        <path d="M16.24 7.76a6 6 0 0 0-8.48 0"/>
+        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
+        <path d="m12 12 5-5" strokeOpacity="0.8"/>
+      </svg>
+    );
+
+    const ModeIcon = ({ type, className }) => {
+      switch(type) {
+        case 'W': return <WonderIcon className={className} />;
+        case 'K': return <KeeperIcon className={className} />;
+        case 'N': return <NurturerIcon className={className} />;
+        case 'A': return <AdapterIcon className={className} />;
+        default: return null;
+      }
     };
 
-    // フロントモードに関する15問
-    const ALL_QUESTIONS = [
-      { id: 1, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'K', text: '新しいアイデアを思いついたとき', optA: 'まず試したくなる', optB: '実現性やリスクを考える' },
-      { id: 4, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'N', text: '初対面の人との会話', optA: '様子を見ながら慎重に入る', optB: '自然に話しかけられる' },
-      { id: 5, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'W', text: '知らないことに出会ったとき', optA: '少し警戒する', optB: 'ワクワクする' },
-      { id: 9, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'N', text: '誰かがミスしたとき', optA: '正すことが大事', optB: '気持ちを守ることが大事' },
-      { id: 2, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'W', text: '仕事での優先順位は', optA: '正確さ・確実性', optB: '面白さ・可能性' },
-      { id: 8, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'N', text: 'チームでの役割は', optA: '盛り上げる・広げる', optB: '支える・整える' },
-      { id: 12, format: 'tradeoff', category: 'mode', typeA: 'A', typeB: 'K', text: '意見が対立したとき', optA: '衝突を避ける', optB: '論理で整理する' },
-      { id: 3, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'A', text: '人が悩んでいるとき', optA: '気持ちに寄り添う', optB: '状況を分析して対処を考える' },
-      { id: 7, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'W', text: '人との関わりで大事なのは', optA: '安心させること', optB: '一緒に楽しむこと' },
-      { id: 10, format: 'tradeoff', category: 'mode', typeA: 'N', typeB: 'K', text: 'フィードバックするとき', optA: '相手が受け取りやすくする', optB: '正確に指摘する' },
-      { id: 6, format: 'tradeoff', category: 'mode', typeA: 'W', typeB: 'A', text: '変化が起きたとき', optA: 'チャンスと感じる', optB: 'リスクを感じる' },
-      { id: 11, format: 'tradeoff', category: 'mode', typeA: 'K', typeB: 'A', text: '判断するとき', optA: '正しいかどうかを重視', optB: '安全かどうかを重視' },
-      { 
-        id: 20, format: 'select4', category: 'mode', text: 'プライベートで、周りの人から言われて「一番嬉しい・自分らしい」と感じる言葉はどれですか？', 
-        options: [
-          { type: 'W', text: '「いつも面白くて、一緒にいるとワクワクするよ！」' },
-          { type: 'K', text: '「いつも冷静で、いざという時に本当に頼りになるね。」' },
-          { type: 'N', text: '「いつも気遣ってくれて、一緒にいると安心するよ。」' },
-          { type: 'A', text: '「いつも周りをよく見ていて、細やかな配慮が助かるよ。」' }
-        ]
-      },
-      { 
-        id: 21, format: 'select4', category: 'mode', text: '心や時間に余裕がないとき、ついやってしまう「マイナスの反応」はどれに近いですか？', 
-        options: [
-          { type: 'W', text: '「もういいや！」と投げ出したり、一人で勝手に行動してしまう' },
-          { type: 'K', text: '「それは違う」と批判的になり、つい語気が荒くなってしまう' },
-          { type: 'N', text: '「自分が我慢すれば」と無理をして、人に言えず一人で抱え込んでしまう' },
-          { type: 'A', text: '自分の意見を飲み込み、周りの顔色をうかがって従ってしまう' }
-        ]
-      },
-      { 
-        id: 22, format: 'select4', category: 'mode', text: 'あなたが一番「エネルギーが湧いてくる」のはどんな状況ですか？', 
-        options: [
-          { type: 'W', text: '誰もやったことのない新しいアイデアや、面白そうなことを見つけたとき' },
-          { type: 'K', text: '物事の筋道を立てて、問題を根本から正しく解決しようとしているとき' },
-          { type: 'N', text: '困っている人を助けたり、誰かに心から喜んでもらえたとき' },
-          { type: 'A', text: '周りの状況を素早く察知し、的確に空気を読んで場をうまく回せたとき' }
-        ]
-      }
+    // UIアイコン
+    const ExternalLinkIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    );
+    const RefreshCwIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+    );
+    const InfoIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    );
+    const ShareIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+    );
+    const ArrowLeftIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    );
+
+    // ==========================================
+    // 問題プール
+    // ==========================================
+    const questionsPool = [
+      { id: 1, group: 'A', text: "旅行の準備をする時、あなたは…", options: [ { text: "気分で決めたい", type: "W" }, { text: "事前にリストアップする", type: "K" }] },
+      { id: 2, group: 'A', text: "新しいプロジェクトが立ち上がりました。最初の関心は？", options: [ { text: "新しい可能性や面白さ", type: "W" }, { text: "目的やスケジュールなどの手順", type: "K" }] },
+      { id: 3, group: 'A', text: "部屋の片付けについて", options: [ { text: "思い立った時に一気に", type: "W" }, { text: "普段から定位置を決める", type: "K" }] },
+      { id: 4, group: 'A', text: "仕事で新しいツールを導入する時", options: [ { text: "とりあえず触ってみる", type: "W" }, { text: "まずはマニュアルを読む", type: "K" }] },
+      { id: 5, group: 'A', text: "休日、ふらっと立ち寄った書店で惹かれるのは？", options: [ { text: "未知の新しいジャンルの本", type: "W" }, { text: "実生活に役立つ実用書", type: "K" }] },
+      { id: 6, group: 'A', text: "目標を立てるとき", options: [ { text: "ワクワクする大きなビジョン", type: "W" }, { text: "達成可能な数値と計画", type: "K" }] },
+      { id: 7, group: 'A', text: "未知のトラブルが発生！最初のアクションは？", options: [ { text: "直感を信じてとりあえず動く", type: "W" }, { text: "類似事例を探し、冷静に分析する", type: "K" }] },
+      { id: 8, group: 'A', text: "趣味のアイテムを買うとき", options: [ { text: "直感的な「好き！」で選ぶ", type: "W" }, { text: "スペックやコスパを比較検討する", type: "K" }] },
+      { id: 9, group: 'A', text: "会議でのアイデア出し", options: [ { text: "斬新で面白いアイデアを出す", type: "W" }, { text: "論理的で実現可能なアイデアを出す", type: "K" }] },
+      { id: 10, group: 'B', text: "未経験の業務を任された時", options: [ { text: "とりあえずやってみる", type: "W" }, { text: "リスクや前例を調べる", type: "A" }] },
+      { id: 11, group: 'B', text: "複数人での食事、お店選びは？", options: [ { text: "興味のある新しいお店", type: "W" }, { text: "みんなが安心できる無難なお店", type: "A" }] },
+      { id: 12, group: 'B', text: "休日の予定が急に空きました", options: [ { text: "面白そうなことを見つけて出かける", type: "W" }, { text: "家でいつものようにゆっくり過ごす", type: "A" }] },
+      { id: 13, group: 'B', text: "会議で誰も発言しない沈黙の時間が流れたら…", options: [ { text: "とりあえず声に出してみる", type: "W" }, { text: "誰かが話し出すのを待ち、静観する", type: "A" }] },
+      { id: 14, group: 'B', text: "はじめて行く街を散策するとき", options: [ { text: "気になるお店にふらっと寄り道する", type: "W" }, { text: "スマホでルートを常に確認する", type: "A" }] },
+      { id: 15, group: 'B', text: "やったことのない新しい業務を打診されたら", options: [ { text: "「面白そう！」と前向きに捉える", type: "W" }, { text: "リスクを考え、慎重になる", type: "A" }] },
+      { id: 16, group: 'B', text: "いつもと違う帰り道を通ってみようか迷った時", options: [ { text: "ワクワクして寄り道する", type: "W" }, { text: "道に迷うかもと不安になる", type: "A" }] },
+      { id: 17, group: 'B', text: "グループ旅行の計画中、意見を求められたら", options: [ { text: "「行きたい！」と思うスポットを提案する", type: "W" }, { text: "無理のない無難なスケジュールに賛同する", type: "A" }] },
+      { id: 18, group: 'B', text: "予期せぬスケジュールの変更があった時", options: [ { text: "新鮮で楽しいと感じる", type: "W" }, { text: "段取りが狂って強いストレスを感じる", type: "A" }] },
+      { id: 19, group: 'C', text: "落ち込んでいる同僚がいたら…", options: [ { text: "気持ちに寄り添って話を聞く", type: "N" }, { text: "原因を分析し、解決策を考える", type: "K" }] },
+      { id: 20, group: 'C', text: "チームで仕事をする時、重視するのは？", options: [ { text: "気持ちよく働ける「雰囲気」", type: "N" }, { text: "役割分担とルールの「正確さ」", type: "K" }] },
+      { id: 21, group: 'C', text: "人から相談を受けた時", options: [ { text: "感情に共感し、受け止める", type: "N" }, { text: "論理に基づき、正しい意見を伝える", type: "K" }] },
+      { id: 22, group: 'C', text: "後輩が仕事でミスをしてしまった時", options: [ { text: "気持ちに寄り添い、フォローする", type: "N" }, { text: "原因を分析し、再発防止策を指導する", type: "K" }] },
+      { id: 23, group: 'C', text: "映画やドラマを見た後、誰かと感想を話すなら？", options: [ { text: "感情を共有したい", type: "N" }, { text: "ストーリーの構成や矛盾点を考察したい", type: "K" }] },
+      { id: 24, group: 'C', text: "チームのリーダーに最も必要だと思う要素は？", options: [ { text: "悩みに寄り添い、温かい居場所を作れること", type: "N" }, { text: "的確な指示と管理ができること", type: "K" }] },
+      { id: 25, group: 'C', text: "議論が白熱し、意見が対立している時", options: [ { text: "誰も傷つかないよう間を取り持つ", type: "N" }, { text: "論点を整理し、合理的な結論へ導く", type: "K" }] },
+      { id: 26, group: 'C', text: "家族や友人が「最近疲れてるんだ」と相談してきたら", options: [ { text: "「いつも頑張ってるね」と労う", type: "N" }, { text: "具体的な解決策を提示する", type: "K" }] },
+      { id: 27, group: 'C', text: "何か重要な決断を下す時に重視する基準は？", options: [ { text: "関わる人がどう感じるか", type: "N" }, { text: "原理原則に則っているか", type: "K" }] },
+      { id: 28, group: 'D', text: "会議で意見が対立しています", options: [ { text: "気持ちを尊重し、間を取り持つ", type: "N" }, { text: "波風が立たないよう静観する", type: "A" }] },
+      { id: 29, group: 'D', text: "頼まれごとをした時", options: [ { text: "相手が助かるなら引き受ける", type: "N" }, { text: "断った後の影響を考えて引き受ける", type: "A" }] },
+      { id: 30, group: 'D', text: "初対面の人が多い場では…", options: [ { text: "孤立している人に声をかける", type: "N" }, { text: "自分が浮かないよう周囲を観察する", type: "A" }] },
+      { id: 31, group: 'D', text: "職場でとても忙しそうにしている同僚を見かけたら", options: [ { text: "積極的に声をかける", type: "N" }, { text: "邪魔にならないよう自分の仕事を進める", type: "A" }] },
+      { id: 32, group: 'D', text: "複数人のLINEグループでのやり取り", options: [ { text: "温かく反応を返す", type: "N" }, { text: "他の人のやり取りを見て無難に同調する", type: "A" }] },
+      { id: 33, group: 'D', text: "友人との待ち合わせに、相手が遅刻してきそうなら", options: [ { text: "相手を気遣う", type: "N" }, { text: "自分の予定を確認する", type: "A" }] },
+      { id: 34, group: 'D', text: "パーティーなどの場で、ポツンと一人でいる人がいたら", options: [ { text: "隣に行って話しかける", type: "N" }, { text: "話しかけるのを躊躇する", type: "A" }] },
+      { id: 35, group: 'D', text: "上司から少し理不尽な指示を受けた時", options: [ { text: "事情を汲んで受け入れる", type: "N" }, { text: "面倒になりそうだからとりあえず従う", type: "A" }] },
+      { id: 36, group: 'D', text: "飲み会で大皿の料理が少しだけ残っている時", options: [ { text: "周りの人に勧める", type: "N" }, { text: "周りの出方をうかがう", type: "A" }] }
     ];
 
-    const RESULTS = {
-      W: { name: 'ワンダー', shortEng: 'W', color: 'bg-orange-500', lightColor: 'bg-orange-50', borderColor: 'border-orange-500', textColor: 'text-orange-600', icon: Rocket, subtitle: '自由・発見・挑戦を愛する冒険家', description: 'あなたのフロントモードは「ワンダー」です。直感や好奇心を原動力に、新しい世界を切り開く力を持っています。ルーチンワークよりも、ゼロからイチを生み出す環境でこそ輝きます。あなたの「とりあえずやってみよう！」という純粋なエネルギーが、周りの空気を動かし、チームに希望の光をもたらします。', backsDescription: 'ノリとか勢いを強要されるようなシーンでは疲れやすいかもしれません。' },
-      K: { name: 'キーパー', shortEng: 'K', color: 'bg-blue-900', lightColor: 'bg-blue-50', borderColor: 'border-blue-900', textColor: 'text-blue-900', icon: Shield, subtitle: '信念・論理・規律を重んじる守護者', description: 'あなたのフロントモードは「キーパー」です。荒波の中でも正確なコンパスを持ち、論理的な分析と計画でチームを安全に導く力があります。感情論に流されず、「どうすべきか」を冷静に判断できる存在です。あなたのその誠実さと厳しさは、大切なものを守るための深い「愛」と「責任感」に基づいています。', backsDescription: 'ルールを守らせるような役割や、厳格な進行を求められるシーンでは疲れやすいかもしれません。' },
-      N: { name: 'ナーチャー', shortEng: 'N', color: 'bg-pink-500', lightColor: 'bg-pink-50', borderColor: 'border-pink-500', textColor: 'text-pink-600', icon: Heart, subtitle: '保護・調和を大切にする癒やしの泉', description: 'あなたのフロントモードは「ナーチャー」です。誰かの笑顔のために心を砕き、チームに安心感と温かさをもたらすオアシスのような存在です。他者の感情の機微を察知し、ありのままを受容するその力は、人が安心して挑戦し、生きていくために不可欠な「安全基地」となります。', backsDescription: '気遣いを長い時間しないといけないシーンでは疲れやすいかもしれません。' },
-      A: { name: 'アダプター', shortEng: 'A', color: 'bg-sky-400', lightColor: 'bg-sky-50', borderColor: 'border-sky-400', textColor: 'text-sky-700', icon: Radar, subtitle: '洞察・適応・安全を確保するレーダー', description: 'あなたのフロントモードは「アダプター」です。周囲の環境や人の感情を瞬時にスキャンし、波風を立てずに的確に対応する力を持っています。あなたのその慎重さと細やかな配慮が、見えないところでチームを危機から守っています。確かな手順と安心できる環境があれば、最強の実務能力を発揮します。', backsDescription: '空気を読んで人に合わせなくてはいけないシーンでは疲れやすいかもしれません。' },
+    const situationQuestionsPool = [
+      { id: 101, isSituation: true, text: "今、あなたの手元に花があります。どんな風に飾りたいですか？", options: [ { text: "無造作なブーケにする", type: "W" }, { text: "種類や高さを揃えて美しく生ける", type: "K" }] },
+      { id: 102, isSituation: true, text: "今の気持ちを色に例えるなら、どちらに近いですか？", options: [ { text: "やわらかな暖色", type: "N" }, { text: "深く落ち着いた寒色", type: "A" }] },
+      { id: 103, isSituation: true, text: "今、歩いてみたいのはどんな道ですか？", options: [ { text: "曲がりくねった小道", type: "W" }, { text: "見通しの良い平坦な道", type: "A" }] },
+      { id: 104, isSituation: true, text: "絵の具で絵を描くなら、どんなスタイルが良いですか？", options: [ { text: "思いのままに筆を走らせる", type: "W" }, { text: "構図を決め、丁寧に塗る", type: "K" }] },
+      { id: 105, isSituation: true, text: "音楽を聴くとき、今のあなたがより惹かれるのは？", options: [ { text: "想いや感情が伝わる曲", type: "N" }, { text: "緻密な音の構成が美しい曲", type: "K" }] },
+      { id: 106, isSituation: true, text: "休日の朝、窓の外の風景はどちらが良いですか？", options: [ { text: "雲ひとつない青空", type: "W" }, { text: "しとしとと降る静かな雨", type: "A" }] },
+      { id: 107, isSituation: true, text: "お茶の時間を楽しむなら、どちらが良いですか？", options: [ { text: "誰かとおしゃべりしながら", type: "N" }, { text: "一人で静かに本を読みながら", type: "A" }] },
+      { id: 108, isSituation: true, text: "未知の世界を旅するなら、何を持って行きたいですか？", options: [ { text: "真っ白なスケッチブック", type: "W" }, { text: "精密なコンパス", type: "K" }] },
+      { id: 109, isSituation: true, text: "今のあなたの内側にあるエネルギーは、どちらに近いですか？", options: [ { text: "ゆっくり育む「土」", type: "N" }, { text: "鋭く本質を見抜く「鷹」", type: "K" }] }
+    ];
+
+    const resultsData = {
+      W: {
+        title: "ワンダー",
+        subTitle: "（自由・発見・挑戦）",
+        detail: [
+          "あなたは決して「落ち着きがない・無鉄砲」なわけではありません。停滞を打ち破り、新しいことを始めるための「生きる原動力・エンジン」として機能しています。今は理屈やルールを少しだけ横に置いて、思い切り自由に「ワクワクすること」を楽しむことを自分に許可してあげてください。",
+          "今は「これ面白そう！」と未知の世界に飛び込む好奇心のエネルギーが満ちています。周囲からは「枠に収まらない」と思われることもあるかもしれませんが、あなたは「新しい発見やブレイクスルーを生み出す着火剤」です。まずは心の動くままに、制約を忘れてアイデアを広げてみてください。",
+          "十分に安心できる状態が整い、「ちょっと挑戦してみようかな」という内発的なエネルギーが自然と湧き上がっている状態です。あなたは「チームに活気と新しい風を吹き込む役割」を担っています。今は「できる・できない」の損得勘定を一旦脇に置き、直感に従って動いてみましょう。"
+        ],
+        theme: { bg: "bg-amber-50", border: "border-amber-200", cardBg: "bg-amber-100/50", header: "from-amber-400 to-orange-500", text: "text-amber-900", textLight: "text-amber-700", btnBg: "bg-amber-100", btnHover: "hover:bg-amber-200" }
+      },
+      K: {
+        title: "キーパー",
+        subTitle: "（信念・論理・規律）",
+        detail: [
+          "あなたは決して「頭が固い・冷たい」わけではありません。チームや自分自身を危険から守り、物事を確実な成功へと導く「信頼のアンカー（錨）」として機能しています。今は「自分の信じる正しさ」を大切にし、筋道立てて物事を進めることに自信を持ってください。",
+          "今は「目的・論理・正しさ」を重んじ、安全な計画を立てようとするエネルギーが前に出ています。周りから「口うるさい」と誤解されることもあるかもしれませんが、あなたは「みんなが安全に活動できるための『守りの柵』を築いてくれている」状態です。あなたの論理的な判断は、周囲を守る大きな優しさです。",
+          "物事の「原理原則」や「納得感」を大切にするエネルギーが高まっています。「これをやることは正しい」と納得できた時、あなたは力強い原動力となります。決して冷たいのではなく、ルールや仕組みを整えることで全体を良くしようとする「静かなる情熱」です。今はご自身のペースで、事実と論理を積み上げるプロセスを大切にしてください。"
+        ],
+        theme: { bg: "bg-blue-50", border: "border-blue-200", cardBg: "bg-blue-100/50", header: "from-blue-500 to-indigo-600", text: "text-blue-900", textLight: "text-blue-700", btnBg: "bg-blue-100", btnHover: "hover:bg-blue-200" }
+      },
+      N: {
+        title: "ナーチャー",
+        subTitle: "（受容・共感・育成）",
+        detail: [
+          "あなたは決して「お節介・甘やかしている」わけではありません。人が安心して存在できる温かい居場所を作り、組織やチームに潤いをもたらす「心のオアシス」として機能しています。今は、その豊かな感受性と優しさを、他者だけでなく「自分自身」にも向けてあげてください。",
+          "他者の感情に寄り添い、気持ちを受け止めようとするエネルギーが前面に出ています。「ただ話を聞いて受け止める」というあなたの姿勢は、周囲の心理的安全性を育む「土」のような役割を果たしています。今は解決策を急がず、「ただそこにいて共感する」というあなたらしい優しさを大切にしてください。",
+          "周囲の人が心地よく過ごせているか、温かい視点で見守るエネルギーが高まっています。あなたはチームの潤滑油であり、波風を立てずに調和をもたらす大切な存在です。誰かを気遣うのと同じくらい、ご自身の心と体が心地よいと感じる時間もたっぷりと取ってあげてください。"
+        ],
+        theme: { bg: "bg-pink-50", border: "border-pink-200", cardBg: "bg-pink-100/50", header: "from-pink-400 to-rose-500", text: "text-pink-900", textLight: "text-pink-700", btnBg: "bg-pink-100", btnHover: "hover:bg-pink-200" }
+      },
+      A: {
+        title: "アダプター",
+        subTitle: "（洞察・適応・慎重）",
+        detail: [
+          "あなたは決して「臆病・消極的」なわけではありません。リスクを未然に防ぎ、周囲との摩擦を減らして安全な状態をキープする「高感度な危機管理レーダー」として機能しています。今は「不安を感じること」そのものを肯定し、まずは自分が一番安心できる環境や状態を確保することを最優先にしてください。",
+          "曖昧なことを避け、確実で安全な道を探るエネルギーが強くなっています。あなたは「臆病」なのではなく、慎重にリスクを回避し、大きな失敗からみんなを守る「優秀なセンサー」です。無理に前に出る必要はありません。まずはご自身の安全基地を確保し、「大丈夫」と思えるまで待つことを許可してください。",
+          "周囲の期待や状況を敏感に察知し、最適に合わせようとするエネルギーが出ています。あなたが「空気を読む」ことで、無用なトラブルが回避されています。今は「挑戦」よりも「安心」を優先する時期です。「どうせなら失敗しない確実な方法でやろう」と、自分を守る選択に自信を持ってください。"
+        ],
+        theme: { bg: "bg-cyan-50", border: "border-cyan-200", cardBg: "bg-cyan-100/50", header: "from-cyan-400 to-teal-500", text: "text-cyan-900", textLight: "text-cyan-700", btnBg: "bg-cyan-100", btnHover: "hover:bg-cyan-200" }
+      }
+    };
+
+    const doubleResultsData = {
+      K_W: { title: "ワンダー ＆ キーパー", desc: "【今のあなた】は、「面白そう！」という直感と、「正しく進めたい」という規律のエネルギーが同時に前に出ています。", detail: ["新しいアイデアを生み出しながらも、それを現実的で安全な形に落とし込もうとする、アクセルとブレーキを両方持っている状態です。ワクワクを形にする実行力が高い反面、自分の中で葛藤しやすい時でもあります。「今は広げる時間」「今は固める時間」と意識してモードを切り替えると楽になりますよ。", "「やりたい！」という情熱と、「本当にこれでいいのか？」という冷静な分析が同居しています。斬新でかつ実現性の高い道を見つけられる素晴らしいバランスですが、考えすぎて動けなくなることも。まずは直感を信じて一歩踏み出し、後からキーパーの力で軌道修正するのも良いでしょう。"], theme: { bg: "bg-teal-50", border: "border-teal-200", cardBg: "bg-teal-100/50", header: "from-amber-400 to-blue-500", text: "text-teal-900", textLight: "text-teal-700", btnBg: "bg-teal-100", btnHover: "hover:bg-teal-200" } },
+      N_W: { title: "ワンダー ＆ ナーチャー", desc: "【今のあなた】は、「新しい挑戦をしたい」という気持ちと、「周囲と一緒に楽しみたい・助けたい」という共感のエネルギーが同時に前に出ています。", detail: ["自分の好奇心を満たすだけでなく、そのワクワクを周りの人と分かち合いたいと感じている状態です。あなたの挑戦が、誰かのためになることに喜びを感じるでしょう。ただ、周囲を気にしすぎて自分のやりたいことが後回しにならないよう、まずは自分の「楽しい！」を大切にしてください。", "自由な発想で場を盛り上げ、みんなを笑顔にできる温かいムードメーカーです。人の気持ちを察する力と、現状を打破するアイデアを併せ持っています。誰かのために動くことでワンダーのエネルギーがさらに湧いてきますが、一人で思い切り好きなことに没頭する時間も作ってあげてください。"], theme: { bg: "bg-orange-50", border: "border-orange-200", cardBg: "bg-orange-100/50", header: "from-amber-400 to-pink-400", text: "text-orange-900", textLight: "text-orange-700", btnBg: "bg-orange-100", btnHover: "hover:bg-orange-200" } },
+      A_W: { title: "ワンダー ＆ アダプター", desc: "【今のあなた】は、「未知の世界へ飛び込みたい」という好奇心と、「失敗しないよう安全を確保したい」という慎重さが同時に前に出ています。", detail: ["「やってみたい！」と「進みたい気持ち」と「でも大丈夫かな？」が心の中で綱引きをしている状態です。これは決して矛盾ではなく、大胆な挑戦を安全に行うための高度な防衛機能です。まずはアダプターの声を聞き入れ、小さな「これなら安全」という保証（命綱）を確保してから、ワンダーの冒険に出発してください。", "新しいことに惹かれつつも、周囲の空気やリスクを敏感に察知しています。斬新なアイデアを持ちながら、それを周囲と摩擦を起こさずに提案できるバランス感覚を持っています。葛藤して疲れたときは、絶対に失敗しない安全な場所で、思い切り好きなことをして息抜きをしてください。"], theme: { bg: "bg-lime-50", border: "border-lime-200", cardBg: "bg-lime-100/50", header: "from-amber-400 to-cyan-400", text: "text-lime-900", textLight: "text-lime-700", btnBg: "bg-lime-100", btnHover: "hover:bg-lime-200" } },
+      K_N: { title: "キーパー ＆ ナーチャー", desc: "【今のあなた】は、「正しさやルールを守りたい」という規律と、「人の気持ちに寄り添いたい」という共感のエネルギーが同時に前に出ています。", detail: ["チームのルールを守りながらも、メンバーの心にも気を配れる「頼れる保護者」のような状態です。「こうすべき」という理想と、「でもあの人は辛そう」という優しさの間で板挟みになることもあるかもしれません。ルールと感情、どちらも大切にできるあなただからこそ、みんなが安心できるのです。", "物事を筋道立てて進める正当性と、周囲を受け入れる温かさを併せ持っています。組織にとっては非常にありがたい存在ですが、自分自身の心身のケアが後回しになりがちです。「べき・ねば」で自分を縛りすぎず、時には「まあいっか」と自分を許し、甘やかすことも忘れないでください。"], theme: { bg: "bg-violet-50", border: "border-violet-200", cardBg: "bg-violet-100/50", header: "from-blue-500 to-pink-500", text: "text-violet-900", textLight: "text-violet-700", btnBg: "bg-violet-100", btnHover: "hover:bg-violet-200" } },
+      A_K: { title: "キーパー ＆ アダプター", desc: "【今のあなた】は、「論理と正当性」を重んじる規律と、「リスクを回避し安全を確保する」慎重さが同時に強く前に出ています。", detail: ["徹底的にリスクを排除し、安全かつ確実に物事を進めようとする、最も守備力の高い状態です。チームを危機から守る優秀な防波堤として機能していますが、常に気を張っているため疲れやすい時でもあります。「何が起きても大丈夫な備え」ができたら、あとは少しだけ肩の力を抜いてみましょう。", "「正しい手順」と「空気を読むこと」の両方に意識が向いています。周囲との摩擦を避けつつ、きっちりと仕事をこなす完璧主義な一面が顔を出しているかもしれません。変化や不確実なことに対してストレスを感じやすいので、予測可能な安全な環境で、心を休める時間を意識的に作ってください。"], theme: { bg: "bg-sky-50", border: "border-sky-200", cardBg: "bg-sky-100/50", header: "from-blue-500 to-cyan-500", text: "text-sky-900", textLight: "text-sky-700", btnBg: "bg-sky-100", btnHover: "hover:bg-sky-200" } },
+      A_N: { title: "ナーチャー ＆ アダプター", desc: "【今のあなた】は、「他者を受け入れたい」という共感と、「場の空気を読んで安全を保ちたい」という慎重さが同時に前に出ています。", detail: ["いちばん、いわゆる「優しい人」の状態です。周囲の感情や場の空気を誰よりも敏感に察知し、誰も傷つかないように、波風が立たないようにと心を砕いています。あなたのその優しさで救われている人はたくさんいますが、気を使いすぎてひどく疲弊してしまうことも。まずは「自分自身の安心と心地よさ」を最優先に守ってあげてください。", "人の気持ちに寄り添い、安全な居場所を作ろうとする平和主義者です。「自分が我慢すれば丸く収まる」と自己犠牲的になりやすい時でもあります。相手をケアする前に、まずは自分自身に「大丈夫だよ」「よくやってるよ」と声をかけ、一人で安心できる空間に逃げ込むことも大切です。"], theme: { bg: "bg-fuchsia-50", border: "border-fuchsia-200", cardBg: "bg-fuchsia-100/50", header: "from-pink-400 to-cyan-400", text: "text-fuchsia-900", textLight: "text-fuchsia-700", btnBg: "bg-fuchsia-100", btnHover: "hover:bg-fuchsia-200" } }
+    };
+
+    // グラデーション色定義 (RGB)
+    const bgColors = {
+      W: '251, 191, 36',  // amber-400
+      K: '59, 130, 246',  // blue-500
+      N: '244, 114, 182', // pink-400
+      A: '34, 211, 238'   // cyan-400
     };
 
     function App() {
-      const [step, setStep] = useState('start');
+      const [started, setStarted] = useState(false);
+      const [currentQuestions, setCurrentQuestions] = useState([]);
       const [currentIndex, setCurrentIndex] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [resultType, setResultType] = useState(null);
+      const [resultScores, setResultScores] = useState(null);
+      const [isSharing, setIsSharing] = useState(false);
+      const [toastMessage, setToastMessage] = useState('');
       
-      const [modeScores, setModeScores] = useState({ W: 0, K: 0, N: 0, A: 0 });
-      
-      const [history, setHistory] = useState([]);
-      const [resultTypes, setResultTypes] = useState([]);
-      const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-      
-      // 画像化するためのRef
-      const modeRef = useRef(null);
+      // ホバーアニメーション用 (0〜100)
+      const [hoverPos, setHoverPos] = useState(50);
 
-      const [questions, setQuestions] = useState(ALL_QUESTIONS);
+      // 質問が変わるたびにホバー位置をリセット
+      useEffect(() => {
+        if (started && !resultType) {
+          setHoverPos(50);
+        }
+      }, [currentIndex, started, resultType]);
 
-      const startQuiz = () => {
-        setModeScores({ W: 0, K: 0, N: 0, A: 0 });
-        setHistory([]);
-        setCurrentIndex(0);
-        
-        const tradeoffs = ALL_QUESTIONS.filter(q => q.format === 'tradeoff').sort(() => Math.random() - 0.5);
-        const directs = ALL_QUESTIONS.filter(q => q.format !== 'tradeoff').sort(() => Math.random() - 0.5);
-        setQuestions([...tradeoffs, ...directs]);
-        setStep('question');
+      const shuffleArray = (array) => {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
       };
 
-      const handleAnswer = (choice, value, directType = null) => {
-        const currentQ = questions[currentIndex];
-        const format = currentQ.format || 'tradeoff';
-        
-        setHistory([...history, { modeScores }]);
-        
-        let newModeScores = { ...modeScores };
+      const generateTodayQuestions = () => {
+        const getRandom = (arr, n) => shuffleArray([...arr]).slice(0, n);
+        let textSelected = [
+          ...getRandom(questionsPool.filter(q => q.group === 'A'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'B'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'C'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'D'), 3),
+        ];
+        textSelected = shuffleArray(textSelected).map(q => ({ ...q, options: shuffleArray(q.options) }));
+        let situationSelected = shuffleArray(situationQuestionsPool).slice(0, 3).map(q => ({ ...q, options: shuffleArray(q.options) }));
+        return [...textSelected, ...situationSelected];
+      };
 
-        if (format === 'select4') {
-          newModeScores[directType] += 1;
-        } else {
-          if (choice === 'A') newModeScores[currentQ.typeA] += value;
-          else if (choice === 'B') newModeScores[currentQ.typeB] += value;
-        }
+      const startQuiz = () => {
+        const questions = generateTodayQuestions();
+        setCurrentQuestions(questions);
+        setCurrentIndex(0);
+        setAnswers([]);
+        setResultType(null);
+        setResultScores(null);
+        setStarted(true);
+      };
 
-        setModeScores(newModeScores);
-
-        if (currentIndex < ALL_QUESTIONS.length - 1) {
+      const handleAnswer = (scoreUpdates) => {
+        const newAnswers = [...answers, scoreUpdates];
+        setAnswers(newAnswers);
+        if (currentIndex < currentQuestions.length - 1) {
           setCurrentIndex(currentIndex + 1);
         } else {
-          calculateResult(newModeScores);
+          calculateResult(newAnswers);
         }
       };
 
       const handleBack = () => {
         if (currentIndex > 0) {
-          const prevScores = history[history.length - 1];
-          setModeScores(prevScores.modeScores);
-          setHistory(history.slice(0, -1));
           setCurrentIndex(currentIndex - 1);
+          setAnswers(answers.slice(0, -1));
         }
       };
 
-      const calculateResult = (finalModeScores) => {
-        const maxScore = Math.max(...Object.values(finalModeScores));
-        const topTypes = Object.keys(finalModeScores).filter(type => finalModeScores[type] === maxScore);
-        
-        if (maxScore === 0) setResultTypes(['A']); 
-        else setResultTypes(topTypes);
-        
-        setStep('result');
+      const calculateResult = (finalAnswers) => {
+        const scores = { W: 0, K: 0, N: 0, A: 0 };
+        finalAnswers.forEach(updates => {
+          updates.forEach(update => { if (scores[update.type] !== undefined) scores[update.type] += update.weight; });
+        });
+        const sortedTypes = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+        const maxType = sortedTypes[0];
+        const maxScore = scores[maxType];
+        const secondType = sortedTypes[1];
+        const secondScore = scores[secondType];
+        const minType = sortedTypes[3];
+
+        let front = maxType; 
+        let isDouble = false;
+        let frontKey = "";
+
+        if (maxScore > 0 && secondScore >= maxScore * 0.9) {
+          isDouble = true;
+          frontKey = [maxType, secondType].sort().join('_');
+        }
+        setResultScores(scores);
+        const detailIndexCount = isDouble ? 2 : 3;
+        const detailIndex = Math.floor(Math.random() * detailIndexCount);
+        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
       };
 
-      const getRelativePercentage = (score) => {
-        const MAX_POSSIBLE_SCORE = 15; 
-        const percentage = 30 + (score / MAX_POSSIBLE_SCORE) * 70;
-        return Math.round(Math.min(percentage, 100)); 
+      const showToast = (message) => {
+        setToastMessage(message);
+        setTimeout(() => setToastMessage(''), 5000);
       };
 
-      const modeChartData = [
-        { id: 'W', name: RESULTS.W.name, score: modeScores.W, percentage: getRelativePercentage(modeScores.W), color: RESULTS.W.color },
-        { id: 'K', name: RESULTS.K.name, score: modeScores.K, percentage: getRelativePercentage(modeScores.K), color: RESULTS.K.color },
-        { id: 'N', name: RESULTS.N.name, score: modeScores.N, percentage: getRelativePercentage(modeScores.N), color: RESULTS.N.color },
-        { id: 'A', name: RESULTS.A.name, score: modeScores.A, percentage: getRelativePercentage(modeScores.A), color: RESULTS.A.color },
-      ];
-      const sortedModeChartData = [...modeChartData].sort((a, b) => b.percentage - a.percentage);
-
-      // --- ランダムシェアテキスト対応＆1枚出力 ---
       const handleShare = async () => {
-        if (isGeneratingImage) return;
-        setIsGeneratingImage(true);
+        setIsSharing(true);
+        const element = document.getElementById('capture-area');
+        if (!element || !window.html2canvas) {
+          showToast('エラー：画像の生成に失敗しました。');
+          setIsSharing(false);
+          return;
+        }
         try {
-          const html2canvas = await loadHtml2Canvas();
+          const canvas = await window.html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+          const dataUrl = canvas.toDataURL('image/png');
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], 'riesm_result.png', { type: 'image/png' });
           
-          const refs = [modeRef].filter(r => r.current);
-          const files = [];
-
-          for (let i = 0; i < refs.length; i++) {
-            const canvas = await html2canvas(refs[i].current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-            const dataUrl = canvas.toDataURL('image/png');
-            const blob = await (await fetch(dataUrl)).blob();
-            files.push(new File([blob], `riesm-mini-result.png`, { type: 'image/png' }));
-          }
-
-          // シェア文のバリエーション定義
-          const shareTexts = {
-            W: [
-              `【私のフロントモードは「ワンダー」🚀】\n面白そうなことにはすぐ飛びつく私の「ワクワクの源」と「実は疲れること」が丸わかりに…！\nみんなのモードも教えて！👀✨\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #自己分析`,
-              `【新しい世界を切り開く「ワンダー」✨】\n自分が一番自然体でいられるモードと、意外な弱点がわかってスッキリ。\nサクッとできるから、みんなもやってみて👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #フロントモード`
-            ],
-            K: [
-              `【私のフロントモードは「キーパー」🛡️】\nチームを安全に導くための最適なモードが判明！\n自分の強みと「無理しがちな役割」がわかるよ👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #自己分析`,
-              `【冷静沈着な「キーパー」タイプ！🧭】\nいつも論理的に考えちゃう私の、一番力を発揮できるモードはこれでした。\n今の自分を観るのにぴったりだから、あなたもやってみて！✨\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #フロントモード`
-            ],
-            N: [
-              `【私のフロントモードは「ナーチャー」🌸】\n自分が一番無理なく人をサポートできる「モード」がわかったよ！\nみんなのトリセツも教えて👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #自己理解`,
-              `【みんなの安全基地「ナーチャー」💖】\n人に寄り添うのが得意な私の、自然に輝ける場所と「実はエネルギーを使う場所」が判明！\nサクッと今の自分を観てみて👀👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #フロントモード`
-            ],
-            A: [
-              `【私のフロントモードは「アダプター」📡】\n空気を読んで動く私の、一番居心地のいい「モード」はこれでした！\n意外な発見があるかも…？👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #自己分析`,
-              `【洞察力バツグンの「アダプター」✨】\n状況に合わせて動くのが得意な私の、真の強みと「疲れる役割」がサクッとわかったよ。\nみんなもやってみてね👇\nhttps://ninin-cc.github.io/rm/\n\n#RIESM_mini #フロントモード`
-            ]
-          };
-
-          const frontMode = resultTypes[0]; 
-          const texts = shareTexts[frontMode];
-          const shareText = texts[Math.floor(Math.random() * texts.length)];
-
-          if (navigator.canShare && navigator.canShare({ files: files })) {
-            await navigator.share({ files: files, title: 'RIESM mini 結果', text: shareText });
+          // ▼ SNS投稿用のテキストにメッセージを組み込みました
+          const shareText = "私のいまの「心のフロント」はこんな感じでした🌈✨\n細かな説明については皆さんご自身で実施してみて！🔍\n\n#RIESM_mini #自己理解\nhttps://ninin-cc.github.io/rm/";
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ text: shareText, files: [file] });
           } else {
-            files.forEach((file, index) => {
-              const url = URL.createObjectURL(file);
-              const link = document.createElement('a');
-              link.download = file.name;
-              link.href = url;
-              setTimeout(() => link.click(), index * 500); 
-            });
+            const textArea = document.createElement("textarea");
+            textArea.value = shareText;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try { document.execCommand('copy'); } catch (err) { console.error('Fallback copy failed', err); }
+            document.body.removeChild(textArea);
+            const link = document.createElement('a');
+            link.download = 'riesm_result.png';
+            link.href = dataUrl;
+            link.click();
+            showToast('結果画像を保存し、投稿文をコピーしました！\nSNSに画像を添付して投稿してください。');
           }
         } catch (error) {
-          console.error(error);
-          alert("画像の保存に失敗しました。お手数ですがスクリーンショットをご利用ください。");
+          console.error('Share failed:', error);
+          showToast('エラー：画像の生成に失敗しました。');
         } finally {
-          setIsGeneratingImage(false);
+          setIsSharing(false);
         }
       };
 
-      const renderQuestionButtons = () => {
-        const currentQ = questions[currentIndex];
-        const format = currentQ.format || 'tradeoff';
-
-        if (format === 'select4') {
-          return (
-            <div className="flex flex-col gap-2 mt-auto">
-              {currentQ.options.map((opt) => (
-                <button key={opt.type} onClick={() => handleAnswer(null, 0, opt.type)} className="w-full py-3 px-4 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98] text-left shadow-sm flex items-center">
-                  <span className="flex-1">{opt.text}</span>
-                </button>
-              ))}
-            </div>
-          );
-        }
-
+      if (!started) {
         return (
-          <div className="flex flex-col gap-2 mt-auto">
-            <button onClick={() => handleAnswer('A', 2)} className="w-full py-3 px-4 bg-gray-100 border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-800 font-bold text-sm transition-all active:scale-[0.98]">
-              「{currentQ.optA}」にとても近い
-            </button>
-            <button onClick={() => handleAnswer('A', 1)} className="w-full py-2.5 px-4 bg-gray-50 border-2 border-gray-100 hover:border-gray-200 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98]">
-              「{currentQ.optA}」にやや近い
-            </button>
-            <button onClick={() => handleAnswer('none', 0)} className="w-full py-2 px-4 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-600 font-medium text-xs transition-all active:scale-[0.98] shadow-sm">
-              どちらでもない / 状況による
-            </button>
-            <button onClick={() => handleAnswer('B', 1)} className="w-full py-2.5 px-4 bg-gray-50 border-2 border-gray-100 hover:border-gray-200 rounded-xl text-gray-700 font-medium text-sm transition-all active:scale-[0.98]">
-              「{currentQ.optB}」にやや近い
-            </button>
-            <button onClick={() => handleAnswer('B', 2)} className="w-full py-3 px-4 bg-gray-100 border-2 border-gray-200 hover:border-gray-300 rounded-xl text-gray-800 font-bold text-sm transition-all active:scale-[0.98]">
-              「{currentQ.optB}」にとても近い
-            </button>
+          <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 flex-col">
+            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-fade-in border border-slate-100">
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mx-auto mb-6 shadow-lg flex items-center justify-center transform -rotate-6">
+                <span className="text-4xl">🌈</span>
+              </div>
+              <h1 className="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">RIESM mini</h1>
+              <p className="text-slate-500 mb-8 font-medium leading-relaxed">
+                今のあなたの「心のモード（フロント）」を測ります。<br/>
+                直感で、いまの自分に近い方を選んでください。
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <button onClick={startQuiz} className="w-full py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-all shadow-md active:scale-[0.98]">
+                  いまの自分を観る
+                </button>
+                <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center justify-center gap-1">
+                  RIESMをもっと知りたい方へ <ExternalLinkIcon />
+                </a>
+              </div>
+
+              <div className="bg-blue-50 rounded-xl p-4 text-left border border-blue-100">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5"><InfoIcon /></div>
+                  <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                    <strong>心の状態は「天気」のように毎日揺らぎます。</strong><br/>
+                    昨日と結果が違っても大丈夫。環境に合わせて心が柔軟にメインエンジン（フロント）を切り替えている証拠です。<br/>
+                    逆に<strong>「何度やっても変わらない部分（バックス）」</strong>に気づくことも、大切な観測の1つです。
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center">
+                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                  © 2026 ninin consulting＆counseling
+                </a>
+              </div>
+            </div>
           </div>
         );
-      };
+      }
 
-      const maxScore = Math.max(...Object.values(modeScores));
-      const minScore = Math.min(...Object.values(modeScores));
-      const bottomTypes = Object.keys(modeScores).filter(type => modeScores[type] === minScore);
+      if (resultType) {
+        const result = resultType.isDouble ? doubleResultsData[resultType.frontKey] : resultsData[resultType.front];
+        const t = result.theme;
+        const backsData = {
+          W: { title: "ワンダー", desc: "今は「新しいこと」や「ワクワク」を少しお休みして、着実さや周囲との調和を優先している状態です。\n\nノリや勢いを求められ続けたり、沢山のアイデアを求められたりすると疲れやすいかもしれません。" },
+          K: { title: "キーパー", desc: "今は「ルール」や「正確さ」よりも、柔軟な発想や周囲の感情に寄り添うことを大切にしている状態です。\n\n人に指示をしなくてはいけないシーンや、自分を律し続けないシーンが続くと疲れを感じやすいかもしれません。また、長時間議論をする、根拠や情報を分析し積み上げなくてはいけない状況が続くと疲れやすいかもしれません。" },
+          N: { title: "ナーチャー", desc: "今は「他者への共感」や「気遣い」よりも、自分の直感や論理的な判断を優先して進みたい状態です。\n\n人を気遣わなくてはいけないシーン、人に気遣い続けられるシーンが続くと疲れやすいかもしれません。" },
+          A: { title: "アダプター", desc: "今は「失敗への警戒」や「空気を読むこと」を手放し、自分の信念や直感を信じて大胆に動けている状態です。\n\n人に合わせなくてはいけないシーンが続くと疲れを感じやすいかもしれません。" }
+        };
+        const backResult = backsData[resultType.back];
 
-      return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-            
-            {step === 'start' && (
-              <div className="p-8 text-center space-y-6">
-                
-                <div className="flex justify-center items-center gap-2 mb-6">
-                  <div className="w-8 h-8 rounded-full bg-orange-500"></div>
-                  <div className="w-8 h-8 rounded-full bg-blue-900"></div>
-                  <div className="w-8 h-8 rounded-full bg-pink-500"></div>
-                  <div className="w-8 h-8 rounded-full bg-sky-400"></div>
+        return (
+          <div className={`min-h-screen flex items-center justify-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg}`}>
+            <div className="max-w-lg w-full animate-fade-in relative">
+              {toastMessage && (
+                <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold text-center whitespace-pre-line w-[90%] max-w-sm border border-slate-600">
+                  {toastMessage}
                 </div>
+              )}
+              
+              <div id="result-card" className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 ${t.border}`}>
                 
-                <div className="space-y-3">
-                  <h1 className="text-3xl font-bold text-gray-900 tracking-tight">RIESM mini</h1>
-                </div>
-
-                <div className="text-gray-600 leading-relaxed text-sm md:text-base space-y-6 mt-8">
-                  <div className="space-y-4">
-                    <p>自分という乗り物を最適に運転するための<br />「RIESM」のミニ版です。</p>
-                    <p>あなたの「フロントモード」（思考や行動のクセ）を観て、今の自分の状態を把握しましょう！</p>
+                {/* --- ▼▼▼ ここからキャプチャ範囲 ▼▼▼ --- */}
+                <div id="capture-area" className="bg-white">
+                  <div className={`p-6 sm:p-8 text-center relative overflow-hidden bg-gradient-to-r ${t.header} text-white`}>
+                    <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                    <h2 className="text-xs sm:text-sm font-bold tracking-widest text-white/90 mb-3 relative z-10">
+                      今の【フロント】
+                    </h2>
+                    <div className="flex items-center justify-center gap-4 mb-2 relative z-10">
+                      <ModeIcon type={resultType.front} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                      {resultType.isDouble && (
+                        <>
+                          <span className="text-xl sm:text-2xl font-bold opacity-70">+</span>
+                          <ModeIcon type={resultType.second} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                        </>
+                      )}
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-extrabold relative z-10 drop-shadow-md">
+                      {result.title}
+                      {result.subTitle && (
+                        <>
+                          <br />
+                          <span className="text-sm sm:text-lg font-bold opacity-90">{result.subTitle}</span>
+                        </>
+                      )}
+                    </h1>
                   </div>
                   
-                  <div className="bg-[#f0f4ff] p-5 rounded-2xl text-indigo-800 text-sm mx-auto max-w-[95%]">
-                    <p className="font-bold mb-3 flex items-center justify-center gap-1.5 text-indigo-700">
-                      <Rocket className="w-4 h-4"/> 回答のポイント
-                    </p>
-                    <div className="space-y-2 text-indigo-700/80 font-medium">
-                      <p>全部で15問なので、3分ほどでおわります。</p>
-                      <p>ただ、回答に葛藤するような設問もあるので、時にはゆっくりと悩みながら回答してください。</p>
-                    </div>
-                  </div>
-                </div>
-
-                <button onClick={startQuiz} className="w-full py-4 px-6 bg-gray-900 text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 shadow-md mt-6">
-                  スタート <ArrowRight className="w-5 h-5" />
-                </button>
-                
-                <div className="bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-200 text-center space-y-4 mt-8">
-                  <h3 className="font-bold text-base md:text-lg text-slate-800">🌈 RIESM -リズム- についてもっと知る</h3>
-                  <p className="text-[13px] md:text-sm text-slate-600 leading-relaxed">自分の強みやストレスの対処法など、詳しい解説はこちら。</p>
-                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-100 shadow-sm text-sm md:text-base">
-                    詳しく知りたい人はこちらへ <ExternalLink className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {step === 'question' && (
-              <div className="p-6 md:p-8 flex flex-col h-full animate-in fade-in">
-                <div className="mb-6">
-                  <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
-                    <span className="flex items-center gap-1"><Compass className="w-4 h-4 text-gray-700"/> Question</span>
-                    <span>{currentIndex + 1} / {questions.length}</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full transition-all duration-300 bg-gray-900" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}></div>
-                  </div>
-                </div>
-                <div className="text-center mb-6">
-                  <h2 className="text-lg md:text-xl font-bold text-gray-900 leading-snug">{questions[currentIndex].text}</h2>
-                </div>
-                {renderQuestionButtons()}
-                <div className="mt-4 pt-2">
-                  <button onClick={handleBack} disabled={currentIndex === 0} className={`w-full py-2 px-4 font-medium text-sm rounded-xl transition-all flex items-center justify-center gap-1 ${currentIndex === 0 ? 'text-transparent cursor-default' : 'text-gray-500 hover:bg-gray-100'}`}>
-                    {currentIndex > 0 && <><ArrowLeft className="w-4 h-4" /> 前の質問に戻る</>}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 'result' && resultTypes.length > 0 && (
-              <div className="pb-8 animate-in fade-in duration-500 bg-white">
-                
-                {/* モードとバランスの表示部分 */}
-                <div ref={modeRef} className="bg-white pb-4 md:pb-6">
-                  <div className={`${resultTypes.length > 1 ? 'bg-gradient-to-br from-slate-800 to-slate-900' : RESULTS[resultTypes[0]].color} p-8 text-center text-white`}>
-                    <div className="flex justify-center gap-4 mb-4">
-                      {resultTypes.map((type) => {
-                        const IconElement = RESULTS[type].icon;
-                        return (
-                          <div key={type} className={`${resultTypes.length > 1 ? RESULTS[type].color : 'bg-white/20'} p-3 rounded-full backdrop-blur-sm shadow-md`}>
-                            <IconElement className="w-8 h-8 text-white" />
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <h2 className="text-lg font-medium opacity-90 mb-1">今のあなたのフロントモードは</h2>
-                    <h1 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-wider leading-tight">
-                      {resultTypes.map(t => RESULTS[t].name).join(' ＆ ')}
-                    </h1>
-                    <p className="font-medium opacity-90 text-sm md:text-base leading-relaxed">
-                      {resultTypes.length > 1 ? '複数のモードが同率で一番前に出ています！' : RESULTS[resultTypes[0]].subtitle}
-                    </p>
-                  </div>
-
-                  <div className="p-4 md:p-8 pb-0 space-y-6 md:space-y-8">
-                    <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                      <h3 className="text-base md:text-lg font-bold text-gray-800 mb-5 text-center">あなたのモード・バランス</h3>
-                      <div className="flex flex-col gap-4">
-                        {sortedModeChartData.map((data) => (
-                          <div key={data.id} className="flex flex-col gap-1.5 group">
-                            <div className="flex justify-between items-end px-1">
-                              <span className="text-xs md:text-sm font-bold text-gray-700 tracking-wide">{data.name}</span>
-                              <span className="text-xs md:text-sm font-bold text-gray-500">{data.percentage}%</span>
-                            </div>
-                            <div className="w-full h-5 md:h-6 bg-gray-50 rounded-full relative flex items-center overflow-hidden shadow-inner">
-                              <div className={`h-full ${data.color} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${data.percentage}%` }}></div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-5 pt-4 border-t border-gray-100">
-                        <p className="text-[11px] md:text-xs text-gray-500 text-center leading-relaxed">
-                          ※このバランスは固定されたものではなく、状況によって変化します。<br className="hidden md:block" />
-                          「今の自分のフロントは何なのか」を日々感じることが大切です。<br />
-                          また、フロントだけではなく２番目３番目（スタンド）がどう働くか、働かせるかが良いコミュニケーションのポイントです。
-                        </p>
-                      </div>
-                    </div>
-
-                    {resultTypes.length === 1 ? (
-                      <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <p className="text-gray-700 leading-relaxed text-sm md:text-[15px] m-0">{RESULTS[resultTypes[0]].description}</p>
-                        {maxScore !== minScore && bottomTypes.length > 0 && (
-                          <div className="mt-4 space-y-1">
-                            {bottomTypes.map(type => (
-                              <p key={type} className="text-[13px] text-gray-500 leading-relaxed">
-                                （{RESULTS[type].backsDescription}）
-                              </p>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <p className="text-sm text-gray-600 font-medium px-2 leading-relaxed">同率一位のモードが複数あります。状況によって器用に切り替えている状態です。</p>
-                        {resultTypes.map((type) => {
-                          const IconComponent = RESULTS[type].icon;
+                  <div className="p-4 sm:p-8 pb-1 sm:pb-2">
+                    <div className={`rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
+                      <h3 className={`font-bold text-xs sm:text-sm mb-4 sm:mb-5 tracking-wide text-center ${t.textLight}`}>今のあなたのモードバランス</h3>
+                      <div className="space-y-3 sm:space-y-4">
+                        {['W', 'K', 'N', 'A'].sort((a, b) => resultScores[b] - resultScores[a]).map(type => {
+                          const score = resultScores[type];
+                          const maxScore = Math.max(...Object.values(resultScores));
+                          const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
+                          const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
+                          const labels = { W: 'ワンダー', K: 'キーパー', N: 'ナーチャー', A: 'アダプター' };
                           return (
-                            <div key={type} className={`${RESULTS[type].lightColor} border-l-4 ${RESULTS[type].borderColor} p-4 rounded-r-xl`}>
-                              <h3 className={`font-bold flex items-center gap-2 mb-2 ${RESULTS[type].textColor}`}>
-                                <IconComponent className="w-5 h-5" /> {RESULTS[type].name}の特徴
-                              </h3>
-                              <p className="text-sm text-gray-700 leading-relaxed">{RESULTS[type].description.replace(`あなたのフロントモードは「${RESULTS[type].name}」です。`, '')}</p>
+                            <div key={type} className="flex items-center gap-2">
+                              <div className={`w-5 sm:w-6 flex justify-center`}>
+                                <ModeIcon type={type} className={`w-4 h-4 sm:w-5 sm:h-5 ${t.textLight}`} />
+                              </div>
+                              <div className={`w-14 sm:w-16 text-left sm:text-right text-[10px] sm:text-xs font-bold ${t.textLight}`}>{labels[type]}</div>
+                              <div className="flex-1 h-3 sm:h-4 bg-slate-200/50 rounded-full overflow-hidden">
+                                <div className={`h-full ${barColors[type]} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${percent}%` }}></div>
+                              </div>
+                              <div className={`w-8 sm:w-10 text-right text-xs font-bold ${t.text}`}>{percent}%</div>
                             </div>
                           );
                         })}
-                        {maxScore !== minScore && bottomTypes.length > 0 && (
-                          <div className="px-2 mt-3 space-y-1">
-                            {bottomTypes.map((type) => (
-                              <p key={type} className="text-[13px] text-gray-500 leading-relaxed">
-                                （{RESULTS[type].backsDescription}）
-                              </p>
-                            ))}
-                          </div>
-                        )}
                       </div>
-                    )}
+                    </div>
+                  </div>
+                </div>
+                {/* --- ▲▲▲ ここまでキャプチャ範囲 ▲▲▲ --- */}
+
+                {/* --- ▼▼▼ ここからキャプチャしない範囲 (Web画面のみ) ▼▼▼ --- */}
+                <div className="px-4 sm:px-8 pb-0" data-html2canvas-ignore="true">
+                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
+                    <p className={`leading-relaxed text-sm md:text-base font-medium ${t.text}`}>{result.detail[resultType.detailIndex]}</p>
+                    <div className={`mt-6 pt-4 border-t border-white/40`}>
+                      <h4 className={`font-bold text-[13px] md:text-sm mb-2 opacity-90 ${t.text}`}>▼ お休み中のモード（バックス）について</h4>
+                      <p className={`text-[13px] md:text-sm font-medium opacity-80 whitespace-pre-line ${t.text}`}>{backResult.desc}</p>
+                      
+                      <div className={`mt-4 p-3 sm:p-4 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
+                         <p className={`text-[11px] sm:text-xs font-bold opacity-90 ${t.text} leading-relaxed`}>
+                           💡 観測のヒント<br/>
+                           フロントはその日の環境や気分でよく揺らぎますが、スコアの低い【バックス】は何度実施してもあまり変わらない傾向があります。<br/>
+                           それはあなたが「今は一番無理をして使わなくていいエネルギー」であるというサインかもしれません。
+                         </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="px-4 md:px-8 space-y-4 pb-4">
-                  <button onClick={handleShare} disabled={isGeneratingImage} className="w-full py-4 px-6 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:bg-slate-800 disabled:bg-slate-400 shadow-md text-sm md:text-base">
-                    {isGeneratingImage ? <><Loader2 className="w-5 h-5 animate-spin" /> 画像を生成中...</> : <><Share2 className="w-5 h-5" /> 画像で保存・シェア</>}
+                <div className="px-4 sm:px-8 pb-6 sm:pb-8 space-y-2 sm:space-y-3" data-html2canvas-ignore="true">
+                  <button onClick={handleShare} disabled={isSharing} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base text-white shadow-md active:scale-95 ${isSharing ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'}`}>
+                    <ShareIcon /> {isSharing ? '画像を作成中...' : '今のフロントを保存・シェアする'}
                   </button>
-                  <div className="bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-200 text-center space-y-4">
-                    <h3 className="font-bold text-base md:text-lg text-slate-800">🌈 RIESM -リズム- についてもっと知る</h3>
-                    <p className="text-[13px] md:text-sm text-slate-600 leading-relaxed">自分の強みやストレスの対処法など、詳しい解説はこちら。</p>
-                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-100 shadow-sm text-sm md:text-base">
-                      詳しく知りたい人はこちらへ <ExternalLink className="w-4 h-4" />
+                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 bg-white border-2 ${t.border} rounded-xl font-bold transition-all text-sm md:text-base ${t.text} hover:bg-slate-50`}>
+                    RIESMをもっと知りたい方へ <ExternalLinkIcon />
+                  </a>
+                  <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
+                    <RefreshCwIcon /> もう一度観る
+                  </button>
+
+                  <div className="text-center pt-2 sm:pt-3">
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                      © 2026 ninin consulting＆counseling
                     </a>
                   </div>
-                  <button onClick={startQuiz} className="w-full py-3 px-6 bg-transparent text-gray-500 rounded-xl font-bold hover:bg-gray-100 flex items-center justify-center gap-2 text-sm md:text-base">
-                    <RefreshCw className="w-4 h-4" /> もう一度観る
-                  </button>
                 </div>
+                {/* --- ▲▲▲ キャプチャしない範囲ここまで ▲▲▲ --- */}
+
               </div>
-            )}
+            </div>
           </div>
-          <div className="mt-8 text-center text-[11px] md:text-sm text-gray-400">
-            <p>Based on RIESM (Roll(Role)_Interest & EgoStresscare Model)</p>
-            <p>© 2026 ninin consulting & counseling</p>
+        );
+      }
+
+      const q = currentQuestions[currentIndex];
+      const progress = ((currentIndex + 1) / currentQuestions.length) * 100;
+      const labelStrong = q.isSituation ? "に、強く惹かれる" : "と、強くそう思う";
+      const labelMid = q.isSituation ? "に、惹かれる" : "と、そう思う";
+
+      const topType = q.options[0].type;
+      const bottomType = q.options[1].type;
+      const topColorRGB = bgColors[topType];
+      const bottomColorRGB = bgColors[bottomType];
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-50 transition-colors duration-1000">
+          <div className="max-w-md w-full bg-white/90 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-white/60 animate-fade-in relative backdrop-blur-2xl">
+            
+            {/* 背景グラデーション: 上 */}
+            <div 
+              className="absolute top-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
+              style={{ 
+                height: `${100 - hoverPos + 10}%`, 
+                background: `linear-gradient(to bottom, rgba(${topColorRGB}, 0.35) 0%, rgba(${topColorRGB}, 0) 100%)`,
+              }}
+            ></div>
+
+            {/* 背景グラデーション: 下 */}
+            <div 
+              className="absolute bottom-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
+              style={{ 
+                height: `${hoverPos + 10}%`, 
+                background: `linear-gradient(to top, rgba(${bottomColorRGB}, 0.35) 0%, rgba(${bottomColorRGB}, 0) 100%)`,
+              }}
+            ></div>
+
+            <div className="relative z-20 h-1.5 bg-slate-100/50 w-full">
+              <div className="h-full bg-indigo-500 transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
+            </div>
+
+            <div className="relative z-10 p-3 sm:p-8 pb-2 sm:pb-6">
+              <div className="text-[11px] sm:text-sm font-bold text-slate-500 mb-2 sm:mb-4 tracking-wider flex justify-between drop-shadow-sm px-1">
+                <span>QUESTION</span>
+                <span>{currentIndex + 1} / {currentQuestions.length}</span>
+              </div>
+              
+              <h2 className="text-base sm:text-xl font-bold text-slate-800 mb-3 sm:mb-6 leading-relaxed bg-white p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-md border border-slate-200">
+                {q.text}
+              </h2>
+              
+              <div className="space-y-1 sm:space-y-2 animate-fade-in relative z-10">
+                <button 
+                  onMouseEnter={() => setHoverPos(15)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[0].type, weight: 4 }])} 
+                  className="w-full text-left py-2.5 px-3 sm:p-4 rounded-xl border border-white/60 bg-white/50 hover:bg-white/80 transition-all text-slate-900 font-bold shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[13px] sm:text-base"
+                >
+                  【{q.options[0].text}】{labelStrong}
+                </button>
+                <button 
+                  onMouseEnter={() => setHoverPos(30)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[0].type, weight: 3 }])} 
+                  className="w-full text-left py-2 px-3 sm:p-3.5 rounded-xl border border-white/60 bg-white/60 hover:bg-white/90 transition-all text-slate-800 font-medium shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[13px] sm:text-base"
+                >
+                  【{q.options[0].text}】{labelMid}
+                </button>
+                <button 
+                  onMouseEnter={() => setHoverPos(45)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[0].type, weight: 2 }, { type: q.options[1].type, weight: 1 }])} 
+                  className="w-full text-left py-1.5 px-2.5 sm:p-3 rounded-xl border border-white/60 bg-white/70 hover:bg-white transition-all text-slate-700 shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[11px] sm:text-sm"
+                >
+                  どちらかといえば【{q.options[0].text}】だが、【{q.options[1].text}】もある
+                </button>
+                
+                <div className="flex items-center justify-center py-0.5 sm:py-2 opacity-50">
+                  <div className="h-px bg-slate-400 w-1/3"></div>
+                  <span className="text-[9px] sm:text-xs text-slate-500 px-3 font-bold tracking-widest">OR</span>
+                  <div className="h-px bg-slate-400 w-1/3"></div>
+                </div>
+
+                <button 
+                  onMouseEnter={() => setHoverPos(55)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[1].type, weight: 2 }, { type: q.options[0].type, weight: 1 }])} 
+                  className="w-full text-left py-1.5 px-2.5 sm:p-3 rounded-xl border border-white/60 bg-white/70 hover:bg-white transition-all text-slate-700 shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[11px] sm:text-sm"
+                >
+                  どちらかといえば【{q.options[1].text}】だが、【{q.options[0].text}】もある
+                </button>
+                <button 
+                  onMouseEnter={() => setHoverPos(70)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[1].type, weight: 3 }])} 
+                  className="w-full text-left py-2 px-3 sm:p-3.5 rounded-xl border border-white/60 bg-white/60 hover:bg-white/90 transition-all text-slate-800 font-medium shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[13px] sm:text-base"
+                >
+                  【{q.options[1].text}】{labelMid}
+                </button>
+                <button 
+                  onMouseEnter={() => setHoverPos(85)} onMouseLeave={() => setHoverPos(50)}
+                  onClick={() => handleAnswer([{ type: q.options[1].type, weight: 4 }])} 
+                  className="w-full text-left py-2.5 px-3 sm:p-4 rounded-xl border border-white/60 bg-white/50 hover:bg-white/80 transition-all text-slate-900 font-bold shadow-sm backdrop-blur-md active:scale-[0.98] leading-tight text-[13px] sm:text-base"
+                >
+                  【{q.options[1].text}】{labelStrong}
+                </button>
+              </div>
+
+              <div className="mt-2 sm:mt-6 flex items-center justify-between border-t border-slate-200 pt-2 sm:pt-4 relative z-10 px-1">
+                <button 
+                  onClick={handleBack} 
+                  disabled={currentIndex === 0} 
+                  className={`flex items-center gap-1 text-[13px] sm:text-base font-extrabold text-slate-800 transition-opacity ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
+                >
+                  <ArrowLeftIcon /> もどる
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       );
     }
-
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
