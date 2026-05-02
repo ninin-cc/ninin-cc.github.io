@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>荒川区 日暮里・北部町会 防災クイズ探検隊！</title>
+  
+  <!-- React & ReactDOM (CDN) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <!-- Babel (JSXをブラウザで動かすため) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Tailwind CSS (デザイン用) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-blue-50">
+  <div id="root"></div>
+
+  <!-- Reactのコード -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- アイコンコンポーネント (Lucideアイコンの代わり) ---
+    const IconTrophy = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    );
+    const IconCheckCircle = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    );
+    const IconXCircle = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    );
+    const IconArrowRight = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    );
+    const IconHome = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    );
+    const IconMapPin = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    );
+    const IconLightbulb = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+    );
+    const IconUsers = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    );
+
+    // --- メインアプリ ---
+    function App() {
+      const [currentQuestion, setCurrentQuestion] = useState(0);
+      const [score, setScore] = useState(0);
+      const [showResult, setShowResult] = useState(false);
+      const [isAnswered, setIsAnswered] = useState(false);
+      const [selectedOption, setSelectedOption] = useState(null);
+      const [questions, setQuestions] = useState([]);
+
+      // 北部町会・日暮里に特化した超特大クイズプール（約45問）
+      const allQuestions = [
+        {
+          question: "これから30年の間に、東京で大きな地震が起きる確率は約70%。その時、荒川区の消防車や救急車は足りるかな？",
+          options: ["みんなの所にすぐ来てくれる！", "ぜんぜん足りない！", "日暮里には特別な消防車がいっぱいある"],
+          answer: 1,
+          explanation: "荒川区の消防ポンプ車は約20台、救急車は約7台だけ。大地震の時はぜんぜん足りなくなっちゃうんだ。だから、北部町会のみんなで助け合う『共助（きょうじょ）』が絶対に必要だよ！"
+        },
+        {
+          question: "日暮里や北部町会のあたりで、地震のときに一番心配されている「地域の特徴」は何かな？",
+          options: ["海が近いので津波がくる", "坂道が多くて歩きにくい", "木のお家が密集していて、道がせまい"],
+          answer: 2,
+          explanation: "正解は「木のお家が密集していて、道がせまい（木密地域）」だよ。地震で家が倒れたり、火事が広がりやすいんだ。消防車も入りにくいから、火が小さいうちに地域のみんなで消すことが大切なんだ。"
+        },
+        {
+          question: "もし大きな地震が起きたら、マンションのトイレはどうするべき？",
+          options: ["お風呂の水をためて流す", "安全が確認できるまで使ってはいけない", "いつも通り普通に使う"],
+          answer: 1,
+          explanation: "目に見えなくても、排水管が壊れているかもしれないんだ。そのまま流すと下の階のひとの家にあふれちゃうかも！だから「携帯トイレ（簡易トイレ）」の準備が絶対に必要なんだよ。"
+        },
+        {
+          question: "地震のあと、日暮里の商店街やスーパー（いなげや など）はどうなると思う？",
+          options: ["次の日には開いて、お水やパンが買える", "お店の棚から商品がなくなって、しばらく買えなくなる", "町会の人が全員分のカレーを作ってくれる"],
+          answer: 1,
+          explanation: "道が壊れたりして、お店に商品が届かなくなっちゃうんだ。だから、最低でも3日分（できれば1週間分）の水や食べ物を、自分のお家に「備蓄（びちく）」しておくことが必要だよ。"
+        },
+        {
+          question: "お家が壊れてしまって住めなくなった時、みんなが一時的に生活する「避難所（ひなんじょ）」はどこ？",
+          options: ["日暮里駅のホーム", "近くの小学校（ひぐらし小や第一日暮里小など）の体育館", "日暮里繊維街のアーケードの下"],
+          answer: 1,
+          explanation: "正解は「近くの小学校などの体育館（指定避難所）」だよ！自分の家がどこの避難所に行くことになっているか、必ずお家の人と確認しておこう。"
+        },
+        {
+          question: "北部町会では「青空こどもまつり」などのイベントをやっているよ。防災のために、こういうお祭りに参加するのは良いこと？",
+          options: ["防災とは関係ないから意味がない", "ご近所さんと顔見知りになれるから、すごく良いこと！", "遊んでるヒマがあったら家でヘルメットをかぶっているべき"],
+          answer: 1,
+          explanation: "大正解！お祭りでご近所さんと仲良くなっておくことが、いざという時の「助け合い（共助）」に繋がるんだ。普段の「こんにちは！」の挨拶が一番の防災なんだよ。"
+        },
+        {
+          question: "最後に！地震の準備で、お水を買うよりも「一番最初」にあなたのお家でやらなきゃいけないことは何？",
+          options: ["避難所の場所をスマホで調べる", "寝ている所に倒れてこないように、大きな家具を固定する", "町会長さんの名前を覚える"],
+          answer: 1,
+          explanation: "命があってこそ！まずは大きな家具が倒れてこないようにしっかり固定しよう。「自分の命は自分で守る（自助）」。これができて初めて、周りの人を助けることができるんだ。"
+        },
+        {
+          question: "家族で決めておくべき「もしもの時の集合場所」、一番良いのはどこ？",
+          options: ["日暮里駅の改札前", "いつも行くコンビニ", "近くの指定避難所（学校など）や大きな公園"],
+          answer: 2,
+          explanation: "駅やコンビニは人が殺到したり、建物が危ないかもしれないよ。安全が確認されている「指定避難所」などを家族の集合場所に決めておこう！"
+        },
+        {
+          question: "夜、寝ている時に大地震！まずどうする？",
+          options: ["布団をかぶって頭を守る", "急いで外に飛び出す", "電気のスイッチを探す"],
+          answer: 0,
+          explanation: "暗闇で動くのはとても危険！まずは布団や枕で頭を守り、揺れが収まるのを待とう。枕元にスリッパや懐中電灯を置いておくと安心だよ。"
+        },
+        {
+          question: "地震のゆれが収まったあと、外に逃げる時に「絶対にやってはいけないこと」は？",
+          options: ["ブレーカーを落とす", "エレベーターを使って急いで下りる", "ガスの元栓を閉める"],
+          answer: 1,
+          explanation: "地震の後はエレベーターが途中で止まって閉じ込められる危険があるよ。逃げる時は必ず「階段」を使おう！"
+        },
+        {
+          question: "大地震のあと、お家の「ブレーカー」はどうする？",
+          options: ["そのままにしておく", "全部のスイッチを「切る（落とす）」", "全部のスイッチを「入れる」"],
+          answer: 1,
+          explanation: "電気が復旧した時に、倒れたヒーターなどから火が出る「通電火災（つうでんかさい）」を防ぐため、避難する時は必ずブレーカーを落とそう！"
+        },
+        {
+          question: "災害が起きた時、家族に「無事だよ！」とメッセージを残せる電話の番号は？",
+          options: ["110", "119", "171（災害用伝言ダイヤル）"],
+          answer: 2,
+          explanation: "「171（イナイ）」は災害用伝言ダイヤルだよ。毎月1日や15日などに体験できるから、家族で使い方を練習してみよう。"
+        },
+        {
+          question: "道によくある「ブロック塀」、地震の時はどうするべき？",
+          options: ["倒れてくるかもしれないから、絶対に近づかない！", "もたれかかって休む", "上に登って周りを見る"],
+          answer: 0,
+          explanation: "ブロック塀は地震のゆれで倒れてくることがあり、下敷きになると命に関わるよ。逃げる時はブロック塀や自動販売機から離れて歩こう。"
+        },
+        {
+          question: "料理中にグラッときた！火はどうする？",
+          options: ["ゆれている最中に、急いで火を消す", "ゆれが収まってから、落ち着いて火を消す", "水をかけて消す"],
+          answer: 1,
+          explanation: "最近のガスコンロは大きなゆれで自動的に火が消えるよ。ゆれている最中に火に近づくとお湯や油をかぶって火傷する危険があるから、ゆれが収まってから確認しよう。"
+        },
+        {
+          question: "お家でお風呂に入っている時に地震！どうする？",
+          options: ["裸のまま外に飛び出す", "お風呂のお湯を全部抜く", "洗面器などで頭を守り、ゆれが収まるのを待つ"],
+          answer: 2,
+          explanation: "お風呂場は割れるものが少なく、意外と安全な場所。転ばないように姿勢を低くして、洗面器やタオルで頭を守ろう。"
+        },
+        {
+          question: "スーパーでお買い物をしている時に地震！どうする？",
+          options: ["レジに向かって走る", "買い物カゴを頭にかぶって、商品の棚から離れる", "お店の外に全力で走る"],
+          answer: 1,
+          explanation: "お店の中は商品が落ちてきたり、ショーケースのガラスが割れたりして危険！買い物カゴで頭を守り、柱のそばなどでゆれが収まるのを待とう。"
+        },
+        {
+          question: "お水は1人1日あたり、どれくらい備蓄（びちく）しておくと良い？",
+          options: ["ペットボトル1本（500ml）", "牛乳パック1本分（1リットル）", "大きなペットボトル1.5本分（3リットル）"],
+          answer: 2,
+          explanation: "飲み水だけでなく、料理などに使う水も含めて「1人あたり1日3リットル」が必要と言われているよ。家族の人数×3日分（できれば7日分）を用意しよう！"
+        },
+        {
+          question: "町会などで用意されている「スタンドパイプ」って何に使う道具？",
+          options: ["水をきれいにする浄水器", "道路の消火栓につないで、火を消す道具", "電気を作る発電機"],
+          answer: 1,
+          explanation: "スタンドパイプは、道路にあるマンホール（消火栓）を開けてホースをつなぎ、地域のみんなで初期消火をするための大切な道具だよ。"
+        },
+        {
+          question: "地震のあと、窓ガラスやコップが割れて床に散乱！足を守るために良いのは？",
+          options: ["靴下を2枚はく", "スリッパや、底の厚い靴をはく", "つま先立ちで歩く"],
+          answer: 1,
+          explanation: "ガラスの破片は靴下を突き破るよ！必ずスリッパや底の厚いスニーカーなどを履こう。寝室の枕元に靴を用意しておくと完璧だね。"
+        },
+        {
+          question: "家の中で家具が倒れないようにする「L字金具」や「つっぱり棒」。どこにつけるのが一番効果的？",
+          options: ["家具の真ん中", "家具の下のほう", "家具と天井の間や、壁の柱などの固い場所"],
+          answer: 2,
+          explanation: "壁の裏にある「柱」などの固い場所や、天井と家具の間をしっかり固定しないと、ゆれの力で外れてしまうんだ。大人の人と一緒に確認しよう！"
+        },
+        {
+          question: "「ホームサバイバルトライアル」ってどんな訓練？",
+          options: ["山の中でテントに泊まる", "家の中で電気・水道・ガスを使わずに数時間〜1日過ごしてみる", "町会の人と川で魚を捕まえる"],
+          answer: 1,
+          explanation: "家にある備蓄品（携帯トイレや水など）だけで過ごしてみる訓練だよ。実際にやってみると「これが足りない！」ということに気づけるすごく良い方法なんだ。"
+        },
+        {
+          question: "大地震が起きた直後、スマホで最初にやるべきことは？",
+          options: ["ゲームのログインボーナスをもらう", "SNSで面白い動画を見る", "家族の安否確認や、ラジオアプリで正しい情報を調べる"],
+          answer: 2,
+          explanation: "災害時はデマ（嘘の情報）もたくさん流れるよ。テレビやラジオ、区の公式アプリなどを使って、正しい情報を見極めよう。"
+        },
+        {
+          question: "荒川区を流れる「隅田川」や「荒川」。大きな地震の後は何に気をつけないといけない？",
+          options: ["お魚がたくさん取れるようになる", "液状化（土がドロドロになる）や、橋が壊れて渡れなくなること", "水がきれいになって泳げるようになる"],
+          answer: 1,
+          explanation: "川の近くは地盤（土）が柔らかく、地震のゆれで水が吹き出す「液状化」が起きやすいんだ。橋が通れなくなって遠回りになることも考えておこう。"
+        },
+        {
+          question: "避難所（学校の体育館など）での生活で、一番大切なルールは？",
+          options: ["周りの人と助け合い、ルールを守ること", "自分の好きな場所を一番広く取ること", "夜遅くまで大きな声で話すこと"],
+          answer: 0,
+          explanation: "避難所には、お年寄りや赤ちゃんなどたくさんの人が集まるよ。みんなが少しでも安心できるように、思いやりとルールを守ることが一番大切なんだ。"
+        },
+        {
+          question: "災害の時、怪我をしている人や困っている人を助ける「共助（きょうじょ）」。子どもにできることは？",
+          options: ["大人に任せて何もしない", "一人で無理に重いものを持ち上げる", "大声で大人の助けを呼んだり、できる範囲のお手伝いをする"],
+          answer: 2,
+          explanation: "大声で周りの大人を呼ぶのも、立派な「共助」だよ！小さな子どもやお年寄りに声をかけたり、できることを探してみよう。"
+        },
+        {
+          question: "冬に地震が起きて停電！暖房が使えない時の防寒対策で役立つ身近なものは？",
+          options: ["冷蔵庫のドアを開ける", "新聞紙やポリ袋を服の下に巻く", "冷たい水を飲む"],
+          answer: 1,
+          explanation: "新聞紙をくしゃくしゃにして服の中に入れたり、大きなポリ袋をかぶったりするだけで、熱が逃げなくなってすごく暖かくなるんだよ！"
+        },
+        {
+          question: "もしものために用意する「非常持ち出し袋」。どれくらいの重さがいい？",
+          options: ["自分が走って逃げられる重さ", "とにかく持てるだけ全部（重くても良い）", "空っぽにしておく"],
+          answer: 0,
+          explanation: "重すぎて逃げ遅れたら意味がないよ！大人は約15kg、子どもは自分の体重の10%〜15%くらい（走れる重さ）を目安に必要なものを厳選しよう。"
+        },
+        {
+          question: "家にいる時に「緊急地震速報（キュイッキュイッという音）」が鳴ったら、まず取るべき行動は？",
+          options: ["急いで外に飛び出す", "テレビに近づいてニュースを見る", "頭を守り、机の下など安全な場所に隠れる"],
+          answer: 2,
+          explanation: "速報が鳴ってから強いゆれが来るまで数秒しかないこともあるよ。まずは自分の命を守るポーズ（ダンゴムシのポーズ）をとろう！"
+        },
+        {
+          question: "断水（水道から水が出ない）に備えて、お風呂の水はどうしておくのが良い？",
+          options: ["入った後はすぐに全部捨てる", "次に入る時までお湯をためたままにしておく", "入浴剤を毎日必ず入れる"],
+          answer: 1,
+          explanation: "ためておいたお風呂の水は、トイレを流す水（※マンションなど排水管が壊れていない場合）や、火事の時の消火用としてすごく役に立つんだ。"
+        },
+        {
+          question: "玄関のドアやマンションの扉、地震が起きた直後にすると良いことは？",
+          options: ["カギを何重にもかける", "少し開けて、逃げ道（出口）を確保する", "ガムテープで塞ぐ"],
+          answer: 1,
+          explanation: "大きなゆれで建物がゆがむと、ドアが開かなくなって外に逃げられなくなる（閉じ込められる）ことがあるんだ。ゆれが収まったら、まずドアや窓を開けよう。"
+        },
+        {
+          question: "もし停電になったら、冷蔵庫の中の食べ物はどうする？",
+          options: ["すぐに全部捨てる", "ドアを何度も開け閉めして確認する", "ドアの開け閉めを減らし、傷みやすいものから早めに食べる"],
+          answer: 2,
+          explanation: "ドアを開けなければ、冷蔵庫はしばらく冷たいまま保たれるよ。冷凍庫に入っている保冷剤や氷も、他の食べ物を冷やすのに役立つんだ。"
+        },
+        {
+          question: "「無事ですタオル」や「黄色いハンカチ」を玄関先に結んでおく意味は何？",
+          options: ["目印にして友達を呼ぶため", "家族全員が無事で、助けはいらないというご近所へのサイン", "洗濯物を干しているだけ"],
+          answer: 1,
+          explanation: "「うちは大丈夫！」というサインを出しておけば、町会や消防の人が『まだサインが出ていない、助けが必要な家』へ早く行くことができるんだ。立派な共助だね。"
+        },
+        {
+          question: "日暮里のような木のお家が密集している地域で、地震の後に怖い「二次災害」は？",
+          options: ["雪崩（なだれ）", "竜巻（たつまき）", "地震の後に発生して広がる「火災（火事）」"],
+          answer: 2,
+          explanation: "倒れた家から火が出ると、細い道や密集した家を伝ってあっという間に火事が広がってしまう。だからこそ「初期消火」が命運を分けるんだ！"
+        },
+        {
+          question: "停電の夜、安全に明かりを確保するために「使わないほうがいい」ものはどれ？",
+          options: ["LEDランタン", "懐中電灯", "ロウソク"],
+          answer: 2,
+          explanation: "地震の余震（あとから来るゆれ）でロウソクが倒れると、火事の原因になってすごく危険だよ！電池で光るライトを使おう。"
+        },
+        {
+          question: "避難所に行く時、お家で飼っているペット（犬や猫）はどうする？",
+          options: ["家に置いていく", "ケージなどに入れて一緒に避難する（同行避難）", "逃がしてあげる"],
+          answer: 1,
+          explanation: "ペットも大切な家族！一緒に安全な場所へ逃げる「同行避難」が基本だよ。ただ、避難所では動物が苦手な人もいるから、ケージに入れるなどのルールを守ろう。"
+        },
+        {
+          question: "ラップ（食品用ラップフィルム）は防災の時にどう役立つ？",
+          options: ["お皿に敷いてからご飯をのせる（お皿を洗わずに済む）", "体に巻いて空を飛ぶ", "窓ガラスに貼って割れないようにする"],
+          answer: 0,
+          explanation: "水が出ない時、お皿を洗うことができないよ。お皿にラップを敷いてから食べ物をのせ、食べ終わったらラップを捨てるだけにすれば、大切な水を節約できるんだ。"
+        },
+        {
+          question: "家族の中で、誰の命を一番最初に守るべき？",
+          options: ["お父さんやお母さん", "自分の命", "飼っているペット"],
+          answer: 1,
+          explanation: "「自分の命は自分で守る」。自分がケガをしてしまったら、周りの人を助けるどころか、他の人に助けてもらわなきゃいけなくなる。まずは自分が無事でいることが一番の貢献だよ。"
+        },
+        {
+          question: "カセットコンロとガスボンベ、備蓄しておく理由は？",
+          options: ["キャンプで遊ぶため", "電気が止まった時の照明にするため", "ガスや電気が止まっても、温かいご飯を作ったりお湯を沸かすため"],
+          answer: 2,
+          explanation: "冬の寒い時や不安な時、温かいスープやご飯を食べるとすごくホッとするんだ。カセットコンロは命をつなぐ大切なアイテムだよ。"
+        },
+        {
+          question: "怪我をした時のための「救急箱」。中に入れておくと良いのは絆創膏と、あとは何？",
+          options: ["おもちゃ", "いつも飲んでいる薬（処方薬）やお薬手帳のコピー", "図書カード"],
+          answer: 1,
+          explanation: "災害時は病院が開いていなかったり、いつもの薬がすぐにもらえないことがあるよ。数日分の薬とお薬手帳のコピーは必ず持ち出し袋に入れておこう。"
+        },
+        {
+          question: "エレベーターに乗っている時に地震が来たら、どのボタンを押す？",
+          options: ["1階のボタンだけ押す", "すべての階のボタンを全部押す", "「閉める」ボタンを連打する"],
+          answer: 1,
+          explanation: "閉じ込められるのを防ぐため、すべての階のボタンを押し、最初に止まった階で素早く降りて、階段で安全な場所へ逃げよう。"
+        },
+        {
+          question: "町会などで配られている「ハザードマップ」ってどんな地図？",
+          options: ["美味しいお店が載っている地図", "地震や水害の時に、自分の家の周りがどれくらい危険か色分けされている地図", "宝探しの地図"],
+          answer: 1,
+          explanation: "自分の家が「水に浸かりやすいか」「火事が広がりやすいか」が一目でわかる大切な地図だよ。家族で一度は必ず確認しておこう！"
+        },
+        {
+          question: "地震の時、机の下に隠れたら次にすることは？",
+          options: ["目をつぶって耳をふさぐ", "机の脚をしっかりと両手で握る", "スマートフォンで写真を撮る"],
+          answer: 1,
+          explanation: "大きなゆれだと、机自体が飛んでいってしまうことがあるよ！対角線上の机の脚を両手でしっかり握って、机と一緒に動くようにしよう。"
+        },
+        {
+          question: "電柱から垂れ下がっている電線を見つけたら？",
+          options: ["触ってみる", "絶対に触らず、近づかない", "引っぱって切る"],
+          answer: 1,
+          explanation: "電気が通っていて感電する危険があるから、絶対に近づかないで！見つけたら大人に教えて、電力会社や消防に連絡してもらおう。"
+        },
+        {
+          question: "災害のあと、ご近所さんに会ったらどんな言葉をかける？",
+          options: ["「何か食べるものちょうだい」", "「こんにちは！お怪我はないですか？」と挨拶して状況を聞く", "何も言わずに通り過ぎる"],
+          answer: 1,
+          explanation: "挨拶と声かけが一番の「共助」！顔見知りになっておくと、いざという時にお互いを助け合いやすくなるんだよ。"
+        }
+      ];
+
+      // 初回レンダリング時とリセット時にランダムに7問をセットする
+      useEffect(() => {
+        startNewQuiz();
+      }, []);
+
+      const startNewQuiz = () => {
+        const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+        setQuestions(shuffled.slice(0, 7));
+        setCurrentQuestion(0);
+        setScore(0);
+        setShowResult(false);
+        setIsAnswered(false);
+        setSelectedOption(null);
+      };
+
+      const handleAnswerClick = (index) => {
+        if (isAnswered) return;
+        
+        setSelectedOption(index);
+        setIsAnswered(true);
+        
+        if (index === questions[currentQuestion].answer) {
+          setScore(score + 1);
+        }
+      };
+
+      const handleNextQuestion = () => {
+        if (currentQuestion + 1 < questions.length) {
+          setCurrentQuestion(currentQuestion + 1);
+          setIsAnswered(false);
+          setSelectedOption(null);
+        } else {
+          setShowResult(true);
+        }
+      };
+
+      const resetQuiz = () => {
+        startNewQuiz();
+      };
+
+      if (questions.length === 0) return null;
+
+      return (
+        <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4 font-sans text-gray-800">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden border-4 border-blue-300">
+            
+            {/* ヘッダー */}
+            <div className="bg-blue-600 text-white p-6 text-center">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-wider mb-2">🏢 日暮里・北部町会<br/>防災クイズ探検隊！ 🚒</h1>
+              <p className="mt-2 text-blue-100 font-medium">〜キミも町会の防災リーダーになろう！〜</p>
+            </div>
+
+            <div className="p-4 md:p-8">
+              {showResult ? (
+                /* 結果画面 */
+                <div className="text-center space-y-6 animate-fade-in">
+                  <IconTrophy className="w-24 h-24 mx-auto text-yellow-400 drop-shadow-md" />
+                  <h2 className="text-3xl font-bold text-gray-700">探検おつかれさま！</h2>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {questions.length}問中、{score}問正解！
+                  </p>
+                  
+                  <div className="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-300 text-left shadow-sm">
+                    <h3 className="font-bold text-xl mb-4 flex items-center text-yellow-800 border-b-2 border-yellow-200 pb-2">
+                      <IconLightbulb className="w-6 h-6 mr-2" />
+                      北部町会からのミッション！
+                    </h3>
+                    <p className="text-gray-700 mb-4 font-bold">
+                      スマホを置いたら、お家の人と一緒に次の3つをやってみよう。
+                    </p>
+                    <ul className="space-y-4 text-gray-700">
+                      <li className="flex items-start">
+                        <IconCheckCircle className="w-6 h-6 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
+                        <span><strong>うちの家具は倒れないように固定してあるか</strong>を今すぐ確認しよう。</span>
+                      </li>
+                      <li className="flex items-start">
+                        <IconMapPin className="w-6 h-6 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>自分のお家の<strong>指定避難所（ひぐらし小など）</strong>まで、どの道を通って行くか歩いてみよう。（せまい道やブロック塀に注意！）</span>
+                      </li>
+                      <li className="flex items-start">
+                        <IconUsers className="w-6 h-6 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>ご近所の人に会ったら<strong>「こんにちは！」</strong>と元気に挨拶しよう。それが一番の防災だよ。</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 text-sm text-gray-600 text-left">
+                    <strong>💡 保護者の方へ：</strong><br/>
+                    休みの日に、電気や水道を使わずに数時間過ごしてみる「ホームサバイバルトライアル」にぜひご家族で挑戦してみてください。足りない備蓄品やマンション特有のトイレの課題が見えてきます。
+                  </div>
+
+                  <button 
+                    onClick={resetQuiz}
+                    className="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition active:scale-95 flex items-center justify-center mx-auto text-lg"
+                  >
+                    <IconHome className="w-6 h-6 mr-2" />
+                    もういちど探検する（別の問題が出るよ！）
+                  </button>
+                </div>
+              ) : (
+                /* クイズ画面 */
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="bg-blue-100 text-blue-800 text-sm font-bold px-4 py-1.5 rounded-full">
+                      第 {currentQuestion + 1} 問 / {questions.length}問
+                    </span>
+                    <span className="text-gray-500 font-bold bg-gray-100 px-4 py-1.5 rounded-full">
+                      スコア: {score}
+                    </span>
+                  </div>
+
+                  {/* プログレスバー */}
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+                    <div 
+                      className="bg-blue-500 h-3 rounded-full transition-all duration-500" 
+                      style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
+                    ></div>
+                  </div>
+
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 leading-snug min-h-[5rem]">
+                    {questions[currentQuestion].question}
+                  </h2>
+
+                  <div className="space-y-3 mt-6">
+                    {questions[currentQuestion].options.map((option, index) => {
+                      let buttonClass = "w-full text-left p-4 rounded-xl border-2 transition-all duration-200 font-bold text-base md:text-lg ";
+                      
+                      if (!isAnswered) {
+                        buttonClass += "border-gray-200 hover:border-blue-500 hover:bg-blue-50 bg-white hover:shadow-md";
+                      } else {
+                        if (index === questions[currentQuestion].answer) {
+                          buttonClass += "border-green-500 bg-green-50 text-green-800 shadow-inner"; // 正解
+                        } else if (index === selectedOption) {
+                          buttonClass += "border-red-400 bg-red-50 text-red-800"; // 選んだ不正解
+                        } else {
+                          buttonClass += "border-gray-200 bg-gray-50 text-gray-400 opacity-50"; // その他
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handleAnswerClick(index)}
+                          disabled={isAnswered}
+                          className={buttonClass}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{option}</span>
+                            {isAnswered && index === questions[currentQuestion].answer && <IconCheckCircle className="w-7 h-7 text-green-500 flex-shrink-0 ml-2" />}
+                            {isAnswered && index === selectedOption && index !== questions[currentQuestion].answer && <IconXCircle className="w-7 h-7 text-red-500 flex-shrink-0 ml-2" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* 解説エリア（回答後に表示） */}
+                  {isAnswered && (
+                    <div className="mt-6 bg-blue-50 p-5 rounded-2xl border-2 border-blue-200 animate-fade-in shadow-sm">
+                      <h3 className="font-bold text-blue-800 mb-2 flex items-center">
+                        <IconLightbulb className="w-5 h-5 mr-1" />
+                        【なるほど！解説】
+                      </h3>
+                      <p className="text-gray-800 leading-relaxed font-medium">{questions[currentQuestion].explanation}</p>
+                      
+                      <div className="mt-6 flex justify-end">
+                        <button 
+                          onClick={handleNextQuestion}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md transform transition active:scale-95 flex items-center"
+                        >
+                          {currentQuestion + 1 === questions.length ? "探検の結果を見る！" : "次の問題へすすむ"}
+                          <IconArrowRight className="w-5 h-5 ml-2" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
