@@ -343,8 +343,8 @@
           const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], 'riesm_result.png', { type: 'image/png' });
           
-          // ▼ SNS投稿用のテキストにメッセージを組み込みました
-          const shareText = "私のいまの「心のフロント」はこんな感じでした🌈✨\n細かな説明については皆さんご自身で実施してみて！🔍\n\n#RIESM_mini #自己理解\nhttps://ninin-cc.github.io/rm/";
+          // ▼ SNS投稿用のテキストをアップデートしました
+          const shareText = "やるたびに設問が替わり今の自分を感じれる #RIESM_mini🌈\n私のいまの「心のフロント」はこんな感じでした✨皆さんも体験してみて！🔍\nhttps://ninin-cc.github.io/rm/";
           
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ text: shareText, files: [file] });
@@ -390,7 +390,7 @@
                   いまの自分を観る
                 </button>
                 <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center justify-center gap-1">
-                  RIESMをもっと知りたい方へ <ExternalLinkIcon />
+                  🌈RIESMをもっと知りたい方へ <ExternalLinkIcon />
                 </a>
               </div>
 
@@ -489,13 +489,14 @@
                         })}
                       </div>
                     </div>
-                    {/* 画像にのみ残るアピールメッセージ（Web上でも控えめに表示） */}
-                    <p className="text-center text-[10px] sm:text-xs font-bold text-slate-400 mt-3 mb-1">
-                      細かな説明については、皆さんご自身で実施してみて！🔍
-                    </p>
-                    {/* キャプチャ画像にのみ表示されるウォーターマーク */}
-                    <div id="capture-watermark" style={{ display: 'none' }} className="text-center text-[9px] sm:text-[10px] text-slate-400/80 font-medium mt-2 pb-1">
-                      🌈 RIESM_mini ©2026ninin consulting＆counseling
+                    {/* キャプチャ画像にのみ表示されるメッセージとウォーターマーク */}
+                    <div id="capture-watermark" style={{ display: 'none' }} className="text-center mt-3 pb-1">
+                      <p className="text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5">
+                        皆さんも体験してみてください。<br className="sm:hidden" />少し詳細なモードバランスの解説も出てきます🔍
+                      </p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-400/80 font-medium">
+                        🌈 RIESM_mini ©2026ninin consulting＆counseling
+                      </p>
                     </div>
                   </div>
                 </div>
