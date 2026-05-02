@@ -48,8 +48,8 @@
             【自分を知り、相手を知る】
         </h1>
         <p class="text-base md:text-lg text-stone-600 font-medium leading-relaxed mb-6">
-            理解を通じて、よりよい関係性を築くための<br class="hidden md:block"/>
-            アセスメントツール「RIESM（リズム）」
+            よりよい関係性を築くための<br class="hidden md:block"/>
+            アプローチ「RIESM（リズム）」
         </p>
         
         <div class="bg-white/60 p-4 rounded-xl border border-stone-200/50 mb-4 max-w-md w-full">
@@ -71,7 +71,7 @@
 
     <!-- プラン一覧と画像 -->
     <main class="w-full max-w-md px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
-        <div class="space-y-6">
+        <div id="plans" class="space-y-6 scroll-mt-6">
 
             <!-- (個人受検) セルフ理解プラン -->
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md">
@@ -126,9 +126,35 @@
                     お二人で受けることで、共通言語が生まれます。<br>
                     ご夫婦、パートナー、職場の同僚など、あなたの大切な方との対話にお役立てください。レポートは申し込み代表者様に合わせてお送りいたします。
                 </p>
+
+                <div class="bg-amber-50 p-3 rounded-lg mb-6 border border-amber-100">
+                    <p class="text-xs text-amber-800 font-medium leading-snug">
+                        【受検後のセッションについて】<br>
+                        ペアでご受検の方は、ページ下部の「RIESMセッション（50分）」も<span class="font-bold text-amber-900">お二人同席にて、同一価格（7,000円）</span>でご利用いただけます。対話を深める場としてぜひご活用ください。
+                    </p>
+                </div>
                 
                 <a href="https://buy.stripe.com/bJebJ0b8X50H8pqfwu9Zm01" class="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
                     ペアで申し込む
+                </a>
+            </div>
+
+            <!-- RIESM(アセスメント＆50分セッション)セット -->
+            <div class="bg-white rounded-2xl shadow-md border-2 border-amber-400 p-6 md:p-8 relative mt-10 transition-all hover:shadow-lg">
+                <!-- バッジ -->
+                <div class="absolute -top-3.5 left-5 bg-amber-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest shadow-sm">
+                    じっくり深めたい方におすすめ
+                </div>
+                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2 mt-1">RIESM（アセスメント＆50分セッション）セット</h2>
+                <div class="mb-5 flex items-baseline space-x-2">
+                    <span class="text-3xl font-black text-rose-600 tracking-tight">10,000<span class="text-2xl">円</span></span>
+                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 1名様分）</span>
+                </div>
+                <p class="text-sm text-stone-500 mb-6 leading-relaxed">
+                    RIESMアセスメントの受検と、プロのカウンセラーによる50分の個別セッションがセットになったプランです。結果レポートを読むだけでなく、対話を通してご自身の強みや現在地をより深く腑に落としたい方に最適です。
+                </p>
+                <a href="https://buy.stripe.com/aFa4gy2CreBh356fwu9Zm05" class="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
+                    セットプランで申し込む
                 </a>
             </div>
 
@@ -143,30 +169,87 @@
             >
         </div>
 
-        <!-- 再掲: (個人受検) セルフ理解プラン -->
-        <div class="mb-10 w-full fade-in" style="animation-delay: 0.4s;">
-            <div class="text-center mb-4">
-                <p class="text-sm font-medium text-stone-600 tracking-wide leading-relaxed">
-                    さぁ、このコックピットを手にして、<br class="md:hidden">広く暖かな🌈そらへ飛び立ちましょう
+        <!-- RIESMの理論背景 -->
+        <div class="mb-12 w-full fade-in" style="animation-delay: 0.35s;">
+            <div class="bg-white/80 rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8">
+                <p class="text-sm text-stone-600 leading-relaxed mb-6">
+                    🌈RIESMは産業社会以降の2つの心理学である、交流分析と職業選択理論を基盤とし、現代の働き方（デジタル/リモート環境）に合わせ、設問や構成をキャリア発達理論に基づいて調整したアプローチです。
+                </p>
+                
+                <div class="bg-stone-50 p-5 rounded-xl border border-stone-200/60">
+                    <p class="text-sm font-bold text-stone-700 mb-4">基盤とした心理学をシンプルにお伝えすると…</p>
+                    
+                    <!-- 心理学カード：エリック・バーン -->
+                    <div class="mb-6">
+                        <div class="flex items-start mb-2">
+                            <span class="text-sky-600 mr-2 mt-0.5 font-bold">➤</span>
+                            <span class="text-sm text-stone-600 font-medium leading-relaxed">交流分析は<br>「👪コミュニケーションと自我の心理学」</span>
+                        </div>
+                        <img 
+                            src="https://ninin-cc.github.io/img/berne.png" 
+                            alt="Eric Berne - 交流分析" 
+                            class="w-full h-auto rounded-lg shadow-sm border border-stone-200"
+                        >
+                    </div>
+
+                    <!-- 心理学カード：ジョン・ホランド -->
+                    <div class="mb-2">
+                        <div class="flex items-start mb-2">
+                            <span class="text-sky-600 mr-2 mt-0.5 font-bold">➤</span>
+                            <span class="text-sm text-stone-600 font-medium leading-relaxed">職業選択理論は<br>「✨興味と職業に関する心理学」です。</span>
+                        </div>
+                        <img 
+                            src="https://ninin-cc.github.io/img/holland.png" 
+                            alt="John L. Holland - 職業選択理論" 
+                            class="w-full h-auto rounded-lg shadow-sm border border-stone-200"
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 飛び立つメッセージとプラン選択へ戻るボタン -->
+        <div class="mb-12 w-full fade-in text-center" style="animation-delay: 0.4s;">
+            <div class="mb-6">
+                <p class="text-base md:text-lg font-bold text-stone-700 tracking-wide leading-relaxed">
+                    さぁ、このコックピットを手にして、<br>広く暖かな🌈そらへ飛び立ちましょう
                 </p>
             </div>
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md">
-                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2">（個人受検）セルフ理解プラン</h2>
+            
+            <a href="#plans" class="inline-flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-sm active:scale-95 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m18 15-6-6-6 6"/></svg>
+                プラン一覧から選ぶ
+            </a>
+        </div>
+
+        <!-- アフターフォロー：RIESMセッション50分（単体） -->
+        <div class="mb-12 w-full fade-in" style="animation-delay: 0.5s;">
+            <div class="flex items-center justify-center space-x-4 mb-6">
+                <div class="h-px bg-stone-200 flex-grow"></div>
+                <h3 class="text-sm font-bold text-stone-500 tracking-widest">受検後のサポート</h3>
+                <div class="h-px bg-stone-200 flex-grow"></div>
+            </div>
+
+            <div class="bg-stone-50 rounded-2xl shadow-inner border border-stone-200/60 p-6 md:p-8 transition-all">
+                <h2 class="text-lg md:text-xl font-bold text-stone-800 mb-2">RIESMセッション（50分）</h2>
                 <div class="mb-5 flex items-baseline space-x-2">
-                    <span class="text-3xl font-black text-rose-600 tracking-tight">5,000<span class="text-2xl">円</span></span>
-                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 1名様分）</span>
+                    <span class="text-3xl font-black text-rose-600 tracking-tight">7,000<span class="text-2xl">円</span></span>
+                    <span class="text-xs text-stone-400 font-medium tracking-wider">（税込 / 1回）</span>
                 </div>
-                <p class="text-sm text-stone-500 mb-6 leading-relaxed">
-                    自分自身の内面を深く見つめ、キャリアや行動特性を整理したい方向け。まずは自分自身の「現在地」を客観的に把握することから始めましょう。
+                <p class="text-sm text-stone-600 mb-6 leading-relaxed">
+                    すでにRIESMを受検済みの方で、さらに自己理解を深めたい方向けの単発セッションプランです。<br>
+                    50分の対話を通して、あなただけの大切な意味付け（リフレーミング）や、これからの行動への気づきをサポートします。<br>
+                    <span class="font-bold text-stone-700 mt-2 block">※相互理解プラン（ペア受検）を受けられた方は、お二人同席にて同一価格でセッションをご利用いただけます。</span>
+                    <span class="font-bold text-stone-700 mt-1 block">※何度でもお申し込みいただけます。心の定期メンテナンスや、行動のペースメーカーとしてもご活用ください。</span>
                 </p>
-                <a href="https://buy.stripe.com/28E00i1ynct9cFG3NM9Zm02" class="block w-full text-center bg-stone-800 hover:bg-stone-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm active:scale-95">
-                    このプランで申し込む
+                <a href="https://buy.stripe.com/bJe14mgthdxddJKfwu9Zm06" class="block w-full text-center bg-stone-700 hover:bg-stone-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm active:scale-95">
+                    セッションを申し込む
                 </a>
             </div>
         </div>
 
         <!-- トップへ戻るリンク（おまけ） -->
-        <div class="mb-12 text-center fade-in" style="animation-delay: 0.5s;">
+        <div class="mb-12 text-center fade-in" style="animation-delay: 0.6s;">
             <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 text-sm font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
                 <span>トップページへ戻る</span>
