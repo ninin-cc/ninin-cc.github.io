@@ -10,6 +10,7 @@
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
   
+  <!-- 画像保存用ライブラリ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -744,30 +745,59 @@
               {/* 完全版案内パネル */}
               <div className="bg-white p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200 text-center space-y-5 shadow-sm box-border">
                 <h3 className="font-black text-lg md:text-xl text-slate-800">🌈 より深く自分を知るために</h3>
-                <div className="text-[13px] md:text-sm text-slate-600 leading-relaxed text-left space-y-3 font-medium">
+                <div className="text-[13px] md:text-sm text-slate-600 leading-relaxed text-left space-y-4 font-medium">
                   <p>
-                    今回の診断は全22問の「簡易版（Lite）」です。直感でサクサク答えられる反面、選択のブレによって結果が極端に出たり、本来のあなたの特性とは少し異なる形になることもあります。
+                    今回の診断は全22問の「簡易版（Lite）」です。あなたが【自然に使いやすい役割】と【少し疲れやすい役割】の傾向をサクッと確認できますが、<span className="font-bold text-slate-800">直感的な選択のブレによって結果が極端に出ることもあります。</span>
                   </p>
                   <p>
-                    もし「少し違うかも？」と感じた場合はもう一度やり直してみるのも良いですし、全101問からなる<span className="font-bold text-slate-800">「完全版RIESM™（リズム）」</span>で、より精密な自己分析を体験していただくのもおすすめです。
+                    もし「少し違うかも？」と感じた場合はもう一度やり直してみるのも良いでしょう。ただし、人の心の動きは「役割」だけでは決まりません。
+                  </p>
+                  <p>
+                    <span className="font-bold text-slate-800">全101問</span>からなる<span className="font-bold text-slate-800">「完全版RIESM™（リズム）」</span>では、4つのモードのバランス、根底にある興味関心、ストレス時の傾向、そして対人関係での活かし方まで含めて、あなたの特性を<span className="font-bold text-orange-500">より立体的かつ精密に整理</span>します。
                   </p>
                 </div>
                 
-                <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-left box-border">
-                  <p className="text-[13px] sm:text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-                    <span className="text-orange-500">🎁</span> 簡易版受検者 限定特典
-                  </p>
-                  <p className="text-[12px] sm:text-[13px] text-slate-600 mb-4 font-medium leading-relaxed">
-                    完全版は通常 5,000円 ですが、お申し込み時に以下の招待コードをご記入いただくと <span className="font-bold text-orange-500 text-base">3,000円</span> で受検可能です。
-                  </p>
-                  <div className="flex items-center justify-center gap-3 bg-white py-3 sm:py-3.5 rounded-xl border border-slate-200 font-mono text-lg sm:text-2xl font-bold text-slate-700 tracking-[0.1em] sm:tracking-[0.2em] shadow-inner box-border overflow-hidden">
-                    {getInviteCode()}
+                {/* 完全版イメージ画像エリア */}
+                <div className="w-full flex flex-col gap-4 mt-4 mb-2">
+                  <div className="text-left">
+                    <p className="text-[13px] sm:text-[14px] font-bold text-slate-800">
+                      👇 完全版で手に入る「あなた専用の詳細レポート」
+                    </p>
+                  </div>
+                  
+                  <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                    <img src="https://ninin-cc.github.io/img/kanzen.png" alt="完全版RIESMのレポートイメージ" className="w-full h-auto object-contain" />
+                  </div>
+
+                  {/* 完全版の魅力・キャッチコピー */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      <span className="text-[11px] sm:text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md border border-blue-100 shadow-sm">上司に見せたくなるワタシのトリセツ</span>
+                      <span className="text-[11px] sm:text-xs font-bold bg-pink-50 text-pink-700 px-2.5 py-1 rounded-md border border-pink-100 shadow-sm">ご家族・パートナーとの幸せな接しかた</span>
+                      <span className="text-[11px] sm:text-xs font-bold bg-orange-50 text-orange-700 px-2.5 py-1 rounded-md border border-orange-100 shadow-sm">私だけの自然でラクな【役割】</span>
+                    </div>
+                    <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 w-full mt-1">
+                      <img src="https://ninin-cc.github.io/img/rei2.png" alt="完全版RIESMの詳細イメージ" className="w-full h-auto object-contain" />
+                    </div>
                   </div>
                 </div>
 
                 <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-4 px-4 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-2xl font-bold shadow-md text-sm md:text-base transition-all active:scale-[0.98] box-border">
                   完全版RIESM™の詳細・お申し込み <ExternalLink />
                 </a>
+                
+                <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-left box-border">
+                  <p className="text-[13px] sm:text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                    <span className="text-orange-500">🎁</span> Lite受検者 限定特典
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] text-slate-600 mb-4 font-medium leading-relaxed">
+                    完全版は通常5,000円ですが、Lite受検後に下記の<span className="font-bold text-slate-800">招待コード</span>をご記入いただくと、<span className="font-bold text-orange-500 text-base">3,000円</span>で受検可能です。
+                  </p>
+                  <div className="flex items-center justify-center gap-3 bg-white py-3 sm:py-3.5 rounded-xl border border-slate-200 font-mono text-lg sm:text-2xl font-bold text-slate-700 tracking-[0.1em] sm:tracking-[0.2em] shadow-inner box-border overflow-hidden">
+                    {getInviteCode()}
+                  </div>
+                </div>
+
               </div>
 
               <button onClick={() => window.location.reload()} className="w-full py-4 px-6 bg-transparent text-slate-500 rounded-xl font-bold hover:bg-slate-200 flex items-center justify-center gap-2 text-sm md:text-base transition-colors box-border">
