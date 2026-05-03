@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RIESM mini</title>
+  <title>RIESM™ mini</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -343,7 +343,7 @@
           const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], 'riesm_result.png', { type: 'image/png' });
           
-          // ▼ SNS投稿用のテキストをアップデートしました
+          // ▼ SNS投稿用のテキスト
           const shareText = "約３分！やるたびに設問が替わり今の自分を感じれる #RIESM_mini🌈\n私のいまの「心のフロント」はこんな感じでした✨皆さんも体験してみて！🔍#自己理解\nhttps://ninin-cc.github.io/rm/";
           
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -379,7 +379,7 @@
               <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mx-auto mb-6 shadow-lg flex items-center justify-center transform -rotate-6">
                 <span className="text-4xl">🌈</span>
               </div>
-              <h1 className="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">RIESM mini</h1>
+              <h1 className="text-3xl font-extrabold text-slate-800 mb-3 tracking-tight">RIESM™ mini</h1>
               <p className="text-slate-500 mb-8 font-medium leading-relaxed">
                 今のあなたの「心のモード（フロント）」を測ります。<br/>
                 直感で、いまの自分に近い方を選んでください。
@@ -389,26 +389,59 @@
                 <button onClick={startQuiz} className="w-full py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-all shadow-md active:scale-[0.98]">
                   いまの自分を観る
                 </button>
-                <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center justify-center gap-1">
-                  🌈RIESMをもっと知りたい方へ <ExternalLinkIcon />
-                </a>
               </div>
 
-              <div className="bg-blue-50 rounded-xl p-4 text-left border border-blue-100">
-                <div className="flex items-start gap-3">
+              {/* ▼ インフォメーション＆観測のヒントエリア ▼ */}
+              <div className="bg-blue-50 rounded-xl p-4 text-left border border-blue-100 mb-6">
+                <div className="flex items-start gap-3 mb-4">
                   <div className="mt-0.5"><InfoIcon /></div>
                   <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
-                    <strong>心の状態は「天気」のように毎日揺らぎます。</strong><br/>
-                    昨日と結果が違っても大丈夫。環境に合わせて心が柔軟にメインエンジン（フロント）を切り替えている証拠です。<br/>
-                    逆に<strong>「何度やっても変わらない部分（バックス）」</strong>に気づくことも、大切な観測の1つです。
+                    <span className="font-bold">心の状態は「天気」のように毎日揺らぎます。</span><br/>
+                    このアプリは、変化するフロントを観る「心の体温計」です。<br/>
+                    基礎体温を測るように、気になった時に何度でも試してみてください。<br/>
+                    逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、大切な観測の1つです。
                   </p>
                 </div>
+                <div className="bg-white/60 rounded-lg p-2.5 text-[11px] sm:text-xs text-blue-900 font-medium flex items-center justify-center gap-1.5 shadow-sm border border-blue-100/50">
+                  <span className="text-sm">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】すると便利です
+                </div>
               </div>
+              {/* ▲ インフォメーションエリア ここまで ▲ */}
 
-              <div className="mt-8 text-center">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
-                  © 2026 ninin consulting＆counseling
+              {/* ▼ RIESM Lite & 完全版への導線エリア ▼ */}
+              <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
+                <p className="text-[13px] text-slate-600 mb-3 leading-relaxed font-medium">
+                  完全版RIESM™では、4つのモードに加えて、<br className="hidden sm:block"/>
+                  <span className="font-bold">「どんな役割で力を発揮しやすいか」</span>まで整理できます。
+                </p>
+                <div className="space-y-2">
+                  <a href="https://ninin-cc.github.io/rl/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
+                    <div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">まずは気軽に知りたい方は</div>
+                      <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 RIESM™ cockpit Liteへ</div>
+                    </div>
+                    <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
+                  </a>
+                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
+                    <div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">仕事や人間関係で本格的に活かしたい方は</div>
+                      <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 完全版RIESM™へ</div>
+                    </div>
+                    <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
+                  </a>
+                </div>
+              </div>
+              {/* ▲ 導線エリア ここまで ▲ */}
+
+              <div className="mt-8 text-center space-y-2">
+                <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
+                  🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
                 </a>
+                <div>
+                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                    © 2026 ninin consulting＆counseling
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -495,7 +528,7 @@
                         皆さんも体験してみてください。<br className="sm:hidden" />少し詳細なモードバランスの解説も出てきます🔍
                       </p>
                       <p className="text-[9px] sm:text-[10px] text-slate-400/80 font-medium">
-                        🌈 RIESM_mini ©2026ninin consulting＆counseling
+                        🌈 RIESM™ mini ©2026ninin consulting＆counseling
                       </p>
                     </div>
                   </div>
@@ -513,29 +546,60 @@
                       <div className={`mt-4 p-3 sm:p-4 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
                          <p className={`text-[11px] sm:text-xs font-bold opacity-90 ${t.text} leading-relaxed`}>
                            💡 観測のヒント<br/>
-                           フロントはその日の環境や気分でよく揺らぎますが、スコアの低い【バックス】は何度実施してもあまり変わらない傾向があります。<br/>
-                           それはあなたが「今は一番無理をして使わなくていいエネルギー」であるというサインかもしれません。
+                           フロントはその日の気分でよく揺らぎますが、スコアの低い【バックス】は何度実施してもあまり変わらない傾向があります。<br/>
+                           「心の体温計」として、気になった時にまた観測してみてくださいね。
                          </p>
+                         <div className={`mt-3 pt-3 border-t border-white/30 flex items-center gap-2 text-[10px] sm:text-[11px] font-medium opacity-80 ${t.text}`}>
+                           <span className="text-xs">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】しておくと毎日の観測に便利です。
+                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="px-4 sm:px-8 pb-6 sm:pb-8 space-y-2 sm:space-y-3" data-html2canvas-ignore="true">
+                <div className="px-4 sm:px-8 pb-6 sm:pb-8 space-y-3 sm:space-y-4" data-html2canvas-ignore="true">
                   <button onClick={handleShare} disabled={isSharing} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base text-white shadow-md active:scale-95 ${isSharing ? 'bg-slate-400 cursor-not-allowed' : 'bg-slate-800 hover:bg-slate-700'}`}>
                     <ShareIcon /> {isSharing ? '画像を作成中...' : '今のフロントを保存・シェアする'}
                   </button>
-                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 bg-white border-2 ${t.border} rounded-xl font-bold transition-all text-sm md:text-base ${t.text} hover:bg-slate-50`}>
-                    RIESMをもっと知りたい方へ <ExternalLinkIcon />
-                  </a>
+                  
                   <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
                     <RefreshCwIcon /> もう一度観る
                   </button>
 
-                  <div className="text-center pt-2 sm:pt-3">
-                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
-                      © 2026 ninin consulting＆counseling
+                  {/* ▼ RIESM Lite & 完全版への導線エリア ▼ */}
+                  <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
+                    <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
+                      完全版RIESM™では、4つのモードに加えて、<br className="hidden sm:block"/>
+                      <span className="font-bold">「どんな役割で力を発揮しやすいか」</span>まで整理できます。
+                    </p>
+                    <div className="space-y-2">
+                      <a href="https://ninin-cc.github.io/rl/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm hover:shadow transition-all group ${t.border}`}>
+                        <div>
+                          <div className={`text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-70 ${t.text}`}>まずは気軽に知りたい方は</div>
+                          <div className={`text-[13px] sm:text-sm font-bold ${t.text}`}>🌈 RIESM™ cockpit Liteへ</div>
+                        </div>
+                        <div className={`opacity-50 group-hover:opacity-100 ${t.text}`}><ExternalLinkIcon /></div>
+                      </a>
+                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 rounded-lg shadow-sm hover:shadow transition-all group text-white bg-gradient-to-r ${t.header}`}>
+                        <div>
+                          <div className="text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-90">仕事や人間関係で本格的に活かしたい方は</div>
+                          <div className="text-[13px] sm:text-sm font-bold">🌈 完全版RIESM™へ</div>
+                        </div>
+                        <div className="opacity-80 group-hover:opacity-100"><ExternalLinkIcon /></div>
+                      </a>
+                    </div>
+                  </div>
+                  {/* ▲ 導線エリア ここまで ▲ */}
+
+                  <div className="text-center pt-2 sm:pt-3 space-y-2">
+                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
+                      🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
                     </a>
+                    <div>
+                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                        © 2026 ninin consulting＆counseling
+                      </a>
+                    </div>
                   </div>
                 </div>
                 {/* --- ▲▲▲ キャプチャしない範囲ここまで ▲▲▲ --- */}
