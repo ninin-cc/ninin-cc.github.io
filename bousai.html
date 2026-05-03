@@ -39,7 +39,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // --- アイコンコンポーネント (Lucideアイコンの代わり) ---
+    // --- アイコンコンポーネント ---
     const IconTrophy = ({ className }) => (
       <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
     );
@@ -64,8 +64,10 @@
     const IconUsers = ({ className }) => (
       <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     );
+    const IconAlertTriangle = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+    );
 
-    // --- メインアプリ ---
     function App() {
       const [currentQuestion, setCurrentQuestion] = useState(0);
       const [score, setScore] = useState(0);
@@ -73,9 +75,69 @@
       const [isAnswered, setIsAnswered] = useState(false);
       const [selectedOption, setSelectedOption] = useState(null);
       const [questions, setQuestions] = useState([]);
+      const [showIntro, setShowIntro] = useState(true);
 
-      // 北部町会・日暮里に特化した超特大クイズプール（約45問）
       const allQuestions = [
+        {
+          question: "テレビで大きな地震のニュースを見た時、「自分たちの町は大丈夫だろう」と思ってしまうことを心理学の言葉で何という？",
+          options: ["ヒーロー・バイアス", "楽観性（らっかんせい）バイアス", "ハッピー・バイアス"],
+          answer: 1,
+          explanation: "正解は「楽観性バイアス」。人間は怖いことを「自分には関係ない」と思い込むことで心を落ち着かせようとする性質があるんだ。でも、地震に「うちは大丈夫」は絶対にない！対岸の火事だと思わず、自分事として考えよう。"
+        },
+        {
+          question: "東京都が発表した「地震に関する地域危険度（第9回）」。都内5,192の町の中で、最も危険（ワースト1）とされたのはどこ？",
+          options: ["新宿区歌舞伎町", "渋谷区道玄坂", "荒川区荒川六丁目"],
+          answer: 2,
+          explanation: "なんと荒川区荒川六丁目がワースト1。町屋四丁目もワースト2位で、荒川区の8つの地区がワースト50に入っているんだ。私たちが住むこの地域は、地理的に見て本当に災害リスクが高い場所なんだよ。"
+        },
+        {
+          question: "荒川区の被害想定。もし首都直下型地震が起きたら、最悪の場合、荒川区で亡くなる人は何人と予想されている？",
+          options: ["約50人", "約400人", "約3,000人"],
+          answer: 1,
+          explanation: "想定される死者は「約400人（389人）」。その多くは、災害時に逃げるのが難しいお年寄りや障害のある方（要配慮者）だと言われているんだ。だからこそ、地域のみんなで助け合う必要があるよ。"
+        },
+        {
+          question: "同じく荒川区の被害想定。地震でケガをする人（負傷者）は、最悪の場合どれくらい出ると予想されている？",
+          options: ["約500人", "約2,200人", "約10,000人"],
+          answer: 1,
+          explanation: "想定される負傷者は「約2,200人（2217人）」。一方で、区内の救急車はたったの7台！ケガをしてもすぐには病院に運んでもらえないから、自分の身は自分で守る（ケガをしない工夫）が絶対に必要だよ。"
+        },
+        {
+          question: "荒川区の被害想定。地震の大きなゆれで、完全に倒れてしまう建物（全壊）はどれくらいあると予想されている？",
+          options: ["約800棟", "約8,400棟", "約20,000棟"],
+          answer: 1,
+          explanation: "なんと「約8,400棟（8379棟）」もの建物が完全に壊れてしまうと予想されているんだ。もしお家が古かったら、大人の人に「耐震（たいしん）チェックをしているか」聞いてみよう。"
+        },
+        {
+          question: "荒川区の被害想定。地震のあとに発生する「火事」で焼けてしまう建物は、最悪でどれくらい？",
+          options: ["約200棟", "約2,000棟", "約15,000棟"],
+          answer: 1,
+          explanation: "「約2,000棟（2090棟）」が燃えてしまうと想定されているよ。木のお家が密集している荒川区では、火事が一番恐ろしい二次災害なんだ。"
+        },
+        {
+          question: "荒川区で予想されている約2000棟の火事。でも実は「最初に出火する場所（出火点）」は、区内で何ヶ所くらいだと想定されている？",
+          options: ["たったの18ヶ所", "約300ヶ所", "約1,000ヶ所"],
+          answer: 0,
+          explanation: "実は、最初の火事は「たったの18ヶ所」にすぎないんだ！つまり、火が小さいうちに地域の消火器やスタンドパイプで「初期消火」できれば、被害を劇的に減らすことができるという希望の数字でもあるんだよ。"
+        },
+        {
+          question: "地域で火事を消すための道具「消火器」や、命を救う「AED」。きみの家の「一番近く」にあるのはどこ？",
+          options: ["わからない（気にしたことがない）", "交番や消防署にしかない", "地域の防災マップで場所を確認しておくべき！"],
+          answer: 2,
+          explanation: "大正解！消火器やAED、消火栓は、実は道を歩いていると色々なところにあるんだ。散歩のときに「あ、ここにもある！」と宝探しみたいに探して、場所を覚えておこう。"
+        },
+        {
+          question: "指定避難所（学校）や指定避難場所（大きな公園）。行く場所は、誰が決めるのが一番いい？",
+          options: ["地震が起きてから、その時一緒にいる人と決める", "お父さんかお母さんが勝手に決める", "あらかじめ家族全員で話し合って決めておく"],
+          answer: 2,
+          explanation: "災害時は電話もスマホもつながらなくなる可能性が高いよ。だから「うちの家族は地震が起きたら、まずはひぐらし小の体育館に集まる」など、あらかじめ全員で約束しておくことが命綱になるんだ。"
+        },
+        {
+          question: "世界で起きる大きな地震（マグニチュード6以上）のうち、日本で起きる割合はどれくらい？",
+          options: ["約10%", "約18%（17.9%）", "約30%"],
+          answer: 1,
+          explanation: "正解は約18%！日本は4つのプレートがぶつかり合う場所にあるから、世界でもすごく地震が多い国なんだよ。"
+        },
         {
           question: "これから30年の間に、東京で大きな地震が起きる確率は約70%。その時、荒川区の消防車や救急車は足りるかな？",
           options: ["みんなの所にすぐ来てくれる！", "ぜんぜん足りない！", "日暮里には特別な消防車がいっぱいある"],
@@ -116,7 +178,7 @@
           question: "最後に！地震の準備で、お水を買うよりも「一番最初」にあなたのお家でやらなきゃいけないことは何？",
           options: ["避難所の場所をスマホで調べる", "寝ている所に倒れてこないように、大きな家具を固定する", "町会長さんの名前を覚える"],
           answer: 1,
-          explanation: "命があってこそ！まずは大きな家具が倒れてこないようにしっかり固定しよう。「自分の命は自分で守る（自助）」。これができて初めて、周りの人を助けることができるんだ。"
+          explanation: "命があってこそ！水や食料の備蓄の前に、まずは大きな家具が倒れてこないようにしっかり固定しよう。「自分の命は自分で守る（自助）」。これができて初めて、備蓄の意味が出てくるんだ。"
         },
         {
           question: "家族で決めておくべき「もしもの時の集合場所」、一番良いのはどこ？",
@@ -342,11 +404,6 @@
         }
       ];
 
-      // 初回レンダリング時とリセット時にランダムに7問をセットする
-      useEffect(() => {
-        startNewQuiz();
-      }, []);
-
       const startNewQuiz = () => {
         const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
         setQuestions(shuffled.slice(0, 7));
@@ -355,6 +412,7 @@
         setShowResult(false);
         setIsAnswered(false);
         setSelectedOption(null);
+        setShowIntro(false);
       };
 
       const handleAnswerClick = (index) => {
@@ -378,26 +436,63 @@
         }
       };
 
-      const resetQuiz = () => {
-        startNewQuiz();
-      };
+      // --- イントロダクション画面 ---
+      if (showIntro) {
+        return (
+          <div className="min-h-screen min-h-[100dvh] bg-blue-50 flex flex-col font-sans text-gray-800">
+            <div className="bg-blue-600 text-white p-6 text-center shadow-md z-30">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-wider mb-2">🏢 日暮里・北部町会<br/>防災クイズ探検隊！ 🚒</h1>
+              <p className="mt-2 text-blue-100 font-medium">〜キミも町会の防災リーダーになろう！〜</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 md:p-8 flex items-start justify-center">
+              <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl border-4 border-blue-300 animate-fade-in">
+                <div className="p-6 md:p-8 space-y-6">
+                  <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+                    <h2 className="text-lg font-bold text-red-800 flex items-center mb-2">
+                      <IconAlertTriangle className="w-5 h-5 mr-2" />
+                      「うちは大丈夫」と思っていませんか？
+                    </h2>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      平和で安全だと言われる日本ですが、首都直下地震は「いつか来る」ではなく「必ず来る」現実です。<br/><br/>
+                      このクイズでは、私たちが住む荒川区の【実際の被害想定】や【地域危険度】といったリアルな数字が出題されます。<br/>
+                      クイズを通して、災害を「対岸の火事（他人事）」ではなく、【自分事】として正しく受け止めてもらうことが、このアプリの切実な願いです。
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-800 mb-4">全57問から、ランダムで7問出題されるよ！</p>
+                    <button 
+                      onClick={startNewQuiz}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform transition active:scale-95 text-xl flex items-center justify-center mx-auto"
+                    >
+                      探検に出発する！
+                      <IconArrowRight className="w-6 h-6 ml-2" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
 
       if (questions.length === 0) return null;
 
       return (
-        <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4 font-sans text-gray-800">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden border-4 border-blue-300">
-            
-            {/* ヘッダー */}
-            <div className="bg-blue-600 text-white p-6 text-center">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-wider mb-2">🏢 日暮里・北部町会<br/>防災クイズ探検隊！ 🚒</h1>
-              <p className="mt-2 text-blue-100 font-medium">〜キミも町会の防災リーダーになろう！〜</p>
-            </div>
+        <div className="min-h-screen min-h-[100dvh] bg-blue-50 flex flex-col font-sans text-gray-800">
+          
+          {/* ヘッダー */}
+          <div className="bg-blue-600 text-white p-4 md:p-5 text-center shadow-md z-30 sticky top-0">
+            <h1 className="text-xl md:text-2xl font-bold tracking-wider">🏢 日暮里・北部町会 防災クイズ探検隊！ 🚒</h1>
+          </div>
 
-            <div className="p-4 md:p-8">
+          {/* メインコンテンツ領域（設問固定 + スクロール） */}
+          <div className="flex-1 flex flex-col items-center p-4 md:p-8 overflow-y-auto">
+            <div className="bg-white shadow-xl w-full max-w-2xl rounded-3xl border-4 border-blue-300 relative overflow-hidden flex flex-col">
+              
               {showResult ? (
                 /* 結果画面 */
-                <div className="text-center space-y-6 animate-fade-in">
+                <div className="p-4 md:p-8 text-center space-y-6 animate-fade-in flex-1 overflow-y-auto">
                   <IconTrophy className="w-24 h-24 mx-auto text-yellow-400 drop-shadow-md" />
                   <h2 className="text-3xl font-bold text-gray-700">探検おつかれさま！</h2>
                   <p className="text-2xl font-bold text-blue-600">
@@ -415,27 +510,28 @@
                     <ul className="space-y-4 text-gray-700">
                       <li className="flex items-start">
                         <IconCheckCircle className="w-6 h-6 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                        <span><strong>うちの家具は倒れないように固定してあるか</strong>を今すぐ確認しよう。</span>
+                        <span>【うちの家具は倒れないように固定してあるか】を今すぐ確認しよう。</span>
                       </li>
                       <li className="flex items-start">
                         <IconMapPin className="w-6 h-6 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
-                        <span>自分のお家の<strong>指定避難所（ひぐらし小など）</strong>まで、どの道を通って行くか歩いてみよう。（せまい道やブロック塀に注意！）</span>
+                        <span>自分のお家の近くにある【消火器やAEDの場所】、そして【指定避難所（ひぐらし小など）】までの安全な道を歩いて確認しよう。</span>
                       </li>
                       <li className="flex items-start">
                         <IconUsers className="w-6 h-6 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
-                        <span>ご近所の人に会ったら<strong>「こんにちは！」</strong>と元気に挨拶しよう。それが一番の防災だよ。</span>
+                        <span>ご近所の人に会ったら【「こんにちは！」】と元気に挨拶しよう。それが一番の防災だよ。</span>
                       </li>
                     </ul>
                   </div>
 
-                  <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 text-sm text-gray-600 text-left">
-                    <strong>💡 保護者の方へ：</strong><br/>
-                    休みの日に、電気や水道を使わずに数時間過ごしてみる「ホームサバイバルトライアル」にぜひご家族で挑戦してみてください。足りない備蓄品やマンション特有のトイレの課題が見えてきます。
+                  <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 text-sm text-gray-700 text-left">
+                    <strong className="text-blue-800">💡 【敵を知り己を知る】 保護者の方へ：</strong><br/>
+                    クイズはいかがでしたか？<br/>
+                    災害を自分事として捉えるため、ぜひ休みの日に電気や水道を使わずに数時間過ごしてみる【ホームサバイバルトライアル】にご家族で挑戦してみてください。ご家庭独自の足りない備蓄品や、マンション特有のトイレの課題が明確に見えてきます。
                   </div>
 
                   <button 
-                    onClick={resetQuiz}
-                    className="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition active:scale-95 flex items-center justify-center mx-auto text-lg"
+                    onClick={startNewQuiz}
+                    className="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition active:scale-95 flex items-center justify-center mx-auto text-lg w-full md:w-auto"
                   >
                     <IconHome className="w-6 h-6 mr-2" />
                     もういちど探検する（別の問題が出るよ！）
@@ -443,29 +539,34 @@
                 </div>
               ) : (
                 /* クイズ画面 */
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="bg-blue-100 text-blue-800 text-sm font-bold px-4 py-1.5 rounded-full">
-                      第 {currentQuestion + 1} 問 / {questions.length}問
-                    </span>
-                    <span className="text-gray-500 font-bold bg-gray-100 px-4 py-1.5 rounded-full">
-                      スコア: {score}
-                    </span>
+                <div className="flex flex-col h-full max-h-[80vh]">
+                  
+                  {/* 【設問エリア（上部固定）】 */}
+                  <div className="shrink-0 z-20 bg-white px-4 py-4 md:px-8 border-b-2 border-gray-100 shadow-sm">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full">
+                        第 {currentQuestion + 1} 問 / {questions.length}問
+                      </span>
+                      <span className="text-gray-500 text-sm font-bold bg-gray-100 px-3 py-1 rounded-full">
+                        スコア: {score}
+                      </span>
+                    </div>
+
+                    {/* プログレスバー */}
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-500" 
+                        style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
+                      ></div>
+                    </div>
+
+                    <h2 className="text-lg md:text-xl font-bold text-gray-800 leading-snug">
+                      {questions[currentQuestion].question}
+                    </h2>
                   </div>
 
-                  {/* プログレスバー */}
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
-                    <div 
-                      className="bg-blue-500 h-3 rounded-full transition-all duration-500" 
-                      style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-                    ></div>
-                  </div>
-
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 leading-snug min-h-[5rem]">
-                    {questions[currentQuestion].question}
-                  </h2>
-
-                  <div className="space-y-3 mt-6">
+                  {/* 【選択肢・解説エリア（スクロール可能）】 */}
+                  <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 space-y-4">
                     {questions[currentQuestion].options.map((option, index) => {
                       let buttonClass = "w-full text-left p-4 rounded-xl border-2 transition-all duration-200 font-bold text-base md:text-lg ";
                       
@@ -496,28 +597,28 @@
                         </button>
                       );
                     })}
-                  </div>
 
-                  {/* 解説エリア（回答後に表示） */}
-                  {isAnswered && (
-                    <div className="mt-6 bg-blue-50 p-5 rounded-2xl border-2 border-blue-200 animate-fade-in shadow-sm">
-                      <h3 className="font-bold text-blue-800 mb-2 flex items-center">
-                        <IconLightbulb className="w-5 h-5 mr-1" />
-                        【なるほど！解説】
-                      </h3>
-                      <p className="text-gray-800 leading-relaxed font-medium">{questions[currentQuestion].explanation}</p>
-                      
-                      <div className="mt-6 flex justify-end">
-                        <button 
-                          onClick={handleNextQuestion}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md transform transition active:scale-95 flex items-center"
-                        >
-                          {currentQuestion + 1 === questions.length ? "探検の結果を見る！" : "次の問題へすすむ"}
-                          <IconArrowRight className="w-5 h-5 ml-2" />
-                        </button>
+                    {/* 解説エリア（回答後に表示） */}
+                    {isAnswered && (
+                      <div className="mt-8 bg-blue-50 p-5 rounded-2xl border-2 border-blue-200 animate-fade-in shadow-sm">
+                        <h3 className="font-bold text-blue-800 mb-2 flex items-center">
+                          <IconLightbulb className="w-5 h-5 mr-1" />
+                          【なるほど！解説】
+                        </h3>
+                        <p className="text-gray-800 leading-relaxed font-medium">{questions[currentQuestion].explanation}</p>
+                        
+                        <div className="mt-6 flex justify-end">
+                          <button 
+                            onClick={handleNextQuestion}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md transform transition active:scale-95 flex items-center"
+                          >
+                            {currentQuestion + 1 === questions.length ? "探検の結果を見る！" : "次の問題へすすむ"}
+                            <IconArrowRight className="w-5 h-5 ml-2" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             </div>
