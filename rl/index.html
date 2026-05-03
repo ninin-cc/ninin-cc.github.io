@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌈RIESM cockpit Lite</title>
+  <title>🌈RIESM™ cockpit Lite</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -101,7 +101,7 @@
       { id: 38, type: 'riasec', category: 'C', reverse: false, text: "厳密な手順に従って物事を進めるのが得意／好きだ。" },
       { id: 39, type: 'riasec', category: 'I', reverse: true,  text: "チームで協力する方が、一人で考えるよりも安心できる。" },
       { id: 40, type: 'riasec', category: 'S', reverse: false, text: "困っている人を放っておけず、力になりたいと強く感じる。" },
-      { id: 41, type: 'riasec', category: 'A', reverse: false, text: "創造的に何かをつくり出す活動（絵画、文章、音楽など）が好き／得意だ。" },
+      { id: 41, type: 'riasec', category: 'A', reverse: false, text: "創造的に何かをつくり出す活動（絵、文章など）や工夫が好き／得意だ。" },
       { id: 42, type: 'riasec', category: 'R', reverse: false, text: "道具や機械・PCを使う方が、人と作業するより性に合っている。" },
       { id: 43, type: 'riasec', category: 'S', reverse: true,  text: "他人や集団の問題に深入りすると、自分のエネルギーを消耗すると感じる。" },
       { id: 44, type: 'riasec', category: 'A', reverse: false, text: "自分の内面にある感情や感覚を掘り下げて表現することが大切だと思う。" },
@@ -316,10 +316,10 @@
       { id: 'AC', name: 'アダプター', letter: 'A', color: 'text-cyan-500', gradient: 'from-cyan-400 to-cyan-500' }
     ];
     const RIASEC_LABELS = [
-      { id: 'S', kanji1: '社', kanji2: '会' },
-      { id: 'C', kanji1: '慣', kanji2: '習' },
+      { id: 'S', kanji1: '貢', kanji2: '献' },
+      { id: 'C', kanji1: '整', kanji2: '合' },
       { id: 'R', kanji1: '体', kanji2: '感' },
-      { id: 'I', kanji1: '研', kanji2: '究' },
+      { id: 'I', kanji1: '探', kanji2: '究' },
       { id: 'E', kanji1: '達', kanji2: '成' },
       { id: 'A', kanji1: '創', kanji2: '造' }
     ];
@@ -412,17 +412,27 @@
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400"></div>
               <div className="w-full flex justify-center mb-1">
                 <h1 className="text-[28px] sm:text-[34px] font-black tracking-tight leading-tight text-slate-800 text-center">
-                  🌈RIESM
+                  🌈RIESM™
                   <span className="block text-xl sm:text-2xl text-slate-500 font-bold mt-1">cockpit Lite</span>
                 </h1>
               </div>
-              <div className="mt-8 mb-10 text-slate-600 text-[14px] sm:text-[15px] leading-relaxed font-medium flex flex-col items-center space-y-4">
-                <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600 px-5 py-2.5 rounded-full border border-cyan-100 shadow-sm mb-2">
+              
+              <div className="mt-8 mb-10 text-slate-600 text-[13px] sm:text-[14px] leading-relaxed font-medium flex flex-col items-center space-y-5 px-1 sm:px-2">
+                <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600 px-5 py-2.5 rounded-full border border-cyan-100 shadow-sm">
                   <PlaneIcon className="w-5 h-5 text-cyan-500" />
                   <span className="font-bold text-sm">さぁあなただけのコックピットを見つけにいきましょう！</span>
                 </div>
-                <p>直感でサクサク答えられる簡易診断です。</p>
-                <p>考え込まず、<br/>今の気持ちに一番近い形（▶）を<br/>タップしてください。</p>
+
+                <div className="text-center space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full">
+                  <p>
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-700 underline hover:text-slate-900 transition-colors">101問の完全版RIESM™</a>に比べ、<br className="hidden sm:block"/>
+                    全22問・約5分でサクッとご自身の傾向がわかる<span className="font-bold text-slate-700">簡易版（Lite）</span>です。
+                  </p>
+                  <p>
+                    直感で答えられる設問が多いですが、中には回答に葛藤するものもあるかもしれません。<br/>
+                    そんな時はゆっくりと悩みながら、<br className="sm:hidden"/>今の気持ちに一番近いところを選んでください。
+                  </p>
+                </div>
               </div>
               
               <button onClick={handleStart} className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg shadow-[0_4px_14px_0_rgba(6,182,212,0.39)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group">
@@ -431,7 +441,7 @@
 
               <div className="mt-6 text-center">
                 <a href="https://note.com/ninin2025/m/m46481d279232" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors underline inline-flex items-center gap-1">
-                  🌈RIESMをもっと知りたい方へ <ExternalLink />
+                  🌈RIESM™をもっと知りたい方へ <ExternalLink />
                 </a>
               </div>
             </div>
@@ -544,7 +554,7 @@
                 <div className="glass-panel p-6 sm:p-10 rounded-[32px] w-full flex flex-col items-center">
                   
                   <h2 className="text-[26px] sm:text-[32px] font-black tracking-tight leading-tight text-slate-800 text-center mb-10">
-                    🌈RIESM<br/>
+                    🌈RIESM™<br/>
                     <span className="block text-xl sm:text-2xl text-slate-500 font-bold mt-1">cockpit Lite</span>
                   </h2>
 
@@ -594,7 +604,7 @@
 
                   {/* クレジット (キャプチャ時のみ表示) */}
                   <div id="capture-cockpit-credit" className="hidden mt-10 text-center text-[11px] sm:text-xs font-bold text-slate-400">
-                    🌈RIESM cockpit Lite © 2026 ninin consulting＆counseling
+                    🌈RIESM™ cockpit Lite © 2026 ninin consulting＆counseling
                   </div>
                 </div>
               </div>
@@ -613,7 +623,7 @@
                   {/* タイトル (キャプチャ時のみ表示) */}
                   <div id="capture-role-title" className="hidden w-full flex justify-center mb-10">
                     <h2 className="text-[22px] sm:text-[26px] font-black tracking-tight leading-tight text-slate-800 text-center">
-                      🌈RIESM cockpit Lite<br/>
+                      🌈RIESM™ cockpit Lite<br/>
                       <span className="block text-base sm:text-lg text-slate-500 font-bold mt-1">あなたの役割解説</span>
                     </h2>
                   </div>
@@ -658,7 +668,7 @@
 
                   {/* クレジット (キャプチャ時のみ表示) */}
                   <div id="capture-role-credit" className="hidden mt-10 text-center text-[11px] sm:text-xs font-bold text-slate-400">
-                    🌈RIESM cockpit Lite © 2026 ninin consulting＆counseling
+                    🌈RIESM™ cockpit Lite © 2026 ninin consulting＆counseling
                   </div>
                 </div>
               </div>
@@ -675,7 +685,7 @@
                     今回の診断は全22問の「簡易版（Lite）」です。直感でサクサク答えられる反面、選択のブレによって結果が極端に出たり、本来のあなたの特性とは少し異なる形になることもあります。
                   </p>
                   <p>
-                    もし「少し違うかも？」と感じた場合はもう一度やり直してみるのも良いですし、全101問からなる<span className="font-bold text-slate-800">「完全版RIESM（リズム）」</span>で、より精密な自己分析を体験していただくのもおすすめです。
+                    もし「少し違うかも？」と感じた場合はもう一度やり直してみるのも良いですし、全101問からなる<span className="font-bold text-slate-800">「完全版RIESM™（リズム）」</span>で、より精密な自己分析を体験していただくのもおすすめです。
                   </p>
                 </div>
                 
@@ -692,7 +702,7 @@
                 </div>
 
                 <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-4 px-4 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-2xl font-bold shadow-md text-sm md:text-base transition-all active:scale-[0.98]">
-                  完全版RIESMの詳細・お申し込み <ExternalLink />
+                  完全版RIESM™の詳細・お申し込み <ExternalLink />
                 </a>
               </div>
 
