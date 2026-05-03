@@ -303,10 +303,15 @@
         let isDouble = false;
         let frontKey = "";
 
-        if (maxScore > 0 && secondScore >= maxScore * 0.9) {
-          isDouble = true;
-          frontKey = [maxType, secondType].sort().join('_');
+        // 画面に表示されるパーセンテージに合わせて判定（1位と2位の差が10%以内）
+        if (maxScore > 0) {
+          const secondPercent = Math.round(30 + (secondScore / maxScore) * 70);
+          if (100 - secondPercent <= 10) {
+            isDouble = true;
+            frontKey = [maxType, secondType].sort().join('_');
+          }
         }
+
         setResultScores(scores);
         const detailIndexCount = isDouble ? 2 : 3;
         const detailIndex = Math.floor(Math.random() * detailIndexCount);
@@ -397,8 +402,8 @@
                   <div className="mt-0.5"><InfoIcon /></div>
                   <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
                     <span className="font-bold">心の状態は「天気」のように毎日揺らぎます。</span><br/>
-                    このアプリは、変化するフロントを観る「心の体温計」設問は記憶で答えられないように工夫されてます🌈<br/>
-                    <span className="font-bold">基礎体温を測るように、お昼休みなど毎日同じ時間、</span>または気になった時に何度でも試してみてください。<br/>
+                    このアプリは、変化するフロントを観る「心の体温計」です。<br/>
+                    基礎体温を測るように、気になった時に何度でも試してみてください。<br/>
                     逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、大切な観測の1つです。
                   </p>
                 </div>
