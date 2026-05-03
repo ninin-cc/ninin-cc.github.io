@@ -393,6 +393,13 @@
             if (credit) credit.classList.remove('hidden');
             const title = clonedDoc.getElementById(`${targetId}-title`);
             if (title) title.classList.remove('hidden');
+
+            // 画像生成時のみ、巨大なバッジのサイズを通常サイズにリセットしてはみ出しを防止
+            const badges = clonedDoc.querySelectorAll('.rank-badge-large');
+            badges.forEach(badge => {
+              badge.classList.remove('text-[24px]', 'sm:text-[32px]');
+              badge.classList.add('text-sm', 'sm:text-lg');
+            });
           }
         });
 
@@ -633,7 +640,8 @@
                             const heat = scores.ego[mode.id] * scores.riasec[typeObj.id];
                             const badge = getRankBadge(mode.id, typeObj.id);
                             let badgeClass = "text-sm sm:text-lg";
-                            if (badge === '①' || badge === '②' || badge === '❶') badgeClass = "text-[24px] sm:text-[32px] font-black";
+                            // rank-badge-largeクラスを追加してキャプチャ時にサイズダウンできるようにする
+                            if (badge === '①' || badge === '②' || badge === '❶') badgeClass = "text-[24px] sm:text-[32px] font-black rank-badge-large";
                             return (
                               <div key={`${typeObj.id}-${mode.id}`} className="aspect-[5/2]">
                                 <div className={`w-full h-full rounded-md flex items-center justify-center font-bold ${badgeClass} ${getHeatColorRanked(heat)} transition-all duration-300 shadow-sm`}>{badge}</div>
