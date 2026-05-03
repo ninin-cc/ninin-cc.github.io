@@ -1,787 +1,239 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🌈RIESM™ cockpit Lite</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合同会社ninin</title>
+    
+    <!-- ファビコン（ブラウザのタブ用アイコン）の設定 -->
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <!-- スマホのホーム画面に追加した時などのアイコン設定 -->
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
 
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in {
-      animation: fadeIn 0.4s ease-out forwards;
-    }
-    body, html {
-      background: #f8fafc;
-      color: #334155;
-      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      min-height: 100vh;
-      overflow-x: hidden; /* スマホでの横揺れを完全に防止 */
-    }
-    .glass-panel {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-    }
-    /* はみ出し防止（minmax）を含めたグリッド設定 */
-    .cockpit-grid {
-      display: grid;
-      grid-template-columns: 3.5rem repeat(4, minmax(0, 1fr));
-      width: 100%;
-    }
-    @media (max-width: 640px) {
-      .cockpit-grid {
-        grid-template-columns: 2.25rem repeat(4, minmax(0, 1fr));
-      }
-    }
-  </style>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            /* 和紙のような温かみのあるベースカラー（生成り色） */
+            background-color: #fdfcf9;
+            /* SVGを用いた微細なノイズ（繊維感）で和紙のテクスチャを表現。ノイズを強めに調整 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="text-stone-800 min-h-screen flex flex-col items-center">
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    // --- アイコンコンポーネント ---
-    const ChevronRight = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-    );
-    const RefreshCw = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-    );
-    const ExternalLink = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-    );
-    const ArrowLeftIcon = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-    );
-    const PlaneIcon = ({ className = "w-6 h-6" }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.7l-1.4 3.7c-.2.5.1 1.1.6 1.3L9 15l-4 4-2.5-1c-.5-.2-1 0-1.2.5l-.8 2c-.2.5.1 1.1.6 1.3l6.5 1.3 1.3 6.5c.2.5.8.8 1.3.6l2-.8c.5-.2.7-.7.5-1.2l-1-2.5 4-4 3.1 6.1c.2.5.8.8 1.3.6l3.7-1.4c.5-.2.8-.6.7-1.1z"/>
-      </svg>
-    );
-    const ShareIcon = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    );
-
-    // --- 設問データ ---
-    const QUESTIONS = [
-      { id: 16, type: 'riasec', category: 'E', reverse: false, text: "人や組織を指揮したり、意思決定をしたりするのは得意／好きだ。" },
-      { id: 17, type: 'riasec', category: 'I', reverse: false, text: "論理的な分析や検証を通して、困難な壁や問題を解明するのが好き／得意だ。" },
-      { id: 18, type: 'riasec', category: 'R', reverse: false, text: "体を動かして活動する方が、デスクワークよりも向いていると感じる。" },
-      { id: 19, type: 'riasec', category: 'S', reverse: false, text: "共感をもって人の話を聞いたり、人間関係を調整したりするのが得意だ。" },
-      { id: 20, type: 'riasec', category: 'C', reverse: false, text: "規則性や定型のある仕事、体系だった業務が好き／得意だ。" },
-      { id: 21, type: 'riasec', category: 'A', reverse: false, text: "自分の感情や思考を表現（モノやカラダ、言葉など）するのは得意／好きだ。" },
-      { id: 22, type: 'riasec', category: 'I', reverse: false, text: "感情論を排し、知識や抽象的な理論を掘り下げて考えることが得意／好きだ。" },
-      { id: 23, type: 'riasec', category: 'A', reverse: false, text: "ルールなどに縛られず、自由な環境で働きたい。" },
-      { id: 24, type: 'riasec', category: 'E', reverse: false, text: "新しい事業や企画を立ち上げたり、リスクをとって挑戦したりするのが好きだ。" },
-      { id: 25, type: 'riasec', category: 'R', reverse: false, text: "手作業や手仕事を伴う活動は得意／好きだ。" },
-      { id: 26, type: 'riasec', category: 'S', reverse: false, text: "人のサポートをしたり、成長を支援したりする活動が好き／得意だ。" },
-      { id: 27, type: 'riasec', category: 'A', reverse: true,  text: "厳密な手順や制約にそってモノを作りたい。" },
-      { id: 28, type: 'riasec', category: 'C', reverse: false, text: "情報を整理したり、記録したりするのは得意な方だと思う。" },
-      { id: 29, type: 'riasec', category: 'R', reverse: true,  text: "モノを扱うより、人と話す方がストレスが少ない。" },
-      { id: 30, type: 'riasec', category: 'E', reverse: false, text: "自分の意見を主張し、他人や集団の行動に影響を与えるのが好き／得意だ。" },
-      { id: 31, type: 'riasec', category: 'I', reverse: false, text: "論理を発展させることや、知識を探求するのが好き／得意だ。" },
-      { id: 32, type: 'riasec', category: 'C', reverse: true,  text: "規則や手順よりも、柔軟性や即興性が大切だと考える。" },
-      { id: 33, type: 'riasec', category: 'E', reverse: false, text: "競争や勝負事になると燃え、成果を出すことに強い関心がある。" },
-      { id: 34, type: 'riasec', category: 'I', reverse: false, text: "複雑な現象の仕組みや原因を探り、理解しようとすることに興味がある。" },
-      { id: 35, type: 'riasec', category: 'S', reverse: false, text: "チームで協力し、皆で目標を達成するのが好き／得意だ。" },
-      { id: 36, type: 'riasec', category: 'R', reverse: false, text: "モノを作ることや、具体的な操作をするのが好き／得意だ。" },
-      { id: 37, type: 'riasec', category: 'E', reverse: false, text: "立場やポジションは重要だと感じ、出世や昇進を目指したい。" },
-      { id: 38, type: 'riasec', category: 'C', reverse: false, text: "厳密な手順に従って物事を進めるのが得意／好きだ。" },
-      { id: 39, type: 'riasec', category: 'I', reverse: true,  text: "チームで協力する方が、一人で考えるよりも安心できる。" },
-      { id: 40, type: 'riasec', category: 'S', reverse: false, text: "困っている人を放っておけず、力になりたいと強く感じる。" },
-      { id: 41, type: 'riasec', category: 'A', reverse: false, text: "創造的に何かをつくり出す活動（絵画、文章、音楽など）が好き／得意だ。" },
-      { id: 42, type: 'riasec', category: 'R', reverse: false, text: "道具や機械・PCを使う方が、人と作業するより性に合っている。" },
-      { id: 43, type: 'riasec', category: 'S', reverse: true,  text: "他人や集団の問題に深入りすると、自分のエネルギーを消耗すると感じる。" },
-      { id: 44, type: 'riasec', category: 'A', reverse: false, text: "自分の内面にある感情や感覚を掘り下げて表現することが大切だと思う。" },
-      { id: 45, type: 'riasec', category: 'C', reverse: false, text: "正確性が求められる細かな作業が好き／得意だ。" },
-      { id: 46, type: 'ego', category: 'A', reverse: false, text: "何でも、何が問題の中心か？を考え直します。" },
-      { id: 47, type: 'ego', category: 'FC', reverse: false, text: "してみたいことがいっぱいあります。" },
-      { id: 48, type: 'ego', category: 'CP', reverse: false, text: "間違ったことに対して、間違いだと言います。" },
-      { id: 49, type: 'ego', category: 'AC', reverse: false, text: "人の気持ちが気になって合わせてしまいます。" },
-      { id: 50, type: 'ego', category: 'CP', reverse: false, text: "時間を守らないことは嫌いです。" },
-      { id: 51, type: 'ego', category: 'NP', reverse: false, text: "思いやりがあります。" },
-      { id: 52, type: 'ego', category: 'AC', reverse: false, text: "人をほめるのが上手です。" },
-      { id: 53, type: 'ego', category: 'A', reverse: false, text: "物事を分析して、事実に基づいて考えます。" },
-      { id: 54, type: 'ego', category: 'FC', reverse: false, text: "気分転換が上手です。" },
-      { id: 55, type: 'ego', category: 'CP', reverse: false, text: "規則やルールを守ります。" },
-      { id: 56, type: 'ego', category: 'AC', reverse: false, text: "人前に出るより、後ろに引っ込んでしまいます。" },
-      { id: 57, type: 'ego', category: 'NP', reverse: false, text: "人の話をよく聞いてあげます。" },
-      { id: 58, type: 'ego', category: 'AC', reverse: false, text: "よく後悔します。" },
-      { id: 59, type: 'ego', category: 'CP', reverse: false, text: "人や自分をとがめます。" },
-      { id: 60, type: 'ego', category: 'A', reverse: false, text: "「なぜ」そうなのか理由を時間をかけて検討する方だ。" },
-      { id: 61, type: 'ego', category: 'AC', reverse: false, text: "相手の顔色をうかがいます。" },
-      { id: 62, type: 'ego', category: 'NP', reverse: false, text: "人の気持ちを考えます。" },
-      { id: 63, type: 'ego', category: 'AC', reverse: false, text: "不愉快なことがあっても口に出さず、押さえてしまいます。" },
-      { id: 64, type: 'ego', category: 'A', reverse: false, text: "情緒的というより理論的です。" },
-      { id: 65, type: 'ego', category: 'CP', reverse: false, text: "「～すべきである」、「～ねばならない」と思います。" },
-      { id: 66, type: 'ego', category: 'A', reverse: false, text: "社会の出来事やニュースを、感情論ではなく客観的な情報として理解することに関心があります。" },
-      { id: 67, type: 'ego', category: 'FC', reverse: false, text: "よく笑います。" },
-      { id: 68, type: 'ego', category: 'CP', reverse: false, text: "決めたことは、最期まで守らないと気がすみません。" },
-      { id: 69, type: 'ego', category: 'NP', reverse: false, text: "相手が喜ぶ「小さな気遣い」をしがちです。" },
-      { id: 70, type: 'ego', category: 'AC', reverse: false, text: "人によく思われようと振る舞います。" },
-      { id: 71, type: 'ego', category: 'NP', reverse: false, text: "協調性があります。" },
-      { id: 72, type: 'ego', category: 'CP', reverse: false, text: "借りたモノなどは、期限までに返さないと気になります。" },
-      { id: 73, type: 'ego', category: 'FC', reverse: false, text: "好奇心が強い方です。" },
-      { id: 74, type: 'ego', category: 'CP', reverse: false, text: "約束を破ることはありません。" },
-      { id: 75, type: 'ego', category: 'AC', reverse: false, text: "遠慮がちです。" },
-      { id: 76, type: 'ego', category: 'AC', reverse: false, text: "周囲の人の意見に振り回されます。" },
-      { id: 77, type: 'ego', category: 'FC', reverse: false, text: "物事を明るく考えます。" },
-      { id: 78, type: 'ego', category: 'A', reverse: false, text: "結末を予測して、準備します。" },
-      { id: 79, type: 'ego', category: 'FC', reverse: false, text: "ユーモアが好き、またはいたずら心があります。" },
-      { id: 80, type: 'ego', category: 'AC', reverse: false, text: "自分が悪くもないのに、すぐ謝ります。" },
-      { id: 81, type: 'ego', category: 'A', reverse: false, text: "物事を冷静に判断します。" },
-      { id: 82, type: 'ego', category: 'FC', reverse: false, text: "新しいことが好きです。" },
-      { id: 83, type: 'ego', category: 'FC', reverse: false, text: "将来の夢や楽しいことを空想するのが好きです。" },
-      { id: 84, type: 'ego', category: 'CP', reverse: false, text: "不正なことは嫌いです。" },
-      { id: 85, type: 'ego', category: 'A', reverse: false, text: "わからない時はわかるまで追求します。" },
-      { id: 86, type: 'ego', category: 'A', reverse: false, text: "仕事や生活の予定を記録します。" },
-      { id: 87, type: 'ego', category: 'NP', reverse: false, text: "人の失敗には寛大です。" },
-      { id: 88, type: 'ego', category: 'NP', reverse: false, text: "世話好きです。" },
-      { id: 89, type: 'ego', category: 'CP', reverse: false, text: "無責任な人を見ると、その場で注意せずにはいられません。" },
-      { id: 90, type: 'ego', category: 'FC', reverse: false, text: "趣味が豊かです。" },
-      { id: 91, type: 'ego', category: 'NP', reverse: false, text: "自分から暖かく挨拶します。" },
-      { id: 92, type: 'ego', category: 'FC', reverse: false, text: "会話の中で感情や驚きを、声や表現で豊かに表します。" },
-      { id: 93, type: 'ego', category: 'NP', reverse: false, text: "困っている人をみるとなんとかしてあげます。" },
-      { id: 94, type: 'ego', category: 'A', reverse: false, text: "他の人ならどうするだろうかと客観視します。" },
-      { id: 95, type: 'ego', category: 'NP', reverse: false, text: "子供や、自分より経験が浅い人に 関心を持ち、温かく見守ります。" }
-    ];
-
-    // --- 24の役割定義（アサーティブ＆労いVer） ---
-    const ROLE_DEFINITIONS = {
-      R: {
-        FC: { 
-          name: '冒険家役', 
-          desc_natural: '自らの感覚を頼りに世界を肌で感じる冒険家です。仕事では「まず現場を見る」ことで一次情報を掴み、直感に従って動くことで、停滞した場にエネルギーを与えます。',
-          desc_tiring: '場を盛り上げようとフットワークを軽くして現場に飛び込んだ経験があるかもしれません。本来のあなたには少しエネルギーのいる行動ですが、周囲のために無理に合わせて動いて、一人でどっと疲れていませんか。今まで本当によく頑張ってこられましたね。'
-        },
-        CP: { 
-          name: '守護者役', 
-          desc_natural: '信念に基づき規律と場を守り抜く役割です。現場の安全基準を実直に守り、生活のルーティンを整える実践力で、周囲に深い安心感と安定をもたらします。',
-          desc_tiring: '誰もやらない泥臭い作業や規律の維持を、「私が守らねば」と自ら背負ってなんとかこなされてきたと思います。しかし、本来のあなた以上に無理をしていたのなら、それは疲れて当然です。今までその場を支えてくれてありがとうございます。少し肩の力を抜いて休んでくださいね。'
-        },
-        NP: { 
-          name: 'バディ役', 
-          desc_natural: '現場で相手と同じ目線に立ち、共に汗を流して伴走する相棒です。後輩に寄り添い、友人の手伝いに駆けつけるなど、共にあることで周囲を強く結びつけます。',
-          desc_tiring: '相手を思う優しさから、自分の時間を削ってまで人に伴走する役割を引き受けてきたかもしれません。あなたは何とかこなされてきたと思いますが、他人のために自分のエネルギーを使いすぎると深く消耗してしまいます。ここまで人に尽くしてきたご自身を、まずはたっぷり労ってあげてください。'
-        },
-        AC: { 
-          name: 'オペレーター役', 
-          desc_natural: '与えられた役割を正確に完遂する実務のスペシャリストです。マニュアル遵守の精密な作業や緻密な趣味など、ブレない丁寧さが社会の質を高めています。',
-          desc_tiring: '周囲の期待に応えようと、精密な作業やルーティンを「完璧にこなさねば」と一人で抱え込んできた経験があるかもしれません。期待に応えようとなんとかこなされてきたと思いますが、常に気を張っているため心身ともに大きく消耗します。今まで本当にお疲れ様でした。時には手を抜くことも必要ですよ。'
-        }
-      },
-      I: {
-        FC: { 
-          name: '探究者役', 
-          desc_natural: '「なぜ？」という問いにワクワクし、知のフロンティアを駆け巡ります。未知を既知に変えるリサーチや趣味の追求は、周囲の思考をアップデートする光です。',
-          desc_tiring: '周囲の知的な話題に話を合わせたり、深くリサーチする役割を求められ、なんとか期待に応えてこられたと思います。しかし、心から興味を持てない探求はエネルギーを著しく奪います。無理に知的好奇心を発揮して付き合わなくても大丈夫です。よく頑張りましたね。'
-        },
-        CP: { 
-          name: '博士・研究者役', 
-          desc_natural: '原理原則を見極め、正解を追求する専門家です。データから法則を導き出し、知識を体系的に極める妥協のない姿勢は、チームの信頼できる羅針盤となります。',
-          desc_tiring: '組織の論理を担保するため、誰もやらない厳密なデータ分析や論理構築を、仕方なく引き受けてきたかもしれません。頼られるからこそなんとかこなされてきたと思いますが、全てに論理的な正解を出そうとすると心が疲弊してしまいます。専門家として場を支えてきたご自身を、まずはゆっくり休ませてあげてください。'
-        },
-        NP: { 
-          name: 'ナレッジ・ギバー役', 
-          desc_natural: '得た知識を惜しみなく分かち合う知の贈与者です。複雑な業務を優しく教え、有益な情報を伝えて人を助ける思いやりは、周囲の成長を支えるギフトです。',
-          desc_tiring: '自分のタスクで手一杯な時でも同僚に丁寧に教えたり、常に有益な情報を提供し続けてきたかもしれません。あなたは相手のためにとなんとかこなされてきたと思いますが、知識を分け与え続けるとエネルギーが枯渇してしまいます。人のために尽くしてきた自分を認め、教える役割を少し手放してみませんか。'
-        },
-        AC: { 
-          name: '研究員役', 
-          desc_natural: '事実に基づき、客観的な検証を地道に積み重ねる研究員です。感情を排したデータの確認や定点観測を続ける確実な力は、あらゆる決定の裏付けです。',
-          desc_tiring: '正確な結果を求められる環境で、感情を押し殺して厳密なデータ検証作業や記録に徹してきた経験があるかもしれません。期待に応えるためなんとか処理をこなされてきたと思いますが、本来の感情を抑え込んでいるため大きく消耗してしまいます。感情を脇に置いて頑張ってきたご自身を、思い切り労ってくださいね。'
-        }
-      },
-      C: {
-        FC: { 
-          name: 'ライフハッカー役', 
-          desc_natural: '制約を逆手に取り、効率的に改善することを楽しむ知恵者です。煩雑な業務の自動化など、遊び心ある創意工夫で退屈な日常をワクワクする冒険へと変えます。',
-          desc_tiring: '停滞した状況を打開するため、業務改善のアイデア出しや「お得で効率的な方法」を求められ、なんとか捻り出してきたかもしれません。一生懸命工夫されてきたと思いますが、常に効率を求められると心が休まりません。状況を良くしようと知恵を絞ってきた過去の自分に、お疲れ様と伝えてあげてください。'
-        },
-        CP: { 
-          name: '管理人・監査役', 
-          desc_natural: '全体の秩序を維持するため、公正な視点でルールを運用します。コンプライアンスを管理し、家庭の安全を確保する正義を貫く姿勢は、集団の不可欠な要です。',
-          desc_tiring: '集団の秩序を守るため、ルールの遵守を周囲に促す嫌な役回りを自ら買って出たり、管理を引き受けてきたかもしれません。責任感からなんとかこなされてきたと思いますが、神経をすり減らしたはずです。組織のために汚れ役を引き受けてきたご自身を労い、少しだけ監視の目を休めてみましょう。'
-        },
-        NP: { 
-          name: '総務・秘書役', 
-          desc_natural: 'みんなが快適に過ごせるよう、細やかな気配りで環境を整える最高の裏方です。先回りして備品を揃えるなど、献身的なホスピタリティは組織の潤滑油になります。',
-          desc_tiring: '周囲の期待に応えるため、雑務や気配りを一手に引き受けたり、飲み会の幹事など裏方に回って自分を楽しむ余裕を失った経験があるかもしれません。気配り上手なのでなんとかこなされてきたと思いますが、自分を犠牲にし続けると疲弊します。みんなのために動いてきた自分を、これからは最優先に労ってあげてください。'
-        },
-        AC: { 
-          name: '庶務・精密作業者役', 
-          desc_natural: '決まった手順を変えず、一貫した品質で業務を全うする精密作業者です。「いつも通り完璧に」こなす姿やルーティンを守る美学は、揺るぎない信頼の証です。',
-          desc_tiring: '「いつも通り完璧に」定型業務をこなすよう求められ、期待に応えようとなんとかこなされてきたと思います。しかし、常にミスなく完璧であろうと気を張っていると、心身ともに消耗してしまいます。完璧にやらなければと踏ん張ってきたご自身に、心からお疲れ様と言ってあげてください。'
-        }
-      },
-      S: {
-        FC: { 
-          name: 'ムードメーカー役', 
-          desc_natural: '存在そのもので場を明るくし、協働の輪を広げていく太陽です。困難な時もユーモアで空気を和ませ、人々の心の壁を取り払う引力を持っています。',
-          desc_tiring: '場の空気を悪くしないため、会議を盛り上げたり冗談を言ったりと気を使いすぎて、一人になるとどっと疲れた経験があるかもしれません。場を明るくしようとなんとか振る舞ってこられたと思いますが、本来の自分を削って捻り出したエネルギーです。頑張ってきたご自身を、静かに休ませてあげてください。'
-        },
-        CP: { 
-          name: 'アクティビスト役', 
-          desc_natural: '所属する「ムレ」の正しさを守り、力強く導く活動家です。組織の倫理を掲げ、家族や友人のために矢面に立つ覚悟は、周囲に戦う勇気を与えます。',
-          desc_tiring: '仲間を守らなければという強い責任感から、チームのために正論を主張して矢面に立ち、プレッシャーと戦ってきた過去があるかもしれません。誰かのためになんとか闘ってこられたと思いますが、一人で全てを背負うと心が擦り切れます。盾となってきたご自身を誇りに思い、時には戦いから離れて休んでくださいね。'
-        },
-        NP: { 
-          name: 'サポーター役', 
-          desc_natural: '相手の心や機微に深く寄り添い、優しく受け止めることで場を支える慈愛の人です。悩んでいる同僚の声を聴き、相手のために行動する共感力は心のオアシスです。',
-          desc_tiring: '自分の余裕がない時でも同僚の愚痴を聴き、負の感情を受け止めすぎた経験があるかもしれません。優しさからなんとか相手に寄り添ってこられたと思いますが、他人の感情を背負い続けると心が枯渇します。人の心に寄り添い続けてきたご自身の優しさを認め、今は自分の心を守ってあげてください。'
-        },
-        AC: { 
-          name: 'フォロワー役', 
-          desc_natural: '周囲の状況や期待を敏感に察知し、全体の調和を優先しながら場を円滑に回す協調の達人です。リーダーの意図を汲み取り、目立つことなく場に貢献します。',
-          desc_tiring: '周囲との摩擦を避けるため、本当は自分の意見があるのに空気を読んで多数派に合わせてきた経験があるかもしれません。調和を守るためになんとか合わせてこられたと思いますが、本音を抑え込むため著しく消耗します。自分を押し殺して場を丸く収めてきたご自身を、優しく解放してあげてください。'
-        }
-      },
-      E: {
-        FC: { 
-          name: 'イノベーター役', 
-          desc_natural: '常識の枠を超え、革新的なアイデアで周囲を熱狂させながら先頭を走るリーダーです。前例のない事業の立ち上げなど、恐れを知らない挑戦心は時代を動かします。',
-          desc_tiring: '「何か新しいことをしてほしい」という周囲の期待に応えようと、常に新しいアイデアを出し続けなければならないプレッシャーを感じていたかもしれません。期待に応えようとなんとか走り続けてこられたと思いますが、背伸びをし続けると心が折れてしまいます。革新を起こそうと頑張ってきたご自身を、まずは労ってくださいね。'
-        },
-        CP: { 
-          name: 'マネジャー役', 
-          desc_natural: '掲げた目標に対して強い責任を持ち、組織をゴールへ導き守り抜く司令塔です。進捗を厳密に管理してリスクを排除し、集団の努力を確かな成功へ結びつけます。',
-          desc_tiring: '結果を出さねばという重圧から、進捗やリスク管理を厳しく詰めて孤独を感じたり、イベントの仕切りを抱え込んだ経験があるかもしれません。責任感からなんとかやり遂げてこられたと思いますが、一人で管理し続けるのは限界があります。完璧な管理で組織を支えてきた自分に、心からお疲れ様と伝えてください。'
-        },
-        NP: { 
-          name: 'コーチ役', 
-          desc_natural: 'メンバーの可能性を信じ、共に汗を流しながら達成を支援する伴走型のリーダーです。部下の強みを引き出しモチベーションを高め、人を育てる力を発揮します。',
-          desc_tiring: '相手の成長を支援せねばという思いから、自分の成果に集中したいのに部下のフォローに時間を割き、エネルギーが枯渇した経験があるかもしれません。面倒見の良さからなんとか指導をこなされてきたと思いますが、他人の課題まで背負い込むと自分がすり減ります。人のために尽力してきた温かいご自身を、たっぷり休ませてあげてください。'
-        },
-        AC: { 
-          name: '補佐役', 
-          desc_natural: '組織の目標達成に向けて自らの役割を確実に完遂し、トップを支える最高の右腕です。リーダーの決断を実務レベルに落とし込むアシストは成功に欠かせません。',
-          desc_tiring: '組織を支えねばという思いから、自分が前に出たい気持ちを抑えてリーダーの裏方に回り、ミスのないアシストを続けてきた経験があるかもしれません。期待に応えようとなんとか裏方をこなされてきたと思いますが、自己実現を抑え込むため消耗します。これまで縁の下の力持ちとして場を支え続けてきたご自身を、大いに讃えてくださいね。'
-        }
-      },
-      A: {
-        FC: { 
-          name: 'クリエイター役', 
-          desc_natural: '既存の枠組みに縛られず、自由な感性で新しい価値を生み出す発明家です。斬新なデザインの提案など、ゼロからイチを創り出す自由な魂は世界に色を添えます。',
-          desc_tiring: '「独自性」や「センス」を求められる環境で、斬新な企画を求められ苦しい思いをしたり、人と違う自分を表現せねばと気疲れした経験があるかもしれません。期待に応えようとなんとか形にされてきたと思いますが、本来の強みではないため精神的に著しく消耗します。捻り出して創造しようと頑張ってきたご自身を、まずは優しく休ませてください。'
-        },
-        CP: { 
-          name: '求道者役', 
-          desc_natural: '創造物に対し一切の妥協を許さず、完璧な美学をストイックに追求し続ける職人です。細部までこだわる完成度への厳格な執念は、時代を超えて残る価値を創ります。',
-          desc_tiring: '完成度に対する周囲の期待やプレッシャーから、細部の品質に妥協できず何時間も浪費して疲労困憊した経験があるかもしれません。高い要求になんとか応えようとされてきたと思いますが、完璧主義を貫くと心が折れてしまいます。極限までクオリティを高めようと身を削ってきたご自身に、心からお疲れ様と言ってあげてください。'
-        },
-        NP: { 
-          name: '詩人・作家役', 
-          desc_natural: '人々の心の琴線に触れるような、情緒的で温かい物語を紡ぎ出す役割です。顧客の感情を動かす提案など、感情を形にする豊かな感性は人々の心を温めます。',
-          desc_tiring: '人の心に触れなければというプレッシャーから、共感を呼ぶストーリー作りを求められたり、心のこもった言葉を返さねばと疲弊した経験があるかもしれません。相手を満たすためになんとか言葉を紡いでこられたと思いますが、本来のあなたとは違うため消耗します。無理にエモーショナルに振る舞おうと頑張ってきたご自身を、今はゆっくり休ませてください。'
-        },
-        AC: { 
-          name: '工芸職人役', 
-          desc_natural: '与えられた指示や枠組みの中で、モノやデータを美しく正確に仕上げる創造性を発揮します。期待を超える精度で納品する規律の中に宿る創造性は、高品質な美を生み出します。',
-          desc_tiring: '枠組みの中で完璧なものを生み出さねばと、細かい指示に縛られて寸分違わず再現することに息苦しさを感じた経験があるかもしれません。やらなければならないと、なんとかこなされてきたと思います。しかし、創造性を抑え込まれるため心が窮屈になります。期待に応えようと窮屈な枠に自分を押し込めてきたご自身を、存分に解放してあげてください。'
-        }
-      }
-    };
-
-    const generateQuizList = () => {
-      const selected = [];
-      ['R', 'I', 'A', 'S', 'E', 'C'].forEach(cat => {
-        const qs = QUESTIONS.filter(q => q.type === 'riasec' && q.category === cat);
-        qs.sort(() => 0.5 - Math.random());
-        selected.push(...qs.slice(0, 2));
-      });
-      ['A', 'FC', 'CP', 'NP', 'AC'].forEach(cat => {
-        const qs = QUESTIONS.filter(q => q.type === 'ego' && q.category === cat);
-        qs.sort(() => 0.5 - Math.random());
-        selected.push(...qs.slice(0, 2));
-      });
-      return selected.sort(() => 0.5 - Math.random());
-    };
-
-    const EGO_LABELS = [
-      { id: 'FC', name: 'ワンダー', letter: 'W', color: 'text-orange-500', gradient: 'from-orange-400 to-orange-500' },
-      { id: 'CP', name: 'キーパー', letter: 'K', color: 'text-blue-600', gradient: 'from-blue-500 to-blue-600' },
-      { id: 'NP', name: 'ナーチャー', letter: 'N', color: 'text-pink-500', gradient: 'from-pink-400 to-pink-500' },
-      { id: 'AC', name: 'アダプター', letter: 'A', color: 'text-cyan-500', gradient: 'from-cyan-400 to-cyan-500' }
-    ];
-    const RIASEC_LABELS = [
-      { id: 'S', kanji1: '貢', kanji2: '献' },
-      { id: 'C', kanji1: '整', kanji2: '合' },
-      { id: 'R', kanji1: '体', kanji2: '感' },
-      { id: 'I', kanji1: '探', kanji2: '究' },
-      { id: 'E', kanji1: '達', kanji2: '成' },
-      { id: 'A', kanji1: '創', kanji2: '造' }
-    ];
-
-    function App() {
-      const [phase, setPhase] = useState('start'); 
-      const [quizList, setQuizList] = useState([]);
-      const [currentIndex, setCurrentIndex] = useState(0);
-      const [answers, setAnswers] = useState([]);
-
-      const handleStart = () => {
-        setQuizList(generateQuizList());
-        setCurrentIndex(0);
-        setAnswers([]);
-        setPhase('quiz');
-      };
-
-      const handleAnswer = (val) => {
-        const newAnswers = [...answers, val];
-        setAnswers(newAnswers);
-        if (currentIndex + 1 < quizList.length) {
-          setCurrentIndex(currentIndex + 1);
-        } else {
-          setPhase('result');
-        }
-      };
-
-      const handleBack = () => {
-        if (currentIndex > 0) {
-          setCurrentIndex(currentIndex - 1);
-          setAnswers(answers.slice(0, -1));
-        }
-      };
-
-      const calculateScores = () => {
-        const scores = {
-          riasec: { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 },
-          ego: { A: 0, FC: 0, CP: 0, NP: 0, AC: 0 }
-        };
-        answers.forEach((ans, idx) => {
-          const q = quizList[idx];
-          let val = ans;
-          if (q.reverse) val = 6 - ans;
-          scores[q.type][q.category] += val;
-        });
-        Object.keys(scores.riasec).forEach(key => {
-          scores.riasec[key] = scores.riasec[key] * 1.1;
-        });
-        return scores;
-      };
-
-      const [isProcessing, setIsProcessing] = useState(false);
-
-      // Web Share API を活用したシェア＆ダウンロード機能
-      const handleCaptureAll = async () => {
-        if (isProcessing) return;
-        setIsProcessing(true);
+    <!-- ヒーローセクション -->
+    <header class="w-full max-w-2xl pt-10 pb-4 px-6 text-center flex flex-col items-center">
+        <div class="mb-4 flex justify-center min-h-[80px] items-center">
+            <!-- ninin ロゴ画像 -->
+            <img 
+                src="https://ninin-cc.github.io/img/ninin.png" 
+                alt="ninin logo" 
+                class="h-20 w-20 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
+                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
+            >
+        </div>
         
-        const cockpitElem = document.getElementById('capture-cockpit');
-        const roleElem = document.getElementById('capture-role');
-        if (!cockpitElem || !roleElem) {
-          setIsProcessing(false);
-          return;
-        }
+        <div class="max-w-xs w-full h-px bg-stone-200 mt-2"></div>
+    </header>
 
-        const cloneOptions = (targetId) => ({
-          scale: 2,
-          backgroundColor: '#f8fafc',
-          onclone: (clonedDoc) => {
-            const credit = clonedDoc.getElementById(`${targetId}-credit`);
-            if (credit) credit.classList.remove('hidden');
-            const title = clonedDoc.getElementById(`${targetId}-title`);
-            if (title) title.classList.remove('hidden');
-          }
-        });
+    <!-- 企業理念 (Philosophy) -->
+    <section class="w-full max-w-2xl px-6 mb-6 text-center fade-in">
+        <div class="bg-white px-5 pt-5 pb-3 md:px-6 md:pt-6 md:pb-4 rounded-2xl border border-stone-100 shadow-sm relative mt-3">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-4 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
+                Philosophy
+            </div>
+            <p class="text-stone-700 font-medium leading-relaxed md:text-base mt-2">
+                私たちは、自分らしく生きていける<br class="hidden md:block"/>
+                社会 / 心理支援を<br class="hidden md:block"/>
+                「日本のあたり前」にしてゆきます
+            </p>
+            <div class="text-right mt-2 md:mt-3 leading-none">
+                <span class="text-[10px] text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
+            </div>
+        </div>
+    </section>
 
-        try {
-          // キャンバスを生成
-          const canvas1 = await window.html2canvas(cockpitElem, cloneOptions('capture-cockpit'));
-          const canvas2 = await window.html2canvas(roleElem, cloneOptions('capture-role'));
-          
-          // Blobに変換
-          const getBlob = (canvas) => new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-          const blob1 = await getBlob(canvas1);
-          const blob2 = await getBlob(canvas2);
-          
-          const file1 = new File([blob1], 'riesm_cockpit.png', { type: 'image/png' });
-          const file2 = new File([blob2], 'riesm_role.png', { type: 'image/png' });
-
-          // スマホなどのWeb Share API対応環境であればダイアログを開く
-          if (navigator.canShare && navigator.canShare({ files: [file1, file2] })) {
-            try {
-              await navigator.share({
-                files: [file1, file2],
-                title: '🌈RIESM cockpit Lite 診断結果',
-                text: '私のRIESM診断結果です！\nhttps://ninin-cc.github.io/riesm.html'
-              });
-            } catch (err) {
-              // ユーザーがシェアをキャンセルした場合は何もしない、それ以外のエラーはダウンロードへ
-              if (err.name !== 'AbortError') {
-                 downloadFiles(canvas1, canvas2);
-              }
-            }
-          } else {
-             // 未対応環境（PC等）の場合は自動でダウンロードさせる
-             downloadFiles(canvas1, canvas2);
-          }
-        } catch (error) {
-          console.error('画像生成エラー:', error);
-        } finally {
-          setIsProcessing(false);
-        }
-      };
-
-      const downloadFiles = async (canvas1, canvas2) => {
-        const link = document.createElement('a');
-        link.download = 'riesm_cockpit.png';
-        link.href = canvas1.toDataURL('image/png');
-        link.click();
-        
-        await new Promise(resolve => setTimeout(resolve, 500)); // 連続ダウンロードブロック対策
-        
-        link.download = 'riesm_role.png';
-        link.href = canvas2.toDataURL('image/png');
-        link.click();
-      };
-
-      if (phase === 'start') {
-        return (
-          <div className="flex flex-col items-center justify-center min-h-screen px-2 sm:px-4 animate-fade-in py-10 w-full overflow-x-hidden">
-            <div className="glass-panel p-5 sm:p-12 rounded-[32px] max-w-md w-full text-center relative overflow-hidden box-border">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400"></div>
-              <div className="w-full flex justify-center mb-1">
-                <h1 className="text-[28px] sm:text-[34px] font-black tracking-tight leading-tight text-slate-800 text-center">
-                  🌈RIESM™
-                  <span className="block text-xl sm:text-2xl text-slate-500 font-bold mt-1">cockpit Lite</span>
-                </h1>
-              </div>
-              
-              <div className="mt-8 mb-10 text-slate-600 text-[13px] sm:text-[14px] leading-relaxed font-medium flex flex-col items-center space-y-5 px-1 sm:px-2">
-                <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600 px-5 py-2.5 rounded-full border border-cyan-100 shadow-sm">
-                  <PlaneIcon className="w-5 h-5 text-cyan-500" />
-                  <span className="font-bold text-sm">さぁあなただけのコックピットを見つけにいきましょう！</span>
+    <!-- メインリンク一覧 -->
+    <main class="w-full max-w-md px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+        <div class="space-y-6">
+            
+            <!-- メインサービス：RIESM -->
+            <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" 
+               class="group block w-full bg-white rounded-2xl shadow-md border-2 border-stone-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-95">
+                <div class="bg-stone-50/50 p-6 flex justify-center items-center border-b border-stone-100">
+                    <img 
+                        src="https://ninin-cc.github.io/img/riesm.png" 
+                        alt="RIESM logo" 
+                        class="w-full max-w-[240px] h-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                    >
                 </div>
-
-                <div className="text-center space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-100 w-full box-border">
-                  <p>
-                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="font-bold text-slate-700 underline hover:text-slate-900 transition-colors">101問の完全版RIESM™</a>に比べ、<br className="hidden sm:block"/>
-                    全22問・約5分でサクッとご自身の傾向がわかる<span className="font-bold text-slate-700">簡易版（Lite）</span>です。
-                  </p>
-                  <p className="text-slate-500 text-[12px] sm:text-[13px]">
-                    直感で答えられる設問が多いですが、中には回答に葛藤するものもあるかもしれません。<br/>
-                    そんな時はゆっくりと悩みながら、<br className="sm:hidden"/>今の気持ちに一番近いところを選んでください。
-                  </p>
-                </div>
-              </div>
-              
-              <button onClick={handleStart} className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg shadow-[0_4px_14px_0_rgba(6,182,212,0.39)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group box-border">
-                テイクオフ<span className="group-hover:translate-x-1 transition-transform"><ChevronRight /></span>
-              </button>
-
-              <div className="mt-6 text-center">
-                <a href="https://note.com/ninin2025/m/m46481d279232" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors underline inline-flex items-center gap-1">
-                  🌈RIESM™をもっと知りたい方へ <ExternalLink />
-                </a>
-              </div>
-            </div>
-            
-            {/* 共通フッター（スタート画面用） */}
-            <div className="mt-12 mb-8 text-center text-[13px] sm:text-sm text-slate-500 font-medium">
-              <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="hover:text-slate-800 transition-colors underline">
-                © 2026 ninin consulting＆counseling
-              </a>
-            </div>
-          </div>
-        );
-      }
-
-      if (phase === 'quiz') {
-        const currentQ = quizList[currentIndex];
-        const progress = ((currentIndex) / quizList.length) * 100;
-        return (
-          <div className="flex flex-col min-h-screen px-3 sm:px-4 pt-8 pb-12 max-w-lg mx-auto animate-fade-in w-full overflow-x-hidden">
-            <div className="w-full bg-slate-200 rounded-full h-2 mb-6 overflow-hidden shadow-inner mt-4 box-border">
-              <div className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
-            </div>
-            
-            {/* === 設問エリア（上部に配置） === */}
-            <div className="w-full mb-6 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-center min-h-[160px] sm:min-h-[200px] box-border relative">
-              <div className="absolute top-4 right-4 sm:top-5 sm:right-5 text-[11px] sm:text-sm font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100 shadow-sm">
-                Q.{currentIndex + 1} / {quizList.length}
-              </div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-relaxed text-center break-auto text-slate-800 mt-6 sm:mt-8">
-                {currentQ.text}
-              </h3>
-            </div>
-
-            {/* === 選択肢エリア（設問のすぐ下に配置） === */}
-            <div className="w-full mb-6 bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-200 box-border">
-              <div className="flex justify-between items-end h-24 sm:h-32 px-1 sm:px-4 mb-4">
-                {[1, 2, 3, 4, 5].map((val) => {
-                  const sizeClasses = { 1: 'w-7 h-7 sm:w-10 sm:h-10', 2: 'w-9 h-9 sm:w-12 sm:h-12', 3: 'w-11 h-11 sm:w-14 sm:h-14', 4: 'w-14 h-14 sm:w-16 sm:h-16', 5: 'w-16 h-16 sm:w-20 sm:h-20' };
-                  return (
-                    <div key={val} onClick={() => handleAnswer(val)} className="flex flex-col justify-end items-center h-full w-[18%] cursor-pointer group relative">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`${sizeClasses[val]} text-slate-300 group-hover:text-cyan-400 group-active:text-cyan-500 transition-all duration-200 drop-shadow-sm group-hover:scale-110 group-active:scale-95`}><path d="M6.002 3.195C6.002 2.133 7.158 1.47 8.077 2.01L20.81 9.815C21.706 10.364 21.706 11.636 20.81 12.185L8.077 19.99C7.158 20.53 6.002 19.867 6.002 18.805V3.195Z" /></svg>
-                      <div className="absolute bottom-0 w-12 h-16 sm:w-16 sm:h-20"></div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex justify-between w-full px-1 sm:px-2 text-[11px] sm:text-sm font-bold text-slate-500">
-                <span className="w-1/3 text-left">当てはまらない</span>
-                <span className="w-1/3 text-center">どちらでも<br/>ない</span>
-                <span className="w-1/3 text-right">おおいに<br/>当てはまる</span>
-              </div>
-            </div>
-            
-            {/* === ナビゲーション（選択肢のすぐ下に配置） === */}
-            <div className="flex items-center justify-center pt-2 pb-4">
-              <button onClick={handleBack} disabled={currentIndex === 0} className={`flex items-center gap-1 text-[13px] sm:text-base font-extrabold text-slate-400 transition-opacity ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70 hover:text-blue-600'}`}>
-                <ArrowLeftIcon /> 前の質問へ戻る
-              </button>
-            </div>
-            
-            {/* 共通フッター（一番下に配置） */}
-            <div className="mt-auto text-center text-[13px] sm:text-sm text-slate-400 font-medium pt-8">
-              <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="hover:text-slate-800 transition-colors underline">
-                © 2026 ninin consulting＆counseling
-              </a>
-            </div>
-          </div>
-        );
-      }
-
-      if (phase === 'result') {
-        const scores = calculateScores();
-        const allCells = [];
-        EGO_LABELS.forEach(mode => { RIASEC_LABELS.forEach(typeObj => { allCells.push({ modeId: mode.id, typeId: typeObj.id, heat: scores.ego[mode.id] * scores.riasec[typeObj.id] }); }); });
-        allCells.sort((a, b) => b.heat - a.heat);
-        
-        const top3 = allCells.slice(0, 3);
-        const bottom3 = allCells.slice(-3).reverse();
-        const top1Role = ROLE_DEFINITIONS[top3[0].typeId][top3[0].modeId];
-        const top2Role = ROLE_DEFINITIONS[top3[1].typeId][top3[1].modeId];
-        const bottom1Role = ROLE_DEFINITIONS[bottom3[0].typeId][bottom3[0].modeId];
-        
-        const getRankBadge = (modeId, typeId) => {
-          const topIndex = top3.findIndex(c => c.modeId === modeId && c.typeId === typeId);
-          if (topIndex === 0) return '①';
-          if (topIndex === 1) return '②';
-          if (topIndex === 2) return '③';
-          const bottomIndex = bottom3.findIndex(c => c.modeId === modeId && c.typeId === typeId);
-          if (bottomIndex === 0) return '❶';
-          if (bottomIndex === 1) return '❷';
-          if (bottomIndex === 2) return '❸';
-          return null;
-        };
-
-        const getHeatColorRanked = (heat) => {
-          if (heat >= allCells[3].heat) return 'bg-[#f05a28] text-white'; 
-          if (heat >= allCells[11].heat) return 'bg-[#f68b61] text-white'; 
-          if (heat >= allCells[19].heat) return 'bg-[#fbcebc] text-slate-700'; 
-          return 'bg-[#d6d2c4] text-slate-800'; 
-        };
-
-        // 診断結果(1位)と当日の日付から招待コードを自動生成
-        const getInviteCode = () => {
-          const d = new Date();
-          const mm = String(d.getMonth() + 1).padStart(2, '0');
-          const dd = String(d.getDate()).padStart(2, '0');
-          const topType = top3[0].typeId;
-          const topModeInfo = EGO_LABELS.find(m => m.id === top3[0].modeId);
-          const topModeLetter = topModeInfo ? topModeInfo.letter : '';
-          return `rl-${topType}${topModeLetter}-${mm}${dd}`;
-        };
-
-        return (
-          <div className="flex flex-col min-h-screen px-2 sm:px-4 py-8 sm:py-12 items-center animate-fade-in w-full max-w-2xl mx-auto overflow-x-hidden">
-            
-            <div className="w-full flex flex-col gap-6 mb-8 box-border">
-              
-              {/* === キャプチャ対象 1: コックピット === */}
-              <div id="capture-cockpit" className="bg-[#f8fafc] p-2 sm:p-4 rounded-[40px] w-full box-border">
-                <div className="glass-panel p-4 sm:p-10 rounded-[32px] w-full flex flex-col items-center box-border">
-                  
-                  <h2 className="text-[24px] sm:text-[32px] font-black tracking-tight leading-tight text-slate-800 text-center mb-8 sm:mb-10">
-                    🌈RIESM™<br/>
-                    <span className="block text-xl sm:text-2xl text-slate-500 font-bold mt-1">cockpit Lite</span>
-                  </h2>
-
-                  <div className="w-full max-w-[480px] flex flex-col gap-y-6 sm:gap-y-8 box-border">
-                    
-                    {/* 1. マトリックス本体 */}
-                    <div className="cockpit-grid gap-1.5 sm:gap-2 w-full">
-                      <div className="invisible">Label</div>
-                      {EGO_LABELS.map(mode => (
-                        <div key={mode.id} className="flex flex-col justify-center items-center pb-2">
-                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-black bg-gradient-to-br ${mode.gradient} shadow-sm text-sm sm:text-base`}>{mode.letter}</div>
-                          <span className={`text-[10px] sm:text-xs font-bold mt-1.5 ${mode.color}`}>{mode.name}</span>
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <h2 class="text-xl font-bold">🌈あなたの心のコックピット</h2>
                         </div>
-                      ))}
-                      {RIASEC_LABELS.map(typeObj => (
-                        <React.Fragment key={typeObj.id}>
-                          <div className="flex justify-end items-center pr-1.5 sm:pr-2">
-                            <div className="flex items-end -space-x-1 sm:-space-x-2">
-                              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-black bg-gradient-to-br from-orange-400 to-orange-500 shadow-md text-sm sm:text-base relative z-10">{typeObj.kanji1}</div>
-                              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white font-bold bg-gradient-to-br from-orange-300 to-orange-400 shadow-sm text-[9px] sm:text-[10px] relative z-0 mb-0.5">{typeObj.kanji2}</div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-stone-400 group-hover:text-stone-600"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                    </div>
+                    <p class="text-sm text-stone-500 leading-relaxed mt-2">
+                        RIESMは一人ひとりの個性を可視化し【<span class="text-slate-600 font-medium">人生のパイロットとしてのあなた</span>】を<span class="text-slate-600 font-medium">ナビゲート</span>するためのアセスメントツールです。
+
+<br><br>また、RIESMでは私たちがお互いに心地よいコミュニケーションを送るための<span class="text-slate-600 font-medium">スキルも獲得</span>できます。大手企業（通信会社系列）での<span class="text-slate-600 font-medium">導入実績</span>もあり、安心してご活用いただけます。
+                    </p>
+                </div>
+            </a>
+
+            <!-- その他のサービス（カウンセリング・研修） -->
+            <div class="space-y-4">
+                <!-- nininカウンセリングルーム -->
+                <a href="https://note.com/ninin2024/n/nfb94f7b9fd88" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-pink-600 shadow-sm transition-transform group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">nininカウンセリングルーム</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                             </div>
-                          </div>
-                          {EGO_LABELS.map(mode => {
-                            const heat = scores.ego[mode.id] * scores.riasec[typeObj.id];
-                            const badge = getRankBadge(mode.id, typeObj.id);
-                            let badgeClass = "text-sm sm:text-lg";
-                            if (badge === '①' || badge === '②' || badge === '❶') badgeClass = "text-[24px] sm:text-[32px] font-black";
-                            return (
-                              <div key={`${typeObj.id}-${mode.id}`} className="aspect-[5/2]">
-                                <div className={`w-full h-full rounded-md flex items-center justify-center font-bold ${badgeClass} ${getHeatColorRanked(heat)} transition-all duration-300 shadow-sm`}>{badge}</div>
-                              </div>
-                            );
-                          })}
-                        </React.Fragment>
-                      ))}
-                    </div>
-
-                    {/* 2. 凡例 */}
-                    <div className="w-full border-t border-slate-100 pt-4">
-                      <div className="flex flex-row justify-center gap-6 sm:gap-12 text-[10px] sm:text-xs font-bold text-slate-500 px-1">
-                        <div className="flex items-center gap-1.5 sm:gap-2"><div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded bg-[#f05a28] shadow-sm"></div><span>自然にできる役割</span></div>
-                        <div className="flex items-center gap-1.5 sm:gap-2"><div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded bg-[#d6d2c4] shadow-sm"></div><span>できるけど疲れる役割</span></div>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* クレジット (キャプチャ時のみ表示) */}
-                  <div id="capture-cockpit-credit" className="hidden mt-10 text-center text-[11px] sm:text-xs font-bold text-slate-400">
-                    🌈RIESM™ cockpit Lite © 2026 ninin consulting＆counseling
-                  </div>
-                </div>
-              </div>
-
-              {/* === 画像シェアボタン === */}
-              <div className="w-full my-4 px-2 sm:px-0 box-border">
-                <button 
-                  onClick={handleCaptureAll} 
-                  disabled={isProcessing}
-                  className={`w-full py-4 px-4 bg-slate-800 text-white rounded-2xl font-black shadow-md flex items-center justify-center gap-2 text-base sm:text-lg transition-all ${isProcessing ? 'opacity-70 cursor-wait' : 'hover:bg-slate-900 active:scale-[0.98]'}`}
-                >
-                  <ShareIcon /> {isProcessing ? 'シェアの準備中...' : '画像をSNSにシェアする'}
-                </button>
-              </div>
-
-              {/* === キャプチャ対象 2: 役割解説 === */}
-              <div id="capture-role" className="bg-[#f8fafc] p-2 sm:p-4 rounded-[40px] w-full box-border">
-                <div className="glass-panel p-5 sm:p-10 rounded-[32px] w-full flex flex-col items-center box-border">
-                  
-                  {/* タイトル (キャプチャ時のみ表示) */}
-                  <div id="capture-role-title" className="hidden w-full flex justify-center mb-10">
-                    <h2 className="text-[22px] sm:text-[26px] font-black tracking-tight leading-tight text-slate-800 text-center">
-                      🌈RIESM™ cockpit Lite<br/>
-                      <span className="block text-base sm:text-lg text-slate-500 font-bold mt-1">あなたの役割解説</span>
-                    </h2>
-                  </div>
-
-                  <div className="w-full max-w-[480px] flex flex-col gap-y-6 sm:gap-y-8 box-border">
-                    
-                    {/* 3. 自然にできる役割 TOP2 解説 */}
-                    <div className="w-full bg-orange-50/70 p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-orange-200 shadow-sm relative box-border">
-                      <div className="absolute -top-3.5 left-4 bg-[#f05a28] text-white text-[10px] sm:text-xs font-bold px-3 sm:px-4 py-1.5 rounded-full shadow-sm">自然にできる役割（強み）</div>
-                      <div className="space-y-6 pt-2">
-                        <div className="min-w-0">
-                          <div className="flex items-center font-black text-base sm:text-xl text-[#f05a28] mb-2 sm:mb-3 leading-none">
-                            <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl">①</span>
-                            <span className="break-words text-[15px] sm:text-xl">{top1Role.name}</span>
-                          </div>
-                          <p className="text-[12px] sm:text-[14px] text-slate-700 leading-[1.8] font-medium text-justify">{top1Role.desc_natural}</p>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">
+                                セラピー、ヒーリング、カウンセリング、コンサルティング、またご希望に応じて「悩みを解決（軽く）」するためのティーチングも行えます（男女2名のカウンセラー在籍）。
+                            </p>
                         </div>
-                        <div className="h-px w-full bg-orange-200/60"></div>
-                        <div className="min-w-0">
-                          <div className="flex items-center font-black text-base sm:text-xl text-[#f05a28] mb-2 sm:mb-3 leading-none">
-                            <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl">②</span>
-                            <span className="break-words text-[15px] sm:text-xl">{top2Role.name}</span>
-                          </div>
-                          <p className="text-[12px] sm:text-[14px] text-slate-700 leading-[1.8] font-medium text-justify">{top2Role.desc_natural}</p>
-                        </div>
-                      </div>
                     </div>
-
-                    {/* 4. できるけど疲れる役割 TOP1 解説 */}
-                    <div className="w-full bg-slate-100/70 p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200 shadow-sm relative box-border">
-                      <div className="absolute -top-3.5 left-4 bg-slate-600 text-white text-[10px] sm:text-xs font-bold px-3 sm:px-4 py-1.5 rounded-full shadow-sm">できるけど疲れる役割（消耗）</div>
-                      <div className="pt-2 min-w-0">
-                        <div className="flex items-center font-black text-base sm:text-xl text-slate-800 mb-2 sm:mb-3 leading-none">
-                          <span className="mr-1.5 sm:mr-2 text-xl sm:text-2xl">❶</span>
-                          <span className="break-words text-[15px] sm:text-xl">{bottom1Role.name}</span>
-                        </div>
-                        <p className="text-[12px] sm:text-[14px] text-slate-600 leading-[1.8] font-medium text-justify">{bottom1Role.desc_tiring}</p>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* クレジット (キャプチャ時のみ表示) */}
-                  <div id="capture-role-credit" className="hidden mt-10 text-center text-[11px] sm:text-xs font-bold text-slate-400">
-                    🌈RIESM™ cockpit Lite © 2026 ninin consulting＆counseling
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="w-full space-y-4 box-border px-1 sm:px-0">
-              
-              {/* 完全版案内パネル */}
-              <div className="bg-white p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-slate-200 text-center space-y-5 shadow-sm box-border">
-                <h3 className="font-black text-lg md:text-xl text-slate-800">🌈 より深く自分を知るために</h3>
-                <div className="text-[13px] md:text-sm text-slate-600 leading-relaxed text-left space-y-3 font-medium">
-                  <p>
-                    今回の診断は全22問の「簡易版（Lite）」です。直感でサクサク答えられる反面、選択のブレによって結果が極端に出たり、本来のあなたの特性とは少し異なる形になることもあります。
-                  </p>
-                  <p>
-                    もし「少し違うかも？」と感じた場合はもう一度やり直してみるのも良いですし、全101問からなる<span className="font-bold text-slate-800">「完全版RIESM™（リズム）」</span>で、より精密な自己分析を体験していただくのもおすすめです。
-                  </p>
-                </div>
-                
-                <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-left box-border">
-                  <p className="text-[13px] sm:text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-                    <span className="text-orange-500">🎁</span> 簡易版受検者 限定特典
-                  </p>
-                  <p className="text-[12px] sm:text-[13px] text-slate-600 mb-4 font-medium leading-relaxed">
-                    完全版は通常 5,000円 ですが、お申し込み時に以下の招待コードをご記入いただくと <span className="font-bold text-orange-500 text-base">3,000円</span> で受検可能です。
-                  </p>
-                  <div className="flex items-center justify-center gap-3 bg-white py-3 sm:py-3.5 rounded-xl border border-slate-200 font-mono text-lg sm:text-2xl font-bold text-slate-700 tracking-[0.1em] sm:tracking-[0.2em] shadow-inner box-border overflow-hidden">
-                    {getInviteCode()}
-                  </div>
-                </div>
-
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 w-full py-4 px-4 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-2xl font-bold shadow-md text-sm md:text-base transition-all active:scale-[0.98] box-border">
-                  完全版RIESM™の詳細・お申し込み <ExternalLink />
                 </a>
-              </div>
 
-              <button onClick={() => window.location.reload()} className="w-full py-4 px-6 bg-transparent text-slate-500 rounded-xl font-bold hover:bg-slate-200 flex items-center justify-center gap-2 text-sm md:text-base transition-colors box-border">
-                <RefreshCw /> もう一度診断する
-              </button>
+                <!-- 企業研修プログラム -->
+                <a href="kougilp202511.html" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">企業研修プログラム</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">
+                                RIESM活用コミュニケーション研修、「人生は伏線回収」、ハラスメント、1on1研修など多彩に対応。
+                            </p>
+                        </div>
+                    </div>
+                </a>
             </div>
-            
-            {/* 共通フッター（結果画面用） */}
-            <div className="mt-12 mb-8 text-center text-[12px] sm:text-sm text-slate-500 font-medium">
-              <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="hover:text-slate-800 transition-colors underline">
-                © 2026 ninin consulting＆counseling
-              </a>
+
+            <!-- 導入メッセージ -->
+            <div class="w-full pt-8 pb-4 text-center px-2">
+                <p class="text-stone-500 leading-relaxed text-xs md:text-sm">
+                    自己理解と他者理解・心地よいコミュニケーション、<br class="md:hidden" />
+                    そして人生の「伏線回収」。<br />
+                    わたしたちはあなたの物語のナビゲーター。
+                    <span class="block mt-3 text-stone-600 font-medium tracking-widest">
+                        ― あなたの物語には、価値がある。 ―
+                    </span>
+                </p>
             </div>
 
-          </div>
-        );
-      }
-      return null;
-    }
+            <!-- Media & SNS 区切り線 -->
+            <div class="flex items-center mt-2">
+                <div class="flex-grow h-px bg-stone-200"></div>
+                <span class="px-4 text-xs font-bold text-stone-400 tracking-widest uppercase">Media ＆ SNS</span>
+                <div class="flex-grow h-px bg-stone-200"></div>
+            </div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+            <!-- SNSリンク -->
+            <div class="space-y-4 mt-6">
+                <!-- note -->
+                <a href="https://note.com/ninin2025" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white border border-stone-200 text-stone-900 shadow-sm transition-transform group-hover:scale-110 flex items-center justify-center">
+                            <!-- 文字で note アイコンを表現（太字で大きく） -->
+                            <span class="text-[34px] leading-none pb-1" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900;">n</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">note</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">日々の気づきや🌈RIESMについて綴る場所</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/in/ninin2025/" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-blue-700 shadow-sm transition-transform group-hover:scale-110">
+                            <!-- LinkedIn SVG アイコン -->
+                            <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">LinkedIn</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">ビジネスプロフィール</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- X (Twitter) -->
+                <a href="https://x.com/ninin2025" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-black shadow-sm transition-transform group-hover:scale-110">
+                            <!-- X SVG アイコン -->
+                            <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">X (Twitter)</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">リアルタイムな発信と対話の場</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 公告リンク -->
+        <div class="mt-12 mb-20 text-center">
+            <a href="https://ninin-cc.github.io/koukoku.html" target="_blank" rel="noopener noreferrer" 
+               class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 border border-stone-200 rounded-full text-sm bg-white/50">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span>電子公告はこちら</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <div class="text-xs text-stone-400 space-y-1 mb-3">
+            <p>合同会社ninin consulting ＆ counseling</p>
+            <p>法人番号 9011503006532</p>
+            <p>※社名由来は「二人三脚」</p>
+        </div>
+        <p class="text-xs text-stone-400 tracking-widest uppercase">
+            © 2025 ninin LLC. All Rights Reserved.
+        </p>
+    </footer>
+
 </body>
 </html>
