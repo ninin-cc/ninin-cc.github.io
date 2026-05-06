@@ -83,37 +83,75 @@
                 </a>
                 <a href="#navigators-list" class="inline-flex items-center px-4 py-2 bg-stone-800 border border-stone-800 rounded-full text-xs md:text-sm text-white font-bold hover:bg-stone-700 hover:border-stone-700 transition-colors shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
-                    認定者一覧
+                    ナビゲーター名簿
                 </a>
             </div>
 
             <!-- 利用範囲と認定の要否 -->
             <div id="usage-policy" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-8 mb-8 scroll-mt-6">
-                <h3 class="text-lg font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2">【重要】利用範囲と認定の要否</h3>
-                <div class="space-y-4">
-                    <div class="bg-sky-50 rounded-xl p-4 md:p-5 border border-sky-100">
-                        <h4 class="font-bold text-sky-800 flex items-center mb-3 text-base">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-sky-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <h3 class="text-lg font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2 text-left">【重要】利用範囲と認定の要否</h3>
+                <div class="space-y-6">
+                    
+                    <!-- 1. 社内・組織内での利用 -->
+                    <div class="bg-sky-50 rounded-xl p-5 md:p-8 border border-sky-100">
+                        <h4 class="font-bold text-sky-800 flex items-center mb-4 text-base text-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-sky-500 flex-shrink-0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             社内・ご自身の組織内での利用：【認定不要・費用負担なし】
                         </h4>
-                        <div class="md:ml-7">
-                            <p class="text-sm font-bold text-sky-900 mb-2">
-                                🌈RIESM™ナビゲーター（名乗りは自由です）
+                        <div class="md:ml-7 text-left">
+                            <p class="text-sm font-bold text-sky-900 mb-4">
+                                🌈RIESM™ナビゲーター（登録のみでOK・名乗りは自由です）
                             </p>
-                            <p class="text-sm text-stone-600 leading-relaxed mb-3">
-                                ご自身の担当部署や自組織内で、🌈RIESM™の入り口である<span class="font-bold text-stone-700">「4つのモード」を用いたワークショップ</span>を実施できます。名乗るための資格は不要ですが、🌈RIESM™への深い理解に努めていただき、自覚をもって名乗ってください。
+                            
+                            <!-- ワークショップイメージ画像 -->
+                            <div class="mb-5 rounded-xl overflow-hidden shadow-sm border border-sky-200 bg-white">
+                                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80" alt="楽し気にワークショップを開催しているイメージ" class="w-full h-40 md:h-52 object-cover opacity-90 hover:opacity-100 transition-opacity">
+                            </div>
+
+                            <p class="text-sm text-stone-600 leading-relaxed mb-5">
+                                ご自身の担当部署や自組織内で、🌈RIESM™の入り口である<span class="font-bold text-stone-700">「4つのモード」を用いたワークショップ</span>を実施できます。名乗るための資格は不要ですが、自覚をもって活動いただくため、以下のフォームより登録をお願いしております。
                             </p>
+                            
+                            <!-- 登録ボタンと戻るボタン -->
+                            <div class="mb-6 flex flex-col md:flex-row items-center gap-3">
+                                <a href="#" class="w-full md:w-auto inline-flex items-center justify-center bg-white hover:bg-sky-600 text-sky-700 hover:text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm border-2 border-sky-200 hover:border-sky-600 active:scale-95 text-sm group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-sky-500 group-hover:text-white"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+                                    無料登録フォーム（5項目程度）
+                                </a>
+                                <a href="guide.html" class="w-full md:w-auto inline-flex items-center justify-center bg-sky-100/50 hover:bg-sky-100 text-sky-800 font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm border border-sky-200 active:scale-95 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m15 18-6-6 6-6"/></svg>
+                                    ワークショップ資料室へ戻る
+                                </a>
+                            </div>
+
+                            <div class="bg-white/70 p-4 rounded-lg border border-sky-100">
+                                <p class="text-xs text-stone-600 leading-relaxed">
+                                    <span class="font-bold text-sky-700 block mb-1.5">【ご安心ください】</span>
+                                    登録に住所や電話番号の記載は不要です。連絡のつくメールアドレスのみご用意ください。名簿への掲載も<span class="font-bold text-stone-700">「ニックネーム」</span>および<span class="font-bold text-stone-700">「活動地域（都道府県）」</span>のみとなります。<br>
+                                    <span class="mt-2 block text-stone-500">ワークショップ実施時などに、そのニックネームでナビゲーション（ファシリテーション）をすると和やかに進行することもできますので、ぜひお試しくださいね✨</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="bg-rose-50 rounded-xl p-4 md:p-5 border border-rose-100">
-                        <h4 class="font-bold text-rose-800 flex items-center mb-3 text-base">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-rose-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <!-- 区切りメッセージ -->
+                    <div class="flex items-center justify-center py-4">
+                        <div class="h-px bg-stone-200 flex-grow"></div>
+                        <p class="text-[11px] md:text-xs font-bold text-stone-400 px-4 text-center leading-relaxed max-w-[80%]">
+                            以下は、主に<span class="text-rose-600">社外</span>、もしくはご自身の<span class="text-rose-600">有償での支援活動</span><br class="hidden md:block">（カウンセリング・キャリアコンサルティング等）に🌈RIESM™をご利用の方向けの内容です。
+                        </p>
+                        <div class="h-px bg-stone-200 flex-grow"></div>
+                    </div>
+
+                    <!-- 2. 社外・有償での実施 -->
+                    <div class="bg-rose-50 rounded-xl p-5 md:p-8 border border-rose-100">
+                        <h4 class="font-bold text-rose-800 flex items-center mb-4 text-base text-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-rose-500 flex-shrink-0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
                             社外への提供・有償での実施：【認定必須】
                         </h4>
-                        <div class="md:ml-7">
+                        <div class="md:ml-7 text-left">
                             <p class="text-sm font-bold text-rose-900 mb-2">
-                                🌈RIESM™認定ナビゲーター（下記に要件記載があります）
+                                🌈RIESM™認定ナビゲーター（要件あり）
                             </p>
                             <p class="text-sm text-stone-600 leading-relaxed">
                                 対価をいただいてワークを実施する場合や、社外のクライエントへ提供する場合は、本ページでご案内する<span class="font-bold text-stone-800">「認定ナビゲーターとしてのライセンス」</span>が必要です。
@@ -124,7 +162,7 @@
             </div>
 
             <!-- 基本思想 -->
-            <div id="philosophy" class="bg-stone-50 rounded-2xl border border-stone-200 p-6 md:p-8 mb-8 scroll-mt-6">
+            <div id="philosophy" class="bg-stone-50 rounded-2xl border border-stone-200 p-6 md:p-8 mb-8 scroll-mt-6 text-left">
                 <h3 class="text-lg md:text-xl font-bold text-stone-800 mb-4 flex items-center border-b border-stone-200 pb-3">
                     基本思想
                 </h3>
@@ -138,14 +176,14 @@
             </div>
 
             <!-- なぜ必要か -->
-            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 mb-10">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 mb-10 text-left">
                 <h4 class="font-bold text-stone-800 mb-3 flex items-center text-base">
                     なぜ認定ナビゲーターが必要か
                 </h4>
                 <p class="text-sm text-stone-600 leading-relaxed">
                     🌈RIESM™が広まるにつれ、その世界観を正しく届け、伴走できる存在が不可欠になります。<br>
-                    認定ナビゲーターは単なる資格ではなく、他者の人生（Cockpit）に触れる役割への<span class="font-bold text-stone-700">【ライセンス】</span>であり、目の前の人に真摯に向き合う<span class="font-bold text-stone-700">「覚悟の証」</span>です。<br>
-                    このライセンスがあるからこそ、相手が安心して話を聞ける「信頼の補助線」として機能します。
+                    認定ナビゲーターは単なる資格ではなく、他者の人生（Cockpit）に触れる役割への<span class="font-bold text-stone-700">【ライセンス】</span>であり、目の前の人に真摯に向き合う<span class="font-bold text-stone-700">「覚悟 of ナビゲーター」</span>の証明です。<br>
+                    この証があるからこそ、相手が安心して話を聞ける「信頼の補助線」として機能します。
                 </p>
             </div>
 
@@ -154,12 +192,16 @@
         <!-- 認定区分詳細 -->
         <section id="requirements" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.2s;">
             <div class="mb-8 text-center">
-                <h3 class="text-xl font-bold text-stone-800 mb-2">社外向け 認定区分と要件</h3>
+                <div class="flex items-center justify-center space-x-4 mb-3">
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                    <h3 class="text-xl font-bold text-stone-800">社外向け 認定区分と要件</h3>
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                </div>
                 <p class="text-sm text-stone-500">外部のクライエントや組織に対して🌈RIESM™を提供する際の基準です。</p>
             </div>
 
             <!-- 1. 🌈RIESM™認定ナビゲーター -->
-            <div class="bg-white border-2 border-stone-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+            <div class="bg-white border-2 border-stone-200 rounded-2xl shadow-sm overflow-hidden mb-8 text-left">
                 <div class="bg-stone-50 px-6 py-4 border-b border-stone-200">
                     <h4 class="text-lg md:text-xl font-bold text-stone-800">🌈RIESM™認定ナビゲーター</h4>
                 </div>
@@ -187,20 +229,54 @@
                             <span class="font-bold text-rose-800">【すでに受検済みの方へ】</span><br>
                             受検ステップを省略し、<span class="font-bold text-rose-700">面談費用のみ（7,000円）</span>にて認定コースへお進みいただけます。
                         </div>
-                        <p class="text-[11px] text-stone-500 mt-2.5">※「責任を持って🌈RIESM™を扱いたい」という意思を確認するための価格設定です。</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. 🌈RIESM™認定コアナビゲーター -->
-            <div class="bg-white border-2 border-stone-200 rounded-2xl shadow-sm overflow-hidden mb-8">
-                <div class="bg-stone-50 px-6 py-4 border-b border-stone-200">
+            <!-- 2. 🌈RIESM™認定アクティブナビゲーター -->
+            <div class="bg-white border-2 border-stone-200 rounded-2xl shadow-sm overflow-hidden mb-8 text-left">
+                <div class="bg-amber-50/30 px-6 py-4 border-b border-stone-200 flex justify-between items-center">
+                    <h4 class="text-lg md:text-xl font-bold text-stone-800">🌈RIESM™認定アクティブナビゲーター</h4>
+                    <span class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded tracking-widest">STEP UP</span>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="mb-6 text-sm text-stone-600 leading-relaxed">
+                        <h5 class="font-bold text-stone-700 mb-2">【役割と認定の意味】</h5>
+                        <p>🌈RIESM™のモード理解による良いコミュニケーションの普及にご協力いただき、現場での実践経験を積まれていることを公式に称えるステータスです。「コアナビゲーター」への重要なステップアップ・パスとなります。</p>
+                    </div>
+
+                    <div class="bg-amber-50/50 rounded-xl p-5 border border-amber-100 mb-6">
+                        <h5 class="text-sm font-bold text-stone-800 mb-3">アクティブ認定要件</h5>
+                        <ul class="text-sm text-stone-600 space-y-3 mb-4">
+                            <li class="flex items-start">
+                                <span class="text-amber-600 font-bold mr-2">✔</span> 
+                                <span>🌈RIESM™認定ナビゲーターのライセンスを保有していること</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-600 font-bold mr-2">✔</span> 
+                                <span>通算<span class="font-bold text-stone-800 text-base mx-1">3回以上</span>のワークショップを開催し、事務局へ報告すること</span>
+                            </li>
+                        </ul>
+                        <div class="flex items-center justify-between border-t border-amber-200 pt-3">
+                            <span class="text-xs font-medium text-stone-500">認定費用</span>
+                            <span class="text-lg font-bold text-stone-800">無料 <span class="text-xs font-normal text-stone-500 ml-1">（活動報告のみで認定）</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 🌈RIESM™認定コアナビゲーター -->
+            <div class="bg-white border-2 border-stone-200 rounded-2xl shadow-sm overflow-hidden mb-8 text-left">
+                <div class="bg-stone-50 px-6 py-4 border-b border-stone-200 flex justify-between items-center">
                     <h4 class="text-lg md:text-xl font-bold text-stone-800">🌈RIESM™認定コアナビゲーター</h4>
+                    <span class="bg-stone-800 text-white text-[10px] font-bold px-2 py-0.5 rounded tracking-widest">EXPERT</span>
                 </div>
                 <div class="p-6 md:p-8">
                     <div class="mb-6 text-sm text-stone-600 leading-relaxed">
                         <h5 class="font-bold text-stone-700 mb-2">【役割とできること】</h5>
-                        <p>上記に加え、<span class="font-bold text-stone-800">Cockpit全体（フロント/バックス等）を詳細に説明</span>でき、ご自身の支援活動（カウンセリング、コンサルティング等）に<span class="font-bold text-stone-800">アセスメントとして活用</span>できる方です。</p>
+                        <p>
+                            上記に加え、<span class="font-bold text-stone-800">Cockpit全体</span>（4モード、フロント/バックス等に加え、<span class="font-bold text-stone-700">詳細な8モード、24の役割、6つの興味の蛇口</span>）を詳細に説明でき、ご自身の支援活動（カウンセリング、コンサルティング等）に<span class="font-bold text-stone-800">アセスメントとして活用</span>できる方です。
+                        </p>
                     </div>
 
                     <div class="bg-sky-50/50 rounded-xl p-5 border border-sky-100 mb-6">
@@ -210,18 +286,32 @@
                                 <span class="font-bold mr-2 mt-0.5">1.</span> 
                                 <div class="flex-grow">
                                     <span class="font-bold text-stone-700 block mb-1">前提資格または検定の合格</span>
-                                    <ul class="list-disc list-inside space-y-1 text-xs">
-                                        <li>「産業カウンセラー」または「国家資格キャリアコンサルタント」の有資格者</li>
-                                        <li>ninin指定の認定検定に合格すること<br>
-                                            <span class="text-stone-500 ml-4 inline-block mt-0.5 leading-relaxed">
-                                                （受検料：<span class="font-bold text-stone-700">55,000円(税込)</span> ※学科・論述、面談のセット価格）<br>
-                                                <span class="ml-4">範囲：来談者中心療法・傾聴・支援者倫理・職業選択理論・交流分析等</span>
-                                            </span>
-                                        </li>
-                                    </ul>
+                                    <div class="space-y-2">
+                                        <div class="flex items-start">
+                                            <span class="text-sky-600 mr-1.5 pt-1 text-[10px]">●</span>
+                                            <span>「産業カウンセラー」または「国家資格キャリアコンサルタント」の有資格者<span class="font-bold text-rose-600 ml-1">（資格登録必須）</span></span>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-center py-2">
+                                            <div class="h-px bg-stone-200 flex-grow"></div>
+                                            <span class="bg-stone-100 text-stone-500 font-bold px-3 py-1 rounded text-[10px] mx-2 tracking-widest border border-stone-200 shadow-inner italic">もしくは</span>
+                                            <div class="h-px bg-stone-200 flex-grow"></div>
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <span class="text-sky-600 mr-1.5 pt-1 text-[10px]">●</span>
+                                            <div>
+                                                <span class="font-bold text-stone-800 border-b-2 border-stone-300">「ninin指定の認定検定」</span>に合格すること<br>
+                                                <span class="text-[11px] text-stone-500 leading-relaxed block mt-1.5 pl-1">
+                                                    （受検料：<span class="font-bold text-stone-700">55,000円(税込)</span> ※学科・論述、面談のセット価格）<br>
+                                                    <span class="italic">範囲：来談者中心療法・傾聴・支援者倫理・職業選択理論・交流分析等</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </li>
-                            <li class="flex items-start"><span class="font-bold mr-2 mt-0.5">2.</span> <span>ワークショップを10回以上開催していること</span></li>
+                            <li class="flex items-start"><span class="font-bold mr-2 mt-0.5">2.</span> <span><span class="bg-amber-100 px-1 font-bold">アクティブ認定</span>を経て、ワークショップを通算<span class="font-bold text-stone-800 text-base mx-1">10回以上</span>開催していること</span></li>
                             <li class="flex items-start"><span class="font-bold mr-2 mt-0.5">3.</span> <span>論述レポート提出（各項目800文字以上）</span></li>
                             <li class="flex items-start"><span class="font-bold mr-2 mt-0.5">4.</span> <span>レポート受理後の面談（60分）</span></li>
                         </ul>
@@ -231,90 +321,127 @@
         </section>
 
         <!-- 運営ポリシー -->
-        <section id="operation-policy" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.3s;">
-            <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 md:p-8 shadow-sm">
+        <section id="operation-policy" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.3s; text-align: left;">
+            <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 md:p-8 shadow-sm text-left">
                 <h3 class="text-lg font-bold text-stone-800 mb-4 border-b border-stone-200 pb-2">運営ポリシー</h3>
                 <div class="space-y-5 text-sm text-stone-600 leading-relaxed">
                     <div>
-                        <h4 class="font-bold text-stone-800 mb-1">■ アセスメントの利用</h4>
-                        <p>認定ナビゲーターには、活動時に利用できる認定者向けの「アセスメント価格（レポートなし）」を用意しています。</p>
+                        <h4 class="font-bold text-stone-800 mb-1">■ 認定権限と上位資格</h4>
+                        <p>🌈RIESM™全体の設計およびすべての認定は、ninin代表が行います。資格ビジネス化を防ぐため、コアより上位の認定は設けません。</p>
                     </div>
                     <div>
-                        <h4 class="font-bold text-stone-800 mb-1">■ ワークショップ実施前の原則確認テスト</h4>
-                        <p>
-                            実施前には毎回必ず<span class="font-bold text-stone-700">「ナビゲーター原則確認テスト（5問）」</span>を実施してください（約2〜3分）。知識を測るのではなく、ご自身のマインドセットを整えるための大切なルーティンです。
-                        </p>
+                        <h4 class="font-bold text-stone-800 mb-1">■ アセスメントの利用</h4>
+                        <p>認定ナビゲーターには、活動時に利用できる認定者向けの「アセスメント価格」を用意しています。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-stone-800 mb-1">■ 実施前の原則確認テスト</h4>
+                        <p>ワークショップ実施前には必ず<span class="font-bold text-stone-700">「ナビゲーター原則確認テスト（5問）」</span>を実施してください（約2〜3分）。知識を測るのではなく、ご自身のマインドセットを整えるためのルーティンです。</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 認定者一覧 -->
-        <section id="navigators-list" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.4s;">
+        <!-- ナビゲーター名簿 -->
+        <section id="navigators-list" class="mb-14 fade-in scroll-mt-6 text-left" style="animation-delay: 0.4s;">
             <div class="flex items-center justify-center space-x-4 mb-8">
                 <div class="h-px bg-stone-200 flex-grow"></div>
-                <h2 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest text-center">🌈RIESM™ 認定者一覧</h2>
+                <h2 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest text-center">🌈RIESM™ ナビゲーター名簿</h2>
                 <div class="h-px bg-stone-200 flex-grow"></div>
             </div>
 
-            <div class="bg-stone-50 rounded-xl p-4 md:p-5 border border-stone-200 mb-6 text-sm text-stone-600 leading-relaxed shadow-sm">
-                <p class="mb-2">
-                    <span class="font-bold text-stone-700">【掲載情報に関する基本原則】</span><br>
-                    本制度において、公式HPへの掲載は「認定ナビゲーターであることの唯一の証明」となります。掲載情報は<span class="font-bold text-stone-800">「都道府県」および「本名（フルネーム）」の公開を基本</span>としております。
-                </p>
-                <p class="text-xs text-stone-500 mt-2 border-t border-stone-200 pt-2 leading-relaxed">
-                    <span class="font-bold text-stone-600">※特例措置：</span><br>
-                    ・本名非公開の場合：「苗字のみ」とし、活動地域を【都道府県・市区町村】まで詳細に公開。<br>
-                    ・地域非公開の場合：地域を「ー」とし、氏名を必ず【本名（フルネーム）】で公開。
-                </p>
+            <!-- 1. 認定ナビゲーター -->
+            <div class="mb-10">
+                <h3 class="text-base md:text-lg font-bold text-stone-800 mb-4 flex items-center">
+                    <span class="bg-stone-800 text-white text-[10px] px-2 py-0.5 rounded mr-2 uppercase tracking-tighter">Certified</span>
+                    認定ナビゲーター（ライセンス保有者）
+                </h3>
+                
+                <div class="bg-stone-50 rounded-xl p-4 md:p-5 border border-stone-200 mb-6 text-sm text-stone-600 leading-relaxed shadow-sm">
+                    <p class="mb-2">
+                        <span class="font-bold text-stone-700">【掲載情報に関する基本原則】</span><br>
+                        本制度において、公式HPへの掲載は「認定ナビゲーターであることの唯一の証明」となります。掲載情報は<span class="font-bold text-stone-800">「都道府県」および「本名（フルネーム）」の公開を基本</span>としております。
+                    </p>
+                    <p class="text-xs text-stone-500 mt-2 border-t border-stone-200 pt-2 leading-relaxed">
+                        <span class="font-bold text-stone-600">※特例措置：</span><br>
+                        ・本名非公開の場合：「苗字のみ」とし、活動地域を【都道府県・市区町村】まで公開。<br>
+                        ・地域非公開の場合：地域を「ー」とし、氏名を必ず【本名（フルネーム）】で公開。
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="overflow-x-auto pb-1">
+                        <table class="w-full text-sm text-left whitespace-nowrap min-w-[500px]">
+                            <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                                <tr>
+                                    <th class="px-6 py-4">区分</th>
+                                    <th class="px-6 py-4">番号</th>
+                                    <th class="px-6 py-4">活動地域</th>
+                                    <th class="px-6 py-4">氏名</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-stone-100 text-stone-700">
+                                <tr class="hover:bg-stone-50 transition-colors">
+                                    <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 bg-sky-50 text-sky-700 text-[11px] font-bold tracking-wider rounded border border-sky-200">RCC_Nv</span></td>
+                                    <td class="px-6 py-4 text-stone-500 font-mono text-xs">001</td>
+                                    <td class="px-6 py-4">東京都</td>
+                                    <td class="px-6 py-4 font-bold text-stone-800">柏崎 哲生</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-stone-50 px-6 py-3 border-t border-stone-200 text-xs text-stone-500 leading-relaxed">
+                        ※ RC_Nv：認定ナビ ／ RCA_Nv：アクティブ ／ RCC_Nv：コア
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
-                <div class="overflow-x-auto pb-1">
-                    <table class="w-full text-sm text-left whitespace-nowrap min-w-[500px]">
-                        <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
-                            <tr>
-                                <th class="px-6 py-4">認定区分</th>
-                                <th class="px-6 py-4">番号</th>
-                                <th class="px-6 py-4">活動地域</th>
-                                <th class="px-6 py-4">氏名</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-stone-100 text-stone-700">
-                            <tr class="hover:bg-stone-50 transition-colors">
-                                <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 bg-sky-50 text-sky-700 text-[11px] font-bold tracking-wider rounded border border-sky-200">RCC_Nv</span></td>
-                                <td class="px-6 py-4 text-stone-500 font-mono text-xs">001</td>
-                                <td class="px-6 py-4">東京都</td>
-                                <td class="px-6 py-4 font-bold text-stone-800">柏崎 哲生</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="bg-stone-50 px-6 py-3 border-t border-stone-200 text-xs text-stone-500 leading-relaxed">
-                    ※ RC_Nv：認定ナビゲーター ／ RCC_Nv：認定コアナビゲーター
+            <!-- 2. 社内ナビゲーター -->
+            <div>
+                <h3 class="text-base md:text-lg font-bold text-stone-800 mb-4 flex items-center">
+                    <span class="bg-stone-400 text-white text-[10px] px-2 py-0.5 rounded mr-2 uppercase tracking-tighter">Registered</span>
+                    ナビゲーター（社内・組織内登録者）
+                </h3>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="overflow-x-auto pb-1">
+                        <table class="w-full text-sm text-left whitespace-nowrap min-w-[500px]">
+                            <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                                <tr>
+                                    <th class="px-6 py-4">登録番号</th>
+                                    <th class="px-6 py-4">主な活動場所</th>
+                                    <th class="px-6 py-4">ニックネーム</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-stone-100 text-stone-700">
+                                <tr class="hover:bg-stone-50 transition-colors">
+                                    <td class="px-6 py-4 text-stone-500 font-mono text-xs">R-001</td>
+                                    <td class="px-6 py-4 text-stone-600">東京都（通信業界）</td>
+                                    <td class="px-6 py-4 font-bold text-stone-800">ジェミー</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <!-- ページ下部リンク群 -->
-        <div class="mb-12 fade-in" style="animation-delay: 0.5s;">
-            <div class="flex flex-col items-center justify-center space-y-5">
-                <a href="#navigator-system" class="inline-flex items-center justify-center space-x-2 text-stone-600 hover:text-stone-800 transition-colors py-2.5 px-6 text-sm font-medium border border-stone-200 rounded-full hover:bg-stone-50 bg-white shadow-sm w-full max-w-xs">
+            <div class="mt-8 text-center">
+                <a href="#navigator-system" class="inline-flex items-center justify-center space-x-2 text-stone-500 hover:text-stone-700 transition-colors py-2.5 px-6 text-sm font-medium border border-stone-200 rounded-full hover:bg-stone-50 bg-white shadow-sm w-full max-w-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
                     <span>ナビゲーター制度メニューへ戻る</span>
                 </a>
-                
-                <div class="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-8 pt-2">
-                    <a href="guide.html" class="inline-flex items-center space-x-1.5 text-stone-400 hover:text-stone-600 transition-colors text-sm font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        <span>🌈RIESM™ ワークショップ資料室へ</span>
-                    </a>
-                    <a href="index.html" class="inline-flex items-center space-x-1.5 text-stone-400 hover:text-stone-600 transition-colors text-sm font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        <span>🌈RIESM™ トップページへ</span>
-                    </a>
-                </div>
             </div>
+        </section>
+
+        <!-- 他ページへのリンク -->
+        <div class="mb-12 flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 pt-4 border-t border-stone-100">
+            <a href="guide.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span>🌈RIESM™ ワークショップ資料室へ</span>
+            </a>
+            <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span>🌈RIESM™ トップページへ</span>
+            </a>
         </div>
     </main>
 

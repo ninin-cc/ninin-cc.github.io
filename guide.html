@@ -108,27 +108,33 @@
         </section>
 
         <!-- 資料ダウンロードセクション -->
-        <section class="mb-14 md:mb-20">
+        <section class="mb-14">
             <div class="flex items-center justify-center space-x-4 mb-8">
                 <div class="h-px bg-stone-200 flex-grow"></div>
                 <h2 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest">資料ダウンロード</h2>
                 <div class="h-px bg-stone-200 flex-grow"></div>
             </div>
 
-            <!-- ガイドブック（上段に単独配置） -->
+            <!-- ナビゲーターガイドブック（上段に新規配置） -->
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md mb-10">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex-grow">
                         <div class="flex items-center space-x-3 mb-3">
                             <!-- PDFアイコン -->
-                            <div class="bg-rose-50 text-rose-600 p-2.5 rounded-lg flex-shrink-0">
+                            <div class="bg-indigo-50 text-indigo-600 p-2.5 rounded-lg flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-4"/><path d="M12 15v-4"/><path d="M15 15v-4"/><path d="M9 11h6"/></svg>
                             </div>
-                            <h3 class="text-lg md:text-xl font-bold text-stone-800 leading-tight">🌈RIESM™ 公式ガイドブック<span class="text-sm font-medium text-stone-500 ml-2">（最新版）</span></h3>
+                            <h3 class="text-lg md:text-xl font-bold text-stone-800 leading-tight">🌈RIESM™ ナビゲーターガイドブック<span class="text-sm font-medium text-stone-500 ml-2">（進行マニュアル）</span></h3>
                         </div>
                         <p class="text-sm text-stone-600 leading-relaxed">
-                            🌈RIESM™の全体像と、基盤となる心理学（交流分析・職業選択理論・キャリア発達理論）の裏付け理論テキストを収録した総合ガイドです。
+                            ワークショップの進行手順や、パイロットへの関わり方の基本方針、安全な場の作り方をまとめたナビゲーター向けの実践マニュアルです。
                         </p>
+                        <ul class="text-xs text-stone-500 mt-4 pt-3 border-t border-stone-100 space-y-2">
+                            <li>※<a href="#recommended-timing" class="text-sky-600 hover:text-sky-800 font-bold transition-colors">推奨実施タイミングは👇</a></li>
+                            <li>※<a href="#case-studies" class="text-sky-600 hover:text-sky-800 font-bold transition-colors">ワークショップ実践ケース集は👇</a></li>
+                            <li>※基盤となる心理学などを収録した<a href="#official-guidebook" class="text-sky-600 hover:text-sky-800 font-bold transition-colors">公式ガイドブックは👇</a></li>
+                            <li>※<a href="#navigator-system" class="text-sky-600 hover:text-sky-800 font-bold transition-colors">ナビゲーター制度についてくわしく👇</a></li>
+                        </ul>
                     </div>
                     <div class="w-full md:w-auto flex-shrink-0">
                         <a href="#" class="inline-flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-sm active:scale-95 text-sm w-full md:w-auto">
@@ -138,8 +144,170 @@
                 </div>
             </div>
 
+            <!-- ワークショップ実施後の手続き（移動） -->
+            <div class="mb-14 fade-in" style="animation-delay: 0.18s;">
+                <div class="flex items-center justify-center space-x-4 mb-8">
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                    <h2 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest">実施後のお願い</h2>
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 実施者向け：実施報告 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="bg-indigo-50 text-indigo-600 p-2 rounded-lg mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <h3 class="font-bold text-stone-800">実施者：実施報告</h3>
+                            </div>
+                            <p class="text-sm text-stone-600 mb-3 leading-relaxed">
+                                ワークショップ終了後、ナビゲーターの方は速やかに活動内容の報告をお願いします。
+                            </p>
+                            <div class="bg-rose-50 border border-rose-100 rounded p-3 mb-5">
+                                <p class="text-[11px] text-rose-700 leading-relaxed font-medium">
+                                    ※この報告は、コアナビゲーター認定要件である「ワークショップ開催10回」の実績証明や、本部の活動実態把握のために【必須】の手続きとなります。
+                                </p>
+                            </div>
+                        </div>
+                        <a href="https://forms.google.com/" target="_blank" class="text-center bg-stone-800 text-white text-sm font-bold py-2.5 rounded-lg hover:bg-stone-700 transition-colors">
+                            報告フォームを開く
+                        </a>
+                    </div>
+
+                    <!-- 参加者向け：振り返りアンケート -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center mb-3">
+                                <div class="bg-emerald-50 text-emerald-600 p-2 rounded-lg mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                </div>
+                                <h3 class="font-bold text-stone-800">参加者：振り返りアンケート</h3>
+                            </div>
+                            <p class="text-sm text-stone-600 mb-4 leading-relaxed">
+                                ワークショップを通じて生じた疑問の解消や、万が一の傷つきに対する適切なケア（フォローアップ）を行うため、最後にアンケートへのご回答を必ずご案内ください。
+                            </p>
+                        </div>
+                        <a href="https://forms.google.com/" target="_blank" class="text-center bg-stone-100 text-stone-800 text-sm font-bold py-2.5 rounded-lg hover:bg-stone-200 transition-colors border border-stone-200">
+                            回答用URLを表示
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 【新規】おすすめの実施タイミング -->
+            <div id="recommended-timing" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.19s;">
+                <div class="flex items-center justify-center space-x-4 mb-8">
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                    <h3 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-sky-500"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        推奨実施タイミング
+                    </h3>
+                    <div class="h-px bg-stone-200 flex-grow"></div>
+                </div>
+                
+                <div class="bg-stone-50 rounded-2xl p-6 md:p-8 border border-stone-200">
+                    <p class="text-sm text-stone-700 mb-6 leading-relaxed">
+                        🌈RIESM™ワークショップは、単発の知識研修としてだけでなく、チームや組織の状態が変化する節目に実施すると効果的です。<br>
+                        理想は2ヶ月に1回程度の定期開催ですが、まずは以下のような<span class="font-bold text-stone-800 border-b-2 border-sky-300">組織の「節目」に合わせて随時実施</span>するのがおすすめです。
+                    </p>
+
+                    <!-- カレンダー風表示 -->
+                    <h4 class="font-bold text-stone-800 text-sm mb-3">📅 年間の推奨カレンダー</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
+                        <div class="bg-white rounded-xl border border-rose-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-rose-400"></div>
+                            <div class="text-xl font-black text-rose-500 mb-1 mt-1">4月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">新年度・新体制の<br>チームビルディング</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-emerald-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-emerald-400"></div>
+                            <div class="text-xl font-black text-emerald-500 mb-1 mt-1">6月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">新任者・新人の<br>配属後フォロー</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-amber-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-amber-400"></div>
+                            <div class="text-xl font-black text-amber-500 mb-1 mt-1">9月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">上期振り返りと<br>下期の関係性づくり</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-orange-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-orange-400"></div>
+                            <div class="text-xl font-black text-orange-500 mb-1 mt-1">10月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">組織改編・下期<br>方針共有とあわせて</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-sky-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-sky-400"></div>
+                            <div class="text-xl font-black text-sky-500 mb-1 mt-1">1月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">新年の自己理解・<br>キャリア整理</div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-indigo-100 p-3 text-center shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-indigo-400"></div>
+                            <div class="text-xl font-black text-indigo-500 mb-1 mt-1">3月</div>
+                            <div class="text-[10px] font-bold text-stone-600 leading-snug">年度末の振り返りと<br>次年度準備</div>
+                        </div>
+                    </div>
+
+                    <!-- 6つの場面 -->
+                    <h4 class="font-bold text-stone-800 text-sm mb-3">💡 特におすすめの場面（6選）</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">1. 新しいチームが立ち上がるとき</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">お互いの行動傾向が見えにくいチームビルディング初期に。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「どんな関わり方を大切にしやすいか」「どこで力を発揮しやすいか」を共有
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">2. 1on1や面談を強化したいとき</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">対話が深まらない、雑談で終わってしまう管理職やメンターに。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「いま相手はどのモードか」「どの入り口から話すと届きやすいか」を考える
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">3. すれ違いが増えているとき</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">報連相が噛み合わない時、個人の性格のせいにせず整理します。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「どのモード同士のすれ違いが起きているのか」として捉え、対立を和らげる
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">4. 若手・新人の定着支援に</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">オンボーディングやフォローアップで自己理解を促します。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「何にエネルギーが出やすいか」「どんな関わりで安心し、何に疲れるか」
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">5. リーダー層の視点を広げたいとき</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">評価面談前などに。自分の得意な関わり方を当てはめないために。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「自分に自然な伝え方が、相手にとって自然とは限らない」という視点を持つ
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-sm">
+                            <h5 class="font-bold text-sm text-stone-800 mb-1">6. 組織文化をつくりたいとき</h5>
+                            <p class="text-xs text-stone-600 mb-2 leading-relaxed">心理的安全性や対話文化、部門横断コミュニケーションの向上に。</p>
+                            <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-500 font-medium">
+                                👉 「違いを理解し、よりよく関わるための共通言語」として定期開催する
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- まとめメッセージ -->
+                    <div class="bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-100 rounded-xl p-5 text-center mt-2 shadow-sm">
+                        <p class="font-bold text-stone-800 mb-2">ひとことで言うなら、<br class="md:hidden"><span class="text-sky-700 text-lg">「人と人との関わり方を見直したい節目」</span></p>
+                        <p class="text-xs text-stone-600 leading-relaxed max-w-lg mx-auto">
+                            新しい関係が始まるとき。すれ違いが起きているとき。対話を深めたいとき。チームの空気を整えたいとき。<br>
+                            そのタイミングで実施すると、🌈RIESM™は単なる診断ではなく、現場で使える「対話の道具」になります。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- ケーススタディ集（リスト配置） -->
-            <div>
+            <div id="case-studies" class="scroll-mt-6">
                 <div class="flex items-center space-x-3 mb-3">
                     <div class="bg-sky-50 text-sky-600 p-2.5 rounded-lg flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
@@ -185,89 +353,112 @@
                         </a>
                     </div>
 
-                    <!-- CASE 04 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-sky-300 transition-colors">
+                    <!-- CASE 04 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-sky-700 mb-1 tracking-wider">CASE 04 【職場】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">新しい環境に馴染めず自信を喪失している社員</div>
+                            <div class="text-[11px] font-bold text-stone-500 mb-1 tracking-wider">CASE 04 【職場】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">新しい環境に馴染めず自信を喪失している社員</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-sky-50 group-hover:text-sky-600 transition-colors border border-stone-100 group-hover:border-sky-200" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 05 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-sky-300 transition-colors">
+                    <!-- CASE 05 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-sky-700 mb-1 tracking-wider">CASE 05 【職場】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">評価に納得できずモチベーションが低下した中堅</div>
+                            <div class="text-[11px] font-bold text-stone-500 mb-1 tracking-wider">CASE 05 【職場】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">評価に納得できずモチベーションが低下した中堅</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-sky-50 group-hover:text-sky-600 transition-colors border border-stone-100 group-hover:border-sky-200" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 06 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-amber-400 transition-colors">
+                    <!-- CASE 06 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-amber-600 mb-1 tracking-wider">CASE 06 【家庭】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">パートナーとのすれ違い（良かれと思ったのに）</div>
+                            <div class="text-[11px] font-bold text-amber-600/70 mb-1 tracking-wider">CASE 06 【家庭】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">パートナーとのすれ違い（良かれと思ったのに）</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors border border-stone-100 group-hover:border-amber-300" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 07 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-amber-400 transition-colors">
+                    <!-- CASE 07 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-amber-600 mb-1 tracking-wider">CASE 07 【家庭】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">子どもの進路選択で親の意見を押し付けてしまう</div>
+                            <div class="text-[11px] font-bold text-amber-600/70 mb-1 tracking-wider">CASE 07 【家庭】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">子どもの進路選択で親の意見を押し付けてしまう</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors border border-stone-100 group-hover:border-amber-300" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 08 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-amber-400 transition-colors">
+                    <!-- CASE 08 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-amber-600 mb-1 tracking-wider">CASE 08 【家庭】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">家事分担で「自分ばかり」と不満が溜まっている</div>
+                            <div class="text-[11px] font-bold text-amber-600/70 mb-1 tracking-wider">CASE 08 【家庭】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">家事分担で「自分ばかり」と不満が溜まっている</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors border border-stone-100 group-hover:border-amber-300" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 09 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-rose-300 transition-colors">
+                    <!-- CASE 09 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-rose-600 mb-1 tracking-wider">CASE 09 【自己】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">やりたいことが分からずキャリアに迷っている</div>
+                            <div class="text-[11px] font-bold text-rose-600/70 mb-1 tracking-wider">CASE 09 【自己】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">やりたいことが分からずキャリアに迷っている</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors border border-stone-100 group-hover:border-rose-200" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
-                    <!-- CASE 10 -->
-                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex items-center justify-between group hover:border-rose-300 transition-colors">
+                    <!-- CASE 10 (準備中) -->
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 flex items-center justify-between opacity-75">
                         <div class="pr-4">
-                            <div class="text-[11px] font-bold text-rose-600 mb-1 tracking-wider">CASE 10 【自己】</div>
-                            <div class="text-sm font-bold text-stone-800 leading-snug">完璧主義（アダプター過剰）で常に疲労感がある</div>
+                            <div class="text-[11px] font-bold text-rose-600/70 mb-1 tracking-wider">CASE 10 【自己】</div>
+                            <div class="text-sm font-bold text-stone-600 leading-snug">完璧主義（アダプター過剰）で常に疲労感がある</div>
                         </div>
-                        <a href="#" class="flex-shrink-0 bg-stone-50 p-2.5 rounded-full text-stone-400 group-hover:bg-rose-50 group-hover:text-rose-600 transition-colors border border-stone-100 group-hover:border-rose-200" title="ダウンロード">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        </a>
+                        <div class="flex-shrink-0 text-[10px] font-bold text-stone-400 bg-stone-200 px-2 py-1 rounded whitespace-nowrap">
+                            順次リリース
+                        </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- 公式ガイドブック（ケース集の下へ移動） -->
+            <div id="official-guidebook" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8 transition-all hover:shadow-md mt-10 scroll-mt-6">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <!-- PDFアイコン -->
+                            <div class="bg-rose-50 text-rose-600 p-2.5 rounded-lg flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-4"/><path d="M12 15v-4"/><path d="M15 15v-4"/><path d="M9 11h6"/></svg>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-bold text-stone-800 leading-tight">🌈RIESM™ 公式ガイドブック<span class="text-sm font-medium text-stone-500 ml-2">（理論テキスト）</span></h3>
+                        </div>
+                        <p class="text-sm text-stone-600 leading-relaxed">
+                            🌈RIESM™の全体像と、基盤となる心理学（交流分析・職業選択理論・キャリア発達理論）の裏付け理論テキストを収録した総合ガイドです。
+                        </p>
+                    </div>
+                    <div class="w-full md:w-auto flex-shrink-0">
+                        <a href="#" class="inline-flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-white font-medium py-3 px-8 rounded-xl transition-all shadow-sm active:scale-95 text-sm w-full md:w-auto">
+                            PDFを開く
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- ナビゲーター制度への案内 -->
-        <section class="mb-14 fade-in" style="animation-delay: 0.2s;">
+        <section id="navigator-system" class="mb-14 fade-in scroll-mt-6" style="animation-delay: 0.2s;">
             <div class="flex items-center justify-center space-x-4 mb-8">
                 <div class="h-px bg-stone-200 flex-grow"></div>
                 <h2 class="text-lg md:text-xl font-bold text-stone-700 tracking-widest text-center">制度・ガイドライン</h2>
