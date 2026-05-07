@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>第二種 衛生管理者 過去問マスター</title>
+  
+  <!-- Tailwind CSS の読み込み -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React, ReactDOM, Babel の読み込み -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- アニメーション用のCSS -->
+  <style>
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-fade-in-up { animation: fade-in-up 0.4s ease-out forwards; }
+    .animate-spin-slow { animation: spin-slow 10s linear infinite; }
+    
+    /* スマホでのタップハイライトを消す */
+    * { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+  <div id="root"></div>
+
+  <!-- React アプリケーションのコード -->
+  <script type="text/babel">
+    const { useState, useEffect, Fragment } = React;
+
+    // ==========================================
+    // アイコンコンポーネント (Lucide-reactの代替としてSVGを直接定義)
+    // ==========================================
+    const IconWrapper = ({ size = 24, className = "", children }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        {children}
+      </svg>
+    );
+
+    const CheckCircle2 = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></IconWrapper>;
+    const XCircle = (props) => <IconWrapper {...props}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></IconWrapper>;
+    const ChevronRight = (props) => <IconWrapper {...props}><path d="m9 18 6-6-6-6"/></IconWrapper>;
+    const RefreshCw = (props) => <IconWrapper {...props}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconWrapper>;
+    const Award = (props) => <IconWrapper {...props}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></IconWrapper>;
+    const BookOpen = (props) => <IconWrapper {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconWrapper>;
+    const Brain = (props) => <IconWrapper {...props}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4.5 4.5 4.5 0 0 1-3 4.5"/></IconWrapper>;
+    const Activity = (props) => <IconWrapper {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></IconWrapper>;
+    const ArrowRight = (props) => <IconWrapper {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconWrapper>;
+    const MessageCircle = (props) => <IconWrapper {...props}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></IconWrapper>;
+
+    // ==========================================
+    // キャラクター設定
+    // ==========================================
+    const CHARACTERS = {
+      gaupt: { name: "ガプト", icon: "🔥", color: "text-red-500", bg: "bg-red-50", border: "border-red-200" },
+      gapel: { name: "ガペル", icon: "❄️", color: "text-blue-500", bg: "bg-blue-50", border: "border-blue-200" },
+      char: { name: "赤い彗星の人", icon: "☄️", color: "text-red-700", bg: "bg-red-100", border: "border-red-300" },
+      amuro: { name: "白い悪魔のパイロット", icon: "🤖", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-300" },
+      rei: { name: "零号機の少女", icon: "🌑", color: "text-cyan-600", bg: "bg-cyan-50", border: "border-cyan-200" },
+      asuka: { name: "弐号機の少女", icon: "🌋", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-300" },
+      shinji: { name: "初号機の少年", icon: "🎧", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-300" },
+      doraemon: { name: "青いネコ型", icon: "🐱", color: "text-blue-400", bg: "bg-blue-50", border: "border-blue-300" },
+      nobita: { name: "昼寝好きの少年", icon: "👓", color: "text-yellow-600", bg: "bg-yellow-50", border: "border-yellow-300" },
+      shizuka: { name: "お風呂好きの少女", icon: "🎀", color: "text-pink-500", bg: "bg-pink-50", border: "border-pink-300" },
+    };
+
+    // ==========================================
+    // 応援メッセージデータ
+    // ==========================================
+    const CORRECT_MESSAGES = [
+      { charId: 'gaupt', text: "よっしゃー！その調子だぜ！完璧な解答だ！" },
+      { charId: 'gapel', text: "ふん、これくらい出来て当然よね。次もこの調子でいきなさいよ。" },
+      { charId: 'char', text: "見せてもらおうか、君の勉強の成果とやらを！…見事だ！" },
+      { charId: 'amuro', text: "君ならできると信じていたよ！凄いぞ！" },
+      { charId: 'rei', text: "……正解。あなたは死なないわ、ちゃんと勉強しているもの。" },
+      { charId: 'asuka', text: "あんたバカァ！？……って言おうとしたけど、やるじゃない！当然よね！" },
+      { charId: 'shinji', text: "逃げちゃダメだ、逃げちゃダメだ……って、すごい！正解だよ！" },
+      { charId: 'doraemon', text: "『アンキパン』がなくても完璧だね！ふふふっ！" },
+      { charId: 'nobita', text: "うわぁぁん！ドラ〇もーん！また正解したよー！すごいや！" },
+      { charId: 'shizuka', text: "すごいわ！私、とっても嬉しい！この調子で頑張って！" },
+    ];
+
+    const INCORRECT_MESSAGES = [
+      { charId: 'gaupt', text: "気にするな！次で取り返すぞ！失敗は成功の母だ！" },
+      { charId: 'gapel', text: "あんたバカァ！？こんな基礎も分からないの？……ほら、解説しっかり読みなさい。" },
+      { charId: 'char', text: "認めたくないものだな、自分自身の若さゆえの過ちというものを……次は間違えるなよ。" },
+      { charId: 'amuro', text: "二度もぶったね！親父にもぶたれたことないのに！……じゃなくて、次こそ正解してくれ！" },
+      { charId: 'rei', text: "……間違ってる。でも、次があるわ。" },
+      { charId: 'asuka', text: "ちょっと！何やってんのよ！あんたバカァ！？しっかりしなさいよね！" },
+      { charId: 'shinji', text: "僕には、僕には無理なんだ……じゃなくて、元気出して！次頑張ろう！" },
+      { charId: 'doraemon', text: "もう、しょっちゅう間違えてちゃダメだよ〜。" },
+      { charId: 'nobita', text: "僕と一緒に0点とっちゃダメだよー！次は頑張って！" },
+      { charId: 'shizuka', text: "ドンマイ！失敗は誰にでもあるわ。次はきっと大丈夫！" },
+    ];
+
+    const CATEGORIES = [
+      { id: 'hourei', name: '関係法令', icon: BookOpen, color: 'bg-blue-500', total: 20 },
+      { id: 'eisei', name: '労働衛生', icon: Brain, color: 'bg-green-500', total: 20 },
+      { id: 'seiri', name: '労働生理', icon: Activity, color: 'bg-orange-500', total: 20 },
+    ];
+
+    // ==========================================
+    // リアル過去問データ（各20問、計60問の純粋な過去問）
+    // ==========================================
+    const QUESTION_DATABASE = [
+      // 【関係法令】 20問
+      { id: 'h1', category: 'hourei', text: '衛生管理者を選任すべき事業場は、常時何人以上の労働者を使用する事業場か。', options: ['10人以上', '30人以上', '50人以上', '100人以上', '300人以上'], correctIndex: 2, explanation: '常時50人以上の労働者を使用する事業場では、衛生管理者を選任しなければなりません。' },
+      { id: 'h2', category: 'hourei', text: '総括安全衛生管理者を選任しなければならない事業場で、常時300人以上の労働者を使用する業種はどれか。', options: ['通信業', '金融業', '製造業', '医療業', '旅館業'], correctIndex: 2, explanation: '製造業は常時300人以上で総括安全衛生管理者の選任が必要です。' },
+      { id: 'h3', category: 'hourei', text: '衛生委員会の構成員として、事業者が指名する者の中に含めなければならないのはどれか。', options: ['総括安全衛生管理者', '産業医', '労働組合の代表', '作業環境測定士', '人事部長'], correctIndex: 1, explanation: '構成員には、①総括安全衛生管理者等、②衛生管理者、③産業医、④衛生に関し経験を有する労働者を含める必要があります。' },
+      { id: 'h4', category: 'hourei', text: '定期健康診断は、常時使用する労働者に対し、原則としてどのくらいの頻度で行わなければならないか。', options: ['3か月以内ごとに1回', '6か月以内ごとに1回', '1年以内ごとに1回', '2年以内ごとに1回', '3年以内ごとに1回'], correctIndex: 2, explanation: '定期健康診断は、1年以内ごとに1回実施することが義務付けられています。' },
+      { id: 'h5', category: 'hourei', text: '労働時間が8時間を超える場合、少なくとも何分の休憩時間を途中に与えなければならないか。', options: ['30分', '45分', '60分', '75分', '90分'], correctIndex: 2, explanation: '労働時間が6時間を超える場合は45分以上、8時間を超える場合は60分以上の休憩が必要です。' },
+      { id: 'h6', category: 'hourei', text: '36協定における時間外労働の限度時間は、原則として1か月何時間か。', options: ['30時間', '40時間', '45時間', '60時間', '80時間'], correctIndex: 2, explanation: '原則として1か月45時間、1年360時間と定められています。' },
+      { id: 'h7', category: 'hourei', text: '年次有給休暇は、雇入れの日から起算して6か月間継続勤務し、全労働日の何割以上出勤した労働者に付与されるか。', options: ['6割以上', '7割以上', '8割以上', '9割以上', '10割（全日）'], correctIndex: 2, explanation: '全労働日の8割以上出勤した労働者に対して、原則10日間の年次有給休暇が付与されます。' },
+      { id: 'h8', category: 'hourei', text: '衛生管理者の職務に含まれないものはどれか。', options: ['健康診断の実施結果に係る記録の作成', '作業環境の維持管理', '労働者の健康障害を防止するための措置', '衛生教育の計画の作成', '作業環境測定の実施'], correctIndex: 4, explanation: '作業環境測定の実施は作業環境測定士の職務です。' },
+      { id: 'h9', category: 'hourei', text: '専属の産業医を選任しなければならないのは、常時何人以上の労働者を使用する事業場か。', options: ['300人以上', '500人以上', '1000人以上', '2000人以上', '3000人以上'], correctIndex: 2, explanation: '常時1000人以上の労働者を使用する事業場などでは、専属の産業医が必要です。' },
+      { id: 'h10', category: 'hourei', text: '雇入時の健康診断において、医師による健康診断を受けた後、その結果を証明する書面を提出した労働者に対しては、省略できるか。', options: ['省略できない', 'その項目について省略できる', '全て省略できる', '事業者の判断による', '労働基準監督署長の許可があれば省略できる'], correctIndex: 1, explanation: '書面を提出したときは、その項目についての健康診断を省略することができます。' },
+      { id: 'h11', category: 'hourei', text: '労働基準法において、労働者を解雇しようとする場合、少なくとも何日前に予告しなければならないか。', options: ['7日前', '14日前', '20日前', '30日前', '60日前'], correctIndex: 3, explanation: '労働者を解雇する場合は、少なくとも30日前に予告をするか、30日分以上の平均賃金（解雇予告手当）を支払う必要があります。' },
+      { id: 'h12', category: 'hourei', text: '衛生管理者は、少なくともどれくらいの頻度で作業場等を巡視しなければならないか。', options: ['毎日', '週に1回', '月に1回', '2か月に1回', '半年に1回'], correctIndex: 1, explanation: '衛生管理者は、少なくとも「毎週1回」作業場等を巡視し、設備、作業方法又は衛生状態に有害のおそれがあるときは、直ちに、労働者の健康障害を防止するため必要な措置を講じなければなりません。' },
+      { id: 'h13', category: 'hourei', text: '産業医は、少なくともどれくらいの頻度で作業場等を巡視しなければならないか。（※事業者から所定の情報提供を受けている場合を除く原則）', options: ['毎週1回', '毎月1回', '2か月に1回', '半年に1回', '1年に1回'], correctIndex: 1, explanation: '産業医は原則として「毎月1回」作業場を巡視する必要があります。（一定の条件を満たせば2か月に1回となります）' },
+      { id: 'h14', category: 'hourei', text: '安全委員会及び衛生委員会は、少なくともどれくらいの頻度で開催しなければならないか。', options: ['毎週1回', '毎月1回', '2か月に1回', '半年に1回', '1年に1回'], correctIndex: 1, explanation: '安全委員会や衛生委員会は、毎月1回以上開催することが義務付けられています。' },
+      { id: 'h15', category: 'hourei', text: '深夜業（午後10時から午前5時まで）を含む業務に常時従事する労働者に対し、特定業務従事者の健康診断はどれくらいの頻度で行うか。', options: ['3か月以内ごとに1回', '6か月以内ごとに1回', '1年以内ごとに1回', '2年以内ごとに1回', '3年以内ごとに1回'], correctIndex: 1, explanation: '深夜業などの特定業務に従事する労働者には、配置替えの際および6か月以内ごとに1回、定期に健康診断を実施する必要があります。' },
+      { id: 'h16', category: 'hourei', text: '常時50人以上の労働者を使用する事業場において、衛生管理者を選任できないやむを得ない事由がある場合、どのような手続きが必要か。', options: ['所轄労働基準監督署長の許可を受ける', '都道府県労働局長に届け出る', '厚生労働大臣の許可を受ける', '安全衛生委員会で承認を得る', '手続きは不要である'], correctIndex: 0, explanation: 'やむを得ない事由により衛生管理者を選任できない場合は、所轄労働基準監督署長の許可を受けることで選任を免除（または猶予）されます。' },
+      { id: 'h17', category: 'hourei', text: '第二種衛生管理者免許を有する者が、衛生管理者として選任できない業種はどれか。', options: ['通信業', '金融業', '卸売業', '製造業', '情報通信業'], correctIndex: 3, explanation: '製造業、建設業、鉱業などの「有害業務と関連の深い業種」では、第一種衛生管理者の免許が必要です。' },
+      { id: 'h18', category: 'hourei', text: '安全衛生推進者または衛生推進者を選任しなければならない事業場の規模は、常時何人以上何人未満の労働者を使用する事業場か。', options: ['10人以上50人未満', '20人以上50人未満', '30人以上100人未満', '50人以上100人未満', '100人以上300人未満'], correctIndex: 0, explanation: '常時10人以上50人未満の労働者を使用する事業場では、安全衛生推進者（または衛生推進者）の選任が義務付けられています。' },
+      { id: 'h19', category: 'hourei', text: '産業医の職務に含まれないものはどれか。', options: ['健康診断の実施とその結果に基づく措置', '長時間労働者に対する面接指導', '作業環境の維持管理に関する措置', '労働者の健康障害の原因の調査', '事業場の経営方針の決定'], correctIndex: 4, explanation: '事業場の経営方針の決定は、産業医の職務ではありません。' },
+      { id: 'h20', category: 'hourei', text: '衛生委員会の議長は、原則として誰が指名するか。', options: ['事業者', '労働組合の代表', '産業医', '衛生管理者', '所轄労働基準監督署長'], correctIndex: 0, explanation: '衛生委員会の議長は、総括安全衛生管理者またはそれに準ずる者の中から「事業者」が指名します。' },
+
+      // 【労働衛生】 20問
+      { id: 'e1', category: 'eisei', text: '事務室の空気環境の調整基準において、一酸化炭素の含有率は百万分の何以下としなければならないか。', options: ['10以下', '20以下', '50以下', '100以下', '1000以下'], correctIndex: 0, explanation: '一酸化炭素の基準は10ppm以下です。' },
+      { id: 'e2', category: 'eisei', text: '精密な作業を行う場合の作業面の照度の基準として、何ルクス以上としなければならないか。', options: ['70ルクス以上', '150ルクス以上', '300ルクス以上', '500ルクス以上', '1000ルクス以上'], correctIndex: 2, explanation: '精密な作業は300ルクス以上です。' },
+      { id: 'e3', category: 'eisei', text: '熱中症の予防指標として用いられるWBGT指数に含まれない要素はどれか。', options: ['気温', '湿度', '輻射熱（放射熱）', '気圧', '気流（風速）の影響'], correctIndex: 3, explanation: 'WBGTは湿度、輻射熱、気温を取り入れた指標で、気圧は含まれません。' },
+      { id: 'e4', category: 'eisei', text: '情報機器作業（VDT作業）において、1日の作業時間が長い場合、1連続作業時間はどれくらいを超えないようにすべきか。', options: ['30分', '1時間', '1時間30分', '2時間', '3時間'], correctIndex: 1, explanation: '1連続作業時間は1時間を超えないようにします。' },
+      { id: 'e5', category: 'eisei', text: '食中毒の原因菌のうち、手などに化膿創がある人が調理を行うことで感染・発症しやすく、潜伏期間が短いのはどれか。', options: ['サルモネラ属菌', '腸炎ビブリオ', 'カンピロバクター', '黄色ブドウ球菌', 'ボツリヌス菌'], correctIndex: 3, explanation: '黄色ブドウ球菌は化膿創に存在し、潜伏期間が1〜5時間と短いです。' },
+      { id: 'e6', category: 'eisei', text: '出血時の救急処置として、最も基本的かつ効果的な止血法はどれか。', options: ['間接圧迫止血法', '直接圧迫止血法', '止血帯止血法', '挙上法', '冷却法'], correctIndex: 1, explanation: '出血部位を直接圧迫する直接圧迫止血法が基本です。' },
+      { id: 'e7', category: 'eisei', text: 'メタボリックシンドロームの診断基準において、男性の腹囲の基準値は何cm以上か。', options: ['80cm以上', '85cm以上', '90cm以上', '95cm以上', '100cm以上'], correctIndex: 1, explanation: '男性85cm以上、女性90cm以上が基準です。' },
+      { id: 'e8', category: 'eisei', text: '肥満度を表すBMIの計算式として正しいものはどれか。', options: ['身長(m) / 体重(kg)²', '体重(kg) / 身長(m)²', '体重(kg) / 身長(cm)', '身長(cm) - 100', '(身長(cm) - 100) × 0.9'], correctIndex: 1, explanation: 'BMI = 体重(kg) ÷ (身長(m) × 身長(m)) で計算されます。' },
+      { id: 'e9', category: 'eisei', text: '一次救命処置(BLS)における胸骨圧迫のテンポとして適切なものは、1分間に何回か。', options: ['60〜80回', '80〜100回', '100〜120回', '120〜140回', '140〜160回'], correctIndex: 2, explanation: '1分間に100〜120回のテンポで行います。' },
+      { id: 'e10', category: 'eisei', text: '労働衛生管理統計において、休業1日以上の災害による死傷者数を100万延べ実労働時間当たりで表した指標は何か。', options: ['年千人率', '度数率', '強度率', '罹患率', '有病率'], correctIndex: 1, explanation: '災害の発生頻度を表す度数率です。' },
+      { id: 'e11', category: 'eisei', text: '事業場の食堂の要件として、床面積は食事の際1人について何平方メートル以上としなければならないか。', options: ['0.5平方メートル', '1.0平方メートル', '1.5平方メートル', '2.0平方メートル', '3.0平方メートル'], correctIndex: 1, explanation: '食堂の床面積は、食事の際1人について1平方メートル以上と規定されています。' },
+      { id: 'e12', category: 'eisei', text: '事務室の換気において、労働者1人について必要な気積（空間）は、設備の占める容積等を除き、何立方メートル以上か。', options: ['5立方メートル', '10立方メートル', '15立方メートル', '20立方メートル', '25立方メートル'], correctIndex: 1, explanation: '労働者1人あたり、10立方メートル以上の気積を確保する必要があります（床面から4mを超える高さにある空間を除く）。' },
+      { id: 'e13', category: 'eisei', text: '虚血性心疾患の危険因子として、通常含まれないものはどれか。', options: ['高血圧', '喫煙', '脂質異常症', '糖尿病', '低尿酸血症'], correctIndex: 4, explanation: '低尿酸血症は危険因子ではありません。高血圧、喫煙、脂質異常症、糖尿病などが重大な危険因子（冠危険因子）です。' },
+      { id: 'e14', category: 'eisei', text: '熱中症の病型の中で、最も重症であり、脳の体温調節中枢が機能不全に陥り、意識障害や高体温を伴うものはどれか。', options: ['熱失神', '熱けいれん', '熱疲労', '熱射病', '熱発疹'], correctIndex: 3, explanation: '熱射病（III度）は、体温調節機能が破綻し、中枢神経症状（意識障害など）を伴う最も重篤な状態です。' },
+      { id: 'e15', category: 'eisei', text: '食中毒の原因となる病原体のうち、ノロウイルスに関する記述として正しいものはどれか。', options: ['細菌の一種であり、抗生物質が有効である', 'カキなどの二枚貝の生食が原因となることが多い', '熱に非常に強く、100度で1時間加熱しても死滅しない', '主な症状は激しい咳と呼吸困難である', '潜伏期間は通常1週間以上である'], correctIndex: 1, explanation: 'ノロウイルスはウイルス性食中毒の代表で、カキなどの二枚貝の生食や加熱不足で感染し、冬場に多く発生します。' },
+      { id: 'e16', category: 'eisei', text: '局所排気装置の基本的な構成要素のうち、有害物質を含んだ空気を吸い込む入り口の部分を何というか。', options: ['ダクト', '空気清浄装置', '排風機（ファン）', 'フード', '排気口'], correctIndex: 3, explanation: '発生源の近くで有害物質を吸い込む入り口部分を「フード」と呼びます。' },
+      { id: 'e17', category: 'eisei', text: '有機溶剤（トルエン、キシレンなど）のばく露によって引き起こされる主な急性の健康障害はどれか。', options: ['中枢神経の抑制（麻酔作用）', 'じん肺', '白ろう病', '熱中症', '騒音性難聴'], correctIndex: 0, explanation: '有機溶剤の急性中毒の主な症状は、頭痛、めまい、意識喪失などの「中枢神経の抑制（麻酔作用）」です。' },
+      { id: 'e18', category: 'eisei', text: '一酸化炭素（CO）に関する記述として正しいものはどれか。', options: ['血液中の白血球と強く結合する', '血液中のヘモグロビンとの結合力は酸素の約250倍である', '特有の刺激臭がある', '空気よりかなり重い', '皮膚から容易に吸収される'], correctIndex: 1, explanation: '一酸化炭素は無色無臭で、赤血球中のヘモグロビンとの結合力が酸素の約250倍と非常に強く、酸素欠乏を引き起こします。' },
+      { id: 'e19', category: 'eisei', text: '騒音性難聴の初期症状として、どの周波数付近の聴力が低下する（c5-dip）のが特徴か。', options: ['500Hz', '1000Hz', '2000Hz', '4000Hz', '8000Hz'], correctIndex: 3, explanation: '騒音性難聴の初期には、4000Hz（ヘルツ）付近の高音域の聴力低下がみられるのが特徴です（c5-dip現象）。' },
+      { id: 'e20', category: 'eisei', text: 'VDT作業（情報機器作業）における照明環境として、適切なものはどれか。', options: ['ディスプレイ画面を周辺より極端に明るくする', 'ディスプレイ画面の明るさと周辺の明るさの差をなるべく小さくする', '直射日光が画面に当たるようにする', '作業面の照度は70ルクス以下とする', 'グレア（まぶしさ）を意図的に発生させる'], correctIndex: 1, explanation: '目の疲労を防ぐため、ディスプレイ画面、書類、キーボード周辺の明るさの差をなるべく小さくし、グレア（まぶしさ）を防止することが重要です。' },
+
+      // 【労働生理】 20問
+      { id: 's1', category: 'seiri', text: '血液の成分のうち、酸素を運搬する主な役割を担っているのはどれか。', options: ['血小板', '白血球', '赤血球', '血漿', 'リンパ球'], correctIndex: 2, explanation: '赤血球に含まれるヘモグロビンが酸素と結びつき、運搬します。' },
+      { id: 's2', category: 'seiri', text: '心臓の構造において、肺から酸素を多く含んだ血液（動脈血）が戻ってくる部屋はどこか。', options: ['右心房', '右心室', '左心房', '左心室', '大動脈'], correctIndex: 2, explanation: '動脈血は肺静脈を通って左心房に入ります。' },
+      { id: 's3', category: 'seiri', text: '呼吸運動において、息を吸うとき（吸気時）の横隔膜の動きとして正しいのはどれか。', options: ['弛緩して上がる', '弛緩して下がる', '収縮して上がる', '収縮して下がる', '動かない'], correctIndex: 3, explanation: '吸気時には横隔膜が収縮して下がります。' },
+      { id: 's4', category: 'seiri', text: '胃液に含まれる消化酵素で、蛋白質を分解する働きがあるものはどれか。', options: ['アミラーゼ', 'ペプシン', 'リパーゼ', 'トリプシン', 'マルターゼ'], correctIndex: 1, explanation: '胃液のペプシンが蛋白質を分解します。' },
+      { id: 's5', category: 'seiri', text: '脂肪の消化を助ける「胆汁」を生成する臓器はどこか。', options: ['胃', '膵臓', '肝臓', '胆のう', '小腸'], correctIndex: 2, explanation: '胆汁は肝臓で生成され、胆のうで濃縮・貯蔵されます。' },
+      { id: 's6', category: 'seiri', text: '腎臓の機能単位であるネフロンにおいて、血液中の水分や老廃物が濾過される場所はどこか。', options: ['糸球体とボウマン嚢', '近位尿細管', 'ヘンレのループ', '遠位尿細管', '集合管'], correctIndex: 0, explanation: '糸球体とボウマン嚢で血液が濾過されます。' },
+      { id: 's7', category: 'seiri', text: '自律神経系のうち、活動時や緊張時に優位に働き、心拍数を増加させるのはどれか。', options: ['交感神経', '副交感神経', '運動神経', '感覚神経', '脳神経'], correctIndex: 0, explanation: '交感神経が緊張・活動時に優位になります。' },
+      { id: 's8', category: 'seiri', text: '目において、カメラのレンズの役割を果たし、厚みを変えることでピント調節を行う器官はどれか。', options: ['角膜', '虹彩', '水晶体', '網膜', '硝子体'], correctIndex: 2, explanation: '水晶体がレンズの役割を果たします。' },
+      { id: 's9', category: 'seiri', text: '基礎代謝量は、同性・同年代であれば、一般的に何にほぼ比例するか。', options: ['身長', '体重', '体表面積', '肺活量', '心拍数'], correctIndex: 2, explanation: '基礎代謝量は体表面積にほぼ比例します。' },
+      { id: 's10', category: 'seiri', text: '体温調節において、暑い環境下で体熱を放散するために起こる生理的反応はどれか。', options: ['皮膚血管の収縮', '立毛筋の収縮', 'ふるえの発生', '発汗', '基礎代謝の亢進'], correctIndex: 3, explanation: '発汗による気化熱で体温を下げます。' },
+      { id: 's11', category: 'seiri', text: '血液の成分のうち、出血時に血液を凝固させる働きを持つものはどれか。', options: ['赤血球', '白血球', '血小板', '血清', 'ヘモグロビン'], correctIndex: 2, explanation: '血小板は血液凝固に関与し、傷口をふさぐ役割を持っています。' },
+      { id: 's12', category: 'seiri', text: '肝臓の機能として誤っているものはどれか。', options: ['胆汁の生成', 'グリコーゲンの合成と貯蔵', '有害物質の解毒', '尿素の合成', 'インスリンの分泌'], correctIndex: 4, explanation: 'インスリンは「膵臓」から分泌されるホルモンであり、肝臓の機能ではありません。' },
+      { id: 's13', category: 'seiri', text: '脳の構造のうち、呼吸や心拍など生命維持に直結する自律神経機能の中枢がある場所はどこか。', options: ['大脳', '小脳', '間脳', '中脳', '延髄'], correctIndex: 4, explanation: '延髄には、呼吸中枢や心臓中枢など、生命維持に不可欠な自律機能の中枢が存在します。' },
+      { id: 's14', category: 'seiri', text: '膵臓から分泌され、血糖値を「下げる」働きを持つホルモンはどれか。', options: ['アドレナリン', 'グルカゴン', 'インスリン', 'チロキシン', 'コルチゾール'], correctIndex: 2, explanation: 'インスリンは血液中のブドウ糖を細胞内に取り込ませ、血糖値を下げる唯一のホルモンです。' },
+      { id: 's15', category: 'seiri', text: '耳の構造のうち、体の傾きや回転などの「平衡感覚」を感知する器官はどれか。', options: ['耳介', '鼓膜', '耳小骨', '蝸牛（うずまき管）', '半規管と前庭'], correctIndex: 4, explanation: '半規管（三半規管）と前庭は、体の回転や傾きを感知する平衡器官です。蝸牛は聴覚に関与します。' },
+      { id: 's16', category: 'seiri', text: '筋肉に関する記述のうち、正しいものはどれか。', options: ['骨格筋は平滑筋である', '心筋は随意筋である', '内臓筋は横紋筋である', '骨格筋は横紋筋であり、随意筋である', '心筋は平滑筋であり、随意筋である'], correctIndex: 3, explanation: '骨格筋は横紋筋（縞模様がある）で、自分の意志で動かせる随意筋です。心筋は横紋筋ですが不随意筋です。' },
+      { id: 's17', category: 'seiri', text: '血液の循環経路において、右心室から肺動脈を経て肺に送られ、肺静脈を通って左心房に戻る経路を何というか。', options: ['体循環', '大循環', '肺循環', '門脈循環', '冠循環'], correctIndex: 2, explanation: '心臓の右側から肺を通って左側に戻る経路を「肺循環（小循環）」と呼びます。' },
+      { id: 's18', category: 'seiri', text: '唾液に含まれる消化酵素「アミラーゼ（プチアリン）」は、主に何を分解するか。', options: ['蛋白質', '脂肪', 'デンプン（糖質）', 'ビタミン', '無機塩類'], correctIndex: 2, explanation: 'アミラーゼは、デンプン（糖質）を分解して麦芽糖などにする消化酵素です。' },
+      { id: 's19', category: 'seiri', text: '内分泌器官である甲状腺から分泌され、全身の物質代謝を亢進させるホルモンはどれか。', options: ['インスリン', 'アドレナリン', 'チロキシン', '成長ホルモン', 'メラトニン'], correctIndex: 2, explanation: '甲状腺から分泌されるチロキシンは、全身の細胞の代謝を活発にする働きがあります。' },
+      { id: 's20', category: 'seiri', text: '目の網膜にある視細胞のうち、暗いところでわずかな光を感じる（明暗を感知する）細胞はどれか。', options: ['錐体（すいたい）細胞', '杆体（かんたい）細胞', '双極細胞', '視神経細胞', '毛様体'], correctIndex: 1, explanation: '網膜には、明暗を感じる「杆体（かんたい）細胞」と、明るいところで色を感じる「錐体（すいたい）細胞」があります。' }
+    ];
+
+    // ==========================================
+    // メインアプリケーションコンポーネント
+    // ==========================================
+    function App() {
+      const [screen, setScreen] = useState('home');
+      const [category, setCategory] = useState(null);
+      const [currentQuestions, setCurrentQuestions] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [score, setScore] = useState(0);
+      const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+      const [aiMessage, setAiMessage] = useState(null);
+
+      const startQuiz = (categoryId) => {
+        const filtered = QUESTION_DATABASE.filter(q => q.category === categoryId);
+        // 該当カテゴリの20問の中からランダムに10問を抽出
+        const shuffled = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+        
+        setCategory(CATEGORIES.find(c => c.id === categoryId));
+        setCurrentQuestions(shuffled);
+        setCurrentIndex(0);
+        setScore(0);
+        setSelectedOptionIndex(null);
+        setIsAnswered(false);
+        setScreen('quiz');
+      };
+
+      const handleSelectOption = (index) => {
+        if (isAnswered) return;
+        setSelectedOptionIndex(index);
+        setIsAnswered(true);
+
+        const isCorrect = index === currentQuestions[currentIndex].correctIndex;
+        if (isCorrect) {
+          setScore(prev => prev + 10);
+          setAiMessage(CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)]);
+        } else {
+          setAiMessage(INCORRECT_MESSAGES[Math.floor(Math.random() * INCORRECT_MESSAGES.length)]);
+        }
+      };
+
+      const handleNextQuestion = () => {
+        if (currentIndex < currentQuestions.length - 1) {
+          setCurrentIndex(prev => prev + 1);
+          setSelectedOptionIndex(null);
+          setIsAnswered(false);
+          setAiMessage(null);
+        } else {
+          setScreen('result');
+        }
+      };
+
+      const resetQuiz = () => {
+        setScreen('home');
+      };
+
+      const getResultMessage = (finalScore) => {
+        if (finalScore === 100) return "100点！あなたが衛生管理者の神だ！";
+        if (finalScore >= 90) return "90点！これは必然！受からざるを得ない！";
+        if (finalScore >= 80) return "80点！すごい余裕で合格！！";
+        if (finalScore >= 70) return "70点！合格だ！";
+        return "惜しい！もう一息！復習して再チャレンジ！";
+      };
+
+      const getCharacterMessage = (finalScore) => {
+        if (finalScore === 100) {
+          return (
+            <Fragment>
+              <p>ガプト🔥「うおおお！満点だぁぁ！本当に最高だぜ！誇らしいぜ！🔥」</p>
+              <p>ガペル❄️(•_•)「……満点なんて、生意気ね。でも……ほんとに、よく頑張ったわね。お疲れ様。」</p>
+            </Fragment>
+          );
+        } else if (finalScore >= 70) {
+          return (
+            <Fragment>
+              <p>ガプト🔥「見事合格ライン突破だ！この勢いで本番もぶっちぎろうぜ！🔥」</p>
+              <p>ガペル❄️(•_•)「まぁ、合格点なら許してあげる。……でも本番はもっと厳しいんだから、私のサポート、ちゃんと受けなさいよ。」</p>
+            </Fragment>
+          );
+        } else {
+          return (
+            <Fragment>
+              <p>ガプト🔥「くそー、惜しかったな！でも絶対できる！次こそ満点だ！🔥」</p>
+              <p>ガペル❄️(•_•)「あんたバカァ！？こんな点数で諦めるつもりじゃないでしょうね？……ほら、もう一回。私が最後まで付き合ってあげるから。」</p>
+            </Fragment>
+          );
+        }
+      };
+
+      const getResultGuestMessage = (finalScore) => {
+        const perfectGuests = [
+          { charId: 'char', text: "ええい！君の知力は化け物か！完璧な成績だ！" },
+          { charId: 'asuka', text: "満点！？……ま、まぁ、私に比べればまだまだだけど、特別に褒めてあげるわ！" },
+          { charId: 'doraemon', text: "満点おめでとう！はい、『天才ヘルメット』〜！……え？そんな道具はないって？" }
+        ];
+        const passGuests = [
+          { charId: 'amuro', text: "こんなに嬉しいことはない……見事な合格だ！" },
+          { charId: 'shinji', text: "やったね。僕も自分のことみたいに嬉しいよ。" },
+          { charId: 'shizuka', text: "合格点よ！今日はゆっくりお風呂に入ってさっぱりしましょ！" }
+        ];
+        const failGuests = [
+          { charId: 'rei', text: "……まだ終わっていないわ。もう一度挑戦して。" },
+          { charId: 'nobita', text: "あはは……僕のテストの点数よりはずっと高いよ！もう一回一緒にやってみようよ！" },
+          { charId: 'char', text: "まだだ、まだ終わらんよ！諦めずに立て！" }
+        ];
+
+        let guests = failGuests;
+        if (finalScore === 100) guests = perfectGuests;
+        else if (finalScore >= 70) guests = passGuests;
+
+        return guests[Math.floor(Math.random() * guests.length)];
+      };
+
+      // --- 画面：ホーム ---
+      if (screen === 'home') {
+        return (
+          <div className="min-h-screen bg-slate-50 flex flex-col items-center py-8 px-4">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-center text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 opacity-20 transform translate-x-4 -translate-y-4">
+                   <BookOpen size={100} />
+                </div>
+                <h1 className="text-2xl font-extrabold mb-1 relative z-10">第二種 衛生管理者</h1>
+                <p className="text-blue-100 font-medium text-sm relative z-10">過去問マスターチャレンジ</p>
+              </div>
+              
+              <div className="p-5">
+                <h2 className="text-base font-bold text-gray-700 mb-3 text-center">勉強する分野を選んでね！</h2>
+                <div className="space-y-3">
+                  {CATEGORIES.map(cat => {
+                    const Icon = cat.icon;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => startQuiz(cat.id)}
+                        className="w-full flex items-center p-3 rounded-2xl border-2 border-gray-100 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-300 group"
+                      >
+                        <div className={`${cat.color} p-2 rounded-xl text-white shadow-md group-hover:scale-110 transition-transform`}>
+                          <Icon size={20} />
+                        </div>
+                        <div className="ml-3 flex-1 text-left">
+                          <span className="text-lg font-bold text-gray-700 block">{cat.name}</span>
+                          <span className="text-xs text-gray-500 font-medium">純粋な過去問{cat.total}問（からランダム10問）</span>
+                        </div>
+                        <ChevronRight className="text-gray-400 group-hover:text-indigo-500" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // --- 画面：クイズ ---
+      if (screen === 'quiz') {
+        const question = currentQuestions[currentIndex];
+        const CategoryIcon = category?.icon;
+        
+        return (
+          <div className="h-[100dvh] flex flex-col bg-slate-50 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+            <div className="flex-shrink-0 bg-white z-10 shadow-sm">
+              <div className="flex items-center justify-between p-3 bg-indigo-600 text-white">
+                <div className="flex items-center gap-2 font-bold text-sm">
+                  {CategoryIcon && <CategoryIcon size={16} />}
+                  {category?.name}
+                </div>
+                <div className="font-bold bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                  {currentIndex + 1} / {currentQuestions.length} 問
+                </div>
+              </div>
+              
+              <div className="h-1 w-full bg-gray-200">
+                <div 
+                  className="h-full bg-yellow-400 transition-all duration-500 ease-out"
+                  style={{ width: `${((currentIndex) / currentQuestions.length) * 100}%` }}
+                ></div>
+              </div>
+
+              <div className="p-4 border-b border-gray-100 bg-white">
+                <div className="flex gap-2 mb-1">
+                  <span className="text-indigo-600 font-extrabold text-lg">Q{currentIndex + 1}.</span>
+                </div>
+                <p className="text-gray-800 text-base font-bold leading-tight">
+                  {question.text}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 pb-8">
+              <div className="space-y-2">
+                {question.options.map((option, idx) => {
+                  let btnClass = "w-full text-left p-3 rounded-xl border-2 transition-all duration-200 text-sm font-medium shadow-sm relative overflow-hidden ";
+                  
+                  if (!isAnswered) {
+                    btnClass += "bg-white border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 text-gray-700 active:scale-95";
+                  } else {
+                    if (idx === question.correctIndex) {
+                      btnClass += "bg-green-50 border-green-500 text-green-800"; 
+                    } else if (idx === selectedOptionIndex) {
+                      btnClass += "bg-red-50 border-red-400 text-red-700 opacity-80"; 
+                    } else {
+                      btnClass += "bg-gray-50 border-gray-200 text-gray-400 opacity-40"; 
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      disabled={isAnswered}
+                      onClick={() => handleSelectOption(idx)}
+                      className={btnClass}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="pr-4">{option}</span>
+                        {isAnswered && idx === question.correctIndex && <CheckCircle2 className="text-green-500 flex-shrink-0" size={20} />}
+                        {isAnswered && idx === selectedOptionIndex && idx !== question.correctIndex && <XCircle className="text-red-500 flex-shrink-0" size={20} />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {isAnswered && (
+                <div className="mt-4 animate-fade-in-up flex flex-col gap-3">
+                  <div className={`p-4 rounded-xl ${selectedOptionIndex === question.correctIndex ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                    <h3 className={`font-bold flex items-center gap-1 mb-1 text-sm ${selectedOptionIndex === question.correctIndex ? 'text-green-700' : 'text-red-700'}`}>
+                      {selectedOptionIndex === question.correctIndex ? '⭕ 正解！' : '❌ 不正解...'}
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed text-sm">
+                      {question.explanation}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleNextQuestion}
+                    className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md"
+                  >
+                    {currentIndex < currentQuestions.length - 1 ? '次の問題へ' : '結果を見る'}
+                    <ArrowRight size={18} />
+                  </button>
+
+                  {aiMessage && (
+                    <div className={`bg-white p-3 rounded-xl shadow-sm border ${CHARACTERS[aiMessage.charId].border} flex items-start gap-3 mt-2`}>
+                      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${CHARACTERS[aiMessage.charId].bg} text-xl shadow-inner`}>
+                        {CHARACTERS[aiMessage.charId].icon}
+                      </div>
+                      <div>
+                        <p className={`text-xs font-extrabold mb-0.5 ${CHARACTERS[aiMessage.charId].color}`}>
+                          {CHARACTERS[aiMessage.charId].name}
+                        </p>
+                        <p className="text-sm font-bold text-gray-700 leading-snug">
+                          {aiMessage.text}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // --- 画面：結果 ---
+      if (screen === 'result') {
+        const isPerfect = score === 100;
+        const guestMsg = getResultGuestMessage(score);
+        
+        return (
+          <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center py-8 px-4">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden p-8 text-center relative">
+              {isPerfect && (
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+                   <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 animate-spin-slow rounded-full mix-blend-multiply blur-3xl"></div>
+                </div>
+              )}
+
+              <div className="relative z-10">
+                <div className="mx-auto bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-inner">
+                  <Award className={isPerfect ? "text-yellow-500" : "text-indigo-500"} size={40} />
+                </div>
+                
+                <h2 className="text-xl font-bold text-gray-700 mb-1">最終スコア</h2>
+                
+                <div className="text-5xl font-extrabold mb-5 flex items-baseline justify-center gap-1">
+                  <span className={isPerfect ? "text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500" : "text-indigo-600"}>
+                    {score}
+                  </span>
+                  <span className="text-xl text-gray-400 font-bold">点</span>
+                </div>
+
+                <div className={`p-4 rounded-xl mb-6 font-bold text-base ${
+                  score >= 70 ? 'bg-green-100 text-green-800' : 'bg-red-50 text-red-600'
+                }`}>
+                  {getResultMessage(score)}
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 text-sm text-left font-medium text-gray-700 space-y-3">
+                  {getCharacterMessage(score)}
+                  
+                  <div className={`mt-4 p-3 rounded-xl border flex items-start gap-3 shadow-sm ${CHARACTERS[guestMsg.charId].bg} ${CHARACTERS[guestMsg.charId].border}`}>
+                     <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white text-base shadow-sm`}>
+                        {CHARACTERS[guestMsg.charId].icon}
+                      </div>
+                      <div>
+                        <p className={`text-xs font-extrabold mb-0.5 ${CHARACTERS[guestMsg.charId].color}`}>
+                          【特別ゲスト】 {CHARACTERS[guestMsg.charId].name}
+                        </p>
+                        <p className="text-gray-800 font-bold">{guestMsg.text}</p>
+                      </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={resetQuiz}
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md"
+                >
+                  <RefreshCw size={18} />
+                  別のカテゴリに挑戦する
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return null;
+    }
+
+    // ==========================================
+    // Reactのレンダリング処理
+    // ==========================================
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
