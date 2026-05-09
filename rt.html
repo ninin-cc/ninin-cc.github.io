@@ -153,7 +153,8 @@
       ChevronLeft: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
       Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
       Shield: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-2 7-2 2.5 0 4.5 1 6.5 2a1 1 0 0 1 1 1z"/></svg>',
-      Star: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+      Star: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+      Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
     };
 
     function getIcon(name, classes) {
@@ -359,48 +360,25 @@
       return maxMode;
     }
 
-    async function handleCaptureAndShare() {
-      const captureEl = document.getElementById('capture-area');
-      if (!captureEl || !window.html2canvas) {
-        state.shareMessage = "準備中です。少し待ってから再度お試しください。";
-        render();
-        return;
-      }
+    // ▼▼ 画像の自動保存をなくし、Web Share API を使ってシェアする機能に変更 ▼▼
+    function handleShare() {
+      const frontColor = getModeColorText(getMostFrequentMode());
+      const shareText = `私が18歳の自分に持たせる「5つの役割」が決まりました！\n一番大事にするのは【${state.primaryCard?.name}】\n二番目は【${state.secondaryCard?.name}】です。\n一番多く選んだ色：${frontColor}\n\n🚪RIESM™ Role TRADE -18歳の自分に持たせる、5つの役割-\n#RIESMロールトレード #RoleTRADE`;
+      const url = 'https://ninin-cc.github.io/riesm.html';
 
-      state.shareMessage = "画像を生成中...";
-      render();
-      
-      try {
-        const canvas = await window.html2canvas(captureEl, {
-          backgroundColor: '#e8dcc4', 
-          scale: 2, 
-          useCORS: true,
+      if (navigator.share) {
+        // OS標準の共有メニューを呼び出す（スマホ等）
+        navigator.share({
+          title: 'RIESM™ Role TRADE',
+          text: shareText,
+          url: url
+        }).catch((error) => {
+          console.error('共有に失敗しました:', error);
         });
-
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement('a');
-        link.download = 'RIESM_RoleTrade_Result.png';
-        link.href = image;
-        link.click();
-
-        state.shareMessage = "画像を保存しました！ X(Twitter)で画像を添付してシェアしてください✨";
-        render();
-
-        const frontColor = getModeColorText(getMostFrequentMode());
-        const shareText = `私が18歳の自分に持たせる「5つの役割」が決まりました！\n一番大事にするのは【${state.primaryCard?.name}】\n二番目は【${state.secondaryCard?.name}】です。\n一番多く選んだ色：${frontColor}\n\n🚪RIESM™ Role TRADE -18歳の自分に持たせる、5つの役割-\n#RIESMロールトレード #RoleTRADE`;
-
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-        
-        setTimeout(() => {
-          window.open(url, '_blank');
-          setTimeout(() => { state.shareMessage = ''; render(); }, 8000);
-        }, 1000);
-
-      } catch (error) {
-        console.error(error);
-        state.shareMessage = "画像の生成に失敗しました。";
-        render();
-        setTimeout(() => { state.shareMessage = ''; render(); }, 3000);
+      } else {
+        // Web Share APIに非対応のブラウザ（PC等）のフォールバックとしてX(Twitter)を開く
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + '\n' + url)}`;
+        window.open(twitterUrl, '_blank');
       }
     }
 
@@ -656,7 +634,8 @@
                     <h2 class="text-2xl sm:text-3xl font-serif font-extrabold mb-4 sm:mb-6 tracking-widest text-stone-900 magic-text-glow">
                       ${state.resultStep === 'SELECT_1' ? '第一の役割' : '第二の役割'}
                     </h2>
-                    <p class="text-stone-800 mb-6 sm:mb-8 font-serif text-sm sm:text-base font-bold w-full text-center px-4 bg-[#e8dcc4]/80 py-4 rounded-sm border border-stone-300 whitespace-pre-line">${state.resultStep === 'SELECT_1' ? '5つの役割が確定しました。\\nこの中で【一番大事にしたい役割】を1つ選んでください。' : '次に、【二番目に大事にしたい役割】を1つ選んでください。'}</p>
+                    <!-- ▼ \n の代わりに <br/> を使用して正しく改行させる ▼ -->
+                    <p class="text-stone-800 mb-6 sm:mb-8 font-serif text-sm sm:text-base font-bold w-full text-center px-4 bg-[#e8dcc4]/80 py-4 rounded-sm border border-stone-300">${state.resultStep === 'SELECT_1' ? '5つの役割が確定しました。<br/>この中で【一番大事にしたい役割】を1つ選んでください。' : '次に、【二番目に大事にしたい役割】を1つ選んでください。'}</p>
 
                     ${state.resultStep === 'SELECT_2' ? `
                       <button data-action="result-reset" class="mb-4 sm:mb-6 flex items-center text-stone-600 hover:text-stone-900 font-serif font-bold text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-stone-800 pb-1">
@@ -742,8 +721,9 @@
                   </div>
 
                   <div class="flex flex-col items-center gap-4 sm:gap-6 mt-8 sm:mt-12 relative z-10">
+                    <!-- ▼▼ 「SNSなどでシェアする」ボタンに変更 ▼▼ -->
                     <button data-action="capture-share" class="w-full sm:w-auto bg-black hover:bg-stone-900 border border-stone-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-10 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] flex items-center justify-center tracking-widest text-xs sm:text-sm">
-                      ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3")} 結果を画像で保存 ＆ X(Twitter)でシェア
+                      ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3")} SNSなどでシェアする
                     </button>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-2 sm:mt-4 relative z-10">
@@ -842,7 +822,8 @@
           state.secondaryCard = null;
         });
       } else if (action === 'capture-share') {
-        handleCaptureAndShare();
+        // 画像キャプチャの代わりにOS標準の共有APIを呼び出す
+        handleShare();
       }
     });
 
