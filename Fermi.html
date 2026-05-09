@@ -52,6 +52,7 @@
         color: "bg-blue-100",
         iconColor: "text-blue-500",
         buttonColor: "bg-blue-500 hover:bg-blue-600",
+        // 安定したフリー写真（Unsplash）
         imageUrl: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
         imageAlt: "小学校",
         unit: "校",
@@ -78,7 +79,8 @@
         color: "bg-orange-100",
         iconColor: "text-orange-500",
         buttonColor: "bg-orange-500 hover:bg-orange-600",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Onigiri_in_a_bamboo_basket.jpg/800px-Onigiri_in_a_bamboo_basket.jpg",
+        // 安定したフリー写真（Unsplash）
+        imageUrl: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?auto=format&fit=crop&w=800&q=80",
         imageAlt: "おにぎり",
         unit: "個",
         hints: [
@@ -104,8 +106,9 @@
         color: "bg-green-100",
         iconColor: "text-green-500",
         buttonColor: "bg-green-500 hover:bg-green-600",
-        imageUrl: "https://images.unsplash.com/photo-1601599965158-b1fc682496a7?auto=format&fit=crop&w=800&q=80",
-        imageAlt: "コンビニ",
+        // 安定したフリー写真（スーパーマーケットに変更）
+        imageUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
+        imageAlt: "スーパーマーケット",
         unit: "店舗",
         hints: [
           { title: "【ステップ1】 手がかりを見つけよう", icon: "fa-magnifying-glass", text: "今回も「日本の人口（約1億2000万人）」をベースに考えてみよう。みんなの家の周りにもコンビニはあるかな？" },
@@ -129,6 +132,7 @@
         color: "bg-amber-100",
         iconColor: "text-amber-500",
         buttonColor: "bg-amber-500 hover:bg-amber-600",
+        // 安定したフリー写真（Unsplash）
         imageUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80",
         imageAlt: "犬",
         unit: "匹",
@@ -365,14 +369,14 @@
                   <p className="text-xl md:text-2xl font-bold text-gray-700">{evaluation.text}</p>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full bg-gray-100 flex justify-center items-center">
                   <img 
                     src={activeQuestion.imageUrl} 
                     alt={activeQuestion.imageAlt}
                     className="w-full h-48 md:h-64 object-cover border-b-4 border-yellow-100"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' text-anchor='middle' fill='%239ca3af' dy='.3em'%3EImage Not Found%3C/text%3E%3C/svg%3E";
+                      e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' text-anchor='middle' fill='%239ca3af' dy='.3em'%3E画像が見つかりません%3C/text%3E%3C/svg%3E";
                     }}
                   />
                 </div>
