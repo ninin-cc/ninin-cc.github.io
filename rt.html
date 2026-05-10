@@ -268,8 +268,31 @@
       secondaryCard: null,
       confirmingCard: null,
       isConfirmModalClosing: false,
-      shareMessage: ''
+      shareMessage: '',
+      isAppBrowser: false // アプリ内ブラウザ判定用
     };
+
+    // ▼▼ アプリ内ブラウザの検知処理 ▼▼
+    function checkAppBrowser() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isLine = ua.indexOf("line") > -1;
+      const isTwitter = ua.indexOf("twitter") > -1;
+      const isFB = ua.indexOf("fbav") > -1 || ua.indexOf("fban") > -1;
+      const isInsta = ua.indexOf("instagram") > -1;
+      
+      if (isLine || isTwitter || isFB || isInsta) {
+        state.isAppBrowser = true; // 案内画面表示フラグを立てる
+        
+        if (ua.indexOf("android") > -1) {
+          // AndroidならChromeへの強制ジャンプを試みる
+          const url = location.href;
+          if (url.startsWith('http')) {
+            const intentUrl = url.replace(/^https?:\/\//, 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end;';
+            location.href = intentUrl;
+          }
+        }
+      }
+    }
 
     // --- Transitions (滑らかな画面遷移) ---
     function transitionState(callback) {
@@ -610,6 +633,29 @@
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
+
+          <!-- ▼▼ アプリ内ブラウザの検知と案内オーバーレイ ▼▼ -->
+          ${state.isAppBrowser ? `
+          <div class="fixed inset-0 z-[1000] bg-stone-900/95 flex flex-col items-center justify-center p-6 text-stone-100 font-sans">
+            <div class="bg-[#f0e6d2] p-8 rounded-md max-w-sm w-full text-center text-stone-900 border-2 border-orange-900/50" style="background-image: ${PARCHMENT_TEXTURE}">
+              <div class="flex justify-center mb-4">
+                 ${getIcon('Compass', "w-12 h-12 text-orange-700")}
+              </div>
+              <h2 class="text-xl font-bold font-serif mb-4 text-orange-900">ブラウザで開いてください</h2>
+              <p class="text-sm font-bold leading-relaxed text-stone-800 text-left mb-6">
+                現在、LINEやXなどのアプリ内ブラウザで表示されています。<br/><br/>
+                このままでは画像の保存やシェア機能が正常に動作しないため、<br/>
+                画面右下（または右上）のメニューボタンから、<br/>
+                <span class="text-orange-700">「デフォルトのブラウザで開く」</span><br/>
+                <span class="text-orange-700">「Safariで開く」</span><br/>
+                を選択して再読み込みしてください。
+              </p>
+              <button data-action="close-iab-modal" class="bg-stone-800 hover:bg-stone-900 text-stone-100 font-bold py-3 px-6 rounded-sm w-full transition-colors text-sm tracking-widest">
+                このまま続ける（非推奨）
+              </button>
+            </div>
+          </div>
+          ` : ''}
 
           <!-- ▼▼ トランジション用のメインステージ ▼▼ -->
           <div id="main-stage" class="w-full flex justify-center ${stageFadeClass}">
@@ -1089,8 +1135,14 @@
       } else if (action === 'close-tutorial') {
         state.showTutorial = false;
         render();
+      } else if (action === 'close-iab-modal') {
+        state.isAppBrowser = false;
+        render();
       }
     });
+
+    // 起動時のIABチェック実行
+    checkAppBrowser();
 
     // Initial render
     render();
