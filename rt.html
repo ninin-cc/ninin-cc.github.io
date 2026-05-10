@@ -309,7 +309,6 @@
       let remaining = allShuffled.slice(5);
       let shopCards = [];
       
-      // ▼▼ 武器庫のカードを6枚にし、各モードを最低1枚ずつ含める ▼▼
       ['WONDER', 'KEEPER', 'NURTURE', 'ADAPTER'].forEach(mode => {
         const idx = remaining.findIndex(c => c.mode === mode);
         if (idx !== -1) {
@@ -317,7 +316,6 @@
           remaining.splice(idx, 1);
         }
       });
-      // 残り2枚を追加して合計6枚にする
       shopCards.push(remaining.shift());
       shopCards.push(remaining.shift());
       
@@ -443,22 +441,90 @@
       return maxMode;
     }
 
-    function handleShare() {
+    async function generateImage() {
+      const captureEl = document.getElementById('capture-area');
+      if (!captureEl || !window.html2canvas) {
+        throw new Error("Cannot capture image");
+      }
+      const canvas = await window.html2canvas(captureEl, {
+        backgroundColor: '#e8dcc4', 
+        scale: 2, 
+        useCORS: true,
+      });
+      return canvas.toDataURL("image/png");
+    }
+
+    function dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    }
+
+    async function handleSave() {
+      state.shareMessage = "画像を生成中...";
+      render();
+      try {
+        const dataUrl = await generateImage();
+        const link = document.createElement('a');
+        link.download = 'RIESM_RoleTrade_Result.png';
+        link.href = dataUrl;
+        link.click();
+        state.shareMessage = "画像を保存しました！";
+      } catch (error) {
+        state.shareMessage = "画像の保存に失敗しました。";
+      }
+      render();
+      setTimeout(() => { state.shareMessage = ''; render(); }, 3000);
+    }
+
+    async function handleShare() {
+      state.shareMessage = "準備中...";
+      render();
+
       const frontColor = getModeColorText(getMostFrequentMode());
       const shareText = `私が18歳の自分に持たせる「5つの役割」が決まりました！\n一番大事にするのは【${state.primaryCard?.name}】\n二番目は【${state.secondaryCard?.name}】です。\n一番多く選んだ色：${frontColor}\n\n🚪RIESM™ Role TRADE -18歳の自分に持たせる、5つの役割-\n#RIESMロールトレード #RoleTRADE`;
       const url = 'https://ninin-cc.github.io/riesm.html';
 
-      if (navigator.share) {
-        navigator.share({
-          title: 'RIESM™ Role TRADE',
-          text: shareText,
-          url: url
-        }).catch((error) => {
-          console.error('共有に失敗しました:', error);
-        });
-      } else {
-        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + '\n' + url)}`;
-        window.open(twitterUrl, '_blank');
+      try {
+        const dataUrl = await generateImage();
+        const file = dataURLtoFile(dataUrl, 'RIESM_RoleTrade_Result.png');
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'RIESM™ Role TRADE',
+            text: shareText,
+            url: url,
+            files: [file]
+          });
+          state.shareMessage = "";
+        } else if (navigator.share) {
+          await navigator.share({
+            title: 'RIESM™ Role TRADE',
+            text: shareText,
+            url: url
+          });
+          state.shareMessage = "";
+        } else {
+          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + '\n' + url)}`;
+          window.open(twitterUrl, '_blank');
+          state.shareMessage = "";
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          state.shareMessage = "シェアに失敗しました。";
+        } else {
+          state.shareMessage = "";
+        }
+      }
+      render();
+      if(state.shareMessage) {
+          setTimeout(() => { state.shareMessage = ''; render(); }, 3000);
       }
     }
 
@@ -655,7 +721,6 @@
                 ${isShopTime ? `
                   <div class="p-4 sm:p-8 relative z-10">
                     
-                    <!-- ▼▼ アイコンとラウンド情報を左に、セリフを右に配置 ▼▼ -->
                     <div class="flex items-start max-w-2xl mx-auto w-full mb-6 sm:mb-8 px-2 sm:px-0">
                       <div class="flex flex-col items-center shrink-0 z-10 w-14 sm:w-20">
                         <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200">
@@ -677,7 +742,6 @@
                       </div>
                     </div>
 
-                    <!-- ▼▼ 武器庫のカードを6枚に変更（スマホでも3段にならないよう横3列配置） ▼▼ -->
                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-4 justify-items-center mb-6 sm:mb-8">
                       ${state.shop.map(card => {
                         const isSelected = state.selectedShopCard?.id === card.id;
@@ -793,17 +857,31 @@
                       </button>
                     ` : ''}
                     
-                    <div class="flex flex-wrap gap-3 sm:gap-4 justify-center w-full">
-                      ${state.hand.map(card => {
-                        const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
-                        const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
-                        return `
-                          <div class="shrink-0 transition-transform duration-500">
-                            ${renderCardHTML(card, { disabled: isDimmed, isSelected, isResultCard: true })}
-                          </div>
-                        `;
-                      }).join('')}
+                    <div class="flex flex-col items-center gap-3 sm:gap-4 w-full">
+                      <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                        ${state.hand.slice(0, 3).map(card => {
+                          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
+                          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
+                          return `
+                            <div class="shrink-0 transition-transform duration-500">
+                              ${renderCardHTML(card, { disabled: isDimmed, isSelected, isResultCard: true })}
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                      <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                        ${state.hand.slice(3, 5).map(card => {
+                          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
+                          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
+                          return `
+                            <div class="shrink-0 transition-transform duration-500">
+                              ${renderCardHTML(card, { disabled: isDimmed, isSelected, isResultCard: true })}
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
                     </div>
+
                   </div>
                 </div>
               ` : `
@@ -873,30 +951,31 @@
                       </div>
                     </div>
 
-                    <!-- ▼▼ シェア用画像に含めるコピーライト表記 ▼▼ -->
                     <div class="mt-8 sm:mt-12 pt-4 sm:pt-6 text-center border-t border-stone-500/30 w-full relative z-10">
                       <p class="text-[9px] sm:text-[11px] text-stone-800 font-serif tracking-widest font-bold">©RIESM™ Role TRADE</p>
                       <p class="text-[8px] sm:text-[10px] text-stone-700 font-serif tracking-widest mt-1">© 2026 ninin consulting＆counseling</p>
                     </div>
                   </div>
 
-                  <div class="flex flex-col items-center gap-4 sm:gap-6 mt-8 sm:mt-12 relative z-10">
-                    <button data-action="capture-share" class="w-full sm:w-auto bg-black hover:bg-stone-900 border border-stone-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-10 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] flex items-center justify-center tracking-widest text-xs sm:text-sm">
-                      ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3")} SNSなどでシェアする
+                  <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-12 relative z-10 w-full px-4">
+                    <button data-action="capture-save" class="w-full sm:w-auto bg-stone-700 hover:bg-stone-800 border border-stone-600 text-stone-100 font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm">
+                      ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
                     </button>
+                    <button data-action="capture-share" class="w-full sm:w-auto bg-black hover:bg-stone-900 border border-stone-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] flex items-center justify-center tracking-widest text-xs sm:text-sm">
+                      ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} SNS等でシェア
+                    </button>
+                  </div>
 
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-2 sm:mt-4 relative z-10">
-                      <button data-action="result-reset" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
-                        ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 順位を選び直す
-                      </button>
-                      <button data-action="go-start" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
-                        再び過去へ戻る
-                      </button>
-                    </div>
+                  <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-6 sm:mt-8 relative z-10">
+                    <button data-action="result-reset" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
+                      ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 順位を選び直す
+                    </button>
+                    <button data-action="go-start" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
+                      再び過去へ戻る
+                    </button>
                   </div>
               `}
               
-              <!-- PLAYING時には非表示にしたフッターリンクをSTARTとRULESとRESULTのみに表示 -->
               <div class="mt-8 text-center pb-4 relative z-10">
                 <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-600 hover:text-stone-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-stone-600 pb-0.5">
                   © 2026 ninin consulting＆counseling
@@ -1003,6 +1082,8 @@
         });
       } else if (action === 'capture-share') {
         handleShare();
+      } else if (action === 'capture-save') {
+        handleSave();
       } else if (action === 'close-tutorial') {
         state.showTutorial = false;
         render();
