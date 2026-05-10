@@ -211,20 +211,20 @@
     const TOTAL_ROUNDS = 6;
 
     const TRADE_AVATARS_LIST = [
-      "https://ninin-cc.github.io/img/rt/1.png",
-      "https://ninin-cc.github.io/img/rt/2.png",
-      "https://ninin-cc.github.io/img/rt/3.png",
-      "https://ninin-cc.github.io/img/rt/4.png",
-      "https://ninin-cc.github.io/img/rt/5.png",
-      "https://ninin-cc.github.io/img/rt/6.png",
-      "https://ninin-cc.github.io/img/rt/7.png"
+      "https://ninin-cc.github.io/img/rt/1.jpg",
+      "https://ninin-cc.github.io/img/rt/2.jpg",
+      "https://ninin-cc.github.io/img/rt/3.jpg",
+      "https://ninin-cc.github.io/img/rt/4.jpg",
+      "https://ninin-cc.github.io/img/rt/5.jpg",
+      "https://ninin-cc.github.io/img/rt/6.jpg",
+      "https://ninin-cc.github.io/img/rt/7.jpg"
     ];
 
     function getRandomAvatar() {
       return TRADE_AVATARS_LIST[Math.floor(Math.random() * TRADE_AVATARS_LIST.length)];
     }
 
-    const SHOP_AVATAR = "https://ninin-cc.github.io/img/rt/bukiya.png";
+    const SHOP_AVATAR = "https://ninin-cc.github.io/img/rt/bukiya.jpg";
 
     const SHOP_MESSAGES = {
       1: "「ようこそ転生者よ。ここは始まりの武器庫。これからの人生に備え、手札と場を見渡し、今の自分に必要な役割を1つ入れ替えるがよい。」",
@@ -240,13 +240,14 @@
 
     const PARCHMENT_TEXTURE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E")`;
     
-    const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.png";
+    // ▼▼ カードの背景画像 ▼▼
+    const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
 
     // ▼▼ 背景画像をすべてオリジナルURLに差し替え ▼▼
-    const BG_JUNBI_IMG = "https://ninin-cc.github.io/img/rt/junbi.png";
-    const BG_SHOP_IMG = "https://ninin-cc.github.io/img/rt/shop.png"; 
-    const BG_TRADE_IMG = "https://ninin-cc.github.io/img/rt/bar.png"; 
-    const BG_DOOR_IMG = "https://ninin-cc.github.io/img/rt/mon.png";
+    const BG_JUNBI_IMG = "https://ninin-cc.github.io/img/rt/junbi.jpg";
+    const BG_SHOP_IMG = "https://ninin-cc.github.io/img/rt/shop.jpg"; 
+    const BG_TRADE_IMG = "https://ninin-cc.github.io/img/rt/bar.jpg"; 
+    const BG_DOOR_IMG = "https://ninin-cc.github.io/img/rt/mon.jpg";
 
     // --- State ---
     let state = {
@@ -537,17 +538,14 @@
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
                   RIESM™ Role TRADE
                 </h1>
-                <p class="text-xs sm:text-sm text-stone-700 mt-2 sm:mt-3 tracking-[0.2em] font-serif font-bold drop-shadow-sm">― 18歳の自分に持たせる、5つの役割 ―</p>
+                <p class="text-xs sm:text-sm text-stone-700 mt-2 sm:mt-3 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-100/50 inline-block px-4 py-1 rounded-full">― 18歳の自分に持たせる、5つの役割 ―</p>
               </header>
       `;
 
       if (state.gameState === 'START') {
         html += `
-              <div class="bg-center bg-cover rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden">
-                <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
-                </div>
-                <div class="absolute inset-0 bg-[#f4ebd8]/70 backdrop-blur-sm z-0"></div>
+              <div class="bg-center bg-cover rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden" style="background-image: url('${BG_DOOR_IMG}');">
+                <div class="absolute inset-0 bg-[#f4ebd8]/85 backdrop-blur-sm z-0"></div>
                 <div class="relative z-10 p-8 sm:p-10">
                   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                   ${getIcon('Flame', "w-10 h-10 sm:w-12 sm:h-12 text-orange-700/80 mx-auto mb-6 animate-pulse drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]")}
@@ -572,7 +570,7 @@
               </div>
 
               <div class="mt-8 text-center relative z-10">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-600 hover:text-stone-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-stone-600 pb-0.5">
+                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-900 font-bold hover:text-orange-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-orange-900 pb-0.5 drop-shadow-md">
                   © 2026 ninin consulting＆counseling
                 </a>
               </div>
@@ -850,10 +848,10 @@
                     </button>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-2 sm:mt-4 relative z-10">
-                      <button data-action="result-reset" class="flex items-center text-stone-600 hover:text-orange-900 font-serif font-bold tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1">
+                      <button data-action="result-reset" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
                         ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 順位を選び直す
                       </button>
-                      <button data-action="go-start" class="flex items-center text-stone-600 hover:text-orange-900 font-serif font-bold tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1">
+                      <button data-action="go-start" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
                         再び過去へ戻る
                       </button>
                     </div>
@@ -861,7 +859,7 @@
               `}
               
               <div class="mt-8 text-center pb-4 relative z-10">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-600 hover:text-stone-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-stone-600 pb-0.5">
+                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-900 font-bold hover:text-orange-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-orange-900 pb-0.5 drop-shadow-md">
                   © 2026 ninin consulting＆counseling
                 </a>
               </div>
