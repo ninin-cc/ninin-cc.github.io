@@ -88,6 +88,22 @@
     .animate-fadeIn {
       animation: fadeIn 0.4s ease-out forwards;
     }
+
+    /* ▼▼ 確認モーダル用の専用フェードアニメーション ▼▼ */
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeOutModal {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    .animate-fadeInModal {
+      animation: fadeInModal 0.3s ease-out forwards;
+    }
+    .animate-fadeOutModal {
+      animation: fadeOutModal 0.3s ease-in forwards;
+    }
   </style>
 </head>
 <body class="bg-[#e8dcc4] text-stone-900 font-sans selection:bg-orange-900 selection:text-orange-100">
@@ -131,7 +147,7 @@
 
     const MODE_TEXT_COLORS = {
       WONDER: 'text-orange-600',
-      KEEPER: 'text-blue-700',
+      KEEPER: 'text-indigo-900',
       NURTURE: 'text-pink-600',
       ADAPTER: 'text-cyan-600'
     };
@@ -174,10 +190,10 @@
 
     const getModeColorText = (mode) => {
       switch(mode) {
-        case 'WONDER': return 'オレンジっぽい色';
-        case 'KEEPER': return '青っぽい色';
-        case 'NURTURE': return 'ピンクっぽい色';
-        case 'ADAPTER': return '水色っぽい色';
+        case 'WONDER': return 'オレンジ';
+        case 'KEEPER': return 'ネイビー';
+        case 'NURTURE': return 'ピンク';
+        case 'ADAPTER': return '水色';
         default: return '';
       }
     };
@@ -186,7 +202,7 @@
       switch(mode) {
         case 'WONDER': return 'オレンジの【ワンダーの宝玉】は自由・発見・挑戦をつかさどります。';
         case 'KEEPER': return '青の【キーパーの宝玉】は論理・ルール・正しさをつかさどります。';
-        case 'NURTURE': return 'ピンクの【ナーチャーの宝玉】は保護・調和・共感をつかさどります。';
+        case 'NURTURE': return 'ピンクの【ナーチャーの宝玉】は保護・調和をつかさどります。';
         case 'ADAPTER': return '水色の【アダプターの宝玉】は洞察・適応・慎重さをつかさどります。';
         default: return '';
       }
@@ -194,7 +210,6 @@
 
     const TOTAL_ROUNDS = 6;
 
-    // ▼▼ ランダムアバター画像のリスト ▼▼
     const TRADE_AVATARS_LIST = [
       "https://ninin-cc.github.io/img/rt/1.png",
       "https://ninin-cc.github.io/img/rt/2.png",
@@ -225,12 +240,13 @@
 
     const PARCHMENT_TEXTURE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E")`;
     
-    // ▼▼ カードの背景画像 ▼▼
     const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.png";
 
-    const BG_SHOP_IMG = "https://images.unsplash.com/photo-1593604340846-4fbe9763a8f3?auto=format&fit=crop&w=1200&q=80"; 
-    const BG_TRADE_IMG = "https://images.unsplash.com/photo-1549488344-c13d711bcce0?auto=format&fit=crop&w=1200&q=80"; 
-    const BG_DOOR_IMG = "https://images.unsplash.com/photo-1483664852095-d6cc6870702d?auto=format&fit=crop&w=1200&q=80";
+    // ▼▼ 背景画像をすべてオリジナルURLに差し替え ▼▼
+    const BG_JUNBI_IMG = "https://ninin-cc.github.io/img/rt/junbi.png";
+    const BG_SHOP_IMG = "https://ninin-cc.github.io/img/rt/shop.png"; 
+    const BG_TRADE_IMG = "https://ninin-cc.github.io/img/rt/bar.png"; 
+    const BG_DOOR_IMG = "https://ninin-cc.github.io/img/rt/mon.png";
 
     // --- State ---
     let state = {
@@ -251,6 +267,8 @@
       resultStep: 'SELECT_1',
       primaryCard: null,
       secondaryCard: null,
+      confirmingCard: null,
+      isConfirmModalClosing: false,
       shareMessage: ''
     };
 
@@ -296,6 +314,8 @@
       state.resultStep = 'SELECT_1';
       state.primaryCard = null;
       state.secondaryCard = null;
+      state.confirmingCard = null;
+      state.isConfirmModalClosing = false;
       state.tradeAvatarImg = getRandomAvatar(); 
       state.gameState = 'PLAYING';
       state.shareMessage = '';
@@ -360,20 +380,35 @@
     }
 
     function handleResultCardSelect(card) {
-      if (state.resultStep === 'SELECT_1') {
-        state.primaryCard = card;
+      if (state.resultStep === 'SELECT_1' || state.resultStep === 'SELECT_2') {
+        if (state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id) return;
+        state.confirmingCard = card;
+        state.isConfirmModalClosing = false;
         render();
-        setTimeout(() => { 
-          transitionState(() => { state.resultStep = 'SELECT_2'; }); 
-        }, 600);
-      } else if (state.resultStep === 'SELECT_2') {
-        if (card.id === state.primaryCard?.id) return;
-        state.secondaryCard = card;
-        render();
-        setTimeout(() => { 
-          transitionState(() => { state.resultStep = 'FINAL'; }); 
-        }, 600);
       }
+    }
+
+    function confirmResultCard(isConfirmed) {
+      state.isConfirmModalClosing = true;
+      render();
+      
+      setTimeout(() => {
+        if (isConfirmed) {
+          if (state.resultStep === 'SELECT_1') {
+            state.primaryCard = state.confirmingCard;
+            state.confirmingCard = null;
+            transitionState(() => { state.resultStep = 'SELECT_2'; });
+          } else if (state.resultStep === 'SELECT_2') {
+            state.secondaryCard = state.confirmingCard;
+            state.confirmingCard = null;
+            transitionState(() => { state.resultStep = 'FINAL'; });
+          }
+        } else {
+          state.confirmingCard = null;
+          state.isConfirmModalClosing = false;
+          render();
+        }
+      }, 300);
     }
 
     function getMostFrequentMode() {
@@ -440,20 +475,22 @@
           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none z-0">
             ${getIcon(ModeIconName, "w-12 h-12 sm:w-20 sm:h-20 text-orange-900")}
           </div>
-          <div class="absolute left-0 bottom-0 right-0 h-[6px] sm:h-[8px] opacity-95 ${MODE_COLORS[card.mode]} shadow-[0_-1px_4px_rgba(0,0,0,0.3)] z-10"></div>
-          <div class="absolute left-0 bottom-0 right-0 h-[6px] sm:h-[8px] opacity-40 pointer-events-none z-10 mix-blend-multiply" style="background-image: ${PARCHMENT_TEXTURE}"></div>
+          
+          <div class="absolute inset-0 bg-gradient-to-b from-orange-900/5 via-transparent to-stone-500/10 pointer-events-none rounded-md z-0"></div>
           
           <div class="p-1.5 sm:p-3 pr-2.5 sm:pr-4 pb-3 sm:pb-4 flex-1 flex flex-col relative z-20 justify-between">
             <div>
-              <div class="text-[7px] sm:text-[9px] text-stone-600 font-serif tracking-widest mb-0.5 sm:mb-1 uppercase opacity-90 flex items-center gap-1 font-bold">
+              <div class="text-[7px] sm:text-[9px] text-stone-600 font-serif tracking-widest mb-0.5 sm:mb-1 uppercase opacity-90 flex items-center justify-center gap-1 font-bold">
                 ${getIcon('Sparkles', "w-1.5 h-1.5 sm:w-2 sm:h-2 text-orange-600/80")} RIESM
               </div>
-              <div class="font-bold text-stone-900 text-[11px] sm:text-sm mb-0.5 sm:mb-1 font-serif tracking-wider border-b border-stone-400/60 pb-0.5 sm:pb-1 flex justify-between items-center leading-tight">
-                <span class="truncate pr-1">${card.name}</span>
-                ${getIcon(ModeIconName, `w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 ${MODE_TEXT_COLORS[card.mode]} shrink-0`)}
+              <div class="font-bold text-stone-900 text-sm sm:text-base mb-1 sm:mb-2 font-serif tracking-widest border-b border-stone-400/60 pb-1 flex justify-center items-center leading-tight relative">
+                <span class="truncate">${card.name}</span>
+                <div class="absolute right-0 top-1/2 -translate-y-1/2">
+                  ${getIcon(ModeIconName, `w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 ${MODE_TEXT_COLORS[card.mode]} shrink-0`)}
+                </div>
               </div>
             </div>
-            <div class="text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4">${card.desc}</div>
+            <div class="text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4 text-center px-1">${card.desc}</div>
           </div>
         </div>
       `;
@@ -506,26 +543,32 @@
 
       if (state.gameState === 'START') {
         html += `
-              <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden" style="background-image: ${PARCHMENT_TEXTURE}">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
-                ${getIcon('Flame', "w-10 h-10 sm:w-12 sm:h-12 text-orange-700/80 mx-auto mb-6 animate-pulse drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]")}
-                
-                <div class="text-stone-800 text-center space-y-6 sm:space-y-8 mb-8 sm:mb-10 text-sm md:text-base leading-loose font-serif font-medium relative z-10">
-                  <p class="text-base sm:text-lg text-stone-900 font-extrabold border-b border-stone-400/60 pb-4 inline-block drop-shadow-sm">
-                    あなたは今、RIESM™の魔法によって<br/>【今の知識と経験を持ったまま18歳に戻る】ことになりました。
-                  </p>
-                  <p class="px-2 sm:px-4 text-stone-800 leading-relaxed">
-                    これまで歩んできた人生での喜びも、<br/>失敗も、後悔も、出会いも、<br/>すべてを保持したまま、もう一度人生を歩み始めるとしたら。
-                  </p>
-                  <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
-                    あなたは、どんな「役割」を自分の武器として持っていきますか？
-                  </p>
+              <div class="bg-center bg-cover rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden">
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
-                
-                <button data-action="go-rules" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center mx-auto tracking-widest text-sm sm:text-base w-full sm:w-auto relative z-10">
-                  準備室の掟（ルール）を読む
-                  ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
-                </button>
+                <div class="absolute inset-0 bg-[#f4ebd8]/70 backdrop-blur-sm z-0"></div>
+                <div class="relative z-10 p-8 sm:p-10">
+                  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
+                  ${getIcon('Flame', "w-10 h-10 sm:w-12 sm:h-12 text-orange-700/80 mx-auto mb-6 animate-pulse drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]")}
+                  
+                  <div class="text-stone-800 text-center space-y-6 sm:space-y-8 mb-8 sm:mb-10 text-sm md:text-base leading-loose font-serif font-medium relative z-10">
+                    <p class="text-base sm:text-lg text-stone-900 font-extrabold border-b border-stone-400/60 pb-4 inline-block drop-shadow-sm">
+                      あなたは今、RIESM™の魔法によって<br/>【今の知識と経験を持ったまま18歳に戻る】ことになりました。
+                    </p>
+                    <p class="px-2 sm:px-4 text-stone-800 leading-relaxed font-bold">
+                      これまで歩んできた人生での喜びも、<br/>失敗も、後悔も、出会いも、<br/>すべてを保持したまま、もう一度人生を歩み始めるとしたら。
+                    </p>
+                    <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
+                      あなたは、どんな「役割」を自分の武器として持っていきますか？
+                    </p>
+                  </div>
+                  
+                  <button data-action="go-rules" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center mx-auto tracking-widest text-sm sm:text-base w-full sm:w-auto relative z-10">
+                    準備室の掟（ルール）を読む
+                    ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                  </button>
+                </div>
               </div>
 
               <div class="mt-8 text-center relative z-10">
@@ -539,8 +582,11 @@
       if (state.gameState === 'RULES') {
         html += `
               <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden" style="background-image: ${PARCHMENT_TEXTURE}">
-                ${getIcon('Scroll', "w-8 h-8 sm:w-10 sm:h-10 text-orange-800/70 mx-auto mb-4 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]")}
-                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 sm:mb-8 tracking-widest border-b border-stone-400/60 pb-2 inline-block magic-text-glow">準備室の掟</h2>
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                </div>
+                ${getIcon('Scroll', "w-8 h-8 sm:w-10 sm:h-10 text-orange-800/70 mx-auto mb-4 relative z-10 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]")}
+                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 sm:mb-8 tracking-widest border-b border-stone-400/60 pb-2 inline-block magic-text-glow relative z-10">準備室の掟</h2>
                 
                 <div class="text-stone-800 text-left space-y-4 sm:space-y-6 mb-8 sm:mb-10 text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium bg-[#e8dcc4] p-4 sm:p-6 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
                   <ul class="list-none space-y-4 sm:space-y-5 text-stone-800">
@@ -602,18 +648,15 @@
                 ${isShopTime ? `
                   <div class="p-4 sm:p-8 relative z-10">
                     
-                    <!-- ▼▼ 武器屋のセリフ（吹き出しデザイン） ▼▼ -->
                     <div class="flex items-start max-w-2xl mx-auto w-full mb-6 sm:mb-8 px-2 sm:px-0">
                       <div class="w-14 h-14 sm:w-20 sm:h-20 shrink-0 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200 z-10">
                         <img src="${SHOP_AVATAR}" alt="武器屋" class="w-full h-full object-cover" />
                       </div>
                       <div class="relative bg-[#f4ebd8] p-4 sm:p-6 rounded-md border border-stone-400/60 shadow-md flex-1 ml-4 sm:ml-6 mt-1 sm:mt-0" style="background-image: ${PARCHMENT_TEXTURE}">
-                        <!-- 吹き出しのしっぽ -->
                         <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <p class="text-xs sm:text-sm text-stone-900 font-serif font-bold leading-loose text-left">${SHOP_MESSAGES[state.round]}</p>
                       </div>
                     </div>
-                    <!-- ▲▲ ▲▲ -->
 
                     <div class="grid grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4 justify-items-center mb-6 sm:mb-8">
                       ${state.shop.map(card => {
@@ -626,21 +669,17 @@
                 ` : `
                   <div class="p-4 sm:p-8 relative z-10 flex flex-col items-center">
                      
-                     <!-- ▼▼ 転生者のセリフ（吹き出しデザイン） ▼▼ -->
                      <div class="flex items-start max-w-2xl mx-auto w-full mb-6 sm:mb-8 px-2 sm:px-0">
                       <div class="w-14 h-14 sm:w-20 sm:h-20 shrink-0 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200 z-10">
                         <img src="${state.tradeAvatarImg}" alt="転生者" class="w-full h-full object-cover" />
                       </div>
                       <div class="relative bg-[#f4ebd8] p-4 sm:p-6 rounded-md border border-stone-400/60 shadow-md flex-1 ml-4 sm:ml-6 mt-1 sm:mt-0" style="background-image: ${PARCHMENT_TEXTURE}">
-                        <!-- 吹き出しのしっぽ -->
                         <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <p class="text-xs sm:text-sm text-stone-900 font-serif font-bold leading-loose text-left">${TRADE_MESSAGES[state.round]}</p>
                       </div>
                     </div>
-                    <!-- ▲▲ ▲▲ -->
                      
                      <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm border border-stone-400/60 shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] inline-flex flex-col items-center relative w-full sm:w-auto max-w-sm mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
-                       <!-- アイコンを削除してスッキリと -->
                        <p class="text-[10px] sm:text-xs font-serif tracking-widest text-stone-700 mb-4 sm:mb-6 font-bold">名もなき転生者の提示</p>
                        <div class="flex justify-center transform hover:scale-105 transition-transform duration-500">
                           ${renderCardHTML(state.tradeOfferCard, { disabled: true, customStyle: `${state.isExchanging ? 'animate-fly-down' : ''} ${state.isEntering ? 'animate-drop-in' : ''}` })}
@@ -676,10 +715,35 @@
                 </div>
               ` : ''}
 
+              ${state.confirmingCard ? `
+                <div class="fixed inset-0 z-[200] flex items-center justify-center bg-stone-900/60 backdrop-blur-sm ${state.isConfirmModalClosing ? 'animate-fadeOutModal' : 'animate-fadeInModal'}">
+                  <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm shadow-2xl max-w-sm w-[90%] text-center border border-orange-900/30" style="background-image: ${PARCHMENT_TEXTURE}">
+                    <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-4 magic-text-glow">【 最終確認 】</h3>
+                    <p class="text-sm sm:text-base text-stone-800 font-serif font-bold leading-loose mb-4">
+                      「${state.confirmingCard.name}」を<br/>
+                      <span class="text-orange-700 text-lg">${state.resultStep === 'SELECT_1' ? '一番' : '二番目'}</span> に大事な役割としますか？
+                    </p>
+                    
+                    <div class="flex justify-center mb-6 scale-90 origin-top">
+                      ${renderCardHTML(state.confirmingCard, { isReadOnly: true })}
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                      <button data-action="confirm-no" class="bg-transparent border border-stone-500 text-stone-800 hover:bg-stone-300/50 font-serif font-bold py-2 sm:py-3 px-6 rounded-sm transition-all text-sm">
+                        選び直す
+                      </button>
+                      <button data-action="confirm-yes" class="bg-stone-800 hover:bg-stone-900 text-stone-100 font-serif font-bold py-2 sm:py-3 px-8 rounded-sm shadow-md transition-all text-sm tracking-widest">
+                        決定する
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+
               ${state.resultStep !== 'FINAL' ? `
                 <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden">
                   <div class="absolute inset-0 z-0 pointer-events-none">
-                    <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                    <img src="${BG_JUNBI_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                   </div>
                   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                   
@@ -753,9 +817,17 @@
                     <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-12 border-t border-stone-400/60 pt-8 sm:pt-10 relative z-10">
                       <div class="mb-6 sm:mb-8 bg-[#f4ebd8]/90 p-4 sm:p-6 rounded-sm border border-stone-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]" style="background-image: ${PARCHMENT_TEXTURE}">
                         <p class="font-serif text-xs sm:text-sm text-stone-700 mb-2 sm:mb-3 tracking-widest font-bold text-center">一番多く選んだ色</p>
-                        <p class="text-xl sm:text-2xl font-serif font-extrabold tracking-wider drop-shadow-sm text-center ${MODE_TEXT_COLORS[getMostFrequentMode()]}">
-                          ${getModeColorText(getMostFrequentMode())}
-                        </p>
+                        
+                        <div class="relative inline-flex justify-center w-full my-2">
+                           <div class="absolute inset-0 pointer-events-none flex items-center justify-center animate-pulse opacity-70">
+                              ${getIcon('Sparkles', "absolute -top-3 left-[30%] w-4 h-4 text-yellow-500")}
+                              ${getIcon('Star', "absolute -bottom-2 right-[30%] w-3 h-3 text-yellow-400 fill-yellow-400")}
+                           </div>
+                           <p class="text-xl sm:text-2xl font-serif font-extrabold tracking-wider drop-shadow-md text-center magic-text-glow relative z-10 ${MODE_TEXT_COLORS[getMostFrequentMode()]}">
+                             ${getModeColorText(getMostFrequentMode())}
+                           </p>
+                        </div>
+                        
                         <p class="text-[10px] sm:text-xs text-stone-800 mt-4 sm:mt-5 leading-relaxed font-serif font-bold text-center">
                           一番多く選んだ色は、今のあなたが人生に装備したいモードかもしれません。<br/>得意だから残ったものもあれば、苦手だけど必要だと感じて残ったものもあるはずです。<br/><br/>
                           <span class="${MODE_TEXT_COLORS[getMostFrequentMode()]} text-sm sm:text-base font-extrabold block mt-2 drop-shadow-sm">
@@ -882,6 +954,10 @@
         const id = parseInt(btn.dataset.id);
         const card = CARDS_DATA.find(c => c.id === id);
         handleResultCardSelect(card);
+      } else if (action === 'confirm-yes') {
+        confirmResultCard(true);
+      } else if (action === 'confirm-no') {
+        confirmResultCard(false);
       } else if (action === 'result-reset') {
         transitionState(() => {
           state.resultStep = 'SELECT_1';
