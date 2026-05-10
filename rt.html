@@ -183,7 +183,7 @@
     function getIcon(name, classes) {
       let svg = ICONS[name] || '';
       if (classes) {
-        svg = svg.replace('<svg ', `<svg class="${classes}" `);
+        svg = svg.replace('<svg ', '<svg class="' + classes + '" ');
       }
       return svg;
     }
@@ -228,7 +228,7 @@
 
     const SHOP_MESSAGES = {
       1: "「ようこそ転生者よ。ここは始まりの武器庫。これからの人生に備え、手札と場を見渡し、今の自分に必要な役割を1つ入れ替えるがよい。」",
-      6: "「いよいよ最後の選択だ。これまでの旅で得たもの、手放したもの……すべてはお前の『伏線』となる。さあ、最後の装備を整えるがよい。」"
+      6: "「いよいよ最後の選択だ。これまでの旅で得たもの、手放したもの……すべてはお前の『伏線』となる。交換してもいいし、今の装備に覚悟があるならそのまま旅立ってもいいぞ。」"
     };
 
     const TRADE_MESSAGES = {
@@ -238,7 +238,7 @@
       5: "「もうすぐ旅立ちの時だね。最後に私と交換しよう。一見苦手に見える役割も、きっと君を助ける武器になるはずだ。」"
     };
 
-    const PARCHMENT_TEXTURE = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E")`;
+    const PARCHMENT_TEXTURE = "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E\")";
     
     const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
 
@@ -267,13 +267,12 @@
       primaryCard: null,
       secondaryCard: null,
       confirmingCard: null,
-      zoomedCard: null, // ▼ 拡大表示用カードの状態
+      zoomedCard: null,
       isConfirmModalClosing: false,
       shareMessage: '',
-      isAppBrowser: false // アプリ内ブラウザ判定用
+      isAppBrowser: false
     };
 
-    // ▼▼ アプリ内ブラウザの検知処理 ▼▼
     function checkAppBrowser() {
       const ua = navigator.userAgent.toLowerCase();
       const isLine = ua.indexOf("line") > -1;
@@ -282,10 +281,8 @@
       const isInsta = ua.indexOf("instagram") > -1;
       
       if (isLine || isTwitter || isFB || isInsta) {
-        state.isAppBrowser = true; // 案内画面表示フラグを立てる
-        
+        state.isAppBrowser = true;
         if (ua.indexOf("android") > -1) {
-          // AndroidならChromeへの強制ジャンプを試みる
           const url = location.href;
           if (url.startsWith('http')) {
             const intentUrl = url.replace(/^https?:\/\//, 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end;';
@@ -295,7 +292,6 @@
       }
     }
 
-    // --- Transitions (滑らかな画面遷移) ---
     function transitionState(callback) {
       const stage = document.getElementById('main-stage');
       const dock = document.getElementById('dock-stage');
@@ -312,16 +308,18 @@
       setTimeout(() => {
         state.isTransitioning = true;
         callback();
+        window.scrollTo(0, 0);
         render();
       }, 400);
     }
 
-    // --- Functions ---
     function shuffleArray(array) {
       const newArray = [...array];
       for (let i = newArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        const temp = newArray[i];
+        newArray[i] = newArray[j];
+        newArray[j] = temp;
       }
       return newArray;
     }
@@ -357,7 +355,6 @@
       state.isConfirmModalClosing = false;
       state.tradeAvatarImg = getRandomAvatar(); 
       
-      // ▼▼ PLAYING ではなく、初期手札確認シーン(INITIAL_HAND)へ遷移 ▼▼
       state.gameState = 'INITIAL_HAND';
       state.shareMessage = '';
     }
@@ -515,8 +512,8 @@
       render();
 
       const frontColor = getModeColorText(getMostFrequentMode());
-      const shareText = `私が18歳の自分に持たせる「5つの役割」が決まりました！\n一番大事にするのは【${state.primaryCard?.name}】\n二番目は【${state.secondaryCard?.name}】です。\n一番多く選んだ色：${frontColor}\n\n🚪RIESM™ Role TRADE -18歳の自分に持たせる、5つの役割-\n#RIESMロールトレード #RoleTRADE`;
-      const url = 'https://ninin-cc.github.io/riesm.html';
+      const shareText = "私が18歳の自分に持たせる「5つの役割」が決まりました！\n一番大事にするのは【" + (state.primaryCard ? state.primaryCard.name : "") + "】\n二番目は【" + (state.secondaryCard ? state.secondaryCard.name : "") + "】です。\n一番多く選んだ色：" + frontColor + "\n\n🚪RIESM™ Role TRADE -18歳の自分に持たせる、5つの役割-\n#RIESM #RoleTRADE #自己理解";
+      const url = 'https://ninin-cc.github.io/rt.html';
 
       try {
         const dataUrl = await generateImage();
@@ -538,7 +535,7 @@
           });
           state.shareMessage = "";
         } else {
-          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + '\n' + url)}`;
+          const twitterUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText + "\n" + url);
           window.open(twitterUrl, '_blank');
           state.shareMessage = "";
         }
@@ -558,7 +555,13 @@
     // --- Rendering Components ---
     function renderCardHTML(card, options = {}) {
       if (!card) return '';
-      const { isSelected = false, disabled = false, isHandCard = false, isReadOnly = false, glow = false, isZoomable = false, customStyle = '' } = options;
+      const isSelected = options.isSelected || false;
+      const disabled = options.disabled || false;
+      const isHandCard = options.isHandCard || false;
+      const isReadOnly = options.isReadOnly || false;
+      const glow = options.glow || false;
+      const isZoomable = options.isZoomable || false;
+      const customStyle = options.customStyle || '';
       
       const ModeIconName = MODE_ICON_NAMES[card.mode];
       
@@ -569,15 +572,21 @@
       const normalStyle = 'border-stone-400 hover:border-orange-400/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] hover:-translate-y-2';
       const glowStyle = glow ? 'border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.4)] z-20' : '';
 
-      const baseClasses = `relative w-[96px] h-[136px] sm:w-32 sm:h-48 rounded-md shadow-lg border flex flex-col transition-all duration-500 overflow-hidden origin-bottom bg-center bg-cover`;
-      const combinedClasses = `${baseClasses} ${isSelected ? selectedStyle : normalStyle} ${disabled ? 'opacity-50 cursor-not-allowed grayscale-[0.3] hover:translate-y-0 hover:shadow-lg' : ''} ${isReadOnly ? 'cursor-default hover:translate-y-0 hover:scale-100' : 'cursor-pointer'} ${glowStyle} ${customStyle}`;
+      const baseClasses = 'relative w-[96px] h-[136px] sm:w-32 sm:h-48 rounded-md shadow-lg border flex flex-col transition-all duration-500 overflow-hidden origin-bottom bg-center bg-cover';
+      
+      let combinedClasses = baseClasses + " ";
+      combinedClasses += isSelected ? selectedStyle : normalStyle;
+      combinedClasses += " ";
+      if (disabled) combinedClasses += 'opacity-50 cursor-not-allowed grayscale-[0.3] hover:translate-y-0 hover:shadow-lg ';
+      combinedClasses += isReadOnly ? 'cursor-default hover:translate-y-0 hover:scale-100 ' : 'cursor-pointer ';
+      combinedClasses += glowStyle + " " + customStyle;
 
       let actionData = '';
       if (!disabled && !isReadOnly) {
-        if (isHandCard) actionData = `data-action="select-hand" data-id="${card.id}"`;
-        else if (options.isShopCard) actionData = `data-action="select-shop" data-id="${card.id}"`;
-        else if (options.isResultCard) actionData = `data-action="select-result" data-id="${card.id}"`;
-        else if (isZoomable) actionData = `data-action="zoom-card" data-id="${card.id}"`; // ▼ 拡大アクション
+        if (isHandCard) actionData = 'data-action="select-hand" data-id="' + card.id + '"';
+        else if (options.isShopCard) actionData = 'data-action="select-shop" data-id="' + card.id + '"';
+        else if (options.isResultCard) actionData = 'data-action="select-result" data-id="' + card.id + '"';
+        else if (isZoomable) actionData = 'data-action="zoom-card" data-id="' + card.id + '"';
       }
 
       return `
@@ -596,7 +605,7 @@
               <div class="font-bold text-stone-900 text-sm sm:text-base mb-1 sm:mb-2 font-serif tracking-widest border-b border-stone-400/60 pb-1 flex justify-center items-center leading-tight relative">
                 <span class="truncate">${card.name}</span>
                 <div class="absolute right-0 top-1/2 -translate-y-1/2">
-                  ${getIcon(ModeIconName, `w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 ${MODE_TEXT_COLORS[card.mode]} shrink-0`)}
+                  ${getIcon(ModeIconName, "w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 " + MODE_TEXT_COLORS[card.mode] + " shrink-0")}
                 </div>
               </div>
             </div>
@@ -614,7 +623,7 @@
         const t = Math.random() * 100;
         const dur = Math.random() * 12 + 10;
         const del = Math.random() * -20;
-        html += `<div class="absolute bg-yellow-300 rounded-full animate-float blur-[1px]" style="width:${w}px; height:${w}px; left:${l}%; top:${t}%; animation-duration:${dur}s; animation-delay:${del}s; box-shadow:0 0 8px 2px rgba(253, 224, 71, 0.8)"></div>`;
+        html += '<div class="absolute bg-yellow-300 rounded-full animate-float blur-[1px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 8px 2px rgba(253, 224, 71, 0.8)"></div>';
       }
       for(let i=0; i<10; i++) {
         const w = Math.random() * 6 + 3;
@@ -622,7 +631,7 @@
         const t = Math.random() * 100;
         const dur = Math.random() * 15 + 15;
         const del = Math.random() * -20;
-        html += `<div class="absolute bg-orange-400 rounded-full animate-float blur-[2px]" style="width:${w}px; height:${w}px; left:${l}%; top:${t}%; animation-duration:${dur}s; animation-delay:${del}s; box-shadow:0 0 12px 3px rgba(251, 146, 60, 0.6)"></div>`;
+        html += '<div class="absolute bg-orange-400 rounded-full animate-float blur-[2px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 12px 3px rgba(251, 146, 60, 0.6)"></div>';
       }
       html += '</div>';
       return html;
@@ -633,14 +642,78 @@
       const isShopTime = state.shopRounds.includes(state.round);
       const stageFadeClass = state.isTransitioning ? 'animate-fadeInStage' : '';
 
+      // ▼▼ 事前に構築する HTML ▼▼
+      let initialHandTopHTML = '';
+      let initialHandBottomHTML = '';
+      if (state.gameState === 'INITIAL_HAND') {
+        initialHandTopHTML = state.hand.slice(0, 3).map(card => '<div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">' + renderCardHTML(card, { isZoomable: true }) + '</div>').join('');
+        initialHandBottomHTML = state.hand.slice(3, 5).map(card => '<div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">' + renderCardHTML(card, { isZoomable: true }) + '</div>').join('');
+      }
+
+      let shopCardsHTML = '';
+      if (state.gameState === 'PLAYING' && isShopTime) {
+        shopCardsHTML = state.shop.map(card => {
+          const isSelected = state.selectedShopCard?.id === card.id;
+          let cStyle = "";
+          if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
+          if (state.isEntering) cStyle += "animate-drop-in ";
+          return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
+        }).join('');
+      }
+
+      let resultHandTopHTML = '';
+      let resultHandBottomHTML = '';
+      if (state.gameState === 'RESULT' && state.resultStep !== 'FINAL') {
+        resultHandTopHTML = state.hand.slice(0, 3).map(card => {
+          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
+          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
+          return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { disabled: isDimmed, isSelected: isSelected, isResultCard: true }) + '</div>';
+        }).join('');
+
+        resultHandBottomHTML = state.hand.slice(3, 5).map(card => {
+          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
+          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
+          return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { disabled: isDimmed, isSelected: isSelected, isResultCard: true }) + '</div>';
+        }).join('');
+      }
+
+      let unselectedCardsHTML = '';
+      if (state.gameState === 'RESULT' && state.resultStep === 'FINAL') {
+        unselectedCardsHTML = state.hand.filter(c => c.id !== state.primaryCard?.id && c.id !== state.secondaryCard?.id).map(card => '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" }) + '</div>').join('');
+      }
+
+      let dockCardsHTML = '';
+      if (state.gameState === 'PLAYING') {
+        dockCardsHTML = state.hand.map((card, index) => {
+          const isSelected = state.selectedHandCard?.id === card.id;
+          let edgeAdjustment = 'origin-bottom';
+          if (isSelected) {
+            if (index === 0) edgeAdjustment = ' origin-bottom-left translate-x-4 sm:translate-x-6 ';
+            else if (index === state.hand.length - 1) edgeAdjustment = ' origin-bottom-right -translate-x-4 sm:-translate-x-6 ';
+          }
+          let cStyle = "";
+          if (state.isExchanging && isSelected) cStyle += "animate-fly-up ";
+          if (state.isEntering) cStyle += "animate-drop-in ";
+          cStyle += edgeAdjustment;
+          
+          let wrapClass = "shrink-0 transition-all duration-500 relative ";
+          if (index > 0) wrapClass += "-ml-8 sm:ml-4 ";
+          wrapClass += isSelected ? "z-[100]" : "z-10";
+
+          return '<div class="' + wrapClass + '">' + renderCardHTML(card, { isSelected: isSelected, isHandCard: true, customStyle: cStyle }) + '</div>';
+        }).join('');
+      }
+
+      // ▼▼ メイン HTML 構築 ▼▼
       let html = `
         <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative"
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
+      `;
 
-          <!-- ▼▼ アプリ内ブラウザの検知と案内オーバーレイ ▼▼ -->
-          ${state.isAppBrowser ? `
+      if (state.isAppBrowser) {
+        html += `
           <div class="fixed inset-0 z-[1000] bg-stone-900/95 flex flex-col items-center justify-center p-6 text-stone-100 font-sans">
             <div class="bg-[#f0e6d2] p-8 rounded-md max-w-sm w-full text-center text-stone-900 border-2 border-orange-900/50" style="background-image: ${PARCHMENT_TEXTURE}">
               <div class="flex justify-center mb-4">
@@ -660,22 +733,24 @@
               </button>
             </div>
           </div>
-          ` : ''}
+        `;
+      }
 
-          <!-- ▼▼ トランジション用のメインステージ ▼▼ -->
+      html += `
           <div id="main-stage" class="w-full flex justify-center ${stageFadeClass}">
             <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
-              
-              <!-- ▼▼ PLAYING, INITIAL_HAND時以外に表示するヘッダー ▼▼ -->
-              ${state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND' ? `
+      `;
+
+      if (state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND') {
+        html += `
               <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
                   RIESM™ Role TRADE
                 </h1>
                 <p class="text-xs sm:text-sm text-stone-700 mt-2 sm:mt-3 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-100/50 inline-block px-4 py-1 rounded-full">― 18歳の自分に持たせる、5つの役割 ―</p>
               </header>
-              ` : ''}
-      `;
+        `;
+      }
 
       if (state.gameState === 'START') {
         html += `
@@ -702,6 +777,12 @@
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </button>
                 </div>
+              </div>
+
+              <div class="mt-8 text-center relative z-10">
+                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-900 font-bold hover:text-orange-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-orange-900 pb-0.5 drop-shadow-md">
+                  © 2026 ninin consulting＆counseling
+                </a>
               </div>
         `;
       }
@@ -756,7 +837,6 @@
         `;
       }
 
-      // ▼▼ 初期手札確認シーン ▼▼
       if (state.gameState === 'INITIAL_HAND') {
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
@@ -779,18 +859,10 @@
                 
                 <div class="flex flex-col items-center gap-3 sm:gap-4 w-full relative z-10">
                   <div class="flex justify-center gap-2 sm:gap-4 w-full">
-                    ${state.hand.slice(0, 3).map(card => `
-                      <div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">
-                        ${renderCardHTML(card, { isZoomable: true })}
-                      </div>
-                    `).join('')}
+                    ${initialHandTopHTML}
                   </div>
                   <div class="flex justify-center gap-2 sm:gap-4 w-full">
-                    ${state.hand.slice(3, 5).map(card => `
-                      <div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">
-                        ${renderCardHTML(card, { isZoomable: true })}
-                      </div>
-                    `).join('')}
+                    ${initialHandBottomHTML}
                   </div>
                 </div>
 
@@ -810,10 +882,11 @@
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${isShopTime ? BG_SHOP_IMG : BG_TRADE_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
+        `;
 
-                ${isShopTime ? `
+        if (isShopTime) {
+          html += `
                   <div class="p-4 sm:p-8 relative z-10">
-                    
                     <div class="flex items-start max-w-2xl mx-auto w-full mb-6 sm:mb-8 px-2 sm:px-0">
                       <div class="flex flex-col items-center shrink-0 z-10 w-14 sm:w-20">
                         <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200">
@@ -836,16 +909,13 @@
                     </div>
 
                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-4 justify-items-center mb-6 sm:mb-8">
-                      ${state.shop.map(card => {
-                        const isSelected = state.selectedShopCard?.id === card.id;
-                        const customStyle = `${state.isExchanging && isSelected ? 'animate-fly-down' : ''} ${state.isEntering ? 'animate-drop-in' : ''}`;
-                        return renderCardHTML(card, { isSelected, isShopCard: true, customStyle });
-                      }).join('')}
+                      ${shopCardsHTML}
                     </div>
                   </div>
-                ` : `
+          `;
+        } else {
+          html += `
                   <div class="p-4 sm:p-8 relative z-10 flex flex-col items-center">
-                     
                      <div class="flex items-start max-w-2xl mx-auto w-full mb-6 sm:mb-8 px-2 sm:px-0">
                       <div class="flex flex-col items-center shrink-0 z-10 w-14 sm:w-20">
                         <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200">
@@ -869,13 +939,15 @@
                      <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm border border-stone-400/60 shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] inline-flex flex-col items-center relative w-full sm:w-auto max-w-sm mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
                        <p class="text-[10px] sm:text-xs font-serif tracking-widest text-stone-700 mb-4 sm:mb-6 font-bold">名もなき転生者の提示</p>
                        <div class="flex justify-center transform hover:scale-105 transition-transform duration-500">
-                          ${renderCardHTML(state.tradeOfferCard, { disabled: true, customStyle: `${state.isExchanging ? 'animate-fly-down' : ''} ${state.isEntering ? 'animate-drop-in' : ''}` })}
+                          ${renderCardHTML(state.tradeOfferCard, { disabled: true, customStyle: (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
                        </div>
                      </div>
                   </div>
-                `}
+          `;
+        }
 
-                ${state.round === 1 && state.showTutorial ? `
+        if (state.round === 1 && state.showTutorial) {
+          html += `
                   <div class="fixed inset-0 z-[200] flex items-start justify-center pt-10 sm:pt-20 bg-stone-900/60 backdrop-blur-sm animate-fadeIn">
                     <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm shadow-2xl max-w-md w-[90%] text-center border border-orange-900/30" style="background-image: ${PARCHMENT_TEXTURE}">
                       <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-4 magic-text-glow">【 トレードのやり方 】</h3>
@@ -889,20 +961,23 @@
                       </button>
                     </div>
                   </div>
-                ` : ''}
-              </div>
-        `;
+          `;
+        }
+
+        html += `</div>`;
       }
 
       if (state.gameState === 'RESULT') {
-        html += `
-              ${state.shareMessage ? `
+        if (state.shareMessage) {
+          html += `
                 <div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-orange-300 font-bold px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-[0_0_20px_rgba(249,115,22,0.5)] border border-orange-500 animate-bounce text-xs sm:text-sm text-center w-11/12 max-w-md">
                   ${state.shareMessage}
                 </div>
-              ` : ''}
+          `;
+        }
 
-              ${state.confirmingCard ? `
+        if (state.confirmingCard) {
+          html += `
                 <div class="fixed inset-0 z-[200] flex items-center justify-center bg-stone-900/60 backdrop-blur-sm ${state.isConfirmModalClosing ? 'animate-fadeOutModal' : 'animate-fadeInModal'}">
                   <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm shadow-2xl max-w-sm w-[90%] text-center border border-orange-900/30" style="background-image: ${PARCHMENT_TEXTURE}">
                     <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-4 magic-text-glow">【 最終確認 】</h3>
@@ -925,9 +1000,11 @@
                     </div>
                   </div>
                 </div>
-              ` : ''}
+          `;
+        }
 
-              ${state.resultStep !== 'FINAL' ? `
+        if (state.resultStep !== 'FINAL') {
+          html += `
                 <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
                   <div class="absolute inset-0 z-0 pointer-events-none">
                     <img src="${BG_JUNBI_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
@@ -952,32 +1029,18 @@
                     
                     <div class="flex flex-col items-center gap-3 sm:gap-4 w-full">
                       <div class="flex justify-center gap-2 sm:gap-4 w-full">
-                        ${state.hand.slice(0, 3).map(card => {
-                          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
-                          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
-                          return `
-                            <div class="shrink-0 transition-transform duration-500">
-                              ${renderCardHTML(card, { disabled: isDimmed, isSelected, isResultCard: true })}
-                            </div>
-                          `;
-                        }).join('')}
+                        ${resultHandTopHTML}
                       </div>
                       <div class="flex justify-center gap-2 sm:gap-4 w-full">
-                        ${state.hand.slice(3, 5).map(card => {
-                          const isSelected = card.id === state.primaryCard?.id || card.id === state.secondaryCard?.id;
-                          const isDimmed = state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id;
-                          return `
-                            <div class="shrink-0 transition-transform duration-500">
-                              ${renderCardHTML(card, { disabled: isDimmed, isSelected, isResultCard: true })}
-                            </div>
-                          `;
-                        }).join('')}
+                        ${resultHandBottomHTML}
                       </div>
                     </div>
 
                   </div>
                 </div>
-              ` : `
+          `;
+        } else {
+          html += `
                   <div id="capture-area" class="bg-[#f0e6d2] pt-8 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <div class="absolute inset-0 z-0 pointer-events-none">
                       <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
@@ -1009,11 +1072,7 @@
                       </div>
 
                       <div class="flex flex-nowrap gap-3 sm:gap-4 justify-center z-10 w-full mt-4">
-                        ${state.hand.filter(c => c.id !== state.primaryCard?.id && c.id !== state.secondaryCard?.id).map(card => `
-                          <div class="shrink-0 transition-transform duration-500">
-                            ${renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" })}
-                          </div>
-                        `).join('')}
+                        ${unselectedCardsHTML}
                       </div>
                     </div>
 
@@ -1069,15 +1128,16 @@
                       再び過去へ戻る
                     </button>
                   </div>
-              `}
-              
-              <div class="mt-8 text-center pb-4 relative z-10">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-600 hover:text-stone-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-stone-600 pb-0.5">
-                  © 2026 ninin consulting＆counseling
-                </a>
-              </div>
-            </div>
-        `;
+
+                  <!-- ▼▼ 今回追加する案内とリンク ▼▼ -->
+                  <div class="mt-12 text-center relative z-10 bg-[#f4ebd8]/80 p-6 rounded-md border border-stone-400/50 shadow-sm max-w-2xl mx-auto" style="background-image: ${PARCHMENT_TEXTURE}">
+                    <p class="text-xs sm:text-sm text-stone-800 font-serif font-bold mb-3">現実のあなたにも備わっている「24の役割」についてもっと知りたい方はこちら</p>
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="inline-block text-sm sm:text-base text-orange-900 font-extrabold hover:text-orange-700 transition-colors font-serif tracking-widest border-b-2 border-orange-900 hover:border-orange-700 pb-1 drop-shadow-md">
+                      🌈RIESM™
+                    </a>
+                  </div>
+          `;
+        }
       }
 
       html += `
@@ -1086,6 +1146,30 @@
       `;
 
       if (state.gameState === 'PLAYING') {
+        let exchangeBtnHTML = '';
+        if (isShopTime) {
+          exchangeBtnHTML = `
+                  <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-orange-700 hover:bg-orange-800 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-orange-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 border border-orange-700 rounded-sm shadow-[0_0_15px_rgba(249,115,22,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
+                      ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
+                      ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場から1枚ずつ選ぶ')}
+                    </button>
+                    ${state.round === 6 ? `
+                      <button data-action="skip-trade" ${state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-stone-700 hover:bg-stone-800 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-stone-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 border border-stone-700 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
+                        交換せずに旅立つ
+                      </button>
+                    ` : ''}
+                  </div>
+          `;
+        } else {
+          exchangeBtnHTML = `
+                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-blue-900 hover:bg-blue-950 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-blue-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 border border-blue-800 rounded-sm shadow-[0_0_15px_rgba(30,58,138,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
+                    ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
+                    ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}
+                  </button>
+          `;
+        }
+
         html += `
           <div id="dock-stage" class="fixed bottom-0 left-0 w-full bg-[#dcccae] shadow-[0_-10px_40px_rgba(67,20,7,0.3)] border-t border-stone-500/80 z-50 ${stageFadeClass}" style="background-image: ${PARCHMENT_TEXTURE}">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#c4b08b] via-orange-900/30 to-[#c4b08b]"></div>
@@ -1093,37 +1177,12 @@
             <div class="max-w-4xl mx-auto pt-2 sm:pt-4 relative flex flex-col">
               <div class="w-full flex justify-center">
                 <div class="flex items-end h-[150px] sm:h-[210px] px-2 relative">
-                  ${state.hand.map((card, index) => {
-                    const isSelected = state.selectedHandCard?.id === card.id;
-                    
-                    let edgeAdjustment = 'origin-bottom';
-                    if (isSelected) {
-                      if (index === 0) edgeAdjustment = ' origin-bottom-left translate-x-4 sm:translate-x-6 ';
-                      else if (index === state.hand.length - 1) edgeAdjustment = ' origin-bottom-right -translate-x-4 sm:-translate-x-6 ';
-                    }
-                    
-                    const customStyle = `${state.isExchanging && isSelected ? 'animate-fly-up' : ''} ${state.isEntering ? 'animate-drop-in' : ''} ${edgeAdjustment}`;
-                    return `
-                      <div class="shrink-0 transition-all duration-500 relative ${index > 0 ? '-ml-8 sm:ml-4' : ''} ${isSelected ? 'z-[100]' : 'z-10'}">
-                        ${renderCardHTML(card, { isSelected, isHandCard: true, customStyle })}
-                      </div>
-                    `;
-                  }).join('')}
+                  ${dockCardsHTML}
                 </div>
               </div>
 
               <div class="w-full flex justify-center px-4 py-3 sm:py-4 mt-2 sm:mt-4 bg-stone-900/5 border-t border-stone-500/20">
-                ${isShopTime ? `
-                  <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-orange-700 hover:bg-orange-800 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-orange-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 border border-orange-700 rounded-sm shadow-[0_0_15px_rgba(249,115,22,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
-                    ${getIcon('RefreshCw', `w-4 h-4 mr-1.5 sm:mr-3 shrink-0 ${state.isExchanging ? 'animate-spin' : ''}`)}
-                    ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場の役割を1枚ずつ選んでください')}
-                  </button>
-                ` : `
-                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-blue-900 hover:bg-blue-950 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-blue-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 border border-blue-800 rounded-sm shadow-[0_0_15px_rgba(30,58,138,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
-                    ${getIcon('RefreshCw', `w-4 h-4 mr-1.5 sm:mr-3 shrink-0 ${state.isExchanging ? 'animate-spin' : ''}`)}
-                    ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}
-                  </button>
-                `}
+                ${exchangeBtnHTML}
               </div>
             </div>
           </div>
@@ -1182,6 +1241,10 @@
         handleShopTrade();
       } else if (action === 'trade-offer') {
         handleTrade();
+      } else if (action === 'skip-trade') {
+        transitionState(() => {
+          proceedToNextRound(state.hand, state.shop, state.deck);
+        });
       } else if (action === 'select-result') {
         const id = parseInt(btn.dataset.id);
         const card = CARDS_DATA.find(c => c.id === id);
