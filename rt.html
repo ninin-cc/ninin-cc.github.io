@@ -267,6 +267,7 @@
       primaryCard: null,
       secondaryCard: null,
       confirmingCard: null,
+      zoomedCard: null, // ▼ 拡大表示用カードの状態
       isConfirmModalClosing: false,
       shareMessage: '',
       isAppBrowser: false // アプリ内ブラウザ判定用
@@ -352,9 +353,12 @@
       state.primaryCard = null;
       state.secondaryCard = null;
       state.confirmingCard = null;
+      state.zoomedCard = null;
       state.isConfirmModalClosing = false;
       state.tradeAvatarImg = getRandomAvatar(); 
-      state.gameState = 'PLAYING';
+      
+      // ▼▼ PLAYING ではなく、初期手札確認シーン(INITIAL_HAND)へ遷移 ▼▼
+      state.gameState = 'INITIAL_HAND';
       state.shareMessage = '';
     }
 
@@ -554,7 +558,7 @@
     // --- Rendering Components ---
     function renderCardHTML(card, options = {}) {
       if (!card) return '';
-      const { isSelected = false, disabled = false, isHandCard = false, isReadOnly = false, glow = false, customStyle = '' } = options;
+      const { isSelected = false, disabled = false, isHandCard = false, isReadOnly = false, glow = false, isZoomable = false, customStyle = '' } = options;
       
       const ModeIconName = MODE_ICON_NAMES[card.mode];
       
@@ -573,6 +577,7 @@
         if (isHandCard) actionData = `data-action="select-hand" data-id="${card.id}"`;
         else if (options.isShopCard) actionData = `data-action="select-shop" data-id="${card.id}"`;
         else if (options.isResultCard) actionData = `data-action="select-result" data-id="${card.id}"`;
+        else if (isZoomable) actionData = `data-action="zoom-card" data-id="${card.id}"`; // ▼ 拡大アクション
       }
 
       return `
@@ -661,8 +666,8 @@
           <div id="main-stage" class="w-full flex justify-center ${stageFadeClass}">
             <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
               
-              <!-- ▼▼ PLAYING時以外に表示するヘッダー ▼▼ -->
-              ${state.gameState !== 'PLAYING' ? `
+              <!-- ▼▼ PLAYING, INITIAL_HAND時以外に表示するヘッダー ▼▼ -->
+              ${state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND' ? `
               <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
                   RIESM™ Role TRADE
@@ -697,12 +702,6 @@
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </button>
                 </div>
-              </div>
-
-              <div class="mt-8 text-center relative z-10">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-xs text-stone-900 font-bold hover:text-orange-900 transition-colors font-serif tracking-widest border-b border-transparent hover:border-orange-900 pb-0.5 drop-shadow-md">
-                  © 2026 ninin consulting＆counseling
-                </a>
               </div>
         `;
       }
@@ -751,6 +750,54 @@
                   </button>
                   <button data-action="start-game" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 px-8 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center tracking-widest text-sm">
                     ${getIcon('Play', "w-4 h-4 sm:w-5 sm:h-5 mr-3 group-hover:text-orange-400 transition-colors")} 扉を開く
+                  </button>
+                </div>
+              </div>
+        `;
+      }
+
+      // ▼▼ 初期手札確認シーン ▼▼
+      if (state.gameState === 'INITIAL_HAND') {
+        html += `
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                </div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
+                
+                <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-4 sm:mb-6 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-2">
+                  初期装備の確認
+                </h2>
+                
+                <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-xs sm:text-sm leading-relaxed font-serif font-medium bg-[#e8dcc4] p-4 sm:p-6 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
+                  <p class="font-bold text-base sm:text-lg mb-2">「準備はいいかな？ これが君に与えられた5つの役割だ。」</p>
+                  <p>「この5枚のカードが、これからの人生を歩む君の初期装備となる。<br/>
+                  これから扉の先で、何人かの転生者や武器庫と交換を行ってゆくことになるが……<br/>
+                  まず今渡されたものを、しっかりと読むがいい。」</p>
+                  <p class="text-[10px] sm:text-xs text-orange-900 font-bold mt-4 animate-pulse">※カードをクリック（タップ）すると大きく表示されます。</p>
+                </div>
+                
+                <div class="flex flex-col items-center gap-3 sm:gap-4 w-full relative z-10">
+                  <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                    ${state.hand.slice(0, 3).map(card => `
+                      <div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">
+                        ${renderCardHTML(card, { isZoomable: true })}
+                      </div>
+                    `).join('')}
+                  </div>
+                  <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                    ${state.hand.slice(3, 5).map(card => `
+                      <div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">
+                        ${renderCardHTML(card, { isZoomable: true })}
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div class="mt-10 sm:mt-12 flex justify-center relative z-10">
+                  <button data-action="go-playing" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 px-8 sm:px-12 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-500 flex items-center tracking-widest text-sm">
+                    確認した。トレードへ向かう
+                    ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </button>
                 </div>
               </div>
@@ -881,7 +928,7 @@
               ` : ''}
 
               ${state.resultStep !== 'FINAL' ? `
-                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden">
+                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
                   <div class="absolute inset-0 z-0 pointer-events-none">
                     <img src="${BG_JUNBI_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                   </div>
@@ -931,7 +978,7 @@
                   </div>
                 </div>
               ` : `
-                  <div id="capture-area" class="bg-[#f0e6d2] pt-8 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div id="capture-area" class="bg-[#f0e6d2] pt-8 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <div class="absolute inset-0 z-0 pointer-events-none">
                       <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                     </div>
@@ -1083,6 +1130,18 @@
         `;
       }
 
+      // ▼▼ ズームカード（モーダル表示） ▼▼
+      if (state.zoomedCard) {
+        html += `
+          <div data-action="close-zoom" class="fixed inset-0 z-[500] bg-stone-900/80 backdrop-blur-md flex items-center justify-center cursor-pointer animate-fadeInModal">
+            <div class="scale-[1.5] sm:scale-[2] pointer-events-none transition-transform duration-300">
+              ${renderCardHTML(state.zoomedCard, { isReadOnly: true, glow: true, customStyle: "shadow-[0_0_40px_rgba(255,255,255,0.2)]" })}
+            </div>
+            <p class="absolute bottom-10 sm:bottom-20 text-stone-300 font-serif tracking-widest text-xs sm:text-sm animate-pulse pointer-events-none">クリック（タップ）して閉じる</p>
+          </div>
+        `;
+      }
+
       root.innerHTML = html;
       
       state.isTransitioning = false;
@@ -1100,6 +1159,15 @@
         transitionState(() => { state.gameState = 'START'; });
       } else if (action === 'start-game') {
         transitionState(() => { startGame(); });
+      } else if (action === 'go-playing') {
+        transitionState(() => { state.gameState = 'PLAYING'; });
+      } else if (action === 'zoom-card') {
+        const id = parseInt(btn.dataset.id);
+        state.zoomedCard = CARDS_DATA.find(c => c.id === id);
+        render();
+      } else if (action === 'close-zoom') {
+        state.zoomedCard = null;
+        render();
       } else if (action === 'select-hand') {
         const id = parseInt(btn.dataset.id);
         const card = CARDS_DATA.find(c => c.id === id);
