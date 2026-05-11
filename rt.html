@@ -104,6 +104,43 @@
     .animate-fadeOutModal {
       animation: fadeOutModal 0.3s ease-in forwards;
     }
+
+    /* ▼▼ 木目調ボタンと魔法のオーラエフェクト ▼▼ */
+    @keyframes magicAura {
+      0% { box-shadow: 0 0 15px 2px rgba(251, 146, 60, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 25px 8px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); border-color: rgba(253, 224, 71, 0.8); color: #fef08a; }
+      100% { box-shadow: 0 0 15px 2px rgba(251, 146, 60, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+    }
+    .animate-magicAura {
+      animation: magicAura 1s ease-in-out infinite;
+    }
+    .wood-btn {
+      background-color: #4a3728;
+      border-width: 2px;
+      border-color: #2c1e16;
+      color: #fdf6e3;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .wood-btn:hover:not(:disabled) {
+      background-color: #3d2d21;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 5px 20px rgba(251, 146, 60, 0.3);
+    }
+    .wood-btn:disabled {
+      background-color: #78716c;
+      border-color: #57534e;
+      color: #d6d3d1;
+      box-shadow: none;
+    }
+    .wood-texture {
+      position: absolute;
+      inset: 0;
+      opacity: 0.3;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='woodNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23woodNoise)' opacity='0.7'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
   </style>
 </head>
 <body class="bg-[#e8dcc4] text-stone-900 font-sans selection:bg-orange-900 selection:text-orange-100">
@@ -762,10 +799,10 @@
                   
                   <div class="text-stone-800 text-center space-y-6 sm:space-y-8 mb-8 sm:mb-10 text-sm md:text-base leading-loose font-serif font-medium relative z-10">
                     <p class="text-base sm:text-lg text-stone-900 font-extrabold border-b border-stone-400/60 pb-4 inline-block drop-shadow-sm">
-                      あなたは今、RIESM™の魔法によって<br/>【今の知識と経験を持ったまま18歳に戻る】ことになりました。
+                      あなたは今、RIESM™の魔法により<br/>【今の知識と経験を持ったまま18歳に戻る】ことになりました。
                     </p>
                     <p class="px-2 sm:px-4 text-stone-800 leading-relaxed font-bold">
-                      これまで歩んできた人生での喜びも、<br/>失敗も、後悔も、出会いも、<br/>すべてを保持したまま、もう一度人生を歩み始めるとしたら。
+                      これまで歩んできた人生での喜びも、<br/>
                     </p>
                     <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
                       あなたは、どんな「役割」を自分の武器として持っていきますか？
@@ -773,7 +810,7 @@
                   </div>
                   
                   <button data-action="go-rules" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center mx-auto tracking-widest text-sm sm:text-base w-full sm:w-auto relative z-10">
-                    準備室の掟（ルール）を読む
+                    準備室の掟を読む
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </button>
                 </div>
@@ -801,7 +838,7 @@
                     <li class="flex items-start">
                       ${getIcon('Sparkles', "w-4 h-4 sm:w-5 sm:h-5 mr-3 mt-0.5 text-yellow-600 flex-shrink-0")}
                       <div>
-                        <span class="font-bold text-stone-900">持っていける装備（カード）は5枚だけです。</span><br/>
+                        <span class="font-bold text-stone-900">持っていける装備（カード）は5枚だけ。</span><br/>
                         <span class="text-[11px] sm:text-sm text-stone-700">最初はランダムに配られた5枚から始まります。</span>
                       </div>
                     </li>
@@ -1049,7 +1086,7 @@
 
                     <p class="text-stone-800 mb-8 sm:mb-12 mt-4 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる「5つの役割」です。</p>
                     
-                    <div class="flex flex-col items-center w-full mt-6 mb-6 relative z-10">
+                    <div class="flex flex-col items-center w-full mt-6 mb-2 relative z-10">
                       
                       <div class="flex flex-nowrap gap-10 sm:gap-16 justify-center z-10 mb-10 sm:mb-14 w-full mt-6">
                         <div class="relative transform scale-[1.3] transition-transform duration-500">
@@ -1076,7 +1113,7 @@
                       </div>
                     </div>
 
-                    <div class="w-full max-w-2xl mx-auto mt-8 sm:mt-12 border-t border-stone-400/60 pt-8 sm:pt-10 relative z-10">
+                    <div class="w-full max-w-2xl mx-auto mt-4 sm:mt-6 border-t border-stone-400/60 pt-6 sm:pt-8 relative z-10">
                       <div class="mb-6 sm:mb-8 bg-[#f4ebd8]/90 p-4 sm:p-6 rounded-sm border border-stone-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]" style="background-image: ${PARCHMENT_TEXTURE}">
                         <p class="font-serif text-xs sm:text-sm text-stone-700 mb-2 sm:mb-3 tracking-widest font-bold text-center">一番多く選んだ色</p>
                         
@@ -1105,7 +1142,14 @@
                     </div>
                   </div>
 
-                  <div class="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 text-stone-900 font-serif font-bold mt-8 text-center px-2 sm:px-4 relative z-10">
+                  <div class="mt-8 mb-8 text-center relative z-10 bg-[#f4ebd8]/80 p-6 rounded-md border border-stone-400/50 shadow-[0_5px_15px_rgba(0,0,0,0.05)] max-w-2xl mx-auto" style="background-image: ${PARCHMENT_TEXTURE}">
+                    <p class="text-xs sm:text-sm text-stone-800 font-serif font-bold mb-3">現実のあなたにも備わっている「24の役割」についてもっと知りたい方はこちら</p>
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="inline-block text-sm sm:text-base text-orange-900 font-extrabold hover:text-orange-700 transition-colors font-serif tracking-widest border-b-2 border-orange-900 hover:border-orange-700 pb-1 drop-shadow-md">
+                      🌈RIESM™
+                    </a>
+                  </div>
+
+                  <div class="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 text-stone-900 font-serif font-bold text-center px-2 sm:px-4 relative z-10">
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-2 rounded-sm border border-stone-300/50 shadow-sm">Q. なぜ【${state.primaryCard?.name}】を一番大事に選びましたか？</p>
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-2 rounded-sm border border-stone-300/50 shadow-sm">Q. もし「自分っぽくない役割」があるなら、それはなぜ残したのですか？</p>
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-2 rounded-sm border border-stone-300/50 shadow-sm">Q. 最後に、この装備でこれからどんな人生を歩みたいですか？</p>
@@ -1128,15 +1172,7 @@
                       再び過去へ戻る
                     </button>
                   </div>
-
-                  <!-- ▼▼ 今回追加する案内とリンク ▼▼ -->
-                  <div class="mt-12 text-center relative z-10 bg-[#f4ebd8]/80 p-6 rounded-md border border-stone-400/50 shadow-sm max-w-2xl mx-auto" style="background-image: ${PARCHMENT_TEXTURE}">
-                    <p class="text-xs sm:text-sm text-stone-800 font-serif font-bold mb-3">現実のあなたにも備わっている「24の役割」についてもっと知りたい方はこちら</p>
-                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="inline-block text-sm sm:text-base text-orange-900 font-extrabold hover:text-orange-700 transition-colors font-serif tracking-widest border-b-2 border-orange-900 hover:border-orange-700 pb-1 drop-shadow-md">
-                      🌈RIESM™
-                    </a>
-                  </div>
-          `;
+              `;
         }
       }
 
@@ -1182,7 +1218,27 @@
               </div>
 
               <div class="w-full flex justify-center px-4 py-3 sm:py-4 mt-2 sm:mt-4 bg-stone-900/5 border-t border-stone-500/20">
-                ${exchangeBtnHTML}
+                ${isShopTime ? `
+                  <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                      <div class="wood-texture"></div>
+                      ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 relative z-10 " + (state.isExchanging ? 'animate-spin' : ''))}
+                      <span class="relative z-10">${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場から1枚ずつ選ぶ')}</span>
+                    </button>
+                    ${state.round === 6 ? `
+                      <button data-action="skip-trade" ${state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10">交換せずに旅立つ</span>
+                      </button>
+                    ` : ''}
+                  </div>
+                ` : `
+                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                    <div class="wood-texture"></div>
+                    ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 relative z-10 " + (state.isExchanging ? 'animate-spin' : ''))}
+                    <span class="relative z-10">${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}</span>
+                  </button>
+                `}
               </div>
             </div>
           </div>
