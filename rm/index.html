@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+<script>
+  if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+    var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+    window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+  }
+</script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
 <script>
@@ -321,7 +329,7 @@
         let isDouble = false;
         let frontKey = "";
 
-        // 【改良点2】 85%以上でダブルフロントと判定する
+        // 85%以上でダブルフロントと判定する
         if (maxScore > 0) {
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
@@ -332,7 +340,7 @@
         }
 
         setResultScores(scores);
-        // 【改良点3】 詳細は3パターンのうちどれか1つをランダムに選ぶ
+        // 詳細は3パターンのうちどれか1つをランダムに選ぶ
         const detailIndex = Math.floor(Math.random() * 3);
         setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
       };
@@ -432,20 +440,13 @@
               </div>
               {/* ▲ インフォメーションエリア ここまで ▲ */}
 
-              {/* ▼ RIESM Lite & 完全版への導線エリア ▼ */}
+              {/* ▼ 完全版への導線エリア ▼ */}
               <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
                 <p className="text-[13px] text-slate-600 mb-3 leading-relaxed font-medium">
-                  完全版RIESM™では、4つのモードに加えて、<br className="hidden sm:block"/>
-                  <span className="font-bold">「どんな役割で力を発揮しやすいか」</span>まで整理できます。
+                  完全版RIESM™では、4つのモードに加えて、6つの興味の蛇口。そして24の役割「あなただけのコックピット」により<br className="hidden sm:block"/>
+                  <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm text-slate-800">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで整理できます。
                 </p>
                 <div className="space-y-2">
-                  <a href="https://ninin-cc.github.io/rl/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
-                    <div>
-                      <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">まずは気軽に知りたい方は</div>
-                      <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 RIESM™ cockpit Liteへ</div>
-                    </div>
-                    <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
-                  </a>
                   <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
                     <div>
                       <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">仕事や人間関係で本格的に活かしたい方は</div>
@@ -473,7 +474,7 @@
       }
 
       if (resultType) {
-        // 【改良点1・3】 ダブルフロント時の情報を動的生成
+        // ダブルフロント時の情報を動的生成
         let result;
         if (resultType.isDouble) {
           const frontData = resultsData[resultType.front];
@@ -578,7 +579,6 @@
                 {/* --- ▼▼▼ ここからキャプチャしない範囲 (Web画面のみ) ▼▼▼ --- */}
                 <div className="px-4 sm:px-8 pb-0" data-html2canvas-ignore="true">
                   <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
-                    {/* 【改良点4】 whitespace-pre-line を追加し、動的生成したセカンドの改行文章を反映させる */}
                     <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[resultType.detailIndex]}</p>
                   </div>
                 </div>
@@ -592,20 +592,13 @@
                     <RefreshCwIcon /> もう一度観る
                   </button>
 
-                  {/* ▼ RIESM Lite & 完全版への導線エリア ▼ */}
+                  {/* ▼ 完全版への導線エリア ▼ */}
                   <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
                     <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
-                      完全版RIESM™では、4つのモードに加えて、<br className="hidden sm:block"/>
-                      <span className="font-bold">「どんな役割で力を発揮しやすいか」</span>まで整理できます。
+                      完全版RIESM™では、4つのモードに加えて、6つの興味の蛇口。そして24の役割「あなただけのコックピット」により<br className="hidden sm:block"/>
+                      <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで整理できます。
                     </p>
                     <div className="space-y-2">
-                      <a href="https://ninin-cc.github.io/rl/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm hover:shadow transition-all group ${t.border}`}>
-                        <div>
-                          <div className={`text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-70 ${t.text}`}>まずは気軽に知りたい方は</div>
-                          <div className={`text-[13px] sm:text-sm font-bold ${t.text}`}>🌈 RIESM™ cockpit Liteへ</div>
-                        </div>
-                        <div className={`opacity-50 group-hover:opacity-100 ${t.text}`}><ExternalLinkIcon /></div>
-                      </a>
                       <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 rounded-lg shadow-sm hover:shadow transition-all group text-white bg-gradient-to-r ${t.header}`}>
                         <div>
                           <div className="text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-90">仕事や人間関係で本格的に活かしたい方は</div>
@@ -628,9 +621,6 @@
                          <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
                            💡 観測のヒント：【バックス】は何度実施してもあまり変わらない傾向があります。自分が何を避け、何を守ろうとしているのか。何度か観測する中で、そんな自分との対話も楽しんでみてくださいね。
                          </p>
-                         <div className={`mt-4 pt-3 border-t border-white/30 flex items-center gap-2 text-[10px] sm:text-[11px] font-medium opacity-80 ${t.text}`}>
-                           <span className="text-xs">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】しておくと毎日の観測に便利です。
-                         </div>
                       </div>
                     </div>
                   </div>
