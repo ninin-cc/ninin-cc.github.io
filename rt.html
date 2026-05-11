@@ -114,32 +114,86 @@
     .animate-magicAura {
       animation: magicAura 1s ease-in-out infinite;
     }
+    
+    /* 共通木目ボタンベース */
     .wood-btn {
-      background-color: #4a3728;
-      border-width: 2px;
-      border-color: #2c1e16;
-      color: #fdf6e3;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.6), 0 5px 15px rgba(0,0,0,0.4);
       position: relative;
       overflow: hidden;
+      border-width: 2px;
+      transition: all 0.3s ease;
     }
-    .wood-btn:hover:not(:disabled) {
-      background-color: #3d2d21;
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 5px 20px rgba(251, 146, 60, 0.3);
+
+    /* ダークな木目ボタン（主要アクション用） */
+    .wood-btn-dark {
+      background-color: #5d4037; /* ベース色を明るく調整 */
+      border-color: #3e2723;
+      color: #ffffff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
     }
-    .wood-btn:disabled {
+    .wood-btn-dark:hover:not(:disabled) {
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.7), 0 5px 20px rgba(251, 146, 60, 0.4);
+    }
+    .wood-btn-dark:hover:not(:disabled) .wood-texture {
+      filter: brightness(0.9);
+    }
+    .wood-btn-dark:disabled {
       background-color: #78716c;
       border-color: #57534e;
       color: #d6d3d1;
+      text-shadow: none;
       box-shadow: none;
     }
+    .wood-btn-dark:disabled .wood-texture {
+      filter: grayscale(1) brightness(0.6);
+      opacity: 0.5;
+    }
+
+    /* ライトな木目ボタン（サブアクション、戻る用） */
+    .wood-btn-light {
+      background-color: #f4ebd8; 
+      border-color: #8c7355;
+      color: #3e2723;
+      font-weight: bold;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+      box-shadow: inset 0 0 5px rgba(255,255,255,0.6), 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .wood-btn-light:hover:not(:disabled) {
+      background-color: #e8dcc4;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.1), 0 4px 12px rgba(249, 115, 22, 0.2);
+    }
+    .wood-btn-light:hover:not(:disabled) .wood-texture {
+      filter: brightness(0.9);
+    }
+    .wood-btn-light:disabled {
+      background-color: #d6d3d1;
+      border-color: #a8a29e;
+      color: #78716c;
+      text-shadow: none;
+      box-shadow: none;
+    }
+    .wood-btn-light:disabled .wood-texture {
+      filter: grayscale(1) opacity(0.3);
+    }
+
+    /* 共通木目テクスチャ */
     .wood-texture {
       position: absolute;
       inset: 0;
-      opacity: 0.3;
       pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='woodNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23woodNoise)' opacity='0.7'/%3E%3C/svg%3E");
-      mix-blend-mode: multiply;
+      background-image: url("https://ninin-cc.github.io/img/rt/mokuzai.jpg");
+      background-size: cover;
+      background-position: center;
+      transition: filter 0.3s ease;
+      z-index: 0;
+    }
+    .wood-btn-dark .wood-texture {
+      mix-blend-mode: normal; /* mokuzai.jpg 本来の色を活かす */
+      opacity: 0.8; /* 木目をはっきり出す */
+    }
+    .wood-btn-light .wood-texture {
+      mix-blend-mode: luminosity;
+      opacity: 0.2; /* 白っぽくする */
     }
   </style>
 </head>
@@ -160,7 +214,7 @@
       { id: 9, name: '設計者', desc: '物事の構造を理解し、再現性のある仕組みを作る役割。', mode: 'KEEPER' },
       { id: 10, name: '審判', desc: '公平な視点で物事を判断し、正しい道を示す役割。', mode: 'KEEPER' },
       { id: 11, name: '記録係', desc: '過去の経験や事実を正確に残し、未来へ繋ぐ役割。', mode: 'KEEPER' },
-      { id: 12, name: '職人', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
+      { id: 12, name: '職ర్ణ', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
       { id: 13, name: '養育者', desc: '他者の成長を温かく見守り、サポートする役割。', mode: 'NURTURE' },
       { id: 14, name: '調停者', desc: '人と人との間に入り、対立を和らげ調和をもたらす役割。', mode: 'NURTURE' },
       { id: 15, name: '共感者', desc: '他者の痛みに寄り添い、共に感情を分かち合う役割。', mode: 'NURTURE' },
@@ -765,8 +819,9 @@
                 <span class="text-orange-700">「Safariで開く」</span><br/>
                 を選択して再読み込みしてください。
               </p>
-              <button data-action="close-iab-modal" class="bg-stone-800 hover:bg-stone-900 text-stone-100 font-bold py-3 px-6 rounded-sm w-full transition-colors text-sm tracking-widest">
-                このまま続ける（非推奨）
+              <button data-action="close-iab-modal" class="wood-btn wood-btn-dark rounded-sm w-full transition-all duration-300 flex items-center justify-center text-sm font-serif font-bold py-3 px-6 tracking-widest relative">
+                <div class="wood-texture"></div>
+                <span class="relative z-10 flex items-center justify-center">このまま続ける（非推奨）</span>
               </button>
             </div>
           </div>
@@ -803,15 +858,20 @@
                     </p>
                     <p class="px-2 sm:px-4 text-stone-800 leading-relaxed font-bold">
                       これまで歩んできた人生での喜びも、<br/>
+                      失敗も、後悔も、出会いも、<br/>
+                      すべてを保持したまま、もう一度人生を歩み始めるとしたら。
                     </p>
                     <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
                       あなたは、どんな「役割」を自分の武器として持っていきますか？
                     </p>
                   </div>
                   
-                  <button data-action="go-rules" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center mx-auto tracking-widest text-sm sm:text-base w-full sm:w-auto relative z-10">
-                    準備室の掟を読む
-                    ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                  <button data-action="go-rules" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center mx-auto tracking-widest text-sm sm:text-base w-full sm:w-auto relative z-10 font-serif font-bold py-3 sm:py-4 px-6 sm:px-10">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      準備室の掟を読む
+                      ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -863,11 +923,17 @@
                 </div>
                 
                 <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 relative z-10">
-                  <button data-action="go-start" class="bg-transparent border border-stone-500 text-stone-800 hover:bg-stone-300/50 font-serif font-bold py-3 px-6 sm:px-8 rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm">
-                    ${getIcon('ChevronLeft', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 物語へ戻る
+                  <button data-action="go-start" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm font-serif py-3 px-6 sm:px-8">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      ${getIcon('ChevronLeft', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 物語へ戻る
+                    </span>
                   </button>
-                  <button data-action="start-game" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 px-8 sm:px-10 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-500 flex items-center justify-center tracking-widest text-sm">
-                    ${getIcon('Play', "w-4 h-4 sm:w-5 sm:h-5 mr-3 group-hover:text-orange-400 transition-colors")} 扉を開く
+                  <button data-action="start-game" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-10">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      ${getIcon('Play', "w-4 h-4 sm:w-5 sm:h-5 mr-3 group-hover:text-orange-400 transition-colors")} 扉を開く
+                    </span>
                   </button>
                 </div>
               </div>
@@ -904,9 +970,12 @@
                 </div>
 
                 <div class="mt-10 sm:mt-12 flex justify-center relative z-10">
-                  <button data-action="go-playing" class="group bg-stone-900 hover:bg-black border border-orange-900/50 text-stone-100 hover:text-orange-300 font-serif font-bold py-3 px-8 sm:px-12 rounded-sm shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-500 flex items-center tracking-widest text-sm">
-                    確認した。トレードへ向かう
-                    ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                  <button data-action="go-playing" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-12 w-full sm:w-auto">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      確認した。トレードへ向かう
+                      ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -993,8 +1062,9 @@
                         下（自分の手札）から<span class="text-orange-700">1枚</span>を選択し、<br/>
                         一番下のボタンを押して入れ替えてください。
                       </p>
-                      <button data-action="close-tutorial" class="bg-stone-800 hover:bg-stone-900 text-stone-100 font-serif font-bold py-2 sm:py-3 px-8 rounded-sm shadow-md transition-all tracking-widest text-sm">
-                        理解した
+                      <button data-action="close-tutorial" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-sm tracking-widest font-serif font-bold py-2 sm:py-3 px-8 w-full sm:w-auto">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10 flex items-center justify-center">理解した</span>
                       </button>
                     </div>
                   </div>
@@ -1028,11 +1098,13 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                      <button data-action="confirm-no" class="bg-transparent border border-stone-500 text-stone-800 hover:bg-stone-300/50 font-serif font-bold py-2 sm:py-3 px-6 rounded-sm transition-all text-sm">
-                        選び直す
+                      <button data-action="confirm-no" class="wood-btn wood-btn-light rounded-sm transition-all text-sm font-serif font-bold py-2 sm:py-3 px-6 w-full sm:w-auto">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10 flex items-center justify-center">選び直す</span>
                       </button>
-                      <button data-action="confirm-yes" class="bg-stone-800 hover:bg-stone-900 text-stone-100 font-serif font-bold py-2 sm:py-3 px-8 rounded-sm shadow-md transition-all text-sm tracking-widest">
-                        決定する
+                      <button data-action="confirm-yes" class="wood-btn wood-btn-dark rounded-sm transition-all text-sm tracking-widest font-serif font-bold py-2 sm:py-3 px-8 w-full sm:w-auto">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10 flex items-center justify-center">決定する</span>
                       </button>
                     </div>
                   </div>
@@ -1156,11 +1228,17 @@
                   </div>
 
                   <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-12 relative z-10 w-full px-4">
-                    <button data-action="capture-save" class="w-full sm:w-auto bg-stone-700 hover:bg-stone-800 border border-stone-600 text-stone-100 font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm">
-                      ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
+                    <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center">
+                        ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
+                      </span>
                     </button>
-                    <button data-action="capture-share" class="w-full sm:w-auto bg-black hover:bg-stone-900 border border-stone-800 text-white font-bold py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] flex items-center justify-center tracking-widest text-xs sm:text-sm">
-                      ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} SNS等でシェア
+                    <button data-action="capture-share" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center">
+                        ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} SNS等でシェア
+                      </span>
                     </button>
                   </div>
 
@@ -1186,22 +1264,29 @@
         if (isShopTime) {
           exchangeBtnHTML = `
                   <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-orange-700 hover:bg-orange-800 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-orange-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 border border-orange-700 rounded-sm shadow-[0_0_15px_rgba(249,115,22,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
-                      ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
-                      ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場から1枚ずつ選ぶ')}
+                    <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center">
+                        ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
+                        ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場から1枚ずつ選ぶ')}
+                      </span>
                     </button>
                     ${state.round === 6 ? `
-                      <button data-action="skip-trade" ${state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-stone-700 hover:bg-stone-800 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-stone-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 border border-stone-700 rounded-sm shadow-[0_0_15px_rgba(0,0,0,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
-                        交換せずに旅立つ
+                      <button data-action="skip-trade" ${state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10 flex items-center justify-center">交換せずに旅立つ</span>
                       </button>
                     ` : ''}
                   </div>
           `;
         } else {
           exchangeBtnHTML = `
-                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto bg-blue-900 hover:bg-blue-950 disabled:bg-stone-400/80 disabled:text-stone-700 disabled:border-stone-500 text-blue-50 font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 border border-blue-800 rounded-sm shadow-[0_0_15px_rgba(30,58,138,0.3)] disabled:shadow-none transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm">
-                    ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
-                    ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}
+                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
+                      ${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}
+                    </span>
                   </button>
           `;
         }
@@ -1218,27 +1303,7 @@
               </div>
 
               <div class="w-full flex justify-center px-4 py-3 sm:py-4 mt-2 sm:mt-4 bg-stone-900/5 border-t border-stone-500/20">
-                ${isShopTime ? `
-                  <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <button data-action="trade-shop" ${!state.selectedHandCard || !state.selectedShopCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8 ${state.isExchanging ? 'animate-magicAura' : ''}">
-                      <div class="wood-texture"></div>
-                      ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 relative z-10 " + (state.isExchanging ? 'animate-spin' : ''))}
-                      <span class="relative z-10">${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '手札と場から1枚ずつ選ぶ')}</span>
-                    </button>
-                    ${state.round === 6 ? `
-                      <button data-action="skip-trade" ${state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8">
-                        <div class="wood-texture"></div>
-                        <span class="relative z-10">交換せずに旅立つ</span>
-                      </button>
-                    ` : ''}
-                  </div>
-                ` : `
-                  <button data-action="trade-offer" ${!state.selectedHandCard || state.isExchanging ? 'disabled' : ''} class="w-full sm:w-auto wood-btn rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
-                    <div class="wood-texture"></div>
-                    ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 relative z-10 " + (state.isExchanging ? 'animate-spin' : ''))}
-                    <span class="relative z-10">${state.isExchanging ? '入れ替え中...' : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')}</span>
-                  </button>
-                `}
+                ${exchangeBtnHTML}
               </div>
             </div>
           </div>
