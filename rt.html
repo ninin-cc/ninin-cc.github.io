@@ -833,7 +833,7 @@
             <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
       `;
 
-      if (state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND') {
+      if (state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND' && state.gameState !== 'RULES') {
         html += `
               <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
