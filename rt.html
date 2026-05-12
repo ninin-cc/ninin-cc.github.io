@@ -476,7 +476,17 @@
         transitionState(() => {
           const newHand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
           const newShop = state.shop.map(c => c.id === state.selectedShopCard.id ? state.selectedHandCard : c);
-          proceedToNextRound(newHand, newShop, state.deck);
+          
+          if (state.round === 1) {
+            // ラウンド1終了時は見送りシーンへ
+            state.hand = newHand;
+            state.shop = newShop;
+            state.selectedHandCard = null;
+            state.selectedShopCard = null;
+            state.gameState = 'LEAVE_SHOP_1';
+          } else {
+            proceedToNextRound(newHand, newShop, state.deck);
+          }
           state.isExchanging = false;
         });
       }, 600);
@@ -509,9 +519,13 @@
 
         // ▼▼ ラウンド間でのシーン遷移 ▼▼
         if (state.round === 2) {
-          state.gameState = 'BEFORE_TAVERN';
+          // round 1 の終了時に LEAVE_SHOP_1 を経由して来るので、ここは PLAYING でよい。
+          // BEFORE_TAVERN にはボタンから遷移する。
+          state.gameState = 'PLAYING';
         } else if (state.round === 6) {
           state.gameState = 'AFTER_TAVERN';
+        } else {
+          state.gameState = 'PLAYING';
         }
       }
     }
@@ -841,8 +855,8 @@
             <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
       `;
 
-      // ▼▼ ヘッダー表示判定の調整（BEFORE_TAVERN, AFTER_TAVERNも追加） ▼▼
-      const hideHeaderStates = ['PLAYING', 'INITIAL_HAND', 'RULES', 'BEFORE_TAVERN', 'AFTER_TAVERN'];
+      // ▼▼ ヘッダー表示判定の調整 ▼▼
+      const hideHeaderStates = ['PLAYING', 'INITIAL_HAND', 'RULES', 'LEAVE_SHOP_1', 'BEFORE_TAVERN', 'AFTER_TAVERN'];
       if (!hideHeaderStates.includes(state.gameState)) {
         html += `
               <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
@@ -984,6 +998,40 @@
                     <div class="wood-texture"></div>
                     <span class="relative z-10 flex items-center justify-center">
                       確認した。扉へ向かう
+                      ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                    </span>
+                  </button>
+                </div>
+              </div>
+        `;
+      }
+
+      // ▼▼ シーン：武器屋の見送り ▼▼
+      if (state.gameState === 'LEAVE_SHOP_1') {
+        html += `
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_SHOP_IMG}" alt="武器屋" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                </div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
+                
+                <div class="flex justify-center mb-6 relative z-10 mt-2">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200">
+                    <img src="${SHOP_AVATAR}" alt="武器屋" class="w-full h-full object-cover" />
+                  </div>
+                </div>
+
+                <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-sm sm:text-base leading-relaxed font-serif font-bold bg-[#e8dcc4]/90 p-6 sm:p-8 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
+                  <p>「おう、なかなかいい装備を選んだじゃねえか。」</p>
+                  <p>「この先にある『酒場』には、あんたと同じような転生者が集まってるはずだ。」</p>
+                  <p>「自分の手札を見せ合って、いろいろ話してみるといいぜ。じゃあな、気をつけて行きな！」</p>
+                </div>
+                
+                <div class="mt-10 sm:mt-12 flex justify-center relative z-10">
+                  <button data-action="go-before-tavern" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-12 w-full sm:w-auto">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      酒場へ向かう
                       ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                     </span>
                   </button>
@@ -1415,6 +1463,8 @@
         transitionState(() => { startGame(); });
       } else if (action === 'go-playing') {
         transitionState(() => { state.gameState = 'PLAYING'; });
+      } else if (action === 'go-before-tavern') {
+        transitionState(() => { state.gameState = 'BEFORE_TAVERN'; });
       } else if (action === 'zoom-card') {
         const id = parseInt(btn.dataset.id);
         state.zoomedCard = CARDS_DATA.find(c => c.id === id);
