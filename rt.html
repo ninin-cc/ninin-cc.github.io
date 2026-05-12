@@ -477,16 +477,7 @@
           const newHand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
           const newShop = state.shop.map(c => c.id === state.selectedShopCard.id ? state.selectedHandCard : c);
           
-          if (state.round === 1) {
-            // ラウンド1終了時は見送りシーンへ
-            state.hand = newHand;
-            state.shop = newShop;
-            state.selectedHandCard = null;
-            state.selectedShopCard = null;
-            state.gameState = 'LEAVE_SHOP_1';
-          } else {
-            proceedToNextRound(newHand, newShop, state.deck);
-          }
+          proceedToNextRound(newHand, newShop, state.deck);
           state.isExchanging = false;
         });
       }, 600);
@@ -519,9 +510,7 @@
 
         // ▼▼ ラウンド間でのシーン遷移 ▼▼
         if (state.round === 2) {
-          // round 1 の終了時に LEAVE_SHOP_1 を経由して来るので、ここは PLAYING でよい。
-          // BEFORE_TAVERN にはボタンから遷移する。
-          state.gameState = 'PLAYING';
+          state.gameState = 'LEAVE_SHOP_1';
         } else if (state.round === 6) {
           state.gameState = 'AFTER_TAVERN';
         } else {
@@ -1436,20 +1425,6 @@
         `;
       }
 
-      // ▼▼ ズームカード（モーダル表示） ▼▼
-      /*
-      if (state.zoomedCard) {
-        html += `
-          <div data-action="close-zoom" class="fixed inset-0 z-[500] bg-stone-900/80 backdrop-blur-md flex items-center justify-center cursor-pointer animate-fadeInModal">
-            <div class="scale-[1.5] sm:scale-[2] pointer-events-none transition-transform duration-300">
-              ${renderCardHTML(state.zoomedCard, { isReadOnly: true, glow: true, customStyle: "shadow-[0_0_40px_rgba(255,255,255,0.2)]" })}
-            </div>
-            <p class="absolute bottom-10 sm:bottom-20 text-stone-300 font-serif tracking-widest text-xs sm:text-sm animate-pulse pointer-events-none">クリック（タップ）して閉じる</p>
-          </div>
-        `;
-      }
-      */
-
       root.innerHTML = html;
       
       state.isTransitioning = false;
@@ -1472,6 +1447,8 @@
           state.selectedHandCard = null; // 遷移時に選択状態をリセット
           state.gameState = 'PLAYING'; 
         });
+      } else if (action === 'go-before-tavern') {
+        transitionState(() => { state.gameState = 'BEFORE_TAVERN'; });
       } else if (action === 'select-hand') {
         const id = parseInt(btn.dataset.id);
         const card = CARDS_DATA.find(c => c.id === id);
