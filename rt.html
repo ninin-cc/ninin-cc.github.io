@@ -496,16 +496,7 @@
           const newHand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
           const newShop = state.shop.map(c => c.id === state.selectedShopCard.id ? state.selectedHandCard : c);
           
-          if (state.round === 1) {
-            // ラウンド1終了時は見送りシーンへ
-            state.hand = newHand;
-            state.shop = newShop;
-            state.selectedHandCard = null;
-            state.selectedShopCard = null;
-            state.gameState = 'LEAVE_SHOP_1';
-          } else {
-            proceedToNextRound(newHand, newShop, state.deck);
-          }
+          proceedToNextRound(newHand, newShop, state.deck);
           state.isExchanging = false;
         });
       }, 600);
