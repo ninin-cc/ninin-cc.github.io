@@ -263,6 +263,13 @@
       ADAPTER: 'text-cyan-600'
     };
 
+    const MODE_AURA_COLORS = {
+      WONDER: { sparkle: 'text-orange-400', star: 'text-orange-300 fill-orange-300', shadow: '0 0 15px rgba(249, 115, 22, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
+      KEEPER: { sparkle: 'text-indigo-400', star: 'text-indigo-300 fill-indigo-300', shadow: '0 0 15px rgba(79, 70, 229, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
+      NURTURE: { sparkle: 'text-pink-400', star: 'text-pink-300 fill-pink-300', shadow: '0 0 15px rgba(236, 72, 153, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
+      ADAPTER: { sparkle: 'text-cyan-400', star: 'text-cyan-300 fill-cyan-300', shadow: '0 0 15px rgba(6, 182, 212, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' }
+    };
+
     const MODE_ICON_NAMES = {
       WONDER: 'Compass',
       KEEPER: 'Scale',
@@ -511,7 +518,6 @@
           const newHand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
           const newShop = state.shop.map(c => c.id === state.selectedShopCard.id ? state.selectedHandCard : c);
           
-          /* ▼▼ 修正箇所：常に次のラウンドへ進行する関数を呼ぶ ▼▼ */
           proceedToNextRound(newHand, newShop, state.deck);
           
           state.isExchanging = false;
@@ -747,19 +753,18 @@
           
           <div class="absolute inset-0 bg-gradient-to-b from-orange-900/5 via-transparent to-stone-500/10 pointer-events-none rounded-md z-0"></div>
           
-          <div class="p-1.5 sm:p-3 pr-2.5 sm:pr-4 pb-3 sm:pb-4 flex-1 flex flex-col relative z-20 justify-between">
+          <div class="p-1 sm:p-1.5 pb-2 sm:pb-3 flex-1 flex flex-col relative z-20 justify-between">
             <div>
-              <div class="text-[7px] sm:text-[9px] text-stone-600 font-serif tracking-widest mb-0.5 sm:mb-1 uppercase opacity-90 flex items-center justify-center gap-1 font-bold">
-                ${getIcon('Sparkles', "w-1.5 h-1.5 sm:w-2 sm:h-2 text-orange-600/80")} RIESM
-              </div>
-              <div class="font-bold text-stone-900 text-sm sm:text-base mb-1 sm:mb-2 font-serif tracking-widest border-b border-stone-400/60 pb-1 flex justify-center items-center leading-tight relative">
-                <span class="truncate">${card.name}</span>
-                <div class="absolute right-0 top-1/2 -translate-y-1/2">
-                  ${getIcon(ModeIconName, "w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-80 " + MODE_TEXT_COLORS[card.mode] + " shrink-0")}
-                </div>
+              <div class="font-black font-sans text-stone-900 text-[15px] sm:text-[19px] tracking-tight text-center relative leading-none mb-1 sm:mb-1.5 w-full flex items-center justify-center pt-2 sm:pt-3">
+                <span class="break-keep drop-shadow-sm px-1 z-10 w-full text-center">${card.name}</span>
               </div>
             </div>
-            <div class="text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4 text-center px-1">${card.desc}</div>
+            <div class="text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4 text-center px-0.5">${card.desc}</div>
+            <div class="text-[8px] sm:text-[9px] text-stone-600 font-serif tracking-widest mt-1 text-center font-bold flex justify-center items-center gap-0.5">
+              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
+              <span class="mt-[1px]">RIESM</span>
+              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
+            </div>
           </div>
         </div>
       `;
@@ -806,15 +811,18 @@
         }).join('');
       }
 
-      let shopCardsHTML = '';
+      let shopCardsTopHTML = '';
+      let shopCardsBottomHTML = '';
       if (state.gameState === 'PLAYING' && isShopTime) {
-        shopCardsHTML = state.shop.map(card => {
+        const createShopCardWrapper = (card) => {
           const isSelected = state.selectedShopCard?.id === card.id;
           let cStyle = "";
           if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
           if (state.isEntering) cStyle += "animate-drop-in ";
           return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
-        }).join('');
+        };
+        shopCardsTopHTML = state.shop.slice(0, 3).map(createShopCardWrapper).join('');
+        shopCardsBottomHTML = state.shop.slice(3, 6).map(createShopCardWrapper).join('');
       }
 
       let resultHandTopHTML = '';
@@ -862,7 +870,7 @@
 
       // ▼▼ メイン HTML 構築 ▼▼
       let html = `
-        <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative"
+        <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-12 sm:pt-16"
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
@@ -895,7 +903,7 @@
 
       html += `
           <div id="main-stage" class="w-full flex justify-center ${stageFadeClass}">
-            <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
+            <div class="w-full max-w-4xl relative z-10 px-2 py-4 sm:p-4 sm:pt-8 md:p-8 md:pt-10 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
       `;
 
       // ▼▼ ヘッダー表示判定の調整 ▼▼
@@ -1091,9 +1099,9 @@
       // ▼▼ シーン：酒場の前 ▼▼
       if (state.gameState === 'BEFORE_TAVERN') {
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/70 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-60 mix-blend-multiply" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
@@ -1272,8 +1280,13 @@
                       </div>
                     </div>
 
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-4 justify-items-center mb-6 sm:mb-8">
-                      ${shopCardsHTML}
+                    <div class="flex flex-col items-center gap-2 sm:gap-4 w-full mb-6 sm:mb-8 relative z-10">
+                      <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                        ${shopCardsTopHTML}
+                      </div>
+                      <div class="flex justify-center gap-2 sm:gap-4 w-full">
+                        ${shopCardsBottomHTML}
+                      </div>
                     </div>
                   </div>
           `;
@@ -1403,18 +1416,19 @@
                 </div>
           `;
         } else {
+          const freqMode = getMostFrequentMode();
+          const aura = MODE_AURA_COLORS[freqMode];
+
           html += `
-                  <div id="capture-area" class="bg-[#f0e6d2] pt-8 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div id="capture-area" class="bg-[#f0e6d2] pt-10 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <div class="absolute inset-0 z-0 pointer-events-none">
                       <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                     </div>
                     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                    <p class="text-stone-800 mb-8 sm:mb-12 mt-4 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる「5つの役割」です。</p>
-                    
-                    <div class="flex flex-col items-center w-full mt-6 mb-2 relative z-10">
+                    <div class="flex flex-col items-center w-full mt-4 mb-2 relative z-10">
                       
-                      <div class="flex justify-center gap-6 sm:gap-16 z-10 mb-8 sm:mb-14 w-full mt-6">
+                      <div class="flex justify-center gap-6 sm:gap-16 z-10 mb-8 sm:mb-10 w-full mt-4">
                         <div class="relative transform scale-110 sm:scale-125 transition-transform duration-500 mx-2 sm:mx-4">
                           <div class="absolute -top-6 sm:-top-7 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-600 to-orange-800 text-yellow-300 text-[10px] sm:text-[12px] font-bold px-3 sm:px-4 py-1 rounded-full shadow-[0_0_10px_rgba(234,179,8,0.5)] z-30 whitespace-nowrap border border-orange-400/50 flex items-center tracking-widest">
                             ★★★★★
@@ -1440,35 +1454,38 @@
                         </div>
                       </div>
 
-                      <div class="flex justify-center gap-2 sm:gap-4 z-10 w-full mt-4 scale-[0.85] sm:scale-100 origin-top">
+                      <div class="flex justify-center gap-2 sm:gap-4 z-10 w-full mt-2 scale-[0.85] sm:scale-100 origin-top">
                         ${unselectedCardsHTML}
                       </div>
                     </div>
 
-                    <div class="w-full max-w-2xl mx-auto mt-4 sm:mt-6 border-t border-stone-400/60 pt-6 sm:pt-8 relative z-10">
-                      <div class="mb-6 sm:mb-8 bg-[#f4ebd8]/90 p-4 sm:p-6 rounded-sm border border-stone-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]" style="background-image: ${PARCHMENT_TEXTURE}">
-                        <p class="font-serif text-xs sm:text-sm text-stone-700 mb-2 sm:mb-3 tracking-widest font-bold text-center">一番多く選んだ色</p>
+                    <p class="text-stone-800 my-6 sm:my-8 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる<br class="sm:hidden" />「5つの役割」です。</p>
+
+                    <div class="w-full max-w-2xl mx-auto mt-2 sm:mt-4 relative z-10">
+                      <div class="mb-4 sm:mb-6 bg-[#f4ebd8]/90 p-4 sm:p-6 rounded-sm shadow-[inset_0_0_10px_rgba(0,0,0,0.05)]" style="background-image: ${PARCHMENT_TEXTURE}">
+                        <p class="font-serif text-xs sm:text-sm text-stone-700 mb-2 tracking-widest font-bold text-center">一番多く選んだ色</p>
                         
-                        <div class="relative inline-flex justify-center w-full my-2">
+                        <div class="relative inline-flex justify-center w-full my-1">
                            <div class="absolute inset-0 pointer-events-none flex items-center justify-center animate-pulse opacity-70">
-                              ${getIcon('Sparkles', "absolute -top-3 left-[30%] w-4 h-4 text-yellow-500")}
-                              ${getIcon('Star', "absolute -bottom-2 right-[30%] w-3 h-3 text-yellow-400 fill-yellow-400")}
+                              ${getIcon('Sparkles', `absolute -top-3 left-[30%] w-4 h-4 ${aura.sparkle}`)}
+                              ${getIcon('Star', `absolute -bottom-2 right-[30%] w-3 h-3 ${aura.star}`)}
                            </div>
-                           <p class="text-xl sm:text-2xl font-serif font-extrabold tracking-wider drop-shadow-md text-center magic-text-glow relative z-10 ${MODE_TEXT_COLORS[getMostFrequentMode()]}">
-                             ${getModeColorText(getMostFrequentMode())}
+                           <p class="text-xl sm:text-2xl font-serif font-extrabold tracking-wider drop-shadow-md text-center relative z-10 ${MODE_TEXT_COLORS[freqMode]}" style="text-shadow: ${aura.shadow}">
+                             ${getModeColorText(freqMode)}
                            </p>
                         </div>
                         
-                        <p class="text-[10px] sm:text-xs text-stone-800 mt-4 sm:mt-5 leading-relaxed font-serif font-bold text-center">
-                          一番多く選んだ色は、今のあなたが人生に装備したいモードかもしれません。<br/>得意だから残ったものもあれば、苦手だけど必要だと感じて残ったものもあるはずです。<br/><br/>
-                          <span class="${MODE_TEXT_COLORS[getMostFrequentMode()]} text-sm sm:text-base font-extrabold block mt-2 drop-shadow-sm">
-                            ${getJewelDescription(getMostFrequentMode())}
-                          </span>
+                        <p class="${MODE_TEXT_COLORS[freqMode]} text-sm sm:text-base font-extrabold text-center mt-2 mb-3 drop-shadow-sm">
+                          ${getJewelDescription(freqMode)}
+                        </p>
+
+                        <p class="text-[10px] sm:text-[11px] text-stone-800 leading-relaxed font-serif font-bold text-center border-t border-stone-300/60 pt-3">
+                          一番多く選んだ色は、今のあなたが人生に装備したいモードかもしれません。<br/>得意だから残ったものもあれば、苦手だけど必要だと感じて残ったものもあるはずです。
                         </p>
                       </div>
                     </div>
 
-                    <div class="mt-4 pt-4 sm:pt-6 text-center border-t border-stone-500/30 w-full relative z-10">
+                    <div class="mt-2 pt-2 sm:pt-4 text-center w-full relative z-10">
                       <p class="text-[9px] sm:text-[11px] text-stone-800 font-serif tracking-widest font-bold">©RIESM™ Role TRADE</p>
                       <p class="text-[8px] sm:text-[10px] text-stone-700 font-serif tracking-widest mt-1">© 2026 ninin consulting＆counseling</p>
                     </div>
@@ -1626,22 +1643,15 @@
         }
       } else if (action === 'confirm-journey-yes') {
         if (state.pendingTradeAction === 'trade') {
-          // PLAYING画面に戻して交換アニメーションを見せる
-          state.gameState = 'PLAYING';
-          state.isExchanging = true;
-          render();
-          
-          setTimeout(() => {
-            transitionState(() => {
-              state.hand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
-              state.isExchanging = false;
-              state.selectedHandCard = null;
-              state.selectedShopCard = null;
-              
-              state.farewellMessage = getRandomFarewellMessage();
-              state.gameState = 'SHOP_FAREWELL';
-            });
-          }, 600);
+          transitionState(() => {
+            state.hand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
+            state.isExchanging = false;
+            state.selectedHandCard = null;
+            state.selectedShopCard = null;
+            
+            state.farewellMessage = getRandomFarewellMessage();
+            state.gameState = 'SHOP_FAREWELL';
+          });
         } else if (state.pendingTradeAction === 'skip') {
           transitionState(() => {
             state.selectedHandCard = null;
