@@ -359,6 +359,7 @@
       primaryCard: null,
       secondaryCard: null,
       confirmingCard: null,
+      zoomedCard: null,
       isConfirmModalClosing: false,
       shareMessage: '',
       isAppBrowser: false
@@ -442,6 +443,7 @@
       state.primaryCard = null;
       state.secondaryCard = null;
       state.confirmingCard = null;
+      state.zoomedCard = null;
       state.isConfirmModalClosing = false;
       state.tradeAvatarImg = getRandomAvatar(); 
       
@@ -888,7 +890,7 @@
                       すべて持ったまま、もう一度人生を歩むとしたら。
                     </p>
                     <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
-                      あなたは、どんな「役割」を自分のスキルとして持っていきますか？
+                      あなたは、どんな「役割」を持っていきますか？
                     </p>
                   </div>
                   
@@ -1433,6 +1435,20 @@
           </div>
         `;
       }
+
+      // ▼▼ ズームカード（モーダル表示） ▼▼
+      /*
+      if (state.zoomedCard) {
+        html += `
+          <div data-action="close-zoom" class="fixed inset-0 z-[500] bg-stone-900/80 backdrop-blur-md flex items-center justify-center cursor-pointer animate-fadeInModal">
+            <div class="scale-[1.5] sm:scale-[2] pointer-events-none transition-transform duration-300">
+              ${renderCardHTML(state.zoomedCard, { isReadOnly: true, glow: true, customStyle: "shadow-[0_0_40px_rgba(255,255,255,0.2)]" })}
+            </div>
+            <p class="absolute bottom-10 sm:bottom-20 text-stone-300 font-serif tracking-widest text-xs sm:text-sm animate-pulse pointer-events-none">クリック（タップ）して閉じる</p>
+          </div>
+        `;
+      }
+      */
 
       root.innerHTML = html;
       
