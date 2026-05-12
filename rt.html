@@ -349,7 +349,7 @@
       5: "「もうすぐ旅立ちの時だね。最後に私と交換しよう。一見苦手に見える役割も、きっと君を助ける武器になるはずだ。」"
     };
 
-    const PARCHMENT_TEXTURE = "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E\")";
+    const PARCHMENT_TEXTURE = "url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjAwIDIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZmlsdGVyIGlkPSdub2lzZUZpbHRlcic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9JzAuOCcgbnVtT2N0YXZlcz0nNCcgc3RpdGNoVGlsZXM9J3N0aXRjaCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbHRlcj0ndXJsKCNub2lzZUZpbHRlciknIG9wYWNpdHk9JzAuMTUnLz48L3N2Zz4=')";
     
     const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
 
@@ -496,7 +496,16 @@
           const newHand = state.hand.map(c => c.id === state.selectedHandCard.id ? state.selectedShopCard : c);
           const newShop = state.shop.map(c => c.id === state.selectedShopCard.id ? state.selectedHandCard : c);
           
-          proceedToNextRound(newHand, newShop, state.deck);
+          if (state.round === 1) {
+            // ラウンド1終了時は見送りシーンへ
+            state.hand = newHand;
+            state.shop = newShop;
+            state.selectedHandCard = null;
+            state.selectedShopCard = null;
+            state.gameState = 'LEAVE_SHOP_1';
+          } else {
+            proceedToNextRound(newHand, newShop, state.deck);
+          }
           state.isExchanging = false;
         });
       }, 600);
@@ -1448,10 +1457,11 @@
 
         /* ▼▼ 変更箇所: ドックの背景色を明るくし、木目を活かす ▼▼ */
         html += `
-          <div id="dock-stage" class="fixed bottom-0 left-0 w-full shadow-[0_-10px_50px_rgba(0,0,0,0.6)] border-t-2 border-stone-800 z-50 ${stageFadeClass}" style="background-image: linear-gradient(rgba(40, 20, 5, 0.2), rgba(40, 20, 5, 0.4)), url('https://ninin-cc.github.io/img/rt/mokuzai.jpg'); background-size: cover; background-position: center bottom;">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8b5a2b] via-orange-900/50 to-[#8b5a2b]"></div>
+          <div id="dock-stage" class="fixed bottom-0 left-0 w-full shadow-[0_-10px_50px_rgba(0,0,0,0.6)] border-t-2 border-stone-800 z-50 ${stageFadeClass}" style="background-image: url('https://ninin-cc.github.io/img/rt/mokuzai.jpg'); background-size: cover; background-position: center bottom;">
+            <div class="absolute inset-0 bg-[#281405]/30 pointer-events-none z-0"></div>
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8b5a2b] via-orange-900/50 to-[#8b5a2b] z-10"></div>
             
-            <div class="max-w-4xl mx-auto pt-2 sm:pt-4 relative flex flex-col">
+            <div class="max-w-4xl mx-auto pt-2 sm:pt-4 relative flex flex-col z-10">
               <div class="w-full flex justify-center">
                 <div class="flex items-end h-[150px] sm:h-[210px] px-2 relative">
                   ${dockCardsHTML}
