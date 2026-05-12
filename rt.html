@@ -359,7 +359,6 @@
       primaryCard: null,
       secondaryCard: null,
       confirmingCard: null,
-      zoomedCard: null,
       isConfirmModalClosing: false,
       shareMessage: '',
       isAppBrowser: false
@@ -443,7 +442,6 @@
       state.primaryCard = null;
       state.secondaryCard = null;
       state.confirmingCard = null;
-      state.zoomedCard = null;
       state.isConfirmModalClosing = false;
       state.tradeAvatarImg = getRandomAvatar(); 
       
@@ -673,7 +671,6 @@
       const isHandCard = options.isHandCard || false;
       const isReadOnly = options.isReadOnly || false;
       const glow = options.glow || false;
-      const isZoomable = options.isZoomable || false;
       const customStyle = options.customStyle || '';
       
       const ModeIconName = MODE_ICON_NAMES[card.mode];
@@ -699,7 +696,6 @@
         if (isHandCard) actionData = 'data-action="select-hand" data-id="' + card.id + '"';
         else if (options.isShopCard) actionData = 'data-action="select-shop" data-id="' + card.id + '"';
         else if (options.isResultCard) actionData = 'data-action="select-result" data-id="' + card.id + '"';
-        else if (isZoomable) actionData = 'data-action="zoom-card" data-id="' + card.id + '"';
       }
 
       return `
@@ -759,8 +755,14 @@
       let initialHandTopHTML = '';
       let initialHandBottomHTML = '';
       if (state.gameState === 'INITIAL_HAND') {
-        initialHandTopHTML = state.hand.slice(0, 3).map(card => '<div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">' + renderCardHTML(card, { isZoomable: true }) + '</div>').join('');
-        initialHandBottomHTML = state.hand.slice(3, 5).map(card => '<div class="shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer">' + renderCardHTML(card, { isZoomable: true }) + '</div>').join('');
+        initialHandTopHTML = state.hand.slice(0, 3).map(card => {
+          const isSelected = state.selectedHandCard?.id === card.id;
+          return '<div class="shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
+        }).join('');
+        initialHandBottomHTML = state.hand.slice(3, 5).map(card => {
+          const isSelected = state.selectedHandCard?.id === card.id;
+          return '<div class="shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
+        }).join('');
       }
 
       let shopCardsHTML = '';
@@ -973,7 +975,7 @@
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
                 <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-4 sm:mb-6 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-2">
-                  初期装備の確認
+                  初期スキルの確認
                 </h2>
                 
                 <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-xs sm:text-sm leading-relaxed font-serif font-medium bg-[#e8dcc4] p-4 sm:p-6 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
@@ -1432,18 +1434,6 @@
         `;
       }
 
-      // ▼▼ ズームカード（モーダル表示） ▼▼
-      if (state.zoomedCard) {
-        html += `
-          <div data-action="close-zoom" class="fixed inset-0 z-[500] bg-stone-900/80 backdrop-blur-md flex items-center justify-center cursor-pointer animate-fadeInModal">
-            <div class="scale-[1.5] sm:scale-[2] pointer-events-none transition-transform duration-300">
-              ${renderCardHTML(state.zoomedCard, { isReadOnly: true, glow: true, customStyle: "shadow-[0_0_40px_rgba(255,255,255,0.2)]" })}
-            </div>
-            <p class="absolute bottom-10 sm:bottom-20 text-stone-300 font-serif tracking-widest text-xs sm:text-sm animate-pulse pointer-events-none">クリック（タップ）して閉じる</p>
-          </div>
-        `;
-      }
-
       root.innerHTML = html;
       
       state.isTransitioning = false;
@@ -1462,16 +1452,10 @@
       } else if (action === 'start-game') {
         transitionState(() => { startGame(); });
       } else if (action === 'go-playing') {
-        transitionState(() => { state.gameState = 'PLAYING'; });
-      } else if (action === 'go-before-tavern') {
-        transitionState(() => { state.gameState = 'BEFORE_TAVERN'; });
-      } else if (action === 'zoom-card') {
-        const id = parseInt(btn.dataset.id);
-        state.zoomedCard = CARDS_DATA.find(c => c.id === id);
-        render();
-      } else if (action === 'close-zoom') {
-        state.zoomedCard = null;
-        render();
+        transitionState(() => { 
+          state.selectedHandCard = null; // 遷移時に選択状態をリセット
+          state.gameState = 'PLAYING'; 
+        });
       } else if (action === 'select-hand') {
         const id = parseInt(btn.dataset.id);
         const card = CARDS_DATA.find(c => c.id === id);
