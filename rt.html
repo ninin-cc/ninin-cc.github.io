@@ -125,7 +125,7 @@
 
     /* ダークな木目ボタン（主要アクション用） */
     .wood-btn-dark {
-      background-color: #5d4037; /* ベース色を明るく調整 */
+      background-color: #5d4037; 
       border-color: #3e2723;
       color: #ffffff;
       text-shadow: 1px 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
@@ -188,12 +188,12 @@
       z-index: 0;
     }
     .wood-btn-dark .wood-texture {
-      mix-blend-mode: normal; /* mokuzai.jpg 本来の色を活かす */
-      opacity: 0.8; /* 木目をはっきり出す */
+      mix-blend-mode: normal; 
+      opacity: 0.8; 
     }
     .wood-btn-light .wood-texture {
       mix-blend-mode: luminosity;
-      opacity: 0.2; /* 白っぽくする */
+      opacity: 0.2; 
     }
   </style>
 </head>
@@ -214,7 +214,7 @@
       { id: 9, name: '設計者', desc: '物事の構造を理解し、再現性のある仕組みを作る役割。', mode: 'KEEPER' },
       { id: 10, name: '審判', desc: '公平な視点で物事を判断し、正しい道を示す役割。', mode: 'KEEPER' },
       { id: 11, name: '記録係', desc: '過去の経験や事実を正確に残し、未来へ繋ぐ役割。', mode: 'KEEPER' },
-      { id: 12, name: '職ర్ణ', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
+      { id: 12, name: '職人', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
       { id: 13, name: '養育者', desc: '他者の成長を温かく見守り、サポートする役割。', mode: 'NURTURE' },
       { id: 14, name: '調停者', desc: '人と人との間に入り、対立を和らげ調和をもたらす役割。', mode: 'NURTURE' },
       { id: 15, name: '共感者', desc: '他者の痛みに寄り添い、共に感情を分かち合う役割。', mode: 'NURTURE' },
@@ -226,7 +226,8 @@
       { id: 21, name: '防衛者', desc: '危険をいち早く察知し、自分やチームを守る役割。', mode: 'ADAPTER' },
       { id: 22, name: 'カメレオン', desc: '環境に合わせて自分を柔軟に変化させ、溶け込む役割。', mode: 'ADAPTER' },
       { id: 23, name: '慎重派', desc: '石橋を叩いて渡り、失敗のリスクを最小限に抑える役割。', mode: 'ADAPTER' },
-      { id: 24, name: '探知機', desc: '場の空気や他者の機嫌を読み取り、摩擦を避ける役割。', mode: 'ADAPTER' }
+      { id: 24, name: '探知機', desc: '場の空気や他者の機嫌を読み取り、摩擦を避ける役割。', mode: 'ADAPTER' },
+      { id: 25, name: '道化師', desc: '場が固まりすぎたとき、笑いや遊び心で空気をゆるめる役割。', mode: 'WONDER' }
     ];
 
     const MODE_COLORS = {
@@ -318,7 +319,7 @@
     const SHOP_AVATAR = "https://ninin-cc.github.io/img/rt/bukiya.jpg";
 
     const SHOP_MESSAGES = {
-      1: "「ようこそ転生者よ。ここは始まりの武器庫。これからの人生に備え、手札と場を見渡し、今の自分に必要な役割を1つ入れ替えるがよい。」",
+      1: "「ようこそ転生者よ。ここは始まりの武器屋。これからの人生に備え、手札と場を見渡し、今の自分に必要な役割を1つ入れ替えるがよい。」",
       6: "「いよいよ最後の選択だ。これまでの旅で得たもの、手放したもの……すべてはお前の『伏線』となる。交換してもいいし、今の装備に覚悟があるならそのまま旅立ってもいいぞ。」"
     };
 
@@ -504,6 +505,13 @@
         if (!state.shopRounds.includes(state.round)) {
           state.tradeOfferCard = newDeck[0];
           state.tradeAvatarImg = getRandomAvatar(); 
+        }
+
+        // ▼▼ ラウンド間でのシーン遷移 ▼▼
+        if (state.round === 2) {
+          state.gameState = 'BEFORE_TAVERN';
+        } else if (state.round === 6) {
+          state.gameState = 'AFTER_TAVERN';
         }
       }
     }
@@ -833,7 +841,9 @@
             <div class="w-full max-w-4xl relative z-10 p-2 sm:p-4 md:p-8 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
       `;
 
-      if (state.gameState !== 'PLAYING' && state.gameState !== 'INITIAL_HAND' && state.gameState !== 'RULES') {
+      // ▼▼ ヘッダー表示判定の調整（BEFORE_TAVERN, AFTER_TAVERNも追加） ▼▼
+      const hideHeaderStates = ['PLAYING', 'INITIAL_HAND', 'RULES', 'BEFORE_TAVERN', 'AFTER_TAVERN'];
+      if (!hideHeaderStates.includes(state.gameState)) {
         html += `
               <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
@@ -859,10 +869,10 @@
                     <p class="px-2 sm:px-4 text-stone-800 leading-relaxed font-bold">
                       これまで歩んできた人生での喜びも、<br/>
                       失敗も、後悔も、出会いも、<br/>
-                      すべてを保持したまま、もう一度人生を歩み始めるとしたら。
+                      すべて持ったまま、もう一度人生を歩むとしたら。
                     </p>
                     <p class="px-2 sm:px-4 font-extrabold text-stone-900 text-base sm:text-lg magic-text-glow">
-                      あなたは、どんな「役割」を自分の武器として持っていきますか？
+                      あなたは、どんな「役割」を自分のスキルとして持っていきますか？
                     </p>
                   </div>
                   
@@ -905,7 +915,7 @@
                     <li class="flex items-start">
                       ${getIcon('Swords', "w-4 h-4 sm:w-5 sm:h-5 mr-3 mt-0.5 text-orange-700/80 flex-shrink-0")}
                       <div>
-                        <span class="font-bold text-stone-900">最初と最後に「武器庫」が開きます。</span><br/>
+                        <span class="font-bold text-stone-900">最初と最後に「武器屋」が開きます。</span><br/>
                         <span class="text-[11px] sm:text-sm text-stone-700">場にある役割から自由に1つ選んで交換できます。</span>
                       </div>
                     </li>
@@ -955,7 +965,7 @@
                 <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-xs sm:text-sm leading-relaxed font-serif font-medium bg-[#e8dcc4] p-4 sm:p-6 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
                   <p class="font-bold text-base sm:text-lg mb-2">「準備はいいかな？ これが君に与えられた5つの役割だ。」</p>
                   <p>「この5枚のカードが、これからの人生を歩む君の初期装備となる。<br/>
-                  これから扉の先で、何人かの転生者や武器庫と交換を行ってゆくことになるが……<br/>
+                  これから扉の先で、何人かの転生者や武器屋と交換を行ってゆくことになるが……<br/>
                   まず今渡されたものを、しっかりと読むがいい。」</p>
                   <p class="text-[10px] sm:text-xs text-orange-900 font-bold mt-4 animate-pulse">※カードをクリック（タップ）すると大きく表示されます。</p>
                 </div>
@@ -973,7 +983,71 @@
                   <button data-action="go-playing" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-12 w-full sm:w-auto">
                     <div class="wood-texture"></div>
                     <span class="relative z-10 flex items-center justify-center">
-                      確認した。トレードへ向かう
+                      確認した。扉へ向かう
+                      ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                    </span>
+                  </button>
+                </div>
+              </div>
+        `;
+      }
+
+      // ▼▼ シーン：酒場の前 ▼▼
+      if (state.gameState === 'BEFORE_TAVERN') {
+        html += `
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                </div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
+                
+                <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-6 sm:mb-8 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-2">
+                  冒険者たちの酒場へ
+                </h2>
+                
+                <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-sm sm:text-base leading-relaxed font-serif font-bold bg-[#e8dcc4]/90 p-6 sm:p-8 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
+                  <p>扉の向こうから、笑い声とグラスの音が聞こえてくる。</p>
+                  <p>あなたは手元の役割カードを見つめ、石畳の道へ一歩踏み出した。</p>
+                  <p>さあ、他の冒険者たちと出会う時間だ。</p>
+                </div>
+                
+                <div class="mt-10 sm:mt-12 flex justify-center relative z-10">
+                  <button data-action="go-playing" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-12 w-full sm:w-auto">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      酒場の扉を開く
+                      ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                    </span>
+                  </button>
+                </div>
+              </div>
+        `;
+      }
+
+      // ▼▼ シーン：準備部屋へ戻る ▼▼
+      if (state.gameState === 'AFTER_TAVERN') {
+        html += `
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+                <div class="absolute inset-0 z-0 pointer-events-none">
+                  <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                </div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
+                
+                <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-6 sm:mb-8 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-2">
+                  帰路
+                </h2>
+                
+                <div class="text-stone-800 text-left space-y-4 mb-8 sm:mb-10 text-sm sm:text-base leading-relaxed font-serif font-bold bg-[#e8dcc4]/90 p-6 sm:p-8 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
+                  <p>酒場のざわめきが、少しずつ遠ざかっていく。</p>
+                  <p>手元のカードは、さっきとは違う重さを持っているように感じられた。</p>
+                  <p>もう一度、静かな準備部屋で見つめ直してみよう。</p>
+                </div>
+                
+                <div class="mt-10 sm:mt-12 flex justify-center relative z-10">
+                  <button data-action="go-playing" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-8 sm:px-12 w-full sm:w-auto">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center">
+                      準備室へ戻る
                       ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                     </span>
                   </button>
@@ -1003,7 +1077,7 @@
                             R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
                           </div>
                           <div class="flex items-center justify-center gap-0.5 font-bold text-[9px] sm:text-[10px] bg-[#e8dcc4] px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm text-orange-900 leading-tight">
-                            ${getIcon('Swords', "w-2.5 h-2.5 text-orange-700")} 武器庫
+                            ${getIcon('Swords', "w-2.5 h-2.5 text-orange-700")} 武器屋
                           </div>
                         </div>
                       </div>
@@ -1032,7 +1106,7 @@
                             R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
                           </div>
                           <div class="flex items-center justify-center gap-0.5 font-bold text-[9px] sm:text-[10px] bg-[#e8dcc4] px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm text-blue-900 leading-tight">
-                            ${getIcon('ArrowRightLeft', "w-2.5 h-2.5 text-blue-700")} トレード
+                            ${getIcon('ArrowRightLeft', "w-2.5 h-2.5 text-blue-700")} 酒場
                           </div>
                         </div>
                       </div>
@@ -1058,7 +1132,7 @@
                     <div class="bg-[#f0e6d2] p-6 sm:p-8 rounded-sm shadow-2xl max-w-md w-[90%] text-center border border-orange-900/30" style="background-image: ${PARCHMENT_TEXTURE}">
                       <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-4 magic-text-glow">【 トレードのやり方 】</h3>
                       <p class="text-sm sm:text-base text-stone-800 font-serif font-bold leading-loose mb-6">
-                        上（武器庫）から<span class="text-orange-700">1枚</span>、<br/>
+                        上（武器屋）から<span class="text-orange-700">1枚</span>、<br/>
                         下（自分の手札）から<span class="text-orange-700">1枚</span>を選択し、<br/>
                         一番下のボタンを押して入れ替えてください。
                       </p>
