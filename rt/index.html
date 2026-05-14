@@ -872,7 +872,7 @@
 
       // ▼▼ メイン HTML 構築 ▼▼
       let html = `
-        <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-12 sm:pt-16"
+        <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-2.5 sm:pt-12"
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
@@ -905,14 +905,14 @@
 
       html += `
           <div id="main-stage" class="w-full flex justify-center ${stageFadeClass}">
-            <div class="w-full max-w-4xl relative z-10 px-2 py-4 sm:p-4 sm:pt-8 md:p-8 md:pt-10 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
+            <div class="w-full max-w-4xl relative z-10 px-2 pt-2 pb-4 sm:p-4 sm:pt-8 md:p-8 md:pt-10 ${state.gameState === 'PLAYING' ? 'pb-[260px] sm:pb-[320px]' : ''}">
       `;
 
       // ▼▼ ヘッダー表示判定の調整 ▼▼
       const hideHeaderStates = ['PLAYING', 'INITIAL_HAND', 'RULES', 'LEAVE_SHOP_1', 'BEFORE_TAVERN', 'AFTER_TAVERN', 'SHOP_CONFIRM', 'SHOP_FAREWELL'];
       if (!hideHeaderStates.includes(state.gameState)) {
         html += `
-              <header class="mb-4 sm:mb-8 text-center pt-2 sm:pt-4">
+              <header class="mb-4 sm:mb-8 text-center pt-1 sm:pt-4">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold tracking-widest text-stone-900 drop-shadow-md magic-text-glow">
                   RIESM™ Role TRADE
                 </h1>
@@ -1041,7 +1041,7 @@
 
       if (state.gameState === 'RULES') {
         html += `
-              <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden" style="background-image: ${PARCHMENT_TEXTURE}">
+              <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-0" style="background-image: ${PARCHMENT_TEXTURE}">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1096,7 +1096,7 @@
 
       if (state.gameState === 'INITIAL_HAND') {
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1138,7 +1138,7 @@
       // ▼▼ シーン：武器屋の見送り ▼▼
       if (state.gameState === 'LEAVE_SHOP_1') {
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_SHOP_IMG}" alt="武器屋" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1172,7 +1172,7 @@
       // ▼▼ シーン：酒場の前 ▼▼
       if (state.gameState === 'BEFORE_TAVERN') {
         html += `
-              <div class="bg-[#f0e6d2]/70 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/70 backdrop-blur-sm rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-60 mix-blend-multiply" />
                 </div>
@@ -1204,7 +1204,7 @@
       // ▼▼ シーン：準備部屋へ戻る ▼▼
       if (state.gameState === 'AFTER_TAVERN') {
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_JUNBI_IMG}" alt="準備室" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1243,7 +1243,7 @@
         }).join('');
 
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_SHOP_IMG}" alt="武器屋" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1292,7 +1292,7 @@
       // ▼▼ シーン：最後の武器屋の別れ ▼▼
       if (state.gameState === 'SHOP_FAREWELL') {
         html += `
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-6 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${BG_SHOP_IMG}" alt="武器屋" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1323,7 +1323,7 @@
 
       if (state.gameState === 'PLAYING') {
         html += `
-              <div class="bg-[#f0e6d2]/95 rounded-sm shadow-[0_10px_30px_rgba(124,45,18,0.2)] border border-stone-400/80 min-h-[300px] sm:min-h-[340px] relative overflow-hidden mt-4">
+              <div class="bg-[#f0e6d2]/95 rounded-sm shadow-[0_10px_30px_rgba(124,45,18,0.2)] border border-stone-400/80 min-h-[300px] sm:min-h-[340px] relative overflow-hidden mt-2 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
                   <img src="${isShopTime ? BG_SHOP_IMG : BG_TRADE_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                 </div>
@@ -1458,7 +1458,7 @@
 
         if (state.resultStep !== 'FINAL') {
           html += `
-                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-4">
+                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 p-4 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-2 sm:mt-4">
                   <div class="absolute inset-0 z-0 pointer-events-none">
                     <img src="${BG_JUNBI_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                   </div>
@@ -1493,7 +1493,7 @@
           const aura = MODE_AURA_COLORS[freqMode];
 
           html += `
-                  <div id="capture-area" class="bg-[#f0e6d2] pt-10 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div id="capture-area" class="bg-[#f0e6d2] pt-10 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-2 sm:mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <div class="absolute inset-0 z-0 pointer-events-none">
                       <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
                     </div>
