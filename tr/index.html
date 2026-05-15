@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メンテーリア・タロット | リフレムの一枚引き</title>
+  <title>メンテーリア・タロット</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -76,7 +76,7 @@
       }
     }
 
-    /* ▼▼ カードのフリップ・出現アニメーション（3秒＋2秒） ▼▼ */
+    /* ▼▼ カードのフリップ・出現アニメーション（3Dスピンと光の演出） ▼▼ */
     .perspective-1000 {
       perspective: 1000px;
       -webkit-perspective: 1000px;
@@ -90,15 +90,35 @@
       -webkit-backface-visibility: hidden;
     }
     
-    /* 1. カード全体がゆっくりひっくり返る（3秒） */
-    @keyframes cardDrawAndFlip {
+    /* 1. カード全体がくるくる回転する（5秒かけて完了） */
+    @keyframes cardSpinAndFlip {
       0% { transform: translateY(-50px) scale(0.8) rotateY(180deg); opacity: 0; }
-      20% { transform: translateY(0) scale(1.0) rotateY(180deg); opacity: 1; }
-      50% { transform: translateY(0) scale(1.1) rotateY(90deg); opacity: 1; }
-      100% { transform: translateY(0) scale(1) rotateY(0deg); opacity: 1; }
+      10% { transform: translateY(0) scale(1.0) rotateY(180deg); opacity: 1; }
+      50% { transform: translateY(0) scale(1.2) rotateY(900deg); opacity: 1; } /* くるくる回る＆少し手前に来る */
+      70% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; } /* 表を向いて定位置に収まる */
+      100% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; } /* 停止状態を維持 */
     }
 
-    /* 2. 透明度制御で透けを完全に防ぐ（3秒） */
+    /* 2. 表面を覆う光のレイヤー（絵柄を隠し、後からスッと消える） */
+    @keyframes cardGlowLayer {
+      0%, 65% { opacity: 1; } /* 回転中と、正面を向いた直後は真っ白/黄金の光で覆う */
+      85%, 100% { opacity: 0; } /* 光がスッと消えて絵柄が現れる */
+    }
+
+    /* 3. 絵柄がじわっと浮かび上がる */
+    @keyframes revealImage {
+      0%, 65% { opacity: 0; filter: brightness(2) blur(8px); }
+      85%, 100% { opacity: 1; filter: brightness(1) blur(0px); }
+    }
+
+    /* 4. 枠が放つ外側のオーラ（正面を向いた瞬間にフラッシュする） */
+    @keyframes cardOuterGlow {
+      0%, 50% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+      65% { box-shadow: 0 0 60px rgba(255, 255, 255, 1), 0 0 30px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); }
+      100% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+    }
+
+    /* アプリ内ブラウザの透け防止（回転中の表面非表示） */
     @keyframes showFront {
       0%, 49.9% { opacity: 0; visibility: hidden; }
       50%, 100% { opacity: 1; visibility: visible; }
@@ -108,23 +128,23 @@
       50%, 100% { opacity: 0; visibility: hidden; }
     }
 
-    /* 3. 絵柄がじわっと浮かび上がる（全体5秒のうち、3〜5秒目でフェードイン） */
-    @keyframes revealImage {
-      0%, 60% { opacity: 0; filter: blur(8px); }
-      100%    { opacity: 1; filter: blur(0px); }
-    }
-
-    .animate-cardFlip {
-      animation: cardDrawAndFlip 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    .animate-cardSpinAndFlip {
+      animation: cardSpinAndFlip 5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     .animate-showFront {
-      animation: showFront 3s linear forwards;
+      animation: showFront 5s linear forwards;
     }
     .animate-hideBack {
-      animation: hideBack 3s linear forwards;
+      animation: hideBack 5s linear forwards;
+    }
+    .animate-cardGlowLayer {
+      animation: cardGlowLayer 5s ease-in-out forwards;
     }
     .animate-revealImage {
       animation: revealImage 5s ease-in-out forwards;
+    }
+    .animate-cardOuterGlow {
+      animation: cardOuterGlow 5s ease-in-out forwards;
     }
 
     /* 逆位置用の回転 */
@@ -151,13 +171,6 @@
     }
     .wood-btn-dark:hover:not(:disabled) .wood-texture {
       filter: brightness(0.9);
-    }
-    .wood-btn-dark:disabled {
-      background-color: #78716c;
-      border-color: #57534e;
-      color: #d6d3d1;
-      text-shadow: none;
-      box-shadow: none;
     }
     .wood-btn-light {
       background-color: #f4ebd8; 
@@ -191,11 +204,11 @@
       box-shadow: 0 0 10px rgba(154, 52, 18, 0.2), inset 0 2px 4px rgba(0,0,0,0.05);
     }
     
-    /* ▼▼ カードオーラ（枠付き） ▼▼ */
+    /* ▼▼ カードオーラ（結果画面の定常アニメーション） ▼▼ */
     @keyframes staticCardAura {
-      0% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), 0 0 10px rgba(251, 146, 60, 0.3); }
-      50% { box-shadow: 0 0 35px rgba(253, 224, 71, 0.8), 0 0 20px rgba(251, 146, 60, 0.6); }
-      100% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), 0 0 10px rgba(251, 146, 60, 0.3); }
+      0% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 35px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); }
+      100% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
     }
     .animate-staticCardAura {
       animation: staticCardAura 3s ease-in-out infinite;
@@ -222,7 +235,8 @@
       ChevronLeft: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
       Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
       Calendar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
-      RefreshCw: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>'
+      RefreshCw: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+      Flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>'
     };
 
     function getIcon(name, classes) {
@@ -233,67 +247,250 @@
       return svg;
     }
 
-    // --- タロットカードデータ ---
-    const defaultPlaceholder = {
-      uprightTitle: "未解読のメッセージ",
-      uprightMeaning: "このカードの意味は、まだメンテーリアの書庫で解読中です。",
-      uprightMessage: "心の中にある声を、そのまま書き出してみるのじゃ。",
-      uprightQuestion: "いま、このカードを見て何を感じたかのう？",
-      reversedTitle: "未解読のメッセージ",
-      reversedMeaning: "このカードの意味は、まだメンテーリアの書庫で解読中です。",
-      reversedMessage: "視点を変えれば、見えなかったものが見えてくるかもしれんぞ。",
-      reversedQuestion: "いま、あえて普段と違う選択をするとしたら、何じゃろうな？"
-    };
-
+    // --- タロットカードデータ（全22枚） ---
     const tarotCards = [
-      { file: "https://ninin-cc.github.io/tr/img/ta_0_fool.png", name: "THE FOOL", jp: "愚者", number: "0", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_1_mag.png", name: "THE MAGICIAN", jp: "魔術師", number: "Ⅰ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_2_h_pri.png", name: "THE HIGH PRIESTESS", jp: "女教皇", number: "Ⅱ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_3_empress.png", name: "THE EMPRESS", jp: "女帝", number: "Ⅲ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_4_emperor.png", name: "THE EMPEROR", jp: "皇帝", number: "Ⅳ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_5_hiero.png", name: "THE HIEROPHANT", jp: "教皇", number: "Ⅴ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_6_lover.png", name: "THE LOVERS", jp: "恋人", number: "Ⅵ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_7_chari.png", name: "THE CHARIOT", jp: "戦車", number: "Ⅶ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_8_stre.png", name: "STRENGTH", jp: "力", number: "Ⅷ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_9_hermit.png", name: "THE HERMIT", jp: "隠者", number: "Ⅸ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_10_wheel.png", name: "WHEEL OF Fortune", jp: "運命の輪", number: "Ⅹ", ...defaultPlaceholder },
       { 
-        file: "https://ninin-cc.github.io/tr/img/ta_11_justice.png", 
-        name: "JUSTICE", 
-        jp: "正義", 
-        number: "Ⅺ",
+        file: "https://ninin-cc.github.io/tr/img/ta_0_fool.png", name: "THE FOOL", jp: "愚者", number: "0",
+        uprightTitle: "無垢なる始まりと無限の可能性",
+        uprightMeaning: "結果を恐れずに新しい物語のページをめくる勇気です。\n荷物を持たずに崖から足を踏み出すように、完全なる信頼のもとに前進すること。",
+        uprightMessage: "内なる好奇心を信じて、次の一歩を踏み出す純粋な心の働きを大切にするのじゃよ。",
+        uprightQuestion: "いま、あなたが結果を気にせず始めてみたいことは何でしょうか？",
+        reversedTitle: "迷子と優しいお休み",
+        reversedMeaning: "自由を恐れて足を踏み出せずにいるか、逆に地に足が着かずに現実逃避をしてしまっている状態への気づきです。",
+        reversedMessage: "心が迷子になっておるサインじゃな。\n一度立ち止まって、本当に進みたい方向を見つめ直すためのお休みをもらうのじゃ。",
+        reversedQuestion: "あなたが本当に進みたい方向は、どちらでしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_1_mag.png", name: "THE MAGICIAN", jp: "魔術師", number: "Ⅰ",
+        uprightTitle: "内なる魔法と創造の始まり",
+        uprightMeaning: "自分の中にすでにある「魔法」や才能に気づき、それを世界に紡ぎ出す力。\nこれまでの経験を活かし、新たな一歩を意識的に始めるサインです。",
+        uprightMessage: "おぬしの中には、もう十分な道具が揃っておる。\n自分の経験を活かし、新たな一歩を始めるのじゃ。",
+        uprightQuestion: "あなたがすでに持っている「才能」や「経験」は何でしょうか？",
+        reversedTitle: "自信の喪失と才能の眠り",
+        reversedMeaning: "自分の内なる才能や魔法（優しさ）を信じられず、自信を失っている状態。\nあるいは、それを無理に誇張しようとする焦りです。",
+        reversedMessage: "焦ることはない。\nおぬしの中には、もう十分な道具が揃っていると思い出すのじゃ。",
+        reversedQuestion: "あなたが自分を信じられなくなっている理由は何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_2_h_pri.png", name: "THE HIGH PRIESTESS", jp: "女教皇", number: "Ⅱ",
+        uprightTitle: "内なる智慧と静寂の時",
+        uprightMeaning: "外部の喧騒から離れ、自分の心の奥底にある小さな声に静かに耳を澄ませる時間です。\n他者の声や常識に惑わされず、自らの内なる真実と静かに向き合う知性を教えてくれます。",
+        uprightMessage: "白と黒の柱の間でバランスをとり、心の奥底にある小さな声に耳を澄ませるのじゃ。",
+        uprightQuestion: "静寂の中で、あなたの心の奥底は何を語りかけていますか？",
+        reversedTitle: "直感との乖離と心の閉鎖",
+        reversedMeaning: "心の奥底の静かな声（直感）を無視し、外部のノイズに振り回されたり、自分を過度に閉ざしてしまっている状態です。",
+        reversedMessage: "自分の本当の想いを信じて、もう一度静かな水面に心を映し出してみるのじゃ。",
+        reversedQuestion: "あなたが無視してしまっている「本当の想い」は何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_3_empress.png", name: "THE EMPRESS", jp: "女帝", number: "Ⅲ",
+        uprightTitle: "無条件の受容と豊かな愛",
+        uprightMeaning: "見返りを求めない無条件の優しさで、他者や自分自身をあたたかく包み込む受容の力。\n無理に物事を推し進めるのではなく成長のための環境を整え、小さな優しさが実を結び心を豊かに満たしていく象徴です。",
+        uprightMessage: "無理に推し進めるのではなく、まずは自分自身をあたたかく包み込むのじゃよ。",
+        uprightQuestion: "あなたが今、優しく受け入れてあげたい自分自身の部分は何でしょうか？",
+        reversedTitle: "愛情の枯渇と過度な依存",
+        reversedMeaning: "他者に愛情を注ぎすぎて自分を大切にできていない、あるいは満たされない思いから過度に愛情を求めてしまう状態です。",
+        reversedMessage: "まずは自分自身を無条件の優しさで包み込み、自分の心のコップを満たすことじゃ。",
+        reversedQuestion: "自分を大切にするために、今日できる小さな優しさは何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_4_emperor.png", name: "THE EMPEROR", jp: "皇帝", number: "Ⅳ",
+        uprightTitle: "静かなる決意と守る力",
+        uprightMeaning: "誰かを支配するためではなく、愛する者たちが安心して生きられる場所を守り抜くための「静かなる決意」。\n困難を乗り越え、現実社会の基盤を築き、人々を導くための地に足のついた強さを意味します。",
+        uprightMessage: "支配するためではなく、愛する者たちの居場所を守り抜く強さを持つことじゃ。",
+        uprightQuestion: "あなたが今、しっかりと守り抜きたいものは何でしょうか？",
+        reversedTitle: "背負いすぎた重荷と硬直",
+        reversedMeaning: "守るべきものを守るために背負い込みすぎ、心が硬直してしまっている状態。\nあるいは自信のなさから虚勢を張っている状態です。",
+        reversedMessage: "少し肩の荷を下ろして、人に頼ってもよいのだぞ。",
+        reversedQuestion: "あなたが無理に背負い込んでいるものは何でしょうか？\n誰かに頼れることはありませんか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_5_hiero.png", name: "THE HIEROPHANT", jp: "教皇", number: "Ⅴ",
+        uprightTitle: "伝統の知恵と誠実な分かち合い",
+        uprightMeaning: "古くから語り継がれてきた物語や教えの中から、今の自分や誰かを救う知恵を見つけ出すこと。\n個人の体験と伝統との架け橋となり、その学びを他者と優しく分かち合う誠実さを表します。",
+        uprightMessage: "古き教えの中から、今を救う知恵を見つけ出し、他者と優しく分かち合うのじゃ。",
+        uprightQuestion: "あなたのこれまでの経験から、誰かに分け与えられる知恵は何でしょうか？",
+        reversedTitle: "ルールの束縛と心の声の喪失",
+        reversedMeaning: "古いルールや誰かの言葉に縛られ、自分の本当の心の声が聞こえなくなっている状態です。",
+        reversedMessage: "本当にあなたを救う教えは、外部の権威ではなく、おぬし自身の心の中にもあるのじゃよ。",
+        reversedQuestion: "あなたが縛られている「見えないルール」は何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_6_lover.png", name: "THE LOVERS", jp: "恋人", number: "Ⅵ",
+        uprightTitle: "心地よい選択と純粋な共鳴",
+        uprightMeaning: "損得や外部の権威ではなく、自らの心が「心地よい」と感じるものを正直に選び取ること。\n自分自身や他者との間に生まれる純粋な共鳴や、心を通わせるあたたかな絆の始まりを示します。",
+        uprightMessage: "損得ではなく、おぬしの心が「心地よい」と感じるものを正直に選び取るのじゃ。",
+        uprightQuestion: "今のあなたにとって、最も「心地よい」と感じる選択は何でしょうか？",
+        reversedTitle: "選択の迷いと絆の見失い",
+        reversedMeaning: "損得や他者の評価で選ぼうとして、自分の心が本当に「心地よい」と感じる選択を見失っている状態です。",
+        reversedMessage: "自分とのあたたかな絆を取り戻し、純粋に惹かれるものにもう一度目を向けるのじゃ。",
+        reversedQuestion: "他者の目を気にせず、あなたが本当に選びたいものは何ですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_7_chari.png", name: "THE CHARIOT", jp: "戦車", number: "Ⅶ",
+        uprightTitle: "前向きな推進力と勇気",
+        uprightMeaning: "心の中の迷いや恐れといった相反する感情を御しながら、自分の信じる道へ勇気を出して進もうとする前向きなエネルギー。\n目標に向かって突き進む、若々しく力強い推進力です。",
+        uprightMessage: "迷いや恐れを抱えたままでもよい。\n信じる道へ勇気を出して進むのじゃ。",
+        uprightQuestion: "恐れを抱えながらも、あなたが前に進めたいことは何でしょうか？",
+        reversedTitle: "焦りと空回り、優しい充電",
+        reversedMeaning: "心の中の迷いや恐れをうまく御しきれず、焦って空回りしているか、進むのが怖くて立ち止まっている状態です。",
+        reversedMessage: "無理に前進するのではなく、今の心の迷いを優しく受け入れる充電時間じゃよ。",
+        reversedQuestion: "焦っている自分に、どんな優しい言葉をかけてあげたいですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_8_stre.png", name: "STRENGTH", jp: "力", number: "Ⅷ",
+        uprightTitle: "しなやかな心の強さと慈愛",
+        uprightMeaning: "力で本能をねじ伏せるのではなく、自分の中の恐れや怒りを優しく受け入れ、静かに寄り添うことで飼い慣らす、本当の意味でのしなやかで静かな心の強さです。",
+        uprightMessage: "恐れや怒りをねじ伏せるのではなく、優しく受け入れ、静かに寄り添うのじゃ。",
+        uprightQuestion: "あなたの中にある「恐れ」や「怒り」に、どう寄り添ってあげられますか？",
+        reversedTitle: "心の疲弊と弱さの受容",
+        reversedMeaning: "自分の中の恐れや怒り、悲しみを無理に力で押さえつけようとして、心身が疲弊している状態です。",
+        reversedMessage: "弱さや痛みごと自分を愛し、優しく受け入れてやるのじゃよ。",
+        reversedQuestion: "あなたが無理に押さえつけている感情は何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_9_hermit.png", name: "THE HERMIT", jp: "隠者", number: "Ⅸ",
+        uprightTitle: "静かなる内省と真実の光",
+        uprightMeaning: "喧騒から離れ、自らの内なる灯り（経験から得た真実の光）だけを頼りに自分だけの答えを見つけるための、尊く優しい孤独の時間です。",
+        uprightMessage: "一人でしか学べないことに静かに向き合う時間じゃ。\n自らの内なる灯りを頼りにするのじゃよ。",
+        uprightQuestion: "一人静かに向き合いたい、あなた自身の問いは何でしょうか？",
+        reversedTitle: "孤独への恐れと心の閉鎖",
+        reversedMeaning: "自分と向き合うことを恐れて孤独を避けようとするか、逆に心を閉ざしすぎてしまっている状態です。",
+        reversedMessage: "おぬしの内なる光は決して消えておらん。\nゆっくりでいいのじゃよ。",
+        reversedQuestion: "あなたが向き合うのを避けている「自分の本心」は何でしょうか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_10_wheel.png", name: "WHEEL OF Fortune", jp: "運命の輪", number: "Ⅹ",
+        uprightTitle: "大いなる巡りと変化の受け入れ",
+        uprightMeaning: "蝶の羽ばたきが遠くの嵐を生むように、小さな出来事が縁となり新たな季節が訪れること。\n運命の大いなる流れに抗うのではなく、その変化に優しく乗り、訪れたチャンスを掴み取る勇気を促します。",
+        uprightMessage: "小さな出来事が縁となり、新たな季節が訪れる。\n変化に優しく乗ってみるのじゃ。",
+        uprightQuestion: "今、あなたに訪れようとしている小さな変化の兆しは何ですか？",
+        reversedTitle: "変化への抵抗と風待ち",
+        reversedMeaning: "運命の大いなる変化の流れに無理に抗おうとしたり、変わることを恐れて立ち止まったりしている状態です。",
+        reversedMessage: "今は無理に動かず、風が吹くのを待てばいいのじゃ。\n大いなる巡りを信じることじゃよ。",
+        reversedQuestion: "流れに身を任せるとしたら、どう心が軽くなりますか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_11_justice.png", name: "JUSTICE", jp: "正義", number: "Ⅺ",
         uprightTitle: "聴くことから始まる正義",
         uprightMeaning: "誰が正しいかを裁くのではなく、なぜそうなったのかを聴くこと。\n言葉の裏にある想い、見えていなかった物語に目を向けること。",
         uprightMessage: "正義とは、誰かを倒すことではない。\nときに、最後まで聴くことこそが、もっとも深い正義なのじゃ。",
-        uprightQuestion: "あなたがまだ十分に聴けていない声は、誰の声でしょうか。\n自分自身の中にある声も含めて、静かに耳を澄ませてみてください。",
+        uprightQuestion: "あなたがまだ十分に聴けていない声は、誰の声でしょうか？\n自分自身の中にある声も含めて、静かに耳を澄ませてみてください。",
         reversedTitle: "断罪と偏り",
         reversedMeaning: "正しさにこだわりすぎて、相手や自分の物語が見えなくなっている状態。\n判断が早すぎるとき、真実はまだ姿を現していないかもしれません。",
         reversedMessage: "剣で切り分ける前に、羽根ペンを手に取るのじゃ。\n書き出してみれば、見えていなかった想いが現れることもある。",
-        reversedQuestion: "あなたはいま、誰かを早く裁こうとしていないでしょうか。\nその人の奥にある事情を、もう少し聴くとしたら何を尋ねますか。"
+        reversedQuestion: "あなたはいま、誰かを早く裁こうとしていないでしょうか？\nその人の奥にある事情を、もう少し聴くとしたら何を尋ねますか？"
       },
-      { file: "https://ninin-cc.github.io/tr/img/ta_12_hanged.png", name: "THE HANGED MAN", jp: "吊るされた男", number: "Ⅻ", ...defaultPlaceholder },
       { 
-        file: "https://ninin-cc.github.io/tr/img/ta_13_death.png", 
-        name: "DEATH", 
-        jp: "死神", 
-        number: "ⅩⅢ",
+        file: "https://ninin-cc.github.io/tr/img/ta_12_hanged.png", name: "THE HANGED MAN", jp: "吊るされた男", number: "Ⅻ",
+        uprightTitle: "視点の転換と静かなる成長",
+        uprightMeaning: "思い通りに動けない時間を嘆くのではなく、立ち止まり視点を変えることでしか見えない景色に気づくための期間。\n魂を深く成長させるための静かな充電と内省の時間です。",
+        uprightMessage: "思い通りに動けぬ時は、視点を変えることでしか見えない景色を楽しむのじゃ。",
+        uprightQuestion: "今の立ち止まっている状況から学べることは何でしょうか？",
+        reversedTitle: "もがきと委ねる勇気",
+        reversedMeaning: "立ち止まることへの焦りから、もがいて自分を傷つけてしまっている状態です。",
+        reversedMessage: "今はただ、視点を変えるための静かなお休みをもらっているだけじゃ。\n状況に優しく委ねてみるのじゃ。",
+        reversedQuestion: "焦りを手放し、状況に身を委ねるとしたらどうなりますか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_13_death.png", name: "DEATH", jp: "死神", number: "ⅩⅢ",
         uprightTitle: "終わりと再生",
         uprightMeaning: "古い価値観や役割の終焉。\n生き方・関係性・アイデンティティの変容。\n手放すことで、新しい自分への生まれなおしが始まります。",
         uprightMessage: "終わりに見えるものは、次の扉を開く鍵かもしれん。\n怖がらず、深呼吸をひとつしてみるのじゃ。",
-        uprightQuestion: "いまのあなたが、静かに手放してもよいものは何でしょうか。\nその先に、どんな自分が生まれようとしているでしょうか。",
+        uprightQuestion: "いまのあなたが、静かに手放してもよいものは何でしょうか？\nその先に、どんな自分が生まれようとしているでしょうか。",
         reversedTitle: "拒絶と停滞",
         reversedMeaning: "手放せない執着。\n古い痛みへの固着。\n必要な変化を恐れて、先に進めない状態。",
         reversedMessage: "次の生は、戸口で待っておる。\nじゃが、その扉を開けるかどうかは、おぬし自身が決めることじゃ。",
-        reversedQuestion: "あなたが変化を恐れているものは何でしょうか。\n変わらないことで、守っているものは何でしょうか。"
+        reversedQuestion: "あなたが変化を恐れているものは何でしょうか？\n変わらないことで、守っているものは何でしょうか？"
       },
-      { file: "https://ninin-cc.github.io/tr/img/ta_14_tenpa.png", name: "TEMPERANCE", jp: "節制", number: "ⅩⅣ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_15_devil.png", name: "THE DEVIL", jp: "悪魔", number: "ⅩⅤ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_16_tawer.png", name: "THE TOWER", jp: "塔", number: "ⅩⅥ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_17_star.png", name: "THE STAR", jp: "星", number: "ⅩⅦ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", name: "THE MOON", jp: "月", number: "ⅩⅧ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", name: "THE SUN", jp: "太陽", number: "ⅩⅨ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_20_judge.png", name: "JUDGEMENT", jp: "審判", number: "ⅩⅩ", ...defaultPlaceholder },
-      { file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", name: "THE WORLD", jp: "世界", number: "ⅩⅪ", ...defaultPlaceholder }
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_14_tenpa.png", name: "TEMPERANCE", jp: "節制", number: "ⅩⅣ",
+        uprightTitle: "心の調和と癒しの循環",
+        uprightMeaning: "自分の中にある異なる感情や価値観を優しく混ぜ合わせ、心の淀みを流していくこと。\n焦らずに内なるペースを整え、穏やかで自然な状態を取り戻す癒しのプロセスです。",
+        uprightMessage: "焦らずに内なるペースを整え、心の淀みを優しく流していくのじゃ。",
+        uprightQuestion: "あなたの心のバランスを整えるために、今必要なものは何ですか？",
+        reversedTitle: "バランスの崩れと心地よいペースの回復",
+        reversedMeaning: "感情や生活のバランスが崩れ、心に淀みが生まれている状態。\n無理に白黒つけようとして疲れている状態です。",
+        reversedMessage: "ゆっくり時間をかけて、おぬしの心地よいペースを取り戻せばいいのじゃよ。",
+        reversedQuestion: "あなたが無理をしていることは何ですか？\nどうすれば自然体に戻れますか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_15_devil.png", name: "THE DEVIL", jp: "悪魔", number: "ⅩⅤ",
+        uprightTitle: "鎖の自覚と内省の鏡",
+        uprightMeaning: "自分が手放せずにいる「恐れ」や「古い思い込み」という鎖の存在に気づくための優しい鏡。\nその鎖は緩く、いつでも自らの意思で外せることに気づき、自分と向き合う機会を与えます。",
+        uprightMessage: "おぬしを縛るその鎖は、実はいつでも自らの意思で外せるものなのじゃよ。",
+        uprightQuestion: "あなたを縛っている「古い思い込み」は何でしょうか？",
+        reversedTitle: "鎖からの解放と自由への目覚め",
+        reversedMeaning: "自分を縛り付けていた鎖に鍵がかかっていなかったことに気づき始める過程。\n自らの意思で自由を選び取れることへの優しい目覚めです。",
+        reversedMessage: "自らの意思で自由を選び取れることに気づき始めたようじゃな。",
+        reversedQuestion: "鎖を外したあなたは、どこへ向かいたいですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_16_tawer.png", name: "THE TOWER", jp: "塔", number: "ⅩⅥ",
+        uprightTitle: "偽りの打破と浄化の光",
+        uprightMeaning: "偽りの殻や、自分を縛っていた不要な思い込みを壊し、本当の真実や希望の光へと導いてくれる「浄化の出来事」。\n痛みを伴いながらも、前向きな変容のプロセスです。",
+        uprightMessage: "壊れることは、新しい希望の光が入る隙間ができることなのじゃ。",
+        uprightQuestion: "壊れ去ったものの中に、どんな新しい希望の種が見えますか？",
+        reversedTitle: "変化の恐れと痛みの延長",
+        reversedMeaning: "崩れ去るべき古い価値観や偽りの殻にしがみつき、変化の痛みを長引かせてしまっている状態です。",
+        reversedMessage: "古い殻にしがみつかず、新しい光を受け入れる勇気を持つことじゃ。",
+        reversedQuestion: "崩れ去ることを恐れている、あなたの中の「殻」は何ですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_17_star.png", name: "THE STAR", jp: "星", number: "ⅩⅦ",
+        uprightTitle: "変わらぬ希望と純粋な祈り",
+        uprightMeaning: "激しい出来事のあとに見上げる空で、変わらずに輝く希望の光。\nあなた自身の中にある祈りや才能が、未来を照らす道標となることを示します。",
+        uprightMessage: "おぬしの中にある祈りや優しさが、未来を照らす道標となるのじゃよ。",
+        uprightQuestion: "あなたの心の奥にある、純粋な「願い」は何でしょうか？",
+        reversedTitle: "希望の忘却と静かな励まし",
+        reversedMeaning: "理想と現実のギャップに傷つき、自分の中にある希望の光が見えなくなってしまっている状態です。",
+        reversedMessage: "雲に隠れているだけで、おぬしの祈りや小さな優しさは変わらずそこにあるのじゃよ。",
+        reversedQuestion: "見えなくなっているけれど、確かにそこにある「希望」は何ですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", name: "THE MOON", jp: "月", number: "ⅩⅧ",
+        uprightTitle: "見えない不安への寄り添いと直感",
+        uprightMeaning: "心の奥底にある漠然とした不安や痛みに優しく寄り添い、自分自身の直感や本当の想いに耳を澄ませるための静かな時間。\n霧が晴れるのを待つ受容のプロセスです。",
+        uprightMessage: "すべてが日光の下で明らかになるわけではない。\n霧が晴れるのを静かに待つのじゃ。",
+        uprightQuestion: "不安の奥にある、あなたの本当の想いは何でしょうか？",
+        reversedTitle: "夜明けの予感と直感の信頼",
+        reversedMeaning: "漠然とした不安の正体が分からず、暗闇の影に怯えている自分への気づき。\nあるいは、霧が晴れかけているのにまだ怖がっている状態です。",
+        reversedMessage: "夜明けは近い。\n自分の直感を信じて待てばよいのじゃよ。",
+        reversedQuestion: "霧が晴れた後、あなたはどんな一歩を踏み出したいですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", name: "THE SUN", jp: "太陽", number: "ⅩⅨ",
+        uprightTitle: "曇りなき魂の輝きと無垢なる喜び",
+        uprightMeaning: "魂が曇りなく輝き、生きている喜びを心から感じられる状態。\nそのあたたかさを周囲と分かち合い、共に笑顔になれる無垢で絶対的な幸福を表します。",
+        uprightMessage: "生きている喜びを心から感じ、そのあたたかさを周囲と分かち合うのじゃ！",
+        uprightQuestion: "あなたが心から喜びを感じ、誰かと分かち合いたいことは何ですか？",
+        reversedTitle: "曇り空の受容と輝きの不変",
+        reversedMeaning: "純粋な生きる喜びを感じられず、心が少し曇り空に覆われている状態。\n無理に明るく振る舞って疲れている自分への気づきです。",
+        reversedMessage: "休んでエネルギーを充電しても、おぬしの魂の輝きは決して失われないのじゃよ。",
+        reversedQuestion: "無理に笑うのをやめて、今どう自分を休ませてあげたいですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_20_judge.png", name: "JUDGEMENT", jp: "審判", number: "ⅩⅩ",
+        uprightTitle: "過去の赦しとあたたかな再出発",
+        uprightMeaning: "過去の傷や後悔が優しく赦され、自分自身に対する正直な総決算を経て、新たな意味を持ってよみがえること。\n古い自分が報われ、本当の自分の魂の声に応えて目覚める再出発です。",
+        uprightMessage: "過去の傷や後悔を優しく赦し、新たな意味を持ってよみがえるのじゃ。",
+        uprightQuestion: "あなたが自分自身を赦し、新しく始めたいことは何ですか？",
+        reversedTitle: "赦しの躊躇と目覚めの促し",
+        reversedMeaning: "過去の傷や後悔をまだ許すことができず、古い自分に囚われている状態。\n新しい自分へと生まれ直す合図が聞こえているのに躊躇している状態です。",
+        reversedMessage: "おぬしはもう十分報われている。\n自分自身を優しく赦してやるのじゃよ。",
+        reversedQuestion: "自分を赦すために、どんな言葉をかけてあげたいですか？"
+      },
+      { 
+        file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", name: "THE WORLD", jp: "世界", number: "ⅩⅪ",
+        uprightTitle: "完全なる調和と満ち足りた結末",
+        uprightMeaning: "あなたの歩んできたすべての物語が一つに繋がり、完全なる調和に達すること。\nありのままの自分を肯定し、次なる旅へと向かう前の、美しく満ち足りた結末です。",
+        uprightMessage: "ありのままのおぬしで、すでに一つの美しい調和を生きているのじゃ。",
+        uprightQuestion: "これまでの旅を振り返り、あなたが自分に贈りたい賛辞は何ですか？",
+        reversedTitle: "不足への執着と自己肯定の鏡",
+        reversedMeaning: "自分の歩んできた物語が完璧でないと感じ、足りないものばかりに目を向けてしまっている状態です。",
+        reversedMessage: "足りないものなどない。\nありのままのあなたで、すでに一つの美しい世界なのじゃ。",
+        reversedQuestion: "今の自分に「すでに十分に備わっているもの」は何でしょうか？"
+      }
     ];
 
     // --- 状態管理 ---
@@ -306,8 +503,32 @@
       isHorizontal: false, // 横向きかどうかのフラグ
       memo: '',
       isTransitioning: false,
-      flashMessage: ''
+      flashMessage: '',
+      isAccordionOpen: false // アコーディオンの開閉状態
     };
+
+    // 魔法の粉を生成する関数
+    const MagicDustHTML = (() => {
+      let html = '<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-60">';
+      for(let i=0; i<15; i++) {
+        const w = Math.random() * 4 + 2;
+        const l = Math.random() * 100;
+        const t = Math.random() * 100;
+        const dur = Math.random() * 12 + 10;
+        const del = Math.random() * -20;
+        html += '<div class="absolute bg-yellow-300 rounded-full animate-float blur-[1px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 8px 2px rgba(253, 224, 71, 0.8)"></div>';
+      }
+      for(let i=0; i<10; i++) {
+        const w = Math.random() * 6 + 3;
+        const l = Math.random() * 100;
+        const t = Math.random() * 100;
+        const dur = Math.random() * 15 + 15;
+        const del = Math.random() * -20;
+        html += '<div class="absolute bg-orange-400 rounded-full animate-float blur-[2px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 12px 3px rgba(251, 146, 60, 0.6)"></div>';
+      }
+      html += '</div>';
+      return html;
+    })();
 
     function getPageNumber() {
       if (state.gameState === 'START') return 1;
@@ -332,7 +553,6 @@
     }
 
     function drawCard() {
-      // カードと向き、傾きをランダムに決定
       const randomIndex = Math.floor(Math.random() * tarotCards.length);
       state.drawnCard = tarotCards[randomIndex];
       
@@ -350,12 +570,13 @@
       }
       
       state.memo = '';
+      state.isAccordionOpen = false;
       
       // 演出画面へ
       transitionState(() => {
         state.gameState = 'DRAWING';
         
-        // ★ 6秒後に結果画面へ自動遷移 (3秒回転 + 2秒画像出現 + 1秒余韻)
+        // ★ 6秒後に結果画面へ自動遷移 (5秒アニメーション + 1秒余韻)
         setTimeout(() => {
           transitionState(() => {
             state.gameState = 'RESULT';
@@ -364,7 +585,6 @@
       });
     }
 
-    // 表示用の詳細データを取得する関数
     function getCardDetails() {
       const card = state.drawnCard;
       if (!card) return null;
@@ -398,7 +618,6 @@
       }, 3000);
     }
 
-    // ★ Web Share API (ネイティブ共有) と クリップボードコピーの統合処理 ★
     async function shareResult() {
       const card = state.drawnCard;
       if (!card) return;
@@ -406,7 +625,6 @@
 
       const shareText = `【今日のメンテーリア・タロット】\n\nカード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
 
-      // 1. Web Share API が使える環境（スマホ等）の場合
       if (navigator.share) {
         try {
           await navigator.share({
@@ -419,7 +637,6 @@
           }
         }
       } else {
-        // 2. Web Share API が使えない環境（PC等）の場合はクリップボードへ
         if (navigator.clipboard && window.isSecureContext) {
           navigator.clipboard.writeText(shareText).then(() => {
             showFlashMessage('結果とメモをコピーしました！');
@@ -432,7 +649,6 @@
       }
     }
 
-    // ★ Googleカレンダーに予定として保存する機能 ★
     function saveToGoogleCalendar() {
       const card = state.drawnCard;
       if (!card) return;
@@ -441,14 +657,12 @@
       const eventTitle = `【タロット内省】${card.name}｜${detailsObj.orientationText}`;
       const details = `カード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
 
-      // 今日の日付を取得して YYYYMMDD フォーマットにする
       const d = new Date();
       const year = d.getFullYear();
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
       const startDate = `${year}${month}${day}`;
       
-      // 翌日の日付を取得（終日イベント用）
       const tomorrow = new Date(d);
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tYear = tomorrow.getFullYear();
@@ -456,10 +670,8 @@
       const tDay = String(tomorrow.getDate()).padStart(2, '0');
       const endDate = `${tYear}${tMonth}${tDay}`;
 
-      // Google Calendar Event URL の生成
       const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&details=${encodeURIComponent(details)}&dates=${startDate}/${endDate}`;
       
-      // 別タブでカレンダーを開く
       window.open(url, '_blank');
     }
 
@@ -484,29 +696,6 @@
       }
       document.body.removeChild(textArea);
     }
-
-    // --- HTML生成 ---
-    const MagicDustHTML = (() => {
-      let html = '<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-60">';
-      for(let i=0; i<15; i++) {
-        const w = Math.random() * 4 + 2;
-        const l = Math.random() * 100;
-        const t = Math.random() * 100;
-        const dur = Math.random() * 12 + 10;
-        const del = Math.random() * -20;
-        html += '<div class="absolute bg-yellow-300 rounded-full animate-float blur-[1px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 8px 2px rgba(253, 224, 71, 0.8)"></div>';
-      }
-      for(let i=0; i<10; i++) {
-        const w = Math.random() * 6 + 3;
-        const l = Math.random() * 100;
-        const t = Math.random() * 100;
-        const dur = Math.random() * 15 + 15;
-        const del = Math.random() * -20;
-        html += '<div class="absolute bg-orange-400 rounded-full animate-float blur-[2px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 12px 3px rgba(251, 146, 60, 0.6)"></div>';
-      }
-      html += '</div>';
-      return html;
-    })();
 
     function render() {
       const root = document.getElementById('root');
@@ -546,7 +735,7 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold tracking-widest text-stone-100 drop-shadow-md magic-text-glow" style="text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                       Mentalia Tarot
                     </h1>
-                    <p class="text-[10px] sm:text-sm text-orange-200 mt-3 sm:mt-4 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-900/60 inline-block px-4 py-1.5 rounded-full border border-orange-500/50">― リフレムの一枚引き ―</p>
+                    <p class="text-[10px] sm:text-sm text-orange-200 mt-3 sm:mt-4 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-900/60 inline-block px-4 py-1.5 rounded-full border border-orange-500/50">― リフレムのワンオラクル ―</p>
                   </header>
                 </div>
               </div>
@@ -642,10 +831,12 @@
                   リフレムがカードを引いています...
                 </h2>
                 
-                <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-[3000ms]" style="transform: rotate(${state.drawingTilt}deg);">
-                  <div class="w-full h-full animate-cardFlip preserve-3d rounded-xl">
-                    <!-- 背面 -->
-                    <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2 sm:p-3 shadow-2xl animate-hideBack" style="transform: rotateY(180deg); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-[5000ms]" style="transform: rotate(${state.drawingTilt}deg);">
+                  <!-- ★ くるくる回転する3Dカード本体 ★ -->
+                  <div class="w-full h-full animate-cardSpinAndFlip preserve-3d rounded-xl">
+                    
+                    <!-- 背面 (回転中は裏面の裏が見えないようバックフェースを隠す) -->
+                    <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2 sm:p-3 shadow-2xl animate-hideBack" style="transform: rotateY(180deg) translateZ(1px); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                       <div class="w-full h-full rounded-sm overflow-hidden relative" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
                          <div class="absolute inset-0 bg-stone-900/40"></div>
                          <div class="absolute inset-0 flex items-center justify-center">
@@ -654,12 +845,18 @@
                       </div>
                     </div>
                     
-                    <!-- 表面(枠付き) -->
-                    <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden animate-showFront">
-                       <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
-                          <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
-                            <img src="${state.drawnCard.file}" alt="${state.drawnCard.name}" class="w-full h-full object-cover ${drawingRotationClass} animate-revealImage" />
-                          </div>
+                    <!-- 表面(枠付き・光レイヤー付き) -->
+                    <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2.5 sm:p-3 animate-cardOuterGlow shadow-2xl animate-showFront" style="transform: rotateY(0deg) translateZ(1px); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                       <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
+                         
+                         <!-- 絵柄 (最後にはっきり現れる) -->
+                         <img src="${state.drawnCard.file}" alt="${state.drawnCard.name}" class="w-full h-full object-cover ${drawingRotationClass} animate-revealImage" />
+                         
+                         <!-- ★ 光レイヤー (回転中〜正面を向いた直後まで絵柄を隠して輝く) ★ -->
+                         <div class="absolute inset-0 bg-gradient-to-tr from-yellow-100 via-orange-100 to-white animate-cardGlowLayer flex items-center justify-center">
+                           ${getIcon('Sparkles', 'w-20 h-20 text-yellow-500 animate-pulse')}
+                         </div>
+                         
                        </div>
                     </div>
                   </div>
@@ -735,6 +932,43 @@
                        ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
                      </div>
                      <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ★ メンテーリアの書庫（アコーディオン） ★ -->
+              <div class="mb-8 relative z-10">
+                <button data-action="toggle-accordion" class="w-full flex items-center justify-between bg-[#f4ebd8]/90 p-4 sm:p-5 rounded-md border border-stone-400/60 shadow-sm text-stone-900 font-serif font-bold text-sm sm:text-base hover:bg-[#e8dcc4] transition-colors" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <span class="flex items-center text-stone-800">
+                    ${getIcon('Scroll', 'w-4 h-4 sm:w-5 sm:h-5 mr-2 text-orange-800')} メンテーリアの書庫（カードの解釈）を開く
+                  </span>
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-stone-600 transform transition-transform duration-300 ${state.isAccordionOpen ? 'rotate-180' : ''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isAccordionOpen ? 'max-h-[2000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}">
+                  <div class="bg-[#f0e6d2]/90 p-5 sm:p-8 rounded-md border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.05)] font-serif text-sm sm:text-base text-stone-800 space-y-6" style="background-image: ${PARCHMENT_TEXTURE}">
+                    
+                    <p class="font-bold border-b border-stone-400/50 pb-3 text-stone-900 text-base sm:text-lg flex items-center">
+                      ${getIcon('Sparkles', 'w-4 h-4 sm:w-5 sm:h-5 mr-2 text-yellow-600')} このカードが持つ、ふたつの意味
+                    </p>
+                    
+                    <div class="bg-[#e8dcc4]/50 p-4 rounded-sm border border-stone-300/50">
+                       <h4 class="text-orange-900 font-bold mb-3 flex items-center text-sm sm:text-base">【正位置】 ${card.uprightTitle}</h4>
+                       <p class="leading-relaxed whitespace-pre-line">${card.uprightMeaning}</p>
+                    </div>
+                    
+                    <div class="bg-[#e8dcc4]/50 p-4 rounded-sm border border-stone-300/50">
+                       <h4 class="text-indigo-900 font-bold mb-3 flex items-center text-sm sm:text-base">【逆位置】 ${card.reversedTitle}</h4>
+                       <p class="leading-relaxed whitespace-pre-line">${card.reversedMeaning}</p>
+                    </div>
+
+                    <div class="bg-[#e8dcc4]/30 p-4 rounded border border-stone-300/50 text-xs sm:text-sm mt-4 text-stone-700">
+                       <p class="font-bold text-stone-900 mb-2 flex items-center">
+                         ${getIcon('Flame', 'w-4 h-4 mr-1 text-orange-700')} メンテーリアにおける「逆位置」とは
+                       </p>
+                       <p class="leading-relaxed">逆位置は、決して「悪い意味」や「罰」ではありません。現在どこで心が立ち止まっているのかを教えてくれる優しい気づき（内省）のサインです。再び希望へと歩み出すための心の魔法として受け取ってみてください。</p>
+                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -834,6 +1068,9 @@
         transitionState(() => {
           state.gameState = 'RULES';
         });
+      } else if (action === 'toggle-accordion') {
+        state.isAccordionOpen = !state.isAccordionOpen;
+        render();
       } else if (action === 'share-result') {
         shareResult();
       } else if (action === 'save-calendar') {
@@ -845,6 +1082,7 @@
           state.orientation = '';
           state.tiltAngle = 0;
           state.memo = '';
+          state.isAccordionOpen = false;
         });
       }
     });
