@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メンテーリア・タロット</title>
+  <title>メンテーリア・タロット | One Card Oracle</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <style>
     body {
@@ -213,6 +215,16 @@
     .animate-staticCardAura {
       animation: staticCardAura 3s ease-in-out infinite;
     }
+
+    /* ▼▼ ボタンのオーラエフェクト ▼▼ */
+    @keyframes buttonAura {
+      0% { box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.4), inset 0 0 5px rgba(255,255,255,0.6); border-color: rgba(140, 115, 85, 1); }
+      50% { box-shadow: 0 0 20px 6px rgba(249, 115, 22, 0.8), inset 0 0 5px rgba(255,255,255,0.6); border-color: rgba(249, 115, 22, 0.8); }
+      100% { box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.4), inset 0 0 5px rgba(255,255,255,0.6); border-color: rgba(140, 115, 85, 1); }
+    }
+    .animate-buttonAura {
+      animation: buttonAura 2.5s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="bg-[#e8dcc4] text-stone-900 font-sans selection:bg-orange-900 selection:text-orange-100">
@@ -236,7 +248,9 @@
       Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
       Calendar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
       RefreshCw: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
-      Flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>'
+      Flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+      Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
+      Line: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-5.906-1.755c.346 0 .628.285.628.63v4.356c0 .344-.282.629-.628.629-.345 0-.63-.285-.63-.629V8.738c0-.345.285-.63.63-.63zm-2.971 4.356v-4.356c0-.345-.285-.63-.63-.63-.346 0-.628.285-.628.63v3.098l-2.028-3.098c-.056-.088-.135-.165-.224-.225-.094-.056-.201-.09-.313-.09-.346 0-.628.285-.628.63v4.356c0 .344.282.629.628.629.345 0 .63-.285.63-.629v-3.098l2.028 3.098c.056.088.135.165.224.225.094.056.201.09.313.09.346 0 .628-.285.628-.63zm-6.254-4.356c.345 0 .63.285.63.63v3.098h1.755c.346 0 .628.285.628.63 0 .344-.282.629-.628.629H3.604c-.345 0-.63-.285-.63-.629V8.738c0-.345.285-.63.63-.63zm20.766 2.455c0-4.228-4.249-7.662-9.477-7.662-5.226 0-9.475 3.434-9.475 7.662 0 3.82 3.404 7.039 8.012 7.568.31.066.732.203.839.467.098.24-.031.603-.062.839l-.178 1.054c-.053.315-.246 1.206 1.057.658 1.303-.548 7.026-4.148 8.65-6.386.425-.632.634-1.378.634-2.2z"/></svg>'
     };
 
     function getIcon(name, classes) {
@@ -255,10 +269,12 @@
         uprightMeaning: "結果を恐れずに新しい物語のページをめくる勇気です。\n荷物を持たずに崖から足を踏み出すように、完全なる信頼のもとに前進すること。",
         uprightMessage: "内なる好奇心を信じて、次の一歩を踏み出す純粋な心の働きを大切にするのじゃよ。",
         uprightQuestion: "いま、あなたが結果を気にせず始めてみたいことは何でしょうか？",
+        uprightOriginalMeaning: "自由、新たな出発、純粋無垢、冒険、無限の可能性、計画性のない未確定な状態を表します。",
         reversedTitle: "迷子と優しいお休み",
         reversedMeaning: "自由を恐れて足を踏み出せずにいるか、逆に地に足が着かずに現実逃避をしてしまっている状態への気づきです。",
         reversedMessage: "心が迷子になっておるサインじゃな。\n一度立ち止まって、本当に進みたい方向を見つめ直すためのお休みをもらうのじゃ。",
-        reversedQuestion: "あなたが本当に進みたい方向は、どちらでしょうか？"
+        reversedQuestion: "あなたが本当に進みたい方向は、どちらでしょうか？",
+        reversedOriginalMeaning: "無謀、軽率、衝動的な決定、未熟さ、コミットメントへの躊躇。方向性の欠如や、結果を考えずに飛び出してしまう無計画な状態を警告します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_1_mag.png", name: "THE MAGICIAN", jp: "魔術師", number: "Ⅰ",
@@ -266,10 +282,12 @@
         uprightMeaning: "自分の中にすでにある「魔法」や才能に気づき、それを世界に紡ぎ出す力。\nこれまでの経験を活かし、新たな一歩を意識的に始めるサインです。",
         uprightMessage: "おぬしの中には、もう十分な道具が揃っておる。\n自分の経験を活かし、新たな一歩を始めるのじゃ。",
         uprightQuestion: "あなたがすでに持っている「才能」や「経験」は何でしょうか？",
+        uprightOriginalMeaning: "創造、意志、才能の開花、スタート、自信、自ら道を切り拓くクリエイティブな力を意味します。",
         reversedTitle: "自信の喪失と才能の眠り",
         reversedMeaning: "自分の内なる才能や魔法（優しさ）を信じられず、自信を失っている状態。\nあるいは、それを無理に誇張しようとする焦りです。",
         reversedMessage: "焦ることはない。\nおぬしの中には、もう十分な道具が揃っていると思い出すのじゃ。",
-        reversedQuestion: "あなたが自分を信じられなくなっている理由は何でしょうか？"
+        reversedQuestion: "あなたが自分を信じられなくなっている理由は何でしょうか？",
+        reversedOriginalMeaning: "操作、権力の悪用、欺瞞、不誠実。自分の才能を無駄にしたり、直感とのつながりを失ったり、先延ばしにしてしまう状態を表します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_2_h_pri.png", name: "THE HIGH PRIESTESS", jp: "女教皇", number: "Ⅱ",
@@ -277,10 +295,12 @@
         uprightMeaning: "外部の喧騒から離れ、自分の心の奥底にある小さな声に静かに耳を澄ませる時間です。\n他者の声や常識に惑わされず、自らの内なる真実と静かに向き合う知性を教えてくれます。",
         uprightMessage: "白と黒の柱の間でバランスをとり、心の奥底にある小さな声に耳を澄ませるのじゃ。",
         uprightQuestion: "静寂の中で、あなたの心の奥底は何を語りかけていますか？",
+        uprightOriginalMeaning: "直感、聡明、鋭い分析と正しい判断、清らかさ、神秘、そして高い知性を象徴します。",
         reversedTitle: "直感との乖離と心の閉鎖",
         reversedMeaning: "心の奥底の静かな声（直感）を無視し、外部のノイズに振り回されたり、自分を過度に閉ざしてしまっている状態です。",
         reversedMessage: "自分の本当の想いを信じて、もう一度静かな水面に心を映し出してみるのじゃ。",
-        reversedQuestion: "あなたが無視してしまっている「本当の想い」は何でしょうか？"
+        reversedQuestion: "あなたが無視してしまっている「本当の想い」は何でしょうか？",
+        reversedOriginalMeaning: "直感の無視、内なる知恵を遮る疑念、秘密、感情的な距離。表面的な実践にとどまったり、未知のものへの恐れを抱くことを示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_3_empress.png", name: "THE EMPRESS", jp: "女帝", number: "Ⅲ",
@@ -288,10 +308,12 @@
         uprightMeaning: "見返りを求めない無条件の優しさで、他者や自分自身をあたたかく包み込む受容の力。\n無理に物事を推し進めるのではなく成長のための環境を整え、小さな優しさが実を結び心を豊かに満たしていく象徴です。",
         uprightMessage: "無理に推し進めるのではなく、まずは自分自身をあたたかく包み込むのじゃよ。",
         uprightQuestion: "あなたが今、優しく受け入れてあげたい自分自身の部分は何でしょうか？",
+        uprightOriginalMeaning: "豊穣、母性、精神的および物質的な満足、家族愛、包容力、豊かな愛情を示します。",
         reversedTitle: "愛情の枯渇と過度な依存",
         reversedMeaning: "他者に愛情を注ぎすぎて自分を大切にできていない、あるいは満たされない思いから過度に愛情を求めてしまう状態です。",
         reversedMessage: "まずは自分自身を無条件の優しさで包み込み、自分の心のコップを満たすことじゃ。",
-        reversedQuestion: "自分を大切にするために、今日できる小さな優しさは何でしょうか？"
+        reversedQuestion: "自分を大切にするために、今日できる小さな優しさは何でしょうか？",
+        reversedOriginalMeaning: "創造性のブロック、自己ケアの怠慢、過度の依存、支配的な行動。過保護や過剰な甘やかしによる停滞、燃え尽き症候群を意味します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_4_emperor.png", name: "THE EMPEROR", jp: "皇帝", number: "Ⅳ",
@@ -299,10 +321,12 @@
         uprightMeaning: "誰かを支配するためではなく、愛する者たちが安心して生きられる場所を守り抜くための「静かなる決意」。\n困難を乗り越え、現実社会の基盤を築き、人々を導くための地に足のついた強さを意味します。",
         uprightMessage: "支配するためではなく、愛する者たちの居場所を守り抜く強さを持つことじゃ。",
         uprightQuestion: "あなたが今、しっかりと守り抜きたいものは何でしょうか？",
+        uprightOriginalMeaning: "権威、秩序、安定、強いリーダーシップ、実行力、責任感、そして指導的な立場を表します。",
         reversedTitle: "背負いすぎた重荷と硬直",
         reversedMeaning: "守るべきものを守るために背負い込みすぎ、心が硬直してしまっている状態。\nあるいは自信のなさから虚勢を張っている状態です。",
         reversedMessage: "少し肩の荷を下ろして、人に頼ってもよいのだぞ。",
-        reversedQuestion: "あなたが無理に背負い込んでいるものは何でしょうか？\n誰かに頼れることはありませんか？"
+        reversedQuestion: "あなたが無理に背負い込んでいるものは何でしょうか？\n誰かに頼れることはありませんか？",
+        reversedOriginalMeaning: "権力の乱用、過度な統制、支配欲、柔軟性の欠如、冷酷さ。コントロールを装った弱さや、抑圧的な管理に対する抵抗を表します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_5_hiero.png", name: "THE HIEROPHANT", jp: "教皇", number: "Ⅴ",
@@ -310,10 +334,12 @@
         uprightMeaning: "古くから語り継がれてきた物語や教えの中から、今の自分や誰かを救う知恵を見つけ出すこと。\n個人の体験と伝統との架け橋となり、その学びを他者と優しく分かち合う誠実さを表します。",
         uprightMessage: "古き教えの中から、今を救う知恵を見つけ出し、他者と優しく分かち合うのじゃ。",
         uprightQuestion: "あなたのこれまでの経験から、誰かに分け与えられる知恵は何でしょうか？",
+        uprightOriginalMeaning: "伝統、慈悲深さ、寛大な心、道徳、保守的であること、目上の人からの援助や導きを得ることを意味します。",
         reversedTitle: "ルールの束縛と心の声の喪失",
         reversedMeaning: "古いルールや誰かの言葉に縛られ、自分の本当の心の声が聞こえなくなっている状態です。",
         reversedMessage: "本当にあなたを救う教えは、外部の権威ではなく、おぬし自身の心の中にもあるのじゃよ。",
-        reversedQuestion: "あなたが縛られている「見えないルール」は何でしょうか？"
+        reversedQuestion: "あなたが縛られている「見えないルール」は何でしょうか？",
+        reversedOriginalMeaning: "伝統への疑問、制限的な信念やルールからの解放、教義への反発。型破りな道を選ぶことや、権威の偽善に対する不満を示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_6_lover.png", name: "THE LOVERS", jp: "恋人", number: "Ⅵ",
@@ -321,10 +347,12 @@
         uprightMeaning: "損得や外部の権威ではなく、自らの心が「心地よい」と感じるものを正直に選び取ること。\n自分自身や他者との間に生まれる純粋な共鳴や、心を通わせるあたたかな絆の始まりを示します。",
         uprightMessage: "損得ではなく、おぬしの心が「心地よい」と感じるものを正直に選び取るのじゃ。",
         uprightQuestion: "今のあなたにとって、最も「心地よい」と感じる選択は何でしょうか？",
+        uprightOriginalMeaning: "選択、調和、幸せな恋愛、ステキな出会い、無邪気で楽しいムードを象徴します。",
         reversedTitle: "選択の迷いと絆の見失い",
         reversedMeaning: "損得や他者の評価で選ぼうとして、自分の心が本当に「心地よい」と感じる選択を見失っている状態です。",
         reversedMessage: "自分とのあたたかな絆を取り戻し、純粋に惹かれるものにもう一度目を向けるのじゃ。",
-        reversedQuestion: "他者の目を気にせず、あなたが本当に選びたいものは何ですか？"
+        reversedQuestion: "他者の目を気にせず、あなたが本当に選びたいものは何ですか？",
+        reversedOriginalMeaning: "不調和、誤った選択、裏切り、関係の不均衡、コミットメントの欠如。すれ違いや相反する目標、優柔不断さによる関係の破綻を意味します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_7_chari.png", name: "THE CHARIOT", jp: "戦車", number: "Ⅶ",
@@ -332,10 +360,12 @@
         uprightMeaning: "心の中の迷いや恐れといった相反する感情を御しながら、自分の信じる道へ勇気を出して進もうとする前向きなエネルギー。\n目標に向かって突き進む、若々しく力強い推進力です。",
         uprightMessage: "迷いや恐れを抱えたままでもよい。\n信じる道へ勇気を出して進むのじゃ。",
         uprightQuestion: "恐れを抱えながらも、あなたが前に進めたいことは何でしょうか？",
+        uprightOriginalMeaning: "勝利、強い意志と情熱、困難を乗り越えての前進、スピーディーな行動力や開拓を表します。",
         reversedTitle: "焦りと空回り、優しい充電",
         reversedMeaning: "心の中の迷いや恐れをうまく御しきれず、焦って空回りしているか、進むのが怖くて立ち止まっている状態です。",
         reversedMessage: "無理に前進するのではなく、今の心の迷いを優しく受け入れる充電時間じゃよ。",
-        reversedQuestion: "焦っている自分に、どんな優しい言葉をかけてあげたいですか？"
+        reversedQuestion: "焦っている自分に、どんな優しい言葉をかけてあげたいですか？",
+        reversedOriginalMeaning: "コントロールの喪失、反対方向へ引っ張られる感覚、権力闘争、明確な目標の欠如。焦りや攻撃性が空回りし、停滞している状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_8_stre.png", name: "STRENGTH", jp: "力", number: "Ⅷ",
@@ -343,10 +373,12 @@
         uprightMeaning: "力で本能をねじ伏せるのではなく、自分の中の恐れや怒りを優しく受け入れ、静かに寄り添うことで飼い慣らす、本当の意味でのしなやかで静かな心の強さです。",
         uprightMessage: "恐れや怒りをねじ伏せるのではなく、優しく受け入れ、静かに寄り添うのじゃ。",
         uprightQuestion: "あなたの中にある「恐れ」や「怒り」に、どう寄り添ってあげられますか？",
+        uprightOriginalMeaning: "自制心、忍耐、強い意志、困難を乗り越える不屈の精神、エネルギー、心の成熟を象徴します。",
         reversedTitle: "心の疲弊と弱さの受容",
         reversedMeaning: "自分の中の恐れや怒り、悲しみを無理に力で押さえつけようとして、心身が疲弊している状態です。",
         reversedMessage: "弱さや痛みごと自分を愛し、優しく受け入れてやるのじゃよ。",
-        reversedQuestion: "あなたが無理に押さえつけている感情は何でしょうか？"
+        reversedQuestion: "あなたが無理に押さえつけている感情は何でしょうか？",
+        reversedOriginalMeaning: "弱さ、不安、恐れに屈すること、嫉妬、支配の問題。感情のバランスが崩れ、自信を失って他人に振り回されやすくなっている状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_9_hermit.png", name: "THE HERMIT", jp: "隠者", number: "Ⅸ",
@@ -354,10 +386,12 @@
         uprightMeaning: "喧騒から離れ、自らの内なる灯り（経験から得た真実の光）だけを頼りに自分だけの答えを見つけるための、尊く優しい孤独の時間です。",
         uprightMessage: "一人でしか学べないことに静かに向き合う時間じゃ。\n自らの内なる灯りを頼りにするのじゃよ。",
         uprightQuestion: "一人静かに向き合いたい、あなた自身の問いは何でしょうか？",
+        uprightOriginalMeaning: "内省、真理探究、冷静で思慮深いこと、孤独、慎重さ、熟慮を意味します。",
         reversedTitle: "孤独への恐れと心の閉鎖",
         reversedMeaning: "自分と向き合うことを恐れて孤独を避けようとするか、逆に心を閉ざしすぎてしまっている状態です。",
         reversedMessage: "おぬしの内なる光は決して消えておらん。\nゆっくりでいいのじゃよ。",
-        reversedQuestion: "あなたが向き合うのを避けている「自分の本心」は何でしょうか？"
+        reversedQuestion: "あなたが向き合うのを避けている「自分の本心」は何でしょうか？",
+        reversedOriginalMeaning: "過度の孤立、世界からの撤退、孤独、回避、コミュニケーション不足。内なる知恵から切り離され、現実逃避をしている状態を警告します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_10_wheel.png", name: "WHEEL OF Fortune", jp: "運命の輪", number: "Ⅹ",
@@ -365,10 +399,12 @@
         uprightMeaning: "蝶の羽ばたきが遠くの嵐を生むように、小さな出来事が縁となり新たな季節が訪れること。\n運命の大いなる流れに抗うのではなく、その変化に優しく乗り、訪れたチャンスを掴み取る勇気を促します。",
         uprightMessage: "小さな出来事が縁となり、新たな季節が訪れる。\n変化に優しく乗ってみるのじゃ。",
         uprightQuestion: "今、あなたに訪れようとしている小さな変化の兆しは何ですか？",
+        uprightOriginalMeaning: "運命的な変化、幸運の訪れ、チャンスの到来、人生の好転、抗えない周期を表します。",
         reversedTitle: "変化への抵抗と風待ち",
         reversedMeaning: "運命の大いなる変化の流れに無理に抗おうとしたり、変わることを恐れて立ち止まったりしている状態です。",
         reversedMessage: "今は無理に動かず、風が吹くのを待てばいいのじゃ。\n大いなる巡りを信じることじゃよ。",
-        reversedQuestion: "流れに身を任せるとしたら、どう心が軽くなりますか？"
+        reversedQuestion: "流れに身を任せるとしたら、どう心が軽くなりますか？",
+        reversedOriginalMeaning: "挫折、変化への抵抗、成長の欠如による悪循環、不安定さ。タイミングの悪さや機会の損失によって、身動きが取れないと感じる状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_11_justice.png", name: "JUSTICE", jp: "正義", number: "Ⅺ",
@@ -376,10 +412,12 @@
         uprightMeaning: "誰が正しいかを裁くのではなく、なぜそうなったのかを聴くこと。\n言葉の裏にある想い、見えていなかった物語に目を向けること。",
         uprightMessage: "正義とは、誰かを倒すことではない。\nときに、最後まで聴くことこそが、もっとも深い正義なのじゃ。",
         uprightQuestion: "あなたがまだ十分に聴けていない声は、誰の声でしょうか？\n自分自身の中にある声も含めて、静かに耳を澄ませてみてください。",
+        uprightOriginalMeaning: "平等、バランスや均衡、冷静で客観的な判断力、正義感、誠実さ、義務を示します。",
         reversedTitle: "断罪と偏り",
         reversedMeaning: "正しさにこだわりすぎて、相手や自分の物語が見えなくなっている状態。\n判断が早すぎるとき、真実はまだ姿を現していないかもしれません。",
         reversedMessage: "剣で切り分ける前に、羽根ペンを手に取るのじゃ。\n書き出してみれば、見えていなかった想いが現れることもある。",
-        reversedQuestion: "あなたはいま、誰かを早く裁こうとしていないでしょうか？\nその人の奥にある事情を、もう少し聴くとしたら何を尋ねますか？"
+        reversedQuestion: "あなたはいま、誰かを早く裁こうとしていないでしょうか？\nその人の奥にある事情を、もう少し聴くとしたら何を尋ねますか？",
+        reversedOriginalMeaning: "不誠実、偏見、不当な結果、嘘、隠された意図、不均衡。倫理的でない選択や職場での不当な扱い、カルマの教訓を無視している状態を示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_12_hanged.png", name: "THE HANGED MAN", jp: "吊るされた男", number: "Ⅻ",
@@ -387,10 +425,12 @@
         uprightMeaning: "思い通りに動けない時間を嘆くのではなく、立ち止まり視点を変えることでしか見えない景色に気づくための期間。\n魂を深く成長させるための静かな充電と内省の時間です。",
         uprightMessage: "思い通りに動けぬ時は、視点を変えることでしか見えない景色を楽しむのじゃ。",
         uprightQuestion: "今の立ち止まっている状況から学べることは何でしょうか？",
+        uprightOriginalMeaning: "試練、自己犠牲、視点の転換、不屈の精神、忍耐することによって最終的に報われることを示します。",
         reversedTitle: "もがきと委ねる勇気",
         reversedMeaning: "立ち止まることへの焦りから、もがいて自分を傷つけてしまっている状態です。",
         reversedMessage: "今はただ、視点を変えるための静かなお休みをもらっているだけじゃ。\n状況に優しく委ねてみるのじゃ。",
-        reversedQuestion: "焦りを手放し、状況に身を委ねるとしたらどうなりますか？"
+        reversedQuestion: "焦りを手放し、状況に身を委ねるとしたらどうなりますか？",
+        reversedOriginalMeaning: "停滞、抵抗、異なる視点を持つことの拒否、利己主義、優柔不断。変化への恐れから無駄な時間を過ごし、学びの機会を逃している状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_13_death.png", name: "DEATH", jp: "死神", number: "ⅩⅢ",
@@ -398,10 +438,12 @@
         uprightMeaning: "古い価値観や役割の終焉。\n生き方・関係性・アイデンティティの変容。\n手放すことで、新しい自分への生まれなおしが始まります。",
         uprightMessage: "終わりに見えるものは、次の扉を開く鍵かもしれん。\n怖がらず、深呼吸をひとつしてみるのじゃ。",
         uprightQuestion: "いまのあなたが、静かに手放してもよいものは何でしょうか？\nその先に、どんな自分が生まれようとしているでしょうか。",
+        uprightOriginalMeaning: "終焉、強制的終了、過去の清算、完全な終わり、別れ、そして変容の始まりを意味します。",
         reversedTitle: "拒絶と停滞",
         reversedMeaning: "手放せない執着。\n古い痛みへの固着。\n必要な変化を恐れて、先に進めない状態。",
         reversedMessage: "次の生は、戸口で待っておる。\nじゃが、その扉を開けるかどうかは、おぬし自身が決めることじゃ。",
-        reversedQuestion: "あなたが変化を恐れているものは何でしょうか？\n変わらないことで、守っているものは何でしょうか？"
+        reversedQuestion: "あなたが変化を恐れているものは何でしょうか？\n変わらないことで、守っているものは何でしょうか？",
+        reversedOriginalMeaning: "変化への抵抗、手放すことへの恐怖、不健全な絆や停滞した状況への執着。古いパターンにしがみつき、魂の成長や変容を拒否している状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_14_tenpa.png", name: "TEMPERANCE", jp: "節制", number: "ⅩⅣ",
@@ -409,10 +451,12 @@
         uprightMeaning: "自分の中にある異なる感情や価値観を優しく混ぜ合わせ、心の淀みを流していくこと。\n焦らずに内なるペースを整え、穏やかで自然な状態を取り戻す癒しのプロセスです。",
         uprightMessage: "焦らずに内なるペースを整え、心の淀みを優しく流していくのじゃ。",
         uprightQuestion: "あなたの心のバランスを整えるために、今必要なものは何ですか？",
+        uprightOriginalMeaning: "調和、バランス、自然体であること、自らをコントロールし状況になじむ穏やかさを表します。",
         reversedTitle: "バランスの崩れと心地よいペースの回復",
         reversedMeaning: "感情や生活のバランスが崩れ、心に淀みが生まれている状態。\n無理に白黒つけようとして疲れている状態です。",
         reversedMessage: "ゆっくり時間をかけて、おぬしの心地よいペースを取り戻せばいいのじゃよ。",
-        reversedQuestion: "あなたが無理をしていることは何ですか？\nどうすれば自然体に戻れますか？"
+        reversedQuestion: "あなたが無理をしていることは何ですか？\nどうすれば自然体に戻れますか？",
+        reversedOriginalMeaning: "不均衡、焦り、過剰、対立、不調和、妥協の欠如。無理に結果を出そうとしたり、極端な行動に走ることで生じるフラストレーションを表します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_15_devil.png", name: "THE DEVIL", jp: "悪魔", number: "ⅩⅤ",
@@ -420,10 +464,12 @@
         uprightMeaning: "自分が手放せずにいる「恐れ」や「古い思い込み」という鎖の存在に気づくための優しい鏡。\nその鎖は緩く、いつでも自らの意思で外せることに気づき、自分と向き合う機会を与えます。",
         uprightMessage: "おぬしを縛るその鎖は、実はいつでも自らの意思で外せるものなのじゃよ。",
         uprightQuestion: "あなたを縛っている「古い思い込み」は何でしょうか？",
+        uprightOriginalMeaning: "執着、束縛、誘惑、堕落した生活、物質主義、抜け出せない依存状態や恐怖を象徴します。",
         reversedTitle: "鎖からの解放と自由への目覚め",
         reversedMeaning: "自分を縛り付けていた鎖に鍵がかかっていなかったことに気づき始める過程。\n自らの意思で自由を選び取れることへの優しい目覚めです。",
         reversedMessage: "自らの意思で自由を選び取れることに気づき始めたようじゃな。",
-        reversedQuestion: "鎖を外したあなたは、どこへ向かいたいですか？"
+        reversedQuestion: "鎖を外したあなたは、どこへ向かいたいですか？",
+        reversedOriginalMeaning: "（逆位置の方がポジティブな意味を持つ数少ないカード）制限からの解放、力を取り戻すこと、有害な関係や執着からの脱却、恐怖からの解放を示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_16_tawer.png", name: "THE TOWER", jp: "塔", number: "ⅩⅥ",
@@ -431,10 +477,12 @@
         uprightMeaning: "偽りの殻や、自分を縛っていた不要な思い込みを壊し、本当の真実や希望の光へと導いてくれる「浄化の出来事」。\n痛みを伴いながらも、前向きな変容のプロセスです。",
         uprightMessage: "壊れることは、新しい希望の光が入る隙間ができることなのじゃ。",
         uprightQuestion: "壊れ去ったものの中に、どんな新しい希望の種が見えますか？",
+        uprightOriginalMeaning: "崩壊、惨事、ショック、最悪な状況、予期せぬ突然のトラブルや大きなダメージを示します。",
         reversedTitle: "変化の恐れと痛みの延長",
         reversedMeaning: "崩れ去るべき古い価値観や偽りの殻にしがみつき、変化の痛みを長引かせてしまっている状態です。",
         reversedMessage: "古い殻にしがみつかず、新しい光を受け入れる勇気を持つことじゃ。",
-        reversedQuestion: "崩れ去ることを恐れている、あなたの中の「殻」は何ですか？"
+        reversedQuestion: "崩れ去ることを恐れている、あなたの中の「殻」は何ですか？",
+        reversedOriginalMeaning: "変化への恐れ、避けられない変容を遅らせること、問題の否定、必要な終わりへの抵抗。無視すれば悪化する内部の混乱や不安定さを示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_17_star.png", name: "THE STAR", jp: "星", number: "ⅩⅦ",
@@ -442,10 +490,12 @@
         uprightMeaning: "激しい出来事のあとに見上げる空で、変わらずに輝く希望の光。\nあなた自身の中にある祈りや才能が、未来を照らす道標となることを示します。",
         uprightMessage: "おぬしの中にある祈りや優しさが、未来を照らす道標となるのじゃよ。",
         uprightQuestion: "あなたの心の奥にある、純粋な「願い」は何でしょうか？",
+        uprightOriginalMeaning: "希望、癒し、インスピレーション、夢がかなうこと、感動や精神的な高揚を意味します。",
         reversedTitle: "希望の忘却と静かな励まし",
         reversedMeaning: "理想と現実のギャップに傷つき、自分の中にある希望の光が見えなくなってしまっている状態です。",
         reversedMessage: "雲に隠れているだけで、おぬしの祈りや小さな優しさは変わらずそこにあるのじゃよ。",
-        reversedQuestion: "見えなくなっているけれど、確かにそこにある「希望」は何ですか？"
+        reversedQuestion: "見えなくなっているけれど、確かにそこにある「希望」は何ですか？",
+        reversedOriginalMeaning: "絶望、疑念、信仰の喪失、失望、インスピレーションの枯渇。創造性がブロックされ、悲観主義に陥って希望を見失っている状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", name: "THE MOON", jp: "月", number: "ⅩⅧ",
@@ -453,10 +503,12 @@
         uprightMeaning: "心の奥底にある漠然とした不安や痛みに優しく寄り添い、自分自身の直感や本当の想いに耳を澄ませるための静かな時間。\n霧が晴れるのを待つ受容のプロセスです。",
         uprightMessage: "すべてが日光の下で明らかになるわけではない。\n霧が晴れるのを静かに待つのじゃ。",
         uprightQuestion: "不安の奥にある、あなたの本当の想いは何でしょうか？",
+        uprightOriginalMeaning: "不安、幻影、曖昧さ、迷い、不信感、見えない敵、状況の移ろいやすさを表します。",
         reversedTitle: "夜明けの予感と直感の信頼",
         reversedMeaning: "漠然とした不安の正体が分からず、暗闇の影に怯えている自分への気づき。\nあるいは、霧が晴れかけているのにまだ怖がっている状態です。",
         reversedMessage: "夜明けは近い。\n自分の直感を信じて待てばよいのじゃよ。",
-        reversedQuestion: "霧が晴れた後、あなたはどんな一歩を踏み出したいですか？"
+        reversedQuestion: "霧が晴れた後、あなたはどんな一歩を踏み出したいですか？",
+        reversedOriginalMeaning: "幻想が晴れて明確さが戻る、秘密が暴かれる（ポジティブな側面）。または、直感がブロックされて恐れやパラノイアに圧倒されている状態を示します。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", name: "THE SUN", jp: "太陽", number: "ⅩⅨ",
@@ -464,10 +516,12 @@
         uprightMeaning: "魂が曇りなく輝き、生きている喜びを心から感じられる状態。\nそのあたたかさを周囲と分かち合い、共に笑顔になれる無垢で絶対的な幸福を表します。",
         uprightMessage: "生きている喜びを心から感じ、そのあたたかさを周囲と分かち合うのじゃ！",
         uprightQuestion: "あなたが心から喜びを感じ、誰かと分かち合いたいことは何ですか？",
+        uprightOriginalMeaning: "成功、喜び、バイタリティ、天真爛漫さ、純粋、祝福、笑い声の絶えない理想通りの状況を象徴します。",
         reversedTitle: "曇り空の受容と輝きの不変",
         reversedMeaning: "純粋な生きる喜びを感じられず、心が少し曇り空に覆われている状態。\n無理に明るく振る舞って疲れている自分への気づきです。",
         reversedMessage: "休んでエネルギーを充電しても、おぬしの魂の輝きは決して失われないのじゃよ。",
-        reversedQuestion: "無理に笑うのをやめて、今どう自分を休ませてあげたいですか？"
+        reversedQuestion: "無理に笑うのをやめて、今どう自分を休ませてあげたいですか？",
+        reversedOriginalMeaning: "一時的な挫折、不明瞭さ、喜びの減少、誤解、不安、非現実的な期待。モチベーションが下がり、ポジティブな光が曇っている状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_20_judge.png", name: "JUDGEMENT", jp: "審判", number: "ⅩⅩ",
@@ -475,10 +529,12 @@
         uprightMeaning: "過去の傷や後悔が優しく赦され、自分自身に対する正直な総決算を経て、新たな意味を持ってよみがえること。\n古い自分が報われ、本当の自分の魂の声に応えて目覚める再出発です。",
         uprightMessage: "過去の傷や後悔を優しく赦し、新たな意味を持ってよみがえるのじゃ。",
         uprightQuestion: "あなたが自分自身を赦し、新しく始めたいことは何ですか？",
+        uprightOriginalMeaning: "復活、覚醒、良い知らせ、最終的な決断、過去からの解放や許しを示します。",
         reversedTitle: "赦しの躊躇と目覚めの促し",
         reversedMeaning: "過去の傷や後悔をまだ許すことができず、古い自分に囚われている状態。\n新しい自分へと生まれ直す合図が聞こえているのに躊躇している状態です。",
         reversedMessage: "おぬしはもう十分報われている。\n自分自身を優しく赦してやるのじゃよ。",
-        reversedQuestion: "自分を赦すために、どんな言葉をかけてあげたいですか？"
+        reversedQuestion: "自分を赦すために、どんな言葉をかけてあげたいですか？",
+        reversedOriginalMeaning: "自己疑念、否定、変化への恐怖、和解への抵抗、責任の回避。内なる呼びかけを無視し、決断を先延ばしにして機会を逃している状態です。"
       },
       { 
         file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", name: "THE WORLD", jp: "世界", number: "ⅩⅪ",
@@ -486,10 +542,12 @@
         uprightMeaning: "あなたの歩んできたすべての物語が一つに繋がり、完全なる調和に達すること。\nありのままの自分を肯定し、次なる旅へと向かう前の、美しく満ち足りた結末です。",
         uprightMessage: "ありのままのおぬしで、すでに一つの美しい調和を生きているのじゃ。",
         uprightQuestion: "これまでの旅を振り返り、あなたが自分に贈りたい賛辞は何ですか？",
+        uprightOriginalMeaning: "完成、成就、統合、目標達成、理想郷への到達、最高の幸福感や成長を意味します。",
         reversedTitle: "不足への執着と自己肯定の鏡",
         reversedMeaning: "自分の歩んできた物語が完璧でないと感じ、足りないものばかりに目を向けてしまっている状態です。",
         reversedMessage: "足りないものなどない。\nありのままのあなたで、すでに一つの美しい世界なのじゃ。",
-        reversedQuestion: "今の自分に「すでに十分に備わっているもの」は何でしょうか？"
+        reversedQuestion: "今の自分に「すでに十分に備わっているもの」は何でしょうか？",
+        reversedOriginalMeaning: "不完全な目標、遅延、終わりの欠如、停滞、不満、未完成の事柄。成功を阻む障害があり、真の充足感やサイクルを完了できない状態を表します。"
       }
     ];
 
@@ -504,7 +562,8 @@
       memo: '',
       isTransitioning: false,
       flashMessage: '',
-      isAccordionOpen: false // アコーディオンの開閉状態
+      isAccordionOpen: false, // メンテーリアの書庫アコーディオンの開閉状態
+      isOriginalAccordionOpen: false // 原義アコーディオンの開閉状態
     };
 
     // 魔法の粉を生成する関数
@@ -571,6 +630,7 @@
       
       state.memo = '';
       state.isAccordionOpen = false;
+      state.isOriginalAccordionOpen = false;
       
       // 演出画面へ
       transitionState(() => {
@@ -618,34 +678,97 @@
       }, 3000);
     }
 
+    // ★ 画像生成（キャプチャ）機能 ★
+    async function generateImage() {
+      const captureEl = document.getElementById('capture-area');
+      if (!captureEl || !window.html2canvas) {
+        throw new Error("Cannot capture image");
+      }
+      const canvas = await window.html2canvas(captureEl, {
+        backgroundColor: '#e8dcc4', 
+        scale: 2, 
+        useCORS: true,
+      });
+      return canvas.toDataURL("image/png");
+    }
+
+    function dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    }
+
+    // ★ 画像保存 ★
+    async function handleSave() {
+      state.flashMessage = "画像を生成中...";
+      render();
+      try {
+        const dataUrl = await generateImage();
+        const link = document.createElement('a');
+        link.download = 'OneCardOracle_Result.png';
+        link.href = dataUrl;
+        link.click();
+        state.flashMessage = "画像を保存しました！";
+      } catch (error) {
+        state.flashMessage = "画像の保存に失敗しました。";
+      }
+      render();
+      setTimeout(() => { state.flashMessage = ''; render(); }, 3000);
+    }
+
+    // ★ 画像付きシェア（Web Share API）★
     async function shareResult() {
       const card = state.drawnCard;
       if (!card) return;
       const detailsObj = getCardDetails();
 
-      const shareText = `【今日のメンテーリア・タロット】\n\nカード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
+      const shareText = `【今日のOne Card Oracle】\n\nカード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
 
-      if (navigator.share) {
-        try {
+      state.flashMessage = "画像を生成中...";
+      render();
+
+      try {
+        const dataUrl = await generateImage();
+        const file = dataURLtoFile(dataUrl, 'OneCardOracle_Result.png');
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
-            title: '今日のメンテーリア・タロット',
+            title: '今日のOne Card Oracle',
             text: shareText,
+            files: [file]
           });
-        } catch (error) {
-          if (error.name !== 'AbortError') {
+          state.flashMessage = "";
+        } else if (navigator.share) {
+          await navigator.share({
+            title: '今日のOne Card Oracle',
+            text: shareText
+          });
+          state.flashMessage = "";
+        } else {
+          // PC等でShare機能がない場合はクリップボードにコピー
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(shareText);
+            state.flashMessage = 'テキストをコピーしました！（画像保存は別ボタンから可能です）';
+          } else {
             fallbackCopyTextToClipboard(shareText);
           }
         }
-      } else {
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(shareText).then(() => {
-            showFlashMessage('結果とメモをコピーしました！');
-          }).catch(err => {
-            fallbackCopyTextToClipboard(shareText);
-          });
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          state.flashMessage = "共有に失敗しました。";
         } else {
-          fallbackCopyTextToClipboard(shareText);
+          state.flashMessage = "";
         }
+      }
+      render();
+      if(state.flashMessage) {
+          setTimeout(() => { state.flashMessage = ''; render(); }, 3000);
       }
     }
 
@@ -735,27 +858,31 @@
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold tracking-widest text-stone-100 drop-shadow-md magic-text-glow" style="text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
                       Mentalia Tarot
                     </h1>
-                    <p class="text-[10px] sm:text-sm text-orange-200 mt-3 sm:mt-4 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-900/60 inline-block px-4 py-1.5 rounded-full border border-orange-500/50">― リフレムのワンオラクル ―</p>
+                    <p class="text-[10px] sm:text-sm text-orange-200 mt-3 sm:mt-4 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-900/60 inline-block px-4 py-1.5 rounded-full border border-orange-500/50">― One Card Oracle ―</p>
                   </header>
                 </div>
               </div>
 
-              <div class="flex justify-center relative z-10 mb-6 mt-8 sm:mt-12">
-                <button data-action="go-rules" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 sm:px-16 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full sm:w-auto mx-4 sm:mx-0">
+              <div class="flex flex-col items-center gap-4 relative z-10 mb-10 mt-8 sm:mt-12 w-full px-4 sm:px-0 mx-auto max-w-[280px] sm:max-w-[340px]">
+                <button data-action="go-rules" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-4 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-100">
                     小部屋の扉を開く
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </span>
                 </button>
-              </div>
 
-              <div class="flex justify-center relative z-10 mb-10">
-                <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-6 sm:px-10 shadow-sm hover:scale-105 group w-full sm:w-auto mx-4 sm:mx-0">
+                <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-4 shadow-sm hover:scale-105 group w-full animate-buttonAura">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-800">
                     メンテーリアの世界へようこそ
                     <svg class="w-3 h-3 ml-2 group-hover:text-orange-700 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  </span>
+                </a>
+
+                <a href="https://store.line.me/stickershop/product/31645809/ja" target="_blank" rel="noopener noreferrer" class="bg-[#06C755] rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold text-white py-3 px-4 shadow-sm hover:bg-[#05b34c] hover:scale-105 w-full">
+                  <span class="relative z-10 flex items-center justify-center">
+                    リフレムのタロットのLINEスタンプ
                   </span>
                 </a>
               </div>
@@ -839,9 +966,6 @@
                     <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2 sm:p-3 shadow-2xl animate-hideBack" style="transform: rotateY(180deg) translateZ(1px); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                       <div class="w-full h-full rounded-sm overflow-hidden relative" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
                          <div class="absolute inset-0 bg-stone-900/40"></div>
-                         <div class="absolute inset-0 flex items-center justify-center">
-                           ${getIcon('Sparkles', 'w-16 h-16 text-yellow-500/60')}
-                         </div>
                       </div>
                     </div>
                     
@@ -854,7 +978,6 @@
                          
                          <!-- ★ 光レイヤー (回転中〜正面を向いた直後まで絵柄を隠して輝く) ★ -->
                          <div class="absolute inset-0 bg-gradient-to-tr from-yellow-100 via-orange-100 to-white animate-cardGlowLayer flex items-center justify-center">
-                           ${getIcon('Sparkles', 'w-20 h-20 text-yellow-500 animate-pulse')}
                          </div>
                          
                        </div>
@@ -875,64 +998,95 @@
         const rotationClass = state.isHorizontal ? "" : (state.orientation === "正位置" ? "" : "card-reversed");
 
         html += `
-              <div class="text-center mb-6 sm:mb-8">
-                <h2 class="text-xl sm:text-2xl font-serif font-extrabold tracking-widest text-stone-900 magic-text-glow">
-                  今日出会ったカード
-                </h2>
-                <div class="w-16 h-0.5 bg-orange-800 mx-auto mt-3 opacity-50"></div>
-              </div>
-
-              <!-- カードビジュアル -->
-              <div class="flex justify-center mb-8 sm:mb-12 relative z-10 ${state.isHorizontal ? 'my-16 sm:my-24' : ''}">
-                <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
-                  <!-- 枠とオーラ -->
-                  <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
-                    <!-- 画像 -->
-                    <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
-                      <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- カード情報と解釈 -->
-              <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-8" style="background-image: ${PARCHMENT_TEXTURE}">
-                <div class="text-center border-b border-stone-400/50 pb-5 sm:pb-6 mb-6">
-                  <p class="text-stone-500 font-serif font-bold text-xs sm:text-sm tracking-[0.2em] mb-1">NO. ${card.number}</p>
-                  <h3 class="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-1">${card.name}</h3>
-                  <p class="text-stone-700 font-serif font-bold text-sm sm:text-base tracking-widest">${card.jp}</p>
-                  <div class="mt-3">
-                    <span class="${detailsObj.orientationColor} font-serif font-bold text-sm sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
-                  </div>
+              <!-- ★ キャプチャ領域開始 ★ -->
+              <div id="capture-area" class="relative z-10 pt-4 pb-8 px-4 sm:px-6 -mx-4 sm:-mx-6 rounded-md" style="background-color: #e8dcc4; background-image: ${PARCHMENT_TEXTURE};">
+                
+                <div class="text-center mb-6 sm:mb-8">
+                  <h2 class="text-xl sm:text-2xl font-serif font-extrabold tracking-widest text-stone-900 magic-text-glow">
+                    今日出会ったカード
+                  </h2>
                 </div>
 
-                <div class="space-y-8 sm:space-y-10">
-                  <!-- 意味 -->
-                  <div>
-                    <h4 class="flex items-center text-sm sm:text-base font-bold text-orange-900 mb-3 border-l-4 border-orange-800 pl-3">
-                      テーマ：${detailsObj.title}
-                    </h4>
-                    <p class="text-stone-800 text-sm sm:text-base leading-relaxed font-serif font-medium whitespace-pre-line pl-4">${detailsObj.meaning}</p>
-                  </div>
-
-                  <!-- リフレムの言葉 -->
-                  <div class="bg-[#e8dcc4]/70 p-4 sm:p-6 rounded-md border border-stone-300/50 shadow-sm relative">
-                    <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
-                      <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
-                         <img src="${REFREM_AVATAR}" class="w-full h-full object-cover object-top" />
+                <!-- カードビジュアル -->
+                <div class="flex justify-center mb-8 sm:mb-12 relative z-10 ${state.isHorizontal ? 'my-16 sm:my-24' : ''}">
+                  <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
+                    <!-- 枠とオーラ -->
+                    <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                      <!-- 画像 -->
+                      <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
+                        <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
                       </div>
-                      <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">リフレムの言葉</span>
                     </div>
-                    <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
+                  </div>
+                </div>
+
+                <!-- カード情報と解釈 -->
+                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-4" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div class="text-center border-b border-stone-400/50 pb-5 sm:pb-6 mb-6">
+                    <p class="text-stone-500 font-serif font-bold text-xs sm:text-sm tracking-[0.2em] mb-1">NO. ${card.number}</p>
+                    <h3 class="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-1">${card.name}</h3>
+                    <p class="text-stone-700 font-serif font-bold text-sm sm:text-base tracking-widest">${card.jp}</p>
+                    <div class="mt-3">
+                      <span class="${detailsObj.orientationColor} font-serif font-bold text-sm sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
+                    </div>
                   </div>
 
-                  <!-- 問い -->
-                  <div class="bg-orange-50/50 p-4 sm:p-6 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
-                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-100 border border-orange-200 text-orange-900 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-widest flex items-center shadow-sm">
-                       ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
-                     </div>
-                     <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
+                  <div class="space-y-8 sm:space-y-10">
+                    <!-- 意味 -->
+                    <div>
+                      <h4 class="flex items-center text-sm sm:text-base font-bold text-orange-900 mb-3 border-l-4 border-orange-800 pl-3">
+                        テーマ：${detailsObj.title}
+                      </h4>
+                      <p class="text-stone-800 text-sm sm:text-base leading-relaxed font-serif font-medium whitespace-pre-line pl-4">${detailsObj.meaning}</p>
+                    </div>
+
+                    <!-- リフレムの言葉 -->
+                    <div class="bg-[#e8dcc4]/70 p-4 sm:p-6 rounded-md border border-stone-300/50 shadow-sm relative">
+                      <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
+                        <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
+                           <img src="${REFREM_AVATAR}" class="w-full h-full object-cover object-top" />
+                        </div>
+                        <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">リフレムの言葉</span>
+                      </div>
+                      <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
+                    </div>
+
+                    <!-- 問い -->
+                    <div class="bg-orange-50/50 p-4 sm:p-6 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
+                       <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-100 border border-orange-200 text-orange-900 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-widest flex items-center shadow-sm">
+                         ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
+                       </div>
+                       <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
+                    </div>
                   </div>
+                </div>
+                
+                <!-- キャプチャ用クレジット -->
+                <div class="mt-8 text-center w-full opacity-80">
+                   <p class="text-[10px] sm:text-[12px] text-stone-900 font-serif tracking-widest font-bold">© Mentalia Tarot</p>
+                   <p class="text-[8px] sm:text-[10px] text-stone-800 font-serif tracking-widest mt-1">© 2026 ninin consulting＆counseling</p>
+                </div>
+              </div>
+              <!-- ★ キャプチャ領域終了 ★ -->
+
+              <!-- メモエリア -->
+              <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-md border border-stone-400/80 p-5 sm:p-8 shadow-sm relative z-10 mb-8 mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
+                <label for="memo" class="block text-stone-800 font-serif font-bold text-sm sm:text-base mb-2 flex items-center">
+                  ${getIcon('Scroll', 'w-4 h-4 mr-2')} 内省のメモ
+                </label>
+                <p class="text-xs sm:text-sm text-stone-700 font-serif font-bold mb-4 leading-relaxed">
+                  内省のメモはGoogleカレンダーに登録する事ができます。<br/>毎日の振り返りの積み重ねがあなたを支えてくれます。
+                </p>
+                <textarea id="memo" rows="5" class="w-full bg-[#e8dcc4]/50 border border-stone-400/60 rounded-md p-4 text-sm sm:text-base font-serif text-stone-800 resize-none transition-all placeholder-stone-500/70" placeholder="今日、このカードと問いを見て感じたことを、言葉にしてみましょう。">${state.memo}</textarea>
+                
+                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
+                  <button data-action="save-calendar" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-6 sm:px-8 w-full sm:w-auto shadow-sm hover:scale-105">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center text-stone-800">
+                      ${getIcon('Calendar', 'w-4 h-4 mr-2 text-stone-600')}
+                      カレンダーに記録
+                    </span>
+                  </button>
                 </div>
               </div>
 
@@ -969,33 +1123,47 @@
                        <p class="leading-relaxed">逆位置は、決して「悪い意味」や「罰」ではありません。現在どこで心が立ち止まっているのかを教えてくれる優しい気づき（内省）のサインです。再び希望へと歩み出すための心の魔法として受け取ってみてください。</p>
                     </div>
                     
+                    <!-- ★ 原義のアコーディオン ★ -->
+                    <div class="mt-6 border-t border-stone-400/50 pt-4">
+                      <button data-action="toggle-original-accordion" class="w-full flex items-center justify-between text-stone-800 font-serif font-bold text-xs sm:text-sm transition-colors py-2">
+                        <span class="flex items-center">
+                          ${getIcon('Scroll', 'w-4 h-4 mr-2 text-stone-600')} タロット本来の原義（一般的な解釈）を見る
+                        </span>
+                        <svg class="w-4 h-4 text-stone-600 transform transition-transform duration-300 ${state.isOriginalAccordionOpen ? 'rotate-180' : ''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"></path></svg>
+                      </button>
+                      
+                      <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isOriginalAccordionOpen ? 'max-h-[1000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}">
+                        <div class="bg-[#d6c5a5]/30 p-4 rounded-sm border border-stone-300/50 space-y-4">
+                           <div class="text-xs sm:text-sm">
+                             <h5 class="text-stone-900 font-bold mb-1">【正位置の原義】</h5>
+                             <p class="leading-relaxed text-stone-800">${card.uprightOriginalMeaning}</p>
+                           </div>
+                           <div class="text-xs sm:text-sm">
+                             <h5 class="text-stone-900 font-bold mb-1">【逆位置の原義】</h5>
+                             <p class="leading-relaxed text-stone-800">${card.reversedOriginalMeaning}</p>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
 
-              <!-- メモエリア -->
-              <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-md border border-stone-400/80 p-5 sm:p-8 shadow-sm relative z-10 mb-8" style="background-image: ${PARCHMENT_TEXTURE}">
-                <label for="memo" class="block text-stone-800 font-serif font-bold text-sm sm:text-base mb-3 flex items-center">
-                  ${getIcon('Scroll', 'w-4 h-4 mr-2')} 内省のメモ
-                </label>
-                <textarea id="memo" rows="5" class="w-full bg-[#e8dcc4]/50 border border-stone-400/60 rounded-md p-4 text-sm sm:text-base font-serif text-stone-800 resize-none transition-all placeholder-stone-500/70" placeholder="今日、このカードと問いを見て感じたことを、言葉にしてみましょう。">${state.memo}</textarea>
-                
-                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
-                  <button data-action="save-calendar" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-6 sm:px-8 w-full sm:w-auto shadow-sm hover:scale-105">
-                    <div class="wood-texture"></div>
-                    <span class="relative z-10 flex items-center justify-center text-stone-800">
-                      ${getIcon('Calendar', 'w-4 h-4 mr-2 text-stone-600')}
-                      カレンダーに記録
-                    </span>
-                  </button>
-                  <button data-action="share-result" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-6 sm:px-8 w-full sm:w-auto shadow-sm hover:scale-105">
-                    <div class="wood-texture"></div>
-                    <span class="relative z-10 flex items-center justify-center text-stone-800">
-                      ${getIcon('Share2', 'w-4 h-4 mr-2 text-stone-600')}
-                      結果とメモを共有
-                    </span>
-                  </button>
-                </div>
+              <!-- ★ 画像保存・シェアボタン ★ -->
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-10 relative z-10 w-full px-2 sm:px-4">
+                <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-100">
+                    ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
+                  </span>
+                </button>
+                <button data-action="capture-share" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-100">
+                    ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 結果とメモをシェア
+                  </span>
+                </button>
               </div>
 
               <!-- 注意書きと戻るボタン -->
@@ -1019,6 +1187,23 @@
                     </span>
                   </button>
                   ` : ''}
+
+                  <div class="flex flex-col items-center gap-4 w-full px-4 sm:px-0 mx-auto max-w-[280px] sm:max-w-[340px] mt-4">
+                    <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-4 shadow-sm hover:scale-105 group w-full animate-buttonAura">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center text-stone-800">
+                        メンテーリアの世界へようこそ
+                        <svg class="w-3 h-3 ml-2 group-hover:text-orange-700 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      </span>
+                    </a>
+
+                    <a href="https://store.line.me/stickershop/product/31645809/ja" target="_blank" rel="noopener noreferrer" class="bg-[#06C755] rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold text-white py-3 px-4 shadow-sm hover:bg-[#05b34c] hover:scale-105 w-full">
+                      <span class="relative z-10 flex items-center justify-center">
+                        リフレムのタロットのLINEスタンプ
+                      </span>
+                    </a>
+                  </div>
+
                 </div>
               </div>
         `;
@@ -1071,7 +1256,14 @@
       } else if (action === 'toggle-accordion') {
         state.isAccordionOpen = !state.isAccordionOpen;
         render();
+      } else if (action === 'toggle-original-accordion') {
+        state.isOriginalAccordionOpen = !state.isOriginalAccordionOpen;
+        render();
       } else if (action === 'share-result') {
+        shareResult();
+      } else if (action === 'capture-save') {
+        handleSave();
+      } else if (action === 'capture-share') {
         shareResult();
       } else if (action === 'save-calendar') {
         saveToGoogleCalendar();
@@ -1083,6 +1275,7 @@
           state.tiltAngle = 0;
           state.memo = '';
           state.isAccordionOpen = false;
+          state.isOriginalAccordionOpen = false;
         });
       }
     });
