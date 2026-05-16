@@ -45,6 +45,14 @@
     .text-glow-soft {
       text-shadow: 0 0 4px #e8dcc4, 0 0 8px #e8dcc4, 0 0 12px #e8dcc4;
     }
+    .text-haze-readable {
+      text-shadow:
+        0 0 2px rgba(255, 252, 244, 1),
+        0 0 6px rgba(255, 252, 244, 0.98),
+        0 0 12px rgba(244, 235, 216, 0.95),
+        0 0 20px rgba(232, 220, 196, 0.9),
+        0 1px 2px rgba(255, 252, 244, 0.9);
+    }
 
     @keyframes fadeInStage {
       0% { opacity: 0; filter: blur(4px); }
@@ -1073,8 +1081,8 @@
                 ${state.isHorizontal ? `
                 <div class="relative z-10 mb-6 w-full max-w-2xl mx-auto px-4 sm:px-8 overflow-visible">
                   <div class="flex flex-col items-center gap-2 sm:gap-3">
-                    <div class="relative flex h-[150px] sm:h-[190px] w-full items-center justify-center overflow-visible">
-                      <div class="relative w-[96px] h-[160px] sm:w-[126px] sm:h-[210px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
+                    <div class="relative flex h-[170px] sm:h-[230px] w-full items-center justify-center overflow-visible">
+                      <div class="relative transition-transform duration-1000" style="width: clamp(126px, 36vw, 204px); height: clamp(210px, 60vw, 340px); transform: rotate(${state.tiltAngle}deg);">
                         <div class="w-full h-full rounded-xl p-1.5 sm:p-2 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                           <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
                             <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
@@ -1094,10 +1102,10 @@
                       </div>
 
                       <div class="text-left">
-                        <h4 class="flex items-center text-xs sm:text-sm font-bold text-orange-900 mb-2 border-l-[3px] border-orange-800 pl-2 drop-shadow-sm">
+                        <h4 class="flex items-center text-xs sm:text-sm font-bold text-orange-900 mb-2 border-l-[3px] border-orange-800 pl-2 drop-shadow-sm text-haze-readable">
                           テーマ：${detailsObj.title}
                         </h4>
-                        <p class="text-stone-900 text-[11px] sm:text-sm leading-relaxed font-serif font-medium pl-2 drop-shadow-sm text-glow-soft">${displayMeaning}</p>
+                        <p class="text-stone-900 text-[11px] sm:text-sm leading-relaxed font-serif font-medium pl-2 drop-shadow-sm text-haze-readable">${displayMeaning}</p>
                       </div>
                     </div>
                   </div>
@@ -1125,10 +1133,10 @@
                     </div>
 
                     <div class="text-left pr-1 sm:pr-0">
-                      <h4 class="flex items-center text-xs sm:text-base font-bold text-orange-900 mb-2 sm:mb-3 border-l-[3px] sm:border-l-4 border-orange-800 pl-2 drop-shadow-sm">
+                      <h4 class="flex items-center text-xs sm:text-base font-bold text-orange-900 mb-2 sm:mb-3 border-l-[3px] sm:border-l-4 border-orange-800 pl-2 drop-shadow-sm text-haze-readable">
                         テーマ：${detailsObj.title}
                       </h4>
-                      <p class="text-stone-900 text-[11px] sm:text-[15px] leading-relaxed sm:leading-loose font-serif font-medium pl-2 drop-shadow-sm text-glow-soft">${displayMeaning}</p>
+                      <p class="text-stone-900 text-[11px] sm:text-[15px] leading-relaxed sm:leading-loose font-serif font-medium pl-2 drop-shadow-sm text-haze-readable">${displayMeaning}</p>
                     </div>
                   </div>
                 </div>
