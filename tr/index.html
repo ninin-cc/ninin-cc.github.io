@@ -78,6 +78,18 @@
       }
     }
 
+    /* 右側配置用リフレム画像の透過マスク */
+    .mask-refrem-right {
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+    }
+    @media (min-width: 640px) {
+      .mask-refrem-right {
+        -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%);
+        mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%);
+      }
+    }
+
     /* ▼▼ カードのフリップ・出現アニメーション（3Dスピンと光の演出） ▼▼ */
     .perspective-1000 {
       perspective: 1000px;
@@ -659,8 +671,8 @@
           ? "カードが横を向いて現れました。\n正位置でも逆位置でもない状態です。\n決められた意味はなく、あなたの心に浮かんだものが、そのまま意味となります。" 
           : (isUpright ? card.uprightMeaning : card.reversedMeaning),
         message: state.isHorizontal 
-          ? "「おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。」" 
-          : (isUpright ? `「${card.uprightMessage}」` : `「${card.reversedMessage}」`),
+          ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。" 
+          : (isUpright ? `${card.uprightMessage}` : `${card.reversedMessage}`),
         question: state.isHorizontal 
           ? "いま、あなたにはこのカードがどう見えていますか？\n直感で浮かんだ言葉は何でしょうか？" 
           : (isUpright ? card.uprightQuestion : card.reversedQuestion),
@@ -867,7 +879,7 @@
                 <button data-action="go-rules" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-4 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-100">
-                    小部屋の扉を開く
+                    タロットの小部屋へ
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </span>
                 </button>
@@ -885,6 +897,25 @@
                     リフレムのタロットのLINEスタンプ
                   </span>
                 </a>
+
+                <div class="w-full mt-2 bg-[#f4ebd8]/90 p-4 rounded-md border border-stone-400/50 shadow-[inset_0_0_10px_rgba(0,0,0,0.05)] text-center" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <p class="text-[10px] sm:text-[11px] text-stone-800 font-serif font-extrabold mb-3 leading-relaxed">
+                    かのん Kanon @phstarrionさんが<br/>曲を作ってくださいました⭐
+                  </p>
+                  <div class="w-full rounded overflow-hidden shadow-inner border border-stone-300">
+                    <iframe src="https://suno.com/embed/c55313dc-5c98-43b6-9ed2-eac2134dac85" allow="autoplay *; encrypted-media *;" allowfullscreen class="w-full h-[350px] sm:h-[400px] border-none"></iframe>
+                  </div>
+                </div>
+
+                <div class="w-full mt-2 bg-[#f0e6d2]/80 p-4 sm:p-5 rounded-md border border-stone-400/50 shadow-sm text-center relative" style="background-image: ${PARCHMENT_TEXTURE}">
+                   <h3 class="text-xs sm:text-sm text-orange-900 font-serif font-extrabold mb-2 tracking-widest flex items-center justify-center drop-shadow-sm">
+                     ${getIcon('Sparkles', 'w-4 h-4 mr-1.5 text-yellow-600')} ファンコミュニティ準備中
+                   </h3>
+                   <p class="text-[9px] sm:text-[11px] text-stone-800 font-serif font-bold leading-relaxed text-left">
+                     メンテーリアの世界観からインスピレーションを受けて、楽曲やイラストなどの作品を制作していただけた際は、ぜひこの小部屋でご紹介させてください。<br/>
+                     <span class="block mt-2 text-center text-orange-800">皆さまと共にこの世界を広げていける場所を<br class="sm:hidden"/>準備しております。</span>
+                   </p>
+                </div>
               </div>
         `;
       }
@@ -899,41 +930,31 @@
                   リフレムからの案内
                 </h2>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-col sm:flex-row">
+                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-col sm:flex-row-reverse">
                   
-                  <div class="w-full sm:w-[40%] h-48 sm:h-auto relative z-0 shrink-0 border-b sm:border-b-0 sm:border-r border-stone-400/50 mask-refrem">
+                  <div class="w-full sm:w-[40%] h-48 sm:h-auto relative z-0 shrink-0 border-b sm:border-b-0 sm:border-l border-stone-400/50 mask-refrem-right">
                     <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%]" />
                   </div>
                   
                   <div class="relative z-20 p-5 sm:p-8 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
-                    <p>「よく来たな、旅人よ。</p>
-                    <p>ここはメンテーリアの静かな小部屋じゃ。」</p>
+                    <p>よく来た、旅人よ。</p>
+                    <p>ここはメンテーリアにある</p>
+                    <p>鏡の塔の中の小部屋じゃ。</p>
                     <div class="h-1.5 sm:h-2"></div>
-                    <p>「わしが、今日のおぬしに</p>
-                    <p>一枚のカードを差し出そう。」</p>
-                    <div class="h-3 sm:h-4"></div>
-                    <p class="text-orange-900">「よいか、これは未来を当てる占いではないぞ。」</p>
+                    <p>わしが、今日のおぬしに</p>
+                    <p>一枚のカードを差し出そう。</p>
                     <div class="h-1.5 sm:h-2"></div>
-                    <p>「おぬしの心に、</p>
-                    <p>ひとつ問いを灯すためのカードなのじゃ。」</p>
+                    <p class="text-orange-900">よいか、</p>
+                    <p class="text-orange-900">これは未来を当てる占いではないぞ。</p>
+                    <div class="h-1.5 sm:h-2"></div>
+                    <p>おぬしの心に、</p>
+                    <p>ひとつ問いを灯すための</p>
+                    <p>カードなのじゃ。</p>
                   </div>
                 </div>
               </div>
 
-              <div class="bg-[#f0e6d2]/80 backdrop-blur-sm p-4 sm:p-6 rounded-md border border-stone-400/50 shadow-sm relative z-10 mb-8 mx-2 sm:mx-0">
-                <div class="flex items-center justify-center mb-3">
-                  ${getIcon('Sparkles', 'w-5 h-5 text-yellow-600 mr-2')}
-                  <h3 class="font-serif font-bold text-stone-900 text-sm sm:text-base tracking-widest">リフレムからの約束</h3>
-                </div>
-                <div class="text-xs sm:text-sm text-stone-800 font-serif font-bold leading-loose text-center space-y-2">
-                  <p>「何度でも引くことはできるぞ。</p>
-                  <p>じゃが、心の扉を開けすぎると、<br/>風が入りすぎることもある。」</p>
-                  <p class="text-orange-900 mt-2 block">「まずは一日一枚。</p>
-                  <p>今日出会ったカードと、<br/>静かに向き合ってみるのじゃよ。」</p>
-                </div>
-              </div>
-
-              <div class="flex justify-center relative z-10 mb-10">
+              <div class="flex justify-center relative z-10 mb-8 sm:mb-10">
                 <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 sm:px-16 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full sm:w-auto mx-4 sm:mx-0">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-100">
@@ -941,6 +962,19 @@
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </span>
                 </button>
+              </div>
+
+              <div class="bg-[#f0e6d2]/80 backdrop-blur-sm p-4 sm:p-6 rounded-md border border-stone-400/50 shadow-sm relative z-10 mb-10 mx-2 sm:mx-0">
+                <div class="flex items-center justify-center mb-3">
+                  ${getIcon('Sparkles', 'w-5 h-5 text-yellow-600 mr-2')}
+                  <h3 class="font-serif font-bold text-stone-900 text-sm sm:text-base tracking-widest">リフレムからの約束</h3>
+                </div>
+                <div class="text-xs sm:text-sm text-stone-800 font-serif font-bold leading-loose text-center space-y-2">
+                  <p>何度でも引くことはできるぞ。</p>
+                  <p>じゃが、心の扉を開けすぎると、<br/>風が入りすぎることもある。</p>
+                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
+                  <p>今日出会ったカードと、<br/>静かに向き合ってみるのじゃよ。</p>
+                </div>
               </div>
         `;
       }
@@ -1150,7 +1184,7 @@
                 </div>
               </div>
 
-              <!-- ★ 画像保存・シェアボタン ★ -->
+              <!-- 画像保存・シェアボタン -->
               <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-10 relative z-10 w-full px-2 sm:px-4">
                 <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
                   <div class="wood-texture"></div>
@@ -1169,8 +1203,8 @@
               <!-- 注意書きと戻るボタン -->
               <div class="text-center relative z-10">
                 <div class="text-[10px] sm:text-xs text-stone-600 font-serif font-bold leading-loose mb-6 px-4">
-                  <p>「何度でも引くことはできるぞ。<br class="sm:hidden"/>けれど、内省は思ったより心の力を使う。」</p>
-                  <p>「迷ったときは、もう一度引くより、最初の一枚に戻ってみるのじゃよ。」</p>
+                  <p>何度でも引くことはできるぞ。<br class="sm:hidden"/>けれど、内省は思ったより心の力を使う。</p>
+                  <p>迷ったときは、もう一度引くより、最初の一枚に戻ってみるのじゃよ。</p>
                 </div>
 
                 <div class="flex flex-col items-center gap-4 sm:gap-6 mb-10">
