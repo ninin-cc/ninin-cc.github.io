@@ -1041,57 +1041,61 @@
                   </h2>
                 </div>
 
-                <!-- カードビジュアル -->
-                <div class="flex justify-center mb-8 sm:mb-12 relative z-10 ${state.isHorizontal ? 'my-16 sm:my-24' : ''}">
-                  <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
-                    <!-- 枠とオーラ -->
-                    <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
-                      <!-- 画像 -->
-                      <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
-                        <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
+                <div class="flex flex-col md:flex-row items-center md:items-start justify-center gap-6 md:gap-8 relative z-10 mb-6 w-full">
+                  
+                  <!-- 左側：カードビジュアル -->
+                  <div class="shrink-0 flex justify-center ${state.isHorizontal ? 'my-16 md:my-16 md:mx-6' : ''}">
+                    <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
+                      <!-- 枠とオーラ -->
+                      <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                        <!-- 画像 -->
+                        <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
+                          <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- カード情報と解釈 -->
-                <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-4" style="background-image: ${PARCHMENT_TEXTURE}">
-                  <div class="text-center border-b border-stone-400/50 pb-5 sm:pb-6 mb-6">
-                    <p class="text-stone-500 font-serif font-bold text-xs sm:text-sm tracking-[0.2em] mb-1">NO. ${card.number}</p>
-                    <h3 class="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-1">${card.name}</h3>
-                    <p class="text-stone-700 font-serif font-bold text-sm sm:text-base tracking-widest">${card.jp}</p>
-                    <div class="mt-3">
-                      <span class="${detailsObj.orientationColor} font-serif font-bold text-sm sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
+                  <!-- 右側：カード情報と解釈（テーマ・意味まで） -->
+                  <div class="flex-1 w-full h-auto min-h-[300px] md:min-h-[426px] flex flex-col justify-center bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10" style="background-image: ${PARCHMENT_TEXTURE}">
+                    <div class="text-center border-b border-stone-400/50 pb-5 sm:pb-6 mb-6">
+                      <p class="text-stone-500 font-serif font-bold text-xs sm:text-sm tracking-[0.2em] mb-1">NO. ${card.number}</p>
+                      <h3 class="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-1">${card.name}</h3>
+                      <p class="text-stone-700 font-serif font-bold text-sm sm:text-base tracking-widest">${card.jp}</p>
+                      <div class="mt-3">
+                        <span class="${detailsObj.orientationColor} font-serif font-bold text-sm sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div class="space-y-8 sm:space-y-10">
-                    <!-- 意味 -->
                     <div>
                       <h4 class="flex items-center text-sm sm:text-base font-bold text-orange-900 mb-3 border-l-4 border-orange-800 pl-3">
                         テーマ：${detailsObj.title}
                       </h4>
                       <p class="text-stone-800 text-sm sm:text-base leading-relaxed font-serif font-medium whitespace-pre-line pl-4">${detailsObj.meaning}</p>
                     </div>
+                  </div>
+                </div>
 
-                    <!-- リフレムの言葉 -->
-                    <div class="bg-[#e8dcc4]/70 p-4 sm:p-6 rounded-md border border-stone-300/50 shadow-sm relative">
-                      <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
-                        <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
-                           <img src="${REFREM_AVATAR}" class="w-full h-full object-cover object-top" />
-                        </div>
-                        <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">リフレムの言葉</span>
+                <!-- 下部：リフレムの言葉と今日の問い -->
+                <div class="w-full bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-4 space-y-8 sm:space-y-10" style="background-image: ${PARCHMENT_TEXTURE}">
+                  
+                  <!-- リフレムの言葉 -->
+                  <div class="bg-[#e8dcc4]/70 p-4 sm:p-5 rounded-md border border-stone-300/50 shadow-sm relative mt-2">
+                    <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
+                      <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
+                         <img src="${REFREM_AVATAR}" class="w-full h-full object-cover object-top" />
                       </div>
-                      <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
+                      <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">リフレムの言葉</span>
                     </div>
+                    <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
+                  </div>
 
-                    <!-- 問い -->
-                    <div class="bg-orange-50/50 p-4 sm:p-6 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
-                       <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-100 border border-orange-200 text-orange-900 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-widest flex items-center shadow-sm">
-                         ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
-                       </div>
-                       <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
-                    </div>
+                  <!-- 問い -->
+                  <div class="bg-orange-50/50 p-4 sm:p-5 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
+                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-100 border border-orange-200 text-orange-900 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-widest flex items-center shadow-sm">
+                       ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
+                     </div>
+                     <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
                   </div>
                 </div>
                 
