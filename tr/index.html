@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>メンテーリア・タロット | One Card Oracle</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
+
   <style>
     body {
       margin: 0;
@@ -17,8 +17,7 @@
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
-    
-    /* スクロールバー非表示 */
+
     .hide-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -27,7 +26,6 @@
       display: none;
     }
 
-    /* 魔法の粉アニメーション */
     @keyframes float {
       0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
       25% { opacity: 0.8; }
@@ -40,8 +38,7 @@
       animation-iteration-count: infinite;
       animation-timing-function: ease-in-out;
     }
-    
-    /* テキストの光彩 */
+
     .magic-text-glow {
       text-shadow: 0 0 15px rgba(249, 115, 22, 0.4), 0 0 5px rgba(255, 255, 255, 0.5);
     }
@@ -49,7 +46,6 @@
       text-shadow: 0 0 4px #e8dcc4, 0 0 8px #e8dcc4, 0 0 12px #e8dcc4;
     }
 
-    /* 画面フェードアニメーション */
     @keyframes fadeInStage {
       0% { opacity: 0; filter: blur(4px); }
       100% { opacity: 1; filter: blur(0px); }
@@ -66,7 +62,6 @@
       pointer-events: none;
     }
 
-    /* リフレム画像の透過マスク用クラス（スマホ/PC対応） */
     .mask-refrem {
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
       mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
@@ -78,7 +73,6 @@
       }
     }
 
-    /* 右側配置用リフレム画像の透過マスク */
     .mask-refrem-right {
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
       mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
@@ -90,7 +84,6 @@
       }
     }
 
-    /* ▼▼ カードのフリップ・出現アニメーション（3Dスピンと光の演出） ▼▼ */
     .perspective-1000 {
       perspective: 1000px;
       -webkit-perspective: 1000px;
@@ -103,36 +96,31 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
-    
-    /* 1. カード全体がくるくる回転する（5秒かけて完了） */
+
     @keyframes cardSpinAndFlip {
       0% { transform: translateY(-50px) scale(0.8) rotateY(180deg); opacity: 0; }
       10% { transform: translateY(0) scale(1.0) rotateY(180deg); opacity: 1; }
-      50% { transform: translateY(0) scale(1.2) rotateY(900deg); opacity: 1; } /* くるくる回る＆少し手前に来る */
-      70% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; } /* 表を向いて定位置に収まる */
-      100% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; } /* 停止状態を維持 */
+      50% { transform: translateY(0) scale(1.2) rotateY(900deg); opacity: 1; }
+      70% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; }
+      100% { transform: translateY(0) scale(1.0) rotateY(1080deg); opacity: 1; }
     }
 
-    /* 2. 表面を覆う光のレイヤー（絵柄を隠し、後からスッと消える） */
     @keyframes cardGlowLayer {
-      0%, 65% { opacity: 1; } /* 回転中と、正面を向いた直後は真っ白/黄金の光で覆う */
-      85%, 100% { opacity: 0; } /* 光がスッと消えて絵柄が現れる */
+      0%, 65% { opacity: 1; }
+      85%, 100% { opacity: 0; }
     }
 
-    /* 3. 絵柄がじわっと浮かび上がる */
     @keyframes revealImage {
       0%, 65% { opacity: 0; filter: brightness(2) blur(8px); }
       85%, 100% { opacity: 1; filter: brightness(1) blur(0px); }
     }
 
-    /* 4. 枠が放つ外側のオーラ（正面を向いた瞬間にフラッシュする） */
     @keyframes cardOuterGlow {
       0%, 50% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
       65% { box-shadow: 0 0 60px rgba(255, 255, 255, 1), 0 0 30px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); }
       100% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
     }
 
-    /* アプリ内ブラウザの透け防止（回転中の表面非表示） */
     @keyframes showFront {
       0%, 49.9% { opacity: 0; visibility: hidden; }
       50%, 100% { opacity: 1; visibility: visible; }
@@ -161,12 +149,10 @@
       animation: cardOuterGlow 5s ease-in-out forwards;
     }
 
-    /* 逆位置用の回転 */
     .card-reversed {
       transform: rotate(180deg);
     }
 
-    /* 木目調ボタン */
     .wood-btn {
       position: relative;
       overflow: hidden;
@@ -174,7 +160,7 @@
       transition: all 0.3s ease;
     }
     .wood-btn-dark {
-      background-color: #5d4037; 
+      background-color: #5d4037;
       border-color: #3e2723;
       color: #ffffff;
       text-shadow: 1px 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
@@ -187,7 +173,7 @@
       filter: brightness(0.9);
     }
     .wood-btn-light {
-      background-color: #f4ebd8; 
+      background-color: #f4ebd8;
       border-color: #8c7355;
       color: #3e2723;
       font-weight: bold;
@@ -211,14 +197,12 @@
     .wood-btn-dark .wood-texture { mix-blend-mode: normal; opacity: 0.8; }
     .wood-btn-light .wood-texture { mix-blend-mode: luminosity; opacity: 0.2; }
 
-    /* メモ欄のカスタマイズ */
     textarea:focus {
       outline: none;
       border-color: #9a3412;
       box-shadow: 0 0 10px rgba(154, 52, 18, 0.2), inset 0 2px 4px rgba(0,0,0,0.05);
     }
-    
-    /* ▼▼ カードオーラ（結果画面の定常アニメーション） ▼▼ */
+
     @keyframes staticCardAura {
       0% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
       50% { box-shadow: 0 0 35px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); }
@@ -228,7 +212,6 @@
       animation: staticCardAura 3s ease-in-out infinite;
     }
 
-    /* ▼▼ ボタンのオーラエフェクト ▼▼ */
     @keyframes buttonAura {
       0% { box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.4), inset 0 0 5px rgba(255,255,255,0.6); border-color: rgba(140, 115, 85, 1); }
       50% { box-shadow: 0 0 20px 6px rgba(249, 115, 22, 0.8), inset 0 0 5px rgba(255,255,255,0.6); border-color: rgba(249, 115, 22, 0.8); }
@@ -243,39 +226,118 @@
   <div id="root"></div>
 
   <script>
-    // --- 画像・デザインアセット ---
     const PARCHMENT_TEXTURE = "url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjAwIDIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZmlsdGVyIGlkPSdub2lzZUZpbHRlcic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9JzAuOCcgbnVtT2N0YXZlcz0nNCcgc3RpdGNoVGlsZXM9J3N0aXRjaCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbHRlcj0ndXJsKCNub2lzZUZpbHRlciknIG9wYWNpdHk9JzAuMTUnLz48L3N2Zz4=')";
     const CARD_BACK_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
-    const CARD_FRAME_IMG = "https://ninin-cc.github.io/img/rt/card.png"; 
+    const CARD_FRAME_IMG = "https://ninin-cc.github.io/img/rt/card.png";
     const REFREM_AVATAR = "https://ninin-cc.github.io/img/mt/reflm.jpg";
     const BG_START_MENTALIA = "https://ninin-cc.github.io/img/mt/top.jpg";
 
     const ICONS = {
       Play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
       Sparkles: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>',
-      Copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
-      Check: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
       Scroll: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/></svg>',
       ChevronLeft: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
       Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
       Calendar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
       RefreshCw: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
       Flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
-      Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
-      Line: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-5.906-1.755c.346 0 .628.285.628.63v4.356c0 .344-.282.629-.628.629-.345 0-.63-.285-.63-.629V8.738c0-.345.285-.63.63-.63zm-2.971 4.356v-4.356c0-.345-.285-.63-.63-.63-.346 0-.628.285-.628.63v3.098l-2.028-3.098c-.056-.088-.135-.165-.224-.225-.094-.056-.201-.09-.313-.09-.346 0-.628.285-.628.63v4.356c0 .344.282.629.628.629.345 0 .63-.285.63-.629v-3.098l2.028 3.098c.056.088.135.165.224.225.094.056.201.09.313.09.346 0 .628-.285.628-.63zm-6.254-4.356c.345 0 .63.285.63.63v3.098h1.755c.346 0 .628.285.628.63 0 .344-.282.629-.628.629H3.604c-.345 0-.63-.285-.63-.629V8.738c0-.345.285-.63.63-.63zm20.766 2.455c0-4.228-4.249-7.662-9.477-7.662-5.226 0-9.475 3.434-9.475 7.662 0 3.82 3.404 7.039 8.012 7.568.31.066.732.203.839.467.098.24-.031.603-.062.839l-.178 1.054c-.053.315-.246 1.206 1.057.658 1.303-.548 7.026-4.148 8.65-6.386.425-.632.634-1.378.634-2.2z"/></svg>'
+      Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>'
     };
 
     function getIcon(name, classes) {
       let svg = ICONS[name] || '';
-      if (classes) {
-        svg = svg.replace('<svg ', '<svg class="' + classes + '" ');
-      }
+      if (classes) svg = svg.replace('<svg ', '<svg class="' + classes + '" ');
       return svg;
     }
 
-    // --- タロットカードデータ（全22枚） ---
+    const EMBEDDED_BROWSER_INFO = (() => {
+      const ua = navigator.userAgent || '';
+      const urlParams = new URLSearchParams(window.location.search);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const matchers = [
+        { name: 'LINE', pattern: /\bLine\//i },
+        { name: 'Instagram', pattern: /Instagram/i },
+        { name: 'Facebook', pattern: /FBAN|FBAV|FBIOS|FB_IAB|FB4A/i },
+        { name: 'Messenger', pattern: /Messenger|FBAN\/Messenger/i },
+        { name: 'X/Twitter', pattern: /Twitter|TwitterAndroid|Twitter for iPhone/i },
+        { name: 'TikTok', pattern: /TikTok|musical_ly|BytedanceWebview/i },
+        { name: 'Threads', pattern: /Barcelona|Threads/i },
+        { name: 'WeChat', pattern: /MicroMessenger/i },
+        { name: 'Yahoo! JAPANアプリ', pattern: /YJApp|YahooMobile/i },
+        { name: 'Googleアプリ', pattern: /\bGSA\//i },
+        { name: 'Android WebView', pattern: /; wv\)|\bwv\b|Version\/\d+\.\d+ Chrome\/.+ Mobile Safari/i },
+        { name: 'アプリ内ブラウザ', pattern: /WebView|InAppBrowser/i }
+      ];
+      const previewName = urlParams.get('browserPreview') || (urlParams.has('linePreview') ? 'LINE' : '');
+      const matchedBrowser = matchers.find(({ pattern }) => pattern.test(ua));
+      const isPreview = urlParams.has('inAppPreview') || urlParams.has('browserPreview') || urlParams.has('linePreview');
+
+      return {
+        isEmbedded: isPreview || !!matchedBrowser,
+        appName: previewName || matchedBrowser?.name || 'アプリ内ブラウザ',
+        isAndroid: /Android/i.test(ua),
+        isIOS
+      };
+    })();
+
+    function getExternalBrowserUrl() {
+      const canonicalUrl = document.querySelector('link[rel="canonical"]')?.href;
+      if (canonicalUrl) return canonicalUrl;
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete('linePreview');
+      url.searchParams.delete('inAppPreview');
+      url.searchParams.delete('browserPreview');
+      return url.toString();
+    }
+
+    function buildAndroidIntentUrl(url) {
+      const parsedUrl = new URL(url);
+      const scheme = parsedUrl.protocol.replace(':', '');
+      return `intent://${parsedUrl.host}${parsedUrl.pathname}${parsedUrl.search}#Intent;scheme=${scheme};action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+    }
+
+    function openInExternalBrowser() {
+      const url = getExternalBrowserUrl();
+
+      if (EMBEDDED_BROWSER_INFO.isAndroid) {
+        window.location.href = buildAndroidIntentUrl(url);
+        setTimeout(() => {
+          showFlashMessage('開けない場合はリンクをコピーして標準ブラウザに貼り付けてください。');
+        }, 1200);
+        return;
+      }
+
+      if (EMBEDDED_BROWSER_INFO.isIOS) {
+        showFlashMessage('iPhone/iPadでは右上メニューから「ブラウザで開く」または「Safariで開く」を選んでください。');
+      } else {
+        showFlashMessage('この環境では自動で外部ブラウザへ切り替えできません。リンクをコピーしてください。');
+      }
+    }
+
+    async function copyCurrentLink() {
+      const url = getExternalBrowserUrl();
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+          showFlashMessage('リンクをコピーしました。標準ブラウザで開いてください。');
+        } else {
+          fallbackCopyTextToClipboard(url, 'リンクをコピーしました。標準ブラウザで開いてください。');
+        }
+      } catch (error) {
+        fallbackCopyTextToClipboard(url, 'リンクをコピーしました。標準ブラウザで開いてください。');
+      }
+    }
+
+    function maybeAutoOpenExternalBrowser() {
+      if (!EMBEDDED_BROWSER_INFO.isEmbedded || !EMBEDDED_BROWSER_INFO.isAndroid) return;
+      if (sessionStorage.getItem('mentaliaExternalOpenTried') === '1') return;
+      sessionStorage.setItem('mentaliaExternalOpenTried', '1');
+      setTimeout(openInExternalBrowser, 800);
+    }
+
     const tarotCards = [
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_0_fool.png", name: "THE FOOL", jp: "愚者", number: "0",
         uprightTitle: "無垢なる始まりと無限の可能性",
         uprightMeaning: "結果を恐れずに新しい物語のページをめくる勇気です。\n荷物を持たずに崖から足を踏み出すように、完全なる信頼のもとに前進すること。",
@@ -288,7 +350,7 @@
         reversedQuestion: "あなたが本当に進みたい方向は、どちらでしょうか？",
         reversedOriginalMeaning: "無謀、軽率、衝動的な決定、未熟さ、コミットメントへの躊躇。方向性の欠如や、結果を考えずに飛び出してしまう無計画な状態を警告します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_1_mag.png", name: "THE MAGICIAN", jp: "魔術師", number: "Ⅰ",
         uprightTitle: "内なる魔法と創造の始まり",
         uprightMeaning: "自分の中にすでにある「魔法」や才能に気づき、それを世界に紡ぎ出す力。\nこれまでの経験を活かし、新たな一歩を意識的に始めるサインです。",
@@ -301,7 +363,7 @@
         reversedQuestion: "あなたが自分を信じられなくなっている理由は何でしょうか？",
         reversedOriginalMeaning: "操作、権力の悪用、欺瞞、不誠実。自分の才能を無駄にしたり、直感とのつながりを失ったり、先延ばしにしてしまう状態を表します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_2_h_pri.png", name: "THE HIGH PRIESTESS", jp: "女教皇", number: "Ⅱ",
         uprightTitle: "内なる智慧と静寂の時",
         uprightMeaning: "外部の喧騒から離れ、自分の心の奥底にある小さな声に静かに耳を澄ませる時間です。\n他者の声や常識に惑わされず、自らの内なる真実と静かに向き合う知性を教えてくれます。",
@@ -314,7 +376,7 @@
         reversedQuestion: "あなたが無視してしまっている「本当の想い」は何でしょうか？",
         reversedOriginalMeaning: "直感の無視、内なる知恵を遮る疑念、秘密、感情的な距離。表面的な実践にとどまったり、未知のものへの恐れを抱くことを示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_3_empress.png", name: "THE EMPRESS", jp: "女帝", number: "Ⅲ",
         uprightTitle: "無条件の受容と豊かな愛",
         uprightMeaning: "見返りを求めない無条件の優しさで、他者や自分自身をあたたかく包み込む受容の力。\n無理に物事を推し進めるのではなく成長のための環境を整え、小さな優しさが実を結び心を豊かに満たしていく象徴です。",
@@ -327,7 +389,7 @@
         reversedQuestion: "自分を大切にするために、今日できる小さな優しさは何でしょうか？",
         reversedOriginalMeaning: "創造性のブロック、自己ケアの怠慢、過度の依存、支配的な行動。過保護や過剰な甘やかしによる停滞、燃え尽き症候群を意味します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_4_emperor.png", name: "THE EMPEROR", jp: "皇帝", number: "Ⅳ",
         uprightTitle: "静かなる決意と守る力",
         uprightMeaning: "誰かを支配するためではなく、愛する者たちが安心して生きられる場所を守り抜くための「静かなる決意」。\n困難を乗り越え、現実社会の基盤を築き、人々を導くための地に足のついた強さを意味します。",
@@ -340,7 +402,7 @@
         reversedQuestion: "あなたが無理に背負い込んでいるものは何でしょうか？\n誰かに頼れることはありませんか？",
         reversedOriginalMeaning: "権力の乱用、過度な統制、支配欲、柔軟性の欠如、冷酷さ。コントロールを装った弱さや、抑圧的な管理に対する抵抗を表します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_5_hiero.png", name: "THE HIEROPHANT", jp: "教皇", number: "Ⅴ",
         uprightTitle: "伝統の知恵と誠実な分かち合い",
         uprightMeaning: "古くから語り継がれてきた物語や教えの中から、今の自分や誰かを救う知恵を見つけ出すこと。\n個人の体験と伝統との架け橋となり、その学びを他者と優しく分かち合う誠実さを表します。",
@@ -353,7 +415,7 @@
         reversedQuestion: "あなたが縛られている「見えないルール」は何でしょうか？",
         reversedOriginalMeaning: "伝統への疑問、制限的な信念やルールからの解放、教義への反発。型破りな道を選ぶことや、権威の偽善に対する不満を示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_6_lover.png", name: "THE LOVERS", jp: "恋人", number: "Ⅵ",
         uprightTitle: "心地よい選択と純粋な共鳴",
         uprightMeaning: "損得や外部の権威ではなく、自らの心が「心地よい」と感じるものを正直に選び取ること。\n自分自身や他者との間に生まれる純粋な共鳴や、心を通わせるあたたかな絆の始まりを示します。",
@@ -366,7 +428,7 @@
         reversedQuestion: "他者の目を気にせず、あなたが本当に選びたいものは何ですか？",
         reversedOriginalMeaning: "不調和、誤った選択、裏切り、関係の不均衡、コミットメントの欠如。すれ違いや相反する目標、優柔不断さによる関係の破綻を意味します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_7_chari.png", name: "THE CHARIOT", jp: "戦車", number: "Ⅶ",
         uprightTitle: "前向きな推進力と勇気",
         uprightMeaning: "心の中の迷いや恐れといった相反する感情を御しながら、自分の信じる道へ勇気を出して進もうとする前向きなエネルギー。\n目標に向かって突き進む、若々しく力強い推進力です。",
@@ -379,7 +441,7 @@
         reversedQuestion: "焦っている自分に、どんな優しい言葉をかけてあげたいですか？",
         reversedOriginalMeaning: "コントロールの喪失、反対方向へ引っ張られる感覚、権力闘争、明確な目標の欠如。焦りや攻撃性が空回りし、停滞している状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_8_stre.png", name: "STRENGTH", jp: "力", number: "Ⅷ",
         uprightTitle: "しなやかな心の強さと慈愛",
         uprightMeaning: "力で本能をねじ伏せるのではなく、自分の中の恐れや怒りを優しく受け入れ、静かに寄り添うことで飼い慣らす、本当の意味でのしなやかで静かな心の強さです。",
@@ -392,7 +454,7 @@
         reversedQuestion: "あなたが無理に押さえつけている感情は何でしょうか？",
         reversedOriginalMeaning: "弱さ、不安、恐れに屈すること、嫉妬、支配の問題。感情のバランスが崩れ、自信を失って他人に振り回されやすくなっている状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_9_hermit.png", name: "THE HERMIT", jp: "隠者", number: "Ⅸ",
         uprightTitle: "静かなる内省と真実の光",
         uprightMeaning: "喧騒から離れ、自らの内なる灯り（経験から得た真実の光）だけを頼りに自分だけの答えを見つけるための、尊く優しい孤独の時間です。",
@@ -405,7 +467,7 @@
         reversedQuestion: "あなたが向き合うのを避けている「自分の本心」は何でしょうか？",
         reversedOriginalMeaning: "過度の孤立、世界からの撤退、孤独、回避、コミュニケーション不足。内なる知恵から切り離され、現実逃避をしている状態を警告します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_10_wheel.png", name: "WHEEL OF Fortune", jp: "運命の輪", number: "Ⅹ",
         uprightTitle: "大いなる巡りと変化の受け入れ",
         uprightMeaning: "蝶の羽ばたきが遠くの嵐を生むように、小さな出来事が縁となり新たな季節が訪れること。\n運命の大いなる流れに抗うのではなく、その変化に優しく乗り、訪れたチャンスを掴み取る勇気を促します。",
@@ -418,7 +480,7 @@
         reversedQuestion: "流れに身を任せるとしたら、どう心が軽くなりますか？",
         reversedOriginalMeaning: "挫折、変化への抵抗、成長の欠如による悪循環、不安定さ。タイミングの悪さや機会の損失によって、身動きが取れないと感じる状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_11_justice.png", name: "JUSTICE", jp: "正義", number: "Ⅺ",
         uprightTitle: "聴くことから始まる正義",
         uprightMeaning: "誰が正しいかを裁くのではなく、なぜそうなったのかを聴くこと。\n言葉の裏にある想い、見えていなかった物語に目を向けること。",
@@ -431,7 +493,7 @@
         reversedQuestion: "あなたはいま、誰かを早く裁こうとしていないでしょうか？\nその人の奥にある事情を、もう少し聴くとしたら何を尋ねますか？",
         reversedOriginalMeaning: "不誠実、偏見、不当な結果、嘘、隠された意図、不均衡。倫理的でない選択や職場での不当な扱い、カルマの教訓を無視している状態を示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_12_hanged.png", name: "THE HANGED MAN", jp: "吊るされた男", number: "Ⅻ",
         uprightTitle: "視点の転換と静かなる成長",
         uprightMeaning: "思い通りに動けない時間を嘆くのではなく、立ち止まり視点を変えることでしか見えない景色に気づくための期間。\n魂を深く成長させるための静かな充電と内省の時間です。",
@@ -444,7 +506,7 @@
         reversedQuestion: "焦りを手放し、状況に身を委ねるとしたらどうなりますか？",
         reversedOriginalMeaning: "停滞、抵抗、異なる視点を持つことの拒否、利己主義、優柔不断。変化への恐れから無駄な時間を過ごし、学びの機会を逃している状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_13_death.png", name: "DEATH", jp: "死神", number: "ⅩⅢ",
         uprightTitle: "終わりと再生",
         uprightMeaning: "古い価値観や役割の終焉。\n生き方・関係性・アイデンティティの変容。\n手放すことで、新しい自分への生まれなおしが始まります。",
@@ -457,7 +519,7 @@
         reversedQuestion: "あなたが変化を恐れているものは何でしょうか？\n変わらないことで、守っているものは何でしょうか？",
         reversedOriginalMeaning: "変化への抵抗、手放すことへの恐怖、不健全な絆や停滞した状況への執着。古いパターンにしがみつき、魂の成長や変容を拒否している状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_14_tenpa.png", name: "TEMPERANCE", jp: "節制", number: "ⅩⅣ",
         uprightTitle: "心の調和と癒しの循環",
         uprightMeaning: "自分の中にある異なる感情や価値観を優しく混ぜ合わせ、心の淀みを流していくこと。\n焦らずに内なるペースを整え、穏やかで自然な状態を取り戻す癒しのプロセスです。",
@@ -470,7 +532,7 @@
         reversedQuestion: "あなたが無理をしていることは何ですか？\nどうすれば自然体に戻れますか？",
         reversedOriginalMeaning: "不均衡、焦り、過剰、対立、不調和、妥協の欠如。無理に結果を出そうとしたり、極端な行動に走ることで生じるフラストレーションを表します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_15_devil.png", name: "THE DEVIL", jp: "悪魔", number: "ⅩⅤ",
         uprightTitle: "鎖の自覚と内省の鏡",
         uprightMeaning: "自分が手放せずにいる「恐れ」や「古い思い込み」という鎖の存在に気づくための優しい鏡。\nその鎖は緩く、いつでも自らの意思で外せることに気づき、自分と向き合う機会を与えます。",
@@ -483,7 +545,7 @@
         reversedQuestion: "鎖を外したあなたは、どこへ向かいたいですか？",
         reversedOriginalMeaning: "（逆位置の方がポジティブな意味を持つ数少ないカード）制限からの解放、力を取り戻すこと、有害な関係や執着からの脱却、恐怖からの解放を示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_16_tawer.png", name: "THE TOWER", jp: "塔", number: "ⅩⅥ",
         uprightTitle: "偽りの打破と浄化の光",
         uprightMeaning: "偽りの殻や、自分を縛っていた不要な思い込みを壊し、本当の真実や希望の光へと導いてくれる「浄化の出来事」。\n痛みを伴いながらも、前向きな変容のプロセスです。",
@@ -496,7 +558,7 @@
         reversedQuestion: "崩れ去ることを恐れている、あなたの中の「殻」は何ですか？",
         reversedOriginalMeaning: "変化への恐れ、避けられない変容を遅らせること、問題の否定、必要な終わりへの抵抗。無視すれば悪化する内部の混乱や不安定さを示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_17_star.png", name: "THE STAR", jp: "星", number: "ⅩⅦ",
         uprightTitle: "変わらぬ希望と純粋な祈り",
         uprightMeaning: "激しい出来事のあとに見上げる空で、変わらずに輝く希望の光。\nあなた自身の中にある祈りや才能が、未来を照らす道標となることを示します。",
@@ -509,7 +571,7 @@
         reversedQuestion: "見えなくなっているけれど、確かにそこにある「希望」は何ですか？",
         reversedOriginalMeaning: "絶望、疑念、信仰の喪失、失望、インスピレーションの枯渇。創造性がブロックされ、悲観主義に陥って希望を見失っている状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", name: "THE MOON", jp: "月", number: "ⅩⅧ",
         uprightTitle: "見えない不安への寄り添いと直感",
         uprightMeaning: "心の奥底にある漠然とした不安や痛みに優しく寄り添い、自分自身の直感や本当の想いに耳を澄ませるための静かな時間。\n霧が晴れるのを待つ受容のプロセスです。",
@@ -522,7 +584,7 @@
         reversedQuestion: "霧が晴れた後、あなたはどんな一歩を踏み出したいですか？",
         reversedOriginalMeaning: "幻想が晴れて明確さが戻る、秘密が暴かれる（ポジティブな側面）。または、直感がブロックされて恐れやパラノイアに圧倒されている状態を示します。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", name: "THE SUN", jp: "太陽", number: "ⅩⅨ",
         uprightTitle: "曇りなき魂の輝きと無垢なる喜び",
         uprightMeaning: "魂が曇りなく輝き、生きている喜びを心から感じられる状態。\nそのあたたかさを周囲と分かち合い、共に笑顔になれる無垢で絶対的な幸福を表します。",
@@ -535,7 +597,7 @@
         reversedQuestion: "無理に笑うのをやめて、今どう自分を休ませてあげたいですか？",
         reversedOriginalMeaning: "一時的な挫折、不明瞭さ、喜びの減少、誤解、不安、非現実的な期待。モチベーションが下がり、ポジティブな光が曇っている状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_20_judge.png", name: "JUDGEMENT", jp: "審判", number: "ⅩⅩ",
         uprightTitle: "過去の赦しとあたたかな再出発",
         uprightMeaning: "過去の傷や後悔が優しく赦され、自分自身に対する正直な総決算を経て、新たな意味を持ってよみがえること。\n古い自分が報われ、本当の自分の魂の声に応えて目覚める再出発です。",
@@ -548,7 +610,7 @@
         reversedQuestion: "自分を赦すために、どんな言葉をかけてあげたいですか？",
         reversedOriginalMeaning: "自己疑念、否定、変化への恐怖、和解への抵抗、責任の回避。内なる呼びかけを無視し、決断を先延ばしにして機会を逃している状態です。"
       },
-      { 
+      {
         file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", name: "THE WORLD", jp: "世界", number: "ⅩⅪ",
         uprightTitle: "完全なる調和と満ち足りた結末",
         uprightMeaning: "あなたの歩んできたすべての物語が一つに繋がり、完全なる調和に達すること。\nありのままの自分を肯定し、次なる旅へと向かう前の、美しく満ち足りた結末です。",
@@ -563,22 +625,20 @@
       }
     ];
 
-    // --- 状態管理 ---
     let state = {
-      gameState: 'START', // START, RULES, DRAWING, RESULT
+      gameState: 'START',
       drawnCard: null,
-      orientation: '', // '正位置', '逆位置', '未知の向き'
-      tiltAngle: 0, 
-      drawingTilt: 0, // 演出中のダミー角度
-      isHorizontal: false, // 横向きかどうかのフラグ
+      orientation: '',
+      tiltAngle: 0,
+      drawingTilt: 0,
+      isHorizontal: false,
       memo: '',
       isTransitioning: false,
       flashMessage: '',
-      isAccordionOpen: false, // メンテーリアの書庫アコーディオンの開閉状態
-      isOriginalAccordionOpen: false // 原義アコーディオンの開閉状態
+      isAccordionOpen: false,
+      isOriginalAccordionOpen: false
     };
 
-    // 魔法の粉を生成する関数
     const MagicDustHTML = (() => {
       let html = '<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-60">';
       for(let i=0; i<15; i++) {
@@ -626,29 +686,24 @@
     function drawCard() {
       const randomIndex = Math.floor(Math.random() * tarotCards.length);
       state.drawnCard = tarotCards[randomIndex];
-      
-      // ★ 1/6の確率で横向きになるイベント ★
       state.isHorizontal = Math.random() < (1/6);
-      
+
       if (state.isHorizontal) {
         state.orientation = "未知の向き";
-        state.tiltAngle = Math.random() < 0.5 ? 90 : -90; // 結果画面では横に倒れる
-        state.drawingTilt = Math.random() < 0.5 ? 10 : -10; // 引いている最中は縦のまま偽装
+        state.tiltAngle = Math.random() < 0.5 ? 90 : -90;
+        state.drawingTilt = Math.random() < 0.5 ? 10 : -10;
       } else {
         state.orientation = Math.random() < 0.5 ? "正位置" : "逆位置";
         state.tiltAngle = Math.random() < 0.5 ? 10 : -10;
         state.drawingTilt = state.tiltAngle;
       }
-      
+
       state.memo = '';
       state.isAccordionOpen = false;
       state.isOriginalAccordionOpen = false;
-      
-      // 演出画面へ
+
       transitionState(() => {
         state.gameState = 'DRAWING';
-        
-        // ★ 6秒後に結果画面へ自動遷移 (5秒アニメーション + 1秒余韻)
         setTimeout(() => {
           transitionState(() => {
             state.gameState = 'RESULT';
@@ -660,21 +715,18 @@
     function getCardDetails() {
       const card = state.drawnCard;
       if (!card) return null;
-      
       const isUpright = state.orientation === "正位置";
-      
+
       return {
-        title: state.isHorizontal 
-          ? "空白の鏡" 
-          : (isUpright ? card.uprightTitle : card.reversedTitle),
-        meaning: state.isHorizontal 
-          ? "カードが横を向いて現れました。\n正位置でも逆位置でもない状態です。\n決められた意味はなく、あなたの心に浮かんだものが、そのまま意味となります。" 
+        title: state.isHorizontal ? "空白の鏡" : (isUpright ? card.uprightTitle : card.reversedTitle),
+        meaning: state.isHorizontal
+          ? "カードが横を向いて現れました。\n正位置でも逆位置でもない状態です。\n決められた意味はなく、あなたの心に浮かんだものが、そのまま意味となります."
           : (isUpright ? card.uprightMeaning : card.reversedMeaning),
-        message: state.isHorizontal 
-          ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。" 
-          : (isUpright ? `${card.uprightMessage}` : `${card.reversedMessage}`),
-        question: state.isHorizontal 
-          ? "いま、あなたにはこのカードがどう見えていますか？\n直感で浮かんだ言葉は何でしょうか？" 
+        message: state.isHorizontal
+          ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。"
+          : (isUpright ? card.uprightMessage : card.reversedMessage),
+        question: state.isHorizontal
+          ? "いま、あなたにはこのカードがどう見えていますか？\n直感で浮かんだ言葉は何でしょうか？"
           : (isUpright ? card.uprightQuestion : card.reversedQuestion),
         orientationText: state.isHorizontal ? "委ねられた意味" : state.orientation,
         orientationColor: state.isHorizontal ? "text-stone-600" : (isUpright ? "text-orange-800" : "text-indigo-800")
@@ -690,33 +742,27 @@
       }, 3000);
     }
 
-    // ★ 画像生成（キャプチャ）機能 ★
     async function generateImage() {
       const captureEl = document.getElementById('capture-area');
-      if (!captureEl || !window.html2canvas) {
-        throw new Error("Cannot capture image");
-      }
+      if (!captureEl || !window.html2canvas) throw new Error("Cannot capture image");
       const canvas = await window.html2canvas(captureEl, {
-        backgroundColor: '#e8dcc4', 
-        scale: 2, 
+        backgroundColor: '#e8dcc4',
+        scale: 2,
         useCORS: true,
       });
       return canvas.toDataURL("image/png");
     }
 
     function dataURLtoFile(dataurl, filename) {
-        var arr = dataurl.split(','),
-            mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[arr.length - 1]), 
-            n = bstr.length, 
-            u8arr = new Uint8Array(n);
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new File([u8arr], filename, {type:mime});
+      var arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[arr.length - 1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while(n--) u8arr[n] = bstr.charCodeAt(n);
+      return new File([u8arr], filename, {type:mime});
     }
 
-    // ★ 画像保存 ★
     async function handleSave() {
       state.flashMessage = "画像を生成中...";
       render();
@@ -734,7 +780,6 @@
       setTimeout(() => { state.flashMessage = ''; render(); }, 3000);
     }
 
-    // ★ 画像付きシェア（Web Share API）★
     async function shareResult() {
       const card = state.drawnCard;
       if (!card) return;
@@ -763,7 +808,6 @@
           });
           state.flashMessage = "";
         } else {
-          // PC等でShare機能がない場合はクリップボードにコピー
           if (navigator.clipboard && window.isSecureContext) {
             await navigator.clipboard.writeText(shareText);
             state.flashMessage = 'テキストをコピーしました！（画像保存は別ボタンから可能です）';
@@ -772,16 +816,11 @@
           }
         }
       } catch (error) {
-        if (error.name !== 'AbortError') {
-          state.flashMessage = "共有に失敗しました。";
-        } else {
-          state.flashMessage = "";
-        }
+        if (error.name !== 'AbortError') state.flashMessage = "共有に失敗しました。";
+        else state.flashMessage = "";
       }
       render();
-      if(state.flashMessage) {
-          setTimeout(() => { state.flashMessage = ''; render(); }, 3000);
-      }
+      if(state.flashMessage) setTimeout(() => { state.flashMessage = ''; render(); }, 3000);
     }
 
     function saveToGoogleCalendar() {
@@ -797,7 +836,7 @@
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
       const startDate = `${year}${month}${day}`;
-      
+
       const tomorrow = new Date(d);
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tYear = tomorrow.getFullYear();
@@ -806,11 +845,10 @@
       const endDate = `${tYear}${tMonth}${tDay}`;
 
       const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&details=${encodeURIComponent(details)}&dates=${startDate}/${endDate}`;
-      
       window.open(url, '_blank');
     }
 
-    function fallbackCopyTextToClipboard(text) {
+    function fallbackCopyTextToClipboard(text, successMessage = '結果とメモをコピーしました！') {
       const textArea = document.createElement("textarea");
       textArea.value = text;
       textArea.style.top = "0";
@@ -821,11 +859,7 @@
       textArea.select();
       try {
         const successful = document.execCommand('copy');
-        if (successful) {
-          showFlashMessage('結果とメモをコピーしました！');
-        } else {
-          showFlashMessage('コピーに失敗しました。');
-        }
+        showFlashMessage(successful ? successMessage : 'コピーに失敗しました。');
       } catch (err) {
         showFlashMessage('コピーに失敗しました。');
       }
@@ -839,7 +873,6 @@
       let html = `
         <div class="min-h-screen text-stone-900 font-sans flex flex-col justify-between transition-colors duration-1000 overflow-x-hidden relative"
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
-          
           ${MagicDustHTML}
       `;
 
@@ -851,20 +884,40 @@
         `;
       }
 
+      if (EMBEDDED_BROWSER_INFO.isEmbedded) {
+        html += `
+          <div class="relative z-20 w-full px-3 sm:px-4 pt-4">
+            <div class="mx-auto max-w-2xl bg-[#f4ebd8]/95 border border-orange-800/40 rounded-md shadow-[0_8px_24px_rgba(67,20,7,0.18)] p-4 sm:p-5 font-serif" style="background-image: ${PARCHMENT_TEXTURE}">
+              <p class="text-sm sm:text-base font-black text-orange-950 tracking-widest mb-2">アプリ内ブラウザで開いています</p>
+              <p class="text-xs sm:text-sm text-stone-800 font-bold leading-relaxed">
+                現在は${EMBEDDED_BROWSER_INFO.appName}などの標準ブラウザ以外の画面で開かれている可能性があります。画像保存や共有がうまく動かない場合は、標準ブラウザで開くと安定します。
+                ${EMBEDDED_BROWSER_INFO.isIOS ? 'iPhone/iPadでは自動切り替えができないため、右上メニューから「ブラウザで開く」または「Safariで開く」を選んでください。' : ''}
+              </p>
+              <div class="mt-3 flex flex-col sm:flex-row gap-2">
+                <button data-action="open-external-browser" class="wood-btn wood-btn-dark rounded-sm flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-4 shadow-sm">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 text-stone-100">標準ブラウザで開く</span>
+                </button>
+                <button data-action="copy-current-link" class="wood-btn wood-btn-light rounded-sm flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-4 shadow-sm">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 text-stone-800">リンクをコピー</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       html += `
           <div id="main-stage" class="w-full flex-grow flex justify-center ${stageFadeClass} py-6 sm:py-12 px-3 sm:px-4">
             <div class="w-full max-w-2xl relative z-10 flex flex-col">
       `;
 
-      // ==========================================
-      // START画面 (トップ)
-      // ==========================================
       if (state.gameState === 'START') {
         html += `
               <div class="bg-center rounded-md border border-stone-400/80 text-center shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]" style="background-image: url('${BG_START_MENTALIA}'); background-size: cover; background-position: center top;">
                 <div class="absolute inset-0 bg-stone-900/10 z-0 pointer-events-none"></div>
                 <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-stone-900/95 via-stone-900/50 to-transparent z-0 pointer-events-none"></div>
-                
                 <div class="relative z-10 px-2 pb-6 sm:pb-8 pt-2 w-full">
                   <header class="text-center w-full">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold tracking-widest text-stone-100 drop-shadow-md magic-text-glow" style="text-shadow: 0 2px 4px rgba(0,0,0,0.9);">
@@ -888,7 +941,6 @@
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-800">
                     メンテーリアの世界へようこそ
-                    <svg class="w-3 h-3 ml-2 group-hover:text-orange-700 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                   </span>
                 </a>
 
@@ -920,9 +972,6 @@
         `;
       }
 
-      // ==========================================
-      // RULES画面 (小部屋の中)
-      // ==========================================
       if (state.gameState === 'RULES') {
         html += `
               <div class="mt-2 sm:mt-4 mb-6 relative z-10">
@@ -931,11 +980,10 @@
                 </h2>
 
                 <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-col sm:flex-row-reverse">
-                  
                   <div class="w-full sm:w-[40%] h-48 sm:h-auto relative z-0 shrink-0 border-b sm:border-b-0 sm:border-l border-stone-400/50 mask-refrem-right">
                     <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%]" />
                   </div>
-                  
+
                   <div class="relative z-20 p-5 sm:p-8 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     <p>よく来た、旅人よ。</p>
                     <p>ここはメンテーリアにある</p>
@@ -979,9 +1027,6 @@
         `;
       }
 
-      // ==========================================
-      // DRAWING画面 (演出)
-      // ==========================================
       if (state.gameState === 'DRAWING') {
         const isDrawingReversed = state.orientation === "逆位置" || (state.isHorizontal && Math.random() < 0.5);
         const drawingRotationClass = isDrawingReversed ? "card-reversed" : "";
@@ -991,29 +1036,18 @@
                 <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-800 mb-8 tracking-widest animate-pulse">
                   リフレムがカードを引いています...
                 </h2>
-                
+
                 <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-[5000ms]" style="transform: rotate(${state.drawingTilt}deg);">
-                  <!-- ★ くるくる回転する3Dカード本体 ★ -->
                   <div class="w-full h-full animate-cardSpinAndFlip preserve-3d rounded-xl">
-                    
-                    <!-- 背面 (回転中は裏面の裏が見えないようバックフェースを隠す) -->
                     <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2 sm:p-3 shadow-2xl animate-hideBack" style="transform: rotateY(180deg) translateZ(1px); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                       <div class="w-full h-full rounded-sm overflow-hidden relative" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
                          <div class="absolute inset-0 bg-stone-900/40"></div>
                       </div>
                     </div>
-                    
-                    <!-- 表面(枠付き・光レイヤー付き) -->
                     <div class="absolute inset-0 w-full h-full rounded-xl backface-hidden p-2.5 sm:p-3 animate-cardOuterGlow shadow-2xl animate-showFront" style="transform: rotateY(0deg) translateZ(1px); background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                        <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
-                         
-                         <!-- 絵柄 (最後にはっきり現れる) -->
                          <img src="${state.drawnCard.file}" alt="${state.drawnCard.name}" class="w-full h-full object-cover ${drawingRotationClass} animate-revealImage" />
-                         
-                         <!-- ★ 光レイヤー (回転中〜正面を向いた直後まで絵柄を隠して輝く) ★ -->
-                         <div class="absolute inset-0 bg-gradient-to-tr from-yellow-100 via-orange-100 to-white animate-cardGlowLayer flex items-center justify-center">
-                         </div>
-                         
+                         <div class="absolute inset-0 bg-gradient-to-tr from-yellow-100 via-orange-100 to-white animate-cardGlowLayer flex items-center justify-center"></div>
                        </div>
                     </div>
                   </div>
@@ -1022,33 +1056,57 @@
         `;
       }
 
-      // ==========================================
-      // RESULT画面
-      // ==========================================
       if (state.gameState === 'RESULT') {
         const card = state.drawnCard;
         const detailsObj = getCardDetails();
-        
         const rotationClass = state.isHorizontal ? "" : (state.orientation === "正位置" ? "" : "card-reversed");
+        const displayMeaning = detailsObj.meaning.replace(/\s*\n\s*/g, '');
 
         html += `
-              <!-- ★ キャプチャ領域開始 ★ -->
-              <div id="capture-area" class="relative z-10 pt-4 pb-8 px-4 sm:px-6 -mx-4 sm:-mx-6 rounded-md" style="background-color: #e8dcc4; background-image: ${PARCHMENT_TEXTURE};">
-                
+              <div id="capture-area" class="relative z-10 pt-4 pb-8 px-2 sm:px-6 -mx-2 sm:-mx-6 rounded-md" style="background-color: #e8dcc4; background-image: ${PARCHMENT_TEXTURE};">
                 <div class="text-center mb-6 sm:mb-8">
                   <h2 class="text-xl sm:text-2xl font-serif font-extrabold tracking-widest text-stone-900 magic-text-glow">
                     今日出会ったカード
                   </h2>
                 </div>
 
-                <div class="flex flex-col md:flex-row items-center md:items-start justify-center gap-6 md:gap-8 relative z-10 mb-6 w-full">
-                  
-                  <!-- 左側：カードビジュアル -->
-                  <div class="shrink-0 flex justify-center ${state.isHorizontal ? 'my-16 md:my-16 md:mx-6' : ''}">
-                    <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
-                      <!-- 枠とオーラ -->
-                      <div class="w-full h-full rounded-xl p-2.5 sm:p-3 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
-                        <!-- 画像 -->
+                ${state.isHorizontal ? `
+                <div class="relative z-10 mb-6 w-full max-w-2xl mx-auto px-4 sm:px-8 overflow-visible">
+                  <div class="flex flex-col items-center gap-2 sm:gap-3">
+                    <div class="relative flex h-[150px] sm:h-[190px] w-full items-center justify-center overflow-visible">
+                      <div class="relative w-[96px] h-[160px] sm:w-[126px] sm:h-[210px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
+                        <div class="w-full h-full rounded-xl p-1.5 sm:p-2 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                          <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
+                            <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="relative z-20 w-[60%] max-w-[60%] py-1 sm:py-2">
+                      <div class="text-left border-b border-stone-400/50 pb-2 sm:pb-3 mb-3">
+                        <p class="text-stone-600 font-serif font-bold text-[10px] sm:text-sm tracking-[0.2em] mb-0.5">NO. ${card.number}</p>
+                        <h3 class="text-lg sm:text-2xl font-serif font-black text-stone-900 tracking-wider mb-0.5 magic-text-glow">${card.name}</h3>
+                        <p class="text-stone-800 font-serif font-bold text-[11px] sm:text-sm tracking-widest">${card.jp}</p>
+                        <div class="mt-2">
+                          <span class="${detailsObj.orientationColor} font-serif font-bold text-[11px] sm:text-sm tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
+                        </div>
+                      </div>
+
+                      <div class="text-left">
+                        <h4 class="flex items-center text-xs sm:text-sm font-bold text-orange-900 mb-2 border-l-[3px] border-orange-800 pl-2 drop-shadow-sm">
+                          テーマ：${detailsObj.title}
+                        </h4>
+                        <p class="text-stone-900 text-[11px] sm:text-sm leading-relaxed font-serif font-medium pl-2 drop-shadow-sm text-glow-soft">${displayMeaning}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                ` : `
+                <div class="relative z-10 mb-6 w-full max-w-2xl mx-auto min-h-[330px] sm:min-h-[430px] px-4 sm:px-8 overflow-visible">
+                  <div class="absolute right-8 sm:right-12 top-12 sm:top-10 z-10 flex justify-center">
+                    <div class="relative w-[140px] h-[233px] sm:w-52 sm:h-[347px] md:w-56 md:h-[373px] transition-transform duration-1000" style="transform: rotate(${state.tiltAngle}deg);">
+                      <div class="w-full h-full rounded-xl p-2 sm:p-2.5 animate-staticCardAura shadow-2xl" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
                         <div class="w-full h-full rounded-[4px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
                           <img src="${card.file}" alt="${card.name}" class="w-full h-full object-cover ${rotationClass}" />
                         </div>
@@ -1056,30 +1114,27 @@
                     </div>
                   </div>
 
-                  <!-- 右側：カード情報と解釈（テーマ・意味まで） -->
-                  <div class="flex-1 w-full h-auto min-h-[300px] md:min-h-[426px] flex flex-col justify-center bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10" style="background-image: ${PARCHMENT_TEXTURE}">
-                    <div class="text-center border-b border-stone-400/50 pb-5 sm:pb-6 mb-6">
-                      <p class="text-stone-500 font-serif font-bold text-xs sm:text-sm tracking-[0.2em] mb-1">NO. ${card.number}</p>
-                      <h3 class="text-2xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-1">${card.name}</h3>
-                      <p class="text-stone-700 font-serif font-bold text-sm sm:text-base tracking-widest">${card.jp}</p>
+                  <div class="relative z-20 flex min-h-[330px] sm:min-h-[430px] w-[60%] max-w-[60%] flex-col justify-center py-4 sm:py-6">
+                    <div class="text-left border-b border-stone-400/50 pb-3 sm:pb-5 mb-4 sm:mb-5">
+                      <p class="text-stone-600 font-serif font-bold text-[10px] sm:text-sm tracking-[0.2em] mb-0.5">NO. ${card.number}</p>
+                      <h3 class="text-xl sm:text-3xl font-serif font-black text-stone-900 tracking-wider mb-0.5 magic-text-glow">${card.name}</h3>
+                      <p class="text-stone-800 font-serif font-bold text-[11px] sm:text-base tracking-widest">${card.jp}</p>
                       <div class="mt-3">
-                        <span class="${detailsObj.orientationColor} font-serif font-bold text-sm sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
+                        <span class="${detailsObj.orientationColor} font-serif font-bold text-[11px] sm:text-base tracking-[0.3em]">― ${detailsObj.orientationText} ―</span>
                       </div>
                     </div>
 
-                    <div>
-                      <h4 class="flex items-center text-sm sm:text-base font-bold text-orange-900 mb-3 border-l-4 border-orange-800 pl-3">
+                    <div class="text-left pr-1 sm:pr-0">
+                      <h4 class="flex items-center text-xs sm:text-base font-bold text-orange-900 mb-2 sm:mb-3 border-l-[3px] sm:border-l-4 border-orange-800 pl-2 drop-shadow-sm">
                         テーマ：${detailsObj.title}
                       </h4>
-                      <p class="text-stone-800 text-sm sm:text-base leading-relaxed font-serif font-medium whitespace-pre-line pl-4">${detailsObj.meaning}</p>
+                      <p class="text-stone-900 text-[11px] sm:text-[15px] leading-relaxed sm:leading-loose font-serif font-medium pl-2 drop-shadow-sm text-glow-soft">${displayMeaning}</p>
                     </div>
                   </div>
                 </div>
+                `}
 
-                <!-- 下部：リフレムの言葉と今日の問い -->
                 <div class="w-full bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-4 space-y-8 sm:space-y-10" style="background-image: ${PARCHMENT_TEXTURE}">
-                  
-                  <!-- リフレムの言葉 -->
                   <div class="bg-[#e8dcc4]/70 p-4 sm:p-5 rounded-md border border-stone-300/50 shadow-sm relative mt-2">
                     <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
                       <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
@@ -1090,7 +1145,6 @@
                     <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
                   </div>
 
-                  <!-- 問い -->
                   <div class="bg-orange-50/50 p-4 sm:p-5 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
                      <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-100 border border-orange-200 text-orange-900 px-4 py-1 rounded-full text-xs sm:text-sm font-bold tracking-widest flex items-center shadow-sm">
                        ${getIcon('Flame', 'w-3 h-3 sm:w-4 sm:h-4 mr-1.5')} 今日の問い
@@ -1098,16 +1152,13 @@
                      <p class="text-stone-900 text-sm sm:text-base md:text-lg leading-loose font-serif font-black whitespace-pre-line text-center mt-3">${detailsObj.question}</p>
                   </div>
                 </div>
-                
-                <!-- キャプチャ用クレジット -->
+
                 <div class="mt-8 text-center w-full opacity-80">
                    <p class="text-[10px] sm:text-[12px] text-stone-900 font-serif tracking-widest font-bold">© Mentalia Tarot</p>
                    <p class="text-[8px] sm:text-[10px] text-stone-800 font-serif tracking-widest mt-1">© 2026 ninin consulting＆counseling</p>
                 </div>
               </div>
-              <!-- ★ キャプチャ領域終了 ★ -->
 
-              <!-- メモエリア -->
               <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-md border border-stone-400/80 p-5 sm:p-8 shadow-sm relative z-10 mb-8 mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
                 <label for="memo" class="block text-stone-800 font-serif font-bold text-sm sm:text-base mb-2 flex items-center">
                   ${getIcon('Scroll', 'w-4 h-4 mr-2')} 内省のメモ
@@ -1116,7 +1167,7 @@
                   内省のメモはGoogleカレンダーに登録する事ができます。<br/>毎日の振り返りの積み重ねがあなたを支えてくれます。
                 </p>
                 <textarea id="memo" rows="5" class="w-full bg-[#e8dcc4]/50 border border-stone-400/60 rounded-md p-4 text-sm sm:text-base font-serif text-stone-800 resize-none transition-all placeholder-stone-500/70" placeholder="今日、このカードと問いを見て感じたことを、言葉にしてみましょう。">${state.memo}</textarea>
-                
+
                 <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
                   <button data-action="save-calendar" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-6 sm:px-8 w-full sm:w-auto shadow-sm hover:scale-105">
                     <div class="wood-texture"></div>
@@ -1128,7 +1179,6 @@
                 </div>
               </div>
 
-              <!-- ★ メンテーリアの書庫（アコーディオン） ★ -->
               <div class="mb-8 relative z-10">
                 <button data-action="toggle-accordion" class="w-full flex items-center justify-between bg-[#f4ebd8]/90 p-4 sm:p-5 rounded-md border border-stone-400/60 shadow-sm text-stone-900 font-serif font-bold text-sm sm:text-base hover:bg-[#e8dcc4] transition-colors" style="background-image: ${PARCHMENT_TEXTURE}">
                   <span class="flex items-center text-stone-800">
@@ -1136,19 +1186,18 @@
                   </span>
                   <svg class="w-4 h-4 sm:w-5 sm:h-5 text-stone-600 transform transition-transform duration-300 ${state.isAccordionOpen ? 'rotate-180' : ''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                
+
                 <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isAccordionOpen ? 'max-h-[2000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}">
                   <div class="bg-[#f0e6d2]/90 p-5 sm:p-8 rounded-md border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.05)] font-serif text-sm sm:text-base text-stone-800 space-y-6" style="background-image: ${PARCHMENT_TEXTURE}">
-                    
                     <p class="font-bold border-b border-stone-400/50 pb-3 text-stone-900 text-base sm:text-lg flex items-center">
                       ${getIcon('Sparkles', 'w-4 h-4 sm:w-5 sm:h-5 mr-2 text-yellow-600')} このカードが持つ、ふたつの意味
                     </p>
-                    
+
                     <div class="bg-[#e8dcc4]/50 p-4 rounded-sm border border-stone-300/50">
                        <h4 class="text-orange-900 font-bold mb-3 flex items-center text-sm sm:text-base">【正位置】 ${card.uprightTitle}</h4>
                        <p class="leading-relaxed whitespace-pre-line">${card.uprightMeaning}</p>
                     </div>
-                    
+
                     <div class="bg-[#e8dcc4]/50 p-4 rounded-sm border border-stone-300/50">
                        <h4 class="text-indigo-900 font-bold mb-3 flex items-center text-sm sm:text-base">【逆位置】 ${card.reversedTitle}</h4>
                        <p class="leading-relaxed whitespace-pre-line">${card.reversedMeaning}</p>
@@ -1160,8 +1209,7 @@
                        </p>
                        <p class="leading-relaxed">逆位置は、決して「悪い意味」や「罰」ではありません。現在どこで心が立ち止まっているのかを教えてくれる優しい気づき（内省）のサインです。再び希望へと歩み出すための心の魔法として受け取ってみてください。</p>
                     </div>
-                    
-                    <!-- ★ 原義のアコーディオン ★ -->
+
                     <div class="mt-6 border-t border-stone-400/50 pt-4">
                       <button data-action="toggle-original-accordion" class="w-full flex items-center justify-between text-stone-800 font-serif font-bold text-xs sm:text-sm transition-colors py-2">
                         <span class="flex items-center">
@@ -1169,7 +1217,7 @@
                         </span>
                         <svg class="w-4 h-4 text-stone-600 transform transition-transform duration-300 ${state.isOriginalAccordionOpen ? 'rotate-180' : ''}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"></path></svg>
                       </button>
-                      
+
                       <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isOriginalAccordionOpen ? 'max-h-[1000px] opacity-100 mt-3' : 'max-h-0 opacity-0'}">
                         <div class="bg-[#d6c5a5]/30 p-4 rounded-sm border border-stone-300/50 space-y-4">
                            <div class="text-xs sm:text-sm">
@@ -1183,12 +1231,10 @@
                         </div>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
 
-              <!-- 画像保存・シェアボタン -->
               <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-10 relative z-10 w-full px-2 sm:px-4">
                 <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
                   <div class="wood-texture"></div>
@@ -1204,7 +1250,6 @@
                 </button>
               </div>
 
-              <!-- 注意書きと戻るボタン -->
               <div class="text-center relative z-10">
                 <div class="text-[10px] sm:text-xs text-stone-600 font-serif font-bold leading-loose mb-6 px-4">
                   <p>何度でも引くことはできるぞ。<br class="sm:hidden"/>けれど、内省は思ったより心の力を使う。</p>
@@ -1215,7 +1260,7 @@
                   <button data-action="go-start" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1">
                     ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 小部屋の入り口に戻る
                   </button>
-                  
+
                   ${state.isHorizontal ? `
                   <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-3 px-8 shadow-sm hover:scale-105 group w-full sm:w-auto mt-4">
                     <div class="wood-texture"></div>
@@ -1225,36 +1270,18 @@
                     </span>
                   </button>
                   ` : ''}
-
-                  <div class="flex flex-col items-center gap-4 w-full px-4 sm:px-0 mx-auto max-w-[280px] sm:max-w-[340px] mt-4">
-                    <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-4 shadow-sm hover:scale-105 group w-full animate-buttonAura">
-                      <div class="wood-texture"></div>
-                      <span class="relative z-10 flex items-center justify-center text-stone-800">
-                        メンテーリアの世界へようこそ
-                        <svg class="w-3 h-3 ml-2 group-hover:text-orange-700 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                      </span>
-                    </a>
-
-                    <a href="https://store.line.me/stickershop/product/31645809/ja" target="_blank" rel="noopener noreferrer" class="bg-[#06C755] rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold text-white py-3 px-4 shadow-sm hover:bg-[#05b34c] hover:scale-105 w-full">
-                      <span class="relative z-10 flex items-center justify-center">
-                        リフレムのタロットのLINEスタンプ
-                      </span>
-                    </a>
-                  </div>
-
                 </div>
               </div>
         `;
       }
 
-      // ▼▼ 開発用シーン表示（ページ番号） ▼▼
       html += `
               <div class="mt-12 pb-4 text-center text-[10px] text-stone-500/50 font-mono tracking-widest relative z-10 pointer-events-none">
                 Page ${getPageNumber()}
               </div>
-            </div> <!-- End of w-full max-w-2xl -->
-          </div> <!-- End of main-stage -->
-          
+            </div>
+          </div>
+
           <footer class="w-full text-center pb-6 relative z-10">
              <p class="text-[9px] sm:text-[11px] text-stone-800 font-serif tracking-widest font-bold">© Mentalia Tarot</p>
              <p class="text-[8px] sm:text-[10px] text-stone-700 font-serif tracking-widest mt-1">
@@ -1267,8 +1294,7 @@
       `;
 
       root.innerHTML = html;
-      
-      // メモ欄の入力内容を状態に同期
+
       const memoEl = document.getElementById('memo');
       if (memoEl) {
         memoEl.addEventListener('input', (e) => {
@@ -1279,7 +1305,6 @@
       state.isTransitioning = false;
     }
 
-    // --- イベントリスナー ---
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -1297,14 +1322,16 @@
       } else if (action === 'toggle-original-accordion') {
         state.isOriginalAccordionOpen = !state.isOriginalAccordionOpen;
         render();
-      } else if (action === 'share-result') {
-        shareResult();
       } else if (action === 'capture-save') {
         handleSave();
       } else if (action === 'capture-share') {
         shareResult();
       } else if (action === 'save-calendar') {
         saveToGoogleCalendar();
+      } else if (action === 'open-external-browser') {
+        openInExternalBrowser();
+      } else if (action === 'copy-current-link') {
+        copyCurrentLink();
       } else if (action === 'go-start') {
         transitionState(() => {
           state.gameState = 'START';
@@ -1318,8 +1345,8 @@
       }
     });
 
-    // Initial render
     render();
+    maybeAutoOpenExternalBrowser();
   </script>
 </body>
 </html>
