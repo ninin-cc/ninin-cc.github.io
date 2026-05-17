@@ -144,18 +144,16 @@
       pointer-events: none;
     }
 
-    .mask-refrem {
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-    }
-    @media (min-width: 640px) {
-      .mask-refrem {
-        -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-        mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-      }
+    /* アイコン画像の縦長（3:4）対応 */
+    .guide-icon {
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 4px;
     }
 
-    .mask-refrem-right {
+    /* Page2の案内画像用マスク */
+    .mask-guide-image-right {
       -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%);
       mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%);
     }
@@ -308,12 +306,20 @@
     const PARCHMENT_TEXTURE = "url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjAwIDIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZmlsdGVyIGlkPSdub2lzZUZpbHRlcic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9JzAuOCcgbnVtT2N0YXZlcz0nNCcgc3RpdGNoVGlsZXM9J3N0aXRjaCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbHRlcj0ndXJsKCNub2lzZUZpbHRlciknIG9wYWNpdHk9JzAuMTUnLz48L3N2Zz4=')";
     const CARD_BACK_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
     const CARD_FRAME_IMG = "https://ninin-cc.github.io/img/rt/card.png";
+    
+    // ガイド用画像
     const REFREM_AVATAR = "https://ninin-cc.github.io/img/mt/reflm.jpg";
+    const HARUKA_IMAGES = [
+      "https://ninin-cc.github.io/img/mt/haruka.jpg",
+      "https://ninin-cc.github.io/img/mt/haruka2.jpg",
+      "https://ninin-cc.github.io/img/mt/haruka3.jpg"
+    ];
     
     // トップ画像をランダム表示するための配列
     const BG_START_IMAGES = [
       "https://ninin-cc.github.io/img/mt/top.jpg",
-      "https://ninin-cc.github.io/img/mt/top2.jpg"
+      "https://ninin-cc.github.io/img/mt/top2.jpg",
+      "https://ninin-cc.github.io/img/mt/top3.jpg"
     ];
 
     const ICONS = {
@@ -703,7 +709,7 @@
         uprightMeaning: "魂が曇りなく輝き、生きている喜びを心から感じられる状態。\nそのあたたかさを周囲と分かち合い、共に笑顔になれる無垢で絶対的な幸福を表します。",
         uprightMessage: "生きている喜びを心から感じ、そのあたたかさを周囲と分かち合うのじゃ！",
         uprightQuestion: "あなたが心から喜びを感じ、誰かと分かち合いたいことは何ですか？",
-        uprightOriginalMeaning: "成功、喜び、バイタリティ、天真爛漫さ、純粋、祝福、笑い声の絶えない理想通りの状況を象徴します。",
+        uprightOriginalMeaning: "成功、喜び、バイタリティ、天真烂漫さ、純粋、祝福、笑い声の絶えない理想通りの状況を象徴します。",
         reversedTitle: "曇り空の受容と輝きの不変",
         reversedMeaning: "純粋な生きる喜びを感じられず、心が少し曇り空に覆われている状態。\n無理に明るく振る舞って疲れている自分への気づきです。",
         reversedMessage: "休んでエネルギーを充電しても、おぬしの魂の輝きは決して失われないのじゃよ。",
@@ -756,7 +762,9 @@
       isAccordionOpen: false,
       isOriginalAccordionOpen: false,
       isMeaningReadable: false,
-      startBgImage: BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)]
+      startBgImage: BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)],
+      guide: Math.random() < 0.25 ? 'haruka' : 'refrem', // 25%の確率でハルカが案内
+      harukaAvatar: HARUKA_IMAGES[Math.floor(Math.random() * HARUKA_IMAGES.length)] // ハルカの場合の画像をランダム決定
     };
 
     const MagicDustHTML = (() => {
@@ -847,15 +855,23 @@
       const card = state.drawnCard;
       if (!card) return null;
       const isUpright = state.orientation === "正位置";
+      const isHaruka = state.guide === 'haruka';
+
+      let message = state.isHorizontal
+        ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。"
+        : (isUpright ? card.uprightMessage : card.reversedMessage);
+
+      // ハルカが代読する場合、メッセージを『』でくくる
+      if (isHaruka) {
+        message = `『${message}』\n\n…だそうです！`;
+      }
 
       return {
         title: state.isHorizontal ? "空白の鏡" : (isUpright ? card.uprightTitle : card.reversedTitle),
         meaning: state.isHorizontal
           ? "カードが横を向いて現れました。\n正位置でも逆位置でもない状態です。\n決められた意味はなく、あなたの心に浮かんだものが、そのまま意味となります."
           : (isUpright ? card.uprightMeaning : card.reversedMeaning),
-        message: state.isHorizontal
-          ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。"
-          : (isUpright ? card.uprightMessage : card.reversedMessage),
+        message: message,
         question: state.isHorizontal
           ? "いま、あなたにはこのカードがどう見えていますか？\n直感で浮かんだ言葉は何でしょうか？"
           : (isUpright ? card.uprightQuestion : card.reversedQuestion),
@@ -1111,18 +1127,25 @@
       }
 
       if (state.gameState === 'RULES') {
-        html += `
-              <div class="mt-2 sm:mt-4 mb-6 relative z-10">
-                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 tracking-widest border-b border-stone-400/60 pb-2 inline-block magic-text-glow relative z-10 text-center w-full">
-                  リフレムからの案内
-                </h2>
-
-                <div class="relative text-left text-[11px] sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-row-reverse items-stretch">
-                  <div class="w-[40%] sm:w-[45%] relative z-0 shrink-0 border-l border-stone-400/50 mask-refrem-right flex">
-                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%] min-h-full" />
-                  </div>
-
-                  <div class="relative z-20 p-4 sm:p-8 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft flex flex-col justify-center">
+        const isHaruka = state.guide === 'haruka';
+        const avatarUrl = isHaruka ? state.harukaAvatar : REFREM_AVATAR;
+        const guideName = isHaruka ? 'ハルカ' : 'リフレム';
+        const guideTitle = isHaruka ? 'ハルカからのご案内' : 'リフレムからの案内';
+        
+        const dialogHtml = isHaruka ? `
+                    <p>あ、えっと…よく来てくださいました、旅人さん！</p>
+                    <p>リフレム先生は今、魔法学園の方で少し立て込んでいて…不在なんです。</p>
+                    <div class="h-1.5 sm:h-2"></div>
+                    <p>代わりに私、ハルカが…</p>
+                    <p>鏡の塔の小部屋をご案内しますね。</p>
+                    <div class="h-1.5 sm:h-2"></div>
+                    <p class="text-orange-900">えっと、確か…</p>
+                    <p class="text-orange-900">これは未来を当てる占いではなくて。</p>
+                    <div class="h-1.5 sm:h-2"></div>
+                    <p>あなたの心に、</p>
+                    <p>ひとつ問いを灯すためのカード…だったはずです。</p>
+                    <p>ふつつか者ですが…よろしくお願いします！</p>
+        ` : `
                     <p>よく来た、旅人よ。</p>
                     <p>ここはメンテーリアにある</p>
                     <p>鏡の塔の中の小部屋じゃ。</p>
@@ -1136,6 +1159,33 @@
                     <p>おぬしの心に、</p>
                     <p>ひとつ問いを灯すための</p>
                     <p>カードなのじゃ。</p>
+        `;
+
+        const promiseTitle = isHaruka ? 'ハルカからのご案内（先生の受け売り）' : 'リフレムからの約束';
+        const promiseText = isHaruka ? `
+                  <p>何度でも引くことはできるそうです。</p>
+                  <p>でも、心の扉を開けすぎると、<br/>風が入りすぎることもあるみたいで…。</p>
+                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
+                  <p>今日出会ったカードと、<br/>静かに向き合ってみてくださいね。</p>
+        ` : `
+                  <p>何度でも引くことはできるぞ。</p>
+                  <p>じゃが、心の扉を開けすぎると、<br/>風が入りすぎることもある。</p>
+                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
+                  <p>今日出会ったカードと、<br/>静かに向き合ってみるのじゃよ。</p>
+        `;
+
+        html += `
+              <div class="mt-2 sm:mt-4 mb-6 relative z-10">
+                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 tracking-widest border-b border-stone-400/60 pb-2 inline-block magic-text-glow relative z-10 text-center w-full">
+                  ${guideTitle}
+                </h2>
+
+                <div class="relative text-left text-[11px] sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-row items-stretch">
+                  <div class="relative z-20 p-4 sm:p-8 pr-2 sm:pr-4 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft flex flex-col justify-center">
+                    ${dialogHtml}
+                  </div>
+                  <div class="w-[35%] sm:w-[30%] relative z-0 shrink-0 border-l border-stone-400/50 mask-guide-image-right flex">
+                    <img src="${avatarUrl}" alt="${guideName}" class="w-full h-full object-cover object-[50%_20%] min-h-full" />
                   </div>
                 </div>
               </div>
@@ -1160,13 +1210,10 @@
               <div class="bg-[#f0e6d2]/80 backdrop-blur-sm p-4 sm:p-6 rounded-md border border-stone-400/50 shadow-sm relative z-10 mb-10 mx-2 sm:mx-0">
                 <div class="flex items-center justify-center mb-3">
                   ${getIcon('Sparkles', 'w-5 h-5 text-yellow-600 mr-2')}
-                  <h3 class="font-serif font-bold text-stone-900 text-sm sm:text-base tracking-widest">リフレムからの約束</h3>
+                  <h3 class="font-serif font-bold text-stone-900 text-sm sm:text-base tracking-widest">${promiseTitle}</h3>
                 </div>
                 <div class="text-xs sm:text-sm text-stone-800 font-serif font-bold leading-loose text-center space-y-2">
-                  <p>何度でも引くことはできるぞ。</p>
-                  <p>じゃが、心の扉を開けすぎると、<br/>風が入りすぎることもある。</p>
-                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
-                  <p>今日出会ったカードと、<br/>静かに向き合ってみるのじゃよ。</p>
+                  ${promiseText}
                 </div>
               </div>
         `;
@@ -1175,11 +1222,12 @@
       if (state.gameState === 'DRAWING') {
         const isDrawingReversed = state.orientation === "逆位置" || (state.isHorizontal && Math.random() < 0.5);
         const drawingRotationClass = isDrawingReversed ? "card-reversed" : "";
+        const isHaruka = state.guide === 'haruka';
 
         html += `
               <div class="flex-grow flex flex-col items-center justify-center min-h-[60vh] relative z-10 perspective-1000">
-                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-800 mb-8 tracking-widest animate-pulse">
-                  リフレムがカードを引いています...
+                <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-800 mb-8 tracking-widest animate-pulse text-center">
+                  ${isHaruka ? 'ハルカがカードを引いています...<br/><span class="text-sm font-normal">（落とさないように慎重に…）</span>' : 'リフレムがカードを引いています...'}
                 </h2>
 
                 <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-[5000ms]" style="transform: rotate(${state.drawingTilt}deg);">
@@ -1206,6 +1254,7 @@
         const detailsObj = getCardDetails();
         const rotationClass = state.isHorizontal ? "" : (state.orientation === "正位置" ? "" : "card-reversed");
         const displayMeaning = detailsObj.meaning.replace(/\s*\n\s*/g, '');
+        const isHaruka = state.guide === 'haruka';
 
         html += `
               <div id="capture-area" class="relative z-10 pt-4 pb-8 px-2 sm:px-6 -mx-2 sm:-mx-6 rounded-md" style="background-color: #e8dcc4; background-image: ${PARCHMENT_TEXTURE};">
@@ -1288,12 +1337,12 @@
                 <div class="w-full bg-[#f0e6d2]/95 backdrop-blur-md rounded-md border border-stone-400/80 p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.1)] relative z-10 mb-4 space-y-8 sm:space-y-10" style="background-image: ${PARCHMENT_TEXTURE}">
                   <div class="bg-[#e8dcc4]/70 p-4 sm:p-5 rounded-md border border-stone-300/50 shadow-sm relative mt-2">
                     <div class="absolute -top-3 left-4 flex items-center bg-[#f0e6d2] px-2 py-0.5 rounded border border-stone-300 shadow-sm">
-                      <div class="w-5 h-5 rounded-full overflow-hidden mr-1.5 border border-stone-400">
-                         <img src="${REFREM_AVATAR}" class="w-full h-full object-cover object-top" />
-                      </div>
-                      <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">リフレムの言葉</span>
+                      <span class="text-[10px] sm:text-xs font-bold text-stone-700 font-serif">${isHaruka ? 'リフレム先生のメモ（代読：ハルカ）' : 'リフレムの言葉'}</span>
                     </div>
-                    <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line mt-2">${detailsObj.message}</p>
+                    <div class="mt-4 flex flex-row items-start gap-3 sm:gap-4">
+                      <img src="${isHaruka ? state.harukaAvatar : REFREM_AVATAR}" class="guide-icon w-16 sm:w-20 shrink-0 border border-stone-400/80 shadow-sm" alt="${isHaruka ? 'ハルカ' : 'リフレム'}" />
+                      <p class="text-stone-900 text-sm sm:text-base leading-relaxed font-serif font-extrabold whitespace-pre-line flex-grow">${detailsObj.message}</p>
+                    </div>
                   </div>
 
                   <div class="bg-orange-50/50 p-4 sm:p-5 rounded-md border border-orange-200/50 shadow-[inset_0_0_10px_rgba(249,115,22,0.05)] relative">
@@ -1407,8 +1456,13 @@
 
               <div class="text-center relative z-10">
                 <div class="text-[10px] sm:text-xs text-stone-600 font-serif font-bold leading-loose mb-6 px-4">
+                  ${isHaruka ? `
+                  <p>何度でも引くことはできるそうですが…<br class="sm:hidden"/>内省は思ったより心の力を使うみたいです。</p>
+                  <p>迷った時は、もう一度引くより、最初の一枚に戻ってみて、と先生が言っていました。</p>
+                  ` : `
                   <p>何度でも引くことはできるぞ。<br class="sm:hidden"/>けれど、内省は思ったより心の力を使う。</p>
                   <p>迷ったときは、もう一度引くより、最初の一枚に戻ってみるのじゃよ。</p>
+                  `}
                 </div>
 
                 <div class="flex flex-col items-center gap-4 sm:gap-6 mb-10">
@@ -1524,6 +1578,8 @@
           state.isOriginalAccordionOpen = false;
           state.isMeaningReadable = false;
           state.startBgImage = BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)];
+          state.guide = Math.random() < 0.25 ? 'haruka' : 'refrem'; // 25%の確率でハルカが案内
+          state.harukaAvatar = HARUKA_IMAGES[Math.floor(Math.random() * HARUKA_IMAGES.length)]; // ハルカの場合の画像をランダム決定
         });
       }
     });
