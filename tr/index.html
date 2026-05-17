@@ -295,13 +295,21 @@
 </head>
 <body class="bg-[#e8dcc4] text-stone-900 font-sans selection:bg-orange-900 selection:text-orange-100">
   <div id="root"></div>
+  
+  <!-- BGM用プレイヤーコンテナ（画面遷移しても消えないフローティング枠） -->
+  <div id="bgm-player-container" class="fixed bottom-0 left-0 w-full z-[100]"></div>
 
   <script>
     const PARCHMENT_TEXTURE = "url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjAwIDIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZmlsdGVyIGlkPSdub2lzZUZpbHRlcic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9JzAuOCcgbnVtT2N0YXZlcz0nNCcgc3RpdGNoVGlsZXM9J3N0aXRjaCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbHRlcj0ndXJsKCNub2lzZUZpbHRlciknIG9wYWNpdHk9JzAuMTUnLz48L3N2Zz4=')";
     const CARD_BACK_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
     const CARD_FRAME_IMG = "https://ninin-cc.github.io/img/rt/card.png";
     const REFREM_AVATAR = "https://ninin-cc.github.io/img/mt/reflm.jpg";
-    const BG_START_MENTALIA = "https://ninin-cc.github.io/img/mt/top.jpg";
+    
+    // トップ画像をランダム表示するための配列
+    const BG_START_IMAGES = [
+      "https://ninin-cc.github.io/img/mt/top.jpg",
+      "https://ninin-cc.github.io/img/mt/top2.jpg"
+    ];
 
     const ICONS = {
       Play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
@@ -658,7 +666,14 @@
         reversedOriginalMeaning: "絶望、疑念、信仰の喪失、失望、インスピレーションの枯渇。創造性がブロックされ、悲観主義に陥って希望を見失っている状態です。"
       },
       {
-        file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", name: "THE MOON", jp: "月", number: "ⅩⅧ",
+        file: "https://ninin-cc.github.io/tr/img/ta_18_moon.png", 
+        variants: [
+          "https://ninin-cc.github.io/tr/img/ta_18_moon.png",
+          "https://ninin-cc.github.io/tr/img/ta_18_moon2.png",
+          "https://ninin-cc.github.io/tr/img/ta_18_moon3.png",
+          "https://ninin-cc.github.io/tr/img/ta_18_moon4.png"
+        ],
+        name: "THE MOON", jp: "月", number: "ⅩⅧ",
         uprightTitle: "見えない不安への寄り添いと直感",
         uprightMeaning: "心の奥底にある漠然とした不安や痛みに優しく寄り添い、自分自身の直感や本当の想いに耳を澄ませるための静かな時間。\n霧が晴れるのを待つ受容のプロセスです。",
         uprightMessage: "すべてが日光の下で明らかになるわけではない。\n霧が晴れるのを静かに待つのじゃ。",
@@ -671,7 +686,14 @@
         reversedOriginalMeaning: "幻想が晴れて明確さが戻る、秘密が暴かれる（ポジティブな側面）。または、直感がブロックされて恐れやパラノイアに圧倒されている状態を示します。"
       },
       {
-        file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", name: "THE SUN", jp: "太陽", number: "ⅩⅨ",
+        file: "https://ninin-cc.github.io/tr/img/ta_19_sun.png", 
+        variants: [
+          "https://ninin-cc.github.io/tr/img/ta_19_sun.png",
+          "https://ninin-cc.github.io/tr/img/ta_19_sun2.png",
+          "https://ninin-cc.github.io/tr/img/ta_19_sun3.png",
+          "https://ninin-cc.github.io/tr/img/ta_19_sun4.png"
+        ],
+        name: "THE SUN", jp: "太陽", number: "ⅩⅨ",
         uprightTitle: "曇りなき魂の輝きと無垢なる喜び",
         uprightMeaning: "魂が曇りなく輝き、生きている喜びを心から感じられる状態。\nそのあたたかさを周囲と分かち合い、共に笑顔になれる無垢で絶対的な幸福を表します。",
         uprightMessage: "生きている喜びを心から感じ、そのあたたかさを周囲と分かち合うのじゃ！",
@@ -697,7 +719,12 @@
         reversedOriginalMeaning: "自己疑念、否定、変化への恐怖、和解への抵抗、責任の回避。内なる呼びかけを無視し、決断を先延ばしにして機会を逃している状態です。"
       },
       {
-        file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", name: "THE WORLD", jp: "世界", number: "ⅩⅪ",
+        file: "https://ninin-cc.github.io/tr/img/ta_21_world.png", 
+        variants: [
+          "https://ninin-cc.github.io/tr/img/ta_21_world.png",
+          "https://ninin-cc.github.io/tr/img/ta_21_world2.png"
+        ],
+        name: "THE WORLD", jp: "世界", number: "ⅩⅪ",
         uprightTitle: "完全なる調和と満ち足りた結末",
         uprightMeaning: "あなたの歩んできたすべての物語が一つに繋がり、完全なる調和に達すること。\nありのままの自分を肯定し、次なる旅へと向かう前の、美しく満ち足りた結末です。",
         uprightMessage: "ありのままのおぬしで、すでに一つの美しい調和を生きているのじゃ。",
@@ -723,7 +750,8 @@
       flashMessage: '',
       isAccordionOpen: false,
       isOriginalAccordionOpen: false,
-      isMeaningReadable: false
+      isMeaningReadable: false,
+      startBgImage: BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)]
     };
 
     const MagicDustHTML = (() => {
@@ -772,7 +800,17 @@
 
     function drawCard() {
       const randomIndex = Math.floor(Math.random() * tarotCards.length);
-      state.drawnCard = tarotCards[randomIndex];
+      const baseCard = tarotCards[randomIndex];
+
+      // 元のデータを変更しないようコピーを作成
+      state.drawnCard = { ...baseCard };
+
+      // カードにバリエーション画像がある場合は、さらにランダムで1つ選ぶ
+      if (state.drawnCard.variants && state.drawnCard.variants.length > 0) {
+        const variantIndex = Math.floor(Math.random() * state.drawnCard.variants.length);
+        state.drawnCard.file = state.drawnCard.variants[variantIndex];
+      }
+
       state.isHorizontal = Math.random() < (1/6);
 
       if (state.isHorizontal) {
@@ -1003,7 +1041,7 @@
 
       if (state.gameState === 'START') {
         html += `
-              <div class="bg-center rounded-md border border-stone-400/80 text-center shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]" style="background-image: url('${BG_START_MENTALIA}'); background-size: cover; background-position: center top;">
+              <div class="bg-center rounded-md border border-stone-400/80 text-center shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]" style="background-image: url('${state.startBgImage}'); background-size: cover; background-position: center top;">
                 <div class="absolute inset-0 bg-stone-900/10 z-0 pointer-events-none"></div>
                 <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-stone-900/95 via-stone-900/50 to-transparent z-0 pointer-events-none"></div>
                 <div class="relative z-10 px-2 pb-6 sm:pb-8 pt-2 w-full">
@@ -1047,11 +1085,11 @@
                     </p>
                   </div>
                   <div class="flex flex-row items-center gap-3 sm:gap-4 w-full">
-                    <div class="shrink-0 flex items-center justify-center">
-                      <img src="https://ninin-cc.github.io/tr/img/ta_17_star.png" alt="THE STAR" class="h-[100px] sm:h-[130px] w-auto rounded border border-stone-400/60 shadow-sm" />
-                    </div>
                     <div class="flex-grow w-full rounded overflow-hidden shadow-inner border border-stone-300">
                       <iframe src="https://suno.com/embed/c55313dc-5c98-43b6-9ed2-eac2134dac85" allow="autoplay *; encrypted-media *;" allowfullscreen class="w-full h-[100px] sm:h-[130px] border-none block"></iframe>
+                    </div>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <img src="https://ninin-cc.github.io/tr/img/ta_17_star.png" alt="THE STAR" class="h-[100px] sm:h-[130px] w-auto rounded border border-stone-400/60 shadow-sm" />
                     </div>
                   </div>
                 </div>
@@ -1099,12 +1137,19 @@
                 </div>
               </div>
 
-              <div class="flex justify-center relative z-10 mb-8 sm:mb-10">
-                <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 sm:px-16 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full sm:w-auto mx-4 sm:mx-0">
+              <div class="flex flex-col items-center justify-center gap-4 relative z-10 mb-8 sm:mb-10 w-full px-4 sm:px-0 mx-auto sm:max-w-md">
+                <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 sm:px-16 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-100">
                     今日のカードを引く
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
+                  </span>
+                </button>
+
+                <button data-action="draw-card-with-music" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-8 sm:px-12 shadow-sm hover:scale-105 group w-full animate-buttonAura">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-800">
+                    ${getIcon('Sparkles', 'w-4 h-4 mr-2 text-orange-600')} 音楽と共に今日のカードを引く
                   </span>
                 </button>
               </div>
@@ -1409,6 +1454,20 @@
 
       if (action === 'draw-card') {
         drawCard();
+      } else if (action === 'draw-card-with-music') {
+        const playerContainer = document.getElementById('bgm-player-container');
+        if (playerContainer) {
+          playerContainer.innerHTML = `
+            <div class="bg-[#e8dcc4] shadow-[0_-5px_20px_rgba(67,20,7,0.3)] border-t border-[#8c7355]/50 flex flex-col items-center justify-center relative p-2" style="background-image: ${PARCHMENT_TEXTURE}">
+              <button onclick="document.getElementById('bgm-player-container').innerHTML=''" class="absolute -top-3 right-4 bg-stone-700 hover:bg-stone-800 text-stone-100 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs shadow-md border border-stone-500 z-10">✕</button>
+              <div class="w-full max-w-sm rounded overflow-hidden shadow-inner border border-stone-300/50">
+                <iframe src="https://suno.com/embed/c55313dc-5c98-43b6-9ed2-eac2134dac85?autoplay=true" allow="autoplay *; encrypted-media *;" allowfullscreen class="w-full h-[80px] border-none block"></iframe>
+              </div>
+            </div>
+          `;
+        }
+        showFlashMessage("自動再生されない場合は、下部の再生ボタンを押してね⭐");
+        drawCard();
       } else if (action === 'go-rules') {
         transitionState(() => {
           state.gameState = 'RULES';
@@ -1433,6 +1492,8 @@
       } else if (action === 'copy-current-link') {
         copyCurrentLink();
       } else if (action === 'go-start') {
+        const playerContainer = document.getElementById('bgm-player-container');
+        if (playerContainer) playerContainer.innerHTML = '';
         transitionState(() => {
           state.gameState = 'START';
           state.drawnCard = null;
@@ -1442,6 +1503,7 @@
           state.isAccordionOpen = false;
           state.isOriginalAccordionOpen = false;
           state.isMeaningReadable = false;
+          state.startBgImage = BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)];
         });
       }
     });
