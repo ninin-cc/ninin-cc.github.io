@@ -104,6 +104,93 @@
                 </div>
             </a>
 
+            <!-- ワークショップのご案内 (アコーディオン) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                <button 
+                    onclick="toggleAccordion('workshop-content', 'workshop-icon')"
+                    class="w-full flex items-center justify-between p-5 text-left group transition-colors hover:bg-stone-50/50"
+                >
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold leading-tight">RIESM™ワークショップ<br class="sm:hidden"/>のご案内</h2>
+                    </div>
+                    <div id="workshop-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                </button>
+                <div 
+                    id="workshop-content" 
+                    class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out"
+                >
+                    <div class="p-5 pt-0 mt-2 border-t border-stone-100">
+                        <p class="text-sm text-stone-500 leading-relaxed mt-4">
+                            ワークショップのテキストやスライド台本など、より深く学ぶための資料を格納しています。
+                        </p>
+                        <div class="mt-4 flex justify-end">
+                            <a href="https://ninin-cc.github.io/touroku.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors bg-amber-50 px-4 py-2 rounded-full">
+                                <span>資料を見る</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEBアプリ (アコーディオン) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                <button 
+                    onclick="toggleAccordion('app-content', 'app-icon')"
+                    class="w-full flex items-center justify-between p-5 text-left group transition-colors hover:bg-stone-50/50"
+                >
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-indigo-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold leading-tight">nininの遊べる深まる<br class="sm:hidden"/>WEBアプリ</h2>
+                    </div>
+                    <div id="app-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                </button>
+                <div 
+                    id="app-content" 
+                    class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out"
+                >
+                    <div class="p-5 pt-0 mt-2 border-t border-stone-100">
+                        <p class="text-sm text-stone-500 leading-relaxed mt-4 mb-4">
+                            RIESM™mini、RIESM™RoleTRADE™、メンテーリアタロットカードなどのアプリをご紹介するページです。
+                        </p>
+                        <div class="space-y-3">
+                            <a href="https://ninin-cc.github.io/rm/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">RIESM™mini</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                </div>
+                                <p class="text-xs text-stone-500 leading-snug">心の基礎体温を毎日チェック💗</p>
+                            </a>
+                            
+                            <!-- RoleTRADE はリンクを外し、Coming Soonを明滅させる -->
+                            <div class="block p-3 rounded-lg border border-stone-100 bg-stone-50/50">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-stone-400">RIESM™RoleTRADE™</span>
+                                    <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider">COMING SOON</span>
+                                </div>
+                            </div>
+
+                            <a href="https://ninin-cc.github.io/tr/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">メンテーリアタロットカード</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                </div>
+                                <p class="text-xs text-stone-500 leading-snug">伝統的なワンオラクル（1枚引き）。引いた1枚にあなたは何を感じるか。偶然から自己と対話する、タロット本来の体験を。</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- その他のサービス（カウンセリング・研修） -->
             <div class="space-y-4">
                 <!-- nininカウンセリングルーム -->
@@ -244,5 +331,23 @@
         </p>
     </footer>
 
+    <script>
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            if (content.classList.contains('max-h-0')) {
+                // 開く処理
+                content.classList.remove('max-h-0', 'opacity-0');
+                content.classList.add('max-h-[500px]', 'opacity-100'); // 余裕を持たせた高さ
+                icon.classList.add('rotate-180');
+            } else {
+                // 閉じる処理
+                content.classList.add('max-h-0', 'opacity-0');
+                content.classList.remove('max-h-[500px]', 'opacity-100');
+                icon.classList.remove('rotate-180');
+            }
+        }
+    </script>
 </body>
 </html>
