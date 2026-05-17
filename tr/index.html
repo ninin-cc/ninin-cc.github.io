@@ -145,14 +145,8 @@
     }
 
     .mask-refrem-right {
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-    }
-    @media (min-width: 640px) {
-      .mask-refrem-right {
-        -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%);
-        mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%);
-      }
+      -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%);
+      mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%);
     }
 
     .perspective-1000 {
@@ -1112,12 +1106,12 @@
                   リフレムからの案内
                 </h2>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-col sm:flex-row-reverse">
-                  <div class="w-full sm:w-[40%] h-48 sm:h-auto relative z-0 shrink-0 border-b sm:border-b-0 sm:border-l border-stone-400/50 mask-refrem-right">
-                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%]" />
+                <div class="relative text-left text-[11px] sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] flex flex-row-reverse items-stretch">
+                  <div class="w-[40%] sm:w-[45%] relative z-0 shrink-0 border-l border-stone-400/50 mask-refrem-right flex">
+                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%] min-h-full" />
                   </div>
 
-                  <div class="relative z-20 p-5 sm:p-8 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
+                  <div class="relative z-20 p-4 sm:p-8 flex-grow text-stone-900 font-extrabold drop-shadow-sm text-glow-soft flex flex-col justify-center">
                     <p>よく来た、旅人よ。</p>
                     <p>ここはメンテーリアにある</p>
                     <p>鏡の塔の中の小部屋じゃ。</p>
