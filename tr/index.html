@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように即座に促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>メンテーリア・タロット | One Card Oracle</title>
