@@ -309,10 +309,7 @@
       const url = getExternalBrowserUrl();
 
       if (EMBEDDED_BROWSER_INFO.isAndroid) {
-        window.location.href = buildAndroidIntentUrl(url);
-        setTimeout(() => {
-          showFlashMessage('開けない場合はリンクをコピーして標準ブラウザに貼り付けてください。');
-        }, 1200);
+        window.location.replace(buildAndroidIntentUrl(url));
         return;
       }
 
@@ -341,7 +338,11 @@
       if (!EMBEDDED_BROWSER_INFO.isEmbedded || !EMBEDDED_BROWSER_INFO.isAndroid) return;
       if (sessionStorage.getItem('mentaliaExternalOpenTried') === '1') return;
       sessionStorage.setItem('mentaliaExternalOpenTried', '1');
-      setTimeout(openInExternalBrowser, 800);
+      setTimeout(openInExternalBrowser, 100);
+    }
+
+    function shouldShowEmbeddedBrowserNotice() {
+      return EMBEDDED_BROWSER_INFO.isEmbedded && !EMBEDDED_BROWSER_INFO.isAndroid;
     }
 
     const tarotCards = [
@@ -892,7 +893,7 @@
         `;
       }
 
-      if (EMBEDDED_BROWSER_INFO.isEmbedded) {
+      if (shouldShowEmbeddedBrowserNotice()) {
         html += `
           <div class="relative z-20 w-full px-3 sm:px-4 pt-4">
             <div class="mx-auto max-w-2xl bg-[#f4ebd8]/95 border border-orange-800/40 rounded-md shadow-[0_8px_24px_rgba(67,20,7,0.18)] p-4 sm:p-5 font-serif" style="background-image: ${PARCHMENT_TEXTURE}">
