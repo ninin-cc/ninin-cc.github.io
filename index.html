@@ -98,8 +98,7 @@
                     </div>
                     <p class="text-sm text-stone-500 leading-relaxed mt-2">
                         RIESM™は一人ひとりの個性を可視化し【<span class="text-slate-600 font-medium">人生のパイロットとしてのあなた</span>】を<span class="text-slate-600 font-medium">ナビゲート</span>するためのアセスメントツールです。
-
-<br><br>また、RIESM™では私たちがお互いに心地よいコミュニケーションを送るための<span class="text-slate-600 font-medium">スキルも身につける事が</span>できます。大手企業（通信会社系列）での<span class="text-slate-600 font-medium">導入実績</span>もあり、安心してご活用いただけます。
+                        <br><br>また、RIESM™では私たちがお互いに心地よいコミュニケーションを送るための<span class="text-slate-600 font-medium">スキルも身につける事が</span>できます。大手企業（通信会社系列）での<span class="text-slate-600 font-medium">導入実績</span>もあり、安心してご活用いただけます。
                     </p>
                 </div>
             </a>
@@ -116,20 +115,28 @@
                         </div>
                         <h2 class="text-lg md:text-xl font-bold leading-tight">RIESM™ワークショップ<br class="sm:hidden"/>のご案内</h2>
                     </div>
-                    <div id="workshop-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
+                    <div id="workshop-icon" class="transition-transform duration-300 flex-shrink-0 ml-2 rotate-180">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                 </button>
                 <div 
                     id="workshop-content" 
-                    class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out"
+                    class="max-h-[1000px] opacity-100 overflow-hidden transition-all duration-300 ease-in-out"
                 >
                     <div class="p-5 pt-0 mt-2 border-t border-stone-100">
+                        <!-- 追加：ワークショップ画像 -->
+                        <div class="mt-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 relative group/img">
+                            <img src="./img/modenavi.png" alt="ワークショップ" class="w-full h-auto object-cover transition-transform duration-700 group-hover/img:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x300/fdfcf9/a8a29e?text=modenavi.png';">
+                        </div>
                         <p class="text-sm text-stone-500 leading-relaxed mt-4">
-                            ワークショップのテキストやスライド台本など、より深く学ぶための資料を格納しています。
+                            チームをより良く理解するための、ワークショップのテキストやスライド台本など、より深く学ぶための資料を格納しています。
                         </p>
-                        <div class="mt-4 flex justify-end">
-                            <a href="https://ninin-cc.github.io/touroku.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors bg-amber-50 px-4 py-2 rounded-full">
+                        <div class="mt-4 flex flex-wrap gap-2 justify-end">
+                            <a href="https://ninin-cc.github.io/touroku.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-stone-500 font-medium hover:text-stone-700 transition-colors bg-stone-50 border border-stone-200 px-4 py-2 rounded-full">
+                                <span>登録者一覧を見る</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </a>
+                            <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors bg-amber-50 px-4 py-2 rounded-full">
                                 <span>資料を見る</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </a>
@@ -339,12 +346,12 @@
             if (content.classList.contains('max-h-0')) {
                 // 開く処理
                 content.classList.remove('max-h-0', 'opacity-0');
-                content.classList.add('max-h-[500px]', 'opacity-100'); // 余裕を持たせた高さ
+                content.classList.add('max-h-[1000px]', 'opacity-100'); // 画像追加に伴い高さを拡張
                 icon.classList.add('rotate-180');
             } else {
                 // 閉じる処理
                 content.classList.add('max-h-0', 'opacity-0');
-                content.classList.remove('max-h-[500px]', 'opacity-100');
+                content.classList.remove('max-h-[1000px]', 'opacity-100');
                 icon.classList.remove('rotate-180');
             }
         }
