@@ -362,10 +362,18 @@
     }
 
     function openInExternalBrowser() {
-      const url = getExternalBrowserUrl();
+      const urlStr = getExternalBrowserUrl();
+      const urlObj = new URL(urlStr);
+
+      // LINEの場合はOS問わずパラメータ付与で外部ブラウザ起動を促す
+      if (EMBEDDED_BROWSER_INFO.appName === 'LINE') {
+        urlObj.searchParams.set('openExternalBrowser', '1');
+        window.location.href = urlObj.toString();
+        return;
+      }
 
       if (EMBEDDED_BROWSER_INFO.isAndroid) {
-        window.location.replace(buildAndroidIntentUrl(url));
+        window.location.href = buildAndroidIntentUrl(urlStr);
         return;
       }
 
@@ -391,7 +399,13 @@
     }
 
     function maybeAutoOpenExternalBrowser() {
-      if (!EMBEDDED_BROWSER_INFO.isEmbedded || !EMBEDDED_BROWSER_INFO.isAndroid) return;
+      if (!EMBEDDED_BROWSER_INFO.isEmbedded) return;
+      if (window.location.search.includes('openExternalBrowser=1')) return;
+
+      // Android全般、またはLINE（iOS含む）の場合は自動起動を試みる
+      const shouldAutoOpen = EMBEDDED_BROWSER_INFO.isAndroid || EMBEDDED_BROWSER_INFO.appName === 'LINE';
+      if (!shouldAutoOpen) return;
+
       if (sessionStorage.getItem('mentaliaExternalOpenTried') === '1') return;
       sessionStorage.setItem('mentaliaExternalOpenTried', '1');
       setTimeout(openInExternalBrowser, 100);
