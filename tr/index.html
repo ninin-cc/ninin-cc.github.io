@@ -53,6 +53,62 @@
         0 0 20px rgba(232, 220, 196, 0.9),
         0 1px 2px rgba(255, 252, 244, 0.9);
     }
+    @keyframes meaningMistPulse {
+      0%, 100% {
+        opacity: 0.22;
+        transform: scale(0.98);
+        background-color: rgba(255, 252, 244, 0.18);
+        box-shadow: 0 0 16px rgba(255, 252, 244, 0.32), 0 0 30px rgba(244, 235, 216, 0.22);
+      }
+      50% {
+        opacity: 0.68;
+        transform: scale(1.015);
+        background-color: rgba(255, 252, 244, 0.48);
+        box-shadow: 0 0 28px rgba(255, 252, 244, 0.88), 0 0 58px rgba(244, 235, 216, 0.62);
+      }
+    }
+    .result-meaning-panel {
+      position: relative;
+      isolation: isolate;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .result-meaning-panel::before {
+      content: "";
+      position: absolute;
+      inset: -12px -14px;
+      z-index: -1;
+      border-radius: 16px;
+      background-color: rgba(255, 252, 244, 0.18);
+      box-shadow: 0 0 16px rgba(255, 252, 244, 0.32), 0 0 30px rgba(244, 235, 216, 0.22);
+      opacity: 0.22;
+      transform: scale(0.98);
+      transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+      animation: meaningMistPulse 3.8s ease-in-out infinite;
+      pointer-events: none;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+    .result-meaning-panel.is-readable::before {
+      animation: none;
+      opacity: 1;
+      transform: scale(1);
+      background-color: rgba(255, 252, 244, 0.72);
+      box-shadow:
+        0 0 22px rgba(255, 252, 244, 0.95),
+        0 0 46px rgba(244, 235, 216, 0.9),
+        0 0 76px rgba(232, 220, 196, 0.58);
+    }
+    .result-meaning-panel.is-readable .text-haze-readable {
+      text-shadow:
+        0 0 3px rgba(255, 252, 244, 1),
+        0 0 8px rgba(255, 252, 244, 1),
+        0 0 16px rgba(255, 252, 244, 0.98),
+        0 0 28px rgba(244, 235, 216, 0.95),
+        0 1px 2px rgba(255, 252, 244, 1);
+    }
 
     @keyframes fadeInStage {
       0% { opacity: 0; filter: blur(4px); }
@@ -645,7 +701,8 @@
       isTransitioning: false,
       flashMessage: '',
       isAccordionOpen: false,
-      isOriginalAccordionOpen: false
+      isOriginalAccordionOpen: false,
+      isMeaningReadable: false
     };
 
     const MagicDustHTML = (() => {
@@ -710,6 +767,7 @@
       state.memo = '';
       state.isAccordionOpen = false;
       state.isOriginalAccordionOpen = false;
+      state.isMeaningReadable = false;
 
       transitionState(() => {
         state.gameState = 'DRAWING';
@@ -1102,7 +1160,7 @@
                         </div>
                       </div>
 
-                      <div class="text-left">
+                      <div data-action="toggle-meaning-readability" role="button" tabindex="0" aria-pressed="${state.isMeaningReadable ? 'true' : 'false'}" class="result-meaning-panel ${state.isMeaningReadable ? 'is-readable' : ''} text-left">
                         <h4 class="flex items-center text-xs sm:text-sm font-bold text-orange-900 mb-2 border-l-[3px] border-orange-800 pl-2 drop-shadow-sm text-haze-readable">
                           テーマ：${detailsObj.title}
                         </h4>
@@ -1133,7 +1191,7 @@
                       </div>
                     </div>
 
-                    <div class="text-left pr-1 sm:pr-0">
+                    <div data-action="toggle-meaning-readability" role="button" tabindex="0" aria-pressed="${state.isMeaningReadable ? 'true' : 'false'}" class="result-meaning-panel ${state.isMeaningReadable ? 'is-readable' : ''} text-left pr-1 sm:pr-0">
                       <h4 class="flex items-center text-xs sm:text-base font-bold text-orange-900 mb-2 sm:mb-3 border-l-[3px] sm:border-l-4 border-orange-800 pl-2 drop-shadow-sm text-haze-readable">
                         テーマ：${detailsObj.title}
                       </h4>
@@ -1331,6 +1389,9 @@
       } else if (action === 'toggle-original-accordion') {
         state.isOriginalAccordionOpen = !state.isOriginalAccordionOpen;
         render();
+      } else if (action === 'toggle-meaning-readability') {
+        state.isMeaningReadable = !state.isMeaningReadable;
+        render();
       } else if (action === 'capture-save') {
         handleSave();
       } else if (action === 'capture-share') {
@@ -1350,6 +1411,7 @@
           state.memo = '';
           state.isAccordionOpen = false;
           state.isOriginalAccordionOpen = false;
+          state.isMeaningReadable = false;
         });
       }
     });
