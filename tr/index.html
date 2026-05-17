@@ -911,7 +911,7 @@
       if (!card) return;
       const detailsObj = getCardDetails();
 
-      const shareText = `【今日のOne Card Oracle】\n\nカード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
+      const shareText = `私が今日出会ったカードはこれでした。みんなはどう？\n\n#メンテーリア #タロット #内省\nhttps://ninin-cc.github.io/tr/`;
 
       state.flashMessage = "画像を生成中...";
       render();
@@ -922,14 +922,12 @@
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
-            title: '今日のOne Card Oracle',
             text: shareText,
             files: [file]
           });
           state.flashMessage = "";
         } else if (navigator.share) {
           await navigator.share({
-            title: '今日のOne Card Oracle',
             text: shareText
           });
           state.flashMessage = "";
@@ -1066,7 +1064,7 @@
                 <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-4 shadow-sm hover:scale-105 group w-full animate-buttonAura">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-800">
-                    メンテーリアの世界へようこそ
+                    メンテーリアの世界を知る
                   </span>
                 </a>
 
@@ -1297,8 +1295,27 @@
 
                 <div class="mt-8 text-center w-full opacity-80">
                    <p class="text-[10px] sm:text-[12px] text-stone-900 font-serif tracking-widest font-bold">© Mentalia Tarot</p>
-                   <p class="text-[8px] sm:text-[10px] text-stone-800 font-serif tracking-widest mt-1">© 2026 ninin consulting＆counseling</p>
+                   <p class="text-[8px] sm:text-[10px] text-stone-800 font-serif tracking-widest mt-1">
+                     <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" class="hover:text-orange-900 transition-colors border-b border-transparent hover:border-orange-900 pb-0.5">
+                       © 2026 ninin consulting＆counseling
+                     </a>
+                   </p>
                 </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-8 relative z-10 w-full px-2 sm:px-4">
+                <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-100">
+                    ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
+                  </span>
+                </button>
+                <button data-action="capture-share" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-100">
+                    ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 結果をシェア
+                  </span>
+                </button>
               </div>
 
               <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-md border border-stone-400/80 p-5 sm:p-8 shadow-sm relative z-10 mb-8 mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
@@ -1377,21 +1394,6 @@
                 </div>
               </div>
 
-              <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-10 relative z-10 w-full px-2 sm:px-4">
-                <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
-                  <div class="wood-texture"></div>
-                  <span class="relative z-10 flex items-center justify-center text-stone-100">
-                    ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
-                  </span>
-                </button>
-                <button data-action="capture-share" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
-                  <div class="wood-texture"></div>
-                  <span class="relative z-10 flex items-center justify-center text-stone-100">
-                    ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 結果とメモをシェア
-                  </span>
-                </button>
-              </div>
-
               <div class="text-center relative z-10">
                 <div class="text-[10px] sm:text-xs text-stone-600 font-serif font-bold leading-loose mb-6 px-4">
                   <p>何度でも引くことはできるぞ。<br class="sm:hidden"/>けれど、内省は思ったより心の力を使う。</p>
@@ -1399,12 +1401,19 @@
                 </div>
 
                 <div class="flex flex-col items-center gap-4 sm:gap-6 mb-10">
-                  <button data-action="go-start" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1">
+                  <a href="https://note.com/ninin2025/m/mde14de35ed84" target="_blank" rel="noopener noreferrer" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-8 shadow-sm hover:scale-105 group w-full sm:w-auto mt-2 animate-buttonAura">
+                    <div class="wood-texture"></div>
+                    <span class="relative z-10 flex items-center justify-center text-stone-800">
+                      メンテーリアの世界を知る
+                    </span>
+                  </a>
+
+                  <button data-action="go-start" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1 mt-2">
                     ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 小部屋の入り口に戻る
                   </button>
 
                   ${state.isHorizontal ? `
-                  <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-3 px-8 shadow-sm hover:scale-105 group w-full sm:w-auto mt-4">
+                  <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-3 px-8 shadow-sm hover:scale-105 group w-full sm:w-auto mt-2">
                     <div class="wood-texture"></div>
                     <span class="relative z-10 flex items-center justify-center text-stone-100">
                       もう一度引き直す
