@@ -4,20 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>キャリアクエスト ～あなたの休息と、旅立ちに祝福を～</title>
-  
+
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  
+
   <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
     body { margin: 0; padding: 0; background: #000; }
@@ -28,6 +28,13 @@
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
     .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media print {
+      body { background: #fff; }
+      .print-hidden { display: none !important; }
+      .print-friendly { background: #fff !important; color: #111 !important; border-color: #333 !important; box-shadow: none !important; }
+      .print-friendly * { color: #111 !important; }
+    }
   </style>
 </head>
 <body>
@@ -36,7 +43,6 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // --- カスタムフック: データの永続化 ---
     function useLocalStorage(key, initialValue) {
       const [storedValue, setStoredValue] = useState(() => {
         try {
@@ -50,9 +56,11 @@
 
       const setValue = (value) => {
         try {
-          const valueToStore = value instanceof Function ? value(storedValue) : value;
-          setStoredValue(valueToStore);
-          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          setStoredValue((currentValue) => {
+            const valueToStore = value instanceof Function ? value(currentValue) : value;
+            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            return valueToStore;
+          });
         } catch (error) {
           console.log(error);
         }
@@ -61,7 +69,6 @@
       return [storedValue, setValue];
     }
 
-    // --- プリセットデータ ---
     const presetCans = {
       skill: [
         { name: 'プログラミング', desc: 'コードを書き、システムを構築する力' },
@@ -105,7 +112,12 @@
       { label: '新たな挑戦', event: '新規事業や新しい役割への挑戦', satisfaction: 35 },
     ];
 
-    // --- UIコンポーネント ---
+    const canTypeMeta = {
+      skill: { label: '武器（専門スキル）', shortLabel: '武器', icon: 'fa-solid fa-khanda', color: 'text-blue-400', active: 'bg-blue-600 border-blue-400 text-white' },
+      magic: { label: '魔法（汎用力）', shortLabel: '魔法', icon: 'fa-solid fa-wand-magic-sparkles', color: 'text-purple-400', active: 'bg-purple-600 border-purple-400 text-white' },
+      ally: { label: '仲間（関係性）', shortLabel: '仲間', icon: 'fa-solid fa-users', color: 'text-green-400', active: 'bg-green-600 border-green-400 text-white' }
+    };
+
     const WindowBox = ({ title, children, iconName, className = "" }) => (
       <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative w-full ${className} animate-fade-in`}>
         {title && (
@@ -121,28 +133,39 @@
     const DialogBox = ({ speaker, type = 'reflem', text, onFinish }) => {
       const [displayedText, setDisplayedText] = useState("");
       const [isFinished, setIsFinished] = useState(false);
+      const finishedRef = useRef(false);
 
       useEffect(() => {
         let index = 0;
+        finishedRef.current = false;
         setDisplayedText("");
         setIsFinished(false);
+
+        const finishOnce = () => {
+          if (finishedRef.current) return;
+          finishedRef.current = true;
+          setIsFinished(true);
+          if (onFinish) onFinish();
+        };
+
         const timer = setInterval(() => {
           index++;
           setDisplayedText(text.slice(0, index));
           if (index >= text.length) {
             clearInterval(timer);
-            setIsFinished(true);
-            if(onFinish) onFinish();
+            finishOnce();
           }
         }, 40);
+
         return () => clearInterval(timer);
       }, [text]);
 
       const handleSkip = () => {
-        if (!isFinished) {
+        if (!finishedRef.current) {
           setDisplayedText(text);
+          finishedRef.current = true;
           setIsFinished(true);
-          if(onFinish) onFinish();
+          if (onFinish) onFinish();
         }
       };
 
@@ -170,7 +193,6 @@
       );
     };
 
-    // 複数のセリフを順に表示するコンポーネント
     const DialogGroup = ({ dialogs, children }) => {
       const [currentIdx, setCurrentIdx] = useState(0);
       const [allFinished, setAllFinished] = useState(false);
@@ -184,7 +206,7 @@
         <div className="w-full flex flex-col items-center">
           {dialogs.slice(0, currentIdx + 1).map((d, i) => (
              <DialogBox
-               key={`${d.text}-${i}`} 
+               key={`${d.text}-${i}`}
                speaker={d.speaker}
                type={d.type}
                text={d.text}
@@ -243,6 +265,10 @@
       );
     };
 
+    const EmptyText = ({ children }) => (
+      <p className="text-sm text-gray-600 text-center py-4">{children}</p>
+    );
+
     const LifelineChart = ({ data }) => {
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
       const sortedData = [...data].sort((a, b) => a.age - b.age);
@@ -254,14 +280,14 @@
         const normalized = (satisfaction + 50) / 100;
         return paddingY + chartHeight - (normalized * chartHeight);
       };
-      
-      const generateSmoothPath = (data) => {
-        if (data.length === 0) return '';
-        if (data.length === 1) return `M ${getX(0)},${getY(data[0].satisfaction)}`;
-        let path = `M ${getX(0)},${getY(data[0].satisfaction)}`;
-        for (let i = 0; i < data.length - 1; i++) {
-          const x0 = getX(i); const y0 = getY(data[i].satisfaction);
-          const x1 = getX(i + 1); const y1 = getY(data[i + 1].satisfaction);
+
+      const generateSmoothPath = (items) => {
+        if (items.length === 0) return '';
+        if (items.length === 1) return `M ${getX(0)},${getY(items[0].satisfaction)}`;
+        let path = `M ${getX(0)},${getY(items[0].satisfaction)}`;
+        for (let i = 0; i < items.length - 1; i++) {
+          const x0 = getX(i); const y0 = getY(items[i].satisfaction);
+          const x1 = getX(i + 1); const y1 = getY(items[i + 1].satisfaction);
           const cx0 = x0 + (x1 - x0) * 0.4; const cy0 = y0;
           const cx1 = x1 - (x1 - x0) * 0.4; const cy1 = y1;
           path += ` C ${cx0},${cy0} ${cx1},${cy1} ${x1},${y1}`;
@@ -298,13 +324,39 @@
       );
     };
 
+    const CanList = ({ cans, emptyText = 'まだ記録されていません。', compact = false, onRemove }) => {
+      if (!cans || cans.length === 0) return <EmptyText>{emptyText}</EmptyText>;
+
+      return (
+        <ul className={`${compact ? 'space-y-2' : 'space-y-3'} mb-2`}>
+          {cans.map(c => {
+            const meta = canTypeMeta[c.type] || canTypeMeta.skill;
+            return (
+              <li key={c.id} className={`flex flex-col border-b border-gray-700 pb-2 relative ${onRemove ? 'pr-8' : ''}`}>
+                <div className="flex items-center gap-2 text-lg">
+                  <i className={`${meta.icon} ${meta.color}`}></i>
+                  <span>{c.name}</span>
+                </div>
+                <div className="text-gray-400 text-sm pl-7">{c.desc || '説明なし'}</div>
+                {onRemove && (
+                  <button onClick={() => onRemove(c.id)} className="absolute right-0 top-2 text-gray-500 hover:text-red-400" aria-label={`${c.name}を削除`}>
+                    <i className="fa-solid fa-trash"></i>
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    };
+
     const App = () => {
-      // --- 状態管理 ---
       const [scene, setScene] = useLocalStorage('cq_scene', 'intro');
       const [introStep, setIntroStep] = useLocalStorage('cq_intro_step', 0);
       const [isInputPhase, setIsInputPhase] = useLocalStorage('cq_input_phase', false);
       const [player, setPlayer] = useLocalStorage('cq_player', { name: '', age: '' });
 
+      const [canStep, setCanStep] = useLocalStorage('cq_can_step', 0);
       const [cans, setCans] = useLocalStorage('cq_cans', [
         { id: 1, type: 'magic', name: '段取り力', desc: '物事をスムーズに進めるための事前準備と計画力' },
         { id: 2, type: 'ally', name: '後輩から頼られる関係', desc: '後輩の相談に乗り、育成をサポートできる信頼関係' }
@@ -314,10 +366,11 @@
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
       const [newMemory, setNewMemory] = useState({ age: '', event: '', satisfaction: 0 });
       const [memoryStep, setMemoryStep] = useLocalStorage('cq_memory_step', 0);
+      const [chartInsight, setChartInsight] = useLocalStorage('cq_chart_insight', '');
 
       const [willStep, setWillStep] = useLocalStorage('cq_will_step', 0);
       const [will, setWill] = useLocalStorage('cq_will', { job: '', oneYear: '', threeYears: '' });
-      
+
       const [musts, setMusts] = useLocalStorage('cq_musts', [
         {
           id: 1, title: '王様からの勅命：レガシーシステムの刷新', desc: '古き良きシステムを最新アーキテクチャに移行せよ。',
@@ -325,6 +378,13 @@
         }
       ]);
       const [newMust, setNewMust] = useState({ title: '', desc: '', connection: '' });
+
+      useEffect(() => {
+        const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
+        if (!allowedTypes.includes(newCan.type)) {
+          setNewCan({ type: allowedTypes[0], name: '', desc: '' });
+        }
+      }, [canStep]);
 
       const getSuggestedAges = () => {
         const currentAge = parseInt(player.age) || 30;
@@ -342,47 +402,29 @@
       const getPageNo = () => {
         switch (scene) {
           case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'can': return `2${isInputPhase ? '-Input' : ''}`;
+          case 'can': return `2-${canStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'memory': return `3-${memoryStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'chart': return '4';
           case 'will': return `5-${willStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'must': return '6';
+          case 'summary': return '7';
           default: return '0';
         }
       };
 
-      const handleAddCan = () => {
-        if (!newCan.name) return;
-        setCans([...cans, { ...newCan, id: Date.now() }]);
-        setNewCan({ type: newCan.type, name: '', desc: '' });
-      };
-      const handleRemoveCan = (id) => setCans(cans.filter(c => c.id !== id));
-
-      const handleAddMemory = () => {
-        if (!newMemory.event || !newMemory.age) return;
-        setMemories([...memories, { ...newMemory, id: Date.now(), age: Number(newMemory.age), satisfaction: Number(newMemory.satisfaction) }]);
-        const nextStep = memoryStep + 1;
-        setMemoryStep(nextStep);
-        setIsInputPhase(false);
-        
-        if (nextStep < 5) {
-          const suggestedAges = getSuggestedAges();
-          setNewMemory({ age: suggestedAges[nextStep], event: '', satisfaction: 0 });
-        } else {
-          setNewMemory({ age: '', event: '', satisfaction: 0 });
+      const clearAdventureData = () => {
+        const keysToRemove = [];
+        for (let i = 0; i < window.localStorage.length; i++) {
+          const key = window.localStorage.key(i);
+          if (key && key.startsWith('cq_')) keysToRemove.push(key);
         }
+        keysToRemove.forEach(key => window.localStorage.removeItem(key));
       };
-      const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
 
-      const handleAddMust = () => {
-        if (!newMust.title) return;
-        setMusts([...musts, { ...newMust, id: Date.now() }]);
-        setNewMust({ title: '', desc: '', connection: '' });
-      };
-      const handleRemoveMust = (id) => setMusts(musts.filter(m => m.id !== id));
+      const scrollTop = () => window.scrollTo(0, 0);
 
       const nextScene = (next) => {
-        window.scrollTo(0, 0);
+        scrollTop();
         setIsInputPhase(false);
         if (next === 'intro') setIntroStep(0);
         if (next === 'memory' && memories.length === 0) {
@@ -394,16 +436,84 @@
         setScene(next);
       };
 
+      const handleStartCan = () => {
+        setCanStep(0);
+        setNewCan({ type: 'skill', name: '', desc: '' });
+        nextScene('can');
+      };
+
+      const handleAddCan = () => {
+        if (!newCan.name) return;
+        setCans([...cans, { ...newCan, id: Date.now() }]);
+        setNewCan({ type: newCan.type, name: '', desc: '' });
+      };
+      const handleRemoveCan = (id) => setCans(cans.filter(c => c.id !== id));
+
+      const handleCompleteCanStep = () => {
+        if (canStep === 0) {
+          setCanStep(1);
+          setNewCan({ type: 'ally', name: '', desc: '' });
+          setIsInputPhase(false);
+          scrollTop();
+        } else {
+          nextScene('memory');
+        }
+      };
+
+      const handleBackCanStep = () => {
+        setCanStep(0);
+        setNewCan({ type: 'skill', name: '', desc: '' });
+        setIsInputPhase(false);
+        scrollTop();
+      };
+
+      const handleAddMemory = () => {
+        if (!newMemory.event || !newMemory.age) return;
+        setMemories([...memories, { ...newMemory, id: Date.now(), age: Number(newMemory.age), satisfaction: Number(newMemory.satisfaction) }]);
+        const nextStep = memoryStep + 1;
+        setMemoryStep(nextStep);
+        setIsInputPhase(false);
+
+        if (nextStep < 5) {
+          const suggestedAges = getSuggestedAges();
+          setNewMemory({ age: suggestedAges[nextStep], event: '', satisfaction: 0 });
+        } else {
+          setNewMemory({ age: '', event: '', satisfaction: 0 });
+        }
+      };
+
+      const handleSkipMemory = () => {
+        const nextStep = memoryStep + 1;
+        setMemoryStep(nextStep);
+        setIsInputPhase(false);
+
+        if (nextStep < 5) {
+          const suggestedAges = getSuggestedAges();
+          setNewMemory({ age: suggestedAges[nextStep], event: '', satisfaction: 0 });
+        } else {
+          setNewMemory({ age: '', event: '', satisfaction: 0 });
+        }
+      };
+
+      const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
+
+      const handleAddMust = () => {
+        if (!newMust.title) return;
+        setMusts([...musts, { ...newMust, id: Date.now() }]);
+        setNewMust({ title: '', desc: '', connection: '' });
+      };
+      const handleRemoveMust = (id) => setMusts(musts.filter(m => m.id !== id));
+
       const handleReset = () => {
         if (window.confirm('これまでの記録（冒険の書）をすべて消去して、初めからやり直しますか？')) {
-          window.localStorage.clear();
+          clearAdventureData();
           window.location.reload();
         }
       };
 
       const handleSuspend = () => {
-        if (window.confirm('あとでこの場面から再開できますが、ここで冒険を中断しますか？\n（「OK」を押すとブラウザタブを閉じます）')) {
-          window.close();
+        if (window.confirm('ここまでの冒険の書はこのブラウザに保存されています。ここで中断しますか？')) {
+          alert('保存しました。あとで同じブラウザでこのページを開くと、この場面から再開できます。');
         }
       };
 
@@ -463,7 +573,7 @@
                   </div>
                 </WindowBox>
                 <div className="text-center mt-6">
-                  <button onClick={() => nextScene('can')} disabled={!player.name || !player.age} className={`rpg-button text-xl px-8 py-4 ${(!player.name || !player.age) ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}>
+                  <button onClick={handleStartCan} disabled={!player.name || !player.age} className={`rpg-button text-xl px-8 py-4 ${(!player.name || !player.age) ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}>
                     二人との会話を続ける
                   </button>
                 </div>
@@ -474,22 +584,39 @@
       };
 
       const renderCan = () => {
-        const dialogsCan = [
-          { speaker: "リフレム", type: "reflem", text: `「Lv.${player.age}の ${player.name} と申すか。よい面構えじゃ。\nまずは、お主が今までどんな武器や魔法を使い、誰と冒険してきたか…わしに教えてくれんか？」` },
-          { speaker: "ハルカ", type: "haruka", text: "「あなたの得意なことや、どんなお仲間がいるのか、すっごく気になります！\nどんな小さなことでもいいので、私に教えてください！」" }
-        ];
+        const pName = player.name || '冒険者';
+        const isWeaponMagicStep = canStep === 0;
+        const allowedTypes = isWeaponMagicStep ? ['skill', 'magic'] : ['ally'];
+        const activeType = allowedTypes.includes(newCan.type) ? newCan.type : allowedTypes[0];
+        const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
+        const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
+        const dialog = isWeaponMagicStep
+          ? [{ speaker: "リフレム", type: "reflem", text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
+          : [{ speaker: "ハルカ", type: "haruka", text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         return (
           <div className="space-y-6 max-w-4xl mx-auto w-full">
             {!isInputPhase ? (
               <div className="animate-fade-in text-center">
-                <DialogGroup dialogs={dialogsCan}>
+                <DialogGroup dialogs={dialog}>
                   <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                    <button onClick={() => nextScene('intro')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                      <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
-                    </button>
-                    <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
-                      <i className="fa-regular fa-message"></i> 自分のステータスを語る
+                    {isWeaponMagicStep ? (
+                      <button onClick={() => nextScene('intro')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
+                      </button>
+                    ) : (
+                      <button onClick={handleBackCanStep} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 武器・魔法に戻る
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setNewCan({ type: activeType, name: '', desc: '' });
+                        setIsInputPhase(true);
+                      }}
+                      className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2"
+                    >
+                      <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
                     </button>
                     <div className="w-40 hidden md:block order-3"></div>
                   </div>
@@ -499,44 +626,39 @@
               <div className="animate-fade-in w-full">
                 <div className="flex justify-between items-center mb-4">
                   <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
-                  <p className="text-yellow-300 font-bold">現在のステータス</p>
+                  <p className="text-yellow-300 font-bold">{isWeaponMagicStep ? '武器・魔法の棚卸し' : '仲間・関係性の棚卸し'}</p>
                 </div>
-                
-                <WindowBox title="シーン1：現在の装備・魔法・仲間の確認" iconName="fa-solid fa-shield-halved">
-                  <ul className="space-y-3 mb-6 bg-gray-900 p-4 rounded-lg">
-                    {cans.map(c => (
-                      <li key={c.id} className="flex flex-col border-b border-gray-700 pb-2 relative pr-8">
-                        <div className="flex items-center gap-2 text-lg">
-                          {c.type === 'skill' && <i className="fa-solid fa-khanda text-blue-400"></i>}
-                          {c.type === 'magic' && <i className="fa-solid fa-wand-magic-sparkles text-purple-400"></i>}
-                          {c.type === 'ally' && <i className="fa-solid fa-users text-green-400"></i>}
-                          <span>{c.name}</span>
-                        </div>
-                        <div className="text-gray-400 text-sm pl-7">{c.desc}</div>
-                        <button onClick={() => handleRemoveCan(c.id)} className="absolute right-0 top-2 text-gray-500 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
-                      </li>
-                    ))}
-                  </ul>
+
+                <WindowBox title={title} iconName={isWeaponMagicStep ? "fa-solid fa-shield-halved" : "fa-solid fa-people-group"}>
+                  <div className="bg-gray-900 p-4 rounded-lg mb-6">
+                    <CanList cans={visibleCans} emptyText={isWeaponMagicStep ? '武器と魔法はまだ記録されていません。' : '仲間との関係性はまだ記録されていません。'} onRemove={handleRemoveCan} />
+                  </div>
 
                   <div className="border-t border-gray-600 pt-4 space-y-3">
-                    <p className="text-sm text-yellow-300">▼ まだ記録していない力はあるか？</p>
+                    <p className="text-sm text-yellow-300">▼ まだ記録していない{isWeaponMagicStep ? '武器や魔法' : '仲間との関係性'}はあるか？</p>
                     <div className="flex gap-2">
-                      <button onClick={() => setNewCan({ ...newCan, type: 'skill', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'skill' ? 'bg-blue-600 border-blue-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>武器(スキル)</button>
-                      <button onClick={() => setNewCan({ ...newCan, type: 'magic', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'magic' ? 'bg-purple-600 border-purple-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>魔法(汎用)</button>
-                      <button onClick={() => setNewCan({ ...newCan, type: 'ally', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'ally' ? 'bg-green-600 border-green-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>仲間(関係性)</button>
+                      {allowedTypes.map(type => (
+                        <button
+                          key={type}
+                          onClick={() => setNewCan({ ...newCan, type, name: '', desc: '' })}
+                          className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${activeType === type ? canTypeMeta[type].active : 'bg-gray-800 border-transparent text-gray-400'}`}
+                        >
+                          {canTypeMeta[type].label}
+                        </button>
+                      ))}
                     </div>
                     <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
                       <div className="flex flex-wrap gap-2">
-                        {presetCans[newCan.type].map((preset, idx) => {
+                        {presetCans[activeType].map((preset, idx) => {
                           const isAdded = cans.some(c => c.name === preset.name);
                           return (
-                            <button 
-                              key={idx} 
+                            <button
+                              key={idx}
                               onClick={() => {
                                 if (!isAdded) {
-                                  setCans([...cans, { id: Date.now() + Math.random(), type: newCan.type, name: preset.name, desc: preset.desc }]);
+                                  setCans([...cans, { id: Date.now() + Math.random(), type: activeType, name: preset.name, desc: preset.desc }]);
                                 }
-                              }} 
+                              }}
                               className={`text-sm border px-3 py-1.5 rounded transition-all ${isAdded ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold opacity-50 cursor-not-allowed' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
                             >
                               {preset.name} {isAdded && <i className="fa-solid fa-check ml-1"></i>}
@@ -546,15 +668,15 @@
                       </div>
                     </div>
                     <div className="flex flex-col md:flex-row gap-2 items-center mt-2">
-                      <input type="text" placeholder="名前 (自由に編集・手動追加も可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, name: e.target.value})} />
-                      <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, desc: e.target.value})} />
+                      <input type="text" placeholder="名前 (自由に編集・手動追加も可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})} />
+                      <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
                       <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
                     </div>
                   </div>
                 </WindowBox>
                 <div className="text-center mt-8">
-                  <button onClick={() => nextScene('memory')} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
-                    ステータスを語り終える <i className="fa-solid fa-arrow-right"></i>
+                  <button onClick={handleCompleteCanStep} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
+                    {isWeaponMagicStep ? '武器と魔法を語り終える' : '仲間との関係性を語り終える'} <i className="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
               </div>
@@ -567,7 +689,7 @@
         const currentAge = parseInt(player.age) || 30;
         const suggestedAges = getSuggestedAges();
         const pName = player.name || '〇〇';
-        
+
         const dialogSteps = [
           [{ speaker: "ハルカ", type: "haruka", text: `「まずは${pName}さんが社会に出たばかりの頃…\n新入社員（${suggestedAges[0]}歳ごろ）の時はどうでしたか？期待や不安があったと思います！」` }],
           [{ speaker: "リフレム", type: "reflem", text: `「ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
@@ -593,7 +715,7 @@
                       </button>
                       <div className="w-48 hidden md:block order-3"></div>
                     </div>
-                    <button onClick={() => setMemoryStep(memoryStep + 1)} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
+                    <button onClick={handleSkipMemory} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
                       この年代の記憶はスキップする
                     </button>
                   </DialogGroup>
@@ -621,7 +743,7 @@
                 <div className="flex justify-between items-center mb-4">
                   <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
                 </div>
-                <WindowBox title={`記憶を語る：${newMemory.age}歳ごろ`} iconName="fa-solid fa-book-open">
+                <WindowBox title={`記憶を語る：${newMemory.age || '追加'}歳ごろ`} iconName="fa-solid fa-book-open">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                     <div className="bg-gray-900 p-4 rounded border-2 border-gray-600 space-y-4">
                       <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700 mb-4">
@@ -663,7 +785,7 @@
                     <div className="bg-black border-2 border-gray-700 p-4 rounded max-h-[450px] overflow-y-auto">
                       <p className="text-gray-400 mb-3 border-b border-gray-700 pb-2">語られた記憶</p>
                       {memories.length === 0 ? (
-                        <p className="text-sm text-gray-600 text-center py-4">まだ記憶は語られていない…</p>
+                        <EmptyText>まだ記憶は語られていない…</EmptyText>
                       ) : (
                         <ul className="space-y-3">
                           {[...memories].sort((a,b) => a.age - b.age).map(m => (
@@ -691,19 +813,24 @@
         <div className="space-y-6 max-w-5xl mx-auto w-full">
           <DialogBox speaker="リフレム" type="reflem" text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
 
-          <WindowBox title="シーン3：冒険の書（ライフラインチャート）" iconName="fa-solid fa-chart-line">
+          <WindowBox title="シーン4：冒険の書（ライフラインチャート）" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
-          
+
           <DialogGroup dialogs={[
             { speaker: "ハルカ", type: "haruka", text: "「すごい…！心の動きが、こんな風に山と谷になってるんですね！」" },
             { speaker: "リフレム", type: "reflem", text: "「うむ。この山と谷を見て、お主はどういう時に心が躍るのか…自分で気づくことはあるかな？」" }
           ]}>
             <div className="mt-6 bg-gray-900 p-4 border border-gray-600 rounded">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 気づき・価値観のメモ</p>
-              <textarea className="rpg-input resize-none w-full h-20 text-gray-200 bg-black p-2 border-dashed" placeholder="例：裁量を持って新しいことに挑戦する時に満足度が高い。逆に、ルーチンワークだけだと下がる傾向がある。"></textarea>
+              <textarea
+                className="rpg-input resize-none w-full h-24 text-gray-200 bg-black p-2 border-dashed"
+                value={chartInsight}
+                onChange={e => setChartInsight(e.target.value)}
+                placeholder="例：裁量を持って新しいことに挑戦する時に満足度が高い。逆に、ルーチンワークだけだと下がる傾向がある。"
+              ></textarea>
             </div>
-            
+
             <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
               <button onClick={() => nextScene('memory')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                 <i className="fa-solid fa-arrow-right rotate-180"></i> 記憶を語り直す
@@ -719,7 +846,7 @@
 
       const renderWill = () => {
         const pName = player.name || '〇〇';
-        
+
         const handleNextWillStep = () => {
           if (willStep === 0) {
             setWillStep(1);
@@ -804,11 +931,11 @@
         <div className="space-y-6 max-w-4xl mx-auto animate-fade-in w-full">
           <NarrationBox iconName="fa-solid fa-bed" text={"リフレムとハルカとの夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\n明日からの現実の任務（Must）とどう接続していくか、一人静かに考える…"} />
 
-          <WindowBox title="最終段階：Must（王様からの勅命）と「接続」" iconName="fa-solid fa-book-open">
+          <WindowBox title="シーン6：Must（王様からの勅命）と「接続」" iconName="fa-solid fa-book-open">
             <div className="mb-4 text-sm text-gray-300">
               <p>与えられた任務（クエスト）をただこなすだけではない。<br/>そのクエストを通じて、<span className="text-yellow-300">「どんなスキル（Can）が上がり、自分の未来（Will）にどう繋がるか」</span> を見出すのだ！</p>
             </div>
-            
+
             <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 mb-4">
               {musts.map(m => (
                 <div key={m.id} className="border-2 border-gray-600 p-4 rounded bg-gray-900 bg-opacity-50 relative pr-8">
@@ -837,24 +964,128 @@
             <button onClick={() => nextScene('will')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
               <i className="fa-solid fa-arrow-right rotate-180"></i> 酒場に戻る
             </button>
-            <button 
-              onClick={() => {
-                alert('作戦会議完了！新たな冒険へ出発します。\n（これまでの記録はリセットされます）');
-                window.localStorage.clear();
-                window.location.reload();
-              }} 
+            <button
+              onClick={() => nextScene('summary')}
               className="bg-white text-black font-bold border-4 border-white rounded px-12 py-4 hover:bg-gray-200 transition-colors text-xl animate-pulse order-1 md:order-2"
             >
-              夜が明け、冒険へ出発する！
+              夜が明け、冒険の書をまとめる！
             </button>
             <div className="w-32 hidden md:block order-3"></div>
           </div>
         </div>
       );
 
-      // --- 共通ヘッダー＆プログレスバー ---
+      const SummarySection = ({ title, iconName, children }) => (
+        <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly">
+          <h3 className="text-xl text-yellow-300 font-bold mb-3 flex items-center gap-2">
+            <i className={iconName}></i>{title}
+          </h3>
+          {children}
+        </section>
+      );
+
+      const renderSummary = () => {
+        const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
+
+        return (
+          <div className="space-y-6 max-w-5xl mx-auto animate-fade-in w-full">
+            <DialogBox speaker="ハルカ" type="haruka" text={`「${player.name || '冒険者'}さんの冒険の書、完成です！\nここまで話してくれたことを、最後に一枚のまとめとして見られるようにしました。」`} />
+
+            <WindowBox title="冒険の書まとめ" iconName="fa-solid fa-book" className="print-friendly">
+              <div className="space-y-5">
+                <div className="bg-gray-900 bg-opacity-80 border-2 border-yellow-500 rounded p-4 text-center print-friendly">
+                  <p className="text-sm text-gray-400">冒険者</p>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mt-1">{player.name || '名もなき勇者'} <span className="text-yellow-300">Lv.{player.age || '?'}</span></h2>
+                  {will.job && <p className="text-blue-300 text-xl mt-2">3年後のクラス：{will.job}</p>}
+                </div>
+
+                <SummarySection title="ステータス：Can" iconName="fa-solid fa-shield-halved">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {['skill', 'magic', 'ally'].map(type => {
+                      const group = cans.filter(c => c.type === type);
+                      const meta = canTypeMeta[type];
+                      return (
+                        <div key={type} className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                          <h4 className={`font-bold mb-2 ${meta.color}`}><i className={`${meta.icon} mr-1`}></i>{meta.label}</h4>
+                          <CanList cans={group} emptyText="未記録" compact />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </SummarySection>
+
+                <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line">
+                  <LifelineChart data={memories} />
+                  <div className="mt-4 bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                    <p className="text-yellow-300 font-bold mb-2">気づき・価値観</p>
+                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{chartInsight || 'まだメモはありません。'}</p>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {sortedMemories.length === 0 ? (
+                      <EmptyText>記憶はまだ記録されていません。</EmptyText>
+                    ) : sortedMemories.map(m => (
+                      <div key={m.id} className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                        <div className="flex justify-between gap-3">
+                          <span className="text-yellow-300 font-bold">{m.age}歳</span>
+                          <span className={m.satisfaction > 0 ? 'text-blue-400' : m.satisfaction < 0 ? 'text-red-400' : 'text-gray-400'}>
+                            {m.satisfaction > 0 ? '+' : ''}{m.satisfaction}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300 mt-1">{m.event}</p>
+                      </div>
+                    ))}
+                  </div>
+                </SummarySection>
+
+                <SummarySection title="次なる冒険：Will" iconName="fa-solid fa-map">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                      <p className="text-sm text-gray-400 mb-1">1年後</p>
+                      <p className="text-gray-200 whitespace-pre-wrap">{will.oneYear || '未記録'}</p>
+                    </div>
+                    <div className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                      <p className="text-sm text-gray-400 mb-1">3年後</p>
+                      <p className="text-gray-200 whitespace-pre-wrap">{will.threeYears || '未記録'}</p>
+                    </div>
+                  </div>
+                </SummarySection>
+
+                <SummarySection title="現実のクエスト：Must" iconName="fa-solid fa-scroll">
+                  <div className="space-y-3">
+                    {musts.length === 0 ? (
+                      <EmptyText>クエストはまだ記録されていません。</EmptyText>
+                    ) : musts.map(m => (
+                      <div key={m.id} className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
+                        <h4 className="text-red-300 font-bold">{m.title}</h4>
+                        <p className="text-sm text-gray-400 mt-1">{m.desc || '概要なし'}</p>
+                        <div className="border-l-4 border-yellow-500 pl-3 mt-3">
+                          <p className="text-xs text-yellow-300 font-bold mb-1">接続メモ</p>
+                          <p className="text-sm text-gray-300">{m.connection || '未記録'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </SummarySection>
+              </div>
+            </WindowBox>
+
+            <div className="print-hidden flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+              <button onClick={() => nextScene('must')} className="text-gray-400 hover:text-white px-4 py-2 order-3 md:order-1 flex items-center gap-2 transition-colors">
+                <i className="fa-solid fa-arrow-right rotate-180"></i> クエスト編集に戻る
+              </button>
+              <button onClick={() => window.print()} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 order-1 md:order-2">
+                <i className="fa-solid fa-print"></i> 印刷・PDF保存
+              </button>
+              <button onClick={handleReset} className="text-gray-400 hover:text-red-400 px-4 py-2 order-2 md:order-3 flex items-center gap-2 transition-colors">
+                <i className="fa-solid fa-rotate-left"></i> 新しい冒険を始める
+              </button>
+            </div>
+          </div>
+        );
+      };
+
       const renderHeader = () => (
-        <div className="mb-8 text-center animate-fade-in relative z-20">
+        <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>キャリアクエスト</h1>
           <p className="text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
             ～あなたの休息と、旅立ちに祝福を～
@@ -863,12 +1094,12 @@
       );
 
       const renderProgressBar = () => {
-        const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must'];
-        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', '冒険の書', '未来', 'クエスト'];
+        const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must', 'summary'];
+        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', '冒険の書', '未来', 'クエスト', 'まとめ'];
         const currentIndex = SCENES.indexOf(scene);
-        
+
         return (
-          <div className="w-full mb-8 relative z-20 bg-black bg-opacity-60 p-3 rounded-lg border border-gray-700 shadow-md">
+          <div className="w-full mb-8 relative z-20 bg-black bg-opacity-60 p-3 rounded-lg border border-gray-700 shadow-md print-hidden">
             <div className="flex justify-between text-[10px] md:text-xs text-gray-400 mb-2 px-1">
               {SCENE_NAMES.map((name, i) => (
                 <span key={name} className={`flex-1 text-center ${i <= currentIndex ? 'text-yellow-400 font-bold' : ''}`}>
@@ -885,16 +1116,22 @@
         );
       };
 
-      const backgroundImage = scene === 'must' 
+      const backgroundImage = scene === 'must' || scene === 'summary'
         ? "url('https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=2000&auto=format&fit=crop')"
         : "url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop')";
 
+      const locationName = scene === 'must'
+        ? '宿屋の自室'
+        : scene === 'summary'
+          ? '冒険の書まとめ'
+          : '宿屋1階の酒場';
+
       return (
-        <div 
+        <div
           className="min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000"
           style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
         >
-          <div className="absolute inset-0 bg-black bg-opacity-75 z-0 transition-opacity duration-1000"></div>
+          <div className="absolute inset-0 bg-black bg-opacity-75 z-0 transition-opacity duration-1000 print-hidden"></div>
 
           <div className="pb-8 relative z-10 text-gray-100 max-w-5xl mx-auto flex flex-col min-h-[90vh]">
             <div className="flex-1">
@@ -902,13 +1139,13 @@
               {renderProgressBar()}
 
               {scene !== 'intro' && (
-                <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-black bg-opacity-70 p-3 md:p-4 rounded-lg border-2 border-gray-600 animate-fade-in shadow-md gap-4">
+                <div className="print-hidden flex flex-col md:flex-row justify-between items-center mb-6 bg-black bg-opacity-70 p-3 md:p-4 rounded-lg border-2 border-gray-600 animate-fade-in shadow-md gap-4">
                   <div className="text-lg md:text-xl font-bold">
                     {player.name || '名もなき勇者'} <span className="text-yellow-400 ml-2">Lv.{player.age || '?'}</span>
                   </div>
                   <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center">
                     <div className="text-sm text-gray-400 hidden md:block">
-                      現在地：{scene === 'must' ? '宿屋の自室' : '宿屋1階の酒場'}
+                      現在地：{locationName}
                     </div>
                     <button onClick={handleSuspend} className="text-xs md:text-sm border border-gray-500 text-gray-400 hover:text-white hover:border-white px-3 py-1.5 rounded transition-colors flex items-center gap-1">
                       <i className="fa-solid fa-pause"></i> 中断する
@@ -926,10 +1163,10 @@
               {scene === 'chart' && renderChart()}
               {scene === 'will' && renderWill()}
               {scene === 'must' && renderMust()}
+              {scene === 'summary' && renderSummary()}
             </div>
 
-            {/* 開発用 PageNO 表示エリア */}
-            <div className="text-center text-gray-600 text-xs mt-12 border-t border-gray-800 pt-4 font-sans tracking-widest">
+            <div className="print-hidden text-center text-gray-600 text-xs mt-12 border-t border-gray-800 pt-4 font-sans tracking-widest">
               PageNO: {getPageNo()}
             </div>
           </div>
@@ -937,7 +1174,6 @@
       );
     }
 
-    // レンダリング開始
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
