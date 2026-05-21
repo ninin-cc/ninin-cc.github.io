@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャリアクエスト ～あなたの休息と、旅立ちに祝福を～</title>
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (ブラウザ内でJSXをコンパイル) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome (アイコン用) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+    body { margin: 0; padding: 0; background: #000; }
+    .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
+    .rpg-input { background: rgba(0,0,0,0.5); border: none; border-bottom: 2px solid white; color: white; outline: none; padding: 8px; width: 100%; transition: border-color 0.2s; }
+    .rpg-input:focus { border-color: #fcd34d; background: rgba(0,0,0,0.8); }
+    .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
+    .rpg-button:hover:not(:disabled) { background: white; color: black; }
+    .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- カスタムフック: データの永続化 (localStorage) ---
+    function useLocalStorage(key, initialValue) {
+      const [storedValue, setStoredValue] = useState(() => {
+        try {
+          const item = window.localStorage.getItem(key);
+          return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+          console.log(error);
+          return initialValue;
+        }
+      });
+
+      const setValue = (value) => {
+        try {
+          const valueToStore = value instanceof Function ? value(storedValue) : value;
+          setStoredValue(valueToStore);
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      return [storedValue, setValue];
+    }
+
+    // --- プリセットデータ ---
+    const presetCans = {
+      skill: [
+        { name: 'プログラミング', desc: 'コードを書き、システムを構築する力' },
+        { name: '営業力', desc: '顧客の課題を引き出し、提案する力' },
+        { name: '企画・デザイン', desc: '情報を視覚的に分かりやすく整理する力' },
+        { name: '会計・財務知識', desc: '数字から会社の状態を読み解く力' },
+        { name: 'プロジェクトマネジメント', desc: '計画を立て、チームをゴールへ導く力' }
+      ],
+      magic: [
+        { name: 'ロジカルシンキング', desc: '筋道を立てて論理的に考える力' },
+        { name: 'プレゼンテーション', desc: '相手に伝わるように説明する力' },
+        { name: 'コミュニケーション', desc: '円滑な人間関係を築く力' },
+        { name: '課題発見・解決力', desc: '本質的な問題を見抜き、解決する力' },
+        { name: 'リーダーシップ', desc: '周囲を巻き込み、目標へ向かわせる力' },
+        { name: '段取り力', desc: '物事をスムーズに進めるための事前準備と計画力' },
+        { name: '根回し力', desc: '事前の調整で関係者の合意形成を円滑にする力' },
+        { name: '気配り力', desc: '周囲の状況に気づき、先回りしてサポートする力' },
+        { name: '観察力', desc: '人や物事の小さな変化や本質を見逃さない力' },
+        { name: '情勢を読む力', desc: '全体的な流れや空気感を察知し、適切な行動をとる力' },
+        { name: '日程調整力', desc: '複数の関係者の都合をまとめ上げ、最適なスケジュールを組む力' }
+      ],
+      ally: [
+        { name: '頼れる上司・先輩', desc: '困ったときに的確な助言をくれる存在' },
+        { name: '切磋琢磨できる同期', desc: '共に成長し、刺激し合える仲間' },
+        { name: '他部署のスペシャリスト', desc: '専門外の課題を助けてくれる助っ人' },
+        { name: '社外のメンター', desc: '客観的な視点で導いてくれる賢者' },
+        { name: '支えてくれる家族・友人', desc: 'どんな時も味方でいてくれる回復の泉' },
+        { name: '後輩から頼られる関係', desc: '後輩の相談に乗り、育成をサポートできる信頼関係' },
+        { name: '上司から任される関係', desc: '重要な仕事を安心して任せてもらえる信頼と実績' }
+      ]
+    };
+
+    const presetMemories = [
+      { label: '入社・配属', event: '新卒入社！期待と不安の始まり', satisfaction: 25 },
+      { label: '挫折・失敗', event: '希望しない配属・大きな失敗', satisfaction: -30 },
+      { label: '初成功', event: '初めての大きなプロジェクト成功', satisfaction: 40 },
+      { label: '壁にぶつかる', event: '仕事の壁にぶつかり悩む', satisfaction: -20 },
+      { label: '後輩指導', event: '後輩ができ、マネジメントに悩む', satisfaction: -15 },
+      { label: 'プライベートの変化', event: '結婚・出産など生活の大きな変化', satisfaction: 45 },
+      { label: '昇格・責任', event: '昇格！新たな役割へのプレッシャー', satisfaction: 10 },
+      { label: '新たな挑戦', event: '新規事業や新しい役割への挑戦', satisfaction: 35 },
+    ];
+
+    // --- UIコンポーネント ---
+    const WindowBox = ({ title, children, iconName, className = "" }) => (
+      <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative ${className} animate-fade-in`}>
+        {title && (
+          <div className="absolute -top-4 left-4 bg-black px-2 flex items-center space-x-2">
+            {iconName && <i className={iconName}></i>}
+            <h2 className="text-xl font-bold tracking-widest">{title}</h2>
+          </div>
+        )}
+        <div className="mt-2">{children}</div>
+      </div>
+    );
+
+    // ゆっくり文字が出るセリフウィンドウ
+    const DialogBox = ({ speaker, type = 'reflem', text }) => {
+      const [displayedText, setDisplayedText] = useState("");
+      const [isFinished, setIsFinished] = useState(false);
+
+      useEffect(() => {
+        let index = 0;
+        setDisplayedText("");
+        setIsFinished(false);
+        const timer = setInterval(() => {
+          index++;
+          setDisplayedText(text.slice(0, index));
+          if (index >= text.length) {
+            clearInterval(timer);
+            setIsFinished(true);
+          }
+        }, 40); // 40ms間隔で1文字ずつ表示
+        return () => clearInterval(timer);
+      }, [text]);
+
+      const handleSkip = () => {
+        if (!isFinished) {
+          setDisplayedText(text);
+          setIsFinished(true);
+        }
+      };
+
+      const config = {
+        reflem: {
+          color: 'bg-amber-900 border-yellow-500',
+          imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950',
+          img: 'https://ninin-cc.github.io/cq/img/rf.png'
+        },
+        haruka: {
+          color: 'bg-rose-900 border-rose-400',
+          imgBg: 'bg-gradient-to-b from-rose-700 to-rose-950',
+          img: 'https://ninin-cc.github.io/cq/img/hr.png'
+        }
+      };
+      const { color, imgBg, img } = config[type] || config.reflem;
+
+      return (
+        <div onClick={handleSkip} className={`${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative animate-fade-in shadow-xl mt-6 md:mt-8 cursor-pointer`}>
+          <div className={`absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+            {speaker}
+          </div>
+          <div className="flex items-center gap-4 md:gap-6 mt-1 md:mt-2">
+            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative`}>
+              <img src={img} alt={speaker} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left">
+              {displayedText.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+              {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ゆっくり文字が出るナレーション
+    const NarrationBox = ({ text, iconName }) => {
+      const [displayedText, setDisplayedText] = useState("");
+      const [isFinished, setIsFinished] = useState(false);
+
+      useEffect(() => {
+        let index = 0;
+        setDisplayedText("");
+        setIsFinished(false);
+        const timer = setInterval(() => {
+          index++;
+          setDisplayedText(text.slice(0, index));
+          if (index >= text.length) {
+            clearInterval(timer);
+            setIsFinished(true);
+          }
+        }, 40);
+        return () => clearInterval(timer);
+      }, [text]);
+
+      const handleSkip = () => {
+        if (!isFinished) {
+          setDisplayedText(text);
+          setIsFinished(true);
+        }
+      };
+
+      return (
+        <div onClick={handleSkip} className="bg-black bg-opacity-80 border-y-2 border-gray-500 py-6 px-4 mb-8 text-center text-gray-300 leading-loose italic flex flex-col items-center animate-fade-in cursor-pointer">
+          {iconName && <i className={`${iconName} mb-2 text-gray-500 text-2xl`}></i>}
+          <div>
+            {displayedText.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+            {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+          </div>
+        </div>
+      );
+    };
+
+    const LifelineChart = ({ data }) => {
+      if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
+      const sortedData = [...data].sort((a, b) => a.age - b.age);
+      const width = 1000; const height = 300; const paddingX = 50; const paddingY = 20;
+      const chartWidth = width - paddingX * 2; const chartHeight = height - paddingY * 2;
+
+      const getX = (index) => paddingX + (index * (chartWidth / Math.max(1, sortedData.length - 1)));
+      const getY = (satisfaction) => {
+        const normalized = (satisfaction + 50) / 100;
+        return paddingY + chartHeight - (normalized * chartHeight);
+      };
+      
+      const generateSmoothPath = (data) => {
+        if (data.length === 0) return '';
+        if (data.length === 1) return `M ${getX(0)},${getY(data[0].satisfaction)}`;
+        let path = `M ${getX(0)},${getY(data[0].satisfaction)}`;
+        for (let i = 0; i < data.length - 1; i++) {
+          const x0 = getX(i); const y0 = getY(data[i].satisfaction);
+          const x1 = getX(i + 1); const y1 = getY(data[i + 1].satisfaction);
+          const cx0 = x0 + (x1 - x0) * 0.4; const cy0 = y0;
+          const cx1 = x1 - (x1 - x0) * 0.4; const cy1 = y1;
+          path += ` C ${cx0},${cy0} ${cx1},${cy1} ${x1},${y1}`;
+        }
+        return path;
+      };
+
+      const pathData = generateSmoothPath(sortedData);
+
+      return (
+        <div className="w-full bg-gray-900 border-2 border-dashed border-gray-600 p-2 rounded mt-4">
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto text-white" preserveAspectRatio="xMidYMid meet">
+            <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
+            <text x={paddingX - 10} y={height / 2 + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
+            <text x={paddingX - 10} y={paddingY + 10} fill="#60A5FA" fontSize="12" textAnchor="end">+50</text>
+            <text x={paddingX - 10} y={height - paddingY} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
+            <path d={pathData} fill="none" stroke="#FCD34D" strokeWidth="4" />
+            {sortedData.map((d, i) => {
+              const cx = getX(i); const cy = getY(d.satisfaction);
+              return (
+                <g key={d.id}>
+                  <circle cx={cx} cy={cy} r="6" fill="#000" stroke="#FCD34D" strokeWidth="3" />
+                  <text x={cx} y={height - 5} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
+                  <foreignObject x={cx - 60} y={cy < height / 2 ? cy - 50 : cy + 15} width="120" height="40">
+                    <div xmlns="http://www.w3.org/1999/xhtml" className="text-xs text-center text-gray-200 leading-tight bg-black bg-opacity-70 rounded px-1">
+                      {d.event}
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      );
+    };
+
+    const App = () => {
+      // --- 状態管理 ---
+      const [scene, setScene] = useLocalStorage('cq_scene', 'intro');
+      const [introStep, setIntroStep] = useLocalStorage('cq_intro_step', 0);
+      const [isInputPhase, setIsInputPhase] = useLocalStorage('cq_input_phase', false);
+      const [player, setPlayer] = useLocalStorage('cq_player', { name: '', age: '' });
+
+      const [cans, setCans] = useLocalStorage('cq_cans', [
+        { id: 1, type: 'magic', name: '段取り力', desc: '物事をスムーズに進めるための事前準備と計画力' },
+        { id: 2, type: 'ally', name: '後輩から頼られる関係', desc: '後輩の相談に乗り、育成をサポートできる信頼関係' }
+      ]);
+      const [newCan, setNewCan] = useState({ type: 'skill', name: '', desc: '' });
+
+      const [memories, setMemories] = useLocalStorage('cq_memories', []);
+      const [newMemory, setNewMemory] = useState({ age: '', event: '', satisfaction: 0 });
+      const [memoryStep, setMemoryStep] = useLocalStorage('cq_memory_step', 0);
+
+      const [will, setWill] = useLocalStorage('cq_will', { job: '', oneYear: '', threeYears: '' });
+      const [musts, setMusts] = useLocalStorage('cq_musts', [
+        {
+          id: 1, title: '王様からの勅命：レガシーシステムの刷新', desc: '古き良きシステムを最新アーキテクチャに移行せよ。',
+          connection: 'これをこなせば「プロジェクト進行スキル」が上がり、将来の「サービス立ち上げ」の布石となる！'
+        }
+      ]);
+      const [newMust, setNewMust] = useState({ title: '', desc: '', connection: '' });
+
+      const getSuggestedAges = () => {
+        const currentAge = parseInt(player.age) || 30;
+        const effectiveStartAge = currentAge < 22 ? 18 : 22;
+        const diff = Math.max(0, currentAge - effectiveStartAge);
+        return [
+          effectiveStartAge,
+          Math.floor(effectiveStartAge + diff * 0.25),
+          Math.floor(effectiveStartAge + diff * 0.50),
+          Math.floor(effectiveStartAge + diff * 0.75),
+          currentAge
+        ];
+      };
+
+      const getPageNo = () => {
+        switch (scene) {
+          case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
+          case 'can': return `2${isInputPhase ? '-Input' : ''}`;
+          case 'memory': return `3-${memoryStep + 1}${isInputPhase ? '-Input' : ''}`;
+          case 'chart': return '4';
+          case 'will': return `5${isInputPhase ? '-Input' : ''}`;
+          case 'must': return '6';
+          default: return '0';
+        }
+      };
+
+      const handleAddCan = () => {
+        if (!newCan.name) return;
+        setCans([...cans, { ...newCan, id: Date.now() }]);
+        setNewCan({ type: newCan.type, name: '', desc: '' });
+      };
+      const handleRemoveCan = (id) => setCans(cans.filter(c => c.id !== id));
+
+      const handleAddMemory = () => {
+        if (!newMemory.event || !newMemory.age) return;
+        setMemories([...memories, { ...newMemory, id: Date.now(), age: Number(newMemory.age), satisfaction: Number(newMemory.satisfaction) }]);
+        const nextStep = memoryStep + 1;
+        setMemoryStep(nextStep);
+        setIsInputPhase(false);
+        
+        if (nextStep < 5) {
+          const suggestedAges = getSuggestedAges();
+          setNewMemory({ age: suggestedAges[nextStep], event: '', satisfaction: 0 });
+        } else {
+          setNewMemory({ age: '', event: '', satisfaction: 0 });
+        }
+      };
+      const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
+
+      const handleAddMust = () => {
+        if (!newMust.title) return;
+        setMusts([...musts, { ...newMust, id: Date.now() }]);
+        setNewMust({ title: '', desc: '', connection: '' });
+      };
+      const handleRemoveMust = (id) => setMusts(musts.filter(m => m.id !== id));
+
+      const nextScene = (next) => {
+        window.scrollTo(0, 0);
+        setIsInputPhase(false);
+        if (next === 'intro') setIntroStep(0);
+        if (next === 'memory' && memories.length === 0) {
+          setMemoryStep(0);
+          const suggestedAges = getSuggestedAges();
+          setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
+        }
+        setScene(next);
+      };
+
+      const handleReset = () => {
+        if (window.confirm('これまでの記録（冒険の書）をすべて消去して、初めからやり直しますか？')) {
+          window.localStorage.clear();
+          window.location.reload();
+        }
+      };
+
+      const renderIntro = () => (
+        <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in mt-10">
+          {!isInputPhase ? (
+            <>
+              {introStep === 0 && (
+                <div className="w-full max-w-2xl text-center animate-fade-in">
+                  <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー」" />
+                  <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
+                    旅を再開する
+                  </button>
+                </div>
+              )}
+
+              {introStep === 1 && (
+                <div className="w-full max-w-2xl text-center animate-fade-in">
+                  <NarrationBox iconName="fa-solid fa-mug-hot" text={"とある町の宿屋に到着した。\n1階の酒場でエールを飲んでくつろいでいると、\n一人の老人と、弟子らしき若い女性が興味深そうに声をかけてきた。"} />
+                  <button onClick={() => setIntroStep(2)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
+                    次へ
+                  </button>
+                </div>
+              )}
+
+              {introStep === 2 && (
+                <div className="w-full max-w-2xl text-center animate-fade-in">
+                  <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「ほっほっほ、見ない顔じゃな。わしは魔法使いのリフレム。こちらは弟子のハルカじゃ。」" />
+                  <DialogBox speaker="弟子 ハルカ" type="haruka" text={"「はじめまして！私、冒険者さんのお話を聞くのが大好きなんです！\nあなたのお名前と年齢、教えてもらえませんか？」"} />
+                  <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
+                    答える
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full max-w-md animate-fade-in">
+              <WindowBox title="プレイヤー情報" iconName="fa-regular fa-message">
+                <div className="space-y-5 p-2">
+                  <div>
+                    <label className="text-gray-300 text-sm block mb-1">なまえ</label>
+                    <input type="text" className="rpg-input text-xl" value={player.name} onChange={e => setPlayer({...player, name: e.target.value})} placeholder="例：ああああ" />
+                  </div>
+                  <div>
+                    <label className="text-gray-300 text-sm block mb-1">ねんれい（年齢はそのままレベルになる）</label>
+                    <div className="flex items-end gap-3">
+                      <input type="number" className="rpg-input text-xl w-24 text-center" value={player.age} onChange={e => setPlayer({...player, age: e.target.value})} placeholder="30" />
+                      <span className="text-yellow-400 font-bold mb-1 text-xl">→ Lv.{player.age || '??'}</span>
+                    </div>
+                  </div>
+                </div>
+              </WindowBox>
+              <div className="text-center mt-6">
+                <button onClick={() => nextScene('can')} disabled={!player.name || !player.age} className={`rpg-button text-xl px-8 py-4 ${(!player.name || !player.age) ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}>
+                  二人との会話を続ける
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      const renderCan = () => (
+        <div className="space-y-6 max-w-4xl mx-auto">
+          {!isInputPhase ? (
+            <div className="animate-fade-in text-center">
+              <DialogBox speaker="老魔法使いリフレム" type="reflem" text={`「Lv.${player.age}の ${player.name} と申すか。よい面構えじゃ。\nまずは、お主が今までどんな武器や魔法を使い、誰と冒険してきたか…わしに教えてくれんか？」`} />
+              <DialogBox speaker="弟子 ハルカ" type="haruka" text={"「あなたの得意なことや、どんなお仲間がいるのか、すっごく気になります！\nどんな小さなことでもいいので、私に教えてください！」"} />
+              
+              <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                <button onClick={() => nextScene('intro')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                  <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
+                </button>
+                <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
+                  <i className="fa-regular fa-message"></i> 自分のステータスを語る
+                </button>
+                <div className="w-40 hidden md:block order-3"></div>
+              </div>
+            </div>
+          ) : (
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-center mb-4">
+                <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
+                <p className="text-yellow-300 font-bold">現在のステータス</p>
+              </div>
+              
+              <WindowBox title="シーン1：現在の装備・魔法・仲間の確認" iconName="fa-solid fa-shield-halved">
+                <ul className="space-y-3 mb-6 bg-gray-900 p-4 rounded-lg">
+                  {cans.map(c => (
+                    <li key={c.id} className="flex flex-col border-b border-gray-700 pb-2 relative pr-8">
+                      <div className="flex items-center gap-2 text-lg">
+                        {c.type === 'skill' && <i className="fa-solid fa-khanda text-blue-400"></i>}
+                        {c.type === 'magic' && <i className="fa-solid fa-wand-magic-sparkles text-purple-400"></i>}
+                        {c.type === 'ally' && <i className="fa-solid fa-users text-green-400"></i>}
+                        <span>{c.name}</span>
+                      </div>
+                      <div className="text-gray-400 text-sm pl-7">{c.desc}</div>
+                      <button onClick={() => handleRemoveCan(c.id)} className="absolute right-0 top-2 text-gray-500 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="border-t border-gray-600 pt-4 space-y-3">
+                  <p className="text-sm text-yellow-300">▼ まだ記録していない力はあるか？</p>
+                  <div className="flex gap-2">
+                    <button onClick={() => setNewCan({ ...newCan, type: 'skill', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'skill' ? 'bg-blue-600 border-blue-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>武器(スキル)</button>
+                    <button onClick={() => setNewCan({ ...newCan, type: 'magic', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'magic' ? 'bg-purple-600 border-purple-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>魔法(汎用)</button>
+                    <button onClick={() => setNewCan({ ...newCan, type: 'ally', name: '', desc: '' })} className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${newCan.type === 'ally' ? 'bg-green-600 border-green-400 text-white' : 'bg-gray-800 border-transparent text-gray-400'}`}>仲間(関係性)</button>
+                  </div>
+                  <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
+                    <div className="flex flex-wrap gap-2">
+                      {presetCans[newCan.type].map((preset, idx) => (
+                        <button key={idx} onClick={() => setNewCan({ ...newCan, name: preset.name, desc: preset.desc })} className={`text-sm border px-3 py-1.5 rounded transition-all ${newCan.name === preset.name ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}>
+                          {preset.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col md:flex-row gap-2 items-center mt-2">
+                    <input type="text" placeholder="名前 (自由に編集・入力可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, name: e.target.value})} />
+                    <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, desc: e.target.value})} />
+                    <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
+                  </div>
+                </div>
+              </WindowBox>
+              <div className="text-center mt-8">
+                <button onClick={() => nextScene('memory')} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
+                  ステータスを語り終える <i className="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      const renderMemory = () => {
+        const currentAge = parseInt(player.age) || 30;
+        const suggestedAges = getSuggestedAges();
+        
+        const dialogSteps = [
+          { speaker: "弟子 ハルカ", type: "haruka", text: `まずは先輩が社会に出たばかりの頃…\n新入社員（${suggestedAges[0]}歳ごろ）の時はどうでしたか？期待や不安があったと思います！` },
+          { speaker: "老魔法使いリフレム", type: "reflem", text: `ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？` },
+          { speaker: "弟子 ハルカ", type: "haruka", text: `なるほど！次は、${suggestedAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？` },
+          { speaker: "老魔法使いリフレム", type: "reflem", text: `うむうむ。次は${suggestedAges[3]}歳ごろじゃな。\n中堅となり、後輩ができたり、責任ある立場になったりしたのではないかな？` },
+          { speaker: "弟子 ハルカ", type: "haruka", text: `最後は、最近（${currentAge}歳ごろ）のことについて教えてください！\n今の先輩を形作っている出来事を知りたいです！` }
+        ];
+
+        const isCompleted = memoryStep >= 5;
+
+        return (
+          <div className="space-y-6 max-w-4xl mx-auto">
+            {!isInputPhase ? (
+              <div className="animate-fade-in text-center">
+                {!isCompleted ? (
+                  <>
+                    <DialogBox speaker={dialogSteps[memoryStep].speaker} type={dialogSteps[memoryStep].type} text={dialogSteps[memoryStep].text} />
+                    
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                      <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
+                      </button>
+                      <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
+                        <i className="fa-regular fa-message"></i> 記憶を語る（{memoryStep + 1}/5）
+                      </button>
+                      <div className="w-48 hidden md:block order-3"></div>
+                    </div>
+
+                    <button onClick={() => setMemoryStep(memoryStep + 1)} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
+                      この年代の記憶はスキップする
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <DialogBox speaker="老魔法使いリフレム" type="reflem" text={"「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを冒険の書（ライフラインチャート）にまとめてみよう。」"} />
+                    
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                      <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
+                      </button>
+                      <button onClick={() => nextScene('chart')} className="rpg-button text-xl px-8 py-4 animate-pulse flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
+                        ライフラインチャートを見る <i className="fa-solid fa-arrow-right"></i>
+                      </button>
+                      <div className="w-48 hidden md:block order-3"></div>
+                    </div>
+
+                    <button onClick={() => setIsInputPhase(true)} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
+                      追加で記憶を語る
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="animate-fade-in">
+                <div className="flex justify-between items-center mb-4">
+                  <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
+                </div>
+                <WindowBox title={`記憶を語る：${newMemory.age}歳ごろ`} iconName="fa-solid fa-book-open">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                    <div className="bg-gray-900 p-4 rounded border-2 border-gray-600 space-y-4">
+                      <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700 mb-4">
+                        <p className="text-xs text-gray-400 mb-2">迷ったら、よくある記憶の欠片から選ぶ：</p>
+                        <div className="flex flex-wrap gap-2">
+                          {presetMemories.map((pm, idx) => (
+                            <button key={idx} onClick={() => setNewMemory({ ...newMemory, event: pm.event, satisfaction: pm.satisfaction })} className="text-xs border border-gray-500 text-gray-300 px-2 py-1 rounded hover:bg-gray-700">
+                              {pm.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">年齢・時期（変更可能）</label>
+                        <div className="flex items-center gap-2">
+                          <input type="number" className="rpg-input w-24 text-center font-bold text-yellow-300" value={newMemory.age} onChange={e => setNewMemory({...newMemory, age: e.target.value})} />
+                          <span>歳ごろ</span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">出来事</label>
+                        <input type="text" className="rpg-input w-full" placeholder="例：初めてのプロジェクトを任された" value={newMemory.event} onChange={e => setNewMemory({...newMemory, event: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1 flex justify-between">
+                          <span>満足度（感情）</span>
+                          <span className={newMemory.satisfaction > 0 ? 'text-blue-400' : newMemory.satisfaction < 0 ? 'text-red-400' : 'text-gray-400'}>
+                            {newMemory.satisfaction > 0 ? '+' : ''}{newMemory.satisfaction}
+                          </span>
+                        </label>
+                        <input type="range" min="-50" max="50" step="5" className="w-full accent-yellow-400" value={newMemory.satisfaction} onChange={e => setNewMemory({...newMemory, satisfaction: e.target.value})} />
+                      </div>
+                      <button onClick={handleAddMemory} className="rpg-button w-full mt-4 py-3 bg-blue-900 border-blue-400 hover:bg-blue-700 text-white font-bold">
+                        記憶を記録する
+                      </button>
+                    </div>
+
+                    <div className="bg-black border-2 border-gray-700 p-4 rounded max-h-[450px] overflow-y-auto">
+                      <p className="text-gray-400 mb-3 border-b border-gray-700 pb-2">語られた記憶</p>
+                      {memories.length === 0 ? (
+                        <p className="text-sm text-gray-600 text-center py-4">まだ記憶は語られていない…</p>
+                      ) : (
+                        <ul className="space-y-3">
+                          {[...memories].sort((a,b) => a.age - b.age).map(m => (
+                            <li key={m.id} className="flex gap-3 text-sm items-center group bg-gray-900 bg-opacity-50 p-2 rounded border border-gray-800">
+                              <span className="text-yellow-400 font-bold shrink-0 w-12">{m.age}歳</span>
+                              <span className="flex-1 text-gray-200">{m.event}</span>
+                              <span className={`shrink-0 font-bold w-10 text-right ${m.satisfaction > 0 ? 'text-blue-400' : m.satisfaction < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                                {m.satisfaction > 0 ? '+' : ''}{m.satisfaction}
+                              </span>
+                              <button onClick={() => handleRemoveMemory(m.id)} className="text-gray-600 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </WindowBox>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const renderChart = () => (
+        <div className="space-y-6 max-w-5xl mx-auto">
+          <DialogBox speaker="老魔法使いリフレム" type="reflem" text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
+          <DialogBox speaker="弟子 ハルカ" type="haruka" text="「すごい…！先輩の心の動きが、こんな風に山と谷になってるんですね！」" />
+          <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「うむ。この山と谷を見て、お主はどういう時に心が躍るのか…自分で気づくことはあるかな？」" />
+
+          <WindowBox title="シーン3：冒険の書（ライフラインチャート）" iconName="fa-solid fa-chart-line">
+            <LifelineChart data={memories} />
+            <div className="mt-6 bg-gray-900 p-4 border border-gray-600 rounded">
+              <p className="text-sm text-yellow-300 font-bold mb-2">▼ 気づき・価値観のメモ</p>
+              <textarea className="rpg-input resize-none w-full h-20 text-gray-200 bg-black p-2 border-dashed" placeholder="例：裁量を持って新しいことに挑戦する時に満足度が高い。逆に、ルーチンワークだけだと下がる傾向がある。"></textarea>
+            </div>
+          </WindowBox>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+            <button onClick={() => nextScene('memory')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+              <i className="fa-solid fa-arrow-right rotate-180"></i> 記憶を語り直す
+            </button>
+            <button onClick={() => nextScene('will')} className="rpg-button text-xl px-8 py-4 flex items-center justify-center gap-2 bg-white text-black font-bold order-1 md:order-2">
+              これからの未来を語り合う <i className="fa-solid fa-arrow-right"></i>
+            </button>
+            <div className="w-40 hidden md:block order-3"></div>
+          </div>
+        </div>
+      );
+
+      const renderWill = () => (
+        <div className="space-y-6 max-w-4xl mx-auto">
+          {!isInputPhase ? (
+            <div className="animate-fade-in text-center">
+              <DialogBox speaker="弟子 ハルカ" type="haruka" text={"「先輩のこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」"} />
+              <DialogBox speaker="老魔法使いリフレム" type="reflem" text={"「そして3年後じゃ。どんな職業（クラス）を名乗り、どんな未来を描いておるのかな？\n魔王討伐だけが正解ではない。枠を外して自由に描くがよいぞ。」"} />
+              
+              <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                  <i className="fa-solid fa-arrow-right rotate-180"></i> 冒険の書に戻る
+                </button>
+                <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
+                  <i className="fa-regular fa-message"></i> 未来の自分を想像して語る
+                </button>
+                <div className="w-40 hidden md:block order-3"></div>
+              </div>
+            </div>
+          ) : (
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-center mb-4">
+                <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
+              </div>
+              <WindowBox title="シーン4：Will（次なる冒険の目的）" iconName="fa-solid fa-map">
+                <div className="space-y-8 p-2">
+                  <div>
+                    <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> ハルカの質問：1年先の未来（短期目標）</label>
+                    <textarea className="rpg-input resize-none w-full text-lg" rows={2} value={will.oneYear} onChange={e => setWill({...will, oneYear: e.target.value})} placeholder="例：バックエンドの魔法（Node.js）を習得し、守備範囲を広げる" />
+                  </div>
+                  <div className="pt-6 border-t border-gray-700">
+                    <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> リフレムの質問：3年先の未来（長期目標）</label>
+                    <textarea className="rpg-input resize-none w-full text-lg" rows={2} value={will.threeYears} onChange={e => setWill({...will, threeYears: e.target.value})} placeholder="例：自社サービスを立ち上げ、多くの村人（ユーザー）を笑顔にする" />
+                  </div>
+                  <div>
+                    <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたい職業（クラス）</label>
+                    <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：フルスタック勇者" />
+                  </div>
+                </div>
+              </WindowBox>
+              <div className="text-center mt-8">
+                <button onClick={() => nextScene('must')} className="rpg-button text-base px-8 py-4 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
+                  語らいを終え、自室へ戻る <i className="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+
+      const renderMust = () => (
+        <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
+          <NarrationBox iconName="fa-solid fa-bed" text={"リフレムとハルカとの夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\n明日からの現実の任務（Must）とどう接続していくか、一人静かに考える…"} />
+
+          <WindowBox title="最終段階：Must（王様からの勅命）と「接続」" iconName="fa-solid fa-book-open">
+            <div className="mb-4 text-sm text-gray-300">
+              <p>与えられた任務（クエスト）をただこなすだけではない。<br/>そのクエストを通じて、<span className="text-yellow-300">「どんなスキル（Can）が上がり、自分の未来（Will）にどう繋がるか」</span> を見出すのだ！</p>
+            </div>
+            
+            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 mb-4">
+              {musts.map(m => (
+                <div key={m.id} className="border-2 border-gray-600 p-4 rounded bg-gray-900 bg-opacity-50 relative pr-8">
+                  <button onClick={() => handleRemoveMust(m.id)} className="absolute right-2 top-2 text-gray-500 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
+                  <h3 className="text-lg text-red-300 font-bold mb-2">{m.title}</h3>
+                  <p className="text-sm text-gray-400 mb-3">{m.desc}</p>
+                  <div className="border-l-4 border-yellow-500 pl-3 bg-yellow-900 bg-opacity-20 p-3 rounded mt-2">
+                    <label className="text-yellow-400 text-xs mb-1 block font-bold">【接続メモ】自分のWill/Canにどう繋がるか</label>
+                    <p className="text-sm leading-relaxed">{m.connection}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="border-t border-gray-600 pt-6 space-y-3">
+              <p className="text-sm text-yellow-300 mb-2">▼ 現実のクエストを登録し、接続を考える</p>
+              <input type="text" placeholder="クエスト名（業務名）" className="rpg-input text-base" value={newMust.title} onChange={e => setNewMust({...newMust, title: e.target.value})} />
+              <input type="text" placeholder="クエストの概要・目的" className="rpg-input text-sm" value={newMust.desc} onChange={e => setNewMust({...newMust, desc: e.target.value})} />
+              <textarea placeholder="【接続】このクエストをこなすことで、どんな力がつき、どんな未来（Will）に近づくか？" className="rpg-input resize-none text-sm" rows={3} value={newMust.connection} onChange={e => setNewMust({...newMust, connection: e.target.value})} />
+              <div className="text-right mt-2">
+                <button onClick={handleAddMust} className="rpg-button text-sm px-6 py-2">クエストを追加する</button>
+              </div>
+            </div>
+          </WindowBox>
+
+          <div className="flex flex-col md:flex-row justify-between items-center mt-12 mb-8 gap-4 w-full">
+            <button onClick={() => nextScene('will')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+              <i className="fa-solid fa-arrow-right rotate-180"></i> 酒場に戻る
+            </button>
+            <button 
+              onClick={() => {
+                alert('作戦会議完了！新たな冒険へ出発します。\n（これまでの記録はリセットされます）');
+                window.localStorage.clear();
+                window.location.reload();
+              }} 
+              className="bg-white text-black font-bold border-4 border-white rounded px-12 py-4 hover:bg-gray-200 transition-colors text-xl animate-pulse order-1 md:order-2"
+            >
+              夜が明け、冒険へ出発する！
+            </button>
+            <div className="w-32 hidden md:block order-3"></div>
+          </div>
+        </div>
+      );
+
+      // --- 共通ヘッダー＆プログレスバー ---
+      const renderHeader = () => (
+        <div className="mb-8 text-center animate-fade-in relative z-20">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>キャリアクエスト</h1>
+          <p className="text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
+            ～あなたの休息と、旅立ちに祝福を～
+          </p>
+        </div>
+      );
+
+      const renderProgressBar = () => {
+        const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must'];
+        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', '冒険の書', '未来', 'クエスト'];
+        const currentIndex = SCENES.indexOf(scene);
+        
+        return (
+          <div className="w-full mb-8 relative z-20 bg-black bg-opacity-60 p-3 rounded-lg border border-gray-700 shadow-md">
+            <div className="flex justify-between text-[10px] md:text-xs text-gray-400 mb-2 px-1">
+              {SCENE_NAMES.map((name, i) => (
+                <span key={name} className={`flex-1 text-center ${i <= currentIndex ? 'text-yellow-400 font-bold' : ''}`}>
+                  {name}
+                </span>
+              ))}
+            </div>
+            <div className="w-full bg-gray-800 rounded-full h-2 border border-gray-600 flex overflow-hidden">
+               {SCENES.map((s, i) => (
+                 <div key={s} className={`h-2 flex-1 ${i <= currentIndex ? 'bg-yellow-400' : 'bg-transparent'} ${i > 0 ? 'border-l border-gray-700' : ''}`}></div>
+               ))}
+            </div>
+          </div>
+        );
+      };
+
+      const backgroundImage = scene === 'must' 
+        ? "url('https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=2000&auto=format&fit=crop')"
+        : "url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop')";
+
+      return (
+        <div 
+          className="min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000"
+          style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-75 z-0 transition-opacity duration-1000"></div>
+
+          <div className="pb-8 relative z-10 text-gray-100 max-w-5xl mx-auto flex flex-col min-h-[90vh]">
+            <div className="flex-1">
+              {renderHeader()}
+              {renderProgressBar()}
+
+              {scene !== 'intro' && (
+                <div className="flex justify-between items-center mb-6 bg-black bg-opacity-70 p-3 md:p-4 rounded-lg border-2 border-gray-600 animate-fade-in shadow-md">
+                  <div className="text-lg md:text-xl font-bold">
+                    {player.name || '名もなき勇者'} <span className="text-yellow-400 ml-2">Lv.{player.age || '?'}</span>
+                  </div>
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <div className="text-sm text-gray-400 hidden md:block">
+                      現在地：{scene === 'must' ? '宿屋の自室' : '宿屋1階の酒場'}
+                    </div>
+                    <button onClick={handleReset} className="text-xs md:text-sm border border-gray-500 text-gray-400 hover:text-red-400 hover:border-red-400 px-3 py-1.5 rounded transition-colors flex items-center gap-1">
+                      <i className="fa-solid fa-rotate-left"></i> 冒険の書を消す
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {scene === 'intro' && renderIntro()}
+              {scene === 'can' && renderCan()}
+              {scene === 'memory' && renderMemory()}
+              {scene === 'chart' && renderChart()}
+              {scene === 'will' && renderWill()}
+              {scene === 'must' && renderMust()}
+            </div>
+
+            {/* 開発用 PageNO 表示エリア */}
+            <div className="text-center text-gray-600 text-xs mt-12 border-t border-gray-800 pt-4 font-sans tracking-widest">
+              PageNO: {getPageNo()}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // レンダリング開始
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
