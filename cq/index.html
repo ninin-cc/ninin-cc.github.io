@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>キャリアの宿屋™ ～あなたの休息と、旅立ちに祝福を～</title>
+  <title>キャリアの宿屋™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～</title>
 
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -180,6 +180,7 @@
 
     const presetCans = {
       skill: [
+        { name: 'プログラミング', desc: 'コードを書き、システムや仕組みを形にする力' },
         { name: '営業力', desc: '顧客の課題を引き出し、提案につなげる力' },
         { name: '接客力', desc: '相手の状況や感情を見ながら、安心感のある対応をする力' },
         { name: '現場力', desc: '現場の状況を把握し、その場で必要な判断と対応をする力' },
@@ -187,9 +188,11 @@
         { name: '資料作成力', desc: '情報を整理し、相手に伝わる資料としてまとめる力' },
         { name: '企画力', desc: '目的に合わせて、アイデアや施策を形にする力' },
         { name: 'IT活用力', desc: 'ツールやシステムを使って、仕事の効率や質を高める力' },
+        { name: 'AI活用力', desc: 'AIツールを使って、情報整理・発想・業務効率化につなげる力' },
         { name: 'データ分析力', desc: '数字やデータから傾向を読み取り、判断に生かす力' },
         { name: '業務改善力', desc: '日々の仕事のムダや課題を見つけ、より良いやり方に変える力' },
-        { name: '品質管理力', desc: 'ミスやばらつきを防ぎ、安定した成果を出す力' }
+        { name: '品質管理力', desc: 'ミスやばらつきを防ぎ、安定した成果を出す力' },
+        { name: '筋力・体力', desc: '身体を使う仕事や長時間の活動を支える基礎的な力' }
       ],
       magic: [
         { name: 'ロジカルシンキング', desc: '筋道を立てて考え、相手にわかりやすく整理する力' },
@@ -731,7 +734,7 @@
                   <div className="w-full max-w-2xl text-center animate-fade-in">
                     <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー」" />
                     <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
-                      旅を再開する
+                      宿屋に向かう
                     </button>
                   </div>
                 )}
@@ -1115,7 +1118,7 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: "リフレム", type: "reflem", text: "「そして3年後じゃ。どんなクラス（立場・役職・職業）を名乗り、どんな未来を描いておるのかな？\n魔王討伐（劇的な成果）だけが正解ではない。枠を外して自由に描くがよいぞ。」" }
+                    { speaker: "リフレム", type: "reflem", text: "「そして3年後じゃ。どんなロール（役割・立場・役職・職業）を名乗り、どんな未来を描いておるのかな？\n魔王討伐（劇的な成果）だけが正解ではない。枠を外して自由に描くがよいぞ。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => { setWillStep(0); setIsInputPhase(false); }} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -1164,7 +1167,7 @@
                           />
                         </div>
                         <div>
-                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたいクラス（立場・役職・職業）</label>
+                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたいロール（役割・立場・役職・職業）</label>
                           <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー" />
                         </div>
                       </>
@@ -1193,7 +1196,7 @@
           {mustRecollectionVisible && (
             <MemoryDialogBox
               speaker="回想のリフレム"
-              text={"「ギルド（会社・組織）からのクエストは、冒険者としての経験をつみ、クラスをあげることや、さらなる冒険を見つめることにもつながっておる。\nクエストの中で、自分のスキルや魔法を磨いていくことが望まれているぞよ！」"}
+              text={"「ギルド（会社・組織）からのクエストは、冒険者としての経験をつみ、ロールを育てることや、さらなる冒険を見つめることにもつながっておる。\nクエストの中で、自分のスキルや魔法を磨いていくことが望まれているぞよ！」"}
             />
           )}
 
@@ -1296,7 +1299,7 @@
                   <div className="bg-gray-900 bg-opacity-80 border-2 border-yellow-500 rounded p-4 text-center print-friendly print-avoid-break">
                     <p className="text-sm text-gray-400">冒険者</p>
                     <h2 className="text-3xl md:text-4xl font-bold text-white mt-1">{player.name || '名もなき勇者'} <span className="text-yellow-300">Lv.{player.age || '?'}</span></h2>
-                    {will.job && <p className="text-blue-300 text-xl mt-2">3年後のクラス：{will.job}</p>}
+                    {will.job && <p className="text-blue-300 text-xl mt-2">3年後のロール：{will.job}</p>}
                   </div>
 
                   <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line">
@@ -1373,6 +1376,12 @@
                 </div>
 
                 <div className="print-page-break">
+                  <div className="print-hidden mb-6">
+                    <DialogGroup dialogs={[
+                      { speaker: "ハルカ", type: "haruka", text: "「おはようございます！\n冒険の書、とても良いものができましたね。」" },
+                      { speaker: "リフレム", type: "reflem", text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
+                    ]} />
+                  </div>
                   <SummarySection title="ここから先の旅" iconName="fa-solid fa-route">
                     <div className="text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap">
 {`ここまでの冒険の書が綴られました。
@@ -1387,27 +1396,30 @@
                       <button onClick={() => window.print()} className="rpg-button flex-1 py-3 text-base">
                         今は、ひとりで考えてみる
                       </button>
-                      <a
-                        href="https://ninin-cc.github.io/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rpg-button flex-1 py-3 text-base"
-                      >
-                        人に話してみる
-                      </a>
+                      <div className="relative flex-1 group">
+                        <div
+                          id="talk-counselor-tooltip"
+                          className="print-hidden pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 w-80 max-w-[80vw] -translate-x-1/2 translate-y-2 rounded-lg border-2 border-yellow-500 bg-amber-950 bg-opacity-95 px-4 py-3 text-left text-sm leading-relaxed text-white shadow-xl opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                        >
+                          <div className="absolute -top-3 left-4 rounded-full border border-white bg-amber-950 px-3 text-xs font-bold text-white">リフレム</div>
+                          「nininにはリフレムとハルカはおらぬが、男性と女性のカウンセラーが在籍しておるそうじゃぞ」
+                          <div className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-yellow-500 bg-amber-950"></div>
+                        </div>
+                        <a
+                          href="https://ninin-cc.github.io/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-describedby="talk-counselor-tooltip"
+                          className="rpg-button block w-full py-3 text-base"
+                        >
+                          人に話してみる
+                        </a>
+                      </div>
                     </div>
                   </SummarySection>
                 </div>
               </div>
             </WindowBox>
-
-            <div className="print-hidden">
-              <NarrationBox iconName="fa-solid fa-mug-hot" text={"翌日の出発前。\n宿屋の1階へ降りると、リフレムとハルカが見送りに来ていた。"} />
-              <DialogGroup dialogs={[
-                { speaker: "ハルカ", type: "haruka", text: "「おはようございます！\n冒険の書、とても良いものができましたね。」" },
-                { speaker: "リフレム", type: "reflem", text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
-              ]} />
-            </div>
 
             <div className="print-hidden flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
               <button onClick={() => nextScene('must')} className="text-gray-400 hover:text-white px-4 py-2 order-3 md:order-1 flex items-center gap-2 transition-colors">
@@ -1427,6 +1439,9 @@
       const renderHeader = () => (
         <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>キャリアの宿屋™</h1>
+          <p className="text-gray-300 text-[10px] md:text-xs font-bold mb-1 opacity-80" style={{ textShadow: '1px 1px 0 #000' }}>
+            -RIESM™　RoleTRADE™クエスト-
+          </p>
           <p className="text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
             ～あなたの休息と、旅立ちに祝福を～
           </p>
@@ -1456,9 +1471,23 @@
         );
       };
 
-      const backgroundImage = scene === 'must' || scene === 'summary'
-        ? "url('https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=2000&auto=format&fit=crop')"
-        : "url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop')";
+      const backgroundImages = {
+        tavern: "url('https://ninin-cc.github.io//cq/img/sakaba.jpg')",
+        room: "url('https://ninin-cc.github.io//cq/img/heya.jpg')",
+        journey: "url('https://ninin-cc.github.io//cq/img/tabidachi.jpg')"
+      };
+      const isOpeningScene = scene === 'intro' && introStep === 0 && !isInputPhase;
+      const backgroundImage = scene === 'must'
+        ? backgroundImages.room
+        : isOpeningScene || scene === 'summary'
+          ? backgroundImages.journey
+          : backgroundImages.tavern;
+      const backgroundPosition = scene === 'must'
+        ? 'center'
+        : isOpeningScene || scene === 'summary'
+          ? 'center bottom'
+          : 'center';
+      const backgroundOverlayOpacity = 0.5;
 
       const locationName = scene === 'must'
         ? '宿屋の自室'
@@ -1469,9 +1498,9 @@
       return (
         <div
           className="min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell"
-          style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
+          style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed' }}
         >
-          <div className="absolute inset-0 bg-black bg-opacity-75 z-0 transition-opacity duration-1000 print-hidden"></div>
+          <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
 
           <div className="pb-8 relative z-10 text-gray-100 max-w-5xl mx-auto flex flex-col min-h-[90vh] print-container">
             <div className="flex-1">
