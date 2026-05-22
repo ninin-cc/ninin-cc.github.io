@@ -29,7 +29,9 @@
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
     .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+    .animate-memory-fade { animation: memoryFade 3s ease-out both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes memoryFade { from { opacity: 0; filter: blur(6px); transform: translateY(18px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 
     .app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
@@ -178,33 +180,40 @@
 
     const presetCans = {
       skill: [
-        { name: 'プログラミング', desc: 'コードを書き、システムを構築する力' },
-        { name: '営業力', desc: '顧客の課題を引き出し、提案する力' },
-        { name: '企画・デザイン', desc: '情報を視覚的に分かりやすく整理する力' },
-        { name: '会計・財務知識', desc: '数字から会社の状態を読み解く力' },
-        { name: 'プロジェクトマネジメント', desc: '計画を立て、チームをゴールへ導く力' }
+        { name: '営業力', desc: '顧客の課題を引き出し、提案につなげる力' },
+        { name: '接客力', desc: '相手の状況や感情を見ながら、安心感のある対応をする力' },
+        { name: '現場力', desc: '現場の状況を把握し、その場で必要な判断と対応をする力' },
+        { name: '事務処理力', desc: '入力・確認・書類作成などを正確に進める力' },
+        { name: '資料作成力', desc: '情報を整理し、相手に伝わる資料としてまとめる力' },
+        { name: '企画力', desc: '目的に合わせて、アイデアや施策を形にする力' },
+        { name: 'IT活用力', desc: 'ツールやシステムを使って、仕事の効率や質を高める力' },
+        { name: 'データ分析力', desc: '数字やデータから傾向を読み取り、判断に生かす力' },
+        { name: '業務改善力', desc: '日々の仕事のムダや課題を見つけ、より良いやり方に変える力' },
+        { name: '品質管理力', desc: 'ミスやばらつきを防ぎ、安定した成果を出す力' }
       ],
       magic: [
-        { name: 'ロジカルシンキング', desc: '筋道を立てて論理的に考える力' },
-        { name: 'プレゼンテーション', desc: '相手に伝わるように説明する力' },
-        { name: 'コミュニケーション', desc: '円滑な人間関係を築く力' },
-        { name: '課題発見・解決力', desc: '本質的な問題を見抜き、解決する力' },
-        { name: 'リーダーシップ', desc: '周囲を巻き込み、目標へ向かわせる力' },
-        { name: '段取り力', desc: '物事をスムーズに進めるための事前準備と計画力' },
-        { name: '根回し力', desc: '事前の調整で関係者の合意形成を円滑にする力' },
-        { name: '気配り力', desc: '周囲の状況に気づき、先回りしてサポートする力' },
-        { name: '観察力', desc: '人や物事の小さな変化や本質を見逃さない力' },
-        { name: '情勢を読む力', desc: '全体的な流れや空気感を察知し、適切な行動をとる力' },
-        { name: '日程調整力', desc: '複数の関係者の都合をまとめ上げ、最適なスケジュールを組む力' }
+        { name: 'ロジカルシンキング', desc: '筋道を立てて考え、相手にわかりやすく整理する力' },
+        { name: '分析的思考力', desc: '原因と結果の関係を見つけ、対応策を考える力' },
+        { name: '概念的思考力', desc: '物事のパターンを見抜き、別々の考えをつなげる力' },
+        { name: '情報収集力', desc: '必要な情報を集め、判断に使える形に整理する力' },
+        { name: 'コミュニケーション', desc: '相手に伝え、相手の話を受け止め、関係を前に進める力' },
+        { name: '対人理解力', desc: '相手の考えや感情、置かれている状況を察知する力' },
+        { name: '巻き込み力', desc: '周囲の協力を得ながら、物事を前に進める力' },
+        { name: 'チームワーク', desc: 'メンバーを尊重し、チームが動きやすい状態をつくる力' },
+        { name: '柔軟性', desc: '状況の変化に応じて、考え方や行動を切り替える力' },
+        { name: '目標達成力', desc: '目標を定め、粘り強く行動を積み重ねる力' }
       ],
       ally: [
         { name: '頼れる上司・先輩', desc: '困ったときに的確な助言をくれる存在' },
+        { name: '相談できる同僚', desc: '迷ったときに本音で話せる身近な仲間' },
         { name: '切磋琢磨できる同期', desc: '共に成長し、刺激し合える仲間' },
+        { name: '協力してくれる関係部署', desc: '自分だけでは解決できない課題を一緒に進めてくれる存在' },
         { name: '他部署のスペシャリスト', desc: '専門外の課題を助けてくれる助っ人' },
+        { name: '頼ってくれる後輩', desc: '相談してくれたり、育成を通じて共に成長できる存在' },
+        { name: '任せてくれる上司', desc: '重要な仕事を安心して任せてくれる信頼と実績を与えてくれる存在' },
         { name: '社外のメンター', desc: '客観的な視点で導いてくれる賢者' },
-        { name: '支えてくれる家族・友人', desc: 'どんな時も味方でいてくれる回復の泉' },
-        { name: '後輩から頼られる関係', desc: '後輩の相談に乗り、育成をサポートできる信頼関係' },
-        { name: '上司から任される関係', desc: '重要な仕事を安心して任せてもらえる信頼と実績' }
+        { name: '学び合えるコミュニティ', desc: '知識や経験を共有し、互いに成長できる場' },
+        { name: '支えてくれる家族・友人', desc: 'どんな時も味方でいてくれる回復の泉' }
       ]
     };
 
@@ -333,6 +342,29 @@
       );
     };
 
+    const MemoryDialogBox = ({ speaker, text }) => {
+      const config = {
+        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: 'https://ninin-cc.github.io/cq/img/rf.png' }
+      };
+      const { color, imgBg, img } = config.reflem;
+
+      return (
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 animate-memory-fade`}>
+          <div className={`absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+            {speaker}
+          </div>
+          <div className="flex items-center gap-4 md:gap-6 mt-1 md:mt-2">
+            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-80`}>
+              <img src={img} alt={speaker} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left italic">
+              {text.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
     const DialogGroup = ({ dialogs, children }) => {
       const [currentIdx, setCurrentIdx] = useState(0);
       const [allFinished, setAllFinished] = useState(false);
@@ -369,29 +401,41 @@
       );
     };
 
-    const NarrationBox = ({ text, iconName }) => {
+    const NarrationBox = ({ text, iconName, onFinish }) => {
       const [displayedText, setDisplayedText] = useState("");
       const [isFinished, setIsFinished] = useState(false);
+      const finishedRef = useRef(false);
 
       useEffect(() => {
         let index = 0;
+        finishedRef.current = false;
         setDisplayedText("");
         setIsFinished(false);
+
+        const finishOnce = () => {
+          if (finishedRef.current) return;
+          finishedRef.current = true;
+          setIsFinished(true);
+          if (onFinish) onFinish();
+        };
+
         const timer = setInterval(() => {
           index++;
           setDisplayedText(text.slice(0, index));
           if (index >= text.length) {
             clearInterval(timer);
-            setIsFinished(true);
+            finishOnce();
           }
         }, 40);
         return () => clearInterval(timer);
       }, [text]);
 
       const handleSkip = () => {
-        if (!isFinished) {
+        if (!finishedRef.current) {
           setDisplayedText(text);
+          finishedRef.current = true;
           setIsFinished(true);
+          if (onFinish) onFinish();
         }
       };
 
@@ -500,10 +544,7 @@
       const [player, setPlayer] = useLocalStorage('cq_player', { name: '', age: '' });
 
       const [canStep, setCanStep] = useLocalStorage('cq_can_step', 0);
-      const [cans, setCans] = useLocalStorage('cq_cans', [
-        { id: 1, type: 'magic', name: '段取り力', desc: '物事をスムーズに進めるための事前準備と計画力' },
-        { id: 2, type: 'ally', name: '後輩から頼られる関係', desc: '後輩の相談に乗り、育成をサポートできる信頼関係' }
-      ]);
+      const [cans, setCans] = useLocalStorage('cq_cans', []);
       const [newCan, setNewCan] = useState({ type: 'skill', name: '', desc: '' });
       const [canConfirming, setCanConfirming] = useState(false);
 
@@ -527,6 +568,7 @@
       ]);
       const [newMust, setNewMust] = useState({ title: '', desc: '', connection: '' });
       const [mustInsight, setMustInsight] = useLocalStorage('cq_must_insight', '');
+      const [mustRecollectionVisible, setMustRecollectionVisible] = useState(false);
 
       useEffect(() => {
         const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
@@ -583,6 +625,7 @@
           setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
         }
         if (next === 'will') setWillStep(0);
+        if (next === 'must') setMustRecollectionVisible(false);
         setScene(next);
       };
 
@@ -748,7 +791,7 @@
         const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
         const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
         const dialog = isWeaponMagicStep
-          ? [{ speaker: "リフレム", type: "reflem", text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
+          ? [{ speaker: "リフレム", type: "reflem", text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
           : [{ speaker: "ハルカ", type: "haruka", text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         return (
@@ -813,11 +856,14 @@
                             <button
                               key={idx}
                               onClick={() => {
-                                if (!isAdded) {
+                                setCanConfirming(false);
+                                if (isAdded) {
+                                  setCans(cans.filter(c => !(c.type === activeType && c.name === preset.name)));
+                                } else {
                                   setCans([...cans, { id: Date.now() + Math.random(), type: activeType, name: preset.name, desc: preset.desc }]);
                                 }
                               }}
-                              className={`text-sm border px-3 py-1.5 rounded transition-all ${isAdded ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold opacity-50 cursor-not-allowed' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
+                              className={`text-sm border px-3 py-1.5 rounded transition-all ${isAdded ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold hover:bg-red-900 hover:border-red-400' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
                             >
                               {preset.name} {isAdded && <i className="fa-solid fa-check ml-1"></i>}
                             </button>
@@ -1119,7 +1165,7 @@
                         </div>
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたいクラス（立場・役職・職業）</label>
-                          <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：フルスタック勇者" />
+                          <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー" />
                         </div>
                       </>
                     )}
@@ -1138,13 +1184,18 @@
 
       const renderMust = () => (
         <div className="space-y-6 max-w-4xl mx-auto animate-fade-in w-full">
-          <NarrationBox iconName="fa-solid fa-bed" text={"リフレムとハルカとの夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\nギルド（会社・組織）からの現実のクエスト（Must）とどう接続していくか、一人静かに考える…\n\nそういえば、あの爺さんはこんなことを言っていたな。"} />
-
-          <DialogBox
-            speaker="回想のリフレム"
-            type="reflem"
-            text={"「ギルド（会社・組織）からのクエストは、冒険者としての経験をつみ、クラスをあげることや、さらなる冒険を見つめることにもつながっておる。\nクエストの中で、自分のスキルや魔法を磨いていくことが望まれているぞよ！」"}
+          <NarrationBox
+            iconName="fa-solid fa-bed"
+            text={"リフレムとハルカとの夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\nギルド（会社・組織）からの現実のクエスト（Must）とどう接続していくか、一人静かに考える…\n\nそういえば、あの爺さんはこんなことを言っていたな。"}
+            onFinish={() => setMustRecollectionVisible(true)}
           />
+
+          {mustRecollectionVisible && (
+            <MemoryDialogBox
+              speaker="回想のリフレム"
+              text={"「ギルド（会社・組織）からのクエストは、冒険者としての経験をつみ、クラスをあげることや、さらなる冒険を見つめることにもつながっておる。\nクエストの中で、自分のスキルや魔法を磨いていくことが望まれているぞよ！」"}
+            />
+          )}
 
           <WindowBox title="シーン6：ギルド（会社・組織）からのクエストと「接続」" iconName="fa-solid fa-book-open">
             <div className="mb-4 text-sm text-gray-300">
