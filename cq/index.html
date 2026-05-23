@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>キャリアの宿屋™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～</title>
+  <title></title>
 
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -289,6 +289,45 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
+    const APP_CONFIG = {
+      appName: "キャリアの宿屋™",
+      appSubtitle: "-RIESM™　RoleTRADE™クエスト-",
+      appTagline: "～あなたの休息と、旅立ちに祝福を～",
+      documentTitle: "キャリアの宿屋™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～",
+      exportTitle: "キャリアの宿屋™ - RIESM™ RoleTRADE™クエスト -",
+
+      char1NameFull: "老魔法使いリフレム",
+      char1NameShort: "リフレム",
+      char1Type: "reflem",
+      char1Img: "https://ninin-cc.github.io/cq/img/rf.png",
+
+      char2NameFull: "弟子 ハルカ",
+      char2NameShort: "ハルカ",
+      char2Type: "haruka",
+      char2Img: "https://ninin-cc.github.io/cq/img/hr.png",
+
+      bookingUrl: "https://ninin-cc.github.io/",
+      bookingButtonText: "人に話してみる",
+      bookingTooltipText: "「nininにはリフレムとハルカはおらぬが、男性と女性のカウンセラーが在籍しておるそうじゃぞ」",
+      companyUrl: "https://ninin-cc.github.io/",
+
+      backgroundImages: {
+        tavern: "https://ninin-cc.github.io//cq/img/sakaba.jpg",
+        room: "https://ninin-cc.github.io//cq/img/heya.jpg",
+        journey: "https://ninin-cc.github.io//cq/img/tabidachi.jpg"
+      }
+    };
+
+    document.title = APP_CONFIG.documentTitle;
+
+    const charName = (type, style = 'short') => {
+      const isChar2 = type === APP_CONFIG.char2Type;
+      const configKey = isChar2 ? 'char2' : 'char1';
+      return APP_CONFIG[`${configKey}Name${style === 'full' ? 'Full' : 'Short'}`];
+    };
+
+    const recollectionName = (type) => `回想の${charName(type)}`;
+
     function useCasualSourceGuard() {
       useEffect(() => {
         const guardedKeys = new Set(['s', 'u']);
@@ -527,8 +566,8 @@
       };
 
       const config = {
-        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: 'https://ninin-cc.github.io/cq/img/rf.png' },
-        haruka: { color: 'bg-rose-900 border-rose-400', imgBg: 'bg-gradient-to-b from-rose-700 to-rose-950', img: 'https://ninin-cc.github.io/cq/img/hr.png' }
+        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: APP_CONFIG.char1Img },
+        haruka: { color: 'bg-rose-900 border-rose-400', imgBg: 'bg-gradient-to-b from-rose-700 to-rose-950', img: APP_CONFIG.char2Img }
       };
       const { color, imgBg, img } = config[type] || config.reflem;
       const isImageRight = imageSide === 'right';
@@ -561,7 +600,7 @@
 
     const MemoryDialogBox = ({ speaker, text }) => {
       const config = {
-        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: 'https://ninin-cc.github.io/cq/img/rf.png' }
+        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: APP_CONFIG.char1Img }
       };
       const { color, imgBg, img } = config.reflem;
 
@@ -585,7 +624,7 @@
     const MemoryHarukaBox = ({ speaker, text }) => {
       const color = 'bg-rose-900 border-rose-400';
       const imgBg = 'bg-gradient-to-b from-rose-700 to-rose-950';
-      const img = 'https://ninin-cc.github.io/cq/img/hr.png';
+      const img = APP_CONFIG.char2Img;
 
       return (
         <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
@@ -886,7 +925,7 @@
       ctx.font = canvasFont(18);
       ctx.fillStyle = imageTheme.muted;
       ctx.textAlign = 'center';
-      ctx.fillText('キャリアの宿屋™ - RIESM™ RoleTRADE™クエスト -', imageTheme.width / 2, y);
+      ctx.fillText(APP_CONFIG.exportTitle, imageTheme.width / 2, y);
       ctx.fillText('© ninin consulting & counseling LLC. All rights reserved.', imageTheme.width / 2, y + 28);
       ctx.restore();
       return y + 62;
@@ -898,10 +937,10 @@
       ctx.textAlign = 'center';
       ctx.fillStyle = imageTheme.text;
       ctx.font = canvasFont(44, '700');
-      ctx.fillText('キャリアの宿屋™', imageTheme.width / 2, y);
+      ctx.fillText(APP_CONFIG.appName, imageTheme.width / 2, y);
       ctx.font = canvasFont(18, '700');
       ctx.fillStyle = imageTheme.muted;
-      ctx.fillText('- RIESM™ RoleTRADE™クエスト -', imageTheme.width / 2, y + 54);
+      ctx.fillText(APP_CONFIG.appSubtitle.replace('　', ' '), imageTheme.width / 2, y + 54);
       ctx.font = canvasFont(30, '700');
       ctx.fillStyle = imageTheme.border;
       ctx.fillText(title, imageTheme.width / 2, y + 98);
@@ -1577,8 +1616,8 @@
 
       const renderIntro = () => {
         const dialogsIntro = [
-          { speaker: "老魔法使いリフレム", type: "reflem", text: "「ほっほっほ、見ない顔じゃな。わしは魔法使いのリフレム。こちらは弟子のハルカじゃ。」" },
-          { speaker: "弟子 ハルカ", type: "haruka", imageSide: "left", text: "「はじめまして！私、冒険者さんのお話を聞くのが大好きなんです！\nあなたのお名前と年齢、教えてもらえませんか？」" }
+          { speaker: APP_CONFIG.char1NameFull, type: APP_CONFIG.char1Type, text: `「ほっほっほ、見ない顔じゃな。わしは魔法使いの${APP_CONFIG.char1NameShort}。こちらは${APP_CONFIG.char2NameFull}じゃ。」` },
+          { speaker: APP_CONFIG.char2NameFull, type: APP_CONFIG.char2Type, imageSide: "left", text: "「はじめまして！私、冒険者さんのお話を聞くのが大好きなんです！\nあなたのお名前と年齢、教えてもらえませんか？」" }
         ];
 
         return (
@@ -1587,7 +1626,7 @@
               <>
                 {introStep === 0 && (
                   <div className="w-full max-w-2xl text-center animate-fade-in">
-                    <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー。」" />
+                    <DialogBox speaker={APP_CONFIG.char1NameFull} type={APP_CONFIG.char1Type} text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー。」" />
                     <p className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-65 px-4 py-3 text-left font-sans text-xs leading-relaxed text-yellow-100">
                       ※注意　LINEやX等のアプリ内ブラウザで開くとうまく動作できない事があります。chromeやEdge、safariなどの純正ブラウザで開くことをお勧めします。
                     </p>
@@ -1653,8 +1692,8 @@
         const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
         const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
         const dialog = isWeaponMagicStep
-          ? [{ speaker: "リフレム", type: "reflem", text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
-          : [{ speaker: "ハルカ", type: "haruka", text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
+          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
+          : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         return (
           <div className="space-y-6 max-w-4xl mx-auto w-full">
@@ -1757,8 +1796,8 @@
                 {canConfirming ? (
                   <div className="mt-8 animate-fade-in">
                     <DialogBox
-                      speaker={isWeaponMagicStep ? "リフレム" : "ハルカ"}
-                      type={isWeaponMagicStep ? "reflem" : "haruka"}
+                      speaker={isWeaponMagicStep ? APP_CONFIG.char1NameShort : APP_CONFIG.char2NameShort}
+                      type={isWeaponMagicStep ? APP_CONFIG.char1Type : APP_CONFIG.char2Type}
                       imageSide={isWeaponMagicStep ? "left" : "right"}
                       text={isWeaponMagicStep
                         ? "「ふむ、これでいいかの？\n武器と魔法、両方確認できたかの？」"
@@ -1776,7 +1815,7 @@
                 ) : (
                   <div className="text-center mt-8">
                     <button onClick={() => setCanConfirming(true)} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
-                      {isWeaponMagicStep ? 'リフレムに確認してもらう' : 'ハルカに確認してもらう'} <i className="fa-solid fa-arrow-right"></i>
+                      {isWeaponMagicStep ? `${APP_CONFIG.char1NameShort}に確認してもらう` : `${APP_CONFIG.char2NameShort}に確認してもらう`} <i className="fa-solid fa-arrow-right"></i>
                     </button>
                   </div>
                 )}
@@ -1792,11 +1831,11 @@
         const pName = player.name || '〇〇';
 
         const dialogSteps = [
-          [{ speaker: "ハルカ", type: "haruka", text: `「まずは${pName}さんが社会に出たばかりの頃…\n新入社員（${suggestedAges[0]}歳ごろ）の時はどうでしたか？期待や不安があったと思います！」` }],
-          [{ speaker: "リフレム", type: "reflem", text: `「ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
-          [{ speaker: "ハルカ", type: "haruka", text: `「そんなことが有ったんですね…！次は、${suggestedAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
-          [{ speaker: "リフレム", type: "reflem", text: `「うむうむ。次は${suggestedAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
-          [{ speaker: "ハルカ", type: "haruka", text: `「最後は、最近（${currentAge}歳ごろ）のことについて教えてください！\n今の${pName}さんを形作っている出来事を知りたいです！」` }]
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n新入社員（${suggestedAges[0]}歳ごろ）の時はどうでしたか？期待や不安があったと思います！」` }],
+          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${suggestedAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
+          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${suggestedAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「最後は、最近（${currentAge}歳ごろ）のことについて教えてください！\n今の${pName}さんを形作っている出来事を知りたいです！」` }]
         ];
 
         const isCompleted = memoryStep >= 5;
@@ -1822,7 +1861,7 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: "リフレム", type: "reflem", text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを冒険の書（ライフラインチャート）にまとめてみよう。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを冒険の書（ライフラインチャート）にまとめてみよう。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -1912,15 +1951,15 @@
 
       const renderChart = () => (
         <div className="space-y-6 max-w-5xl mx-auto w-full">
-          <DialogBox speaker="リフレム" type="reflem" text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
+          <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
 
           <WindowBox title="シーン4：冒険の書（ライフラインチャート）" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
 
           <DialogGroup dialogs={[
-            { speaker: "ハルカ", type: "haruka", text: "「すごい…！心の動きが、こんな風に山と谷になってるんですね！」" },
-            { speaker: "リフレム", type: "reflem", text: "「うむ。この山と谷を見て、お主はどういう時に心が躍るのか…自分で気づくことはあるかな？…これはゆっくり考えてみるのがいいのじゃ。」" }
+            { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: "「すごい…！心の動きが、こんな風に山と谷になってるんですね！」" },
+            { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「うむ。この山と谷を見て、お主はどういう時に心が躍るのか…自分で気づくことはあるかな？…これはゆっくり考えてみるのがいいのじゃ。」" }
           ]}>
             <div className="mt-6 bg-gray-900 p-4 border border-gray-600 rounded">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 気づき・価値観のメモ</p>
@@ -1936,8 +1975,8 @@
             {showRestPrompt ? (
               <div className="mt-8 animate-fade-in">
                 <DialogBox
-                  speaker="ハルカ"
-                  type="haruka"
+                  speaker={APP_CONFIG.char2NameShort}
+                  type={APP_CONFIG.char2Type}
                   imageSide="right"
                   text={"「たくさん話して、つかれたんじゃない？\nいったん休憩する？」"}
                 />
@@ -1983,7 +2022,7 @@
               <div className="animate-fade-in text-center">
                 {willStep === 0 ? (
                   <DialogGroup dialogs={[
-                    { speaker: "ハルカ", type: "haruka", text: `「${pName}さんのこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」` }
+                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんのこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」` }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -1997,7 +2036,7 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: "リフレム", type: "reflem", text: "「そして3年後じゃ。どんなロール（役割・立場・役職・職業）を名乗り、どんな未来を描いておるのかな？\n魔王討伐（劇的な成果）だけが正解ではない。枠を外して自由に描くがよいぞ。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「そして3年後じゃ。どんなロール（役割・立場・役職・職業）を名乗り、どんな未来を描いておるのかな？\n魔王討伐（劇的な成果）だけが正解ではない。枠を外して自由に描くがよいぞ。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => { setWillStep(0); setIsInputPhase(false); }} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -2020,7 +2059,7 @@
                   <div className="space-y-8 p-2 w-full">
                     {willStep === 0 ? (
                       <div>
-                        <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> ハルカの質問：1年先の未来（短期目標）</label>
+                        <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> {APP_CONFIG.char2NameShort}の質問：1年先の未来（短期目標）</label>
                         <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.oneYear} onChange={e => setWill({...will, oneYear: e.target.value})} placeholder="例：〇〇の資格を取得して、担当業務で〇〇を任されるようになっていたい" />
                         <label className="text-gray-400 text-sm flex items-center gap-1 mt-6 mb-2"><i className="fa-solid fa-feather-pointed"></i> 1年後についての気づき</label>
                         <textarea
@@ -2034,7 +2073,7 @@
                     ) : (
                       <>
                         <div>
-                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> リフレムの質問：3年先の未来（長期目標）</label>
+                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> {APP_CONFIG.char1NameShort}の質問：3年先の未来（長期目標）</label>
                           <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.threeYears} onChange={e => setWill({...will, threeYears: e.target.value})} placeholder="例：自社サービスを立ち上げ、多くの村人（ユーザー）を笑顔にする" />
                           <label className="text-gray-400 text-sm flex items-center gap-1 mt-6 mb-2"><i className="fa-solid fa-feather-pointed"></i> 3年後についての気づき</label>
                           <textarea
@@ -2070,14 +2109,14 @@
             <>
               <NarrationBox
                 iconName="fa-solid fa-bed"
-                text={"リフレムとハルカとの夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\nギルド（会社・組織）からの現実のクエスト（Must）とどう接続していくか、一人静かに考える…\n\nそういえば、あの爺さんはこんなことを言っていたな。"}
+                text={`${APP_CONFIG.char1NameShort}と${APP_CONFIG.char2NameShort}との夜明かしの語らいを終え、自室のベッドに腰掛ける。\n己の過去を知り、未来（Will）を描いた今。\nギルド（会社・組織）からの現実のクエスト（Must）とどう接続していくか、一人静かに考える…\n\nそういえば、あの爺さんはこんなことを言っていたな。`}
                 onFinish={() => setMustRecollectionVisible(true)}
               />
 
               {mustRecollectionVisible && (
                 <>
                   <MemoryDialogBox
-                    speaker="回想のリフレム"
+                    speaker={recollectionName(APP_CONFIG.char1Type)}
                     text={"「ギルド（会社・組織）からのクエストは、冒険者としての経験をつみ、ロールを育てることや、さらなる冒険を見つめることにもつながっておる。\nクエストの中で、自分のスキルや魔法を磨いていくことが望まれているぞよ！」"}
                   />
                   <div className="text-center mt-8">
@@ -2186,7 +2225,7 @@
                       </div>
                     </div>
                     <MemoryDialogBox
-                      speaker="回想のリフレム"
+                      speaker={recollectionName(APP_CONFIG.char1Type)}
                       text={"「クエストの欠片から選ぶだけでも、良いのじゃが、そこに自分なりの言葉を足すとより理解が深まるのじゃよ。\nいくつか書き出してもよい。そのあと、今のWillにつなげたいクエストを一つ選ぶのじゃ。」"}
                     />
                     <div className="flex justify-end">
@@ -2258,7 +2297,7 @@
                       <p className="text-base md:text-lg text-[#071f3f] mt-3 leading-relaxed whitespace-pre-wrap">{newMust.desc || '概要なし'}</p>
                     </div>
                     <MemoryHarukaBox
-                      speaker="回想のハルカ"
+                      speaker={recollectionName(APP_CONFIG.char2Type)}
                       text={"「このクエストは、1年後・3年後のWillへ近づくための冒険、自分の物語のサブクエストとして捉えることもできるんですよ。\n文章は自由に書き換えてくださいね。」"}
                     />
                     <WriteCue active={!mustConnectionStarted} />
@@ -2553,8 +2592,8 @@
                 <div className="print-page-break">
                   <div className="print-hidden mb-6">
                     <DialogGroup dialogs={[
-                      { speaker: "ハルカ", type: "haruka", imageSide: "left", text: "「おはようございます！\n冒険の書、とても良いものができましたね。」" },
-                      { speaker: "リフレム", type: "reflem", text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
+                      { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, imageSide: "left", text: "「おはようございます！\n冒険の書、とても良いものができましたね。」" },
+                      { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
                     ]} />
                   </div>
                   <SummarySection title="ここから先の旅" iconName="fa-solid fa-route">
@@ -2576,18 +2615,18 @@
                           id="talk-counselor-tooltip"
                           className="print-hidden pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 w-80 max-w-[80vw] -translate-x-1/2 translate-y-2 rounded-lg border-2 border-yellow-500 bg-amber-950 bg-opacity-95 px-4 py-3 text-left text-sm leading-relaxed text-white shadow-xl opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
                         >
-                          <div className="absolute -top-3 left-4 rounded-full border border-white bg-amber-950 px-3 text-xs font-bold text-white">リフレム</div>
-                          「nininにはリフレムとハルカはおらぬが、男性と女性のカウンセラーが在籍しておるそうじゃぞ」
+                          <div className="absolute -top-3 left-4 rounded-full border border-white bg-amber-950 px-3 text-xs font-bold text-white">{APP_CONFIG.char1NameShort}</div>
+                          {APP_CONFIG.bookingTooltipText}
                           <div className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-yellow-500 bg-amber-950"></div>
                         </div>
                         <a
-                          href="https://ninin-cc.github.io/"
+                          href={APP_CONFIG.bookingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-describedby="talk-counselor-tooltip"
                           className="rpg-button block w-full py-3 text-base"
                         >
-                          人に話してみる
+                          {APP_CONFIG.bookingButtonText}
                         </a>
                       </div>
                     </div>
@@ -2635,12 +2674,12 @@
 
       const renderHeader = () => (
         <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>キャリアの宿屋™</h1>
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>{APP_CONFIG.appName}</h1>
           <p className="text-gray-300 text-[10px] md:text-xs font-bold mb-1 opacity-80" style={{ textShadow: '1px 1px 0 #000' }}>
-            -RIESM™　RoleTRADE™クエスト-
+            {APP_CONFIG.appSubtitle}
           </p>
           <p className="text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
-            ～あなたの休息と、旅立ちに祝福を～
+            {APP_CONFIG.appTagline}
           </p>
         </div>
       );
@@ -2675,9 +2714,9 @@
       };
 
       const backgroundImages = {
-        tavern: "url('https://ninin-cc.github.io//cq/img/sakaba.jpg')",
-        room: "url('https://ninin-cc.github.io//cq/img/heya.jpg')",
-        journey: "url('https://ninin-cc.github.io//cq/img/tabidachi.jpg')"
+        tavern: `url('${APP_CONFIG.backgroundImages.tavern}')`,
+        room: `url('${APP_CONFIG.backgroundImages.room}')`,
+        journey: `url('${APP_CONFIG.backgroundImages.journey}')`
       };
       const isOpeningScene = scene === 'intro' && introStep === 0 && !isInputPhase;
       const backgroundImage = scene === 'must'
@@ -2750,7 +2789,7 @@
             {scene === 'summary' && renderAppNote()}
 
             <footer className="app-footer text-center text-gray-300 text-xs mt-12 border-t border-gray-700 pt-4 font-sans tracking-wide">
-              © 2026 <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer">ninin consulting＆counseling</a>
+              © 2026 <a href={APP_CONFIG.companyUrl} target="_blank" rel="noopener noreferrer">ninin consulting＆counseling</a>
             </footer>
             <div className="print-hidden text-center text-gray-600 text-xs mt-2 font-sans tracking-widest">
               PageNO: {getPageNo()}
