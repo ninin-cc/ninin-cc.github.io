@@ -26,6 +26,30 @@
     .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
     .rpg-input { background: rgba(0,0,0,0.5); border: none; border-bottom: 2px solid white; color: white; outline: none; padding: 8px; width: 100%; transition: border-color 0.2s; }
     .rpg-input:focus { border-color: #fcd34d; background: rgba(0,0,0,0.8); }
+    .rpg-select {
+      background: rgba(0,0,0,0.55);
+      border: 2px solid rgba(255,255,255,0.75);
+      color: white;
+      outline: none;
+      padding: 8px;
+      width: 100%;
+      border-radius: 6px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .rpg-select:focus {
+      border-color: #fcd34d;
+      background: rgba(0,0,0,0.85);
+    }
+    .rpg-select option {
+      background: #070707;
+      color: white;
+      padding: 4px 8px;
+    }
+    .rpg-select option:checked {
+      background: #fcd34d;
+      color: #111;
+      font-weight: bold;
+    }
     .parchment-input {
       background-color: #f2dfad !important;
       background-image:
@@ -76,6 +100,30 @@
     @keyframes writeCueBlink {
       0%, 100% { opacity: 0.25; transform: translateY(-2px); }
       50% { opacity: 1; transform: translateY(2px); }
+    }
+    .attention-blink {
+      animation: attentionBlink 1.05s ease-in-out infinite;
+    }
+    @keyframes attentionBlink {
+      0%, 100% { opacity: 0.35; text-shadow: none; }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(250, 204, 21, 0.85); }
+    }
+    .satisfaction-wiggle {
+      animation: satisfactionWiggle 1.5s ease-in-out 0.45s 1 both;
+      transform-origin: center;
+    }
+    @keyframes satisfactionWiggle {
+      0%, 100% { transform: translateX(0); }
+      18% { transform: translateX(-10px); }
+      36% { transform: translateX(10px); }
+      54% { transform: translateX(-7px); }
+      72% { transform: translateX(7px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .attention-blink,
+      .satisfaction-wiggle {
+        animation: none;
+      }
     }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
@@ -295,6 +343,10 @@
       appTagline: "～あなたの休息と、旅立ちに祝福を～",
       documentTitle: "キャリアの宿屋™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～",
       exportTitle: "キャリアの宿屋™ - RIESM™ RoleTRADE™クエスト -",
+      defaultAge: 40,
+      ageSelectMin: 18,
+      ageSelectMax: 75,
+      memoryStartAge: 20,
 
       char1NameFull: "老魔法使いリフレム",
       char1NameShort: "リフレム",
@@ -1279,7 +1331,7 @@
       const [scene, setScene] = useLocalStorage('cq_scene', 'intro');
       const [introStep, setIntroStep] = useLocalStorage('cq_intro_step', 0);
       const [isInputPhase, setIsInputPhase] = useLocalStorage('cq_input_phase', false);
-      const [player, setPlayer] = useLocalStorage('cq_player', { name: '', age: '' });
+      const [player, setPlayer] = useLocalStorage('cq_player', { name: '', age: String(APP_CONFIG.defaultAge) });
 
       const [canStep, setCanStep] = useLocalStorage('cq_can_step', 0);
       const [cans, setCans] = useLocalStorage('cq_cans', []);
@@ -1287,7 +1339,7 @@
       const [canConfirming, setCanConfirming] = useState(false);
 
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
-      const [newMemory, setNewMemory] = useState({ age: '', event: '', satisfaction: 0 });
+      const [newMemory, setNewMemory] = useState({ age: APP_CONFIG.memoryStartAge, event: '', satisfaction: 0 });
       const [memoryStep, setMemoryStep] = useLocalStorage('cq_memory_step', 0);
       const [chartInsight, setChartInsight] = useLocalStorage('cq_chart_insight', '');
       const [showRestPrompt, setShowRestPrompt] = useState(false);
@@ -1310,6 +1362,17 @@
       const [mustDraftStarted, setMustDraftStarted] = useState(false);
       const [mustConnectionStarted, setMustConnectionStarted] = useState(false);
       const [mustInsightStarted, setMustInsightStarted] = useState(() => Boolean(mustInsight));
+
+      const ageOptions = Array.from(
+        { length: APP_CONFIG.ageSelectMax - APP_CONFIG.ageSelectMin + 1 },
+        (_, index) => APP_CONFIG.ageSelectMin + index
+      );
+
+      useEffect(() => {
+        if (!player.age) {
+          setPlayer(current => ({ ...current, age: String(APP_CONFIG.defaultAge) }));
+        }
+      }, []);
 
       useEffect(() => {
         const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
@@ -1335,7 +1398,7 @@
 
       const getSuggestedAges = () => {
         const currentAge = parseInt(player.age) || 30;
-        const effectiveStartAge = currentAge < 22 ? 18 : 22;
+        const effectiveStartAge = Math.min(APP_CONFIG.memoryStartAge, currentAge);
         const diff = Math.max(0, currentAge - effectiveStartAge);
         return [
           effectiveStartAge,
@@ -1666,9 +1729,22 @@
                     </div>
                     <div>
                       <label className="text-gray-300 text-sm block mb-1">ねんれい（年齢はそのままレベルになる）</label>
-                      <div className="flex items-end gap-3">
-                        <input type="number" className="rpg-input text-xl w-24 text-center" value={player.age} onChange={e => setPlayer({...player, age: e.target.value})} placeholder="30" />
-                        <span className="text-yellow-400 font-bold mb-1 text-xl">→ Lv.{player.age || '??'}</span>
+                      <div className="flex items-start gap-3">
+                        <select
+                          className="rpg-select h-32 w-28 text-center text-xl font-bold text-yellow-300"
+                          size={5}
+                          value={String(player.age || APP_CONFIG.defaultAge)}
+                          onChange={e => setPlayer({...player, age: e.target.value})}
+                          aria-label="年齢を選択"
+                        >
+                          {ageOptions.map(age => (
+                            <option key={age} value={age}>{age}歳</option>
+                          ))}
+                        </select>
+                        <div className="flex-1 pt-2 text-left">
+                          <span className="text-yellow-400 font-bold text-xl">→ Lv.{player.age || APP_CONFIG.defaultAge}</span>
+                          <p className="mt-2 text-xs text-gray-400 leading-relaxed">上下にスクロールして選べます。</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1831,7 +1907,7 @@
         const pName = player.name || '〇〇';
 
         const dialogSteps = [
-          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n新入社員（${suggestedAges[0]}歳ごろ）の時はどうでしたか？期待や不安があったと思います！」` }],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${suggestedAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
           [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${suggestedAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${suggestedAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
@@ -1898,7 +1974,9 @@
                       </div>
 
                       <div>
-                        <label className="block text-sm text-gray-400 mb-1">年齢・時期（変更可能）</label>
+                        <label className="block text-sm text-gray-400 mb-1">
+                          年齢・時期（<span className="attention-blink inline-block text-yellow-300">変更可能</span>）
+                        </label>
                         <div className="flex items-center gap-2">
                           <input type="number" className="rpg-input w-24 text-center font-bold text-yellow-300" value={newMemory.age} onChange={e => setNewMemory({...newMemory, age: e.target.value})} />
                           <span>歳ごろ</span>
@@ -1915,7 +1993,7 @@
                             {newMemory.satisfaction > 0 ? '+' : ''}{newMemory.satisfaction}
                           </span>
                         </label>
-                        <input type="range" min="-50" max="50" step="5" className="w-full accent-yellow-400" value={newMemory.satisfaction} onChange={e => setNewMemory({...newMemory, satisfaction: e.target.value})} />
+                        <input type="range" min="-50" max="50" step="5" className="satisfaction-wiggle w-full accent-yellow-400" value={newMemory.satisfaction} onChange={e => setNewMemory({...newMemory, satisfaction: e.target.value})} />
                       </div>
                       <button onClick={handleAddMemory} className="rpg-button w-full mt-4 py-3 bg-blue-900 border-blue-400 hover:bg-blue-700 text-white font-bold">
                         記憶を記録する
