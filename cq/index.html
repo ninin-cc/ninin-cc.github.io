@@ -26,6 +26,57 @@
     .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
     .rpg-input { background: rgba(0,0,0,0.5); border: none; border-bottom: 2px solid white; color: white; outline: none; padding: 8px; width: 100%; transition: border-color 0.2s; }
     .rpg-input:focus { border-color: #fcd34d; background: rgba(0,0,0,0.8); }
+    .parchment-input {
+      background-color: #f2dfad !important;
+      background-image:
+        linear-gradient(rgba(85, 55, 20, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90, 60, 24, 0.08), transparent 12%, transparent 88%, rgba(90, 60, 24, 0.08));
+      background-size: 100% 1.8em, 100% 100%;
+      border: 2px solid #a87533 !important;
+      border-radius: 4px;
+      color: #071f3f !important;
+      caret-color: #071f3f;
+      box-shadow: inset 0 0 18px rgba(78, 48, 14, 0.18);
+    }
+    .parchment-input:focus {
+      background-color: #f8e9bd !important;
+      border-color: #facc15 !important;
+      box-shadow: inset 0 0 18px rgba(78, 48, 14, 0.16), 0 0 0 2px rgba(250, 204, 21, 0.18);
+    }
+    .parchment-input::placeholder {
+      color: #6f5b3b;
+      opacity: 0.85;
+    }
+    .parchment-card {
+      background-color: #f2dfad;
+      background-image:
+        linear-gradient(rgba(85, 55, 20, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90, 60, 24, 0.08), transparent 12%, transparent 88%, rgba(90, 60, 24, 0.08));
+      background-size: 100% 1.8em, 100% 100%;
+      border: 2px solid #a87533;
+      border-radius: 6px;
+      color: #071f3f;
+      box-shadow: inset 0 0 18px rgba(78, 48, 14, 0.16), 0 3px 0 rgba(0, 0, 0, 0.18);
+    }
+    .write-cue {
+      text-align: center;
+      color: #facc15;
+      font-size: 1.4rem;
+      line-height: 1;
+      margin: 0.15rem 0 0.35rem;
+      text-shadow: 0 0 8px rgba(250, 204, 21, 0.5), 2px 2px 0 #000;
+    }
+    .write-cue.is-blinking {
+      animation: writeCueBlink 1.1s ease-in-out infinite;
+    }
+    .write-cue.is-resting {
+      opacity: 0.45;
+      animation: none;
+    }
+    @keyframes writeCueBlink {
+      0%, 100% { opacity: 0.25; transform: translateY(-2px); }
+      50% { opacity: 1; transform: translateY(2px); }
+    }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
     .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
@@ -200,6 +251,37 @@
       }
     }
   </style>
+  <script>
+    (function () {
+      var ua = navigator.userAgent || '';
+      var isInAppBrowser = /Line\/|FBAN|FBAV|FB_IAB|Instagram|Twitter|MicroMessenger|TikTok|LinkedInApp|Pinterest|KAKAOTALK|NAVER|NewsPicks/i.test(ua);
+      if (!isInAppBrowser) return;
+
+      try {
+        if (sessionStorage.getItem('cq_external_browser_redirect_attempted') === '1') return;
+        sessionStorage.setItem('cq_external_browser_redirect_attempted', '1');
+      } catch (error) {}
+
+      var currentUrl = window.location.href;
+      var isAndroid = /Android/i.test(ua);
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      window.setTimeout(function () {
+        if (isAndroid) {
+          var strippedUrl = currentUrl.replace(/^https?:\/\//i, '');
+          var scheme = /^https:\/\//i.test(currentUrl) ? 'https' : 'http';
+          window.location.href = 'intent://' + strippedUrl + '#Intent;scheme=' + scheme + ';package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(currentUrl) + ';end';
+          return;
+        }
+
+        if (isIOS && /^https?:\/\//i.test(currentUrl)) {
+          window.location.href = currentUrl
+            .replace(/^https:\/\//i, 'googlechromes://')
+            .replace(/^http:\/\//i, 'googlechrome://');
+        }
+      }, 1);
+    })();
+  </script>
 </head>
 <body>
   <div id="root"></div>
@@ -327,32 +409,62 @@
     const presetMissions = [
       {
         title: '売上上昇',
-        desc: '担当領域の売上や成果を高めることが期待されている。',
+        desc: '担当領域の売上や成果を高めることが期待されている。\nその他にわが社では〇〇という意味がある。',
         connection: '数字を上げる過程で、提案力・関係構築力・課題発見力を育てられる。'
       },
       {
+        title: '担当店舗の売り上げ向上',
+        desc: '担当店舗の売り上げや来店数、顧客満足度を高めることが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: '店舗運営を通じて、現場把握力・接客力・改善力を育てられる。'
+      },
+      {
+        title: '新規顧客開拓',
+        desc: 'まだ取引のない顧客や市場に働きかけ、新しい関係をつくることが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: '新しい顧客と向き合うことで、行動力・提案力・関係構築力を育てられる。'
+      },
+      {
+        title: '新商品開発',
+        desc: '顧客や市場の変化を捉え、新しい商品やサービスを形にすることが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: '開発を通じて、企画力・情報収集力・周囲を巻き込む力を育てられる。'
+      },
+      {
+        title: '販路拡大',
+        desc: '商品やサービスを届ける先を広げ、新しい販売チャネルをつくることが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: '販路を広げる過程で、戦略思考・交渉力・外部との連携力を育てられる。'
+      },
+      {
         title: '業務改善',
-        desc: '日々の業務のムダや非効率を見つけ、よりよい進め方に変えていく。',
+        desc: '日々の業務のムダや非効率を見つけ、よりよい進め方に変えていく。\nその他にわが社では〇〇という意味がある。',
         connection: '改善を通じて、観察力・構造化力・周囲を巻き込む力を育てられる。'
       },
       {
+        title: 'DX推進',
+        desc: 'デジタル技術やシステムを活用し、業務やサービスのあり方を変えていくことが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: 'DXを通じて、IT活用力・業務改善力・変化を進める力を育てられる。'
+      },
+      {
+        title: 'AI活用推進',
+        desc: 'AIを活用して、情報整理・判断支援・業務効率化などを進めることが期待されている。\nその他にわが社では〇〇という意味がある。',
+        connection: 'AI活用を通じて、試行錯誤する力・情報活用力・新しい働き方をつくる力を育てられる。'
+      },
+      {
         title: '進捗管理',
-        desc: 'チームや案件の進み具合を見える化し、遅れや課題に早く気づく。',
+        desc: 'チームや案件の進み具合を見える化し、遅れや課題に早く気づく。\nその他にわが社では〇〇という意味がある。',
         connection: '進捗管理を通じて、段取り力・調整力・リスク察知力を育てられる。'
       },
       {
-        title: '品質チェック',
-        desc: '成果物や対応内容の品質を確認し、ミスや手戻りを減らす。',
-        connection: '品質を見ることで、注意力・基準を持つ力・信頼を守る力を育てられる。'
+        title: '品質維持改善',
+        desc: '成果物や対応内容の品質を維持し、ミスや手戻りを減らしながら改善していく。\nその他にわが社では〇〇という意味がある。',
+        connection: '品質を維持改善することで、注意力・基準を持つ力・信頼を守る力を育てられる。'
       },
       {
         title: 'エンゲージメント向上',
-        desc: 'メンバーが前向きに働けるよう、関係性や対話の質を高める。',
+        desc: 'メンバーが前向きに働けるよう、関係性や対話の質を高める。\nその他にわが社では〇〇という意味がある。',
         connection: '人に関わる実践を通じて、傾聴力・承認力・場づくりの力を育てられる。'
       },
       {
         title: 'ダイバーシティ推進',
-        desc: '多様な価値観や働き方を尊重し、誰もが力を発揮しやすい環境をつくる。',
+        desc: '多様な価値観や働き方を尊重し、誰もが力を発揮しやすい環境をつくる。\nその他にわが社では〇〇という意味がある。',
         connection: '多様性に向き合うことで、想像力・対話力・違いを活かす力を育てられる。'
       }
     ];
@@ -461,6 +573,28 @@
           <div className="flex items-center gap-4 md:gap-6 mt-1 md:mt-2">
             <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-80`}>
               <img src={img} alt={speaker} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left italic">
+              {text.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const MemoryHarukaBox = ({ speaker, text }) => {
+      const color = 'bg-rose-900 border-rose-400';
+      const imgBg = 'bg-gradient-to-b from-rose-700 to-rose-950';
+      const img = 'https://ninin-cc.github.io/cq/img/hr.png';
+
+      return (
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
+          <div className="absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
+            {speaker}
+          </div>
+          <div className="flex flex-row-reverse items-center gap-4 md:gap-6 mt-1 md:mt-2">
+            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-85`}>
+              <img src={img} alt={speaker} className="w-full h-full object-contain" style={{ imageRendering: 'pixelated', transform: 'scaleX(-1) scale(1.1)' }} />
             </div>
             <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left italic">
               {text.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
@@ -641,6 +775,465 @@
       );
     };
 
+    const WriteCue = ({ active }) => (
+      <div className={`write-cue ${active ? 'is-blinking' : 'is-resting'}`} aria-hidden="true">▼</div>
+    );
+
+    const imageTheme = {
+      width: 1200,
+      height: 1697,
+      bg: '#07111f',
+      panel: '#0f172a',
+      panel2: '#111827',
+      border: '#facc15',
+      text: '#f8fafc',
+      muted: '#cbd5e1',
+      blue: '#60a5fa',
+      red: '#f87171',
+      green: '#4ade80',
+      purple: '#c084fc',
+      parchment: '#f2dfad',
+      parchmentBorder: '#a87533',
+      ink: '#071f3f',
+      brown: '#6b3f15'
+    };
+
+    const canvasFont = (size, weight = '400') => `${weight} ${size}px 'DotGothic16', 'Yu Gothic', 'Meiryo', sans-serif`;
+
+    const roundRectPath = (ctx, x, y, w, h, r = 12) => {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + w - radius, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+      ctx.lineTo(x + w, y + h - radius);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      ctx.lineTo(x + radius, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    };
+
+    const fillRoundRect = (ctx, x, y, w, h, r, fill, stroke, lineWidth = 2) => {
+      ctx.save();
+      roundRectPath(ctx, x, y, w, h, r);
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    const canvasLines = (ctx, text, maxWidth) => {
+      const source = String(text || '');
+      const lines = [];
+      source.split('\n').forEach(part => {
+        if (!part) {
+          lines.push('');
+          return;
+        }
+        let line = '';
+        [...part].forEach(char => {
+          const test = line + char;
+          if (line && ctx.measureText(test).width > maxWidth) {
+            lines.push(line);
+            line = char;
+          } else {
+            line = test;
+          }
+        });
+        lines.push(line);
+      });
+      return lines.length ? lines : [''];
+    };
+
+    const drawCanvasText = (ctx, text, x, y, maxWidth, lineHeight, options = {}) => {
+      ctx.save();
+      ctx.font = options.font || canvasFont(24);
+      ctx.fillStyle = options.color || imageTheme.text;
+      ctx.textBaseline = 'top';
+      const lines = canvasLines(ctx, text || options.emptyText || '', maxWidth);
+      const maxLines = options.maxLines || lines.length;
+      const visibleLines = lines.slice(0, maxLines);
+      visibleLines.forEach((line, index) => {
+        let visible = line;
+        if (index === maxLines - 1 && lines.length > maxLines) visible = `${line.slice(0, Math.max(0, line.length - 1))}…`;
+        ctx.fillText(visible, x, y + index * lineHeight);
+      });
+      ctx.restore();
+      return y + visibleLines.length * lineHeight;
+    };
+
+    const drawExportBackground = (ctx, height) => {
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, '#101827');
+      gradient.addColorStop(1, '#05070d');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, imageTheme.width, height);
+      ctx.strokeStyle = imageTheme.border;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(32, 32, imageTheme.width - 64, height - 64);
+    };
+
+    const drawExportFooter = (ctx, y) => {
+      ctx.save();
+      ctx.font = canvasFont(18);
+      ctx.fillStyle = imageTheme.muted;
+      ctx.textAlign = 'center';
+      ctx.fillText('キャリアの宿屋™ - RIESM™ RoleTRADE™クエスト -', imageTheme.width / 2, y);
+      ctx.fillText('© ninin consulting & counseling LLC. All rights reserved.', imageTheme.width / 2, y + 28);
+      ctx.restore();
+      return y + 62;
+    };
+
+    const drawExportHeader = (ctx, title, player) => {
+      let y = 72;
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.fillStyle = imageTheme.text;
+      ctx.font = canvasFont(44, '700');
+      ctx.fillText('キャリアの宿屋™', imageTheme.width / 2, y);
+      ctx.font = canvasFont(18, '700');
+      ctx.fillStyle = imageTheme.muted;
+      ctx.fillText('- RIESM™ RoleTRADE™クエスト -', imageTheme.width / 2, y + 54);
+      ctx.font = canvasFont(30, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText(title, imageTheme.width / 2, y + 98);
+      ctx.restore();
+
+      y += 150;
+      fillRoundRect(ctx, 90, y, imageTheme.width - 180, 120, 10, '#0b1220', imageTheme.border, 3);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = imageTheme.muted;
+      ctx.font = canvasFont(20, '700');
+      ctx.fillText('冒険者', imageTheme.width / 2, y + 20);
+      ctx.fillStyle = imageTheme.text;
+      ctx.font = canvasFont(42, '700');
+      ctx.fillText(`${player.name || '名もなき勇者'}  Lv.${player.age || '?'}`, imageTheme.width / 2, y + 52);
+      ctx.textAlign = 'left';
+      return y + 155;
+    };
+
+    const drawSectionTitle = (ctx, title, y) => {
+      ctx.font = canvasFont(28, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText(`▼ ${title}`, 90, y);
+      return y + 46;
+    };
+
+    const drawDarkCard = (ctx, x, y, w, h) => {
+      fillRoundRect(ctx, x, y, w, h, 10, '#0f172a', '#334155', 2);
+    };
+
+    const drawParchmentCard = (ctx, x, y, w, h) => {
+      fillRoundRect(ctx, x, y, w, h, 10, imageTheme.parchment, imageTheme.parchmentBorder, 3);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(90, 60, 24, 0.18)';
+      ctx.lineWidth = 1;
+      for (let lineY = y + 34; lineY < y + h - 18; lineY += 30) {
+        ctx.beginPath();
+        ctx.moveTo(x + 18, lineY);
+        ctx.lineTo(x + w - 18, lineY);
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    const cropCanvas = (canvas, usedHeight) => {
+      const height = Math.min(canvas.height, Math.max(900, Math.ceil(usedHeight)));
+      const output = document.createElement('canvas');
+      output.width = canvas.width;
+      output.height = height;
+      output.getContext('2d').drawImage(canvas, 0, 0);
+      return output;
+    };
+
+    const downloadCanvasPng = (canvas, filename) => {
+      canvas.toBlob(blob => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    };
+
+    const drawLifeChartOnCanvas = (ctx, memories, x, y, w, h) => {
+      const sorted = [...(memories || [])].sort((a, b) => a.age - b.age);
+      drawDarkCard(ctx, x, y, w, h);
+      const px = 54;
+      const py = 36;
+      const chartX = x + px;
+      const chartY = y + py;
+      const chartW = w - px * 2;
+      const chartH = h - py * 2;
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(chartX, chartY + chartH / 2);
+      ctx.lineTo(chartX + chartW, chartY + chartH / 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = canvasFont(18);
+      ctx.fillStyle = imageTheme.muted;
+      ctx.fillText('+50', chartX - 42, chartY - 4);
+      ctx.fillText('±0', chartX - 38, chartY + chartH / 2 - 10);
+      ctx.fillText('-50', chartX - 42, chartY + chartH - 18);
+
+      if (!sorted.length) {
+        drawCanvasText(ctx, '記憶はまだ記録されていません。', chartX + 40, chartY + 110, chartW - 80, 30, { font: canvasFont(26), color: imageTheme.muted });
+        return;
+      }
+
+      const getX = index => chartX + index * (chartW / Math.max(1, sorted.length - 1));
+      const getY = satisfaction => chartY + chartH - (((Number(satisfaction) + 50) / 100) * chartH);
+
+      ctx.beginPath();
+      sorted.forEach((item, index) => {
+        const cx = getX(index);
+        const cy = getY(item.satisfaction);
+        if (index === 0) {
+          ctx.moveTo(cx, cy);
+        } else {
+          const prevX = getX(index - 1);
+          const prevY = getY(sorted[index - 1].satisfaction);
+          const c0x = prevX + (cx - prevX) * 0.4;
+          const c1x = cx - (cx - prevX) * 0.4;
+          ctx.bezierCurveTo(c0x, prevY, c1x, cy, cx, cy);
+        }
+      });
+      ctx.strokeStyle = imageTheme.border;
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      sorted.forEach((item, index) => {
+        const cx = getX(index);
+        const cy = getY(item.satisfaction);
+        ctx.fillStyle = imageTheme.bg;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = imageTheme.border;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.font = canvasFont(18, '700');
+        ctx.fillStyle = imageTheme.text;
+        ctx.textAlign = 'center';
+        ctx.fillText(`${item.age}歳`, cx, y + h - 28);
+        ctx.textAlign = 'left';
+
+        const labelY = cy < chartY + chartH / 2 ? cy + 16 : cy - 58;
+        fillRoundRect(ctx, cx - 78, labelY, 156, 46, 6, 'rgba(0,0,0,0.7)', null);
+        drawCanvasText(ctx, item.event || '', cx - 70, labelY + 7, 140, 16, { font: canvasFont(14), color: imageTheme.text, maxLines: 2 });
+      });
+    };
+
+    const drawOverflowCount = (ctx, text, x, y, color = imageTheme.muted) => {
+      ctx.save();
+      ctx.font = canvasFont(18, '700');
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    };
+
+    const createA4Canvas = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = imageTheme.width;
+      canvas.height = imageTheme.height;
+      drawExportBackground(canvas.getContext('2d'), canvas.height);
+      return canvas;
+    };
+
+    const drawFixedFooter = (ctx) => drawExportFooter(ctx, imageTheme.height - 92);
+
+    const createMemoryExportImage = ({ player, memories, chartInsight }) => {
+      const canvas = createA4Canvas();
+      const ctx = canvas.getContext('2d');
+      let y = drawExportHeader(ctx, '歩んできた道：Memory', player);
+      y = drawSectionTitle(ctx, 'ライフラインチャート', y);
+      drawLifeChartOnCanvas(ctx, memories, 90, y, imageTheme.width - 180, 360);
+      y += 400;
+
+      y = drawSectionTitle(ctx, '記憶の一覧', y);
+      const sorted = [...(memories || [])].sort((a, b) => a.age - b.age);
+      const contentW = imageTheme.width - 180;
+      const gap = 18;
+      const colW = (contentW - gap) / 2;
+      const rowH = 82;
+      const visible = sorted.slice(0, 8);
+
+      if (!visible.length) {
+        drawDarkCard(ctx, 90, y, contentW, 82);
+        drawCanvasText(ctx, '記憶はまだ記録されていません。', 120, y + 26, contentW - 60, 26, { font: canvasFont(22), color: imageTheme.muted });
+        y += 106;
+      } else {
+        visible.forEach((item, index) => {
+          const col = index % 2;
+          const row = Math.floor(index / 2);
+          const cardX = 90 + col * (colW + gap);
+          const cardY = y + row * rowH;
+          drawDarkCard(ctx, cardX, cardY, colW, rowH - 12);
+          ctx.font = canvasFont(20, '700');
+          ctx.fillStyle = imageTheme.border;
+          ctx.fillText(`${item.age}歳`, cardX + 20, cardY + 16);
+          ctx.fillStyle = Number(item.satisfaction) >= 0 ? imageTheme.blue : imageTheme.red;
+          ctx.fillText(`${Number(item.satisfaction) > 0 ? '+' : ''}${item.satisfaction}`, cardX + colW - 72, cardY + 16);
+          drawCanvasText(ctx, item.event || '', cardX + 92, cardY + 14, colW - 178, 22, { font: canvasFont(18), color: imageTheme.text, maxLines: 2 });
+        });
+        y += Math.ceil(visible.length / 2) * rowH + 4;
+        if (sorted.length > visible.length) {
+          drawOverflowCount(ctx, `ほか ${sorted.length - visible.length} 件の記憶があります。`, 92, y);
+          y += 32;
+        }
+      }
+
+      y = drawSectionTitle(ctx, 'ライフラインを見て気づいたこと', y + 10);
+      drawDarkCard(ctx, 90, y, contentW, 190);
+      drawCanvasText(ctx, chartInsight || 'まだメモはありません。', 120, y + 24, contentW - 60, 28, { font: canvasFont(22), color: imageTheme.text, maxLines: 5 });
+      drawFixedFooter(ctx);
+      return canvas;
+    };
+
+    const createStatusExportImage = ({ player, cans, canInsight, allyInsight }) => {
+      const canvas = createA4Canvas();
+      const ctx = canvas.getContext('2d');
+      let y = drawExportHeader(ctx, 'ステータス：Can', player);
+      y = drawSectionTitle(ctx, '武器・魔法・仲間', y);
+
+      const contentW = imageTheme.width - 180;
+      const gap = 18;
+      const cardW = (contentW - gap * 2) / 3;
+      const cardH = 520;
+      const groupY = y;
+
+      ['skill', 'magic', 'ally'].forEach((type, index) => {
+        const group = (cans || []).filter(c => c.type === type);
+        const meta = canTypeMeta[type];
+        const x = 90 + index * (cardW + gap);
+        drawDarkCard(ctx, x, groupY, cardW, cardH);
+        ctx.font = canvasFont(24, '700');
+        ctx.fillStyle = type === 'skill' ? imageTheme.blue : type === 'magic' ? imageTheme.purple : imageTheme.green;
+        ctx.fillText(meta.label, x + 22, groupY + 24);
+        let innerY = groupY + 70;
+        const visible = group.slice(0, 6);
+        if (!visible.length) {
+          drawCanvasText(ctx, '未記録', x + 22, innerY, cardW - 44, 26, { font: canvasFont(21), color: imageTheme.muted });
+        } else {
+          visible.forEach(item => {
+            ctx.fillStyle = type === 'skill' ? imageTheme.blue : type === 'magic' ? imageTheme.purple : imageTheme.green;
+            ctx.font = canvasFont(20, '700');
+            ctx.fillText(`・${item.name}`, x + 22, innerY);
+            innerY = drawCanvasText(ctx, item.desc || '説明なし', x + 42, innerY + 26, cardW - 64, 21, { font: canvasFont(17), color: imageTheme.muted, maxLines: 2 }) + 14;
+          });
+          if (group.length > visible.length) {
+            drawOverflowCount(ctx, `ほか ${group.length - visible.length} 件`, x + 22, groupY + cardH - 38);
+          }
+        }
+      });
+
+      y = groupY + cardH + 36;
+      y = drawSectionTitle(ctx, '気づき', y);
+      const memoW = (contentW - gap) / 2;
+      drawDarkCard(ctx, 90, y, memoW, 360);
+      ctx.font = canvasFont(22, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('武器・魔法から見えた気づき', 118, y + 26);
+      drawCanvasText(ctx, canInsight || 'まだメモはありません。', 118, y + 68, memoW - 56, 27, { font: canvasFont(21), color: imageTheme.text, maxLines: 9 });
+
+      const allyX = 90 + memoW + gap;
+      drawDarkCard(ctx, allyX, y, memoW, 360);
+      ctx.font = canvasFont(22, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('仲間・関係性から見えた気づき', allyX + 28, y + 26);
+      drawCanvasText(ctx, allyInsight || 'まだメモはありません。', allyX + 28, y + 68, memoW - 56, 27, { font: canvasFont(21), color: imageTheme.text, maxLines: 9 });
+
+      drawFixedFooter(ctx);
+      return canvas;
+    };
+
+    const createWillMustExportImage = ({ player, will, willOneYearInsight, willThreeYearsInsight, selectedMust, mustInsight }) => {
+      const canvas = createA4Canvas();
+      const ctx = canvas.getContext('2d');
+      let y = drawExportHeader(ctx, '次なる冒険：Will / Quest', player);
+      const contentW = imageTheme.width - 180;
+      const gap = 18;
+
+      y = drawSectionTitle(ctx, '次なる冒険：Will', y);
+      drawDarkCard(ctx, 90, y, contentW, 330);
+      ctx.font = canvasFont(22, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('1年後', 120, y + 28);
+      let innerY = drawCanvasText(ctx, will.oneYear || '未記録', 120, y + 62, contentW - 60, 26, { font: canvasFont(21), color: imageTheme.text, maxLines: 4 });
+      ctx.fillStyle = imageTheme.border;
+      ctx.font = canvasFont(22, '700');
+      ctx.fillText('3年後', 120, innerY + 16);
+      innerY = drawCanvasText(ctx, will.threeYears || '未記録', 120, innerY + 48, contentW - 60, 26, { font: canvasFont(21), color: imageTheme.text, maxLines: 4 });
+      ctx.fillStyle = imageTheme.blue;
+      ctx.font = canvasFont(24, '700');
+      ctx.fillText(`目指すロール：${will.job || '未記録'}`, 120, Math.min(y + 292, innerY + 18));
+
+      y += 366;
+      const memoW = (contentW - gap) / 2;
+      drawDarkCard(ctx, 90, y, memoW, 210);
+      ctx.font = canvasFont(21, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('1年後の気づき', 118, y + 24);
+      drawCanvasText(ctx, willOneYearInsight || 'まだメモはありません。', 118, y + 62, memoW - 56, 25, { font: canvasFont(19), color: imageTheme.text, maxLines: 5 });
+      const threeX = 90 + memoW + gap;
+      drawDarkCard(ctx, threeX, y, memoW, 210);
+      ctx.font = canvasFont(21, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('3年後の気づき', threeX + 28, y + 24);
+      drawCanvasText(ctx, willThreeYearsInsight || 'まだメモはありません。', threeX + 28, y + 62, memoW - 56, 25, { font: canvasFont(19), color: imageTheme.text, maxLines: 5 });
+
+      y += 252;
+      y = drawSectionTitle(ctx, 'ギルドからのクエスト：Must', y);
+      const must = selectedMust || {};
+      drawParchmentCard(ctx, 90, y, contentW, 500);
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('接続したクエスト', 125, y + 28);
+      ctx.fillStyle = imageTheme.ink;
+      ctx.font = canvasFont(31, '700');
+      drawCanvasText(ctx, must.title || '未選択', 125, y + 62, contentW - 70, 38, { font: canvasFont(31, '700'), color: imageTheme.ink, maxLines: 2 });
+      let nextY = drawCanvasText(ctx, must.desc || '概要なし', 125, y + 142, contentW - 70, 27, { font: canvasFont(21), color: imageTheme.ink, maxLines: 4 });
+      ctx.strokeStyle = imageTheme.parchmentBorder;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(125, nextY + 16);
+      ctx.lineTo(imageTheme.width - 125, nextY + 16);
+      ctx.stroke();
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('Willとの接続メモ', 125, nextY + 38);
+      nextY = drawCanvasText(ctx, must.connection || '未記録', 125, nextY + 74, contentW - 70, 25, { font: canvasFont(19), color: imageTheme.ink, maxLines: 5 });
+      ctx.strokeStyle = imageTheme.parchmentBorder;
+      ctx.beginPath();
+      ctx.moveTo(125, nextY + 14);
+      ctx.lineTo(imageTheme.width - 125, nextY + 14);
+      ctx.stroke();
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('接続してみた気づき', 125, nextY + 36);
+      drawCanvasText(ctx, mustInsight || 'まだメモはありません。', 125, nextY + 72, contentW - 70, 25, { font: canvasFont(19), color: imageTheme.ink, maxLines: 5 });
+
+      drawFixedFooter(ctx);
+      return canvas;
+    };
+
     const App = () => {
       useCasualSourceGuard();
 
@@ -667,16 +1260,17 @@
       const [willOneYearInsight, setWillOneYearInsight] = useLocalStorage('cq_will_one_year_insight', '');
       const [willThreeYearsInsight, setWillThreeYearsInsight] = useLocalStorage('cq_will_three_years_insight', '');
 
-      const [musts, setMusts] = useLocalStorage('cq_musts', [
-        {
-          id: 1, title: 'ギルド（会社・組織）からのクエスト', desc: '冒険者としての経験をつみ、古き良きものも活かすことも、必要に応じて最新の形へ進化させることも望まれている。',
-          connection: 'このクエストを通じて、プロジェクト進行力・調整力・構造化力を磨き、将来のサービス立ち上げやさらなる冒険につなげられる。'
-        }
-      ]);
+      const [musts, setMusts] = useLocalStorage('cq_musts', []);
       const [newMust, setNewMust] = useState({ title: '', desc: '', connection: '' });
       const [mustInsight, setMustInsight] = useLocalStorage('cq_must_insight', '');
       const [mustStep, setMustStep] = useLocalStorage('cq_must_step', 0);
+      const [mustWorkStep, setMustWorkStep] = useLocalStorage('cq_must_work_step', 0);
+      const [activeMustId, setActiveMustId] = useLocalStorage('cq_active_must_id', null);
+      const [mustQuestAdded, setMustQuestAdded] = useLocalStorage('cq_must_quest_added', false);
       const [mustRecollectionVisible, setMustRecollectionVisible] = useState(false);
+      const [mustDraftStarted, setMustDraftStarted] = useState(false);
+      const [mustConnectionStarted, setMustConnectionStarted] = useState(false);
+      const [mustInsightStarted, setMustInsightStarted] = useState(() => Boolean(mustInsight));
 
       useEffect(() => {
         const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
@@ -685,6 +1279,20 @@
         }
         setCanConfirming(false);
       }, [canStep]);
+
+      useEffect(() => {
+        const legacyDefault = musts.length === 1
+          && musts[0].id === 1
+          && musts[0].title === 'ギルド（会社・組織）からのクエスト'
+          && musts[0].desc === '冒険者としての経験をつみ、古き良きものも活かすことも、必要に応じて最新の形へ進化させることも望まれている。';
+        if (legacyDefault) {
+          setMusts([]);
+          setActiveMustId(null);
+          setNewMust({ title: '', desc: '', connection: '' });
+          setMustWorkStep(0);
+          setMustQuestAdded(false);
+        }
+      }, []);
 
       const getSuggestedAges = () => {
         const currentAge = parseInt(player.age) || 30;
@@ -736,6 +1344,8 @@
         if (next === 'will') setWillStep(0);
         if (next === 'must') {
           setMustStep(0);
+          setMustWorkStep(0);
+          setMustQuestAdded(musts.length > 0);
           setMustRecollectionVisible(false);
         }
         setScene(next);
@@ -772,6 +1382,8 @@
         setShowRestPrompt(false);
         setIsInputPhase(false);
         setMustStep(1);
+        setMustWorkStep(0);
+        setMustQuestAdded(musts.length > 0);
         setMustRecollectionVisible(true);
         setScene('must');
       };
@@ -861,12 +1473,94 @@
 
       const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
 
+      const getMustConnectionTemplate = (hint = '') => {
+        const oneYearWill = will.oneYear || '〇〇';
+        const threeYearsWill = will.threeYears || '△△';
+        return `${hint ? `${hint}\n\n` : ''}それは私の１年後のWILLである「${oneYearWill}」を実現するのに役立つかもしれない。\nさらには・・・\n\nそれは私の３年後のWILLである「${threeYearsWill}」を実現するのに役立つかもしれない。\nさらには・・・`;
+      };
+      const normalizeMustConnection = (text = '') => (
+        text.includes('それは私の１年後のWILL') ? text : getMustConnectionTemplate(text)
+      );
+
       const handleAddMust = () => {
         if (!newMust.title) return;
-        setMusts([...musts, { ...newMust, id: Date.now() }]);
+        const existing = musts.find(m => m.title === newMust.title);
+        const connection = existing ? (existing.connection || normalizeMustConnection(newMust.connection)) : normalizeMustConnection(newMust.connection);
+        const id = existing ? existing.id : Date.now();
+        const mustToAdd = {
+          id,
+          title: newMust.title,
+          desc: newMust.desc,
+          connection
+        };
+        setMusts(existing ? musts.map(m => m.id === existing.id ? mustToAdd : m) : [...musts, mustToAdd]);
+        setActiveMustId(id);
         setNewMust({ title: '', desc: '', connection: '' });
+        setMustQuestAdded(true);
+        setMustDraftStarted(false);
       };
-      const handleRemoveMust = (id) => setMusts(musts.filter(m => m.id !== id));
+      const handleProceedToMustConnection = () => {
+        if (musts.length === 0) return;
+        if (musts.length > 1) {
+          setMustWorkStep(1);
+          scrollTop();
+          return;
+        }
+        const target = musts[0];
+        setActiveMustId(target.id);
+        setNewMust({
+          title: target.title,
+          desc: target.desc,
+          connection: target.connection || normalizeMustConnection('')
+        });
+        setMustConnectionStarted(false);
+        setMustWorkStep(2);
+        scrollTop();
+      };
+      const handleStartMustConnection = (must) => {
+        setActiveMustId(must.id);
+        setNewMust({
+          title: must.title,
+          desc: must.desc,
+          connection: must.connection || normalizeMustConnection('')
+        });
+        setMustConnectionStarted(false);
+        setMustWorkStep(2);
+        scrollTop();
+      };
+      const handleSaveMustConnection = () => {
+        if (!activeMustId) return;
+        setMusts(musts.map(m => m.id === activeMustId ? { ...m, connection: newMust.connection } : m));
+        setMustWorkStep(3);
+        scrollTop();
+      };
+      const handleEditMustConnection = (connection) => {
+        setMustConnectionStarted(true);
+        setNewMust({ ...newMust, connection });
+        if (activeMustId) {
+          setMusts(musts.map(m => m.id === activeMustId ? { ...m, connection } : m));
+        }
+      };
+      const handleEditActiveMust = (updates) => {
+        const updatedMust = { ...newMust, ...updates };
+        setNewMust(updatedMust);
+        if (activeMustId) {
+          setMusts(musts.map(m => m.id === activeMustId ? { ...m, ...updates } : m));
+        }
+      };
+      const handleRemoveMust = (id) => {
+        const remainingMusts = musts.filter(m => m.id !== id);
+        setMusts(remainingMusts);
+        setMustQuestAdded(remainingMusts.length > 0);
+        if (activeMustId === id) {
+          setActiveMustId(null);
+          setNewMust({ title: '', desc: '', connection: '' });
+          setMustWorkStep(0);
+        } else if (remainingMusts.length === 0) {
+          setActiveMustId(null);
+          setNewMust({ title: '', desc: '', connection: '' });
+        }
+      };
 
       const handleReset = () => {
         if (window.confirm('これまでの記録（冒険の書）をすべて消去して、初めからやり直しますか？')) {
@@ -893,10 +1587,14 @@
               <>
                 {introStep === 0 && (
                   <div className="w-full max-w-2xl text-center animate-fade-in">
-                    <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー」" />
+                    <DialogBox speaker="老魔法使いリフレム" type="reflem" text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー。」" />
+                    <p className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-65 px-4 py-3 text-left font-sans text-xs leading-relaxed text-yellow-100">
+                      ※注意　LINEやX等のアプリ内ブラウザで開くとうまく動作できない事があります。chromeやEdge、safariなどの純正ブラウザで開くことをお勧めします。
+                    </p>
                     <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
                       宿屋に向かう
                     </button>
+                    {renderAppNote('mt-5')}
                   </div>
                 )}
 
@@ -1245,10 +1943,10 @@
                 />
                 <div className="flex flex-col md:flex-row justify-center gap-3 mt-4">
                   <button onClick={handleSuspend} className="rpg-button text-base px-8 py-3">
-                    YES
+                    やすむ
                   </button>
                   <button onClick={() => nextScene('will')} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
-                    NO <i className="fa-solid fa-arrow-right"></i>
+                    つづける <i className="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
               </div>
@@ -1349,7 +2047,7 @@
                         </div>
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたいロール（役割・立場・役職・職業）</label>
-                          <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー" />
+                          <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー / 個人事業主 / 地域に貢献する人" />
                         </div>
                       </>
                     )}
@@ -1386,6 +2084,8 @@
                     <button
                       onClick={() => {
                         setMustStep(1);
+                        setMustWorkStep(0);
+                        setMustQuestAdded(musts.length > 0);
                         scrollTop();
                       }}
                       className="rpg-button text-base px-8 py-4 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold"
@@ -1399,74 +2099,308 @@
           ) : (
             <>
               <WindowBox title="シーン6：ギルド（会社・組織）からのクエストと「接続」" iconName="fa-solid fa-book-open">
-                <div className="mb-4 text-sm text-gray-300">
-                  <p><span className="text-yellow-300">ギルド（会社・組織）からのクエスト：</span><br/>冒険者としての経験をつみ、古き良きものも活かすことも、必要に応じて最新の形へ進化させることも望まれている。</p>
-                </div>
-
-                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 mb-4">
-                  {musts.map(m => (
-                    <div key={m.id} className="border-2 border-gray-600 p-4 rounded bg-gray-900 bg-opacity-50 relative pr-8">
-                      <button onClick={() => handleRemoveMust(m.id)} className="absolute right-2 top-2 text-gray-500 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
-                      <h3 className="text-lg text-red-300 font-bold mb-2">{m.title}</h3>
-                      <p className="text-sm text-gray-400 mb-3">{m.desc}</p>
-                      <div className="border-l-4 border-yellow-500 pl-3 bg-yellow-900 bg-opacity-20 p-3 rounded mt-2">
-                        <label className="text-yellow-400 text-xs mb-1 block font-bold">【接続メモ】自分のWill/Canにどう繋がるか</label>
-                        <p className="text-sm leading-relaxed">{m.connection}</p>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6 text-xs md:text-sm">
+                  {['1. クエスト登録', '2. クエスト選択', '3. Willと接続', '4. 気づき'].map((label, idx) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        if (idx === 0) {
+                          setMustWorkStep(0);
+                          return;
+                        }
+                        if (musts.length === 0) return;
+                        if (idx === 1) {
+                          if (musts.length > 1) {
+                            setMustWorkStep(1);
+                          } else {
+                            handleStartMustConnection(musts[0]);
+                          }
+                          return;
+                        }
+                        if (!activeMustId) {
+                          if (musts.length > 1) {
+                            setMustWorkStep(1);
+                            return;
+                          }
+                          const target = musts[0];
+                          setActiveMustId(target.id);
+                          setNewMust({
+                            title: target.title,
+                            desc: target.desc,
+                            connection: target.connection || normalizeMustConnection('')
+                          });
+                          setMustConnectionStarted(false);
+                        }
+                        setMustWorkStep(idx);
+                      }}
+                      className={`border px-2 py-2 rounded transition-colors ${mustWorkStep === idx ? 'bg-yellow-400 text-black border-yellow-200 font-bold' : 'bg-black bg-opacity-50 text-gray-400 border-gray-600 hover:text-white'}`}
+                    >
+                      {label}
+                    </button>
                   ))}
                 </div>
-                <div className="border-t border-gray-600 pt-6 space-y-3">
-                  <p className="text-sm text-yellow-300 mb-2">▼ 現実のクエストを登録し、接続を考える</p>
-                  <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
-                    <p className="text-xs text-gray-400 mb-2">よくあるクエストの欠片から選ぶ：</p>
-                    <div className="flex flex-wrap gap-2">
-                      {presetMissions.map((mission, idx) => (
+
+                {mustWorkStep === 0 && (
+                  <div className="border-t border-gray-600 pt-6 space-y-4">
+                    <p className="text-sm text-yellow-300 font-bold">▼ まず、（会社・組織）からのクエストを書き出す</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      思い浮かぶクエストはいくつか書き出してもよい。そのあと、Willと接続するクエストを一つ選んでみよう。
+                    </p>
+                    <WriteCue active={!mustDraftStarted} />
+                    <input
+                      type="text"
+                      placeholder="クエスト名（業務・役割・期待されていること）"
+                      className="rpg-input parchment-input text-base"
+                      value={newMust.title}
+                      onChange={e => {
+                        setMustDraftStarted(true);
+                        setNewMust({...newMust, title: e.target.value});
+                      }}
+                    />
+                    <textarea
+                      placeholder="クエストの概要・目的"
+                      className="rpg-input parchment-input resize-none text-sm leading-relaxed"
+                      rows={3}
+                      value={newMust.desc}
+                      onChange={e => {
+                        setMustDraftStarted(true);
+                        setNewMust({...newMust, desc: e.target.value});
+                      }}
+                    />
+                    <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
+                      <p className="text-xs text-gray-400 mb-2">よくあるクエストの欠片から選ぶ：</p>
+                      <div className="flex flex-wrap gap-2">
+                        {presetMissions.map((mission, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              setMustDraftStarted(false);
+                              setNewMust({ title: mission.title, desc: mission.desc, connection: mission.connection });
+                            }}
+                            className="text-xs border border-gray-500 text-gray-300 px-2 py-1 rounded hover:bg-gray-700"
+                          >
+                            {mission.title}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <MemoryDialogBox
+                      speaker="回想のリフレム"
+                      text={"「クエストの欠片から選ぶだけでも、良いのじゃが、そこに自分なりの言葉を足すとより理解が深まるのじゃよ。\nいくつか書き出してもよい。そのあと、今のWillにつなげたいクエストを一つ選ぶのじゃ。」"}
+                    />
+                    <div className="flex justify-end">
+                      <button onClick={handleAddMust} disabled={!newMust.title} className={`rpg-button text-sm px-6 py-2 ${!newMust.title ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        書き込みが完了したのでクエストを追加する
+                      </button>
+                    </div>
+
+                    <div className="border-t border-gray-700 pt-4">
+                      <p className="text-sm text-gray-400 mb-3">登録したクエスト</p>
+                      {musts.length === 0 ? (
+                        <EmptyText>まだクエストは登録されていません。</EmptyText>
+                      ) : (
+                        <div className="space-y-3">
+                          {musts.map(m => (
+                            <div key={m.id} className="border border-gray-600 p-3 rounded bg-gray-900 bg-opacity-50 relative pr-8">
+                              <button onClick={() => handleRemoveMust(m.id)} className="absolute right-2 top-2 text-gray-500 hover:text-red-400"><i className="fa-solid fa-trash"></i></button>
+                              <h3 className="text-base text-red-300 font-bold mb-1">{m.title}</h3>
+                              <p className="text-sm text-gray-400 mb-2">{m.desc || '概要なし'}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="border-t border-yellow-500 pt-5 flex justify-end">
+                      <button
+                        onClick={handleProceedToMustConnection}
+                        disabled={musts.length === 0}
+                        className={`rpg-button text-sm px-8 py-3 bg-white text-black font-bold ${musts.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        接続に進む <i className="fa-solid fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {mustWorkStep === 1 && (
+                  <div className="border-t border-gray-600 pt-6 space-y-4">
+                    <p className="text-sm text-yellow-300 font-bold">▼ どのクエストをWillと接続する？</p>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      登録済みのクエストが複数あるようじゃ。今回は、その中から一つを選んでWillと接続してみよう。
+                    </p>
+                    <div className="space-y-3">
+                      {musts.map(m => (
                         <button
-                          key={idx}
-                          onClick={() => setNewMust({ title: mission.title, desc: mission.desc, connection: mission.connection })}
-                          className="text-xs border border-gray-500 text-gray-300 px-2 py-1 rounded hover:bg-gray-700"
+                          key={m.id}
+                          type="button"
+                          onClick={() => handleStartMustConnection(m)}
+                          className="w-full text-left border-2 border-gray-600 p-4 rounded bg-gray-900 bg-opacity-50 hover:border-yellow-400 hover:bg-yellow-900 hover:bg-opacity-20 transition-colors"
                         >
-                          {mission.title}
+                          <span className="block text-base text-red-300 font-bold mb-1">{m.title}</span>
+                          <span className="block text-sm text-gray-400">{m.desc || '概要なし'}</span>
                         </button>
                       ))}
                     </div>
+                    <button onClick={() => setMustWorkStep(0)} className="text-gray-400 hover:text-white px-4 py-2 flex items-center gap-2 transition-colors">
+                      <i className="fa-solid fa-arrow-right rotate-180"></i> クエスト登録に戻る
+                    </button>
                   </div>
-                  <input type="text" placeholder="クエスト名（業務・役割・期待されていること）" className="rpg-input text-base" value={newMust.title} onChange={e => setNewMust({...newMust, title: e.target.value})} />
-                  <input type="text" placeholder="クエストの概要・目的" className="rpg-input text-sm" value={newMust.desc} onChange={e => setNewMust({...newMust, desc: e.target.value})} />
-                  <textarea placeholder="【接続】このクエストは、どんなCanを育て、どんなWillに近づく機会になるか？" className="rpg-input resize-none text-sm leading-relaxed" rows={5} value={newMust.connection} onChange={e => setNewMust({...newMust, connection: e.target.value})} />
-                  <div>
-                    <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-feather-pointed"></i> クエストとの接続から見えた気づき</label>
+                )}
+
+                {mustWorkStep === 2 && (
+                  <div className="border-t border-gray-600 pt-6 space-y-4">
+                    <p className="text-sm text-yellow-300 font-bold">▼ クエストを、自分のWillと接続してみる</p>
+                    <div className="parchment-card p-4 md:p-5">
+                      <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">接続するクエスト</p>
+                      <p className="text-2xl md:text-3xl font-bold text-[#071f3f] leading-tight">{newMust.title || 'クエスト未選択'}</p>
+                      <p className="text-base md:text-lg text-[#071f3f] mt-3 leading-relaxed whitespace-pre-wrap">{newMust.desc || '概要なし'}</p>
+                    </div>
+                    <MemoryHarukaBox
+                      speaker="回想のハルカ"
+                      text={"「このクエストは、1年後・3年後のWillへ近づくための冒険、自分の物語のサブクエストとして捉えることもできるんですよ。\n文章は自由に書き換えてくださいね。」"}
+                    />
+                    <WriteCue active={!mustConnectionStarted} />
                     <textarea
-                      className="rpg-input resize-none w-full text-sm leading-relaxed"
+                      placeholder="このクエストは、どんなCanを育て、どんなWillに近づく機会になるか？"
+                      className="rpg-input parchment-input resize-none text-sm leading-relaxed"
+                      rows={8}
+                      value={newMust.connection}
+                      onChange={e => {
+                        handleEditMustConnection(e.target.value);
+                      }}
+                    />
+                    <div className="flex flex-col md:flex-row justify-between gap-3">
+                      <button onClick={() => setMustWorkStep(musts.length > 1 ? 1 : 0)} className="text-gray-400 hover:text-white px-4 py-2 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> {musts.length > 1 ? 'クエスト選択に戻る' : 'クエスト登録に戻る'}
+                      </button>
+                      <button onClick={handleSaveMustConnection} disabled={!activeMustId} className={`rpg-button text-sm px-6 py-2 bg-white text-black font-bold ${!activeMustId ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        接続を保存して、気づきへ進む
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {mustWorkStep === 3 && (
+                  <div className="border-t border-gray-600 pt-6 space-y-4">
+                    <p className="text-sm text-yellow-300 font-bold">▼ 接続してみた気づき</p>
+                    <div className="parchment-card p-4 md:p-5">
+                      <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">接続したクエスト</p>
+                      <input
+                        type="text"
+                        className="rpg-input parchment-input text-2xl md:text-3xl font-bold leading-tight"
+                        value={newMust.title}
+                        onChange={e => handleEditActiveMust({ title: e.target.value })}
+                        placeholder="クエスト名"
+                      />
+                      <textarea
+                        className="rpg-input parchment-input resize-none w-full text-sm md:text-base leading-relaxed mt-3"
+                        rows={4}
+                        value={newMust.desc}
+                        onChange={e => handleEditActiveMust({ desc: e.target.value })}
+                        placeholder="クエストの概要・目的"
+                      />
+                      <div className="mt-4 pt-3 border-t border-[#a87533] border-opacity-60">
+                        <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">Willとの接続メモ</p>
+                        <textarea
+                          className="rpg-input parchment-input resize-none w-full text-sm md:text-base leading-relaxed"
+                          rows={6}
+                          value={newMust.connection}
+                          onChange={e => handleEditMustConnection(e.target.value)}
+                          placeholder="ここでもWillとの接続メモを見直せます。"
+                        />
+                      </div>
+                    </div>
+                    <WriteCue active={!mustInsightStarted && !mustInsight} />
+                    <textarea
+                      className="rpg-input parchment-input resize-none w-full text-sm leading-relaxed"
                       rows={5}
                       value={mustInsight}
-                      onChange={e => setMustInsight(e.target.value)}
+                      onChange={e => {
+                        setMustInsightStarted(true);
+                        setMustInsight(e.target.value);
+                      }}
                       placeholder={"例：このクエストは、私の〇〇という力を磨く機会になる。\n例：ギルドから求められている〇〇を、自分のWillである〇〇につなげられる。"}
                     />
+                    <div className="flex flex-col md:flex-row justify-between gap-3">
+                      <button onClick={() => setMustWorkStep(2)} className="text-gray-400 hover:text-white px-4 py-2 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 接続に戻る
+                      </button>
+                      <button onClick={() => nextScene('summary')} className="rpg-button text-sm px-6 py-2 bg-white text-black font-bold">
+                        冒険の書をまとめる
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-right mt-2">
-                    <button onClick={handleAddMust} className="rpg-button text-sm px-6 py-2">クエストを追加する</button>
-                  </div>
-                </div>
+                )}
               </WindowBox>
 
               <div className="flex flex-col md:flex-row justify-between items-center mt-12 mb-8 gap-4 w-full">
                 <button onClick={() => nextScene('will')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                   <i className="fa-solid fa-arrow-right rotate-180"></i> 酒場に戻る
                 </button>
-                <button
-                  onClick={() => nextScene('summary')}
-                  className="bg-white text-black font-bold border-4 border-white rounded px-12 py-4 hover:bg-gray-200 transition-colors text-xl animate-pulse order-1 md:order-2"
-                >
-                  夜が明け、冒険の書をまとめる！
-                </button>
+                {mustWorkStep === 3 ? (
+                  <button
+                    onClick={() => nextScene('summary')}
+                    className="bg-white text-black font-bold border-4 border-white rounded px-12 py-4 hover:bg-gray-200 transition-colors text-xl animate-pulse order-1 md:order-2"
+                  >
+                    夜が明け、冒険の書をまとめる！
+                  </button>
+                ) : (
+                  <div className="w-64 hidden md:block order-1 md:order-2"></div>
+                )}
                 <div className="w-32 hidden md:block order-3"></div>
               </div>
             </>
           )}
         </div>
       );
+
+      const getSelectedMust = () => (
+        musts.find(m => m.id === activeMustId)
+        || musts.find(m => m.connection)
+        || musts[0]
+        || null
+      );
+
+      const safeFilePart = (value) => String(value || 'adventurer').replace(/[\\/:*?"<>|\s]+/g, '-').slice(0, 40);
+
+      const handleDownloadSummaryImage = (kind) => {
+        const selectedMust = getSelectedMust();
+        const imageData = {
+          player,
+          memories,
+          chartInsight,
+          cans,
+          canInsight,
+          allyInsight,
+          will,
+          willOneYearInsight,
+          willThreeYearsInsight,
+          selectedMust,
+          mustInsight
+        };
+        const builders = {
+          memory: createMemoryExportImage,
+          status: createStatusExportImage,
+          willMust: createWillMustExportImage
+        };
+        const labels = {
+          memory: 'memory',
+          status: 'status',
+          willMust: 'will-must'
+        };
+        const builder = builders[kind];
+        if (!builder) return;
+        const canvas = builder(imageData);
+        downloadCanvasPng(canvas, `career-inn-${safeFilePart(player.name)}-${labels[kind]}.png`);
+      };
+
+      const handleDownloadAllSummaryImages = () => {
+        ['memory', 'status', 'willMust'].forEach((kind, index) => {
+          window.setTimeout(() => handleDownloadSummaryImage(kind), index * 250);
+        });
+      };
 
       const SummarySection = ({ title, iconName, children }) => (
         <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly print-avoid-break">
@@ -1486,6 +2420,7 @@
 
       const renderSummary = () => {
         const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
+        const selectedMust = getSelectedMust();
 
         return (
           <div className="space-y-6 max-w-5xl mx-auto animate-fade-in w-full">
@@ -1597,20 +2532,21 @@
                       </button>
                     </div>
                     <div className="space-y-3">
-                      {musts.length === 0 ? (
+                      {!selectedMust ? (
                         <EmptyText>クエストはまだ記録されていません。</EmptyText>
-                      ) : musts.map(m => (
-                        <div key={m.id} className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly print-avoid-break">
-                          <h4 className="text-red-300 font-bold">{m.title}</h4>
-                          <p className="text-sm text-gray-400 mt-1">{m.desc || '概要なし'}</p>
-                          <div className="border-l-4 border-yellow-500 pl-3 mt-3">
-                            <p className="text-xs text-yellow-300 font-bold mb-1">接続メモ</p>
-                            <p className="text-sm text-gray-300">{m.connection || '未記録'}</p>
+                      ) : (
+                        <div className="parchment-card p-4 print-friendly print-avoid-break">
+                          <p className="text-xs font-bold mb-2 tracking-widest text-[#6b3f15]">選択して接続したクエスト</p>
+                          <h4 className="text-2xl font-bold text-[#071f3f]">{selectedMust.title}</h4>
+                          <p className="text-sm text-[#071f3f] mt-2 whitespace-pre-wrap">{selectedMust.desc || '概要なし'}</p>
+                          <div className="border-t border-[#a87533] border-opacity-60 mt-4 pt-3">
+                            <p className="text-xs text-[#6b3f15] font-bold mb-1">Willとの接続メモ</p>
+                            <p className="text-sm text-[#071f3f] whitespace-pre-wrap">{selectedMust.connection || '未記録'}</p>
                           </div>
                         </div>
-                      ))}
+                      )}
                     </div>
-                    <MemoBox title="クエストとの接続から見えた気づき" text={mustInsight} />
+                    <MemoBox title="接続してみた気づき" text={mustInsight} />
                   </SummarySection>
                 </div>
 
@@ -1659,6 +2595,25 @@
                 </div>
               </div>
             </WindowBox>
+
+            <div className="print-hidden bg-black bg-opacity-70 border border-yellow-600 rounded p-4 mt-8">
+              <p className="text-sm text-yellow-300 font-bold mb-2">▼ 画像として保存</p>
+              <p className="text-xs text-gray-400 mb-3">A4縦サイズのPNGとして保存します。文字とグラフが読みやすいよう、内容ごとに3枚へ分けています。</p>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                <button type="button" onClick={() => handleDownloadSummaryImage('memory')} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
+                  <i className="fa-solid fa-image"></i> 歩んできた道
+                </button>
+                <button type="button" onClick={() => handleDownloadSummaryImage('status')} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
+                  <i className="fa-solid fa-image"></i> ステータス
+                </button>
+                <button type="button" onClick={() => handleDownloadSummaryImage('willMust')} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
+                  <i className="fa-solid fa-image"></i> Willとクエスト
+                </button>
+                <button type="button" onClick={handleDownloadAllSummaryImages} className="rpg-button py-2 text-sm flex items-center justify-center gap-2 bg-white text-black font-bold">
+                  <i className="fa-solid fa-images"></i> 全部画像で保存する
+                </button>
+              </div>
+            </div>
 
             <div className="print-hidden flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
               <button
@@ -1743,6 +2698,15 @@
           ? '冒険の書まとめ'
           : '宿屋1階の酒場';
 
+      const renderAppNote = (className = 'mt-10') => (
+        <div className={`${className} w-full rounded border border-gray-600 bg-black bg-opacity-55 px-4 py-3 text-center font-sans text-[11px] leading-relaxed text-gray-300 print-friendly`}>
+          <p>
+            本アプリは、交流分析・RIASEC・役割理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。
+          </p>
+          <p className="mt-1">© ninin consulting & counseling LLC. All rights reserved.</p>
+        </div>
+      );
+
       return (
         <div
           className="min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell"
@@ -1782,6 +2746,8 @@
               {scene === 'must' && renderMust()}
               {scene === 'summary' && renderSummary()}
             </div>
+
+            {scene === 'summary' && renderAppNote()}
 
             <footer className="app-footer text-center text-gray-300 text-xs mt-12 border-t border-gray-700 pt-4 font-sans tracking-wide">
               © 2026 <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer">ninin consulting＆counseling</a>
