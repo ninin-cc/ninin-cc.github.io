@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
 
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z1T35THNDV');
+  </script>
+
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -131,6 +148,86 @@
     .animate-memory-fade { animation: memoryFade 3s ease-out both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes memoryFade { from { opacity: 0; filter: blur(6px); transform: translateY(18px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+    .route-choice-wrap {
+      padding-top: 6.25rem;
+    }
+    .route-choice-bubble {
+      pointer-events: none;
+      position: absolute;
+      bottom: calc(100% + 0.8rem);
+      left: 50%;
+      z-index: 30;
+      width: min(22rem, 84vw);
+      transform: translate(-50%, 0.55rem);
+      border: 2px solid #facc15;
+      border-radius: 8px;
+      background: rgba(69, 26, 3, 0.96);
+      color: #fff;
+      padding: 0.95rem 1rem 0.85rem;
+      text-align: left;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      animation: routeBubbleCycle 10s ease-in-out infinite;
+    }
+    .route-choice-bubble::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      width: 0.75rem;
+      height: 0.75rem;
+      transform: translate(-50%, -50%) rotate(45deg);
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      background: inherit;
+    }
+    .route-choice-bubble .bubble-name {
+      position: absolute;
+      top: -0.95rem;
+      left: 1rem;
+      border: 1px solid #fff;
+      border-radius: 999px;
+      padding: 0 0.75rem;
+      background: inherit;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: bold;
+      line-height: 1.45;
+    }
+    .route-choice-bubble.is-haruka {
+      border-color: #fda4af;
+      color: #fda4af;
+      background: rgba(136, 19, 55, 0.96);
+    }
+    .route-choice-bubble.is-reflem {
+      animation-delay: 5s;
+    }
+    .route-choice-item:hover .route-choice-bubble,
+    .route-choice-item:focus-within .route-choice-bubble {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      animation: none;
+    }
+    @keyframes routeBubbleCycle {
+      0%, 8% { opacity: 0; transform: translate(-50%, 0.55rem); }
+      14%, 44% { opacity: 1; transform: translate(-50%, 0); }
+      50%, 100% { opacity: 0; transform: translate(-50%, 0.55rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .route-choice-bubble {
+        animation: none;
+      }
+      .route-choice-wrap {
+        padding-top: 0;
+      }
+    }
+    @media (min-width: 768px) {
+      .route-choice-wrap {
+        padding-top: 5.5rem;
+      }
+    }
 
     .app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
@@ -148,6 +245,10 @@
 
       .print-hidden {
         display: none !important;
+      }
+
+      .route-choice-wrap {
+        padding-top: 0 !important;
       }
 
       .print-shell {
@@ -360,8 +461,10 @@
 
       bookingUrl: "https://ninin-cc.github.io/",
       bookingButtonText: "人に話してみる",
-      bookingTooltipText: "「nininにはリフレムとハルカはおらぬが、男性と女性のカウンセラーが在籍しておるそうじゃぞ」",
+      soloTooltipText: "「あなたの物語を、ゆっくり見つめる時間も大切。また別の場所で出会えるといいですね♪」",
+      bookingTooltipText: "「誰かと話すことで考えがよりまとまる事もある。そうじゃのぉ、nininｷｬﾘｱﾙｰﾑには女性男性の二名が在籍しているそうじゃぞ✨」",
       companyUrl: "https://ninin-cc.github.io/",
+      otherGuestsImg: "https://ninin-cc.github.io/cq/img/kyaku.jpg",
 
       backgroundImages: {
         tavern: "https://ninin-cc.github.io//cq/img/sakaba.jpg",
@@ -376,6 +479,35 @@
       const isChar2 = type === APP_CONFIG.char2Type;
       const configKey = isChar2 ? 'char2' : 'char1';
       return APP_CONFIG[`${configKey}Name${style === 'full' ? 'Full' : 'Short'}`];
+    };
+
+    const encodeBase64Unicode = (text) => {
+      const bytes = new TextEncoder().encode(text);
+      let binary = '';
+      bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
+    };
+
+    const decodeBase64Unicode = (encoded) => {
+      const binary = atob(encoded.trim());
+      const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    };
+
+    const copyTextToClipboard = async (text) => {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
     };
 
     const recollectionName = (type) => `回想の${charName(type)}`;
@@ -495,6 +627,109 @@
       { label: 'プライベートの変化', event: '結婚・出産など生活の大きな変化', satisfaction: 45 },
       { label: '昇格・責任', event: '昇格！新たな役割へのプレッシャー', satisfaction: 10 },
       { label: '新たな挑戦', event: '新規事業や新しい役割への挑戦', satisfaction: 35 },
+    ];
+
+    const presetTenYearWishes = [
+      '世界遺産を見に行きたい',
+      '毎年旅行に行きたい',
+      '暖かな家庭でいたい',
+      '人から頼られる状態でいたい',
+      'お金に不自由したくない',
+      '健康に楽しく働いていたい',
+      '好きな場所で暮らしたい',
+      '趣味や学びを続けていたい',
+      '家族や友人との時間を大切にしたい',
+      '自分のペースで仕事を選べるようになりたい',
+      'ピアノが弾きたい',
+      '絵が描きたい',
+      '伝統工芸をやってみたい',
+      '武術を習いたい',
+      'フルマラソンを走ってみたい',
+      '富士山に登ってみたい',
+      '蕎麦をうちたい',
+      '古民家で自給自足の生活がしたい'
+    ];
+
+    const otherTableGuests = [
+      {
+        id: 'female25',
+        label: '25歳 女性',
+        can: [
+          '「クレーム対応ばかりで毎日泣きそうだったんだけど…そういえばあの時、相手の本当の気持ちを察知する『対人理解力』っていう魔法を身につけられたのかな。今の企画の仕事でも、それが一番活きてるかも」',
+          '「言われた通りに事務処理をするだけの日々だったんだけど…そういえばあの時、ミスなく全体を俯瞰する『業務改善力』を身につけられたのかな。新しい環境でも、それが私の土台になってる気がする」',
+          '「新人の頃、全然仕事ができなくて同期に愚痴ってばかりだったんだけど…そういえばあの時、弱みを見せ合える『切磋琢磨できる同期』っていう仲間を得られたのかな。今でもそれが一番の支えかも」',
+          '「趣味の延長でSNSの画像をただ作ってただけなんだけど…そういえばあの時、情報を視覚的に伝える『資料作成力』っていう武器を身につけられたのかな。まさかそれが今の仕事で重宝されるなんてね」',
+          '「よくわからないままAIツールに仕事の手伝いをさせてたんだけど…そういえばあの時、新しいものを恐れずに試す『AI活用力』っていう武器を身につけられたのかな。今、チームの効率化でそれがすごく活きてるかも」'
+        ],
+        will: [
+          '「自分のスキルが足りなくて焦ってばかりだったんだけど…そういえばあの時、チームの空気を良くすることには自信が持てたんだよね。だから3年後は『チームの潤滑油』みたいなロールを目指すのが私のWILLかな」',
+          '「毎日満員電車に揺られて疲弊してたんだけど…そういえば私、本当は自然の中でホッとしたいんだって気づいたの。だから10年後までに『好きな場所で暮らしたい』って思うようになったんだ」',
+          '「先輩の指示をこなすだけで精一杯だったんだけど…そういえばあの時、後輩から質問されて教える時間がすごく楽しかったんだよね。だから1年後は、もっと『人から頼られる状態でいたい』な」',
+          '「休みの日は疲れて寝てばかりだったんだけど…そういえば昔から絵を描くのが好きだったなって思い出したの。だから10年後までに、また『絵が描きたい』。自分の好きな時間を大切にするのが今の目標」',
+          '「失敗ばかりで仕事に向いてないって落ち込んでたんだけど…そういえばあの時、誰かを裏方でサポートする時に一番力が出せるって気づいたんだ。だから3年後は、専門的なサポート役のロールに就きたいって思えてる」'
+        ]
+      },
+      {
+        id: 'male35',
+        label: '35歳 男性',
+        can: [
+          '「現場で毎日トラブルの火消しばかりやってたんだけど…そういえばあの時、状況に合わせて瞬時に判断する『柔軟性』の魔法を身につけられたのかな。リーダーになった今、それが一番活きてるかもな」',
+          '「他部署と毎日のように意見がぶつかってバチバチやってたんだけど…そういえばあの時、落としどころを見つける力と『戦友』と呼べる仲間を得られたのかな。今の大きなプロジェクトは、あの時の連中に助けられてるよ」',
+          '「ただがむしゃらにテレアポして靴底を減らしてたんだけど…そういえばあの時、顧客の課題を引き出す『営業力』の基礎を身につけられたのかな。ツールがAIに変わっても、結局その武器がいま活きてるよ」',
+          '「無茶振りされたプロジェクトで、色んな部署に頭を下げて回ってたんだけど…そういえばあの時、利害が違う人たちを同じ方向に向かせる『巻き込み力』の魔法を身につけられたのかな。今の新規事業で、それが最大の武器になってるよ」',
+          '「プレッシャーで押しつぶされそうな仕事を一人で抱え込んでたんだけど…そういえばあの時、黙って見守ってくれた『任せてくれる上司』の存在に救われたのかな。今自分がチームを持つようになって、そのありがたみが痛いほどわかるよ」'
+        ],
+        will: [
+          '「自分の成績を上げるためだけにガムシャラだったんだけど…そういえばあの時、チームで結果を出す喜びに気づいたんだよな。だから1年後は、自分の数字より『チームの売上上昇』を牽引できる状態でありたい」',
+          '「徹夜も辞さない働き方がカッコいいと思ってたんだけど…そういえばあの時、倒れてみて初めて健康のありがたみを知ったんだよ。だから10年後は、何より『健康に楽しく働いていたい』ってのが一番の願いだな」',
+          '「自分一人で抱え込んでパンクしそうになってたんだけど…そういえばあの時、人に任せることでお互い成長できるって学んだんだ。だから3年後は『メンバーの可能性を引き出すマネージャー』のロールを担いたいね」',
+          '「仕事のプレッシャーから逃げることばかり考えてたんだけど…そういえばあの時、キツい壁を越える達成感を思い出したんだ。だから10年後までに『フルマラソンを走ってみたい』。自分への挑戦としてね」',
+          '「会社に言われた通りに働くのが当たり前だと思ってたんだけど…そういえばあの時、もっと自由に働きたい本音に気づいちゃったんだよな。だから10年後までに『自分のペースで仕事を選べるようになりたい』んだ」'
+        ]
+      },
+      {
+        id: 'female45',
+        label: '45歳 女性',
+        can: [
+          '「後輩のミスの尻拭いばかりしてイライラしてた時期もあったんだけど…そういえばあの時、相手の成長を待つ『コミュニケーション力』を身につけられたのかな。今のチームビルディングに、それがすごく活きてるかも」',
+          '「地味なバックオフィスの作業を何年もやってたんだけど…そういえばあの時、小さな違和感に気づく『品質管理力』という武器を身につけられたのかな。今、経営企画のサポートでそれが大きな力になってるの」',
+          '「育休復帰で時短になって、周囲に謝ってばかりだったんだけど…そういえばあの時、限られた時間で成果を出す工夫や、『協力してくれる関係部署』のありがたさに気づけたのかな。それが今の私の土台ね」',
+          '「いろんなバックグラウンドを持つ人たちの間に入って、板挟みで苦労してばかりだったんだけど…そういえばあの時、違いをそのまま受け入れる『対人理解力』の魔法を身につけられたのかな。今のマネジメントで、それが一番大切な力になってるわ」',
+          '「仕事と家庭の両立で毎日綱渡りみたいに焦っていたんだけど…そういえばあの時、弱音を吐き出せる『安心できるパートナー』との関係性を育てられたのかな。自分が崩れずに今日までやってこられたのは、間違いなくそのおかげね」'
+        ],
+        will: [
+          '「子育てと仕事の両立で、毎日『ごめんなさい』って言ってばかりだったんだけど…そういえばあの時、限られた時間で成果を出す自分なりの型ができたのよね。だから1年後は、同じように悩む後輩を導ける状態になっていたいわ」',
+          '「都会のスピード感にずっと無理して合わせてたんだけど…そういえばあの時、もっと静かな時間を持ちたいっていう本音に気づいたのよね。だから10年後までには『ピアノが弾きたい』。心を満たす時間が私のWILLね」',
+          '「何でも屋みたいに雑務ばかり引き受けてたんだけど…そういえばあの時、バラバラの業務を繋ぎ合わせる面白さに気づいたの。だから3年後は『組織のハブ』という独自のロールを確立したいのよ」',
+          '「自分のキャリアのことばかりでいっぱいいっぱいだったんだけど…そういえばあの時、家族の笑顔が私の原動力だって再確認したの。だから10年後も『暖かな家庭でいたい』。それが一番のベースにある願いね」',
+          '「長年、会社の仕組みに疑問を持たずに従ってきたんだけど…そういえばあの時、もっと多様な働き方があっていいって強く思ったの。だから3年後は『ダイバーシティ推進』を牽引するロールになるのが私のWILL」'
+        ]
+      },
+      {
+        id: 'male58',
+        label: '58歳 男性',
+        can: [
+          '「昔はただ図面通りに部品を作るだけの日々だったんだけど…そういえばあの時、ものづくりの本質を見抜く『概念的思考力』を身につけられたのかな。時代が変わっても、それが俺の最後の武器になってるよ」',
+          '「クレーム処理で頭を下げてばかりのヒリヒリした経験もあったんだけど…そういえばあの時、相手の怒りの奥にある想いを受け止める『傾聴力』の魔法を身につけられたのかな。今じゃ、それが一番の強みだね」',
+          '「とんでもなく厳しい上司に絞られまくってた時期があったんだけど…そういえばあの時、仕事の筋を通すことの大切さと、『社外のメンター』と呼べる存在を得たのかな。今、俺が若手に教えられるのはそれくらいかもな」',
+          '「若い連中の考えてることが理解できなくて、衝突してばかりだった時期もあったんだけど…そういえばあの時、自分の正しさを手放して相手の物語を聴く『コミュニケーション』の魔法を身につけられたのかな。今じゃ若い連中のほうが、俺によく相談に来るよ」',
+          '「昔は職人技ばかりもてはやされる現場で、地味なマニュアル作りばかりやってたんだけど…そういえばあの時、誰でも同じ成果を出せるようにする『業務改善力』を身につけられたのかな。組織が大きくなった今、それが会社の土台になってるよ」'
+        ],
+        will: [
+          '「昔の成功体験にしがみついて若手に煙たがられてたんだけど…そういえばあの時、教えるより『聴く』ことの価値に気づいたんだ。だから1年後は、若手が自ら答えを見つけるための良き壁打ち相手でありたいね」',
+          '「定年後は何をしていいかわからず途方に暮れてたんだけど…そういえばあの時、昔ながらの生活の知恵にすごく惹かれたんだよ。だから10年後は『古民家で自給自足の生活がしたい』。それが今の俺の最高のWILLだよ」',
+          '「効率ばかり追い求める仕事人生だったんだけど…そういえばあの時、時間をかけてじっくり物を作る尊さを思い出したんだ。だから10年後までには『蕎麦をうちたい』し、『伝統工芸をやってみたい』ね」',
+          '「役職定年が見えてきてすっかりモチベーションを落としてたんだけど…そういえばあの時、肩書きじゃなく人間力で勝負する面白さに気づいたんだ。だから3年後は『次世代のメンター』というロールを全うしたい」',
+          '「会社という枠組みの中だけで生きがいを探してたんだけど…そういえばあの時、もっと広い世界を見てみたいって好奇心が蘇ったんだよな。だからお金に不自由したくないし『世界遺産を見に行きたい』。人生はまだまだこれからだからね」'
+        ]
+      }
+    ];
+
+    const otherTableGreetings = [
+      '「おう、歓迎するぜ。\nお前さんもいろいろ考えてるみたいだな。」',
+      '「どうぞ座ってください✨\nあなたのお話もきかせてくださいね。」',
+      '「よかったら、少しだけ話していきませんか。\n誰かの話を聞くと、自分のことも見えてくる時がありますよ。」',
+      '「まあまあ、肩の力を抜いていきな。\nここでは、急いで答えを出さなくてもいいんだ。」'
     ];
 
     const presetMissions = [
@@ -784,6 +1019,78 @@
     const EmptyText = ({ children }) => (
       <p className="text-sm text-gray-600 text-center py-4">{children}</p>
     );
+
+    const OtherTableModal = ({ state, onClose, onSelectGuest, onMore }) => {
+      if (!state.isOpen) return null;
+      const selectedGuest = otherTableGuests.find(guest => guest.id === state.selectedGuestId);
+      const lines = selectedGuest ? (selectedGuest[state.context] || []) : [];
+      const greeting = otherTableGreetings[state.greetingIndex % otherTableGreetings.length];
+      const currentLine = selectedGuest
+        ? (lines[state.lineIndex % Math.max(1, lines.length)] || '「まだ話すことを考えているところだよ。」')
+        : greeting;
+      const speakerLabel = selectedGuest ? `${selectedGuest.label} の話` : '酒場の客の声';
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 print-hidden">
+          <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-lg border-4 border-white bg-black p-4 text-white shadow-2xl animate-fade-in">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b border-gray-700 pb-3">
+              <div>
+                <p className="text-xs text-yellow-300">酒場の他のテーブル</p>
+                <h3 className="text-xl font-bold">他の客の話を聞く</h3>
+              </div>
+              <button type="button" onClick={onClose} className="rpg-button px-3 py-1 text-sm">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="h-48 w-full overflow-hidden rounded border-2 border-gray-600 bg-gray-700 sm:h-64">
+                <img
+                  src={APP_CONFIG.otherGuestsImg}
+                  alt="酒場の他のテーブルの客たち"
+                  className="h-full w-full object-cover"
+                  draggable="false"
+                />
+              </div>
+
+              <div className="flex flex-col justify-between rounded border-2 border-yellow-600 bg-gray-900 bg-opacity-90 p-4">
+                <div>
+                  <p className="mb-2 text-sm font-bold text-yellow-300">{speakerLabel}</p>
+                  <p className="min-h-[10rem] whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{currentLine}</p>
+                </div>
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  {selectedGuest ? (
+                    <button type="button" onClick={onMore} className="rpg-button flex-1 py-2">
+                      もっと聞く
+                    </button>
+                  ) : (
+                    <button type="button" onClick={onMore} className="rpg-button flex-1 py-2">
+                      別の声を聞く
+                    </button>
+                  )}
+                  <button type="button" onClick={onClose} className="rpg-button flex-1 py-2 bg-white text-black font-bold">
+                    自分の話に戻る
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {otherTableGuests.map(guest => (
+                  <button
+                    key={guest.id}
+                    type="button"
+                    onClick={() => onSelectGuest(guest.id)}
+                    className={`rounded border px-3 py-2 text-sm transition-colors ${selectedGuest && selectedGuest.id === guest.id ? 'border-yellow-400 bg-yellow-900 text-yellow-100 font-bold' : 'border-gray-500 bg-gray-900 text-gray-300 hover:border-white hover:text-white'}`}
+                  >
+                    {guest.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
 
     const LifelineChart = ({ data }) => {
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
@@ -1255,7 +1562,7 @@
       return canvas;
     };
 
-    const createWillMustExportImage = ({ player, will, willOneYearInsight, willThreeYearsInsight, selectedMust, mustInsight }) => {
+    const createWillMustExportImage = ({ player, will, willTenYears, willOneYearInsight, willThreeYearsInsight, selectedMust, mustInsight }) => {
       const canvas = createA4Canvas();
       const ctx = canvas.getContext('2d');
       let y = drawExportHeader(ctx, '次なる冒険：Will / Quest', player);
@@ -1263,37 +1570,41 @@
       const gap = 18;
 
       y = drawSectionTitle(ctx, '次なる冒険：Will', y);
-      drawDarkCard(ctx, 90, y, contentW, 330);
+      drawDarkCard(ctx, 90, y, contentW, 410);
       ctx.font = canvasFont(22, '700');
       ctx.fillStyle = imageTheme.border;
       ctx.fillText('1年後', 120, y + 28);
-      let innerY = drawCanvasText(ctx, will.oneYear || '未記録', 120, y + 62, contentW - 60, 26, { font: canvasFont(21), color: imageTheme.text, maxLines: 4 });
+      let innerY = drawCanvasText(ctx, will.oneYear || '未記録', 120, y + 62, contentW - 60, 25, { font: canvasFont(20), color: imageTheme.text, maxLines: 3 });
       ctx.fillStyle = imageTheme.border;
       ctx.font = canvasFont(22, '700');
-      ctx.fillText('3年後', 120, innerY + 16);
-      innerY = drawCanvasText(ctx, will.threeYears || '未記録', 120, innerY + 48, contentW - 60, 26, { font: canvasFont(21), color: imageTheme.text, maxLines: 4 });
+      ctx.fillText('3年後', 120, innerY + 12);
+      innerY = drawCanvasText(ctx, will.threeYears || '未記録', 120, innerY + 42, contentW - 60, 25, { font: canvasFont(20), color: imageTheme.text, maxLines: 3 });
       ctx.fillStyle = imageTheme.blue;
       ctx.font = canvasFont(24, '700');
-      ctx.fillText(`目指すロール：${will.job || '未記録'}`, 120, Math.min(y + 292, innerY + 18));
+      ctx.fillText(`目指すロール：${will.job || '未記録'}`, 120, innerY + 12);
+      ctx.fillStyle = imageTheme.border;
+      ctx.font = canvasFont(22, '700');
+      ctx.fillText('10年後までに楽しみたいこと', 120, innerY + 50);
+      drawCanvasText(ctx, (willTenYears || []).map(item => `・${item}`).join('\n') || '未記録', 120, innerY + 82, contentW - 60, 24, { font: canvasFont(19), color: imageTheme.text, maxLines: 5 });
 
-      y += 366;
+      y += 446;
       const memoW = (contentW - gap) / 2;
-      drawDarkCard(ctx, 90, y, memoW, 210);
+      drawDarkCard(ctx, 90, y, memoW, 185);
       ctx.font = canvasFont(21, '700');
       ctx.fillStyle = imageTheme.border;
       ctx.fillText('1年後の気づき', 118, y + 24);
-      drawCanvasText(ctx, willOneYearInsight || 'まだメモはありません。', 118, y + 62, memoW - 56, 25, { font: canvasFont(19), color: imageTheme.text, maxLines: 5 });
+      drawCanvasText(ctx, willOneYearInsight || 'まだメモはありません。', 118, y + 62, memoW - 56, 24, { font: canvasFont(18), color: imageTheme.text, maxLines: 4 });
       const threeX = 90 + memoW + gap;
-      drawDarkCard(ctx, threeX, y, memoW, 210);
+      drawDarkCard(ctx, threeX, y, memoW, 185);
       ctx.font = canvasFont(21, '700');
       ctx.fillStyle = imageTheme.border;
       ctx.fillText('3年後の気づき', threeX + 28, y + 24);
-      drawCanvasText(ctx, willThreeYearsInsight || 'まだメモはありません。', threeX + 28, y + 62, memoW - 56, 25, { font: canvasFont(19), color: imageTheme.text, maxLines: 5 });
+      drawCanvasText(ctx, willThreeYearsInsight || 'まだメモはありません。', threeX + 28, y + 62, memoW - 56, 24, { font: canvasFont(18), color: imageTheme.text, maxLines: 4 });
 
-      y += 252;
+      y += 225;
       y = drawSectionTitle(ctx, 'ギルドからのクエスト：Must', y);
       const must = selectedMust || {};
-      drawParchmentCard(ctx, 90, y, contentW, 500);
+      drawParchmentCard(ctx, 90, y, contentW, 455);
       ctx.fillStyle = imageTheme.brown;
       ctx.font = canvasFont(21, '700');
       ctx.fillText('接続したクエスト', 125, y + 28);
@@ -1337,6 +1648,7 @@
       const [cans, setCans] = useLocalStorage('cq_cans', []);
       const [newCan, setNewCan] = useState({ type: 'skill', name: '', desc: '' });
       const [canConfirming, setCanConfirming] = useState(false);
+      const canTypeGuideRef = useRef('');
 
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
       const [newMemory, setNewMemory] = useState({ age: APP_CONFIG.memoryStartAge, event: '', satisfaction: 0 });
@@ -1348,6 +1660,8 @@
 
       const [willStep, setWillStep] = useLocalStorage('cq_will_step', 0);
       const [will, setWill] = useLocalStorage('cq_will', { job: '', oneYear: '', threeYears: '' });
+      const [willTenYears, setWillTenYears] = useLocalStorage('cq_will_ten_years', []);
+      const [newTenYearWish, setNewTenYearWish] = useState('');
       const [willOneYearInsight, setWillOneYearInsight] = useLocalStorage('cq_will_one_year_insight', '');
       const [willThreeYearsInsight, setWillThreeYearsInsight] = useLocalStorage('cq_will_three_years_insight', '');
 
@@ -1362,6 +1676,16 @@
       const [mustDraftStarted, setMustDraftStarted] = useState(false);
       const [mustConnectionStarted, setMustConnectionStarted] = useState(false);
       const [mustInsightStarted, setMustInsightStarted] = useState(() => Boolean(mustInsight));
+      const [showImportBox, setShowImportBox] = useState(false);
+      const [importText, setImportText] = useState('');
+      const [importMessage, setImportMessage] = useState('');
+      const [otherTableState, setOtherTableState] = useState({
+        isOpen: false,
+        context: 'can',
+        selectedGuestId: null,
+        lineIndex: 0,
+        greetingIndex: 0
+      });
 
       const ageOptions = Array.from(
         { length: APP_CONFIG.ageSelectMax - APP_CONFIG.ageSelectMin + 1 },
@@ -1381,6 +1705,38 @@
         }
         setCanConfirming(false);
       }, [canStep]);
+
+      useEffect(() => {
+        const isWeaponMagicInput = scene === 'can' && isInputPhase && canStep === 0;
+        if (!isWeaponMagicInput) {
+          canTypeGuideRef.current = '';
+          return;
+        }
+
+        const guideKey = `${scene}-${canStep}-${isInputPhase}`;
+        if (canTypeGuideRef.current === guideKey) return;
+        canTypeGuideRef.current = guideKey;
+        setCanConfirming(false);
+        setNewCan(current => ({ ...current, type: 'skill', name: '', desc: '' }));
+
+        const showMagicTimer = window.setTimeout(() => {
+          setNewCan(current => {
+            if (current.name || current.desc) return current;
+            return { ...current, type: 'magic' };
+          });
+        }, 700);
+        const returnSkillTimer = window.setTimeout(() => {
+          setNewCan(current => {
+            if (current.name || current.desc) return current;
+            return { ...current, type: 'skill' };
+          });
+        }, 1600);
+
+        return () => {
+          window.clearTimeout(showMagicTimer);
+          window.clearTimeout(returnSkillTimer);
+        };
+      }, [scene, isInputPhase, canStep]);
 
       useEffect(() => {
         const legacyDefault = musts.length === 1
@@ -1412,12 +1768,18 @@
       const getPageNo = () => {
         switch (scene) {
           case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'can': return `2-${canStep + 1}${isInputPhase ? '-Input' : ''}`;
+          case 'can': {
+            const base = `2-${canStep + 1}`;
+            if (!isInputPhase) return base;
+            return `${base}-${canConfirming ? 'Confirm' : 'Input'}`;
+          }
           case 'memory': return `3-${memoryStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'chart': return '4';
+          case 'chart': return showRestPrompt ? '4-2' : '4-1';
           case 'will': return `5-${willStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'must': return `6-${mustStep + 1}`;
-          case 'summary': return '7';
+          case 'must':
+            if (mustStep === 0) return mustRecollectionVisible ? '6-1-2' : '6-1-1';
+            return `6-2-${mustWorkStep + 1}`;
+          case 'summary': return '7-1';
           default: return '0';
         }
       };
@@ -1575,6 +1937,25 @@
 
       const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
 
+      const toggleTenYearWish = (wish) => {
+        setWillTenYears(current => (
+          current.includes(wish)
+            ? current.filter(item => item !== wish)
+            : [...current, wish]
+        ));
+      };
+
+      const handleAddTenYearWish = () => {
+        const value = newTenYearWish.trim();
+        if (!value) return;
+        setWillTenYears(current => current.includes(value) ? current : [...current, value]);
+        setNewTenYearWish('');
+      };
+
+      const handleRemoveTenYearWish = (wish) => {
+        setWillTenYears(current => current.filter(item => item !== wish));
+      };
+
       const getMustConnectionTemplate = (hint = '') => {
         const oneYearWill = will.oneYear || '〇〇';
         const threeYearsWill = will.threeYears || '△△';
@@ -1664,15 +2045,107 @@
         }
       };
 
+      const getStoryStorageData = () => {
+        const data = {};
+        for (let i = 0; i < window.localStorage.length; i++) {
+          const key = window.localStorage.key(i);
+          if (!key || !key.startsWith('cq_')) continue;
+          const rawValue = window.localStorage.getItem(key);
+          try {
+            data[key] = JSON.parse(rawValue);
+          } catch (error) {
+            data[key] = rawValue;
+          }
+        }
+        return data;
+      };
+
+      const handleExportStoryData = async () => {
+        const payload = {
+          app: APP_CONFIG.appName,
+          type: 'career-inn-story',
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          data: getStoryStorageData()
+        };
+        const encoded = encodeBase64Unicode(JSON.stringify(payload));
+        try {
+          await copyTextToClipboard(encoded);
+          alert('コピーしました。Googleカレンダーの予定の「説明」欄などに貼り付けて保存してください。');
+        } catch (error) {
+          window.prompt('コピーに失敗しました。以下の文字列を選択して保存してください。', encoded);
+        }
+      };
+
+      const handleImportStoryData = () => {
+        const source = importText.trim();
+        if (!source) {
+          setImportMessage('読み込む文字列を貼り付けてください。');
+          return;
+        }
+        try {
+          const decoded = decodeBase64Unicode(source.replace(/^CQ-STORY:/, ''));
+          const payload = JSON.parse(decoded);
+          const data = payload.data || payload;
+          if (!data || typeof data !== 'object') throw new Error('invalid payload');
+
+          clearAdventureData();
+          Object.entries(data).forEach(([key, value]) => {
+            if (!key.startsWith('cq_')) return;
+            const serialized = JSON.stringify(value);
+            if (serialized !== undefined) {
+              window.localStorage.setItem(key, serialized);
+            }
+          });
+          if (!Object.prototype.hasOwnProperty.call(data, 'cq_scene')) {
+            window.localStorage.setItem('cq_scene', JSON.stringify('intro'));
+          }
+          setImportMessage('読み込みました。あなたの物語を呼び覚まします。');
+          window.setTimeout(() => window.location.reload(), 500);
+        } catch (error) {
+          setImportMessage('読み込みに失敗しました。書き出した文字列をそのまま貼り付けてください。');
+        }
+      };
+
+      const openOtherTableTalk = (context) => {
+        setOtherTableState({
+          isOpen: true,
+          context,
+          selectedGuestId: null,
+          lineIndex: 0,
+          greetingIndex: Math.floor(Math.random() * otherTableGreetings.length)
+        });
+      };
+
+      const closeOtherTableTalk = () => {
+        setOtherTableState(current => ({ ...current, isOpen: false }));
+      };
+
+      const handleSelectOtherGuest = (guestId) => {
+        setOtherTableState(current => ({
+          ...current,
+          selectedGuestId: guestId,
+          lineIndex: current.selectedGuestId === guestId ? current.lineIndex + 1 : 0
+        }));
+      };
+
+      const handleMoreOtherGuest = () => {
+        setOtherTableState(current => (
+          current.selectedGuestId
+            ? { ...current, lineIndex: current.lineIndex + 1 }
+            : { ...current, greetingIndex: current.greetingIndex + 1 }
+        ));
+      };
+
       const handleReset = () => {
-        if (window.confirm('これまでの記録（冒険の書）をすべて消去して、初めからやり直しますか？')) {
+        if (window.confirm('これまでの記録（あなたの物語）をすべて消去して、初めからやり直しますか？')) {
           clearAdventureData();
           window.location.reload();
         }
       };
 
       const handleSuspend = () => {
-        if (window.confirm('ここまでの冒険の書はこのブラウザに保存されています。ここで中断しますか？')) {
+        if (window.confirm('ここまでのあなたの物語はこのブラウザに保存されています。ここで中断しますか？')) {
           alert('保存しました。あとで同じブラウザでこのページを開くと、この場面から再開できます。');
         }
       };
@@ -1696,6 +2169,35 @@
                     <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
                       宿屋に向かう
                     </button>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowImportBox(!showImportBox);
+                          setImportMessage('');
+                        }}
+                        className="text-sm text-yellow-200 underline underline-offset-4 hover:text-white"
+                      >
+                        「あなたの物語」の記憶を呼び覚ます（データを読み込む）
+                      </button>
+                    </div>
+                    {showImportBox && (
+                      <div className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-75 p-4 text-left animate-fade-in">
+                        <label className="mb-2 block text-sm font-bold text-yellow-300">保存しておいたデータ文字列</label>
+                        <textarea
+                          className="rpg-input h-28 resize-none text-xs leading-relaxed"
+                          value={importText}
+                          onChange={e => setImportText(e.target.value)}
+                          placeholder="Googleカレンダーの説明欄などに保存した文字列を貼り付けてください。"
+                        />
+                        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <p className="text-xs text-gray-300">{importMessage || '読み込むと、このブラウザの現在の記録に上書きされます。'}</p>
+                          <button type="button" onClick={handleImportStoryData} className="rpg-button whitespace-nowrap px-5 py-2 text-sm">
+                            読み込む
+                          </button>
+                        </div>
+                      </div>
+                    )}
                     {renderAppNote('mt-5')}
                   </div>
                 )}
@@ -1724,10 +2226,6 @@
                 <WindowBox title="プレイヤー情報" iconName="fa-regular fa-message">
                   <div className="space-y-5 p-2">
                     <div>
-                      <label className="text-gray-300 text-sm block mb-1">なまえ</label>
-                      <input type="text" className="rpg-input text-xl" value={player.name} onChange={e => setPlayer({...player, name: e.target.value})} placeholder="例：ああああ" />
-                    </div>
-                    <div>
                       <label className="text-gray-300 text-sm block mb-1">ねんれい（年齢はそのままレベルになる）</label>
                       <div className="flex items-start gap-3">
                         <select
@@ -1747,6 +2245,11 @@
                         </div>
                       </div>
                     </div>
+                    <div>
+                      <WriteCue active={!player.name} />
+                      <label className="text-gray-300 text-sm block mb-1">なまえ</label>
+                      <input type="text" className="rpg-input text-xl" value={player.name} onChange={e => setPlayer({...player, name: e.target.value})} placeholder="例：ああああ" />
+                    </div>
                   </div>
                 </WindowBox>
                 <div className="text-center mt-6">
@@ -1757,6 +2260,35 @@
               </div>
             )}
           </div>
+        );
+      };
+
+      const renderOtherTablePrompt = (context, options = {}) => {
+        const speakerType = options.speakerType || APP_CONFIG.char1Type;
+        const defaultText = speakerType === APP_CONFIG.char2Type
+          ? '「もしすんなり浮かばない時は、他の人のお話を聞いてみてもいいかもしれません。\nあちらのテーブルの方たちも、これからのことを考えているみたいですよ✨」'
+          : '「どうじゃ？すんなり浮かばない時は他の者の話をきくのもよいぞ。あちらのテーブルの者たちも同じような境遇のようじゃ。」';
+
+        return (
+        <div className="mt-6 print-hidden">
+          {options.showIntro !== false && (
+            <DialogBox
+              speaker={charName(speakerType)}
+              type={speakerType}
+              imageSide={speakerType === APP_CONFIG.char2Type ? 'right' : 'left'}
+              text={options.text || defaultText}
+            />
+          )}
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => openOtherTableTalk(context)}
+              className="rpg-button text-base px-6 py-3 bg-gray-900 border-yellow-400 text-yellow-100 hover:bg-yellow-100 hover:text-black"
+            >
+              <i className="fa-solid fa-users mr-2"></i>他のテーブルの話を聞く（任意）
+            </button>
+          </div>
+        </div>
         );
       };
 
@@ -1788,7 +2320,7 @@
                     )}
                     <button
                       onClick={() => {
-                        setNewCan({ type: activeType, name: '', desc: '' });
+                        setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
                         setCanConfirming(false);
                         setIsInputPhase(true);
                       }}
@@ -1814,6 +2346,11 @@
 
                   <div className="border-t border-gray-600 pt-4 space-y-3">
                     <p className="text-sm text-yellow-300">▼ まだ記録していない{isWeaponMagicStep ? '武器や魔法' : '仲間との関係性'}はあるか？</p>
+                    {isWeaponMagicStep && (
+                      <p className="text-xs text-gray-400 leading-relaxed">
+                        ページを開くと、武器→魔法→武器の順に候補が切り替わります。タブを押して自分でも切り替えられます。
+                      </p>
+                    )}
                     <div className="flex gap-2">
                       {allowedTypes.map(type => (
                         <button
@@ -1853,22 +2390,23 @@
                       <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
                       <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
                     </div>
+                    {isWeaponMagicStep && (
                     <div className="mt-5">
                       <label className="text-gray-400 text-sm flex items-center gap-1 mb-2">
-                        <i className="fa-solid fa-feather-pointed"></i> {isWeaponMagicStep ? '武器・魔法についての気づき' : '仲間・関係性についての気づき'}
+                        <i className="fa-solid fa-feather-pointed"></i> 武器・魔法についての気づき
                       </label>
                       <textarea
                         className="rpg-input resize-none w-full text-sm leading-relaxed"
                         rows={5}
-                        value={isWeaponMagicStep ? canInsight : allyInsight}
-                        onChange={e => isWeaponMagicStep ? setCanInsight(e.target.value) : setAllyInsight(e.target.value)}
-                        placeholder={isWeaponMagicStep
-                          ? '例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'
-                          : '例：私は〇〇さん／〇〇な人たちに支えられてきた。\n例：困ったとき、〇〇という関係性が力になっていた。'}
+                        value={canInsight}
+                        onChange={e => setCanInsight(e.target.value)}
+                        placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
                       />
                     </div>
+                    )}
                   </div>
                 </WindowBox>
+                {!canConfirming && renderOtherTablePrompt('can')}
                 {canConfirming ? (
                   <div className="mt-8 animate-fade-in">
                     <DialogBox
@@ -1877,8 +2415,22 @@
                       imageSide={isWeaponMagicStep ? "left" : "right"}
                       text={isWeaponMagicStep
                         ? "「ふむ、これでいいかの？\n武器と魔法、両方確認できたかの？」"
-                        : "「このような方々と過ごしてきたんですね✨\nこれでいいですか？」"}
+                        : "「このような方々と過ごしてきたんですね✨\n思い起こしてみて、何か気づくことはありますか？」"}
                     />
+                    {!isWeaponMagicStep && (
+                      <div className="mt-5 rounded border border-gray-600 bg-gray-900 bg-opacity-95 p-4 shadow-xl">
+                        <p className="mb-3 text-sm font-bold text-yellow-300">
+                          <span className="mr-2">▼</span>仲間・関係性についての気づき
+                        </p>
+                        <textarea
+                          className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                          rows={5}
+                          value={allyInsight}
+                          onChange={e => setAllyInsight(e.target.value)}
+                          placeholder={"例：私は〇〇さん／〇〇な人たちに支えられてきた。\n例：困ったとき、〇〇という関係性が力になっていた。"}
+                        />
+                      </div>
+                    )}
                     <div className="flex flex-col md:flex-row justify-center gap-3 mt-4">
                       <button onClick={() => setCanConfirming(false)} className="rpg-button text-base px-6 py-3">
                         もう少し書き足す
@@ -1937,7 +2489,7 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを冒険の書（ライフラインチャート）にまとめてみよう。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（ライフラインチャート）にまとめてみよう。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -2031,7 +2583,7 @@
         <div className="space-y-6 max-w-5xl mx-auto w-full">
           <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
 
-          <WindowBox title="シーン4：冒険の書（ライフラインチャート）" iconName="fa-solid fa-chart-line">
+          <WindowBox title="シーン4：あなたの物語（ライフラインチャート）" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
 
@@ -2084,11 +2636,21 @@
 
       const renderWill = () => {
         const pName = player.name || '〇〇';
+        const canProceedFromTenYears = willStep !== 2 || willTenYears.length > 0 || newTenYearWish.trim().length > 0;
 
         const handleNextWillStep = () => {
           if (willStep === 0) {
             setWillStep(1);
             setIsInputPhase(false);
+          } else if (willStep === 1) {
+            setWillStep(2);
+            setIsInputPhase(false);
+          } else if (willStep === 2) {
+            handleAddTenYearWish();
+            if (willTenYears.length === 0 && !newTenYearWish.trim()) return;
+            setWillStep(3);
+            setIsInputPhase(false);
+            scrollTop();
           } else {
             nextScene('must');
           }
@@ -2104,7 +2666,7 @@
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> 冒険の書に戻る
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> あなたの物語に戻る
                       </button>
                       <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
                         <i className="fa-regular fa-message"></i> 1年後の未来を語る
@@ -2112,7 +2674,7 @@
                       <div className="w-40 hidden md:block order-3"></div>
                     </div>
                   </DialogGroup>
-                ) : (
+                ) : willStep === 1 ? (
                   <DialogGroup dialogs={[
                     { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「そして3年後じゃ。どんなロール（役割・立場・役職・職業）を名乗り、どんな未来を描いておるのかな？\n魔王討伐（劇的な成果）だけが正解ではない。枠を外して自由に描くがよいぞ。」" }
                   ]}>
@@ -2126,6 +2688,39 @@
                       <div className="w-40 hidden md:block order-3"></div>
                     </div>
                   </DialogGroup>
+                ) : willStep === 2 ? (
+                  <DialogGroup dialogs={[
+                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「最後に、${pName}さんが10年後までにどんなふうに楽しんでいたいか、少し自由に描いてみませんか？\n仕事だけじゃなく、暮らしや人との関係、旅や安心も大切な未来です！」` }
+                  ]}>
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                      <button onClick={() => { setWillStep(1); setIsInputPhase(false); }} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 3年後の話に戻る
+                      </button>
+                      <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
+                        <i className="fa-regular fa-message"></i> 10年後までの楽しみを選ぶ
+                      </button>
+                      <div className="w-40 hidden md:block order-3"></div>
+                    </div>
+                  </DialogGroup>
+                ) : (
+                  <DialogGroup dialogs={[
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「ほう。そのような『想い』があるのじゃな。\n仕事の目標とは少し違って見えても、それもお主の未来を照らす大切な願いじゃ。」" },
+                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「とっても素敵！\n${pName}さんなら、もしかしたらもっと早くにできるかもしれないですね！」` }
+                  ]}>
+                    <NarrationBox
+                      iconName="fa-solid fa-moon"
+                      text={"夜も更けてきた。\nふたりに礼を伝え、酒場をあとにする。\n胸の中には、1年後、3年後、そして10年後まで続く小さな灯りが残っていた。"}
+                    />
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                      <button onClick={() => { setWillStep(2); setIsInputPhase(true); scrollTop(); }} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 10年後の想いを書き直す
+                      </button>
+                      <button onClick={handleNextWillStep} className="rpg-button text-xl px-8 py-4 flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
+                        自室へ戻って考える <i className="fa-solid fa-arrow-right"></i>
+                      </button>
+                      <div className="w-48 hidden md:block order-3"></div>
+                    </div>
+                  </DialogGroup>
                 )}
               </div>
             ) : (
@@ -2133,7 +2728,7 @@
                 <div className="flex justify-between items-center mb-4">
                   <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
                 </div>
-                <WindowBox title={`シーン5：Will（次なる冒険の目的）${willStep === 0 ? ' - 1年後' : ' - 3年後'}`} iconName="fa-solid fa-map">
+                <WindowBox title={`シーン5：Will（次なる冒険の目的）${willStep === 0 ? ' - 1年後' : willStep === 1 ? ' - 3年後' : ' - 10年後まで'}`} iconName="fa-solid fa-map">
                   <div className="space-y-8 p-2 w-full">
                     {willStep === 0 ? (
                       <div>
@@ -2148,7 +2743,7 @@
                           placeholder={"例：1年後には、〇〇の資格取得や〇〇の経験を通じて、〇〇ができる自分になっていたい。\n例：そのために、今の仕事の中で〇〇を試してみたい。"}
                         />
                       </div>
-                    ) : (
+                    ) : willStep === 1 ? (
                       <>
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> {APP_CONFIG.char1NameShort}の質問：3年先の未来（長期目標）</label>
@@ -2167,13 +2762,89 @@
                           <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー / 個人事業主 / 地域に貢献する人" />
                         </div>
                       </>
+                    ) : (
+                      <div className="space-y-5">
+                        <div>
+                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-star"></i> 10年後までに、どんなふうに楽しんでいたい？</label>
+                          <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                            思いつくものをいくつでも選んでよい。ここでは、働き方だけでなく、暮らし・旅・家族・安心・人との関係も未来の一部として扱います。
+                          </p>
+                          <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
+                            <div className="flex flex-wrap gap-2">
+                              {presetTenYearWishes.map(wish => {
+                                const isSelected = willTenYears.includes(wish);
+                                return (
+                                  <button
+                                    key={wish}
+                                    type="button"
+                                    onClick={() => toggleTenYearWish(wish)}
+                                    className={`text-sm border px-3 py-1.5 rounded transition-all ${isSelected ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
+                                  >
+                                    {wish} {isSelected && <i className="fa-solid fa-check ml-1"></i>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-pen"></i> 自分でも書き足す</label>
+                          <div className="flex flex-col md:flex-row gap-2">
+                            <input
+                              type="text"
+                              className="rpg-input flex-1"
+                              value={newTenYearWish}
+                              onChange={e => setNewTenYearWish(e.target.value)}
+                              placeholder="例：海の近くでゆっくり暮らしたい"
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleAddTenYearWish();
+                                }
+                              }}
+                            />
+                            <button type="button" onClick={handleAddTenYearWish} disabled={!newTenYearWish.trim()} className={`rpg-button ${!newTenYearWish.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                              追加
+                            </button>
+                          </div>
+                        </div>
+                        <div className="rounded border border-yellow-600 bg-gray-900 bg-opacity-80 p-3">
+                          <p className="text-sm text-yellow-300 font-bold mb-2">選んだ10年後までの楽しみ</p>
+                          {willTenYears.length === 0 ? (
+                            <EmptyText>まだ選ばれていません。</EmptyText>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {willTenYears.map(wish => (
+                                <button
+                                  key={wish}
+                                  type="button"
+                                  onClick={() => handleRemoveTenYearWish(wish)}
+                                  className="rounded-full border border-yellow-500 bg-yellow-900 bg-opacity-60 px-3 py-1 text-sm text-yellow-100 hover:border-red-400 hover:bg-red-900"
+                                  title="クリックで外す"
+                                >
+                                  {wish} <i className="fa-solid fa-xmark ml-1"></i>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 </WindowBox>
+                {willStep === 0 && renderOtherTablePrompt('will', { speakerType: APP_CONFIG.char2Type })}
+                {willStep === 1 && renderOtherTablePrompt('will', { speakerType: APP_CONFIG.char1Type })}
                 <div className="text-center mt-8">
-                  <button onClick={handleNextWillStep} className="rpg-button text-base px-8 py-4 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
-                    {willStep === 0 ? '次へ進む' : '語らいを終え、自室へ戻る'} <i className="fa-solid fa-arrow-right"></i>
+                  <button
+                    onClick={handleNextWillStep}
+                    disabled={!canProceedFromTenYears}
+                    className={`rpg-button text-base px-8 py-4 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold ${!canProceedFromTenYears ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {willStep === 2 ? '二人に話してみる' : '次へ進む'} <i className="fa-solid fa-arrow-right"></i>
                   </button>
+                  {willStep === 2 && !canProceedFromTenYears && (
+                    <p className="text-xs text-yellow-300 mt-3">ひとつ選ぶか、自分の言葉で書き足すと先へ進めます。</p>
+                  )}
                 </div>
               </div>
             )}
@@ -2388,6 +3059,34 @@
                         handleEditMustConnection(e.target.value);
                       }}
                     />
+                    <div className="rounded border border-yellow-700 bg-black bg-opacity-50 p-4 print-friendly">
+                      <p className="text-sm text-yellow-300 font-bold mb-3">▼ 参考：ここまでに描いたWill</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="parchment-card p-3">
+                          <p className="text-xs font-bold tracking-widest text-[#6b3f15] mb-1">1年後のWill</p>
+                          <p className="text-sm text-[#071f3f] whitespace-pre-wrap">{will.oneYear || 'まだ記録されていません。'}</p>
+                        </div>
+                        <div className="parchment-card p-3">
+                          <p className="text-xs font-bold tracking-widest text-[#6b3f15] mb-1">3年後のWill</p>
+                          <p className="text-sm text-[#071f3f] whitespace-pre-wrap">{will.threeYears || 'まだ記録されていません。'}</p>
+                          {will.job && <p className="text-xs text-[#6b3f15] mt-2">目指すロール：{will.job}</p>}
+                        </div>
+                        <div className="parchment-card p-3 md:col-span-2">
+                          <p className="text-xs font-bold tracking-widest text-[#6b3f15] mb-2">10年後までに楽しみたいこと</p>
+                          {willTenYears.length === 0 ? (
+                            <p className="text-sm text-[#071f3f]">まだ記録されていません。</p>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {willTenYears.map(wish => (
+                                <span key={wish} className="rounded-full border border-[#a87533] bg-[#f5e1bd] px-3 py-1 text-xs text-[#071f3f]">
+                                  {wish}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                     <div className="flex flex-col md:flex-row justify-between gap-3">
                       <button onClick={() => setMustWorkStep(musts.length > 1 ? 1 : 0)} className="text-gray-400 hover:text-white px-4 py-2 flex items-center gap-2 transition-colors">
                         <i className="fa-solid fa-arrow-right rotate-180"></i> {musts.length > 1 ? 'クエスト選択に戻る' : 'クエスト登録に戻る'}
@@ -2445,7 +3144,7 @@
                         <i className="fa-solid fa-arrow-right rotate-180"></i> 接続に戻る
                       </button>
                       <button onClick={() => nextScene('summary')} className="rpg-button text-sm px-6 py-2 bg-white text-black font-bold">
-                        冒険の書をまとめる
+                        あなたの物語をまとめる
                       </button>
                     </div>
                   </div>
@@ -2461,7 +3160,7 @@
                     onClick={() => nextScene('summary')}
                     className="bg-white text-black font-bold border-4 border-white rounded px-12 py-4 hover:bg-gray-200 transition-colors text-xl animate-pulse order-1 md:order-2"
                   >
-                    夜が明け、冒険の書をまとめる！
+                    夜が明け、あなたの物語をまとめる！
                   </button>
                 ) : (
                   <div className="w-64 hidden md:block order-1 md:order-2"></div>
@@ -2492,6 +3191,7 @@
           canInsight,
           allyInsight,
           will,
+          willTenYears,
           willOneYearInsight,
           willThreeYearsInsight,
           selectedMust,
@@ -2542,10 +3242,10 @@
         return (
           <div className="space-y-6 max-w-5xl mx-auto animate-fade-in w-full">
             <div className="print-hidden">
-              <NarrationBox iconName="fa-solid fa-book-open" text={"良い冒険の書ができた。\nもう一度、ここまでの旅を振り返ってみよう。\n（これは下部でPDF保存ができるらしい…）"} />
+              <NarrationBox iconName="fa-solid fa-book-open" text={"良いあなたの物語ができた。\nもう一度、ここまでの旅を振り返ってみよう。\n（これは下部でPDF保存ができるらしい…）"} />
             </div>
 
-            <WindowBox title="冒険の書まとめ" iconName="fa-solid fa-book" className="print-friendly">
+            <WindowBox title="あなたの物語まとめ" iconName="fa-solid fa-book" className="print-friendly">
               <div className="space-y-5">
                 <div className="space-y-5 print-avoid-break">
                   <div className="bg-gray-900 bg-opacity-80 border-2 border-yellow-500 rounded p-4 text-center print-friendly print-avoid-break">
@@ -2554,9 +3254,26 @@
                     {will.job && <p className="text-blue-300 text-xl mt-2">3年後のロール：{will.job}</p>}
                   </div>
 
+                  <div className="bg-gray-900 bg-opacity-80 border-2 border-blue-400 rounded p-4 print-friendly print-avoid-break">
+                    <p className="text-sm text-blue-300 font-bold mb-2 flex items-center justify-center gap-2">
+                      <i className="fa-solid fa-star"></i> 10年後までに楽しみたいこと
+                    </p>
+                    {willTenYears.length === 0 ? (
+                      <p className="text-center text-gray-300">未記録</p>
+                    ) : (
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {willTenYears.map(wish => (
+                          <span key={wish} className="rounded-full border border-blue-300 bg-black bg-opacity-40 px-3 py-1 text-sm text-gray-100 print-friendly">
+                            {wish}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="print-hidden bg-black bg-opacity-70 border border-gray-600 rounded p-4">
                     <p className="text-sm text-yellow-300 font-bold mb-3">▼ まとめから書き直す</p>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
                       <button type="button" onClick={() => goToCanInput(0)} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-khanda"></i> 武器・魔法
                       </button>
@@ -2568,6 +3285,9 @@
                       </button>
                       <button type="button" onClick={() => goToWillInput(1)} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-bullseye"></i> 3年後
+                      </button>
+                      <button type="button" onClick={() => goToWillInput(2)} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
+                        <i className="fa-solid fa-star"></i> 10年後
                       </button>
                     </div>
                   </div>
@@ -2627,6 +3347,9 @@
                       <button type="button" onClick={() => goToWillInput(1)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> 3年後を書き直す
                       </button>
+                      <button type="button" onClick={() => goToWillInput(2)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
+                        <i className="fa-solid fa-pen-to-square"></i> 10年後を書き直す
+                      </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly">
@@ -2670,32 +3393,44 @@
                 <div className="print-page-break">
                   <div className="print-hidden mb-6">
                     <DialogGroup dialogs={[
-                      { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, imageSide: "left", text: "「おはようございます！\n冒険の書、とても良いものができましたね。」" },
+                      { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, imageSide: "left", text: "「おはようございます！\nあなたの物語、とても良いものができましたね。」" },
                       { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
                     ]} />
                   </div>
                   <SummarySection title="ここから先の旅" iconName="fa-solid fa-route">
                     <div className="text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap">
-{`ここまでの冒険の書が綴られました。
+{`ここまでのあなたの物語が綴られました。
 
 このまま、ひとりで読み返してもよいでしょう。
 あるいは、誰かに話すことで、まだ言葉になっていない想いや、
 次の一歩が見えてくるかもしれません。
 
-この冒険の書をもとに、キャリアコンサルティングを受けることもできます。`}
+このあなたの物語をもとに、キャリアコンサルティングを受けることもできます。`}
                     </div>
-                    <div className="mt-5 flex flex-col md:flex-row gap-3">
-                      <button onClick={() => window.print()} className="rpg-button flex-1 py-3 text-base">
-                        今は、ひとりで考えてみる
-                      </button>
-                      <div className="relative flex-1 group">
+                    <div className="route-choice-wrap mt-5 flex flex-col md:flex-row gap-3">
+                      <div className="relative flex-1 route-choice-item">
+                        <div
+                          id="think-alone-tooltip"
+                          className="route-choice-bubble is-haruka print-hidden"
+                        >
+                          <div className="bubble-name">{APP_CONFIG.char2NameShort}</div>
+                          <span className="text-white">{APP_CONFIG.soloTooltipText}</span>
+                        </div>
+                        <button
+                          onClick={() => window.print()}
+                          aria-describedby="think-alone-tooltip"
+                          className="rpg-button w-full py-3 text-base"
+                        >
+                          今は、ひとりで考えてみる
+                        </button>
+                      </div>
+                      <div className="relative flex-1 route-choice-item">
                         <div
                           id="talk-counselor-tooltip"
-                          className="print-hidden pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 w-80 max-w-[80vw] -translate-x-1/2 translate-y-2 rounded-lg border-2 border-yellow-500 bg-amber-950 bg-opacity-95 px-4 py-3 text-left text-sm leading-relaxed text-white shadow-xl opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                          className="route-choice-bubble is-reflem print-hidden"
                         >
-                          <div className="absolute -top-3 left-4 rounded-full border border-white bg-amber-950 px-3 text-xs font-bold text-white">{APP_CONFIG.char1NameShort}</div>
-                          {APP_CONFIG.bookingTooltipText}
-                          <div className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-yellow-500 bg-amber-950"></div>
+                          <div className="bubble-name">{APP_CONFIG.char1NameShort}</div>
+                          <span className="text-white">{APP_CONFIG.bookingTooltipText}</span>
                         </div>
                         <a
                           href={APP_CONFIG.bookingUrl}
@@ -2712,6 +3447,16 @@
                 </div>
               </div>
             </WindowBox>
+
+            <div className="print-hidden bg-black bg-opacity-70 border border-blue-500 rounded p-4 mt-8">
+              <p className="text-sm text-blue-200 font-bold mb-2">▼ 「あなたの物語」のデータを書き出す</p>
+              <p className="text-xs text-gray-300 mb-3">
+                別の日に続きを開きたい時のために、現在の記録を保存用文字列としてコピーします。Googleカレンダーの予定の「説明」欄などに貼り付けておくと、あとでTOP画面から読み込めます。
+              </p>
+              <button type="button" onClick={handleExportStoryData} className="rpg-button w-full py-3 text-sm bg-white text-black font-bold">
+                <i className="fa-solid fa-copy mr-2"></i>「あなたの物語」のデータを書き出す
+              </button>
+            </div>
 
             <div className="print-hidden bg-black bg-opacity-70 border border-yellow-600 rounded p-4 mt-8">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 画像として保存</p>
@@ -2764,7 +3509,7 @@
 
       const renderProgressBar = () => {
         const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must', 'summary'];
-        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', '冒険の書', '未来', 'クエスト', 'まとめ'];
+        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', 'あなたの物語', '未来', 'クエスト', 'まとめ'];
         const currentIndex = SCENES.indexOf(scene);
 
         return (
@@ -2812,7 +3557,7 @@
       const locationName = scene === 'must'
         ? '宿屋の自室'
         : scene === 'summary'
-          ? '冒険の書まとめ'
+          ? 'あなたの物語まとめ'
           : '宿屋1階の酒場';
 
       const renderAppNote = (className = 'mt-10') => (
@@ -2837,19 +3582,19 @@
               {renderProgressBar()}
 
               {scene !== 'intro' && (
-                <div className="print-hidden flex flex-col md:flex-row justify-between items-center mb-6 bg-black bg-opacity-70 p-3 md:p-4 rounded-lg border-2 border-gray-600 animate-fade-in shadow-md gap-4">
+                <div className="print-hidden flex flex-col md:flex-row justify-between items-center mb-6 bg-black bg-opacity-75 p-3 md:p-4 rounded-lg border-2 border-yellow-500 animate-fade-in shadow-md gap-4">
                   <div className="text-lg md:text-xl font-bold">
                     {player.name || '名もなき勇者'} <span className="text-yellow-400 ml-2">Lv.{player.age || '?'}</span>
                   </div>
                   <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center">
-                    <div className="text-sm text-gray-400 hidden md:block">
+                    <div className="text-sm text-yellow-300 font-bold hidden md:block" style={{ textShadow: '1px 1px 0 #000' }}>
                       現在地：{locationName}
                     </div>
-                    <button onClick={handleSuspend} className="text-xs md:text-sm border border-gray-500 text-gray-400 hover:text-white hover:border-white px-3 py-1.5 rounded transition-colors flex items-center gap-1">
+                    <button onClick={handleSuspend} className="text-xs md:text-sm border border-yellow-500 text-yellow-300 hover:bg-yellow-400 hover:text-black hover:border-yellow-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
                       <i className="fa-solid fa-pause"></i> 中断する
                     </button>
-                    <button onClick={handleReset} className="text-xs md:text-sm border border-gray-500 text-gray-400 hover:text-red-400 hover:border-red-400 px-3 py-1.5 rounded transition-colors flex items-center gap-1">
-                      <i className="fa-solid fa-rotate-left"></i> 冒険の書を消す
+                    <button onClick={handleReset} className="text-xs md:text-sm border border-yellow-500 text-yellow-300 hover:bg-red-900 hover:text-red-100 hover:border-red-400 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
+                      <i className="fa-solid fa-rotate-left"></i> 『あなたの物語』を最初から書き直す
                     </button>
                   </div>
                 </div>
@@ -2862,6 +3607,12 @@
               {scene === 'will' && renderWill()}
               {scene === 'must' && renderMust()}
               {scene === 'summary' && renderSummary()}
+              <OtherTableModal
+                state={otherTableState}
+                onClose={closeOtherTableTalk}
+                onSelectGuest={handleSelectOtherGuest}
+                onMore={handleMoreOtherGuest}
+              />
             </div>
 
             {scene === 'summary' && renderAppNote()}
