@@ -286,6 +286,49 @@
       backdrop-filter: blur(0.35px);
       -webkit-backdrop-filter: blur(0.35px);
     }
+    .other-table-peek {
+      position: relative;
+      min-height: 8.75rem;
+      background: transparent;
+      color: #fff;
+      isolation: isolate;
+    }
+    .other-table-peek:hover:not(:disabled) {
+      background: transparent;
+      color: #fff;
+      border-color: #facc15;
+    }
+    .other-table-peek::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image: var(--other-table-image);
+      background-size: cover;
+      background-position: center top;
+      filter: brightness(0.88) saturate(1.06);
+      transform: scale(1.01);
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+    .other-table-peek::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.16));
+      pointer-events: none;
+    }
+    .other-table-peek:hover::before {
+      transform: scale(1.04);
+      filter: brightness(0.96) saturate(1.08);
+    }
+    .other-table-peek > span {
+      position: relative;
+      z-index: 1;
+    }
+    .other-table-peek-label {
+      text-shadow: 0 2px 4px #000, 0 0 8px #000, 0 0 12px #000;
+    }
     .other-guest-focus-shade {
       position: absolute;
       inset: 0;
@@ -814,6 +857,188 @@
       }
     ];
 
+    const otherTableCanPowerIndexes = {
+      female25: [0, 1, 3, 4],
+      male35: [0, 2, 3],
+      female45: [0, 1, 3],
+      male58: [0, 1, 3, 4]
+    };
+
+    const otherTableCanRelationLines = {
+      female25: [
+        '「新人の頃、全然仕事ができなくて同期に愚痴ってばかりだったんだけど…そういえばあの時、弱みを見せ合える『切磋琢磨できる同期』っていう仲間を得られたのかな。今でもそれが一番の支えかも」',
+        '「部署が変わったばかりで不安だった時、何気なく声をかけてくれた先輩がいたの。そういう『相談できる同僚』がいたから、新しい場所でも踏ん張れたのかもしれない」',
+        '「忙しい時に、同じ温度感で笑ってくれる人がいるだけで救われるんだよね。私にとっては、そういう人たちが『安心できるパートナー』だったのかも」'
+      ],
+      male35: [
+        '「他部署と毎日のように意見がぶつかってバチバチやってたんだけど…そういえばあの時、落としどころを見つける力と『戦友』と呼べる仲間を得られたのかな。今の大きなプロジェクトは、あの時の連中に助けられてるよ」',
+        '「プレッシャーで押しつぶされそうな仕事を一人で抱え込んでたんだけど…そういえばあの時、黙って見守ってくれた『任せてくれる上司』の存在に救われたのかな。今自分がチームを持つようになって、そのありがたみが痛いほどわかるよ」',
+        '「数字が伸びなくて焦っていた頃、ただ責めるんじゃなく一緒に考えてくれた人がいたんだ。あれは俺にとって『頼りになるパートナー』だったんだと思う」'
+      ],
+      female45: [
+        '「育休復帰で時短になって、周囲に謝ってばかりだったんだけど…そういえばあの時、限られた時間で成果を出す工夫や、『協力してくれる関係部署』のありがたさに気づけたのかな。それが今の私の土台ね」',
+        '「仕事と家庭の両立で毎日綱渡りみたいに焦っていたんだけど…そういえばあの時、弱音を吐き出せる『安心できるパートナー』との関係性を育てられたのかな。自分が崩れずに今日までやってこられたのは、間違いなくそのおかげね」',
+        '「後輩から相談されることが増えた時、最初は負担だと思っていたの。でも振り返ると、『頼ってくれる後輩』の存在が、私自身の成長にもつながっていたのよね」'
+      ],
+      male58: [
+        '「とんでもなく厳しい上司に絞られまくってた時期があったんだけど…そういえばあの時、仕事の筋を通すことの大切さと、『社外のメンター』と呼べる存在を得たのかな。今、俺が若手に教えられるのはそれくらいかもな」',
+        '「若い連中の考えてることが理解できなくて、衝突してばかりだった時期もあったんだけど…今じゃ若い連中のほうが、俺によく相談に来るよ。あれも一つの『学び合えるコミュニティ』なのかもしれないな」',
+        '「会社の外で地元の活動に関わるようになってから、肩書き抜きで話せる人が増えたんだ。ああいう『支え合える地元コミュニティ』が、定年後の自分を支えてくれる気がしているよ」'
+      ]
+    };
+
+    const otherTableCanPowerExtraLines = {
+      female25: [
+        '「言われた事務処理をこなすだけだったんだけど…あの時、ミスを防ぐ『品質管理力』が身についてたみたい。今、チームの基盤を支える力になってるよ。」',
+        '「SNSの画像作成を趣味の延長でやってたんだけど…視覚的に伝える『資料作成力』が、今の仕事で一番の武器になってるなんてね。」',
+        '「よくわからないままAIツールを使ってみたんだけど…新しいものを恐れずに試す『AI活用力』のおかげで、今は業務の効率化を任されてるんだ。」'
+      ],
+      male35: [
+        '「現場で毎日トラブルの火消しばかりやってたんだけど…状況に合わせて瞬時に判断する『柔軟性』が、リーダーになった今、一番活きてるかもな。」',
+        '「ただがむしゃらに顧客の所へ通ってたんだけど…相手の本当の課題を引き出す『対人理解力』の基礎ができたのかな。結局そこが俺の最大の武器だよ。」',
+        '「無茶振りされたプロジェクトで頭を下げて回ってたんだけど…利害が違う人を同じ方向に向かせる『巻き込み力』の魔法が、今の新規事業で活きてる。」'
+      ],
+      female45: [
+        '「後輩のミスの尻拭いばかりでイライラしてた時期もあったんだけど…相手の成長を待つ『コミュニケーション力』が、今のチームビルディングにすごく活きてるわ。」',
+        '「不本意な部署異動でゼロから仕事を覚えてたんだけど…膨大な情報を整理して本質を見抜く『概念的思考力』の魔法が、変化の激しい今、一番役立ってるの。」',
+        '「いろんな人の間に立って調整ばかりしてたんだけど…無意識のうちに、複雑な状況を紐解く処理能力がついてたみたい。脳の力ってすごいわよね。」'
+      ],
+      male58: [
+        '「クレーム処理で頭を下げてばかりのヒリヒリした経験もあったんだけど…相手の怒りの奥にある想いを受け止める『傾聴力』が、今じゃ一番の強みになってるよ。」',
+        '「昔は職人技ばかりもてはやされる現場で地味なマニュアル作りをやってたんだけど…誰でもできるようにする『仕組み化の力』が、今の組織の土台になってるよ。」',
+        '「過去の成功体験が通用しなくなってプライドがズタズタになった時期もあったが…ゼロから学び直す謙虚さと『試行錯誤する力』を身につけられた。それがなかったら今頃ただの頑固オヤジだ。」'
+      ]
+    };
+
+    const otherTableCanRelationExtraLines = {
+      female25: [
+        '「新人の頃、全然仕事ができなくて同期に愚痴ってばかりだったんだけど…弱みを見せ合える『切磋琢磨できる同期』っていう仲間が、今でも一番の支えかな。」',
+        '「他部署のスペシャリストに勇気を出して質問しに行ったんだけど…あの時繋がった縁が、今では『困ったときの駆け込み寺』になってるんだよね。」'
+      ],
+      male35: [
+        '「他部署と毎日のように意見がぶつかってバチバチやってたんだけど…あの時、本音でぶつかり合えた『戦友』が、今の大きなプロジェクトで俺を助けてくれてるよ。」',
+        '「プレッシャーで押しつぶされそうだったんだけど…黙って見守ってくれた『任せてくれる上司』の存在に救われたんだ。今度は俺がそういう安心できる環境を作る番だ。」'
+      ],
+      female45: [
+        '「育休復帰で時短になって、周囲に謝ってばかりだったんだけど…限られた時間で成果を出す工夫と、『協力してくれる関係部署』のありがたさに気づけたのが財産ね。」',
+        '「仕事と家庭の両立で毎日綱渡りみたいだったんだけど…弱音を吐き出せる『安心できるパートナー』との関係性が、私が崩れずにやってこられた最大の理由よ。」'
+      ],
+      male58: [
+        '「駆け出しの頃、大失敗してクビを覚悟した時に、泥をかぶって守ってくれた『頼れる上司』がいたんだ。シニアになった今、俺が若い連中の防波堤でありたいと思うよ。」',
+        '「若い連中と衝突してばかりだった時期もあったが…自分の正しさを手放して相手の物語を聴くようになったら、今じゃ『気軽に相談できるメンター』として頼られるようになったよ。」'
+      ]
+    };
+
+    const otherTableWillLines = {
+      willOne: {
+        female25: [
+          '「先輩の指示をこなすだけで精一杯だったんだけど…そういえばあの時、後輩から質問されて教える時間がすごく楽しかったんだよね。だから1年後は、もっと『人から頼られる状態でいたい』な」',
+          '「自分のスキル不足に焦ってばかりだったけど…まずは1年後、目の前の後輩から『この人がいると安心する』って頼られる状態になりたいな。」',
+          '「毎日忙殺されてるけど…1年後には、ツールを駆使して自分の業務を半分にして、もっとクリエイティブな仕事に挑戦できるようになりたい。」'
+        ],
+        male35: [
+          '「自分の成績を上げるためだけにガムシャラだったんだけど…そういえばあの時、チームで結果を出す喜びに気づいたんだよな。だから1年後は、自分の数字より『チームの売上上昇』を牽引できる状態でありたい」',
+          '「自分の成績だけを追いかけてたけど…1年後は、自分の数字より『チームの売上上昇』を牽引して、メンバーに成功体験を積ませてやりたい。」',
+          '「徹夜も辞さない働き方をしてたけど…まずは1年後、仕事とプライベートの境界線を引いて、心身ともに余裕のある働き方を実現したいな。」'
+        ],
+        female45: [
+          '「子育てと仕事の両立で、毎日『ごめんなさい』って言ってばかりだったんだけど…そういえばあの時、限られた時間で成果を出す自分なりの型ができたのよね。だから1年後は、同じように悩む後輩を導ける状態になっていたいわ」',
+          '「自分のキャリアでいっぱいいっぱいだったけど…1年後は、同じようにキャリアとライフイベントの狭間で悩む後輩たちを、少しでも導ける存在になっていたいわ。」',
+          '「何でも屋みたいに雑務を引き受けてたけど…1年後は、自分の得意な領域を絞って、そこだけは誰にも負けないという自信を持てるようになりたいの。」'
+        ],
+        male58: [
+          '「昔の成功体験にしがみついて若手に煙たがられてたんだけど…そういえばあの時、教えるより『聴く』ことの価値に気づいたんだ。だから1年後は、若手が自ら答えを見つけるための良き壁打ち相手でありたいね」',
+          '「自分の成績ばかり気にしてた昔とは違う。1年後は、若手が自ら答えを見つけるための良き壁打ち相手として、彼らの成長を心から喜べるようになっていたいね。」',
+          '「役職定年が見えてきて焦りもあったが…1年後は、肩書きに頼らず、一人の人間としての魅力で勝負できるような、しなやかな状態を整えたい。」'
+        ]
+      },
+      willThree: {
+        female25: [
+          '「自分のスキルが足りなくて焦ってばかりだったんだけど…そういえばあの時、チームの空気を良くすることには自信が持てたんだよね。だから3年後は『チームの潤滑油』みたいなロールを目指すのが私のWILLかな」',
+          '「失敗ばかりで仕事に向いてないって落ち込んでたんだけど…そういえばあの時、誰かを裏方でサポートする時に一番力が出せるって気づいたんだ。だから3年後は、専門的なサポート役のロールに就きたいって思えてる」',
+          '「失敗ばかりで落ち込んでたけど…裏方で人を支えるのが好きだって気づいたの。だから3年後は『チームの潤滑油』としてのロールを確立したいな。」',
+          '「自分のことで精一杯だったけど…3年後は、多様な意見をまとめて新しいサービスを生み出す『企画リーダー』になっていたいな。」'
+        ],
+        male35: [
+          '「自分一人で抱え込んでパンクしそうになってたんだけど…そういえばあの時、人に任せることでお互い成長できるって学んだんだ。だから3年後は『メンバーの可能性を引き出すマネージャー』のロールを担いたいね」',
+          '「一人で抱え込んでパンクしそうになってたけど…3年後は、メンバーの挑戦と創造性を引き出すマネージャーのロールを担いたいね。」',
+          '「売上至上主義に疑問を感じてたんだけど…3年後は、数字だけじゃない、本当に顧客の人生を豊かにするサービスを立ち上げる責任者になっていたい。」'
+        ],
+        female45: [
+          '「何でも屋みたいに雑務ばかり引き受けてたんだけど…そういえばあの時、バラバラの業務を繋ぎ合わせる面白さに気づいたの。だから3年後は『組織のハブ』という独自のロールを確立したいのよ」',
+          '「長年、会社の仕組みに疑問を持たずに従ってきたんだけど…そういえばあの時、もっと多様な働き方があっていいって強く思ったの。だから3年後は『ダイバーシティ推進』を牽引するロールになるのが私のWILL」',
+          '「会社の仕組みに従ってきたけど…3年後は、多様な価値観を尊重し、誰もが本来の力を発揮できる『ダイバーシティ推進』を牽引するロールになっていたいわ。」',
+          '「裏方で支えるのが私の役目だと思ってたけど…3年後は、私自身の名前でプロジェクトを立ち上げて、組織の枠を超えた新しい価値を生み出すリーダーになりたい。」'
+        ],
+        male58: [
+          '「役職定年が見えてきてすっかりモチベーションを落としてたんだけど…そういえばあの時、肩書きじゃなく人間力で勝負する面白さに気づいたんだ。だから3年後は『次世代のメンター』というロールを全うしたい」',
+          '「会社という枠組みの中で生きてきたが…3年後は、地域社会との繋がりを深め、これまでの知見を活かして地元に貢献する『ローカルな案内人』のロールを担いたいね。」',
+          '「第一線から退く準備を進める中で…3年後は、俺が培ってきたノウハウをすべて次世代に継承し、いつでも笑顔でバトンを渡せる状態を完成させたいんだ。」'
+        ]
+      },
+      willTen: {
+        female25: [
+          '「毎日満員電車に揺られて疲弊してたんだけど…そういえば私、本当は自然の中でホッとしたいんだって気づいたの。だから10年後までに『好きな場所で暮らしたい』って思うようになったんだ」',
+          '「休みの日は疲れて寝てばかりだったんだけど…そういえば昔から絵を描くのが好きだったなって思い出したの。だから10年後までに、また『絵が描きたい』。自分の好きな時間を大切にするのが今の目標」',
+          '「今は都会のワンルームだけど…10年後は、海が見えるアトリエで、時間を気にせず自分の好きな絵だけを描いて暮らしていたいな。お金の心配は一切なしでね！」',
+          '「会社員やってるけど…本当は、世界中を旅しながら、行く先々で出会った人たちの人生の物語を本にするような生き方がしたいんだ。」',
+          '「もし何の制約もないなら、10年後は自分で立ち上げたカフェで、悩みを抱えた若者たちがほっと一息つけるような居場所を作っていたいな。」'
+        ],
+        male35: [
+          '「徹夜も辞さない働き方がカッコいいと思ってたんだけど…そういえばあの時、倒れてみて初めて健康のありがたみを知ったんだよ。だから10年後は、何より『健康に楽しく働いていたい』ってのが一番の願いだな」',
+          '「仕事のプレッシャーから逃げることばかり考えてたんだけど…そういえばあの時、キツい壁を越える達成感を思い出したんだ。だから10年後までに『フルマラソンを走ってみたい』。自分への挑戦としてね」',
+          '「会社に言われた通りに働くのが当たり前だと思ってたんだけど…そういえばあの時、もっと自由に働きたい本音に気づいちゃったんだよな。だから10年後までに『自分のペースで仕事を選べるようになりたい』んだ」',
+          '「今は満員電車に揺られてるけど…10年後は、大自然の中で自給自足の生活をしながら、年に数回だけ気の合う仲間と極上のビジネスを仕掛けるような、自由な生き方がしたいね。」',
+          '「現実的には難しいかもしれないけど…いつか、自分のブランドを立ち上げて、こだわりのボタンをつけたオーダーメイドのジャケットだけを仕立てる職人として生きていきたいんだ。」',
+          '「会社に縛られず、10年後は世界中のスタートアップに投資しながら、未来を作る若者たちと一緒にゲラゲラ笑って仕事がしたいな。」'
+        ],
+        female45: [
+          '「都会のスピード感にずっと無理して合わせてたんだけど…そういえばあの時、もっと静かな時間を持ちたいっていう本音に気づいたのよね。だから10年後までには『ピアノが弾きたい』。心を満たす時間が私のWILLね」',
+          '「自分のキャリアのことばかりでいっぱいいっぱいだったんだけど…そういえばあの時、家族の笑顔が私の原動力だって再確認したの。だから10年後も『暖かな家庭でいたい』。それが一番のベースにある願いね」',
+          '「今の立場や収入を全部忘れていいなら…10年後は、ヨーロッパの小さな田舎町に移住して、毎日美味しいワインを飲みながら、花やハーブを育てて暮らすのが私の究極の夢なの。」',
+          '「絶対に無理だってみんな笑うかもしれないけど…10年後までに、自分の設計した理想の学校を作りたいの。子どもたちが自分の『好き』を追求できるような場所をね。」',
+          '「お金の心配がないなら、10年後は海辺の街で保護犬や保護猫たちと一緒に暮らしながら、命を繋ぐ活動だけに専念したいわ。」'
+        ],
+        male58: [
+          '「定年後は何をしていいかわからず途方に暮れてたんだけど…そういえばあの時、昔ながらの生活の知恵にすごく惹かれたんだよ。だから10年後は『古民家で自給自足の生活がしたい』。それが今の俺の最高のWILLだよ」',
+          '「効率ばかり追い求める仕事人生だったんだけど…そういえばあの時、時間をかけてじっくり物を作る尊さを思い出したんだ。だから10年後までには『蕎麦をうちたい』し、『伝統工芸をやってみたい』ね」',
+          '「会社という枠組みの中だけで生きがいを探してたんだけど…そういえばあの時、もっと広い世界を見てみたいって好奇心が蘇ったんだよな。だからお金に不自由したくないし『世界遺産を見に行きたい』。人生はまだまだこれからだからね」',
+          '「定年後は何をしていいか分からなかった時期もあるが…10年後は、築60年以上の古い日本家屋を自分でリノベーションして、妻と土いじりをしながらのんびり暮らしたいんだよ。」',
+          '「もう体力的にキツいかもしれないけど…10年後までに、海外の過酷なウルトラマラソンを完走してみたいんだ。限界を決めるのはいつも自分だからな、死ぬまで挑戦し続けたいんだよ。」',
+          '「本当の夢を言っていいなら…10年後は、私財を投じて地元の若い芸術家や起業家を支援するパトロンになって、彼らの夢が叶う瞬間を特等席で見ていたいんだ。」'
+        ]
+      }
+    };
+
+    const mergeUniqueLines = (...groups) => {
+      const seen = new Set();
+      return groups.flat().filter(line => {
+        if (!line || seen.has(line)) return false;
+        seen.add(line);
+        return true;
+      });
+    };
+
+    const getOtherTableGuestLines = (guest, context) => {
+      if (!guest) return [];
+      if (context === 'canPower') {
+        return mergeUniqueLines(
+          (otherTableCanPowerIndexes[guest.id] || []).map(index => guest.can[index]),
+          otherTableCanPowerExtraLines[guest.id] || []
+        );
+      }
+      if (context === 'canRelation') {
+        return mergeUniqueLines(
+          otherTableCanRelationLines[guest.id] || [],
+          otherTableCanRelationExtraLines[guest.id] || []
+        );
+      }
+      if (otherTableWillLines[context]) {
+        return otherTableWillLines[context][guest.id] || [];
+      }
+      return guest[context] || [];
+    };
+
     const otherTableGreetings = [
       '「おう、歓迎するぜ。\nお前さんもいろいろ考えてるみたいだな。」',
       '「どうぞ座ってください✨\nあなたのお話もきかせてくださいね。」',
@@ -1111,7 +1336,7 @@
 
     const OtherTableModal = ({ state, onClose, onSelectGuest, onMore }) => {
       const selectedGuest = otherTableGuests.find(guest => guest.id === state.selectedGuestId);
-      const lines = selectedGuest ? (selectedGuest[state.context] || []) : [];
+      const lines = getOtherTableGuestLines(selectedGuest, state.context);
       const greeting = otherTableGreetings[state.greetingIndex % otherTableGreetings.length];
       const currentLine = selectedGuest
         ? (lines[state.lineIndex % Math.max(1, lines.length)] || '「まだ話すことを考えているところだよ。」')
@@ -1627,7 +1852,7 @@
       const canvas = createA4Canvas();
       const ctx = canvas.getContext('2d');
       let y = drawExportHeader(ctx, '歩んできた道：Memory', player);
-      y = drawSectionTitle(ctx, 'ライフラインチャート', y);
+      y = drawSectionTitle(ctx, '旅路の記録', y);
       drawLifeChartOnCanvas(ctx, memories, 90, y, imageTheme.width - 180, 360);
       y += 400;
 
@@ -1814,6 +2039,8 @@
       const [cans, setCans] = useLocalStorage('cq_cans', []);
       const [newCan, setNewCan] = useState({ type: 'skill', name: '', desc: '' });
       const [canConfirming, setCanConfirming] = useState(false);
+      const [canAddOpen, setCanAddOpen] = useState(true);
+      const [canReviewing, setCanReviewing] = useState(false);
       const canTypeGuideRef = useRef('');
 
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
@@ -1874,6 +2101,8 @@
           setNewCan({ type: allowedTypes[0], name: '', desc: '' });
         }
         setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
       }, [canStep]);
 
       useEffect(() => {
@@ -1939,6 +2168,7 @@
         switch (scene) {
           case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'can': {
+            if (canReviewing) return '2-2-Review';
             const base = `2-${canStep + 1}`;
             if (!isInputPhase) return base;
             return `${base}-${canConfirming ? 'Confirm' : 'Input'}`;
@@ -1999,6 +2229,7 @@
         setCanStep(step);
         setNewCan({ type: step === 0 ? 'skill' : 'ally', name: '', desc: '' });
         setCanConfirming(false);
+        setCanReviewing(false);
         setIsInputPhase(true);
         setScene('can');
       };
@@ -2057,8 +2288,17 @@
         }
 
         if (scene === 'can') {
+          if (canReviewing) {
+            setCanReviewing(false);
+            setCanStep(1);
+            setIsInputPhase(true);
+            setCanConfirming(false);
+            setCanAddOpen(true);
+            return;
+          }
           if (canConfirming) {
             setCanConfirming(false);
+            setCanAddOpen(true);
             return;
           }
           if (isInputPhase) {
@@ -2147,6 +2387,8 @@
         setCanStep(0);
         setNewCan({ type: 'skill', name: '', desc: '' });
         setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
         nextScene('can');
       };
 
@@ -2155,10 +2397,14 @@
         setCans([...cans, { ...newCan, id: Date.now() }]);
         setNewCan({ type: newCan.type, name: '', desc: '' });
         setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
       };
       const handleRemoveCan = (id) => {
         setCans(cans.filter(c => c.id !== id));
         setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
       };
 
       const handleCompleteCanStep = () => {
@@ -2169,7 +2415,10 @@
           setIsInputPhase(false);
           scrollTop();
         } else {
-          nextScene('memory');
+          setCanConfirming(false);
+          setCanReviewing(true);
+          setIsInputPhase(false);
+          scrollTop();
         }
       };
 
@@ -2177,7 +2426,24 @@
         setCanStep(0);
         setNewCan({ type: 'skill', name: '', desc: '' });
         setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
         setIsInputPhase(false);
+        scrollTop();
+      };
+
+      const handleProceedFromCanReview = () => {
+        setCanReviewing(false);
+        nextScene('memory');
+      };
+
+      const handleEditCanFromReview = (step) => {
+        setCanReviewing(false);
+        setCanStep(step);
+        setNewCan({ type: step === 0 ? 'skill' : 'ally', name: '', desc: '' });
+        setCanConfirming(false);
+        setCanAddOpen(true);
+        setIsInputPhase(true);
         scrollTop();
       };
 
@@ -2608,9 +2874,14 @@
             <button
               type="button"
               onClick={() => openOtherTableTalk(context)}
-              className="rpg-button text-base px-6 py-3 bg-gray-900 border-yellow-400 text-yellow-100 hover:bg-yellow-100 hover:text-black"
+              className="rpg-button other-table-peek inline-flex w-72 max-w-full flex-col overflow-hidden border-yellow-400 text-base shadow-xl"
+              style={{ padding: 0, '--other-table-image': `url(${APP_CONFIG.otherGuestsImg})` }}
             >
-              <i className="fa-solid fa-users mr-2"></i>他のテーブルの話を聞く（任意）
+              <span className="flex min-h-[8.75rem] w-full items-end justify-center px-4 py-4 text-center">
+                <span className="other-table-peek-label inline-flex items-center justify-center px-4 py-2 leading-relaxed">
+                  <i className="fa-solid fa-users mr-2"></i>他のテーブルの話を聞く（任意）
+                </span>
+              </span>
             </button>
           </div>
         </div>
@@ -2623,10 +2894,71 @@
         const allowedTypes = isWeaponMagicStep ? ['skill', 'magic'] : ['ally'];
         const activeType = allowedTypes.includes(newCan.type) ? newCan.type : allowedTypes[0];
         const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
+        const skillCans = cans.filter(c => c.type === 'skill');
+        const magicCans = cans.filter(c => c.type === 'magic');
+        const allyCans = cans.filter(c => c.type === 'ally');
         const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
         const dialog = isWeaponMagicStep
           ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
+
+        if (canReviewing) {
+          return (
+            <div className="space-y-6 max-w-5xl mx-auto w-full animate-fade-in">
+              <DialogBox
+                speaker={APP_CONFIG.char1NameShort}
+                type={APP_CONFIG.char1Type}
+                text={"「ふむ。武器、魔法、仲間との関係性が出そろったようじゃな。\n旅路の記録（ﾗｲﾌﾗｲﾝﾁｬｰﾄ）へ向かう前に、ここまでのステータスを一度眺めてみるのじゃ。」"}
+              />
+
+              <WindowBox title="ここまでのステータス確認" iconName="fa-solid fa-shield-heart">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded border border-blue-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-300">
+                      <i className={canTypeMeta.skill.icon}></i> 武器（専門スキル）
+                    </h3>
+                    <CanList cans={skillCans} emptyText="まだ武器は記録されていません。" compact />
+                  </div>
+                  <div className="rounded border border-purple-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
+                      <i className={canTypeMeta.magic.icon}></i> 魔法（汎用力）
+                    </h3>
+                    <CanList cans={magicCans} emptyText="まだ魔法は記録されていません。" compact />
+                  </div>
+                  <div className="rounded border border-green-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-green-300">
+                      <i className={canTypeMeta.ally.icon}></i> 仲間・関係性
+                    </h3>
+                    <CanList cans={allyCans} emptyText="まだ仲間との関係性は記録されていません。" compact />
+                  </div>
+                </div>
+
+                <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
+                    <p className="mb-2 text-sm font-bold text-yellow-300">武器・魔法についての気づき</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{canInsight || 'まだメモはありません。'}</p>
+                  </div>
+                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
+                    <p className="mb-2 text-sm font-bold text-yellow-300">仲間・関係性についての気づき</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{allyInsight || 'まだメモはありません。'}</p>
+                  </div>
+                </div>
+              </WindowBox>
+
+              <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
+                <button onClick={() => handleEditCanFromReview(0)} className="rpg-button text-base px-6 py-3">
+                  武器・魔法を見直す
+                </button>
+                <button onClick={() => handleEditCanFromReview(1)} className="rpg-button text-base px-6 py-3">
+                  仲間・関係性を見直す
+                </button>
+                <button onClick={handleProceedFromCanReview} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
+                  OK、記憶を語りに進む <i className="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          );
+        }
 
         return (
           <div className="space-y-6 max-w-4xl mx-auto w-full">
@@ -2647,6 +2979,7 @@
                       onClick={() => {
                         setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
                         setCanConfirming(false);
+                        setCanAddOpen(true);
                         setIsInputPhase(true);
                       }}
                       className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2"
@@ -2669,69 +3002,79 @@
                     <CanList cans={visibleCans} emptyText={isWeaponMagicStep ? '武器と魔法はまだ記録されていません。' : '仲間との関係性はまだ記録されていません。'} onRemove={handleRemoveCan} />
                   </div>
 
-                  <div className="border-t border-gray-600 pt-4 space-y-3">
-                    <p className="text-sm text-yellow-300">▼ まだ記録していない{isWeaponMagicStep ? '武器や魔法' : '仲間との関係性'}はあるか？</p>
-                    {isWeaponMagicStep && (
-                      <p className="text-xs text-gray-400 leading-relaxed">
-                        ページを開くと、武器→魔法→武器の順に候補が切り替わります。タブを押して自分でも切り替えられます。
+                  {isWeaponMagicStep && (
+                    <div className="mb-6 rounded border border-gray-600 bg-gray-900 bg-opacity-95 p-4 shadow-xl">
+                      <p className="mb-3 text-sm font-bold text-yellow-300">
+                        <span className="mr-2">▼</span>武器・魔法についての気づき
                       </p>
-                    )}
-                    <div className="flex gap-2">
-                      {allowedTypes.map(type => (
-                        <button
-                          key={type}
-                          onClick={() => setNewCan({ ...newCan, type, name: '', desc: '' })}
-                          className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${activeType === type ? canTypeMeta[type].active : 'bg-gray-800 border-transparent text-gray-400'}`}
-                        >
-                          {canTypeMeta[type].label}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
-                      <div className="flex flex-wrap gap-2">
-                        {presetCans[activeType].map((preset, idx) => {
-                          const isAdded = cans.some(c => c.name === preset.name);
-                          return (
-                            <button
-                              key={idx}
-                              onClick={() => {
-                                setCanConfirming(false);
-                                if (isAdded) {
-                                  setCans(cans.filter(c => !(c.type === activeType && c.name === preset.name)));
-                                } else {
-                                  setCans([...cans, { id: Date.now() + Math.random(), type: activeType, name: preset.name, desc: preset.desc }]);
-                                }
-                              }}
-                              className={`text-sm border px-3 py-1.5 rounded transition-all ${isAdded ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold hover:bg-red-900 hover:border-red-400' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
-                            >
-                              {preset.name} {isAdded && <i className="fa-solid fa-check ml-1"></i>}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-2 items-center mt-2">
-                      <input type="text" placeholder="名前 (自由に編集・手動追加も可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})} />
-                      <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
-                      <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
-                    </div>
-                    {isWeaponMagicStep && (
-                    <div className="mt-5">
-                      <label className="text-gray-400 text-sm flex items-center gap-1 mb-2">
-                        <i className="fa-solid fa-feather-pointed"></i> 武器・魔法についての気づき
-                      </label>
                       <textarea
-                        className="rpg-input resize-none w-full text-sm leading-relaxed"
+                        className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
                         rows={5}
                         value={canInsight}
                         onChange={e => setCanInsight(e.target.value)}
                         placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
                       />
                     </div>
-                    )}
-                  </div>
+                  )}
+
+                  <details
+                    className="border-t border-gray-600 pt-4"
+                    open={canAddOpen}
+                    onToggle={e => setCanAddOpen(e.currentTarget.open)}
+                  >
+                    <summary className="cursor-pointer list-none text-sm font-bold text-yellow-300 hover:text-yellow-100">
+                      <span className="mr-2">▼</span>まだ記録していない{isWeaponMagicStep ? '武器や魔法' : '仲間との関係性'}はあるか？
+                    </summary>
+                    <div className="mt-4 space-y-3">
+                      {isWeaponMagicStep && (
+                        <p className="text-xs text-gray-400 leading-relaxed">
+                          ページを開くと、武器→魔法→武器の順に候補が切り替わります。タブを押して自分でも切り替えられます。
+                        </p>
+                      )}
+                      <div className="flex gap-2">
+                        {allowedTypes.map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setNewCan({ ...newCan, type, name: '', desc: '' })}
+                            className={`flex-1 py-2 rounded text-sm font-bold transition-colors border-2 ${activeType === type ? canTypeMeta[type].active : 'bg-gray-800 border-transparent text-gray-400'}`}
+                          >
+                            {canTypeMeta[type].label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
+                        <div className="flex flex-wrap gap-2">
+                          {presetCans[activeType].map((preset, idx) => {
+                            const isAdded = cans.some(c => c.name === preset.name);
+                            return (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  setCanConfirming(false);
+                                  setCanAddOpen(true);
+                                  if (isAdded) {
+                                    setCans(cans.filter(c => !(c.type === activeType && c.name === preset.name)));
+                                  } else {
+                                    setCans([...cans, { id: Date.now() + Math.random(), type: activeType, name: preset.name, desc: preset.desc }]);
+                                  }
+                                }}
+                                className={`text-sm border px-3 py-1.5 rounded transition-all ${isAdded ? 'border-yellow-400 bg-yellow-900 bg-opacity-80 text-yellow-100 font-bold hover:bg-red-900 hover:border-red-400' : 'border-gray-500 text-gray-300 hover:bg-gray-800'}`}
+                              >
+                                {preset.name} {isAdded && <i className="fa-solid fa-check ml-1"></i>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex flex-col md:flex-row gap-2 items-center mt-2">
+                        <input type="text" placeholder="名前 (自由に編集・手動追加も可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})} />
+                        <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
+                        <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
+                      </div>
+                    </div>
+                  </details>
                 </WindowBox>
-                {!canConfirming && renderOtherTablePrompt('can')}
+                {!canConfirming && renderOtherTablePrompt(isWeaponMagicStep ? 'canPower' : 'canRelation')}
                 {canConfirming ? (
                   <div className="mt-8 animate-fade-in">
                     <DialogBox
@@ -2757,7 +3100,7 @@
                       </div>
                     )}
                     <div className="flex flex-col md:flex-row justify-center gap-3 mt-4">
-                      <button onClick={() => setCanConfirming(false)} className="rpg-button text-base px-6 py-3">
+                      <button onClick={() => { setCanConfirming(false); setCanAddOpen(true); }} className="rpg-button text-base px-6 py-3">
                         もう少し書き足す
                       </button>
                       <button onClick={handleCompleteCanStep} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
@@ -2766,11 +3109,13 @@
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center mt-8">
-                    <button onClick={() => setCanConfirming(true)} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
-                      {isWeaponMagicStep ? `${APP_CONFIG.char1NameShort}に確認してもらう` : `${APP_CONFIG.char2NameShort}に確認してもらう`} <i className="fa-solid fa-arrow-right"></i>
-                    </button>
-                  </div>
+                  <>
+                    <div className="text-center mt-8">
+                      <button onClick={() => { setCanConfirming(true); setCanAddOpen(false); }} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
+                        {isWeaponMagicStep ? `${APP_CONFIG.char1NameShort}に確認してもらう` : `${APP_CONFIG.char2NameShort}に確認してもらう`} <i className="fa-solid fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -2814,14 +3159,14 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（ライフラインチャート）にまとめてみよう。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（旅路の記録）にまとめてみよう。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                         <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
                       </button>
                       <button onClick={() => nextScene('chart')} className="rpg-button text-xl px-8 py-4 animate-pulse flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
-                        ライフラインチャートを見る <i className="fa-solid fa-arrow-right"></i>
+                        旅路の記録を見る <i className="fa-solid fa-arrow-right"></i>
                       </button>
                       <div className="w-48 hidden md:block order-3"></div>
                     </div>
@@ -2919,9 +3264,9 @@
 
       const renderChart = () => (
         <div className="space-y-6 max-w-5xl mx-auto w-full">
-          <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（ライフラインチャート）か。」`} />
+          <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（旅路の記録）か。」`} />
 
-          <WindowBox title="シーン4：あなたの物語（ライフラインチャート）" iconName="fa-solid fa-chart-line">
+          <WindowBox title="シーン4：旅路の記録" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
 
@@ -3045,6 +3390,71 @@
                     { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「ほう。そのような『想い』があるのじゃな。\n仕事の目標とは少し違って見えても、それもお主の未来を照らす大切な願いじゃ。」" },
                     { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「とっても素敵！\n${pName}さんなら、もしかしたらもっと早くにできるかもしれないですね！」` }
                   ]}>
+                    <WindowBox title="ここまでのWill確認" iconName="fa-solid fa-map-location-dot" className="text-left">
+                      <div className="space-y-4">
+                        <div className="rounded border-2 border-yellow-500 bg-gray-900 bg-opacity-90 p-4">
+                          <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <h3 className="text-lg font-bold text-yellow-300">
+                              <i className="fa-solid fa-star mr-2"></i>10年後までに楽しみたいこと
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => { setWillStep(2); setIsInputPhase(true); scrollTop(); }}
+                              className="text-xs text-gray-400 hover:text-white"
+                            >
+                              書き直す
+                            </button>
+                          </div>
+                          {willTenYears.length === 0 ? (
+                            <p className="text-sm text-gray-400">まだ記録されていません。</p>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {willTenYears.map(wish => (
+                                <span key={wish} className="rounded-full border border-yellow-500 bg-yellow-900 bg-opacity-60 px-3 py-1 text-sm text-yellow-100">
+                                  {wish}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="rounded border border-blue-500 bg-gray-900 bg-opacity-80 p-4">
+                          <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <h3 className="text-lg font-bold text-blue-300">
+                              <i className="fa-solid fa-bullseye mr-2"></i>3年後のWill
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => { setWillStep(1); setIsInputPhase(true); scrollTop(); }}
+                              className="text-xs text-gray-400 hover:text-white"
+                            >
+                              書き直す
+                            </button>
+                          </div>
+                          <p className="mb-2 whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{will.threeYears || 'まだ記録されていません。'}</p>
+                          <div className="mt-3 rounded border border-gray-700 bg-black bg-opacity-50 p-3">
+                            <p className="text-xs font-bold text-gray-400">目指すロール</p>
+                            <p className="text-base font-bold text-blue-200">{will.job || '未記録'}</p>
+                          </div>
+                        </div>
+
+                        <div className="rounded border border-green-500 bg-gray-900 bg-opacity-80 p-4">
+                          <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <h3 className="text-lg font-bold text-green-300">
+                              <i className="fa-solid fa-location-dot mr-2"></i>1年後のWill
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => { setWillStep(0); setIsInputPhase(true); scrollTop(); }}
+                              className="text-xs text-gray-400 hover:text-white"
+                            >
+                              書き直す
+                            </button>
+                          </div>
+                          <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{will.oneYear || 'まだ記録されていません。'}</p>
+                        </div>
+                      </div>
+                    </WindowBox>
                     <NarrationBox
                       iconName="fa-solid fa-moon"
                       text={"夜も更けてきた。\nふたりに礼を伝え、酒場をあとにする。\n胸の中には、1年後、3年後、そして10年後まで続く小さな灯りが残っていた。"}
@@ -3170,8 +3580,9 @@
                     )}
                   </div>
                 </WindowBox>
-                {willStep === 0 && renderOtherTablePrompt('will', { speakerType: APP_CONFIG.char2Type })}
-                {willStep === 1 && renderOtherTablePrompt('will', { speakerType: APP_CONFIG.char1Type })}
+                {willStep === 0 && renderOtherTablePrompt('willOne', { speakerType: APP_CONFIG.char2Type })}
+                {willStep === 1 && renderOtherTablePrompt('willThree', { showIntro: false })}
+                {willStep === 2 && renderOtherTablePrompt('willTen', { showIntro: false })}
                 <div className="text-center mt-8">
                   <button
                     onClick={handleNextWillStep}
