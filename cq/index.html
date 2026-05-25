@@ -588,6 +588,7 @@
       bookingTooltipText: "「誰かと話すことで考えがよりまとまる事もある。そうじゃのぉ、nininｷｬﾘｱﾙｰﾑには女性男性の二名が在籍しているそうじゃぞ✨」",
       companyUrl: "https://ninin-cc.github.io/",
       otherGuestsImg: "https://ninin-cc.github.io/cq/img/kyaku.jpg",
+      introResultPreviewImg: "https://ninin-cc.github.io/cq/img/reflmn.jpg",
       googleCalendarCreateUrl: "https://calendar.google.com/calendar/render",
 
       backgroundImages: {
@@ -1244,10 +1245,13 @@
       );
     };
 
-    const DialogGroup = ({ dialogs, children }) => {
+    const DialogGroup = ({ dialogs, children, reserveDialogSlots = 0, afterDialog = {} }) => {
       const [currentIdx, setCurrentIdx] = useState(0);
       const [allFinished, setAllFinished] = useState(false);
       const dialogSignature = dialogs.map(d => `${d.speaker}:${d.text}`).join('|');
+      const reserveStyle = reserveDialogSlots > 0
+        ? { minHeight: `${reserveDialogSlots * 13}rem` }
+        : undefined;
 
       useEffect(() => {
         setCurrentIdx(0);
@@ -1255,22 +1259,28 @@
       }, [dialogSignature]);
 
       return (
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center" style={reserveStyle}>
           {dialogs.slice(0, currentIdx + 1).map((d, i) => (
-             <DialogBox
-               key={`${d.text}-${i}`}
-               speaker={d.speaker}
-               type={d.type}
-               text={d.text}
-               imageSide={d.imageSide || (d.type === 'haruka' ? 'right' : 'left')}
-               onFinish={() => {
-                 if (i === currentIdx && currentIdx < dialogs.length - 1) {
-                   setCurrentIdx(currentIdx + 1);
-                 } else if (i === dialogs.length - 1) {
-                   setAllFinished(true);
-                 }
-               }}
-             />
+             <React.Fragment key={`${d.text}-${i}`}>
+               <DialogBox
+                 speaker={d.speaker}
+                 type={d.type}
+                 text={d.text}
+                 imageSide={d.imageSide || (d.type === 'haruka' ? 'right' : 'left')}
+                 onFinish={() => {
+                   if (i === currentIdx && currentIdx < dialogs.length - 1) {
+                     setCurrentIdx(currentIdx + 1);
+                   } else if (i === dialogs.length - 1) {
+                     setAllFinished(true);
+                   }
+                 }}
+               />
+               {afterDialog[i] && (
+                 <div className="w-full animate-fade-in">
+                   {afterDialog[i]}
+                 </div>
+               )}
+             </React.Fragment>
           ))}
           {allFinished && (
             <div className="w-full animate-fade-in mt-4">
@@ -2045,6 +2055,7 @@
 
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
       const [newMemory, setNewMemory] = useState({ age: APP_CONFIG.memoryStartAge, event: '', satisfaction: 0 });
+      const [memoryEditId, setMemoryEditId] = useState(null);
       const [memoryStep, setMemoryStep] = useLocalStorage('cq_memory_step', 0);
       const [chartInsight, setChartInsight] = useLocalStorage('cq_chart_insight', '');
       const [showRestPrompt, setShowRestPrompt] = useState(false);
@@ -2072,6 +2083,7 @@
       const [showImportBox, setShowImportBox] = useState(false);
       const [importText, setImportText] = useState('');
       const [importMessage, setImportMessage] = useState('');
+      const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -2200,10 +2212,11 @@
         setShowRestPrompt(false);
         setIsInputPhase(false);
         if (next === 'intro') setIntroStep(0);
-        if (next === 'memory' && memories.length === 0) {
+        if (next === 'memory') {
           setMemoryStep(0);
           const suggestedAges = getSuggestedAges();
           setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
+          setMemoryEditId(null);
         }
         if (next === 'will') setWillStep(0);
         if (next === 'must') {
@@ -2262,10 +2275,11 @@
         scrollTop();
         setShowRestPrompt(false);
         setIsInputPhase(false);
-        if (target === 'memory' && memories.length === 0) {
+        if (target === 'memory') {
           const suggestedAges = getSuggestedAges();
           setMemoryStep(0);
           setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
+          setMemoryEditId(null);
         }
         setScene(target);
       };
@@ -2317,6 +2331,7 @@
         if (scene === 'memory') {
           if (isInputPhase) {
             setIsInputPhase(false);
+            setMemoryEditId(null);
             return;
           }
           if (memoryStep > 0) {
@@ -2324,6 +2339,7 @@
             const suggestedAges = getSuggestedAges();
             setMemoryStep(prevStep);
             setNewMemory({ age: suggestedAges[prevStep] || APP_CONFIG.memoryStartAge, event: '', satisfaction: 0 });
+            setMemoryEditId(null);
             return;
           }
           setScene('can');
@@ -2450,10 +2466,24 @@
       const handleAddMemory = () => {
         const memoryAge = Number(newMemory.age || APP_CONFIG.memoryStartAge);
         if (!newMemory.event || !memoryAge) return;
-        setMemories([...memories, { ...newMemory, id: Date.now(), age: memoryAge, satisfaction: Number(newMemory.satisfaction) }]);
+        const memoryPayload = {
+          ...newMemory,
+          age: memoryAge,
+          satisfaction: Number(newMemory.satisfaction)
+        };
+        if (memoryEditId) {
+          setMemories(memories.map(memory => (
+            memory.id === memoryEditId
+              ? { ...memory, ...memoryPayload, id: memory.id }
+              : memory
+          )));
+        } else {
+          setMemories([...memories, { ...memoryPayload, id: Date.now() }]);
+        }
         const nextStep = memoryStep + 1;
         setMemoryStep(nextStep);
         setIsInputPhase(false);
+        setMemoryEditId(null);
 
         if (nextStep < 5) {
           const suggestedAges = getSuggestedAges();
@@ -2467,6 +2497,7 @@
         const nextStep = memoryStep + 1;
         setMemoryStep(nextStep);
         setIsInputPhase(false);
+        setMemoryEditId(null);
 
         if (nextStep < 5) {
           const suggestedAges = getSuggestedAges();
@@ -2476,7 +2507,35 @@
         }
       };
 
-      const handleRemoveMemory = (id) => setMemories(memories.filter(m => m.id !== id));
+      const handleRemoveMemory = (id) => {
+        setMemories(memories.filter(m => m.id !== id));
+        if (memoryEditId === id) setMemoryEditId(null);
+      };
+
+      const handleKeepMemory = () => {
+        handleSkipMemory();
+      };
+
+      const handleRewriteMemory = (memory) => {
+        setMemoryEditId(memory.id);
+        setNewMemory({
+          age: memory.age,
+          event: memory.event,
+          satisfaction: memory.satisfaction
+        });
+        setIsInputPhase(true);
+        scrollTop();
+      };
+
+      const handleReviewMemoriesFromChart = () => {
+        const suggestedAges = getSuggestedAges();
+        scrollTop();
+        setMemoryStep(0);
+        setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
+        setMemoryEditId(null);
+        setIsInputPhase(false);
+        setScene('memory');
+      };
 
       const toggleTenYearWish = (wish) => {
         setWillTenYears(current => (
@@ -2753,7 +2812,39 @@
               <>
                 {introStep === 0 && (
                   <div className="w-full max-w-2xl text-center animate-fade-in">
-                    <DialogBox speaker={APP_CONFIG.char1NameFull} type={APP_CONFIG.char1Type} text="「これはスマホでもできるが、できれば魔法箱（パソコン）のおおきな画面でやったほうがいいのじゃー。」" />
+                    <DialogGroup dialogs={[
+                      {
+                        speaker: APP_CONFIG.char1NameFull,
+                        type: APP_CONFIG.char1Type,
+                        text: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていくのじゃ。\n『旅の記録』では、これまでの冒険をライフラインチャートとして振り返ることもできるのじゃー。」"
+                      },
+                      {
+                        speaker: APP_CONFIG.char2NameShort,
+                        type: APP_CONFIG.char2Type,
+                        imageSide: "left",
+                        text: "「少し時間をとって、じっくり自分と向き合ってみてくださいね。\nだいたい30分くらいが目安です。スマホでも使えますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
+                      }
+                    ]} reserveDialogSlots={4} afterDialog={{
+                      0: (
+                        <button
+                          type="button"
+                          onClick={() => setIntroPreviewOpen(true)}
+                          className="group mb-4 block w-full overflow-hidden rounded-lg border-2 border-yellow-500 bg-black bg-opacity-70 p-2 text-left shadow-xl transition-all hover:border-yellow-300 hover:bg-opacity-80"
+                        >
+                          <img
+                            src={APP_CONFIG.introResultPreviewImg}
+                            alt="このアプリで作成されるあなたの物語まとめの例"
+                            className="max-h-72 w-full rounded border border-gray-700 object-cover object-top"
+                            draggable="false"
+                          />
+                          <span className="mt-2 flex items-center justify-center gap-2 text-xs font-bold text-yellow-200 group-hover:text-white">
+                            <i className="fa-solid fa-magnifying-glass-plus"></i> クリックで拡大
+                          </span>
+                        </button>
+                      )
+                    }}>
+                      <></>
+                    </DialogGroup>
                     <p className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-65 px-4 py-3 text-left font-sans text-xs leading-relaxed text-yellow-100">
                       ※注意　LINEやX等のアプリ内ブラウザで開くとうまく動作できない事があります。chromeやEdge、safariなどの純正ブラウザで開くことをお勧めします。
                     </p>
@@ -2898,8 +2989,19 @@
         const magicCans = cans.filter(c => c.type === 'magic');
         const allyCans = cans.filter(c => c.type === 'ally');
         const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
+        const enteredName = (player.name || '').trim();
+        const sameNameNames = ['りふれむ', 'リフレム', 'はるか', 'ハルカ'];
+        const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
+        const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
+        const nameReaction = sameNameNames.includes(enteredName)
+          ? '同じ名前とは奇遇じゃな。'
+          : heroLikeNames.includes(enteredName)
+            ? 'ふむ…古の勇者のような名前じゃのう…。'
+            : lookalikeNames.includes(enteredName)
+              ? '…いや…まさかな。他人の空似じゃろう…。'
+              : 'よい面構えじゃ。';
         const dialog = isWeaponMagicStep
-          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。よい面構えじゃ。\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
+          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         if (canReviewing) {
@@ -3127,13 +3229,16 @@
         const currentAge = parseInt(player.age) || 30;
         const suggestedAges = getSuggestedAges();
         const pName = player.name || '〇〇';
+        const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
+        const existingStepMemory = memoryStep < 5 ? sortedMemories[memoryStep] : null;
+        const memoryAges = suggestedAges.map((age, index) => sortedMemories[index]?.age || age);
 
         const dialogSteps = [
-          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${suggestedAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }],
-          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${suggestedAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
-          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${suggestedAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
-          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${suggestedAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
-          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「最後は、最近（${currentAge}歳ごろ）のことについて教えてください！\n今の${pName}さんを形作っている出来事を知りたいです！」` }]
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${memoryAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }],
+          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${memoryAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${memoryAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
+          [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${memoryAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「最後は、最近（${memoryAges[4] || currentAge}歳ごろ）のことについて教えてください！\n今の${pName}さんを形作っている出来事を知りたいです！」` }]
         ];
 
         const isCompleted = memoryStep >= 5;
@@ -3144,18 +3249,44 @@
               <div className="animate-fade-in text-center">
                 {!isCompleted ? (
                   <DialogGroup dialogs={dialogSteps[memoryStep]}>
-                    <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                      <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
-                      </button>
-                      <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
-                        <i className="fa-regular fa-message"></i> 記憶を語る（{memoryStep + 1}/5）
-                      </button>
-                      <div className="w-48 hidden md:block order-3"></div>
-                    </div>
-                    <button onClick={handleSkipMemory} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
-                      この年代の記憶はスキップする
-                    </button>
+                    {existingStepMemory ? (
+                      <div className="mt-6 w-full animate-fade-in">
+                        <WindowBox title={`旅路の記録：${existingStepMemory.age}歳ごろ`} iconName="fa-solid fa-book-open">
+                          <div className="rounded border border-yellow-600 bg-gray-900 bg-opacity-80 p-4 text-left">
+                            <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                              <p className="text-lg font-bold text-yellow-300">{existingStepMemory.age}歳ごろ</p>
+                              <span className={`text-sm font-bold ${existingStepMemory.satisfaction > 0 ? 'text-blue-400' : existingStepMemory.satisfaction < 0 ? 'text-red-400' : 'text-gray-300'}`}>
+                                満足度 {existingStepMemory.satisfaction > 0 ? '+' : ''}{existingStepMemory.satisfaction}
+                              </span>
+                            </div>
+                            <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{existingStepMemory.event}</p>
+                          </div>
+                        </WindowBox>
+                        <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
+                          <button onClick={handleKeepMemory} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold">
+                            このままでいい <i className="fa-solid fa-arrow-right ml-1"></i>
+                          </button>
+                          <button onClick={() => handleRewriteMemory(existingStepMemory)} className="rpg-button text-base px-8 py-3">
+                            書き直す
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
+                          <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                            <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
+                          </button>
+                          <button onClick={() => { setMemoryEditId(null); setIsInputPhase(true); }} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
+                            <i className="fa-regular fa-message"></i> 記憶を語る（{memoryStep + 1}/5）
+                          </button>
+                          <div className="w-48 hidden md:block order-3"></div>
+                        </div>
+                        <button onClick={handleSkipMemory} className="text-gray-500 text-sm mt-6 hover:text-gray-300 block mx-auto transition-colors">
+                          この年代の記憶はスキップする
+                        </button>
+                      </>
+                    )}
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
@@ -3179,7 +3310,7 @@
             ) : (
               <div className="animate-fade-in w-full">
                 <div className="flex justify-between items-center mb-4">
-                  <button onClick={() => setIsInputPhase(false)} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
+                  <button onClick={() => { setMemoryEditId(null); setIsInputPhase(false); }} className="text-gray-400 hover:text-white flex items-center gap-2"><i className="fa-solid fa-arrow-right rotate-180"></i> 会話に戻る</button>
                 </div>
                 <WindowBox title={`記憶を語る：${newMemory.age || '追加'}歳ごろ`} iconName="fa-solid fa-book-open">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -3231,7 +3362,7 @@
                         <input type="range" min="-50" max="50" step="5" className="satisfaction-wiggle w-full accent-yellow-400" value={newMemory.satisfaction} onChange={e => setNewMemory({...newMemory, satisfaction: e.target.value})} />
                       </div>
                       <button onClick={handleAddMemory} className="rpg-button w-full mt-4 py-3 bg-blue-900 border-blue-400 hover:bg-blue-700 text-white font-bold">
-                        記憶を記録する
+                        {memoryEditId ? '記憶を更新する' : '記憶を記録する'}
                       </button>
                     </div>
 
@@ -3304,7 +3435,7 @@
               </div>
             ) : (
               <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                <button onClick={() => nextScene('memory')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                <button onClick={handleReviewMemoriesFromChart} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                   <i className="fa-solid fa-arrow-right rotate-180"></i> 記憶を語り直す
                 </button>
                 <button onClick={() => setShowRestPrompt(true)} className="rpg-button text-xl px-8 py-4 flex items-center justify-center gap-2 bg-white text-black font-bold order-1 md:order-2">
@@ -4386,6 +4517,26 @@
                 onSelectGuest={handleSelectOtherGuest}
                 onMore={handleMoreOtherGuest}
               />
+              {introPreviewOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85 p-4 print-hidden" onClick={() => setIntroPreviewOpen(false)}>
+                  <div className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-lg border-4 border-white bg-black p-3 shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() => setIntroPreviewOpen(false)}
+                      className="absolute right-3 top-3 z-10 rounded border-2 border-white bg-black bg-opacity-80 px-3 py-1 text-lg font-bold text-white hover:bg-white hover:text-black"
+                      aria-label="拡大画像を閉じる"
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                    <img
+                      src={APP_CONFIG.introResultPreviewImg}
+                      alt="このアプリで作成されるあなたの物語まとめの例"
+                      className="h-auto w-full rounded border border-gray-700"
+                      draggable="false"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {scene === 'summary' && renderAppNote()}
