@@ -138,12 +138,143 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .attention-blink,
-      .satisfaction-wiggle {
+      .satisfaction-wiggle,
+      .orange-aura-pulse,
+      .magic-particle {
         animation: none;
       }
+      .magic-particles { display: none; }
     }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
+    .orange-aura-pulse {
+      animation: orangeAuraPulse 1.75s ease-in-out infinite;
+      box-shadow: 0 0 12px rgba(251, 146, 60, 0.7), 0 0 28px rgba(251, 146, 60, 0.35);
+    }
+    @keyframes orangeAuraPulse {
+      0%, 100% {
+        border-color: #fb923c;
+        box-shadow: 0 0 8px rgba(251, 146, 60, 0.55), 0 0 20px rgba(251, 146, 60, 0.25);
+      }
+      50% {
+        border-color: #fed7aa;
+        box-shadow: 0 0 18px rgba(251, 146, 60, 0.95), 0 0 42px rgba(251, 146, 60, 0.55);
+      }
+    }
+    .magic-particles {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      transform: translateY(7vh);
+      animation: magicLayerRise 120s linear infinite;
+      will-change: transform;
+    }
+    .magic-particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 9999px;
+      background: rgba(255, 244, 190, 0.95);
+      box-shadow: 0 0 8px rgba(255, 244, 190, 0.9), 0 0 18px rgba(147, 197, 253, 0.45);
+      opacity: 0;
+      animation: fireflyFloat 9s ease-in-out infinite;
+    }
+    .magic-particle:nth-child(3n) {
+      width: 2px;
+      height: 2px;
+      box-shadow: 0 0 6px rgba(255, 244, 190, 0.8), 0 0 12px rgba(147, 197, 253, 0.35);
+    }
+    .magic-particle:nth-child(4n) {
+      width: 6px;
+      height: 6px;
+      box-shadow: 0 0 10px rgba(255, 244, 190, 0.95), 0 0 24px rgba(147, 197, 253, 0.5);
+    }
+    .magic-particle:nth-child(7n) {
+      width: 8px;
+      height: 8px;
+      opacity: 0;
+      box-shadow: 0 0 12px rgba(255, 244, 190, 0.9), 0 0 30px rgba(147, 197, 253, 0.45);
+    }
+    .magic-particle:nth-child(1) { left: 7%; top: 72%; animation-delay: -1.2s; animation-duration: 11s; }
+    .magic-particle:nth-child(2) { left: 18%; top: 28%; animation-delay: -5.4s; animation-duration: 13s; }
+    .magic-particle:nth-child(3) { left: 29%; top: 82%; animation-delay: -3.1s; animation-duration: 10s; }
+    .magic-particle:nth-child(4) { left: 41%; top: 18%; animation-delay: -7s; animation-duration: 12s; }
+    .magic-particle:nth-child(5) { left: 53%; top: 64%; animation-delay: -2.5s; animation-duration: 9.5s; }
+    .magic-particle:nth-child(6) { left: 66%; top: 34%; animation-delay: -6.2s; animation-duration: 14s; }
+    .magic-particle:nth-child(7) { left: 74%; top: 78%; animation-delay: -4.5s; animation-duration: 10.5s; }
+    .magic-particle:nth-child(8) { left: 86%; top: 22%; animation-delay: -8.5s; animation-duration: 12.5s; }
+    .magic-particle:nth-child(9) { left: 92%; top: 58%; animation-delay: -1.8s; animation-duration: 11.5s; }
+    .magic-particle:nth-child(10) { left: 12%; top: 47%; animation-delay: -9.2s; animation-duration: 13.5s; }
+    .magic-particle:nth-child(11) { left: 35%; top: 42%; animation-delay: -6.8s; animation-duration: 12.2s; }
+    .magic-particle:nth-child(12) { left: 61%; top: 86%; animation-delay: -3.9s; animation-duration: 10.8s; }
+    .magic-particle:nth-child(13) { left: 4%; top: 18%; animation-delay: -4.1s; animation-duration: 12.8s; }
+    .magic-particle:nth-child(14) { left: 23%; top: 61%; animation-delay: -8.1s; animation-duration: 9.8s; }
+    .magic-particle:nth-child(15) { left: 31%; top: 12%; animation-delay: -2.2s; animation-duration: 14.2s; }
+    .magic-particle:nth-child(16) { left: 46%; top: 76%; animation-delay: -10.4s; animation-duration: 12.9s; }
+    .magic-particle:nth-child(17) { left: 57%; top: 26%; animation-delay: -5.6s; animation-duration: 10.7s; }
+    .magic-particle:nth-child(18) { left: 69%; top: 12%; animation-delay: -7.8s; animation-duration: 13.8s; }
+    .magic-particle:nth-child(19) { left: 81%; top: 47%; animation-delay: -3.3s; animation-duration: 9.9s; }
+    .magic-particle:nth-child(20) { left: 96%; top: 84%; animation-delay: -6.6s; animation-duration: 12.4s; }
+    .magic-particle:nth-child(21) { left: 15%; top: 88%; animation-delay: -11.2s; animation-duration: 14.5s; }
+    .magic-particle:nth-child(22) { left: 27%; top: 36%; animation-delay: -1.5s; animation-duration: 10.3s; }
+    .magic-particle:nth-child(23) { left: 39%; top: 58%; animation-delay: -9.8s; animation-duration: 13.1s; }
+    .magic-particle:nth-child(24) { left: 49%; top: 7%; animation-delay: -4.8s; animation-duration: 11.7s; }
+    .magic-particle:nth-child(25) { left: 72%; top: 91%; animation-delay: -2.9s; animation-duration: 15s; }
+    .magic-particle:nth-child(26) { left: 79%; top: 9%; animation-delay: -12.1s; animation-duration: 10.9s; }
+    .magic-particle:nth-child(27) { left: 89%; top: 69%; animation-delay: -5.1s; animation-duration: 13.4s; }
+    .magic-particle:nth-child(28) { left: 98%; top: 32%; animation-delay: -8.9s; animation-duration: 11.2s; }
+    .magic-particle.rainbow {
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      animation-name: fireflyFloat, rainbowSpark;
+      animation-timing-function: ease-in-out, linear;
+      animation-iteration-count: infinite, infinite;
+      animation-duration: 12s, 4.5s;
+      box-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 24px rgba(168,85,247,0.65);
+    }
+    .magic-particle.rainbow:nth-child(2n) {
+      width: 7px;
+      height: 7px;
+    }
+    .magic-particle.rainbow:nth-child(3n) {
+      width: 3px;
+      height: 3px;
+    }
+    .magic-particle.rainbow:nth-child(29) { left: 9%; top: 36%; animation-delay: -2.4s, -0.5s; animation-duration: 13s, 4.2s; }
+    .magic-particle.rainbow:nth-child(30) { left: 21%; top: 14%; animation-delay: -7.7s, -2.1s; animation-duration: 11.6s, 4.8s; }
+    .magic-particle.rainbow:nth-child(31) { left: 44%; top: 93%; animation-delay: -5.2s, -1.4s; animation-duration: 14.4s, 4.4s; }
+    .magic-particle.rainbow:nth-child(32) { left: 63%; top: 51%; animation-delay: -9.1s, -3.2s; animation-duration: 12.7s, 5s; }
+    .magic-particle.rainbow:nth-child(33) { left: 84%; top: 39%; animation-delay: -3.8s, -0.9s; animation-duration: 10.8s, 4.6s; }
+    .magic-particle.rainbow:nth-child(34) { left: 94%; top: 17%; animation-delay: -11.5s, -2.8s; animation-duration: 13.6s, 4.9s; }
+    @keyframes fireflyFloat {
+      0%, 100% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.6); }
+      12% { opacity: 0.85; }
+      45% { opacity: 0.35; transform: translate3d(34px, -42px, 0) scale(1.15); }
+      70% { opacity: 1; transform: translate3d(-22px, -84px, 0) scale(0.85); }
+      88% { opacity: 0.2; }
+    }
+    @keyframes magicLayerRise {
+      from { transform: translateY(7vh); }
+      to { transform: translateY(-7vh); }
+    }
+    @keyframes rainbowSpark {
+      0% { background: #fca5a5; box-shadow: 0 0 10px #fca5a5, 0 0 24px rgba(252,165,165,0.65); }
+      20% { background: #fde68a; box-shadow: 0 0 10px #fde68a, 0 0 24px rgba(253,230,138,0.65); }
+      40% { background: #86efac; box-shadow: 0 0 10px #86efac, 0 0 24px rgba(134,239,172,0.65); }
+      60% { background: #93c5fd; box-shadow: 0 0 10px #93c5fd, 0 0 24px rgba(147,197,253,0.65); }
+      80% { background: #d8b4fe; box-shadow: 0 0 10px #d8b4fe, 0 0 24px rgba(216,180,254,0.65); }
+      100% { background: #f9a8d4; box-shadow: 0 0 10px #f9a8d4, 0 0 24px rgba(249,168,212,0.65); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .orange-aura-pulse,
+      .magic-particle {
+        animation: none !important;
+      }
+      .magic-particles { display: none; }
+    }
     .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
     .animate-memory-fade { animation: memoryFade 3s ease-out both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -1344,6 +1475,44 @@
       <p className="text-sm text-gray-600 text-center py-4">{children}</p>
     );
 
+    const InnMeaningModal = ({ onClose }) => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85 p-4 print-hidden" onClick={onClose}>
+        <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg border-4 border-yellow-500 bg-black p-4 text-white shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
+          <div className="mb-4 flex items-center justify-between border-b border-yellow-700 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="h-16 w-16 shrink-0 overflow-hidden rounded border-2 border-white bg-gradient-to-b from-amber-700 to-amber-950">
+                <img src={APP_CONFIG.char1Img} alt={APP_CONFIG.char1NameFull} className="h-full w-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-yellow-300">老魔法使い</p>
+                <h3 className="text-xl font-bold">{APP_CONFIG.char1NameShort}</h3>
+              </div>
+            </div>
+            <button type="button" onClick={onClose} className="rpg-button px-3 py-1 text-sm" aria-label="閉じる">
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div className="space-y-4 text-left text-sm leading-relaxed md:text-base">
+            <p>よいか、冒険者よ。</p>
+            <p>いきなり遠い未来を決めようとしても、人はなかなか動けぬものじゃ。<br />“いつか大きなことを成し遂げたい”と思っても、今の自分が何をすればよいのか分からなくなることがある。</p>
+            <p>じゃが、冒険とは本来、そういうものではない。</p>
+            <p>大魔王を倒すことだけが、冒険ではないのじゃ。<br />冒険の目的は、人それぞれでよい。<br />世界を救う者もおれば、まだ見ぬ町を訪ねたい者もおる。<br />誰かを助けたい者もおれば、自分の力を試したい者もおる。</p>
+            <p>大きな目標は、それぞれにあってよい。<br />いや、時に大きな目標は、お主の旅を照らす星にもなる。</p>
+            <p>じゃが、その大きな目標へ向かう前には、身近な目標がある。<br />目の前の<span className="font-bold text-blue-300">小さなスライム</span>に向き合う。<br />おぬしは、すこし強くなる。</p>
+            <p>見知らぬ街へゆく、<br />手ごわい相手が現れる。</p>
+            <p>少し強い武器を手に入れる。<br />例えば<span className="font-bold text-slate-50 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]">はがねの剣</span>は、次の一歩を支える頼もしい力になる。</p>
+            <p>大きな目標の前に、身近な目標があるからこそ、レベル上げもできる。<br /><span className="font-bold text-yellow-200 drop-shadow-[0_0_10px_rgba(250,204,21,0.95)]">ゴールド</span>稼ぎもできる。<br />今の自分に必要な武器や魔法も、少しずつ見えてくるのじゃ。</p>
+            <p>そして、<span className="font-bold text-emerald-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.95)]">回復魔法</span>を覚える。<br /><span className="font-bold text-pink-200 drop-shadow-[0_0_10px_rgba(244,114,182,0.95)]">仲間</span>に助けられる。<br />そうして経験値を得て、少しずつ行ける場所が増えていく。</p>
+            <p>人生も、キャリアも、それと同じなのじゃ。</p>
+            <p>この宿屋では、お主がこれまで手にしてきた武器や魔法、支えてくれた仲間を見つめ直す。<br />そして、歩んできた旅路をふり返り、これから向かう少し先のクエストを見つけていく。</p>
+            <p>大きな夢を、無理に語らなくてもよい。<br />いまの自分が一歩進むための“小さなクエスト”を見つければよいのじゃ。</p>
+            <p>だんだんできることが増えていく。<br />行ける場所が増えていく。<br />そして気づけば、お主だけの冒険の物語が、静かに動き出しているのじゃ。</p>
+          </div>
+        </div>
+      </div>
+    );
+
     const OtherTableModal = ({ state, onClose, onSelectGuest, onMore }) => {
       const selectedGuest = otherTableGuests.find(guest => guest.id === state.selectedGuestId);
       const lines = getOtherTableGuestLines(selectedGuest, state.context);
@@ -2084,6 +2253,7 @@
       const [importText, setImportText] = useState('');
       const [importMessage, setImportMessage] = useState('');
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
+      const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -2826,21 +2996,36 @@
                       }
                     ]} reserveDialogSlots={4} afterDialog={{
                       0: (
-                        <button
-                          type="button"
-                          onClick={() => setIntroPreviewOpen(true)}
-                          className="group mb-4 block w-full overflow-hidden rounded-lg border-2 border-yellow-500 bg-black bg-opacity-70 p-2 text-left shadow-xl transition-all hover:border-yellow-300 hover:bg-opacity-80"
-                        >
-                          <img
-                            src={APP_CONFIG.introResultPreviewImg}
-                            alt="このアプリで作成されるあなたの物語まとめの例"
-                            className="max-h-72 w-full rounded border border-gray-700 object-cover object-top"
-                            draggable="false"
-                          />
-                          <span className="mt-2 flex items-center justify-center gap-2 text-xs font-bold text-yellow-200 group-hover:text-white">
-                            <i className="fa-solid fa-magnifying-glass-plus"></i> クリックで拡大
-                          </span>
-                        </button>
+                        <div className="mb-4 space-y-4">
+                          <button
+                            type="button"
+                            onClick={() => setIntroPreviewOpen(true)}
+                            className="group relative block w-full overflow-hidden rounded-lg border-2 border-yellow-500 bg-black bg-opacity-70 p-2 text-left shadow-xl transition-all hover:border-yellow-300 hover:bg-opacity-80"
+                          >
+                            <img
+                              src={APP_CONFIG.introResultPreviewImg}
+                              alt="このアプリで作成されるあなたの物語まとめの例"
+                              className="max-h-72 w-full rounded border border-gray-700 object-cover object-top"
+                              draggable="false"
+                            />
+                            <div className="pointer-events-none absolute inset-4 flex items-center justify-center rounded bg-black bg-opacity-35 px-3 py-2 text-center text-lg font-bold leading-relaxed text-white md:text-2xl" style={{ textShadow: '0 0 10px rgba(0,0,0,0.95), 2px 2px 0 #000' }}>
+                              アプリをやると<br />
+                              チャートや振り返りを<br />
+                              まとめられるのじゃ
+                            </div>
+                            <span className="mt-2 flex min-h-[1.5rem] items-center justify-center gap-2 pb-1 text-xs font-bold leading-none text-yellow-200 group-hover:text-white">
+                              <i className="fa-solid fa-magnifying-glass-plus"></i> クリックで拡大
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setInnMeaningOpen(true)}
+                            className="rpg-button orange-aura-pulse inline-flex items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-6 py-3 text-base text-orange-100 hover:bg-orange-100 hover:text-black"
+                          >
+                            <i className="fa-solid fa-hat-wizard"></i>
+                            リフレムに、この宿屋の意味を聞く
+                          </button>
+                        </div>
                       )
                     }}>
                       <></>
@@ -4475,6 +4660,16 @@
           style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed' }}
         >
           <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
+          {(isOpeningScene || scene === 'summary') && (
+            <div className="magic-particles print-hidden" aria-hidden="true">
+              {Array.from({ length: 28 }, (_, index) => (
+                <span key={index} className="magic-particle"></span>
+              ))}
+              {Array.from({ length: 6 }, (_, index) => (
+                <span key={`rainbow-${index}`} className="magic-particle rainbow"></span>
+              ))}
+            </div>
+          )}
 
           <div className="pb-8 relative z-10 text-gray-100 max-w-5xl mx-auto flex flex-col min-h-[90vh] print-container">
             <div className="flex-1">
@@ -4517,6 +4712,9 @@
                 onSelectGuest={handleSelectOtherGuest}
                 onMore={handleMoreOtherGuest}
               />
+              {innMeaningOpen && (
+                <InnMeaningModal onClose={() => setInnMeaningOpen(false)} />
+              )}
               {introPreviewOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85 p-4 print-hidden" onClick={() => setIntroPreviewOpen(false)}>
                   <div className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-lg border-4 border-white bg-black p-3 shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
