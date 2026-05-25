@@ -147,6 +147,98 @@
     }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
+    .theme-cafe {
+      background-color: #fdf6e3 !important;
+      color: #1e293b !important;
+    }
+    .theme-cafe .rpg-button {
+      background: #4a3f35 !important;
+      color: #fdf6e3 !important;
+      border-color: #8d6e63 !important;
+      box-shadow: 0 2px 0 rgba(62, 39, 35, 0.22);
+    }
+    .theme-cafe .rpg-button:hover:not(:disabled) {
+      background: #1e293b !important;
+      color: #fff !important;
+      border-color: #1e293b !important;
+    }
+    .theme-cafe .bg-black,
+    .theme-cafe .bg-gray-900,
+    .theme-cafe .bg-gray-800 {
+      background-color: #fefce8 !important;
+    }
+    .theme-cafe .bg-opacity-40,
+    .theme-cafe .bg-opacity-50,
+    .theme-cafe .bg-opacity-55,
+    .theme-cafe .bg-opacity-60,
+    .theme-cafe .bg-opacity-65,
+    .theme-cafe .bg-opacity-70,
+    .theme-cafe .bg-opacity-75,
+    .theme-cafe .bg-opacity-80,
+    .theme-cafe .bg-opacity-85,
+    .theme-cafe .bg-opacity-95 {
+      --tw-bg-opacity: 0.92 !important;
+    }
+    .theme-cafe .text-white,
+    .theme-cafe .text-gray-100,
+    .theme-cafe .text-gray-200,
+    .theme-cafe .text-gray-300,
+    .theme-cafe .text-gray-400 {
+      color: #1e293b !important;
+    }
+    .theme-cafe .text-yellow-300,
+    .theme-cafe .text-yellow-400,
+    .theme-cafe .text-yellow-200 {
+      color: #6b3f15 !important;
+    }
+    .theme-cafe .border-white,
+    .theme-cafe .border-gray-700,
+    .theme-cafe .border-gray-600,
+    .theme-cafe .border-yellow-500,
+    .theme-cafe .border-yellow-600,
+    .theme-cafe .border-yellow-700 {
+      border-color: #8d6e63 !important;
+    }
+    .theme-cafe .rpg-input,
+    .theme-cafe .rpg-select {
+      background: #fffaf0 !important;
+      color: #1e293b !important;
+      border-color: #8d6e63 !important;
+      border-bottom-color: #8d6e63 !important;
+    }
+    .theme-cafe .rpg-input::placeholder {
+      color: #7c6a58 !important;
+    }
+    .theme-cafe .print-friendly {
+      background: #fefce8 !important;
+      color: #1e293b !important;
+      border-color: #8d6e63 !important;
+    }
+    .theme-cafe .theme-shadow-text {
+      text-shadow: none !important;
+    }
+    .theme-cafe .app-title-text {
+      color: #fff !important;
+      text-shadow: 3px 3px 0 #000 !important;
+    }
+    .theme-cafe .app-subtitle-text {
+      color: #d1d5db !important;
+      text-shadow: 1px 1px 0 #000 !important;
+    }
+    .theme-cafe .app-tagline-text {
+      color: #fde047 !important;
+      text-shadow: 2px 2px 0 #000 !important;
+    }
+    .theme-cafe .rpg-button {
+      background: #4a3f35 !important;
+      color: #fdf6e3 !important;
+      border-color: #8d6e63 !important;
+    }
+    .theme-cafe .rpg-button:hover:not(:disabled) {
+      background: #1e293b !important;
+      color: #fff !important;
+      border-color: #1e293b !important;
+    }
     .orange-aura-pulse {
       animation: orangeAuraPulse 1.75s ease-in-out infinite;
       box-shadow: 0 0 12px rgba(251, 146, 60, 0.7), 0 0 28px rgba(251, 146, 60, 0.35);
@@ -692,7 +784,7 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    const APP_CONFIG = {
+    const RPG_THEME_CONFIG = {
       appName: "キャリアの宿屋™",
       appSubtitle: "-RIESM™　RoleTRADE™クエスト-",
       appTagline: "～あなたの休息と、旅立ちに祝福を～",
@@ -726,8 +818,147 @@
         tavern: "https://ninin-cc.github.io//cq/img/sakaba.jpg",
         room: "https://ninin-cc.github.io//cq/img/heya.jpg",
         journey: "https://ninin-cc.github.io//cq/img/tabidachi.jpg"
+      },
+
+      colors: {
+        pageBg: "#000000",
+        baseText: "#f3f4f6",
+        windowBg: "#000000",
+        border: "#ffffff",
+        buttonBg: "#000000",
+        buttonText: "#ffffff",
+        buttonHoverBg: "#ffffff",
+        buttonHoverText: "#000000"
+      },
+
+      char1: {
+        nameFull: "老魔法使いリフレム",
+        nameShort: "リフレム",
+        role: "老魔法使い",
+        type: "reflem",
+        img: "https://ninin-cc.github.io/cq/img/rf.png",
+        dialogColor: "bg-amber-900 border-yellow-500",
+        dialogBg: "bg-amber-900",
+        portraitBg: "bg-gradient-to-b from-amber-700 to-amber-950"
+      },
+
+      char2: {
+        nameFull: "弟子 ハルカ",
+        nameShort: "ハルカ",
+        role: "弟子",
+        type: "haruka",
+        img: "https://ninin-cc.github.io/cq/img/hr.png",
+        dialogColor: "bg-rose-900 border-rose-400",
+        dialogBg: "bg-rose-900",
+        portraitBg: "bg-gradient-to-b from-rose-700 to-rose-950"
+      },
+
+      scenarioText: {
+        intro: {
+          firstGuide: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていくのじゃ。\n『旅の記録』では、これまでの冒険をライフラインチャートとして振り返ることもできるのじゃー。」",
+          secondGuide: "「少し時間をとって、じっくり自分と向き合ってみてくださいね。\nだいたい30分くらいが目安です。スマホでも使えますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
+        },
+        can: {},
+        memory: {},
+        chart: {},
+        will: {},
+        must: {},
+        summary: {}
       }
     };
+
+    const createThemeConfig = (overrides = {}) => {
+      const char1 = {
+        ...RPG_THEME_CONFIG.char1,
+        ...(overrides.char1 || {})
+      };
+      const char2 = {
+        ...RPG_THEME_CONFIG.char2,
+        ...(overrides.char2 || {})
+      };
+
+      return {
+        ...RPG_THEME_CONFIG,
+        ...overrides,
+        backgroundImages: {
+          ...RPG_THEME_CONFIG.backgroundImages,
+          ...(overrides.backgroundImages || {})
+        },
+        colors: {
+          ...RPG_THEME_CONFIG.colors,
+          ...(overrides.colors || {})
+        },
+        char1,
+        char2,
+        char1NameFull: char1.nameFull,
+        char1NameShort: char1.nameShort,
+        char1Type: char1.type,
+        char1Img: char1.img,
+        char2NameFull: char2.nameFull,
+        char2NameShort: char2.nameShort,
+        char2Type: char2.type,
+        char2Img: char2.img,
+        scenarioText: {
+          ...RPG_THEME_CONFIG.scenarioText,
+          ...(overrides.scenarioText || {}),
+          intro: {
+            ...RPG_THEME_CONFIG.scenarioText.intro,
+            ...((overrides.scenarioText || {}).intro || {})
+          }
+        }
+      };
+    };
+
+    const THEMES = {
+      rpg: createThemeConfig({
+        themeId: "rpg",
+        themeLabel: "RPG風",
+        nextThemeLabel: "喫茶店風"
+      }),
+      cafe: createThemeConfig({
+        themeId: "cafe",
+        themeLabel: "喫茶店風",
+        nextThemeLabel: "RPG風",
+        appName: "キャリアカフェ™",
+        documentTitle: "キャリアカフェ™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～",
+        exportTitle: "キャリアカフェ™ - RIESM™ RoleTRADE™クエスト -",
+        backgroundImages: {
+          tavern: "https://ninin-cc.github.io/cq/img/cafei.jpg",
+          room: "https://ninin-cc.github.io/cq/img/jishitsu.jpg",
+          journey: "https://ninin-cc.github.io/cq/img/cafee.jpg"
+        },
+        colors: {
+          pageBg: "#fdf6e3",
+          baseText: "#1e293b",
+          windowBg: "#fefce8",
+          border: "#8d6e63",
+          buttonBg: "#4a3f35",
+          buttonText: "#fdf6e3",
+          buttonHoverBg: "#1e293b",
+          buttonHoverText: "#ffffff"
+        },
+        char1: {
+          nameFull: "オーナー",
+          nameShort: "オーナー",
+          role: "喫茶店のオーナー",
+          img: "https://ninin-cc.github.io/cq/img/mt.png",
+          dialogColor: "bg-[#fefce8] border-[#8d6e63]",
+          dialogBg: "bg-[#fefce8]",
+          portraitBg: "bg-gradient-to-b from-[#f6e7bf] to-[#d7b98f]"
+        },
+        char2: {
+          nameFull: "理澄",
+          nameShort: "理澄",
+          role: "看板娘",
+          img: "https://ninin-cc.github.io/cq/img/rz.png",
+          dialogColor: "bg-[#fefce8] border-[#8d6e63]",
+          dialogBg: "bg-[#fefce8]",
+          portraitBg: "bg-gradient-to-b from-[#f6e7bf] to-[#d7b98f]"
+        }
+      })
+    };
+
+    let APP_CONFIG = THEMES.rpg;
 
     document.title = APP_CONFIG.documentTitle;
 
@@ -735,6 +966,21 @@
       const isChar2 = type === APP_CONFIG.char2Type;
       const configKey = isChar2 ? 'char2' : 'char1';
       return APP_CONFIG[`${configKey}Name${style === 'full' ? 'Full' : 'Short'}`];
+    };
+
+    const applyThemeText = (value = '') => {
+      if (APP_CONFIG.themeId !== 'cafe') return value;
+      return String(value)
+        .replace(/リフレム/g, APP_CONFIG.char1NameShort)
+        .replace(/ハルカ/g, APP_CONFIG.char2NameShort)
+        .replace(/おぬし/g, 'あなた')
+        .replace(/お主/g, 'あなた')
+        .replace(/のじゃー。/g, 'んだよ。')
+        .replace(/のじゃー/g, 'んだよ')
+        .replace(/のじゃよ。/g, 'んだよ。')
+        .replace(/のじゃよ/g, 'んだよ')
+        .replace(/のじゃ。/g, 'んだ。')
+        .replace(/のじゃ/g, 'んだ');
     };
 
     const encodeBase64Unicode = (text) => {
@@ -1259,7 +1505,12 @@
       </div>
     );
 
+    const renderTextLines = (value) => (
+      value.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)
+    );
+
     const DialogBox = ({ speaker, type = 'reflem', text, onFinish, imageSide = 'left' }) => {
+      const themedText = applyThemeText(text);
       const [displayedText, setDisplayedText] = useState("");
       const [isFinished, setIsFinished] = useState(false);
       const finishedRef = useRef(false);
@@ -1279,19 +1530,19 @@
 
         const timer = setInterval(() => {
           index++;
-          setDisplayedText(text.slice(0, index));
-          if (index >= text.length) {
+          setDisplayedText(themedText.slice(0, index));
+          if (index >= themedText.length) {
             clearInterval(timer);
             finishOnce();
           }
         }, 40);
 
         return () => clearInterval(timer);
-      }, [text]);
+      }, [themedText]);
 
       const handleSkip = () => {
         if (!finishedRef.current) {
-          setDisplayedText(text);
+          setDisplayedText(themedText);
           finishedRef.current = true;
           setIsFinished(true);
           if (onFinish) onFinish();
@@ -1299,10 +1550,10 @@
       };
 
       const config = {
-        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: APP_CONFIG.char1Img },
-        haruka: { color: 'bg-rose-900 border-rose-400', imgBg: 'bg-gradient-to-b from-rose-700 to-rose-950', img: APP_CONFIG.char2Img }
+        [APP_CONFIG.char1Type]: { color: APP_CONFIG.char1.dialogColor, imgBg: APP_CONFIG.char1.portraitBg, img: APP_CONFIG.char1.img },
+        [APP_CONFIG.char2Type]: { color: APP_CONFIG.char2.dialogColor, imgBg: APP_CONFIG.char2.portraitBg, img: APP_CONFIG.char2.img }
       };
-      const { color, imgBg, img } = config[type] || config.reflem;
+      const { color, imgBg, img } = config[type] || config[APP_CONFIG.char1Type];
       const isImageRight = imageSide === 'right';
 
       return (
@@ -1310,8 +1561,8 @@
           <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
-          <div className={`flex items-center gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
-            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative`}>
+          <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
+            <div className={`shrink-0 self-start w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative`}>
               <img
                 src={img}
                 alt={speaker}
@@ -1323,8 +1574,16 @@
               />
             </div>
             <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left">
-              {displayedText.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
-              {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+              <div className="grid">
+                <div className="invisible col-start-1 row-start-1 pointer-events-none select-none" aria-hidden="true">
+                  {renderTextLines(themedText)}
+                  <span className="ml-1">▼</span>
+                </div>
+                <div className="col-start-1 row-start-1">
+                  {renderTextLines(displayedText)}
+                  {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1332,8 +1591,9 @@
     };
 
     const MemoryDialogBox = ({ speaker, text }) => {
+      const themedText = applyThemeText(text);
       const config = {
-        reflem: { color: 'bg-amber-900 border-yellow-500', imgBg: 'bg-gradient-to-b from-amber-700 to-amber-950', img: APP_CONFIG.char1Img }
+        reflem: { color: APP_CONFIG.char1.dialogColor, imgBg: APP_CONFIG.char1.portraitBg, img: APP_CONFIG.char1.img }
       };
       const { color, imgBg, img } = config.reflem;
 
@@ -1342,12 +1602,12 @@
           <div className={`absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
-          <div className="flex items-center gap-4 md:gap-6 mt-1 md:mt-2">
-            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-80`}>
+          <div className="flex items-start gap-4 md:gap-6 mt-1 md:mt-2">
+            <div className={`shrink-0 self-start w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-80`}>
               <img src={img} alt={speaker} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
             </div>
             <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left italic">
-              {text.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+              {renderTextLines(themedText)}
             </div>
           </div>
         </div>
@@ -1355,21 +1615,22 @@
     };
 
     const MemoryHarukaBox = ({ speaker, text }) => {
-      const color = 'bg-rose-900 border-rose-400';
-      const imgBg = 'bg-gradient-to-b from-rose-700 to-rose-950';
-      const img = APP_CONFIG.char2Img;
+      const themedText = applyThemeText(text);
+      const color = APP_CONFIG.char2.dialogColor;
+      const imgBg = APP_CONFIG.char2.portraitBg;
+      const img = APP_CONFIG.char2.img;
 
       return (
         <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
           <div className="absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
             {speaker}
           </div>
-          <div className="flex flex-row-reverse items-center gap-4 md:gap-6 mt-1 md:mt-2">
-            <div className={`shrink-0 w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-85`}>
+          <div className="flex flex-row-reverse items-start gap-4 md:gap-6 mt-1 md:mt-2">
+            <div className={`shrink-0 self-start w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative opacity-85`}>
               <img src={img} alt={speaker} className="w-full h-full object-contain" style={{ imageRendering: 'pixelated', transform: 'scaleX(-1) scale(1.1)' }} />
             </div>
             <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left italic">
-              {text.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
+              {renderTextLines(themedText)}
             </div>
           </div>
         </div>
@@ -1423,6 +1684,7 @@
     };
 
     const NarrationBox = ({ text, iconName, onFinish }) => {
+      const themedText = applyThemeText(text);
       const [displayedText, setDisplayedText] = useState("");
       const [isFinished, setIsFinished] = useState(false);
       const finishedRef = useRef(false);
@@ -1442,18 +1704,18 @@
 
         const timer = setInterval(() => {
           index++;
-          setDisplayedText(text.slice(0, index));
-          if (index >= text.length) {
+          setDisplayedText(themedText.slice(0, index));
+          if (index >= themedText.length) {
             clearInterval(timer);
             finishOnce();
           }
         }, 40);
         return () => clearInterval(timer);
-      }, [text]);
+      }, [themedText]);
 
       const handleSkip = () => {
         if (!finishedRef.current) {
-          setDisplayedText(text);
+          setDisplayedText(themedText);
           finishedRef.current = true;
           setIsFinished(true);
           if (onFinish) onFinish();
@@ -1464,8 +1726,16 @@
         <div onClick={handleSkip} className="w-full max-w-2xl mx-auto bg-black bg-opacity-80 border-y-2 border-gray-500 py-6 px-6 mb-8 text-left text-gray-300 leading-loose italic flex flex-col items-start animate-fade-in cursor-pointer">
           {iconName && <i className={`${iconName} mb-4 text-gray-500 text-2xl self-center`}></i>}
           <div className="w-full">
-            {displayedText.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
-            {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+            <div className="grid">
+              <div className="invisible col-start-1 row-start-1 pointer-events-none select-none" aria-hidden="true">
+                {renderTextLines(themedText)}
+                <span className="ml-1">▼</span>
+              </div>
+              <div className="col-start-1 row-start-1">
+                {renderTextLines(displayedText)}
+                {!isFinished && <span className="animate-pulse ml-1">▼</span>}
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -1475,7 +1745,10 @@
       <p className="text-sm text-gray-600 text-center py-4">{children}</p>
     );
 
-    const InnMeaningModal = ({ onClose }) => (
+    const InnMeaningModal = ({ onClose, playerName = '' }) => {
+      const displayName = (playerName || '').trim();
+
+      return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85 p-4 print-hidden" onClick={onClose}>
         <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg border-4 border-yellow-500 bg-black p-4 text-white shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
           <div className="mb-4 flex items-center justify-between border-b border-yellow-700 pb-3">
@@ -1484,7 +1757,7 @@
                 <img src={APP_CONFIG.char1Img} alt={APP_CONFIG.char1NameFull} className="h-full w-full object-contain scale-110" style={{ imageRendering: 'pixelated' }} />
               </div>
               <div className="text-left">
-                <p className="text-xs text-yellow-300">老魔法使い</p>
+                <p className="text-xs text-yellow-300">{APP_CONFIG.char1.role}</p>
                 <h3 className="text-xl font-bold">{APP_CONFIG.char1NameShort}</h3>
               </div>
             </div>
@@ -1494,30 +1767,47 @@
           </div>
 
           <div className="space-y-4 text-left text-sm leading-relaxed md:text-base">
-            <p>よいか、冒険者よ。</p>
-            <p>いきなり遠い未来を決めようとしても、人はなかなか動けぬものじゃ。<br />“いつか大きなことを成し遂げたい”と思っても、今の自分が何をすればよいのか分からなくなることがある。</p>
+            <p>{applyThemeText(displayName ? `よいか、${displayName}よ。` : 'よいか、冒険者よ。')}</p>
+            <p>{renderTextLines(applyThemeText('いきなり遠い未来を決めようとしても、人はなかなか動けぬものじゃ。\n“いつか大きなことを成し遂げたい”と思っても、今の自分が何をすればよいのか分からなくなることがある。'))}</p>
             <p>じゃが、冒険とは本来、そういうものではない。</p>
-            <p>大魔王を倒すことだけが、冒険ではないのじゃ。</p>
+            <p>{applyThemeText('大魔王を倒すことだけが、冒険ではないのじゃ。')}</p>
             <img src="https://ninin-cc.github.io/cq/img/ryu.jpg" alt="大きな冒険の象徴" className="mx-auto w-4/5 rounded object-cover shadow-lg" draggable="false" />
             <p>たしかに、遠くにそびえる強大な敵を目指す旅もある。<br />世界を救う物語も、立派な冒険じゃ。</p>
             <p>じゃが、それだけが冒険ではない。</p>
             <p>冒険の目的は、人それぞれでよい。<br />世界を救う者もおれば、まだ見ぬ町を訪ねたい者もおる。<br />誰かを助けたい者もおれば、自分の力を試したい者もおる。</p>
-            <p>大きな目標は、それぞれにあってよい。<br />いや、時に大きな目標は、お主の旅を照らす星にもなる。</p>
-            <p>じゃが、その大きな目標へ向かう前には、身近な目標がある。<br />目の前の<span className="font-bold text-blue-300">小さなスライム</span>に向き合う。<br />おぬしは、すこし強くなる。</p>
+            <p>{renderTextLines(applyThemeText('大きな目標は、それぞれにあってよい。\nいや、時に大きな目標は、お主の旅を照らす星にもなる。'))}</p>
+            <p>
+              {applyThemeText('じゃが、その大きな目標へ向かう前には、身近な目標がある。')}<br />
+              {applyThemeText('目の前の')}<span className="font-bold text-blue-300">小さなスライム</span>{applyThemeText('に向き合う。')}<br />
+              {applyThemeText('おぬしは、すこし強くなる。')}
+            </p>
             <img src="https://ninin-cc.github.io/cq/img/lake.jpg" alt="旅の途中で出会う景色" className="mx-auto w-4/5 rounded object-cover shadow-lg" draggable="false" />
             <p>見知らぬ街へゆく、<br />手ごわい相手が現れる。</p>
             <p>少し強い武器を手に入れる。<br />例えば<span className="font-bold text-slate-50 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]">はがねの剣</span>は、次の一歩を支える頼もしい力になる。</p>
-            <p>大きな目標の前に、身近な目標があるからこそ、<br />レベル上げもできる。<br /><span className="font-bold text-yellow-200 drop-shadow-[0_0_10px_rgba(250,204,21,0.95)]">ゴールド</span>稼ぎもできる。<br />今の自分に必要な武器や魔法も、少しずつ見えてくるのじゃ。</p>
+            <p>大きな目標の前に、身近な目標があるからこそ、<br />レベル上げもできる。<br /><span className="font-bold text-yellow-200 drop-shadow-[0_0_10px_rgba(250,204,21,0.95)]">ゴールド</span>稼ぎもできる。<br />{applyThemeText('今の自分に必要な武器や魔法も、少しずつ見えてくるのじゃ。')}</p>
             <p>そして、<span className="font-bold text-emerald-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.95)]">回復魔法</span>を覚える。<br /><span className="font-bold text-pink-200 drop-shadow-[0_0_10px_rgba(244,114,182,0.95)]">仲間</span>に助けられる。<br />そうして経験値を得て、少しずつ行ける場所が増えていく。</p>
-            <p>人生も、キャリアも、それと同じなのじゃ。</p>
+            <p>{applyThemeText('人生も、キャリアも、それと同じなのじゃ。')}</p>
             <img src="https://ninin-cc.github.io/cq/img/sakusen.jpg" alt="作戦を考える冒険者たち" className="mx-auto w-4/5 rounded object-cover shadow-lg" draggable="false" />
-            <p>この宿屋では、お主がこれまで手にしてきた武器や魔法、支えてくれた仲間を見つめ直す。<br />そして、歩んできた旅路をふり返り、これから向かう少し先のクエストを見つけていく。</p>
-            <p>大きな夢を、無理に語らなくてもよい。<br />いまの自分が一歩進むための“小さなクエスト”を見つければよいのじゃ。</p>
-            <p>だんだんできることが増えていく。<br />行ける場所が増えていく。<br />そして気づけば、お主だけの冒険の物語が、静かに動き出しているのじゃ。</p>
+            <p>{renderTextLines(applyThemeText('この宿屋では、お主がこれまで手にしてきた武器や魔法、支えてくれた仲間を見つめ直す。\nそして、歩んできた旅路をふり返り、これから向かう少し先のクエストを見つけていく。'))}</p>
+            <p>{renderTextLines(applyThemeText('大きな夢を、無理に語らなくてもよい。\nいまの自分が一歩進むための“小さなクエスト”を見つければよいのじゃ。'))}</p>
+            <p>
+              だんだんできることが増えていく。<br />
+              行ける場所が増えていく。<br />
+              {displayName
+                ? <>{applyThemeText(`そして気づけば、お主だけの…。${displayName}だけの冒険の物語が、静かに動き出しているのじゃ。`)}</>
+                : <>{applyThemeText('そして気づけば、お主だけの冒険の物語が、静かに動き出しているのじゃ。')}</>}
+            </p>
+            <div aria-hidden="true" className="leading-relaxed"><br /><br /><br /><br /><br /></div>
+            <div className="text-center">
+              <button type="button" onClick={onClose} className="rpg-button px-10 py-3 text-base">
+                閉じる
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    );
+      );
+    };
 
     const OtherTableModal = ({ state, onClose, onSelectGuest, onMore }) => {
       const selectedGuest = otherTableGuests.find(guest => guest.id === state.selectedGuestId);
@@ -2215,6 +2505,10 @@
     const App = () => {
       useCasualSourceGuard();
 
+      const [currentTheme, setCurrentTheme] = useLocalStorage('cq_theme', 'rpg');
+      const activeThemeKey = THEMES[currentTheme] ? currentTheme : 'rpg';
+      APP_CONFIG = THEMES[activeThemeKey];
+
       const [scene, setScene] = useLocalStorage('cq_scene', 'intro');
       const [introStep, setIntroStep] = useLocalStorage('cq_intro_step', 0);
       const [isInputPhase, setIsInputPhase] = useLocalStorage('cq_input_phase', false);
@@ -2260,6 +2554,7 @@
       const [importMessage, setImportMessage] = useState('');
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
+      const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -2276,6 +2571,14 @@
         { length: 80 - 15 + 1 },
         (_, index) => 15 + index
       );
+
+      useEffect(() => {
+        if (!THEMES[currentTheme]) {
+          setCurrentTheme('rpg');
+          return;
+        }
+        document.title = APP_CONFIG.documentTitle;
+      }, [currentTheme]);
 
       useEffect(() => {
         if (!player.age) {
@@ -2976,6 +3279,29 @@
         }
       };
 
+      const renderIntroPreviewCard = (className = '') => (
+        <button
+          type="button"
+          onClick={() => setIntroPreviewOpen(true)}
+          className={`group relative block w-full overflow-hidden rounded-lg border-2 border-yellow-500 bg-black bg-opacity-70 p-2 text-left shadow-xl transition-all hover:border-yellow-300 hover:bg-opacity-80 ${className}`}
+        >
+          <img
+            src={APP_CONFIG.introResultPreviewImg}
+            alt="このアプリで作成されるあなたの物語まとめの例"
+            className="max-h-72 w-full rounded border border-gray-700 object-cover object-top"
+            draggable="false"
+          />
+          <div className="pointer-events-none absolute inset-4 flex items-center justify-center rounded bg-black bg-opacity-35 px-3 py-2 text-center text-lg font-bold leading-relaxed text-white md:text-2xl" style={{ textShadow: '0 0 10px rgba(0,0,0,0.95), 2px 2px 0 #000' }}>
+            アプリで<br />
+            チャートや振り返りを<br />
+            {applyThemeText('まとめられるのじゃ')}
+          </div>
+          <span className="mt-2 flex min-h-[1.5rem] items-center justify-center gap-2 pb-1 text-xs font-bold leading-none text-yellow-200 group-hover:text-white">
+            <i className="fa-solid fa-magnifying-glass-plus"></i> クリックで拡大
+          </span>
+        </button>
+      );
+
       const renderIntro = () => {
         const dialogsIntro = [
           { speaker: APP_CONFIG.char1NameFull, type: APP_CONFIG.char1Type, text: `「ほっほっほ、見ない顔じゃな。わしは魔法使いの${APP_CONFIG.char1NameShort}。こちらは${APP_CONFIG.char2NameFull}じゃ。」` },
@@ -2992,44 +3318,25 @@
                       {
                         speaker: APP_CONFIG.char1NameFull,
                         type: APP_CONFIG.char1Type,
-                        text: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていくのじゃ。\n『旅の記録』では、これまでの冒険をライフラインチャートとして振り返ることもできるのじゃー。」"
+                        text: APP_CONFIG.scenarioText.intro.firstGuide
                       },
                       {
                         speaker: APP_CONFIG.char2NameShort,
                         type: APP_CONFIG.char2Type,
                         imageSide: "left",
-                        text: "「少し時間をとって、じっくり自分と向き合ってみてくださいね。\nだいたい30分くらいが目安です。スマホでも使えますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
+                        text: APP_CONFIG.scenarioText.intro.secondGuide
                       }
                     ]} reserveDialogSlots={4} afterDialog={{
                       0: (
                         <div className="mb-4 space-y-4">
-                          <button
-                            type="button"
-                            onClick={() => setIntroPreviewOpen(true)}
-                            className="group relative block w-full overflow-hidden rounded-lg border-2 border-yellow-500 bg-black bg-opacity-70 p-2 text-left shadow-xl transition-all hover:border-yellow-300 hover:bg-opacity-80"
-                          >
-                            <img
-                              src={APP_CONFIG.introResultPreviewImg}
-                              alt="このアプリで作成されるあなたの物語まとめの例"
-                              className="max-h-72 w-full rounded border border-gray-700 object-cover object-top"
-                              draggable="false"
-                            />
-                            <div className="pointer-events-none absolute inset-4 flex items-center justify-center rounded bg-black bg-opacity-35 px-3 py-2 text-center text-lg font-bold leading-relaxed text-white md:text-2xl" style={{ textShadow: '0 0 10px rgba(0,0,0,0.95), 2px 2px 0 #000' }}>
-                              アプリで<br />
-                              チャートや振り返りを<br />
-                              まとめられるのじゃ
-                            </div>
-                            <span className="mt-2 flex min-h-[1.5rem] items-center justify-center gap-2 pb-1 text-xs font-bold leading-none text-yellow-200 group-hover:text-white">
-                              <i className="fa-solid fa-magnifying-glass-plus"></i> クリックで拡大
-                            </span>
-                          </button>
+                          {renderIntroPreviewCard()}
                           <button
                             type="button"
                             onClick={() => setInnMeaningOpen(true)}
                             className="rpg-button orange-aura-pulse inline-flex items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-6 py-3 text-base text-orange-100 hover:bg-orange-100 hover:text-black"
                           >
                             <i className="fa-solid fa-hat-wizard"></i>
-                            リフレムに、この宿屋の意味を聞く
+                            {APP_CONFIG.char1NameShort}に、この宿屋の意味を聞く
                           </button>
                         </div>
                       )
@@ -3185,7 +3492,7 @@
         const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
         const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
         const nameReaction = sameNameNames.includes(enteredName)
-          ? '同じ名前とは奇遇じゃな。'
+          ? '同じ名とは奇遇じゃな。'
           : heroLikeNames.includes(enteredName)
             ? 'ふむ…古の勇者のような名前じゃのう…。'
             : lookalikeNames.includes(enteredName)
@@ -3268,17 +3575,48 @@
                         <i className="fa-solid fa-arrow-right rotate-180"></i> 武器・魔法に戻る
                       </button>
                     )}
-                    <button
-                      onClick={() => {
-                        setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
-                        setCanConfirming(false);
-                        setCanAddOpen(true);
-                        setIsInputPhase(true);
-                      }}
-                      className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2"
-                    >
-                      <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
-                    </button>
+                    <div className="order-1 md:order-2 flex flex-col items-center gap-5">
+                      {isWeaponMagicStep && (
+                        <button
+                          type="button"
+                          onClick={() => setInnMeaningOpen(true)}
+                          className="rpg-button orange-aura-pulse inline-flex w-60 items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-orange-100 hover:bg-orange-100 hover:text-black"
+                        >
+                          <i className="fa-solid fa-hat-wizard"></i>
+                          この宿屋の意味を聞く
+                        </button>
+                      )}
+                      {isWeaponMagicStep && (
+                        <div className="w-full max-w-xl text-center">
+                          <button
+                            type="button"
+                            onClick={() => setCanInnPreviewOpen(!canInnPreviewOpen)}
+                            className="rpg-button inline-flex w-60 items-center justify-center gap-2 border-yellow-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-yellow-100 hover:bg-yellow-100 hover:text-black"
+                            aria-expanded={canInnPreviewOpen}
+                          >
+                            <i className="fa-solid fa-house-chimney-window"></i>
+                            <i className={`fa-solid ${canInnPreviewOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                            この宿屋でできる事
+                          </button>
+                          {canInnPreviewOpen && (
+                            <div className="mt-4 animate-fade-in">
+                              {renderIntroPreviewCard()}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
+                          setCanConfirming(false);
+                          setCanAddOpen(true);
+                          setIsInputPhase(true);
+                        }}
+                        className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2"
+                      >
+                        <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
+                      </button>
+                    </div>
                     <div className="w-40 hidden md:block order-3"></div>
                   </div>
                 </DialogGroup>
@@ -4573,11 +4911,22 @@
 
       const renderHeader = () => (
         <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>{APP_CONFIG.appName}</h1>
-          <p className="text-gray-300 text-[10px] md:text-xs font-bold mb-1 opacity-80" style={{ textShadow: '1px 1px 0 #000' }}>
+          <div className="mb-3 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setCurrentTheme(activeThemeKey === 'rpg' ? 'cafe' : 'rpg')}
+              className="inline-flex items-center justify-center gap-2 rounded border border-transparent bg-transparent px-4 py-2 text-xs text-transparent md:text-sm"
+              aria-label="テーマを切り替える"
+              title="テーマを切り替える"
+            >
+              テーマを切り替える
+            </button>
+          </div>
+          <h1 className="app-title-text theme-shadow-text text-4xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '3px 3px 0 #000' }}>{APP_CONFIG.appName}</h1>
+          <p className="app-subtitle-text theme-shadow-text text-gray-300 text-[10px] md:text-xs font-bold mb-1 opacity-80" style={{ textShadow: '1px 1px 0 #000' }}>
             {APP_CONFIG.appSubtitle}
           </p>
-          <p className="text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
+          <p className="app-tagline-text theme-shadow-text text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
             {APP_CONFIG.appTagline}
           </p>
         </div>
@@ -4638,12 +4987,13 @@
         : isOpeningScene || scene === 'summary'
           ? backgroundImages.journey
           : backgroundImages.tavern;
+      const themedBackgroundImage = backgroundImage;
       const backgroundPosition = scene === 'must'
         ? 'center'
         : isOpeningScene || scene === 'summary'
           ? 'center bottom'
           : 'center';
-      const backgroundOverlayOpacity = 0.5;
+      const backgroundOverlayOpacity = activeThemeKey === 'cafe' ? 0.28 : 0.5;
 
       const locationName = scene === 'must'
         ? '宿屋の自室'
@@ -4662,8 +5012,8 @@
 
       return (
         <div
-          className="min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell"
-          style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed' }}
+          className={`theme-${activeThemeKey} min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell`}
+          style={{ backgroundImage: themedBackgroundImage, backgroundColor: APP_CONFIG.colors.pageBg, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed', color: APP_CONFIG.colors.baseText }}
         >
           <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
           {(isOpeningScene || scene === 'summary') && (
@@ -4719,7 +5069,7 @@
                 onMore={handleMoreOtherGuest}
               />
               {innMeaningOpen && (
-                <InnMeaningModal onClose={() => setInnMeaningOpen(false)} />
+                <InnMeaningModal onClose={() => setInnMeaningOpen(false)} playerName={player.name} />
               )}
               {introPreviewOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-85 p-4 print-hidden" onClick={() => setIntroPreviewOpen(false)}>
