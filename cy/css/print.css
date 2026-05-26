@@ -1,0 +1,168 @@
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm;
+      }
+
+      html, body {
+        background: #fff !important;
+        font-size: 10pt !important;
+        line-height: 1.35 !important;
+      }
+
+      .print-hidden {
+        display: none !important;
+      }
+
+      .route-choice-wrap {
+        padding-top: 0 !important;
+      }
+
+      .print-shell {
+        background: #fff !important;
+        background-image: none !important;
+        min-height: auto !important;
+        padding: 0 !important;
+      }
+
+      .print-container {
+        color: #111 !important;
+        max-width: 100% !important;
+        min-height: auto !important;
+        padding-bottom: 0 !important;
+        font-size: 9.4pt !important;
+        line-height: 1.35 !important;
+      }
+
+      .print-friendly {
+        background: #fff !important;
+        color: #111 !important;
+        border-color: #333 !important;
+        box-shadow: none !important;
+        border-width: 1px !important;
+        border-radius: 3px !important;
+        padding: 3mm !important;
+      }
+
+      .print-friendly * {
+        color: #111 !important;
+      }
+
+      .print-friendly p,
+      .print-friendly li,
+      .print-friendly div,
+      .print-friendly span,
+      .print-friendly label {
+        font-size: 8.8pt !important;
+        line-height: 1.32 !important;
+      }
+
+      .print-friendly h2,
+      .print-friendly .text-3xl,
+      .print-friendly .md\:text-4xl {
+        font-size: 16pt !important;
+        line-height: 1.15 !important;
+      }
+
+      .print-friendly h3,
+      .print-friendly .text-xl {
+        font-size: 11pt !important;
+        line-height: 1.25 !important;
+      }
+
+      .print-friendly h4,
+      .print-friendly .text-lg {
+        font-size: 9.6pt !important;
+        line-height: 1.25 !important;
+      }
+
+      .print-friendly .text-sm {
+        font-size: 8.2pt !important;
+      }
+
+      .print-friendly .text-xs {
+        font-size: 7.3pt !important;
+      }
+
+      .print-friendly .p-4 {
+        padding: 2.5mm !important;
+      }
+
+      .print-friendly .p-3 {
+        padding: 2mm !important;
+      }
+
+      .print-friendly .mt-4 {
+        margin-top: 2.5mm !important;
+      }
+
+      .print-friendly .mt-3 {
+        margin-top: 2mm !important;
+      }
+
+      .print-friendly .mb-3 {
+        margin-bottom: 2mm !important;
+      }
+
+      .print-friendly .mb-2,
+      .print-friendly .mb-1 {
+        margin-bottom: 1.5mm !important;
+      }
+
+      .print-friendly .space-y-5 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 3mm !important;
+      }
+
+      .print-friendly .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 2.5mm !important;
+      }
+
+      .print-friendly .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 2mm !important;
+      }
+
+      .print-friendly .gap-4 {
+        gap: 3mm !important;
+      }
+
+      .print-friendly .gap-3 {
+        gap: 2mm !important;
+      }
+
+      .print-avoid-break {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .print-page-break {
+        page-break-before: always;
+        break-before: page;
+      }
+
+      .lifeline-print {
+        background: #fff !important;
+        border-color: #333 !important;
+        max-height: 84mm;
+        overflow: hidden;
+      }
+
+      .lifeline-print svg {
+        width: 100% !important;
+        max-height: 80mm !important;
+        height: auto !important;
+      }
+
+      .lifeline-print foreignObject div {
+        background: #fff !important;
+        color: #111 !important;
+      }
+
+      .app-footer {
+        color: #111 !important;
+        font-size: 8pt !important;
+      }
+
+      .animate-fade-in {
+        animation: none !important;
+      }
+    }

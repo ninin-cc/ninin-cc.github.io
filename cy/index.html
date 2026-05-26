@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <script>
+    window.__cqLoadStartedAt = Date.now();
+  </script>
+
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z1T35THNDV');
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="./css/app.css">
+<link rel="stylesheet" href="./css/print.css">
+  <script>
+    (function () {
+      var ua = navigator.userAgent || '';
+      var isInAppBrowser = /Line\/|FBAN|FBAV|FB_IAB|Instagram|Twitter|MicroMessenger|TikTok|LinkedInApp|Pinterest|KAKAOTALK|NAVER|NewsPicks/i.test(ua);
+      if (!isInAppBrowser) return;
+
+      try {
+        if (sessionStorage.getItem('cq_external_browser_redirect_attempted') === '1') return;
+        sessionStorage.setItem('cq_external_browser_redirect_attempted', '1');
+      } catch (error) {}
+
+      var currentUrl = window.location.href;
+      var isAndroid = /Android/i.test(ua);
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      window.setTimeout(function () {
+        if (isAndroid) {
+          var strippedUrl = currentUrl.replace(/^https?:\/\//i, '');
+          var scheme = /^https:\/\//i.test(currentUrl) ? 'https' : 'http';
+          window.location.href = 'intent://' + strippedUrl + '#Intent;scheme=' + scheme + ';package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(currentUrl) + ';end';
+          return;
+        }
+
+        if (isIOS && /^https?:\/\//i.test(currentUrl)) {
+          window.location.href = currentUrl
+            .replace(/^https:\/\//i, 'googlechromes://')
+            .replace(/^http:\/\//i, 'googlechrome://');
+        }
+      }, 1);
+    })();
+  </script>
+</head>
+<body>
+  <div id="cq-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="読み込み中">
+    <div class="initial-loading-text">Now loading</div>
+  </div>
+  <div id="root"></div>
+
+  <script src="./js/config.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/data.js"></script>
+<script type="text/babel" src="./js/components.jsx"></script>
+<script src="./js/export-images.js"></script>
+<script type="text/babel" src="./js/app.jsx"></script>
+</body>
+</html>
