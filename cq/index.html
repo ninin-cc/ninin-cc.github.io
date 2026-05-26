@@ -829,8 +829,8 @@
       documentTitle: "キャリアの宿屋™ -RIESM™ RoleTRADE™クエスト- ～あなたの休息と、旅立ちに祝福を～",
       exportTitle: "キャリアの宿屋™ - RIESM™ RoleTRADE™クエスト -",
       defaultAge: 40,
-      ageSelectMin: 18,
-      ageSelectMax: 75,
+      ageSelectMin: 15,
+      ageSelectMax: 99,
       memoryStartAge: 20,
 
       char1NameFull: "老魔法使いリフレム",
@@ -893,7 +893,7 @@
 
       scenarioText: {
         intro: {
-          firstGuide: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていくのじゃ。\n『旅の記録』では、これまでの冒険をライフラインチャートとして振り返ることもできるのじゃー。」",
+          firstGuide: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていけるのじゃー。」",
           secondGuide: "「少し時間をとって、じっくり自分と向き合ってみてくださいね。\nだいたい30分くらいが目安です。スマホでも使えますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
         },
         can: {},
@@ -1753,7 +1753,7 @@
               imageSide={d.imageSide || (d.type === APP_CONFIG.char2Type ? 'right' : 'left')}
             />
           ))}
-          {allFinished && (
+          {allFinished && children && (
             <div className="w-full animate-fade-in mt-4">
               {children}
             </div>
@@ -2115,6 +2115,26 @@
             );
           })}
         </ul>
+      );
+    };
+
+    const CanNameChips = ({ cans, emptyText = 'まだ選ばれていません。' }) => {
+      if (!cans || cans.length === 0) {
+        return <p className="text-sm text-gray-500">{emptyText}</p>;
+      }
+
+      return (
+        <div className="flex flex-wrap gap-2">
+          {cans.map(c => {
+            const meta = canTypeMeta[c.type] || canTypeMeta.skill;
+            return (
+              <span key={c.id} className={`inline-flex items-center gap-1 rounded-full border border-gray-600 bg-black bg-opacity-70 px-3 py-1 text-sm font-bold ${meta.color}`}>
+                <i className={meta.icon}></i>
+                {c.name}
+              </span>
+            );
+          })}
+        </div>
       );
     };
 
@@ -3414,34 +3434,51 @@
                         speaker: APP_CONFIG.char1NameFull,
                         type: APP_CONFIG.char1Type,
                         text: APP_CONFIG.scenarioText.intro.firstGuide
-                      },
-                      {
-                        speaker: APP_CONFIG.char2NameShort,
-                        type: APP_CONFIG.char2Type,
-                        imageSide: "left",
-                        text: APP_CONFIG.scenarioText.intro.secondGuide
                       }
-                    ]} reserveDialogSlots={4} previewUpcoming afterDialog={{
+                    ]} afterDialog={{
                       0: (
                         <div className="mb-4 space-y-4">
                           {renderIntroPreviewCard()}
                           <button
                             type="button"
                             onClick={() => setInnMeaningOpen(true)}
-                            className="rpg-button orange-aura-pulse inline-flex items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-6 py-3 text-base text-orange-100 hover:bg-orange-100 hover:text-black"
+                            className="orange-aura-pulse group relative inline-flex min-h-[10rem] w-full max-w-md items-end justify-center overflow-hidden rounded border-2 border-orange-400 px-6 pb-5 pt-4 text-base font-bold tracking-wide text-white shadow-xl transition-all hover:scale-[1.01] hover:border-yellow-200"
+                            style={{
+                              backgroundImage: "linear-gradient(rgba(0,0,0,0.04), rgba(0,0,0,0.32)), url('https://ninin-cc.github.io/cq/img/sakusen.jpg')",
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center 52%'
+                            }}
                           >
-                            <i className="fa-solid fa-hat-wizard"></i>
-                            {APP_CONFIG.char1NameShort}に、この宿屋の意味を聞く
+                            <span className="absolute inset-0 bg-black bg-opacity-5 transition-opacity group-hover:bg-opacity-0"></span>
+                            <span className="relative z-10 flex items-center justify-center gap-2 rounded bg-black bg-opacity-45 px-4 py-2" style={{ textShadow: '0 0 8px rgba(0,0,0,0.95), 2px 2px 0 #000' }}>
+                              <i className="fa-solid fa-hat-wizard text-yellow-200"></i>
+                              {APP_CONFIG.char1NameShort}に、この宿屋の意味を聞く
+                            </span>
                           </button>
                         </div>
                       )
-                    }}>
-                      <></>
-                    </DialogGroup>
+                    }} />
+                    <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
+                      ハルカの案内に進む
+                    </button>
+                    {renderAppNote('mt-5')}
+                  </div>
+                )}
+
+                {introStep === 1 && (
+                  <div className="w-full max-w-2xl text-center animate-fade-in">
+                    <DialogGroup dialogs={[
+                      {
+                        speaker: APP_CONFIG.char2NameShort,
+                        type: APP_CONFIG.char2Type,
+                        imageSide: "left",
+                        text: APP_CONFIG.scenarioText.intro.secondGuide
+                      }
+                    ]} />
                     <p className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-65 px-4 py-3 text-left font-sans text-xs leading-relaxed text-yellow-100">
                       ※注意　LINEやX等のアプリ内ブラウザで開くとうまく動作できない事があります。chromeやEdge、safariなどの純正ブラウザで開くことをお勧めします。
                     </p>
-                    <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
+                    <button onClick={() => setIntroStep(2)} className="rpg-button text-xl px-8 py-4 mt-8 animate-bounce">
                       宿屋に向かう
                     </button>
                     <div className="mt-4">
@@ -3477,16 +3514,16 @@
                   </div>
                 )}
 
-                {introStep === 1 && (
+                {introStep === 2 && (
                   <div className="w-full text-center animate-fade-in">
                     <NarrationBox iconName="fa-solid fa-mug-hot" text={"あなたは、長い冒険の途中に、とある町の宿屋に到着した。\n古びた看板には『ＲＩＥＳＭ亭』と書かれている。\n\n「リースム…？いや、この地方だとリズムだな。…リズム亭か。なかなかよさそうだ。」\n\n荷物を部屋におき、1階の酒場でエールを飲んでくつろいでいると、\n一人の老人と、弟子らしき若い女性が興味深そうに声をかけてきた。"} />
-                    <button onClick={() => setIntroStep(2)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
+                    <button onClick={() => setIntroStep(3)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
                       次へ
                     </button>
                   </div>
                 )}
 
-                {introStep === 2 && (
+                {introStep === 3 && (
                   <div className="w-full max-w-2xl text-center animate-fade-in">
                     <DialogGroup dialogs={dialogsIntro}>
                       <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
@@ -3594,7 +3631,7 @@
               ? '…いや…まさかな。他人の空似じゃろう…。'
               : 'よい面構えじゃ。';
         const dialog = isWeaponMagicStep
-          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。\n下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」` }]
+          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。」` }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         if (canReviewing) {
@@ -3707,7 +3744,7 @@
                           setCanAddOpen(true);
                           setIsInputPhase(true);
                         }}
-                        className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2"
+                        className={`rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 ${isWeaponMagicStep ? 'mt-4' : ''}`}
                       >
                         <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
                       </button>
@@ -3723,25 +3760,18 @@
                   <p className="text-yellow-300 font-bold">{isWeaponMagicStep ? '武器・魔法の棚卸し' : '仲間・関係性の棚卸し'}</p>
                 </div>
 
+                {isWeaponMagicStep && (
+                  <DialogBox
+                    speaker={APP_CONFIG.char1NameShort}
+                    type={APP_CONFIG.char1Type}
+                    text={"「下の候補から選んでもよいし、自分で思いつく力を追加してもよいぞ。\n専門スキルも、どんな場でも使える汎用力も、立派な冒険の力じゃ。」"}
+                  />
+                )}
+
                 <WindowBox title={title} iconName={isWeaponMagicStep ? "fa-solid fa-shield-halved" : "fa-solid fa-people-group"}>
                   <div className="bg-gray-900 p-4 rounded-lg mb-6">
                     <CanList cans={visibleCans} emptyText={isWeaponMagicStep ? '武器と魔法はまだ記録されていません。' : '仲間との関係性はまだ記録されていません。'} onRemove={handleRemoveCan} />
                   </div>
-
-                  {isWeaponMagicStep && (
-                    <div className="mb-6 rounded border border-gray-600 bg-gray-900 bg-opacity-95 p-4 shadow-xl">
-                      <p className="mb-3 text-sm font-bold text-yellow-300">
-                        <span className="mr-2">▼</span>武器・魔法についての気づき
-                      </p>
-                      <textarea
-                        className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
-                        rows={5}
-                        value={canInsight}
-                        onChange={e => setCanInsight(e.target.value)}
-                        placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
-                      />
-                    </div>
-                  )}
 
                   <details
                     className="border-t border-gray-600 pt-4"
@@ -3799,6 +3829,21 @@
                       </div>
                     </div>
                   </details>
+
+                  {isWeaponMagicStep && canConfirming && (
+                    <div className="mt-6 rounded border border-gray-600 bg-gray-900 bg-opacity-95 p-4 shadow-xl">
+                      <p className="mb-3 text-sm font-bold text-yellow-300">
+                        <span className="mr-2">▼</span>武器・魔法についての気づき
+                      </p>
+                      <textarea
+                        className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                        rows={5}
+                        value={canInsight}
+                        onChange={e => setCanInsight(e.target.value)}
+                        placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
+                      />
+                    </div>
+                  )}
                 </WindowBox>
                 {!canConfirming && renderOtherTablePrompt(isWeaponMagicStep ? 'canPower' : 'canRelation')}
                 {canConfirming ? (
@@ -3836,6 +3881,24 @@
                   </div>
                 ) : (
                   <>
+                    {isWeaponMagicStep && (
+                      <div className="mt-8 rounded border border-gray-600 bg-gray-900 bg-opacity-95 p-4 shadow-xl">
+                        <div className="mb-4 rounded border border-gray-700 bg-black bg-opacity-45 p-3">
+                          <p className="mb-2 text-xs font-bold text-gray-400">選んだ武器・魔法</p>
+                          <CanNameChips cans={visibleCans} emptyText="武器・魔法はまだ選ばれていません。" />
+                        </div>
+                        <p className="mb-3 text-sm font-bold text-yellow-300">
+                          <span className="mr-2">▼</span>武器・魔法についての気づき
+                        </p>
+                        <textarea
+                          className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                          rows={5}
+                          value={canInsight}
+                          onChange={e => setCanInsight(e.target.value)}
+                          placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
+                        />
+                      </div>
+                    )}
                     <div className="text-center mt-8">
                       <button onClick={() => { setCanConfirming(true); setCanAddOpen(false); }} className="rpg-button text-base px-8 py-3 flex items-center justify-center gap-2 mx-auto bg-white text-black font-bold">
                         {isWeaponMagicStep ? `${APP_CONFIG.char1NameShort}に確認してもらう` : `${APP_CONFIG.char2NameShort}に確認してもらう`} <i className="fa-solid fa-arrow-right"></i>
