@@ -64,6 +64,7 @@
       const [showImportBox, setShowImportBox] = useState(false);
       const [importText, setImportText] = useState('');
       const [importMessage, setImportMessage] = useState('');
+      const [saveMessage, setSaveMessage] = useState('');
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
@@ -661,34 +662,6 @@
 
       const createStoryExportText = () => encodeBase64Unicode(JSON.stringify(createStoryExportPayload()));
 
-      const formatGoogleCalendarDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}${month}${day}`;
-      };
-
-      const buildGoogleCalendarStoryUrl = (encodedStoryData) => {
-        const startDate = new Date();
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 1);
-        const playerName = player.name || '名もなき勇者';
-        const details = [
-          'キャリアの宿屋™で作成した「あなたの物語」の再開用データです。',
-          'この文字列を、アプリTOP画面の「『あなたの物語』の記憶を呼び覚ます（データを読み込む）」に貼り付けると再開できます。',
-          '',
-          '【あなたの物語データ】',
-          encodedStoryData
-        ].join('\n');
-        const params = new URLSearchParams({
-          action: 'TEMPLATE',
-          text: `${APP_CONFIG.appName}：${playerName}さんの「あなたの物語」`,
-          dates: `${formatGoogleCalendarDate(startDate)}/${formatGoogleCalendarDate(endDate)}`,
-          details
-        });
-        return `${APP_CONFIG.googleCalendarCreateUrl}?${params.toString()}`;
-      };
-
       const extractStoryImportText = (source) => {
         const marker = '【あなたの物語データ】';
         let text = source.trim();
@@ -701,52 +674,101 @@
         return (base64Match ? base64Match[0] : text).trim();
       };
 
-      const handleExportStoryData = async ({ openCalendar = false } = {}) => {
-        const encoded = createStoryExportText();
-        if (openCalendar) {
-          window.open(buildGoogleCalendarStoryUrl(encoded), '_blank', 'noopener,noreferrer');
-        }
+      const resolveStoryImportText = async (source) => {
+        const text = source.trim();
         try {
-          await copyTextToClipboard(encoded);
-          if (openCalendar) {
-            alert('コピーしました。Googleカレンダーの新規予定画面を開きました。予定の「説明」欄に「あなたの物語」データが入っています。内容を確認して保存してください。');
-          } else {
-            alert('コピーしました。Googleカレンダーの予定の「説明」欄などに貼り付けて保存してください。');
+          const url = new URL(text, window.location.href);
+          const compressed = url.searchParams.get('data');
+          if (compressed) {
+            return restoreStoryBase64FromCompressedParam(compressed);
           }
+        } catch (error) {}
+        return extractStoryImportText(text).replace(/^CQ-STORY:/, '');
+      };
+
+      const restoreStoryPayload = (payload) => {
+        const data = payload.data || payload;
+        if (!data || typeof data !== 'object') throw new Error('invalid payload');
+
+        clearAdventureData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (!key.startsWith('cq_')) return;
+          const serialized = JSON.stringify(value);
+          if (serialized !== undefined) {
+            window.localStorage.setItem(key, serialized);
+          }
+        });
+        if (!Object.prototype.hasOwnProperty.call(data, 'cq_scene')) {
+          window.localStorage.setItem('cq_scene', JSON.stringify('intro'));
+        }
+        return data;
+      };
+
+      const handleExportStoryData = async () => {
+        const encoded = createStoryExportText();
+        try {
+          const saveUrl = await createCompressedStoryUrl(encoded);
+          await copyTextToClipboard(saveUrl);
+          setSaveMessage('セーブ用URLをコピーしました。別のブラウザで開くと、この「あなたの物語」を呼び覚ませます。');
+          alert('セーブ用URLをコピーしました。PCやスマホなど別のブラウザで開くと、この「あなたの物語」を呼び覚ませます。');
         } catch (error) {
-          window.prompt('コピーに失敗しました。以下の文字列を選択して保存してください。', encoded);
+          const message = error && /Compression Streams/.test(error.message || '')
+            ? 'このブラウザは圧縮セーブURLの作成に対応していません。Chrome / Edge / Safari などの新しいブラウザでお試しください。'
+            : 'コピーに失敗しました。以下のURLを選択して保存してください。';
+          try {
+            const saveUrl = await createCompressedStoryUrl(encoded);
+            window.prompt(message, saveUrl);
+          } catch (fallbackError) {
+            alert(message);
+          }
         }
       };
 
-      const handleImportStoryData = () => {
+      const handleImportStoryData = async () => {
         const source = importText.trim();
         if (!source) {
           setImportMessage('読み込む文字列を貼り付けてください。');
           return;
         }
         try {
-          const decoded = decodeBase64Unicode(extractStoryImportText(source).replace(/^CQ-STORY:/, ''));
+          const encoded = await resolveStoryImportText(source);
+          const decoded = decodeBase64Unicode(encoded);
           const payload = JSON.parse(decoded);
-          const data = payload.data || payload;
-          if (!data || typeof data !== 'object') throw new Error('invalid payload');
-
-          clearAdventureData();
-          Object.entries(data).forEach(([key, value]) => {
-            if (!key.startsWith('cq_')) return;
-            const serialized = JSON.stringify(value);
-            if (serialized !== undefined) {
-              window.localStorage.setItem(key, serialized);
-            }
-          });
-          if (!Object.prototype.hasOwnProperty.call(data, 'cq_scene')) {
-            window.localStorage.setItem('cq_scene', JSON.stringify('intro'));
-          }
+          restoreStoryPayload(payload);
           setImportMessage('読み込みました。あなたの物語を呼び覚まします。');
           window.setTimeout(() => window.location.reload(), 500);
         } catch (error) {
-          setImportMessage('読み込みに失敗しました。書き出した文字列をそのまま貼り付けてください。');
+          setImportMessage('読み込みに失敗しました。セーブ用URL、または書き出した文字列をそのまま貼り付けてください。');
         }
       };
+
+      useEffect(() => {
+        const compressed = new URLSearchParams(window.location.search).get('data');
+        if (!compressed) return undefined;
+
+        let cancelled = false;
+        (async () => {
+          try {
+            const encoded = await restoreStoryBase64FromCompressedParam(compressed);
+            console.log('Restored career-inn story data:', encoded);
+            const payload = JSON.parse(decodeBase64Unicode(encoded));
+            restoreStoryPayload(payload);
+            if (cancelled) return;
+
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('data');
+            window.history.replaceState(null, document.title, cleanUrl.toString());
+            window.location.reload();
+          } catch (error) {
+            console.error('Failed to restore career-inn story data from URL:', error);
+            setImportMessage('URLからの読み込みに失敗しました。セーブ用URLを確認してください。');
+          }
+        })();
+
+        return () => {
+          cancelled = true;
+        };
+      }, []);
 
       const openOtherTableTalk = (context) => {
         setOtherTableState({
@@ -898,7 +920,7 @@
                             className="rpg-input h-28 resize-none text-xs leading-relaxed"
                             value={importText}
                             onChange={e => setImportText(e.target.value)}
-                            placeholder="Googleカレンダーの説明欄などに保存した文字列を貼り付けてください。"
+                            placeholder="セーブ用URL、または保存した文字列を貼り付けてください。"
                           />
                         </WritableField>
                         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -2477,18 +2499,18 @@
             </WindowBox>
 
             <div className="print-hidden bg-black bg-opacity-70 border border-blue-500 rounded p-4 mt-8">
-              <p className="text-sm text-blue-200 font-bold mb-2">▼ 「あなたの物語」のデータを書き出す</p>
+              <p className="text-sm text-blue-200 font-bold mb-2">▼ セーブする</p>
               <p className="text-xs text-gray-300 mb-3">
-                別の日に続きを開きたい時のために、現在の記録を保存用文字列としてコピーします。Googleカレンダーの新規予定画面を開くこともできます。最後にGoogleカレンダー側で保存してください。
+                現在の記録を圧縮し、別のブラウザで開けるセーブ用URLとしてコピーします。スマホからPCへ、PCからスマホへ移動したい時にも使えます。
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <button type="button" onClick={() => handleExportStoryData({ openCalendar: true })} className="rpg-button w-full py-3 text-sm bg-white text-black font-bold">
-                  <i className="fa-regular fa-calendar-plus mr-2"></i>Googleカレンダーに保存する
-                </button>
-                <button type="button" onClick={() => handleExportStoryData()} className="rpg-button w-full py-3 text-sm">
-                  <i className="fa-solid fa-copy mr-2"></i>文字列だけコピーする
-                </button>
-              </div>
+              <button type="button" onClick={handleExportStoryData} className="rpg-button w-full py-3 text-sm bg-white text-black font-bold">
+                <i className="fa-solid fa-floppy-disk mr-2"></i>セーブ用URLをコピーする
+              </button>
+              {saveMessage && (
+                <p className="mt-3 rounded border border-blue-400 bg-blue-950 bg-opacity-60 px-3 py-2 text-xs text-blue-100">
+                  {saveMessage}
+                </p>
+              )}
             </div>
 
             <div className="print-hidden bg-black bg-opacity-70 border border-yellow-600 rounded p-4 mt-8">
@@ -2687,8 +2709,8 @@
                     <div className="text-sm text-yellow-300 font-bold hidden md:block" style={{ textShadow: '1px 1px 0 #000' }}>
                       現在地：{locationName}
                     </div>
-                    <button onClick={() => handleExportStoryData({ openCalendar: true })} className="text-xs md:text-sm border border-blue-400 text-blue-200 hover:bg-blue-300 hover:text-black hover:border-blue-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
-                      <i className="fa-regular fa-calendar-plus"></i> カレンダーに保存
+                    <button onClick={handleExportStoryData} className="text-xs md:text-sm border border-blue-400 text-blue-200 hover:bg-blue-300 hover:text-black hover:border-blue-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
+                      <i className="fa-solid fa-floppy-disk"></i> セーブする
                     </button>
                     <button onClick={handleSuspend} className="text-xs md:text-sm border border-yellow-500 text-yellow-300 hover:bg-yellow-400 hover:text-black hover:border-yellow-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
                       <i className="fa-solid fa-pause"></i> 中断する

@@ -28,7 +28,6 @@
       companyUrl: "https://ninin-cc.github.io/",
       otherGuestsImg: "./img/kyaku.jpg",
       introResultPreviewImg: "./img/reflmn.jpg",
-      googleCalendarCreateUrl: "https://calendar.google.com/calendar/render",
 
       backgroundImages: {
         tavern: "./img/sakaba.jpg",
