@@ -2226,12 +2226,14 @@
         const builders = {
           memory: createMemoryExportImage,
           status: createStatusExportImage,
-          willMust: createWillMustExportImage
+          willMust: createWillMustExportImage,
+          storyLong: createStorySummaryLongExportImage
         };
         const labels = {
           memory: 'memory',
           status: 'status',
-          willMust: 'will-must'
+          willMust: 'will-must',
+          storyLong: 'story-summary-long'
         };
         const builder = builders[kind];
         if (!builder) return;
@@ -2491,7 +2493,10 @@
 
             <div className="print-hidden bg-black bg-opacity-70 border border-yellow-600 rounded p-4 mt-8">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 画像として保存</p>
-              <p className="text-xs text-gray-400 mb-3">A4縦サイズのPNGとして保存します。文字とグラフが読みやすいよう、内容ごとに3枚へ分けています。</p>
+              <p className="text-xs text-gray-400 mb-3">細長い1枚画像、またはA4縦サイズの分割PNGとして保存できます。</p>
+              <button type="button" onClick={() => handleDownloadSummaryImage('storyLong')} className="rpg-button mb-3 w-full py-3 text-sm flex items-center justify-center gap-2 bg-white text-black font-bold">
+                <i className="fa-solid fa-camera"></i> あなたの物語まとめ〜Mustまでを1枚画像で保存する
+              </button>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                 <button type="button" onClick={() => handleDownloadSummaryImage('memory')} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
                   <i className="fa-solid fa-image"></i> 歩んできた道

@@ -456,3 +456,220 @@
       drawFixedFooter(ctx);
       return canvas;
     };
+
+    const cropLongCanvas = (canvas, usedHeight) => {
+      const height = Math.min(canvas.height, Math.max(1600, Math.ceil(usedHeight)));
+      const output = document.createElement('canvas');
+      output.width = canvas.width;
+      output.height = height;
+      const ctx = output.getContext('2d');
+      ctx.drawImage(canvas, 0, 0, canvas.width, height, 0, 0, canvas.width, height);
+      ctx.save();
+      ctx.strokeStyle = imageTheme.border;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(32, 32, output.width - 64, output.height - 64);
+      ctx.restore();
+      return output;
+    };
+
+    const drawLongSummaryMemo = (ctx, title, text, x, y, w, maxLines = 8) => {
+      ctx.font = canvasFont(18);
+      const lines = canvasLines(ctx, text || 'まだメモはありません。', w - 56);
+      const h = 70 + Math.min(lines.length, maxLines) * 25;
+      drawDarkCard(ctx, x, y, w, h);
+      ctx.font = canvasFont(21, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText(title, x + 28, y + 24);
+      drawCanvasText(ctx, text || 'まだメモはありません。', x + 28, y + 60, w - 56, 25, { font: canvasFont(18), color: imageTheme.text, maxLines });
+      return y + h + 18;
+    };
+
+    const createStorySummaryLongExportImage = ({
+      player,
+      memories,
+      chartInsight,
+      cans,
+      canInsight,
+      allyInsight,
+      will,
+      willTenYears,
+      willOneYearInsight,
+      willThreeYearsInsight,
+      selectedMust,
+      mustInsight
+    }) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = imageTheme.width;
+      canvas.height = 14000;
+      const ctx = canvas.getContext('2d');
+      drawExportBackground(ctx, canvas.height);
+
+      const contentX = 90;
+      const contentW = imageTheme.width - 180;
+      const gap = 18;
+      let y = 78;
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.fillStyle = imageTheme.text;
+      ctx.font = canvasFont(38, '700');
+      ctx.fillText(APP_CONFIG.appName, imageTheme.width / 2, y);
+      ctx.font = canvasFont(18, '700');
+      ctx.fillStyle = imageTheme.muted;
+      ctx.fillText(APP_CONFIG.appSubtitle.replace('　', ' '), imageTheme.width / 2, y + 46);
+      ctx.font = canvasFont(42, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('あなたの物語まとめ', imageTheme.width / 2, y + 96);
+      ctx.restore();
+      y += 168;
+
+      fillRoundRect(ctx, contentX, y, contentW, 126, 10, '#0b1220', imageTheme.border, 3);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = imageTheme.muted;
+      ctx.font = canvasFont(20, '700');
+      ctx.fillText('冒険者', imageTheme.width / 2, y + 22);
+      ctx.fillStyle = imageTheme.text;
+      ctx.font = canvasFont(42, '700');
+      ctx.fillText(`${player.name || '名もなき勇者'}  Lv.${player.age || '?'}`, imageTheme.width / 2, y + 56);
+      if (will.job) {
+        ctx.font = canvasFont(22, '700');
+        ctx.fillStyle = imageTheme.blue;
+        ctx.fillText(`3年後のロール：${will.job}`, imageTheme.width / 2, y + 98);
+      }
+      ctx.textAlign = 'left';
+      y += 166;
+
+      drawDarkCard(ctx, contentX, y, contentW, 132);
+      ctx.font = canvasFont(22, '700');
+      ctx.fillStyle = imageTheme.blue;
+      ctx.fillText('★ 10年後までに楽しみたいこと', contentX + 30, y + 24);
+      const tenYearText = (willTenYears || []).length ? (willTenYears || []).map(item => `・${item}`).join('　') : '未記録';
+      drawCanvasText(ctx, tenYearText, contentX + 30, y + 62, contentW - 60, 26, { font: canvasFont(19), color: imageTheme.text, maxLines: 2 });
+      y += 174;
+
+      y = drawSectionTitle(ctx, '歩んできた道：Memory', y);
+      drawLifeChartOnCanvas(ctx, memories, contentX, y, contentW, 430);
+      y += 468;
+      y = drawLongSummaryMemo(ctx, 'ライフラインを見て気づいたこと', chartInsight, contentX, y, contentW, 7);
+
+      const sorted = [...(memories || [])].sort((a, b) => a.age - b.age);
+      y = drawSectionTitle(ctx, '記憶の一覧', y + 10);
+      if (!sorted.length) {
+        drawDarkCard(ctx, contentX, y, contentW, 82);
+        drawCanvasText(ctx, '記憶はまだ記録されていません。', contentX + 30, y + 26, contentW - 60, 26, { font: canvasFont(21), color: imageTheme.muted });
+        y += 108;
+      } else {
+        const colW = (contentW - gap) / 2;
+        const rowH = 88;
+        const visible = sorted.slice(0, 14);
+        visible.forEach((item, index) => {
+          const col = index % 2;
+          const row = Math.floor(index / 2);
+          const cardX = contentX + col * (colW + gap);
+          const cardY = y + row * rowH;
+          drawDarkCard(ctx, cardX, cardY, colW, rowH - 12);
+          ctx.font = canvasFont(19, '700');
+          ctx.fillStyle = imageTheme.border;
+          ctx.fillText(`${item.age}歳`, cardX + 18, cardY + 14);
+          ctx.fillStyle = Number(item.satisfaction) >= 0 ? imageTheme.blue : imageTheme.red;
+          ctx.fillText(`${Number(item.satisfaction) > 0 ? '+' : ''}${item.satisfaction}`, cardX + colW - 70, cardY + 14);
+          drawCanvasText(ctx, item.event || '', cardX + 84, cardY + 14, colW - 166, 21, { font: canvasFont(17), color: imageTheme.text, maxLines: 2 });
+        });
+        y += Math.ceil(visible.length / 2) * rowH + 10;
+        if (sorted.length > visible.length) {
+          drawOverflowCount(ctx, `ほか ${sorted.length - visible.length} 件の記憶があります。`, contentX + 4, y);
+          y += 34;
+        }
+      }
+
+      y += 12;
+      y = drawSectionTitle(ctx, 'ステータス：Can', y);
+      const cardW = (contentW - gap * 2) / 3;
+      const groupY = y;
+      const cardH = 500;
+      ['skill', 'magic', 'ally'].forEach((type, index) => {
+        const group = (cans || []).filter(c => c.type === type);
+        const meta = canTypeMeta[type];
+        const x = contentX + index * (cardW + gap);
+        drawDarkCard(ctx, x, groupY, cardW, cardH);
+        ctx.font = canvasFont(23, '700');
+        ctx.fillStyle = type === 'skill' ? imageTheme.blue : type === 'magic' ? imageTheme.purple : imageTheme.green;
+        ctx.fillText(meta.label, x + 22, groupY + 24);
+        let innerY = groupY + 70;
+        const visible = group.slice(0, 6);
+        if (!visible.length) {
+          drawCanvasText(ctx, '未記録', x + 22, innerY, cardW - 44, 26, { font: canvasFont(20), color: imageTheme.muted });
+        } else {
+          visible.forEach(item => {
+            ctx.fillStyle = type === 'skill' ? imageTheme.blue : type === 'magic' ? imageTheme.purple : imageTheme.green;
+            ctx.font = canvasFont(19, '700');
+            ctx.fillText(`・${item.name}`, x + 22, innerY);
+            innerY = drawCanvasText(ctx, item.desc || '説明なし', x + 42, innerY + 24, cardW - 64, 20, { font: canvasFont(16), color: imageTheme.muted, maxLines: 2 }) + 12;
+          });
+          if (group.length > visible.length) {
+            drawOverflowCount(ctx, `ほか ${group.length - visible.length} 件`, x + 22, groupY + cardH - 36);
+          }
+        }
+      });
+      y = groupY + cardH + 28;
+      const memoW = (contentW - gap) / 2;
+      const memoY = y;
+      const canMemoEnd = drawLongSummaryMemo(ctx, '武器・魔法から見えた気づき', canInsight, contentX, memoY, memoW, 8);
+      const allyMemoEnd = drawLongSummaryMemo(ctx, '仲間・関係性から見えた気づき', allyInsight, contentX + memoW + gap, memoY, memoW, 8);
+      y = Math.max(canMemoEnd, allyMemoEnd);
+
+      y += 16;
+      y = drawSectionTitle(ctx, '次なる冒険：Will', y);
+      drawDarkCard(ctx, contentX, y, contentW, 330);
+      ctx.font = canvasFont(22, '700');
+      ctx.fillStyle = imageTheme.border;
+      ctx.fillText('1年後', contentX + 30, y + 26);
+      let willY = drawCanvasText(ctx, (will || {}).oneYear || '未記録', contentX + 30, y + 60, contentW - 60, 24, { font: canvasFont(18), color: imageTheme.text, maxLines: 3 });
+      ctx.fillStyle = imageTheme.border;
+      ctx.font = canvasFont(22, '700');
+      ctx.fillText('3年後', contentX + 30, willY + 12);
+      willY = drawCanvasText(ctx, (will || {}).threeYears || '未記録', contentX + 30, willY + 46, contentW - 60, 24, { font: canvasFont(18), color: imageTheme.text, maxLines: 3 });
+      ctx.fillStyle = imageTheme.blue;
+      ctx.font = canvasFont(22, '700');
+      ctx.fillText(`目指すロール：${(will || {}).job || '未記録'}`, contentX + 30, willY + 18);
+      y += 370;
+      const willMemoY = y;
+      const oneYearMemoEnd = drawLongSummaryMemo(ctx, '1年後の気づき', willOneYearInsight, contentX, willMemoY, memoW, 6);
+      const threeYearMemoEnd = drawLongSummaryMemo(ctx, '3年後の気づき', willThreeYearsInsight, contentX + memoW + gap, willMemoY, memoW, 6);
+      y = Math.max(oneYearMemoEnd, threeYearMemoEnd);
+
+      y += 16;
+      y = drawSectionTitle(ctx, '現実のクエスト：Must', y);
+      const must = selectedMust || {};
+      const mustTop = y;
+      drawParchmentCard(ctx, contentX, y, contentW, 520);
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('選択して接続したクエスト', contentX + 35, y + 30);
+      ctx.fillStyle = imageTheme.ink;
+      drawCanvasText(ctx, must.title || '未選択', contentX + 35, y + 68, contentW - 70, 34, { font: canvasFont(28, '700'), color: imageTheme.ink, maxLines: 2 });
+      let mustY = drawCanvasText(ctx, must.desc || '概要なし', contentX + 35, y + 142, contentW - 70, 25, { font: canvasFont(19), color: imageTheme.ink, maxLines: 5 });
+      ctx.strokeStyle = imageTheme.parchmentBorder;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(contentX + 35, mustY + 18);
+      ctx.lineTo(contentX + contentW - 35, mustY + 18);
+      ctx.stroke();
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('Willとの接続メモ', contentX + 35, mustY + 42);
+      mustY = drawCanvasText(ctx, must.connection || '未記録', contentX + 35, mustY + 78, contentW - 70, 24, { font: canvasFont(18), color: imageTheme.ink, maxLines: 6 });
+      ctx.strokeStyle = imageTheme.parchmentBorder;
+      ctx.beginPath();
+      ctx.moveTo(contentX + 35, mustY + 16);
+      ctx.lineTo(contentX + contentW - 35, mustY + 16);
+      ctx.stroke();
+      ctx.fillStyle = imageTheme.brown;
+      ctx.font = canvasFont(21, '700');
+      ctx.fillText('接続してみた気づき', contentX + 35, mustY + 40);
+      drawCanvasText(ctx, mustInsight || 'まだメモはありません。', contentX + 35, mustY + 76, contentW - 70, 24, { font: canvasFont(18), color: imageTheme.ink, maxLines: 6 });
+      y = Math.max(mustTop + 548, mustY + 250);
+
+      y = drawExportFooter(ctx, y + 28);
+      return cropLongCanvas(canvas, y + 48);
+    };
