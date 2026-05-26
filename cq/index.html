@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  <script>
+    window.__cqLoadStartedAt = Date.now();
+  </script>
 
   <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
   <script>
@@ -38,6 +41,38 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
     body { margin: 0; padding: 0; background: #000; }
+    .initial-loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(250, 204, 21, 0.16), transparent 34%),
+        rgba(0, 0, 0, 0.94);
+      color: #fff7cc;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 12px rgba(250, 204, 21, 0.75), 3px 3px 0 #000;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+    .initial-loading-screen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .initial-loading-text {
+      display: inline-block;
+      font-family: Consolas, "Courier New", monospace;
+      animation: initialLoadingGlow 2.4s ease-in-out infinite;
+    }
+    @keyframes initialLoadingGlow {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
     html, body { -webkit-touch-callout: none; }
     img { -webkit-user-drag: none; user-select: none; }
     .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
@@ -779,6 +814,9 @@
   </script>
 </head>
 <body>
+  <div id="cq-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="読み込み中">
+    <div class="initial-loading-text">Now loading</div>
+  </div>
   <div id="root"></div>
 
   <script type="text/babel">
@@ -1509,6 +1547,14 @@
       value.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)
     );
 
+    const getDialogVisualConfig = (type) => {
+      const config = {
+        [APP_CONFIG.char1Type]: { color: APP_CONFIG.char1.dialogColor, imgBg: APP_CONFIG.char1.portraitBg, img: APP_CONFIG.char1.img },
+        [APP_CONFIG.char2Type]: { color: APP_CONFIG.char2.dialogColor, imgBg: APP_CONFIG.char2.portraitBg, img: APP_CONFIG.char2.img }
+      };
+      return config[type] || config[APP_CONFIG.char1Type];
+    };
+
     const DialogBox = ({ speaker, type = 'reflem', text, onFinish, imageSide = 'left' }) => {
       const themedText = applyThemeText(text);
       const [displayedText, setDisplayedText] = useState("");
@@ -1549,11 +1595,7 @@
         }
       };
 
-      const config = {
-        [APP_CONFIG.char1Type]: { color: APP_CONFIG.char1.dialogColor, imgBg: APP_CONFIG.char1.portraitBg, img: APP_CONFIG.char1.img },
-        [APP_CONFIG.char2Type]: { color: APP_CONFIG.char2.dialogColor, imgBg: APP_CONFIG.char2.portraitBg, img: APP_CONFIG.char2.img }
-      };
-      const { color, imgBg, img } = config[type] || config[APP_CONFIG.char1Type];
+      const { color, imgBg, img } = getDialogVisualConfig(type);
       const isImageRight = imageSide === 'right';
 
       return (
@@ -1584,6 +1626,35 @@
                   {!isFinished && <span className="animate-pulse ml-1">▼</span>}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const DialogPlaceholder = ({ speaker, type = 'reflem', imageSide = 'left' }) => {
+      const { color, imgBg, img } = getDialogVisualConfig(type);
+      const isImageRight = imageSide === 'right';
+
+      return (
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 opacity-90`}>
+          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+            {speaker}
+          </div>
+          <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
+            <div className={`shrink-0 self-start w-20 h-20 md:w-28 md:h-28 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner relative`}>
+              <img
+                src={img}
+                alt={speaker}
+                className="w-full h-full object-contain"
+                style={{
+                  imageRendering: 'pixelated',
+                  transform: isImageRight && type === APP_CONFIG.char2Type ? 'scaleX(-1) scale(1.1)' : 'scale(1.1)'
+                }}
+              />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed flex-1 min-h-[4rem] text-left opacity-0" aria-hidden="true">
+              ...
             </div>
           </div>
         </div>
@@ -1637,7 +1708,7 @@
       );
     };
 
-    const DialogGroup = ({ dialogs, children, reserveDialogSlots = 0, afterDialog = {} }) => {
+    const DialogGroup = ({ dialogs, children, reserveDialogSlots = 0, afterDialog = {}, previewUpcoming = false }) => {
       const [currentIdx, setCurrentIdx] = useState(0);
       const [allFinished, setAllFinished] = useState(false);
       const dialogSignature = dialogs.map(d => `${d.speaker}:${d.text}`).join('|');
@@ -1658,7 +1729,7 @@
                  speaker={d.speaker}
                  type={d.type}
                  text={d.text}
-                 imageSide={d.imageSide || (d.type === 'haruka' ? 'right' : 'left')}
+                 imageSide={d.imageSide || (d.type === APP_CONFIG.char2Type ? 'right' : 'left')}
                  onFinish={() => {
                    if (i === currentIdx && currentIdx < dialogs.length - 1) {
                      setCurrentIdx(currentIdx + 1);
@@ -1673,6 +1744,14 @@
                  </div>
                )}
              </React.Fragment>
+          ))}
+          {previewUpcoming && currentIdx < dialogs.length - 1 && dialogs.slice(currentIdx + 1).map((d, offset) => (
+            <DialogPlaceholder
+              key={`placeholder-${dialogSignature}-${currentIdx}-${offset}`}
+              speaker={d.speaker}
+              type={d.type}
+              imageSide={d.imageSide || (d.type === APP_CONFIG.char2Type ? 'right' : 'left')}
+            />
           ))}
           {allFinished && (
             <div className="w-full animate-fade-in mt-4">
@@ -2509,6 +2588,22 @@
       const activeThemeKey = THEMES[currentTheme] ? currentTheme : 'rpg';
       APP_CONFIG = THEMES[activeThemeKey];
 
+      useEffect(() => {
+        const loadingScreen = document.getElementById('cq-loading-screen');
+        if (!loadingScreen) return undefined;
+
+        const startedAt = window.__cqLoadStartedAt || Date.now();
+        const remaining = Math.max(0, 3000 - (Date.now() - startedAt));
+        const timer = window.setTimeout(() => {
+          loadingScreen.classList.add('is-hidden');
+          window.setTimeout(() => {
+            loadingScreen.remove();
+          }, 500);
+        }, remaining);
+
+        return () => window.clearTimeout(timer);
+      }, []);
+
       const [scene, setScene] = useLocalStorage('cq_scene', 'intro');
       const [introStep, setIntroStep] = useLocalStorage('cq_intro_step', 0);
       const [isInputPhase, setIsInputPhase] = useLocalStorage('cq_input_phase', false);
@@ -3326,7 +3421,7 @@
                         imageSide: "left",
                         text: APP_CONFIG.scenarioText.intro.secondGuide
                       }
-                    ]} reserveDialogSlots={4} afterDialog={{
+                    ]} reserveDialogSlots={4} previewUpcoming afterDialog={{
                       0: (
                         <div className="mb-4 space-y-4">
                           {renderIntroPreviewCard()}
@@ -3384,7 +3479,7 @@
 
                 {introStep === 1 && (
                   <div className="w-full text-center animate-fade-in">
-                    <NarrationBox iconName="fa-solid fa-mug-hot" text={"あなたは、長い冒険の途中に、とある町の宿屋に到着した。\n荷物を部屋におき、1階の酒場でエールを飲んでくつろいでいると、\n一人の老人と、弟子らしき若い女性が興味深そうに声をかけてきた。"} />
+                    <NarrationBox iconName="fa-solid fa-mug-hot" text={"あなたは、長い冒険の途中に、とある町の宿屋に到着した。\n古びた看板には『ＲＩＥＳＭ亭』と書かれている。\n\n「リースム…？いや、この地方だとリズムだな。…リズム亭か。なかなかよさそうだ。」\n\n荷物を部屋におき、1階の酒場でエールを飲んでくつろいでいると、\n一人の老人と、弟子らしき若い女性が興味深そうに声をかけてきた。"} />
                     <button onClick={() => setIntroStep(2)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
                       次へ
                     </button>
