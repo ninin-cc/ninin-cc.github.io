@@ -160,6 +160,94 @@
       0%, 100% { opacity: 0.35; text-shadow: none; }
       50% { opacity: 1; text-shadow: 0 0 10px rgba(250, 204, 21, 0.85); }
     }
+    .skill-name-editable {
+      border-bottom-color: #fb923c !important;
+      animation: orangeInputBlink 1.4s ease-in-out infinite;
+    }
+    .skill-name-field {
+      position: relative;
+      flex: 1 1 0%;
+      width: 100%;
+    }
+    .skill-name-field::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      width: 0.72em;
+      height: 1.18em;
+      border: 2px solid #fff7cc;
+      background: rgba(255, 247, 204, 0.18);
+      box-shadow: 0 0 8px rgba(251, 146, 60, 0.82);
+      transform: translateY(-50%);
+      pointer-events: none;
+      animation: blockCursorBlink 0.95s steps(2, end) infinite;
+    }
+    .skill-name-field.has-value::after {
+      display: none;
+    }
+    .skill-name-field .rpg-input {
+      padding-left: 1.55rem;
+    }
+    .skill-name-field.has-value .rpg-input,
+    .skill-name-field:focus-within .rpg-input {
+      padding-left: 8px;
+    }
+    .skill-name-field:focus-within::after {
+      opacity: 0.35;
+    }
+    .writable-cell {
+      position: relative;
+      width: 100%;
+    }
+    .writable-cell::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      width: 0.72em;
+      height: 1.18em;
+      border: 2px solid #fff7cc;
+      background: rgba(255, 247, 204, 0.18);
+      box-shadow: 0 0 8px rgba(251, 146, 60, 0.82);
+      transform: translateY(-50%);
+      pointer-events: none;
+      animation: blockCursorBlink 0.95s steps(2, end) infinite;
+    }
+    .writable-cell.is-textarea::after {
+      top: 0.95rem;
+      transform: none;
+    }
+    .writable-cell.has-value::after {
+      display: none;
+    }
+    .writable-cell .rpg-input {
+      padding-left: 1.55rem !important;
+    }
+    .writable-cell.has-value .rpg-input,
+    .writable-cell:focus-within .rpg-input {
+      padding-left: 8px !important;
+    }
+    .writable-cell.is-textarea.has-value .rpg-input,
+    .writable-cell.is-textarea:focus-within .rpg-input {
+      padding-left: 0.75rem !important;
+    }
+    .writable-cell:focus-within::after {
+      opacity: 0.35;
+    }
+    @keyframes blockCursorBlink {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0.12; }
+    }
+    @keyframes orangeInputBlink {
+      0%, 100% {
+        box-shadow: 0 8px 12px -12px rgba(251, 146, 60, 0.35);
+      }
+      50% {
+        border-bottom-color: #fed7aa !important;
+        box-shadow: 0 8px 18px -8px rgba(251, 146, 60, 0.95);
+      }
+    }
     .satisfaction-wiggle {
       animation: satisfactionWiggle 1.5s ease-in-out 0.45s 1 both;
       transform-origin: center;
@@ -174,6 +262,9 @@
     @media (prefers-reduced-motion: reduce) {
       .attention-blink,
       .satisfaction-wiggle,
+      .skill-name-editable,
+      .skill-name-field::after,
+      .writable-cell::after,
       .orange-aura-pulse,
       .magic-particle {
         animation: none;
@@ -894,7 +985,7 @@
       scenarioText: {
         intro: {
           firstGuide: "「このアプリでは、キャリアデザインでよく使われる『WILL・CAN・MUST』を洗い出し、それぞれをつなげながら、お主自身の気づきを見つけていけるのじゃー。」",
-          secondGuide: "「少し時間をとって、じっくり自分と向き合ってみてくださいね。\nだいたい30分くらいが目安です。スマホでも使えますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
+          secondGuide: "「30分くらいの時間をとって、じっくり自分と向き合ってみてくださいね。\n\nスマホでもできますが、できれば魔法箱――パソコンの大きな画面で取り組むのがおすすめです！」"
         },
         can: {},
         memory: {},
@@ -2137,6 +2228,12 @@
         </div>
       );
     };
+
+    const WritableField = ({ value, textarea = false, className = '', children }) => (
+      <div className={`writable-cell ${textarea ? 'is-textarea' : ''} ${value ? 'has-value' : ''} ${className}`}>
+        {children}
+      </div>
+    );
 
     const WriteCue = ({ active }) => (
       <div className={`write-cue ${active ? 'is-blinking' : 'is-resting'}`} aria-hidden="true">▼</div>
@@ -3496,12 +3593,14 @@
                     {showImportBox && (
                       <div className="mt-4 rounded border border-yellow-600 bg-black bg-opacity-75 p-4 text-left animate-fade-in">
                         <label className="mb-2 block text-sm font-bold text-yellow-300">保存しておいたデータ文字列</label>
-                        <textarea
-                          className="rpg-input h-28 resize-none text-xs leading-relaxed"
-                          value={importText}
-                          onChange={e => setImportText(e.target.value)}
-                          placeholder="Googleカレンダーの説明欄などに保存した文字列を貼り付けてください。"
-                        />
+                        <WritableField value={importText} textarea>
+                          <textarea
+                            className="rpg-input h-28 resize-none text-xs leading-relaxed"
+                            value={importText}
+                            onChange={e => setImportText(e.target.value)}
+                            placeholder="Googleカレンダーの説明欄などに保存した文字列を貼り付けてください。"
+                          />
+                        </WritableField>
                         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                           <p className="text-xs text-gray-300">{importMessage || '読み込むと、このブラウザの現在の記録に上書きされます。'}</p>
                           <button type="button" onClick={handleImportStoryData} className="rpg-button whitespace-nowrap px-5 py-2 text-sm">
@@ -3560,7 +3659,9 @@
                     <div>
                       <WriteCue active={!player.name} />
                       <label className="text-gray-300 text-sm block mb-1">なまえ</label>
-                      <input type="text" className="rpg-input text-xl" value={player.name} onChange={e => setPlayer({...player, name: e.target.value})} placeholder="例：ああああ" />
+                      <WritableField value={player.name}>
+                        <input type="text" className="rpg-input text-xl" value={player.name} onChange={e => setPlayer({...player, name: e.target.value})} placeholder="例：ああああ" />
+                      </WritableField>
                     </div>
                   </div>
                 </WindowBox>
@@ -3779,7 +3880,7 @@
                     onToggle={e => setCanAddOpen(e.currentTarget.open)}
                   >
                     <summary className="cursor-pointer list-none text-sm font-bold text-yellow-300 hover:text-yellow-100">
-                      <span className="mr-2">▼</span>まだ記録していない{isWeaponMagicStep ? '武器や魔法' : '仲間との関係性'}はあるか？
+                      <span className="mr-2">▼</span>{isWeaponMagicStep ? '武器や魔法を記録する。' : '仲間との関係性を記録する。'}
                     </summary>
                     <div className="mt-4 space-y-3">
                       {isWeaponMagicStep && (
@@ -3823,8 +3924,30 @@
                         </div>
                       </div>
                       <div className="flex flex-col md:flex-row gap-2 items-center mt-2">
-                        <input type="text" placeholder="名前 (自由に編集・手動追加も可能)" className="rpg-input flex-1 w-full" value={newCan.name} onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})} />
-                        <input type="text" placeholder="説明" className="rpg-input flex-1 w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
+                        {isWeaponMagicStep ? (
+                          <div className={`skill-name-field ${newCan.name ? 'has-value' : ''}`}>
+                            <input
+                              type="text"
+                              placeholder="スキル名（自由に編集・手動追加も可能）"
+                              className="rpg-input skill-name-editable w-full"
+                              value={newCan.name}
+                              onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})}
+                            />
+                          </div>
+                        ) : (
+                          <WritableField value={newCan.name} className="flex-1">
+                            <input
+                              type="text"
+                              placeholder="名前 (自由に編集・手動追加も可能)"
+                              className="rpg-input w-full"
+                              value={newCan.name}
+                              onChange={e => setNewCan({...newCan, type: activeType, name: e.target.value})}
+                            />
+                          </WritableField>
+                        )}
+                        <WritableField value={newCan.desc} className="flex-1">
+                          <input type="text" placeholder="説明" className="rpg-input w-full" value={newCan.desc} onChange={e => setNewCan({...newCan, type: activeType, desc: e.target.value})} />
+                        </WritableField>
                         <button onClick={handleAddCan} disabled={!newCan.name} className={`rpg-button whitespace-nowrap md:w-auto w-full ${!newCan.name ? 'opacity-50' : ''}`}>追加</button>
                       </div>
                     </div>
@@ -3835,13 +3958,15 @@
                       <p className="mb-3 text-sm font-bold text-yellow-300">
                         <span className="mr-2">▼</span>武器・魔法についての気づき
                       </p>
-                      <textarea
-                        className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
-                        rows={5}
-                        value={canInsight}
-                        onChange={e => setCanInsight(e.target.value)}
-                        placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
-                      />
+                      <WritableField value={canInsight} textarea>
+                        <textarea
+                          className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                          rows={5}
+                          value={canInsight}
+                          onChange={e => setCanInsight(e.target.value)}
+                          placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
+                        />
+                      </WritableField>
                     </div>
                   )}
                 </WindowBox>
@@ -3861,13 +3986,15 @@
                         <p className="mb-3 text-sm font-bold text-yellow-300">
                           <span className="mr-2">▼</span>仲間・関係性についての気づき
                         </p>
-                        <textarea
-                          className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
-                          rows={5}
-                          value={allyInsight}
-                          onChange={e => setAllyInsight(e.target.value)}
-                          placeholder={"例：私は〇〇さん／〇〇な人たちに支えられてきた。\n例：困ったとき、〇〇という関係性が力になっていた。"}
-                        />
+                        <WritableField value={allyInsight} textarea>
+                          <textarea
+                            className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                            rows={5}
+                            value={allyInsight}
+                            onChange={e => setAllyInsight(e.target.value)}
+                            placeholder={"例：私は〇〇さん／〇〇な人たちに支えられてきた。\n例：困ったとき、〇〇という関係性が力になっていた。"}
+                          />
+                        </WritableField>
                       </div>
                     )}
                     <div className="flex flex-col md:flex-row justify-center gap-3 mt-4">
@@ -3890,13 +4017,15 @@
                         <p className="mb-3 text-sm font-bold text-yellow-300">
                           <span className="mr-2">▼</span>武器・魔法についての気づき
                         </p>
-                        <textarea
-                          className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
-                          rows={5}
-                          value={canInsight}
-                          onChange={e => setCanInsight(e.target.value)}
-                          placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
-                        />
+                        <WritableField value={canInsight} textarea>
+                          <textarea
+                            className="rpg-input resize-none w-full border-2 border-dashed border-gray-300 bg-black bg-opacity-95 p-3 text-sm leading-relaxed text-gray-200"
+                            rows={5}
+                            value={canInsight}
+                            onChange={e => setCanInsight(e.target.value)}
+                            placeholder={'例：私は〇〇の場面で、〇〇という力を使ってきた。\n例：自分では当たり前だと思っていたが、〇〇は私の武器かもしれない。'}
+                          />
+                        </WritableField>
                       </div>
                     )}
                     <div className="text-center mt-8">
@@ -4037,7 +4166,9 @@
                       </div>
                       <div>
                         <label className="block text-sm text-gray-400 mb-1">出来事</label>
-                        <input type="text" className="rpg-input w-full" placeholder="例：初めてのプロジェクトを任された" value={newMemory.event} onChange={e => setNewMemory({...newMemory, event: e.target.value})} />
+                        <WritableField value={newMemory.event}>
+                          <input type="text" className="rpg-input w-full" placeholder="例：初めてのプロジェクトを任された" value={newMemory.event} onChange={e => setNewMemory({...newMemory, event: e.target.value})} />
+                        </WritableField>
                       </div>
                       <div>
                         <label className="block text-sm text-gray-400 mb-1 flex justify-between">
@@ -4094,13 +4225,15 @@
           ]}>
             <div className="mt-6 bg-gray-900 p-4 border border-gray-600 rounded">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 気づき・価値観のメモ</p>
-              <textarea
-                className="rpg-input resize-none w-full text-gray-200 bg-black p-2 border-dashed leading-relaxed"
-                rows={5}
-                value={chartInsight}
-                onChange={e => setChartInsight(e.target.value)}
-                placeholder={"例：満足度が上がる時には、〇〇という共通点がある。\n例：つらかった出来事にも、今の自分につながる〇〇があった。"}
-              ></textarea>
+              <WritableField value={chartInsight} textarea>
+                <textarea
+                  className="rpg-input resize-none w-full text-gray-200 bg-black p-2 border-dashed leading-relaxed"
+                  rows={5}
+                  value={chartInsight}
+                  onChange={e => setChartInsight(e.target.value)}
+                  placeholder={"例：満足度が上がる時には、〇〇という共通点がある。\n例：つらかった出来事にも、今の自分につながる〇〇があった。"}
+                ></textarea>
+              </WritableField>
             </div>
 
             {showRestPrompt ? (
@@ -4299,33 +4432,43 @@
                     {willStep === 0 ? (
                       <div>
                         <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> {APP_CONFIG.char2NameShort}の質問：1年先の未来（短期目標）</label>
-                        <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.oneYear} onChange={e => setWill({...will, oneYear: e.target.value})} placeholder="例：〇〇の資格を取得して、担当業務で〇〇を任されるようになっていたい" />
+                        <WritableField value={will.oneYear} textarea>
+                          <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.oneYear} onChange={e => setWill({...will, oneYear: e.target.value})} placeholder="例：〇〇の資格を取得して、担当業務で〇〇を任されるようになっていたい" />
+                        </WritableField>
                         <label className="text-gray-400 text-sm flex items-center gap-1 mt-6 mb-2"><i className="fa-solid fa-feather-pointed"></i> 1年後についての気づき</label>
-                        <textarea
-                          className="rpg-input resize-none w-full text-sm leading-relaxed"
-                          rows={5}
-                          value={willOneYearInsight}
-                          onChange={e => setWillOneYearInsight(e.target.value)}
-                          placeholder={"例：1年後には、〇〇の資格取得や〇〇の経験を通じて、〇〇ができる自分になっていたい。\n例：そのために、今の仕事の中で〇〇を試してみたい。"}
-                        />
+                        <WritableField value={willOneYearInsight} textarea>
+                          <textarea
+                            className="rpg-input resize-none w-full text-sm leading-relaxed"
+                            rows={5}
+                            value={willOneYearInsight}
+                            onChange={e => setWillOneYearInsight(e.target.value)}
+                            placeholder={"例：1年後には、〇〇の資格取得や〇〇の経験を通じて、〇〇ができる自分になっていたい。\n例：そのために、今の仕事の中で〇〇を試してみたい。"}
+                          />
+                        </WritableField>
                       </div>
                     ) : willStep === 1 ? (
                       <>
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-location-dot"></i> {APP_CONFIG.char1NameShort}の質問：3年先の未来（長期目標）</label>
-                          <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.threeYears} onChange={e => setWill({...will, threeYears: e.target.value})} placeholder="例：自社サービスを立ち上げ、多くの村人（ユーザー）を笑顔にする" />
+                          <WritableField value={will.threeYears} textarea>
+                            <textarea className="rpg-input resize-none w-full text-lg" rows={3} value={will.threeYears} onChange={e => setWill({...will, threeYears: e.target.value})} placeholder="例：自社サービスを立ち上げ、多くの村人（ユーザー）を笑顔にする" />
+                          </WritableField>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mt-6 mb-2"><i className="fa-solid fa-feather-pointed"></i> 3年後についての気づき</label>
-                          <textarea
-                            className="rpg-input resize-none w-full text-sm leading-relaxed"
-                            rows={5}
-                            value={willThreeYearsInsight}
-                            onChange={e => setWillThreeYearsInsight(e.target.value)}
-                            placeholder={"例：3年後には、〇〇という役割を自然に担えるようになりたい。\n例：その未来に近づくために、〇〇という経験を積んでおきたい。"}
-                          />
+                          <WritableField value={willThreeYearsInsight} textarea>
+                            <textarea
+                              className="rpg-input resize-none w-full text-sm leading-relaxed"
+                              rows={5}
+                              value={willThreeYearsInsight}
+                              onChange={e => setWillThreeYearsInsight(e.target.value)}
+                              placeholder={"例：3年後には、〇〇という役割を自然に担えるようになりたい。\n例：その未来に近づくために、〇〇という経験を積んでおきたい。"}
+                            />
+                          </WritableField>
                         </div>
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-bullseye"></i> 3年後になりたいロール（役割・立場・役職・職業）</label>
-                          <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー / 個人事業主 / 地域に貢献する人" />
+                          <WritableField value={will.job}>
+                            <input type="text" className="rpg-input text-2xl font-bold text-blue-300 w-full" value={will.job} onChange={e => setWill({...will, job: e.target.value})} placeholder="例：業務改善リーダー / 個人事業主 / 地域に貢献する人" />
+                          </WritableField>
                         </div>
                       </>
                     ) : (
@@ -4356,19 +4499,21 @@
                         <div>
                           <label className="text-gray-400 text-sm flex items-center gap-1 mb-2"><i className="fa-solid fa-pen"></i> 自分でも書き足す</label>
                           <div className="flex flex-col md:flex-row gap-2">
-                            <input
-                              type="text"
-                              className="rpg-input flex-1"
-                              value={newTenYearWish}
-                              onChange={e => setNewTenYearWish(e.target.value)}
-                              placeholder="例：海の近くでゆっくり暮らしたい"
-                              onKeyDown={e => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  handleAddTenYearWish();
-                                }
-                              }}
-                            />
+                            <WritableField value={newTenYearWish} className="flex-1">
+                              <input
+                                type="text"
+                                className="rpg-input w-full"
+                                value={newTenYearWish}
+                                onChange={e => setNewTenYearWish(e.target.value)}
+                                placeholder="例：海の近くでゆっくり暮らしたい"
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleAddTenYearWish();
+                                  }
+                                }}
+                              />
+                            </WritableField>
                             <button type="button" onClick={handleAddTenYearWish} disabled={!newTenYearWish.trim()} className={`rpg-button ${!newTenYearWish.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}>
                               追加
                             </button>
@@ -4503,26 +4648,30 @@
                       思い浮かぶクエストはいくつか書き出してもよい。そのあと、Willと接続するクエストを一つ選んでみよう。
                     </p>
                     <WriteCue active={!mustDraftStarted} />
-                    <input
-                      type="text"
-                      placeholder="クエスト名（業務・役割・期待されていること）"
-                      className="rpg-input parchment-input text-base"
-                      value={newMust.title}
-                      onChange={e => {
-                        setMustDraftStarted(true);
-                        setNewMust({...newMust, title: e.target.value});
-                      }}
-                    />
-                    <textarea
-                      placeholder="クエストの概要・目的"
-                      className="rpg-input parchment-input resize-none text-sm leading-relaxed"
-                      rows={3}
-                      value={newMust.desc}
-                      onChange={e => {
-                        setMustDraftStarted(true);
-                        setNewMust({...newMust, desc: e.target.value});
-                      }}
-                    />
+                    <WritableField value={newMust.title}>
+                      <input
+                        type="text"
+                        placeholder="クエスト名（業務・役割・期待されていること）"
+                        className="rpg-input parchment-input text-base"
+                        value={newMust.title}
+                        onChange={e => {
+                          setMustDraftStarted(true);
+                          setNewMust({...newMust, title: e.target.value});
+                        }}
+                      />
+                    </WritableField>
+                    <WritableField value={newMust.desc} textarea>
+                      <textarea
+                        placeholder="クエストの概要・目的"
+                        className="rpg-input parchment-input resize-none text-sm leading-relaxed"
+                        rows={3}
+                        value={newMust.desc}
+                        onChange={e => {
+                          setMustDraftStarted(true);
+                          setNewMust({...newMust, desc: e.target.value});
+                        }}
+                      />
+                    </WritableField>
                     <div className="bg-black bg-opacity-50 p-3 rounded border border-gray-700">
                       <p className="text-xs text-gray-400 mb-2">よくあるクエストの欠片から選ぶ：</p>
                       <div className="flex flex-wrap gap-2">
@@ -4617,15 +4766,17 @@
                       text={"「このクエストは、1年後・3年後のWillへ近づくための冒険、自分の物語のサブクエストとして捉えることもできるんですよ。\n文章は自由に書き換えてくださいね。」"}
                     />
                     <WriteCue active={!mustConnectionStarted} />
-                    <textarea
-                      placeholder="このクエストは、どんなCanを育て、どんなWillに近づく機会になるか？"
-                      className="rpg-input parchment-input resize-none text-sm leading-relaxed"
-                      rows={8}
-                      value={newMust.connection}
-                      onChange={e => {
-                        handleEditMustConnection(e.target.value);
-                      }}
-                    />
+                    <WritableField value={newMust.connection} textarea>
+                      <textarea
+                        placeholder="このクエストは、どんなCanを育て、どんなWillに近づく機会になるか？"
+                        className="rpg-input parchment-input resize-none text-sm leading-relaxed"
+                        rows={8}
+                        value={newMust.connection}
+                        onChange={e => {
+                          handleEditMustConnection(e.target.value);
+                        }}
+                      />
+                    </WritableField>
                     <div className="rounded border border-yellow-700 bg-black bg-opacity-50 p-4 print-friendly">
                       <p className="text-sm text-yellow-300 font-bold mb-3">▼ 参考：ここまでに描いたWill</p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -4670,42 +4821,50 @@
                     <p className="text-sm text-yellow-300 font-bold">▼ 接続してみた気づき</p>
                     <div className="parchment-card p-4 md:p-5">
                       <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">接続したクエスト</p>
-                      <input
-                        type="text"
-                        className="rpg-input parchment-input text-2xl md:text-3xl font-bold leading-tight"
-                        value={newMust.title}
-                        onChange={e => handleEditActiveMust({ title: e.target.value })}
-                        placeholder="クエスト名"
-                      />
-                      <textarea
-                        className="rpg-input parchment-input resize-none w-full text-sm md:text-base leading-relaxed mt-3"
-                        rows={4}
-                        value={newMust.desc}
-                        onChange={e => handleEditActiveMust({ desc: e.target.value })}
-                        placeholder="クエストの概要・目的"
-                      />
-                      <div className="mt-4 pt-3 border-t border-[#a87533] border-opacity-60">
-                        <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">Willとの接続メモ</p>
+                      <WritableField value={newMust.title}>
+                        <input
+                          type="text"
+                          className="rpg-input parchment-input text-2xl md:text-3xl font-bold leading-tight"
+                          value={newMust.title}
+                          onChange={e => handleEditActiveMust({ title: e.target.value })}
+                          placeholder="クエスト名"
+                        />
+                      </WritableField>
+                      <WritableField value={newMust.desc} textarea className="mt-3">
                         <textarea
                           className="rpg-input parchment-input resize-none w-full text-sm md:text-base leading-relaxed"
-                          rows={6}
-                          value={newMust.connection}
-                          onChange={e => handleEditMustConnection(e.target.value)}
-                          placeholder="ここでもWillとの接続メモを見直せます。"
+                          rows={4}
+                          value={newMust.desc}
+                          onChange={e => handleEditActiveMust({ desc: e.target.value })}
+                          placeholder="クエストの概要・目的"
                         />
+                      </WritableField>
+                      <div className="mt-4 pt-3 border-t border-[#a87533] border-opacity-60">
+                        <p className="text-sm font-bold mb-2 tracking-widest text-[#6b3f15]">Willとの接続メモ</p>
+                        <WritableField value={newMust.connection} textarea>
+                          <textarea
+                            className="rpg-input parchment-input resize-none w-full text-sm md:text-base leading-relaxed"
+                            rows={6}
+                            value={newMust.connection}
+                            onChange={e => handleEditMustConnection(e.target.value)}
+                            placeholder="ここでもWillとの接続メモを見直せます。"
+                          />
+                        </WritableField>
                       </div>
                     </div>
                     <WriteCue active={!mustInsightStarted && !mustInsight} />
-                    <textarea
-                      className="rpg-input parchment-input resize-none w-full text-sm leading-relaxed"
-                      rows={5}
-                      value={mustInsight}
-                      onChange={e => {
-                        setMustInsightStarted(true);
-                        setMustInsight(e.target.value);
-                      }}
-                      placeholder={"例：このクエストは、私の〇〇という力を磨く機会になる。\n例：ギルドから求められている〇〇を、自分のWillである〇〇につなげられる。"}
-                    />
+                    <WritableField value={mustInsight} textarea>
+                      <textarea
+                        className="rpg-input parchment-input resize-none w-full text-sm leading-relaxed"
+                        rows={5}
+                        value={mustInsight}
+                        onChange={e => {
+                          setMustInsightStarted(true);
+                          setMustInsight(e.target.value);
+                        }}
+                        placeholder={"例：このクエストは、私の〇〇という力を磨く機会になる。\n例：ギルドから求められている〇〇を、自分のWillである〇〇につなげられる。"}
+                      />
+                    </WritableField>
                     <div className="flex flex-col md:flex-row justify-between gap-3">
                       <button onClick={() => setMustWorkStep(2)} className="text-gray-400 hover:text-white px-4 py-2 flex items-center gap-2 transition-colors">
                         <i className="fa-solid fa-arrow-right rotate-180"></i> 接続に戻る
@@ -5139,7 +5298,7 @@
         room: `url('${APP_CONFIG.backgroundImages.room}')`,
         journey: `url('${APP_CONFIG.backgroundImages.journey}')`
       };
-      const isOpeningScene = scene === 'intro' && introStep === 0 && !isInputPhase;
+      const isOpeningScene = scene === 'intro' && introStep <= 1 && !isInputPhase;
       const backgroundImage = scene === 'must'
         ? backgroundImages.room
         : isOpeningScene || scene === 'summary'
@@ -5151,7 +5310,27 @@
         : isOpeningScene || scene === 'summary'
           ? 'center bottom'
           : 'center';
-      const backgroundOverlayOpacity = activeThemeKey === 'cafe' ? 0.28 : 0.5;
+      const isSummaryScene = scene === 'summary';
+      const backgroundOverlayOpacity = activeThemeKey === 'cafe'
+        ? (isSummaryScene ? 0.14 : 0.28)
+        : isSummaryScene
+          ? 0.18
+          : isOpeningScene
+            ? 0.42
+            : 0.5;
+      const backgroundAtmosphereStyle = isOpeningScene
+        ? {
+            background: 'radial-gradient(circle at 82% 32%, rgba(255, 190, 92, 0.34), transparent 34%), linear-gradient(120deg, rgba(255, 122, 48, 0.18), rgba(255, 210, 120, 0.10) 48%, rgba(40, 80, 140, 0.08))',
+            mixBlendMode: 'soft-light',
+            opacity: 0.85
+          }
+        : isSummaryScene
+          ? {
+              background: 'radial-gradient(circle at 78% 20%, rgba(255, 246, 205, 0.42), transparent 32%), linear-gradient(180deg, rgba(255, 244, 210, 0.22), rgba(185, 220, 255, 0.12))',
+              mixBlendMode: 'screen',
+              opacity: 0.42
+            }
+          : null;
 
       const locationName = scene === 'must'
         ? '宿屋の自室'
@@ -5174,6 +5353,9 @@
           style={{ backgroundImage: themedBackgroundImage, backgroundColor: APP_CONFIG.colors.pageBg, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed', color: APP_CONFIG.colors.baseText }}
         >
           <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
+          {backgroundAtmosphereStyle && (
+            <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={backgroundAtmosphereStyle}></div>
+          )}
           {(isOpeningScene || scene === 'summary') && (
             <div className="magic-particles print-hidden" aria-hidden="true">
               {Array.from({ length: 28 }, (_, index) => (
