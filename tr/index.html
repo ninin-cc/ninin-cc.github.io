@@ -21,7 +21,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メンテーリア・タロット | One Card Oracle</title>
+  <title>メンテーリア・タロット</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -170,6 +170,9 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
 
     @keyframes cardSpinAndFlip {
       0% { transform: translateY(-50px) scale(0.8) rotateY(180deg); opacity: 0; }
@@ -202,6 +205,24 @@
     @keyframes hideBack {
       0%, 49.9% { opacity: 1; visibility: visible; }
       50%, 100% { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes fourCardFlip {
+      0% { transform: translateY(0) scale(1) rotateY(0deg); }
+      50% { transform: translateY(-15px) scale(1.05) rotateY(270deg); }
+      100% { transform: translateY(0) scale(1) rotateY(540deg); }
+    }
+    .animate-fourCardFlip {
+      animation: fourCardFlip 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    
+    @keyframes cardFlipGlow {
+      0%, 35% { opacity: 0; }
+      45%, 65% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .animate-cardFlipGlow {
+      animation: cardFlipGlow 2.5s ease-in-out forwards;
     }
 
     .animate-cardSpinAndFlip {
@@ -751,11 +772,14 @@
 
     let state = {
       gameState: 'START',
-      drawnCard: null,
+      drawMode: 'ONE_CARD', // 'ONE_CARD' or 'FOUR_CARDS'
+      drawnCard: null, // ワンオラクル用
+      drawnCards: [],  // フォーカード用
       orientation: '',
       tiltAngle: 0,
       drawingTilt: 0,
       isHorizontal: false,
+      isUserDrawn: false,
       memo: '',
       isTransitioning: false,
       flashMessage: '',
@@ -792,8 +816,11 @@
     function getPageNumber() {
       if (state.gameState === 'START') return 1;
       if (state.gameState === 'RULES') return 2;
-      if (state.gameState === 'DRAWING') return 3;
-      if (state.gameState === 'RESULT') return 4;
+      if (state.gameState === 'CHOOSING') return 3;
+      if (state.gameState === 'DRAWING') return state.isUserDrawn ? 4 : 3;
+      if (state.gameState === 'RESULT') return state.isUserDrawn ? 5 : 4;
+      if (state.gameState === 'FOUR_CARDS_PLAY') return 3;
+      if (state.gameState === 'FOUR_CARDS_RESULT') return 4;
       return 0;
     }
 
@@ -811,7 +838,30 @@
       }, 400);
     }
 
-    function drawCard() {
+    function playMusic() {
+      const playerContainer = document.getElementById('bgm-player-container');
+      if (playerContainer) {
+        playerContainer.innerHTML = `
+          <div class="bg-[#e8dcc4] shadow-[0_-5px_20px_rgba(67,20,7,0.3)] border-t border-[#8c7355]/50 flex flex-col items-center justify-center relative p-2" style="background-image: ${PARCHMENT_TEXTURE}">
+            <button onclick="document.getElementById('bgm-player-container').innerHTML=''" class="absolute -top-3 right-4 bg-stone-700 hover:bg-stone-800 text-stone-100 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs shadow-md border border-stone-500 z-10">✕</button>
+            <div class="w-full max-w-sm rounded overflow-hidden shadow-inner border border-stone-300/50">
+              <iframe src="https://suno.com/embed/c55313dc-5c98-43b6-9ed2-eac2134dac85?autoplay=true" allow="autoplay *; encrypted-media *;" allowfullscreen class="w-full h-[80px] border-none block"></iframe>
+            </div>
+          </div>
+        `;
+      }
+      showFlashMessage("自動再生されない場合は、下部の再生ボタンを押してね⭐");
+    }
+
+    function enterChoosingMode() {
+      state.drawMode = 'ONE_CARD';
+      transitionState(() => {
+        state.gameState = 'CHOOSING';
+      });
+    }
+
+    function drawCard(isUserDrawn = false) {
+      state.drawMode = 'ONE_CARD';
       const randomIndex = Math.floor(Math.random() * tarotCards.length);
       const baseCard = tarotCards[randomIndex];
 
@@ -825,6 +875,7 @@
       }
 
       state.isHorizontal = Math.random() < (1/6);
+      state.isUserDrawn = isUserDrawn; // 自分で引いたかどうかを記録
 
       if (state.isHorizontal) {
         state.orientation = "未知の向き";
@@ -851,13 +902,49 @@
       });
     }
 
-    function getCardDetails() {
-      const card = state.drawnCard;
+    function startFourCards(withMusic = false) {
+      if (withMusic) playMusic();
+      state.drawMode = 'FOUR_CARDS';
+      
+      let available = [...tarotCards];
+      let selected = [];
+      for(let i = 0; i < 4; i++) {
+        let idx = Math.floor(Math.random() * available.length);
+        let card = { ...available[idx] };
+        
+        if (card.variants && card.variants.length > 0) {
+           card.file = card.variants[Math.floor(Math.random() * card.variants.length)];
+        }
+        card.isHorizontal = Math.random() < (1/6);
+        if (card.isHorizontal) {
+           card.orientation = "未知の向き";
+        } else {
+           card.orientation = Math.random() < 0.5 ? "正位置" : "逆位置";
+        }
+        card.isOpen = false;
+        card.isFlipping = false;
+        selected.push(card);
+        available.splice(idx, 1);
+      }
+      state.drawnCards = selected;
+      state.memo = '';
+
+      transitionState(() => {
+        state.gameState = 'FOUR_CARDS_PLAY';
+      });
+    }
+
+    function getCardDetails(cardOverride = null, isHorizontalOverride = null, orientationOverride = null) {
+      const card = cardOverride || state.drawnCard;
       if (!card) return null;
-      const isUpright = state.orientation === "正位置";
+      
+      const isHorizontal = isHorizontalOverride !== null ? isHorizontalOverride : state.isHorizontal;
+      const orientation = orientationOverride !== null ? orientationOverride : state.orientation;
+      
+      const isUpright = orientation === "正位置";
       const isHaruka = state.guide === 'haruka';
 
-      let message = state.isHorizontal
+      let message = isHorizontal
         ? "おや、カードが横を向いてしもうたな。\n正位置でも逆位置でもない……。\nこの解釈は、おぬし自身に委ねられているようじゃ。\n\nもし、どうしても答えが見つからぬのなら、\nもう一度引き直してもよいぞ。"
         : (isUpright ? card.uprightMessage : card.reversedMessage);
 
@@ -867,16 +954,16 @@
       }
 
       return {
-        title: state.isHorizontal ? "空白の鏡" : (isUpright ? card.uprightTitle : card.reversedTitle),
-        meaning: state.isHorizontal
+        title: isHorizontal ? "空白の鏡" : (isUpright ? card.uprightTitle : card.reversedTitle),
+        meaning: isHorizontal
           ? "カードが横を向いて現れました。\n正位置でも逆位置でもない状態です。\n決められた意味はなく、あなたの心に浮かんだものが、そのまま意味となります."
           : (isUpright ? card.uprightMeaning : card.reversedMeaning),
         message: message,
-        question: state.isHorizontal
+        question: isHorizontal
           ? "いま、あなたにはこのカードがどう見えていますか？\n直感で浮かんだ言葉は何でしょうか？"
           : (isUpright ? card.uprightQuestion : card.reversedQuestion),
-        orientationText: state.isHorizontal ? "委ねられた意味" : state.orientation,
-        orientationColor: state.isHorizontal ? "text-stone-600" : (isUpright ? "text-orange-800" : "text-indigo-800")
+        orientationText: isHorizontal ? "委ねられた意味" : orientation,
+        orientationColor: isHorizontal ? "text-stone-600" : (isUpright ? "text-orange-800" : "text-indigo-800")
       };
     }
 
@@ -916,7 +1003,7 @@
       try {
         const dataUrl = await generateImage();
         const link = document.createElement('a');
-        link.download = 'OneCardOracle_Result.png';
+        link.download = 'MentaliaTarot_Result.png';
         link.href = dataUrl;
         link.click();
         state.flashMessage = "画像を保存しました！";
@@ -928,18 +1015,14 @@
     }
 
     async function shareResult() {
-      const card = state.drawnCard;
-      if (!card) return;
-      const detailsObj = getCardDetails();
-
-      const shareText = `私が今日出会ったカードはこれでした。みんなはどう？\n\n#メンテーリア #タロット #内省\nhttps://ninin-cc.github.io/tr/`;
+      const shareText = `私が今日出会ったカードはこちら。\n\n#メンテーリア #タロット #内省\nhttps://ninin-cc.github.io/tr/`;
 
       state.flashMessage = "画像を生成中...";
       render();
 
       try {
         const dataUrl = await generateImage();
-        const file = dataURLtoFile(dataUrl, 'OneCardOracle_Result.png');
+        const file = dataURLtoFile(dataUrl, 'MentaliaTarot_Result.png');
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
@@ -969,12 +1052,25 @@
     }
 
     function saveToGoogleCalendar() {
-      const card = state.drawnCard;
-      if (!card) return;
-      const detailsObj = getCardDetails();
+      let eventTitle = "";
+      let details = "";
 
-      const eventTitle = `【タロット内省】${card.name}｜${detailsObj.orientationText}`;
-      const details = `カード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
+      if (state.drawMode === 'ONE_CARD') {
+        const card = state.drawnCard;
+        if (!card) return;
+        const detailsObj = getCardDetails();
+        eventTitle = `【タロット内省】${card.name}｜${detailsObj.orientationText}`;
+        details = `カード：${card.number} ${card.name}｜${card.jp}\n向き：${detailsObj.orientationText}\nテーマ：${detailsObj.title}\n\n意味：\n${detailsObj.meaning}\n\nリフレムの言葉：\n${detailsObj.message}\n\n今日の問い：\n${detailsObj.question}\n\nメモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
+      } else {
+        eventTitle = `【タロット内省】フォーカード`;
+        details = `【フォーカードの結果】\n\n`;
+        const labels = ["① 現状", "② 自分", "③ 原因", "④ 解決策"];
+        state.drawnCards.forEach((card, index) => {
+          const detailsObj = getCardDetails(card, card.isHorizontal, card.orientation);
+          details += `${labels[index]}：${card.number} ${card.name} (${detailsObj.orientationText})\nテーマ：${detailsObj.title}\n\n`;
+        });
+        details += `メモ：\n${state.memo || '（なし）'}\n\n#メンテーリア・タロット #内省`;
+      }
 
       const d = new Date();
       const year = d.getFullYear();
@@ -1151,7 +1247,7 @@
                     <p>鏡の塔の中の小部屋じゃ。</p>
                     <div class="h-1.5 sm:h-2"></div>
                     <p>わしが、今日のおぬしに</p>
-                    <p>一枚のカードを差し出そう。</p>
+                    <p>カードを差し出そう。</p>
                     <div class="h-1.5 sm:h-2"></div>
                     <p class="text-orange-900">よいか、</p>
                     <p class="text-orange-900">これは未来を当てる占いではないぞ。</p>
@@ -1165,12 +1261,12 @@
         const promiseText = isHaruka ? `
                   <p>何度でも引くことはできるそうです。</p>
                   <p>でも、心の扉を開けすぎると、<br/>風が入りすぎることもあるみたいで…。</p>
-                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
+                  <p class="text-orange-900 mt-2 block">迷った時は、引き直すより休んでね。</p>
                   <p>今日出会ったカードと、<br/>静かに向き合ってみてくださいね。</p>
         ` : `
                   <p>何度でも引くことはできるぞ。</p>
                   <p>じゃが、心の扉を開けすぎると、<br/>風が入りすぎることもある。</p>
-                  <p class="text-orange-900 mt-2 block">まずは一日一枚。</p>
+                  <p class="text-orange-900 mt-2 block">迷った時は、引き直すより休むのじゃ。</p>
                   <p>今日出会ったカードと、<br/>静かに向き合ってみるのじゃよ。</p>
         `;
 
@@ -1190,21 +1286,65 @@
                 </div>
               </div>
 
-              <div class="flex flex-col items-center justify-center gap-4 relative z-10 mb-8 sm:mb-10 w-full px-4 sm:px-0 mx-auto sm:max-w-md">
-                <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 sm:px-16 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105 group w-full">
-                  <div class="wood-texture"></div>
-                  <span class="relative z-10 flex items-center justify-center text-stone-100">
-                    今日のカードを引く
-                    ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
-                  </span>
-                </button>
+              <div class="flex flex-col items-center justify-center gap-4 relative z-10 mb-8 sm:mb-10 w-full px-2 sm:px-0 mx-auto sm:max-w-lg">
+                <!-- ワンオラクル -->
+                <div class="w-full bg-[#f4ebd8]/70 p-3 rounded-md border border-stone-400/50">
+                  <h3 class="text-xs sm:text-sm font-bold text-stone-800 text-center border-b border-stone-400/50 pb-1.5 mb-3 tracking-widest">【ワンオラクル（1枚引き）】</h3>
+                  <div class="flex flex-row gap-2 w-full mb-2">
+                    <button data-action="draw-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex flex-col items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-2 shadow-md hover:scale-105 group w-1/2">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 text-stone-100 flex items-center mb-0.5 text-xs sm:text-sm">
+                        おまかせで引く
+                        ${getIcon('Play', "w-3 h-3 ml-1 group-hover:text-orange-400 transition-colors")}
+                      </span>
+                      <span class="relative z-10 text-[9px] sm:text-[10px] text-stone-300">案内人に委ねる</span>
+                    </button>
+                    <button data-action="choose-card" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex flex-col items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-2 shadow-md hover:scale-105 group w-1/2">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 text-stone-100 flex items-center mb-0.5 text-xs sm:text-sm">
+                        自分で引く
+                        ${getIcon('Play', "w-3 h-3 ml-1 group-hover:text-orange-400 transition-colors")}
+                      </span>
+                      <span class="relative z-10 text-[9px] sm:text-[10px] text-stone-300">22枚から選ぶ</span>
+                    </button>
+                  </div>
+                  <div class="flex flex-row gap-2 w-full">
+                    <button data-action="draw-card-with-music" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[9px] sm:text-[11px] font-serif font-bold py-2 px-1 shadow-sm hover:scale-105 group w-1/2 animate-buttonAura">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center text-stone-800">
+                        ${getIcon('Sparkles', 'w-3 h-3 mr-1 text-orange-600')} 音楽あり(おまかせ)
+                      </span>
+                    </button>
+                    <button data-action="choose-card-with-music" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[9px] sm:text-[11px] font-serif font-bold py-2 px-1 shadow-sm hover:scale-105 group w-1/2 animate-buttonAura">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center text-stone-800">
+                        ${getIcon('Sparkles', 'w-3 h-3 mr-1 text-orange-600')} 音楽あり(自分で)
+                      </span>
+                    </button>
+                  </div>
+                </div>
 
-                <button data-action="draw-card-with-music" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-3 px-8 sm:px-12 shadow-sm hover:scale-105 group w-full animate-buttonAura">
-                  <div class="wood-texture"></div>
-                  <span class="relative z-10 flex items-center justify-center text-stone-800">
-                    ${getIcon('Sparkles', 'w-4 h-4 mr-2 text-orange-600')} 音楽と共に今日のカードを引く
-                  </span>
-                </button>
+                <!-- フォーカード -->
+                <div class="w-full bg-[#f4ebd8]/70 p-3 rounded-md border border-stone-400/50 mt-1">
+                  <h3 class="text-xs sm:text-sm font-bold text-stone-800 text-center border-b border-stone-400/50 pb-1.5 mb-3 tracking-widest">【フォーカード（4枚引き）】</h3>
+                  <div class="flex flex-col gap-2 w-full">
+                    <button data-action="play-four-cards" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex flex-col items-center justify-center tracking-widest text-sm font-serif font-bold py-3 px-2 shadow-md hover:scale-105 group w-full">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 text-stone-100 flex items-center mb-0.5 text-xs sm:text-sm">
+                        フォーカードで引く
+                        ${getIcon('Play', "w-3 h-3 ml-1 group-hover:text-orange-400 transition-colors")}
+                      </span>
+                      <span class="relative z-10 text-[9px] sm:text-[10px] text-stone-300">4枚のカードを1枚ずつ開く</span>
+                    </button>
+                    <button data-action="play-four-cards-with-music" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[10px] sm:text-[11px] font-serif font-bold py-2 px-2 shadow-sm hover:scale-105 group w-full animate-buttonAura">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center text-stone-800">
+                        ${getIcon('Sparkles', 'w-3 h-3 mr-1 text-orange-600')} 音楽あり(フォーカード)
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
               </div>
 
               <div class="bg-[#f0e6d2]/80 backdrop-blur-sm p-4 sm:p-6 rounded-md border border-stone-400/50 shadow-sm relative z-10 mb-10 mx-2 sm:mx-0">
@@ -1219,6 +1359,140 @@
         `;
       }
 
+      if (state.gameState === 'CHOOSING') {
+        const isHaruka = state.guide === 'haruka';
+        html += `
+            <div class="flex-grow flex flex-col items-center justify-start min-h-[60vh] relative z-10 w-full px-2 sm:px-4">
+                <div class="mb-6 sm:mb-8 text-center bg-[#f4ebd8]/90 p-4 rounded-md border border-stone-400/60 shadow-sm w-full max-w-2xl" style="background-image: ${PARCHMENT_TEXTURE}">
+                    <h2 class="text-base sm:text-lg font-serif font-bold text-stone-900 tracking-widest magic-text-glow">
+                        ${isHaruka ? '直感で、これだと思うカードを<br class="sm:hidden"/>1枚選んでくださいね。' : '直感で、これだと思うカードを<br class="sm:hidden"/>1枚選ぶのじゃ。'}
+                    </h2>
+                </div>
+
+                <div class="relative w-full max-w-[340px] aspect-[3/4.5] mx-auto mb-10">
+                    <!-- Top -->
+                    <div data-action="select-card" class="absolute top-0 left-1/2 -translate-x-1/2 w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-10">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mid-Left -->
+                    <div data-action="select-card" class="absolute top-[22%] left-[6%] w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-20">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mid-Right -->
+                    <div data-action="select-card" class="absolute top-[22%] right-[6%] w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-20">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bot-Left -->
+                    <div data-action="select-card" class="absolute top-[54%] left-[6%] w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-30">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bot-Right -->
+                    <div data-action="select-card" class="absolute top-[54%] right-[6%] w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-30">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom -->
+                    <div data-action="select-card" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[28%] aspect-[2/3] cursor-pointer transition-transform duration-300 hover:-translate-y-2 group perspective-1000 z-40">
+                        <div class="w-full h-full rounded-md p-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] transition-all duration-300 group-active:scale-95" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                            <div class="w-full h-full rounded-[2px] overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button data-action="go-rules" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1 mt-4">
+                    ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 案内画面に戻る
+                </button>
+            </div>
+        `;
+      }
+
+      if (state.gameState === 'FOUR_CARDS_PLAY') {
+        const isHaruka = state.guide === 'haruka';
+        const labels = ["① 現状", "② 自分", "③ 原因", "④ 解決策"];
+        
+        html += `
+          <div class="flex-grow flex flex-col items-center justify-start min-h-[60vh] relative z-10 w-full px-2 sm:px-4 pb-12">
+            <div class="mb-8 text-center bg-[#f4ebd8]/90 p-4 rounded-md border border-stone-400/60 shadow-sm w-full max-w-2xl" style="background-image: ${PARCHMENT_TEXTURE}">
+              <h2 class="text-base sm:text-lg font-serif font-bold text-stone-900 tracking-widest magic-text-glow">
+                ${isHaruka ? '4つの位置にカードが置かれています。<br/>気になるカードから、順番にタップしてめくってみてくださいね。' : '4つの位置にカードが置かれておる。<br/>気になるカードから、順番にタップしてめくってみるのじゃ。'}
+              </h2>
+            </div>
+
+            <!-- フォーカードのグリッド配置 -->
+            <div class="grid grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-10 w-full max-w-md mx-auto mb-12">
+              ${state.drawnCards.map((card, index) => {
+                const isFlipped = card.isOpen;
+                const rotationClass = card.isHorizontal ? "" : (card.orientation === "正位置" ? "" : "card-reversed");
+                const transformClass = isFlipped ? 'rotate-y-180' : '';
+                return `
+                  <div class="flex flex-col items-center">
+                    <div data-action="flip-card" data-index="${index}" class="relative w-full aspect-[2/3] cursor-pointer perspective-1000 mb-3 group transition-transform duration-300 ${!isFlipped ? 'hover:-translate-y-1' : ''} ${isFlipped ? 'pointer-events-none' : ''}">
+                      <div class="w-full h-full preserve-3d ${transformClass}">
+                        <!-- Back -->
+                        <div class="absolute inset-0 backface-hidden w-full h-full rounded-md p-1.5 sm:p-2 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 ${!isFlipped ? 'group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)]' : ''} transition-shadow duration-300" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                          <div class="w-full h-full rounded-sm overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]" style="background-image: url('${CARD_BACK_IMG}'); background-size: cover; background-position: center;">
+                             <div class="absolute inset-0 bg-stone-900/30"></div>
+                          </div>
+                        </div>
+                        <!-- Front -->
+                        <div class="absolute inset-0 backface-hidden w-full h-full rounded-md p-1.5 sm:p-2 shadow-[0_5px_15px_rgba(0,0,0,0.3)] bg-stone-800 rotate-y-180" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                          <div class="w-full h-full rounded-[2px] overflow-hidden shadow-[inset_0_0_10px_rgba(67,20,7,0.8)] bg-stone-800 relative">
+                            <img src="${card.file}" class="w-full h-full object-cover ${rotationClass}" />
+                            <div class="glow-target absolute inset-0 bg-gradient-to-tr from-yellow-100 via-orange-100 to-white opacity-0 pointer-events-none"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="text-sm sm:text-base font-bold text-stone-800 font-serif tracking-widest border-b border-stone-400/50 pb-0.5">${labels[index]}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            ${state.drawnCards.every(c => c.isOpen) ? `
+              <div class="animate-fadeInStage mt-4">
+                <button data-action="show-four-cards-result" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-sm sm:text-base font-serif font-bold py-4 px-10 shadow-[0_5px_15px_rgba(0,0,0,0.4)] hover:scale-105 animate-pulse">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center text-stone-100">
+                    詳しい解釈を見る
+                  </span>
+                </button>
+              </div>
+            ` : ''}
+
+            <button data-action="go-rules" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1 mt-12">
+              ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 案内画面に戻る
+            </button>
+          </div>
+        `;
+      }
+
       if (state.gameState === 'DRAWING') {
         const isDrawingReversed = state.orientation === "逆位置" || (state.isHorizontal && Math.random() < 0.5);
         const drawingRotationClass = isDrawingReversed ? "card-reversed" : "";
@@ -1227,7 +1501,7 @@
         html += `
               <div class="flex-grow flex flex-col items-center justify-center min-h-[60vh] relative z-10 perspective-1000">
                 <h2 class="text-xl sm:text-2xl font-serif font-bold text-stone-800 mb-8 tracking-widest animate-pulse text-center">
-                  ${isHaruka ? 'ハルカがカードを引いています...<br/><span class="text-sm font-normal">（落とさないように慎重に…）</span>' : 'リフレムがカードを引いています...'}
+                  ${state.isUserDrawn ? 'カードをめくっています...' : (isHaruka ? 'ハルカがカードを引いています...<br/><span class="text-sm font-normal">（落とさないように慎重に…）</span>' : 'リフレムがカードを引いています...')}
                 </h2>
 
                 <div class="relative w-48 h-80 sm:w-64 sm:h-[426px] transition-transform duration-[5000ms]" style="transform: rotate(${state.drawingTilt}deg);">
@@ -1491,6 +1765,102 @@
         `;
       }
 
+      if (state.gameState === 'FOUR_CARDS_RESULT') {
+        const isHaruka = state.guide === 'haruka';
+        const labels = ["① 現状", "② 自分", "③ 原因", "④ 解決策"];
+
+        html += `
+          <div id="capture-area" class="relative z-10 pt-4 pb-8 px-2 sm:px-6 -mx-2 sm:-mx-6 rounded-md" style="background-color: #e8dcc4; background-image: ${PARCHMENT_TEXTURE};">
+            <div class="text-center mb-6 sm:mb-8">
+              <h2 class="text-xl sm:text-2xl font-serif font-extrabold tracking-widest text-stone-900 magic-text-glow">
+                フォーカードの結果
+              </h2>
+            </div>
+
+            <div class="flex flex-col gap-6 sm:gap-8 w-full max-w-2xl mx-auto px-2 sm:px-4">
+              ${state.drawnCards.map((card, index) => {
+                const detailsObj = getCardDetails(card, card.isHorizontal, card.orientation);
+                const rotationClass = card.isHorizontal ? "" : (card.orientation === "正位置" ? "" : "card-reversed");
+                const displayMeaning = detailsObj.meaning.replace(/\s*\n\s*/g, '');
+                return `
+                  <div class="flex flex-row items-start gap-4 p-4 bg-[#f4ebd8]/80 rounded-md border border-stone-400/50 shadow-sm relative">
+                    <div class="w-20 sm:w-28 shrink-0">
+                      <div class="w-full aspect-[2/3] rounded-md p-1 sm:p-1.5 shadow-md bg-stone-800 mb-2" style="background-image: url('${CARD_FRAME_IMG}'); background-size: 100% 100%;">
+                        <div class="w-full h-full rounded-[2px] overflow-hidden bg-stone-800 relative shadow-[inset_0_0_10px_rgba(67,20,7,0.8)]">
+                          <img src="${card.file}" class="w-full h-full object-cover ${rotationClass}" />
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <span class="text-[10px] sm:text-xs font-bold font-serif ${detailsObj.orientationColor} tracking-widest">${detailsObj.orientationText}</span>
+                      </div>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-start">
+                      <h3 class="text-sm sm:text-lg font-bold text-stone-900 border-b border-stone-400/50 pb-1.5 mb-2 leading-snug">
+                        <span class="text-orange-900 text-xs sm:text-sm mr-1 block mb-0.5">${labels[index]}</span>
+                        ${card.name} <span class="text-stone-600 text-[10px] sm:text-xs font-normal">(${card.jp})</span>
+                      </h3>
+                      <div class="flex-grow">
+                        <h4 class="text-xs sm:text-sm font-bold text-orange-900 mb-1.5 border-l-[3px] border-orange-800 pl-2">テーマ: ${detailsObj.title}</h4>
+                        <p class="text-[11px] sm:text-[13px] text-stone-800 leading-relaxed font-serif pl-2">${displayMeaning}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="text-center w-full mb-6 mt-8 relative z-10 px-4">
+              <p class="text-[10px] sm:text-[11px] text-stone-500/80 font-serif tracking-widest leading-relaxed">
+                -カードはあなたの状態を表していません。<br class="sm:hidden"/>何を感じるか？のヒントとしてあなたの目の前に現れたのです-
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-4 mb-8 relative z-10 w-full px-2 sm:px-4">
+            <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+              <div class="wood-texture"></div>
+              <span class="relative z-10 flex items-center justify-center text-stone-100">
+                ${getIcon('Camera', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 画像を保存する
+              </span>
+            </button>
+            <button data-action="capture-share" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8 shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+              <div class="wood-texture"></div>
+              <span class="relative z-10 flex items-center justify-center text-stone-100">
+                ${getIcon('Share2', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 結果をシェア
+              </span>
+            </button>
+          </div>
+
+          <div class="bg-[#f0e6d2]/90 backdrop-blur-sm rounded-md border border-stone-400/80 p-5 sm:p-8 shadow-sm relative z-10 mb-8 mt-2" style="background-image: ${PARCHMENT_TEXTURE}">
+            <label for="memo" class="block text-stone-800 font-serif font-bold text-sm sm:text-base mb-2 flex items-center">
+              ${getIcon('Scroll', 'w-4 h-4 mr-2')} 内省のメモ
+            </label>
+            <p class="text-xs sm:text-sm text-stone-700 font-serif font-bold mb-4 leading-relaxed">
+              4つのカードを見比べて、全体を通して感じたことや、<br class="hidden sm:block"/>気づいたストーリーを言葉にしてみましょう。
+            </p>
+            <textarea id="memo" rows="5" class="w-full bg-[#e8dcc4]/50 border border-stone-400/60 rounded-md p-4 text-sm sm:text-base font-serif text-stone-800 resize-none transition-all placeholder-stone-500/70" placeholder="たとえば、「原因は〇〇だけど、解決策のカードを見て少し心が軽くなった」など…">${state.memo}</textarea>
+
+            <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
+              <button data-action="save-calendar" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 px-6 sm:px-8 w-full sm:w-auto shadow-sm hover:scale-105">
+                <div class="wood-texture"></div>
+                <span class="relative z-10 flex items-center justify-center text-stone-800">
+                  ${getIcon('Calendar', 'w-4 h-4 mr-2 text-stone-600')}
+                  カレンダーに記録
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="text-center relative z-10">
+            <div class="flex flex-col items-center gap-4 sm:gap-6 mb-10">
+              <button data-action="go-rules" class="inline-flex items-center text-stone-800 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-stone-400 hover:border-orange-900 pb-1 mt-2">
+                ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 案内画面に戻る
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
       html += `
               <div class="mt-12 pb-4 text-center text-[10px] text-stone-500/50 font-mono tracking-widest relative z-10 pointer-events-none">
                 Page ${getPageNumber()}
@@ -1527,21 +1897,66 @@
       const action = btn.dataset.action;
 
       if (action === 'draw-card') {
-        drawCard();
+        drawCard(false);
       } else if (action === 'draw-card-with-music') {
-        const playerContainer = document.getElementById('bgm-player-container');
-        if (playerContainer) {
-          playerContainer.innerHTML = `
-            <div class="bg-[#e8dcc4] shadow-[0_-5px_20px_rgba(67,20,7,0.3)] border-t border-[#8c7355]/50 flex flex-col items-center justify-center relative p-2" style="background-image: ${PARCHMENT_TEXTURE}">
-              <button onclick="document.getElementById('bgm-player-container').innerHTML=''" class="absolute -top-3 right-4 bg-stone-700 hover:bg-stone-800 text-stone-100 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs shadow-md border border-stone-500 z-10">✕</button>
-              <div class="w-full max-w-sm rounded overflow-hidden shadow-inner border border-stone-300/50">
-                <iframe src="https://suno.com/embed/c55313dc-5c98-43b6-9ed2-eac2134dac85?autoplay=true" allow="autoplay *; encrypted-media *;" allowfullscreen class="w-full h-[80px] border-none block"></iframe>
-              </div>
-            </div>
-          `;
+        playMusic();
+        drawCard(false);
+      } else if (action === 'choose-card') {
+        enterChoosingMode();
+      } else if (action === 'choose-card-with-music') {
+        playMusic();
+        enterChoosingMode();
+      } else if (action === 'select-card') {
+        drawCard(true);
+      } else if (action === 'play-four-cards') {
+        startFourCards(false);
+      } else if (action === 'play-four-cards-with-music') {
+        startFourCards(true);
+      } else if (action === 'flip-card') {
+        const idx = parseInt(btn.dataset.index, 10);
+        if (!state.drawnCards[idx].isOpen && !state.drawnCards[idx].isFlipping) {
+          state.drawnCards[idx].isFlipping = true;
+          
+          const cardContainer = btn.querySelector('.preserve-3d');
+          const glowLayer = btn.querySelector('.glow-target');
+          
+          if (cardContainer) {
+            cardContainer.classList.add('animate-fourCardFlip');
+            btn.classList.add('pointer-events-none'); // btn自体にイベントを無くす
+            
+            // backfaceのhoverエフェクトを無効化するため
+            const backFace = cardContainer.querySelector('.group-hover\\:shadow-\\[0_8px_20px_rgba\\(249\\,115\\,22\\,0\\.4\\)\\]');
+            if(backFace) {
+               backFace.classList.remove('group-hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)]');
+            }
+          }
+          if (glowLayer) {
+            glowLayer.classList.add('animate-cardFlipGlow');
+          }
+
+          setTimeout(() => {
+            if (state.gameState !== 'FOUR_CARDS_PLAY') return; // 他の画面に遷移していたら無視
+
+            state.drawnCards[idx].isOpen = true;
+            state.drawnCards[idx].isFlipping = false;
+            
+            if (cardContainer) {
+               cardContainer.classList.remove('animate-fourCardFlip');
+               cardContainer.classList.add('rotate-y-180');
+            }
+            if (glowLayer) {
+               glowLayer.classList.remove('animate-cardFlipGlow');
+            }
+
+            if (state.drawnCards.every(c => c.isOpen)) {
+               render(); // 最後のカードが終わったら再描画
+            }
+          }, 2500);
         }
-        showFlashMessage("自動再生されない場合は、下部の再生ボタンを押してね⭐");
-        drawCard();
+      } else if (action === 'show-four-cards-result') {
+        transitionState(() => {
+          state.gameState = 'FOUR_CARDS_RESULT';
+        });
       } else if (action === 'go-rules') {
         transitionState(() => {
           state.gameState = 'RULES';
@@ -1570,7 +1985,9 @@
         if (playerContainer) playerContainer.innerHTML = '';
         transitionState(() => {
           state.gameState = 'START';
+          state.drawMode = 'ONE_CARD';
           state.drawnCard = null;
+          state.drawnCards = [];
           state.orientation = '';
           state.tiltAngle = 0;
           state.memo = '';
