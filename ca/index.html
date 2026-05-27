@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャリアアンカー ～心の錨を観る魔法～</title>
+
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+    body { margin: 0; padding: 0; background: #000; color: #f3f4f6; }
+    html, body { -webkit-touch-callout: none; }
+    img { -webkit-user-drag: none; user-select: none; }
+    .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
+    
+    .rpg-button { 
+      border: 2px solid white; 
+      padding: 12px 16px; 
+      border-radius: 6px; 
+      transition: all 0.2s; 
+      background: black; 
+      color: white; 
+      cursor: pointer; 
+      text-align: center; 
+      font-weight: bold;
+    }
+    .rpg-button:hover:not(:disabled) { 
+      background: white; 
+      color: black; 
+    }
+    .rpg-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .progress-bar-fill {
+      transition: width 0.3s ease-out;
+    }
+
+    /* 結果カードのスタイル */
+    .result-card-gold {
+      background: linear-gradient(135deg, rgba(30,25,0,0.9), rgba(10,5,0,0.95));
+      border: 2px solid #facc15;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+    }
+    .result-card-silver {
+      background: linear-gradient(135deg, rgba(20,25,30,0.9), rgba(5,10,15,0.95));
+      border: 2px solid #94a3b8;
+    }
+    .result-card-bronze {
+      background: linear-gradient(135deg, rgba(30,15,5,0.9), rgba(15,5,0,0.95));
+      border: 2px solid #b45309;
+    }
+    .result-card-danger {
+      background: linear-gradient(135deg, rgba(40,0,0,0.9), rgba(10,0,0,0.95));
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+  </style>
+</head>
+<body class="rpg-font min-h-screen relative" style="background-image: url('https://ninin-cc.github.io/cq/img/sakaba.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <div class="absolute inset-0 z-0 bg-black bg-opacity-75"></div>
+  <div id="root" class="relative z-10 w-full max-w-2xl mx-auto p-4 md:p-6 min-h-screen flex flex-col"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- 設定データ ---
+    const CONFIG = {
+      appTitlePre: "キャリアアンカー",
+      appTitleMain: "～心の錨を観る魔法～",
+      appSubtitle: "-RIESM亭での語らい-",
+      char1: {
+        name: "リフレム",
+        img: "https://ninin-cc.github.io/cq/img/rf.png",
+        dialogColor: "bg-amber-900 border-yellow-500",
+        imgBg: "bg-gradient-to-b from-amber-700 to-amber-950"
+      },
+      char2: {
+        name: "ハルカ",
+        img: "https://ninin-cc.github.io/cq/img/hr.png",
+        dialogColor: "bg-rose-900 border-rose-400",
+        imgBg: "bg-gradient-to-b from-rose-700 to-rose-950"
+      }
+    };
+
+    // --- キャリアアンカーの定義 ---
+    const ANCHORS = {
+      TF: { name: '専門・職能別能力', short: '専門性を極めたい', icon: 'fa-solid fa-wrench', color: 'text-blue-400' },
+      GM: { name: '経営管理能力', short: '組織を動かしたい', icon: 'fa-solid fa-chess-king', color: 'text-purple-400' },
+      AU: { name: '自律・独立', short: '自分のペースで自由に働きたい', icon: 'fa-solid fa-dove', color: 'text-green-400' },
+      SE: { name: '保障・安定', short: '安定と保障がほしい', icon: 'fa-solid fa-shield-halved', color: 'text-teal-400' },
+      EC: { name: '起業家的創造性', short: 'ゼロから新しいものを創りたい', icon: 'fa-solid fa-lightbulb', color: 'text-yellow-400' },
+      SV: { name: '奉仕・社会貢献', short: '社会や人の役に立ちたい', icon: 'fa-solid fa-hand-holding-heart', color: 'text-pink-400' },
+      CH: { name: '純粋な挑戦', short: '困難な課題に挑みたい', icon: 'fa-solid fa-mountain', color: 'text-red-400' },
+      LS: { name: '生活様式', short: '仕事とプライベートのバランスを保ちたい', icon: 'fa-solid fa-mug-hot', color: 'text-orange-400' }
+    };
+
+    const ANCHOR_DESCRIPTIONS = {
+      TF: {
+        strength: "特定の分野で高度なスキルと知識を発揮し、その専門性を深めることに最大の喜びを感じます。スペシャリストとしての道を歩むことが重要です。",
+        weakness: "専門性が活かせないジェネラリスト的な役割や、浅く広く業務をこなさなければならない環境では、モチベーションを維持しにくいでしょう。"
+      },
+      GM: {
+        strength: "組織全体の責任を担い、多様な人々をまとめ上げて大きな成果を出すことにやりがいを感じます。リーダーシップを発揮できるポジションが向いています。",
+        weakness: "権限や責任が限定され、組織全体への影響力が持てない、または専門的な実務のみを延々と求められる環境は避けるべきです。"
+      },
+      AU: {
+        strength: "組織のルールや制約に縛られず、自分自身のやり方とペースで仕事を進めることに価値を置きます。裁量が大きい環境で力を発揮します。",
+        weakness: "細かい規則やマニュアルで管理され、仕事の進め方や時間に厳しい制約があるマイクロマネジメントな環境では息苦しさを感じます。"
+      },
+      SE: {
+        strength: "雇用や収入が長期的に安定していることに安心感を覚え、組織に対する忠誠心も高くなります。予測可能で落ち着いた環境で着実に成果を出します。",
+        weakness: "雇用が不安定で、将来の予測が立たない、または過度な成果主義やリスクを常に伴うような環境は大きなストレスになります。"
+      },
+      EC: {
+        strength: "リスクを恐れず、自分自身のアイデアで全く新しい事業や製品をゼロから創り出すことに強い情熱を持っています。起業や新規事業開発が天職です。",
+        weakness: "既存の枠組みの中で、すでに決まった業務をルール通りにルーチンとしてこなすだけの環境では、あなたの創造性が枯渇してしまいます。"
+      },
+      SV: {
+        strength: "個人の利益よりも、社会を良くすることや他者を支援するという大義に貢献することに価値を見出します。自身の価値観と仕事が一致することが重要です。",
+        weakness: "社会的な意義が感じられない、または自身の倫理観と反するような「利益のみを追求する環境」では、働く意味を見失ってしまいます。"
+      },
+      CH: {
+        strength: "解決不可能と思われるような困難な問題や、手強いライバルとの競争に打ち勝つことにやりがいを感じます。タフな状況ほど燃え上がります。",
+        weakness: "簡単に解決できるような容易な仕事や、競争がなく刺激に欠けるルーチンワーク中心の環境では、すぐに退屈してしまうでしょう。"
+      },
+      LS: {
+        strength: "仕事、家族、個人の時間など、人生全体のバランスを最優先します。柔軟な働き方ができることで、仕事にも高いモチベーションを保てます。",
+        weakness: "長時間労働が常態化し、プライベートや家族との時間を常に犠牲にしなければならない環境は、あなたの人生の質を大きく損ないます。"
+      }
+    };
+
+    // --- 設問データ (Q1 - Q16) ---
+    const QUESTIONS = [
+      { id: 1, typeA: 'TF', typeB: 'GM', textA: '自分の専門分野でスキルを極め、その分野のエキスパートとして評価されたい。', textB: '自分の専門領域を離れてでも、組織を率いるゼネラルマネージャーになりたい。' },
+      { id: 2, typeA: 'AU', typeB: 'SE', textA: '規則や制約に縛られず、自分のやり方やペースで自由に仕事をしたい。', textB: '自由や裁量よりも、将来の雇用や収入が長期的に保障されている環境で働きたい。' },
+      { id: 3, typeA: 'EC', typeB: 'SE', textA: 'リスクを取ってでも、自分のアイデアで新しい事業や組織をゼロから立ち上げたい。', textB: 'リスクを避け、身分や経済的な安定が約束された組織で安心して働きたい。' },
+      { id: 4, typeA: 'GM', typeB: 'SV', textA: '組織の中で高い地位に就き、多くの人に影響を与えるマネジメントを担いたい。', textB: '高い地位に就くことよりも、自分の能力を活かして世の中や他者の役に立ちたい。' },
+      { id: 5, typeA: 'GM', typeB: 'LS', textA: '組織のトップを目指して、責任ある役割と大きな権限を持ちたい。', textB: '出世することよりも、プライベートや家族との生活と仕事をうまく両立させたい。' },
+      { id: 6, typeA: 'TF', typeB: 'SE', textA: '専門外の仕事への異動を命じられるくらいなら、今の組織を辞めてでも専門性を追求したい。', textB: '専門性を極めることよりも、変化の少ない環境で安定・安心して働きたい。' },
+      { id: 7, typeA: 'CH', typeB: 'SE', textA: '困難や不可能と思われるような課題に立ち向かい、競争に打ち勝つことにやりがいを感じる。', textB: '挑戦的な仕事よりも、収入や雇用が十分に保障され、安心して取り組める仕事が大切だ。' },
+      { id: 8, typeA: 'CH', typeB: 'LS', textA: 'プライベートが多少犠牲になっても、非常に難しい課題や難局を打開する大きな挑戦をしたい。', textB: '解決困難な課題に挑むよりも、自分や家族の生活にマイナスの影響が出ない働き方をしたい。' },
+      { id: 9, typeA: 'SV', typeB: 'LS', textA: '仕事を通じて社会や他者に貢献できるなら、私生活の時間が減ってもかまわない。', textB: 'どんなに社会貢献になる仕事でも、家族との楽しみや個人の時間が犠牲になるならやりたくない。' },
+      { id: 10, typeA: 'AU', typeB: 'GM', textA: 'マネジメントの責任を負うよりも、完全に自律して自由に動ける環境に身を置きたい。', textB: '一人で自由に行動するよりも、チームメンバーをマネジメントして大きな成果を上げたい。' },
+      { id: 11, typeA: 'AU', typeB: 'EC', textA: '他人のルールに縛られない「自分だけのペース・自由な環境」を確保するために独立したい。', textB: '単なる独立ではなく、障害を乗り越えて「自分の手で新しい価値や事業」をゼロから創り出したい。' },
+      { id: 12, typeA: 'GM', typeB: 'EC', textA: '既存の大きな組織でゼネラルマネージャーとして経営管理を行う方が魅力的だ。', textB: '他人の組織で出世するよりも、自分自身で起業して経営トップになることを重視する。' },
+      { id: 13, typeA: 'SV', typeB: 'EC', textA: '人間の幸せや社会貢献など、世の中を良くするための仕事に全力を尽くしたい。', textB: '自分のアイデアや製品を世に出し、自分の事業として軌道に乗せることに全力を尽くしたい。' },
+      { id: 14, typeA: 'TF', typeB: 'AU', textA: '「この分野ならあなた」と呼ばれるような高度な専門スキルを身につけることが何より重要だ。', textB: '何の専門家になるかよりも、自分の思い通りにスケジュールや仕事の手順を決められることが重要だ。' },
+      { id: 15, typeA: 'CH', typeB: 'TF', textA: 'とにかく解決が難しい課題であれば、自分の専門分野外のことであっても挑みたい。', textB: '他の分野の課題に挑むよりも、自分の専門領域を深く掘り下げてスキルを極めることに専念したい。' },
+      { id: 16, typeA: 'EC', typeB: 'CH', textA: '既存の難題を解決するよりも、全く新しいモノや事業を自分自身でゼロから創り出したい。', textB: 'ゼロから何かを創り出すよりも、不可能と思われるような目の前の難局やライバルとの競争に勝つことに燃える。' }
+    ];
+
+    // --- 共通UIコンポーネント ---
+    const WindowBox = ({ title, children, iconName, className = "" }) => (
+      <div className={`bg-black text-white border-4 border-gray-400 p-5 rounded-lg shadow-xl relative w-full ${className}`}>
+        {title && (
+          <div className="absolute -top-4 left-4 bg-black px-3 py-1 flex items-center space-x-2 border-2 border-gray-400 rounded">
+            {iconName && <i className={`${iconName} text-yellow-300`}></i>}
+            <h2 className="text-lg font-bold tracking-widest text-yellow-100">{title}</h2>
+          </div>
+        )}
+        <div className="mt-3 w-full">{children}</div>
+      </div>
+    );
+
+    const DialogBox = ({ charConfig, text, imageSide = 'left' }) => {
+      const { name, img, dialogColor, imgBg } = charConfig;
+      const isImageRight = imageSide === 'right';
+
+      return (
+        <div className={`w-full ${dialogColor} border-2 p-4 rounded-lg mb-6 relative animate-fade-in shadow-xl mt-6`}>
+          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${dialogColor.split(' ')[0]} px-3 border border-white rounded-full text-white text-sm font-bold tracking-widest shadow-sm z-10`}>
+            {name}
+          </div>
+          <div className={`flex items-start gap-4 mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
+            <div className={`shrink-0 self-start w-20 h-20 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner`}>
+              <img src={img} alt={name} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated', transform: isImageRight ? 'scaleX(-1) scale(1.1)' : 'scale(1.1)' }} />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed flex-1 whitespace-pre-wrap">
+              {text}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const ProgressBar = ({ current, total, label }) => {
+      const percentage = Math.max(0, Math.min(100, (current / total) * 100));
+      return (
+        <div className="w-full mb-6 relative z-20 bg-black bg-opacity-80 p-3 rounded-lg border border-gray-600 shadow-md">
+          <div className="flex justify-between text-xs text-gray-300 mb-2 px-1 font-bold">
+            <span>{label}</span>
+            <span>{current} / {total}</span>
+          </div>
+          <div className="w-full bg-gray-800 rounded-full h-2 border border-gray-600 overflow-hidden">
+            <div className="bg-yellow-400 h-full progress-bar-fill" style={{ width: `${percentage}%` }}></div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- メインアプリケーション ---
+    const App = () => {
+      const [step, setStep] = useState('intro'); // intro, question, bonus, calculating, result
+      const [qIndex, setQIndex] = useState(0);
+      const [scores, setScores] = useState({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
+      const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
+      const [selectedBonus, setSelectedBonus] = useState([]);
+      const [results, setResults] = useState(null);
+
+      // --- スコア処理 ---
+      const handleAnswer = (val) => {
+        const q = QUESTIONS[qIndex];
+        
+        // 戻るボタンのために現在のスコアを履歴に保存
+        setScoreHistory([...scoreHistory, { ...scores }]);
+
+        const newScores = { ...scores };
+
+        if (val === 0) { newScores[q.typeA] += 4; }
+        else if (val === 1) { newScores[q.typeA] += 3; }
+        else if (val === 2) { newScores[q.typeA] += 2; newScores[q.typeB] += 1; }
+        else if (val === 3) { newScores[q.typeA] += 1; newScores[q.typeB] += 2; }
+        else if (val === 4) { newScores[q.typeB] += 3; }
+        else if (val === 5) { newScores[q.typeB] += 4; }
+
+        setScores(newScores);
+
+        if (qIndex < QUESTIONS.length - 1) {
+          setQIndex(qIndex + 1);
+          window.scrollTo(0, 0);
+        } else {
+          setStep('bonus');
+          window.scrollTo(0, 0);
+        }
+      };
+
+      // --- 戻る処理 ---
+      const handleBack = () => {
+        if (scoreHistory.length === 0) return;
+
+        // 履歴から1つ前のスコアを取り出して復元
+        const prevScores = scoreHistory[scoreHistory.length - 1];
+        setScores(prevScores);
+        setScoreHistory(scoreHistory.slice(0, -1));
+
+        if (step === 'bonus') {
+          // ボーナス画面から最後の質問に戻る
+          setStep('question');
+          window.scrollTo(0, 0);
+        } else if (step === 'question' && qIndex > 0) {
+          // 質問画面で1つ前の質問に戻る
+          setQIndex(qIndex - 1);
+          window.scrollTo(0, 0);
+        }
+      };
+
+      const toggleBonus = (key) => {
+        if (selectedBonus.includes(key)) {
+          setSelectedBonus(selectedBonus.filter(k => k !== key));
+        } else if (selectedBonus.length < 2) {
+          setSelectedBonus([...selectedBonus, key]);
+        }
+      };
+
+      const calculateResult = () => {
+        setStep('calculating');
+        
+        const finalScores = { ...scores };
+        selectedBonus.forEach(key => {
+          finalScores[key] += 4;
+        });
+
+        const sorted = Object.entries(finalScores).sort((a, b) => b[1] - a[1]);
+        const top3 = sorted.slice(0, 3).map(item => item[0]);
+        const bottom1 = sorted[sorted.length - 1][0];
+
+        setTimeout(() => {
+          setResults({ top3, bottom1, finalScores });
+          setStep('result');
+          window.scrollTo(0, 0);
+        }, 1500);
+      };
+
+      const resetApp = () => {
+        if(window.confirm('最初からやり直しますか？')) {
+          setStep('intro');
+          setQIndex(0);
+          setScores({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
+          setScoreHistory([]);
+          setSelectedBonus([]);
+          setResults(null);
+          window.scrollTo(0, 0);
+        }
+      };
+
+      // --- 各画面のレンダリング ---
+      const renderIntro = () => (
+        <div className="animate-fade-in flex-1 flex flex-col items-center justify-center">
+          <div className="text-center mb-8">
+            <h1 className="font-bold text-white mb-3 leading-tight flex flex-col items-center justify-center" style={{ textShadow: '2px 2px 0 #000' }}>
+              <span className="text-lg md:text-2xl mb-1 text-gray-300">{CONFIG.appTitlePre}</span>
+              <span className="text-3xl md:text-5xl">{CONFIG.appTitleMain}</span>
+            </h1>
+            <p className="text-yellow-300 text-sm md:text-base font-bold tracking-widest">{CONFIG.appSubtitle}</p>
+          </div>
+
+          <DialogBox 
+            charConfig={CONFIG.char1} 
+            text={`「よく来たな。ここではお主のキャリアにおける【絶対に譲れない軸】を見極めるための試練を用意したぞい。\n直感で答えてゆくのじゃ。」`} 
+          />
+          <DialogBox 
+            charConfig={CONFIG.char2} 
+            imageSide="right"
+            text={`「全部で16問あります。\nAとB、ふたつの価値観のうち、より自分にしっくりくる方を選んでくださいね！」`} 
+          />
+
+          <button onClick={() => setStep('question')} className="rpg-button text-xl px-10 py-4 mt-4 animate-pulse">
+            診断をはじめる
+          </button>
+        </div>
+      );
+
+      const renderQuestion = () => {
+        const q = QUESTIONS[qIndex];
+        
+        const AnswerCircle = ({ val }) => {
+          // ベージュ(A)と茶色(B)のサイズ配列
+          const sizeA = [
+            'w-12 h-12 md:w-16 md:h-16', 
+            'w-9 h-9 md:w-12 md:h-12',   
+            'w-6 h-6 md:w-8 md:h-8',     
+            'w-3 h-3 md:w-4 md:h-4',     
+            'w-0 h-0',                   
+            'w-0 h-0'                    
+          ];
+          const sizeB = [
+            'w-0 h-0',                   
+            'w-0 h-0',                   
+            'w-3 h-3 md:w-4 md:h-4',     
+            'w-6 h-6 md:w-8 md:h-8',     
+            'w-9 h-9 md:w-12 md:h-12',   
+            'w-12 h-12 md:w-16 md:h-16'  
+          ];
+
+          const textMap = [
+            "Aに非常に\nあてはまる",
+            "Aに\nあてはまる",
+            "どちらかと\nいえばA",
+            "どちらかと\nいえばB",
+            "Bに\nあてはまる",
+            "Bに非常に\nあてはまる"
+          ];
+
+          return (
+            <button 
+              onClick={() => handleAnswer(val)} 
+              className="flex-1 flex flex-col items-center group relative z-10 hover:bg-gray-800 hover:bg-opacity-60 rounded-lg transition-all py-2"
+            >
+              <div className="h-28 md:h-32 w-full flex flex-col relative justify-center">
+                {/* 中央の基準線 */}
+                <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 5 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+                
+                {/* A: ベージュ (下揃え) */}
+                <div className="flex-1 flex items-end justify-center pb-0.5 relative z-10">
+                  {val <= 3 && (
+                    <div className={`rounded-full bg-[#e6c280] transform group-hover:scale-110 transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8] shadow-[0_0_20px_rgba(230,194,128,0.8)]' : 'shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
+                  )}
+                </div>
+                
+                {/* B: 茶色 (上揃え) */}
+                <div className="flex-1 flex items-start justify-center pt-0.5 relative z-10">
+                  {val >= 2 && (
+                    <div className={`rounded-full bg-[#784a23] transform group-hover:scale-110 transition-all duration-300 ${sizeB[val]} ${val === 5 ? 'border-2 border-[#d4b895] shadow-[0_0_20px_rgba(120,74,35,0.8)]' : 'shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
+                  )}
+                </div>
+              </div>
+              <div className="h-10 mt-1 flex items-center justify-center w-full">
+                <span className="text-[9px] md:text-xs text-gray-400 group-hover:text-yellow-200 text-left leading-tight whitespace-pre-wrap font-bold transition-colors">
+                  {textMap[val]}
+                </span>
+              </div>
+            </button>
+          );
+        };
+
+        return (
+          <div className="animate-fade-in w-full">
+            <ProgressBar current={qIndex + 1} total={QUESTIONS.length} label="診断の進捗" />
+            
+            {/* 戻るボタン */}
+            {qIndex > 0 && (
+              <div className="mb-4">
+                <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                  <i className="fa-solid fa-chevron-left"></i> 前の質問に戻る
+                </button>
+              </div>
+            )}
+
+            <WindowBox title={`第 ${qIndex + 1} 問`} iconName="fa-solid fa-clipboard-question" className="bg-opacity-90">
+              <div className="flex flex-col w-full py-2">
+                
+                {/* 選択肢 A (ベージュ系) */}
+                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 pt-8 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)]">
+                  <div className="absolute top-0 left-0 bg-[#e6c280] text-black text-xs font-bold px-3 py-1 rounded-br-lg shadow-md">A</div>
+                  <p className="text-base md:text-xl font-bold text-[#fdf6e3] leading-relaxed">{q.textA}</p>
+                </div>
+
+                {/* 円ボタン群 */}
+                <div className="relative my-6 md:my-8 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
+                  <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                    {[0, 1, 2, 3, 4, 5].map(val => (
+                      <AnswerCircle key={val} val={val} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* 選択肢 B (茶色系) */}
+                <div className="bg-[#3a2012] bg-opacity-50 border border-[#8b5a2b] rounded-lg p-5 pt-8 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(139,90,43,0.1)]">
+                  <div className="absolute top-0 left-0 bg-[#8b5a2b] text-white text-xs font-bold px-3 py-1 rounded-br-lg shadow-md">B</div>
+                  <p className="text-base md:text-xl font-bold text-[#e8d5c4] leading-relaxed">{q.textB}</p>
+                </div>
+
+              </div>
+            </WindowBox>
+          </div>
+        );
+      };
+
+      const renderBonus = () => {
+        // 現在のスコアから上位4つを抽出
+        const top4Keys = Object.entries(scores)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 4)
+          .map(item => item[0]);
+
+        return (
+          <div className="animate-fade-in w-full">
+            <ProgressBar current={QUESTIONS.length} total={QUESTIONS.length} label="最終確認" />
+            
+            {/* 戻るボタン */}
+            <div className="mb-4">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                <i className="fa-solid fa-chevron-left"></i> 前の質問に戻る
+              </button>
+            </div>
+
+            <DialogBox 
+              charConfig={CONFIG.char1} 
+              text={`「よくぞ答えた。\nこれまでの回答から、お主の中で特に強そうな【4つの価値観】を導き出したぞい。\nこの中から【これだけは絶対に譲れない】と思うものを 2つ 選んでくれい。」`} 
+            />
+
+            <WindowBox title="絶対に譲れない価値観（2つ選択）" iconName="fa-solid fa-crown" className="bg-opacity-90">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-2">
+                {top4Keys.map((key) => {
+                  const data = ANCHORS[key];
+                  const isSelected = selectedBonus.includes(key);
+                  const isDisabled = !isSelected && selectedBonus.length >= 2;
+                  
+                  return (
+                    <button 
+                      key={key}
+                      onClick={() => toggleBonus(key)}
+                      disabled={isDisabled}
+                      className={`flex flex-col items-start p-3 border-2 rounded transition-colors text-left ${isSelected ? 'bg-yellow-900 border-yellow-400' : 'bg-gray-800 border-gray-600 hover:border-gray-400'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1">
+                        <span className={`font-bold ${isSelected ? 'text-yellow-300' : data.color}`}>
+                          <i className={`${data.icon} w-5 mr-1`}></i> {data.name}
+                        </span>
+                        {isSelected && <i className="fa-solid fa-check text-yellow-400"></i>}
+                      </div>
+                      <span className="text-xs text-gray-300">{data.short}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <div className="text-center mt-6">
+                <p className="text-sm text-yellow-300 mb-3 font-bold">
+                  選択中: {selectedBonus.length} / 2
+                </p>
+                <button 
+                  onClick={calculateResult} 
+                  disabled={selectedBonus.length !== 2}
+                  className={`rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold ${selectedBonus.length === 2 ? 'bg-white text-black animate-pulse' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}
+                >
+                  結果を見る
+                </button>
+              </div>
+            </WindowBox>
+          </div>
+        );
+      };
+
+      const renderCalculating = () => (
+        <div className="flex-1 flex flex-col items-center justify-center animate-pulse">
+          <i className="fa-solid fa-hat-wizard text-5xl text-yellow-400 mb-4"></i>
+          <p className="text-xl font-bold text-white tracking-widest">お主の軸を見極めておる...</p>
+        </div>
+      );
+
+      const renderResult = () => {
+        if (!results) return null;
+        const { top3, bottom1 } = results;
+
+        return (
+          <div className="animate-fade-in w-full space-y-6 pb-12">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-yellow-300" style={{ textShadow: '2px 2px 0 #000' }}>診断完了</h2>
+            </div>
+
+            <DialogBox 
+              charConfig={CONFIG.char1} 
+              text={`「ふむ…見えたぞ。お主のキャリアの軸、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。」`} 
+            />
+
+            <WindowBox title="あなたのキャリアの軸（強み）" iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
+              <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、あなたが仕事において無意識に大切にしている「譲れない価値観」です。</p>
+              <div className="space-y-4">
+                {top3.map((key, idx) => {
+                  const data = ANCHORS[key];
+                  const desc = ANCHOR_DESCRIPTIONS[key];
+                  const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
+                  const rankIcons = ['fa-crown text-yellow-400', 'fa-medal text-gray-300', 'fa-award text-amber-600'];
+                  
+                  return (
+                    <div key={key} className={`${cardClass} p-4 rounded-lg relative overflow-hidden`}>
+                      <div className="flex items-center gap-3 mb-2">
+                        <i className={`fa-solid ${rankIcons[idx]} text-2xl`}></i>
+                        <h3 className={`text-xl font-bold ${data.color}`}>{data.name}</h3>
+                      </div>
+                      <p className="text-sm font-bold text-gray-400 mb-2 border-b border-gray-700 pb-2">「{data.short}」</p>
+                      <p className="text-sm leading-relaxed text-gray-100">{desc.strength}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </WindowBox>
+
+            <DialogBox 
+              charConfig={CONFIG.char2} 
+              imageSide="right"
+              text={`「すごいですね！これがあなたの強みなんですね✨\nでも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」`} 
+            />
+
+            <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
+              <p className="text-sm text-gray-300 mb-4 px-2">逆に、以下の要素はあなたが「犠牲にしてもよい」と感じやすく、この環境を強制されると強いストレスを感じる可能性があります。</p>
+              
+              <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className={`text-xl font-bold ${ANCHORS[bottom1].color}`}>
+                    <i className={`${ANCHORS[bottom1].icon} mr-2`}></i>
+                    {ANCHORS[bottom1].name}
+                  </h3>
+                </div>
+                <p className="text-sm font-bold text-gray-400 mb-2 border-b border-red-900 pb-2">「{ANCHORS[bottom1].short}」に反する環境</p>
+                <p className="text-sm leading-relaxed text-red-100">{ANCHOR_DESCRIPTIONS[bottom1].weakness}</p>
+              </div>
+            </WindowBox>
+
+            <div className="text-center pt-6">
+              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm">
+                もう一度最初から診断する
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="flex flex-col flex-1 w-full justify-between">
+          <div className="w-full">
+            {step === 'intro' && renderIntro()}
+            {step === 'question' && renderQuestion()}
+            {step === 'bonus' && renderBonus()}
+            {step === 'calculating' && renderCalculating()}
+            {step === 'result' && renderResult()}
+          </div>
+          
+          {/* フッター・開発用 採番表示 */}
+          <div className="w-full mt-12 mb-4 flex flex-col items-center animate-fade-in">
+            {/* 説明ボックス */}
+            <div className="w-full bg-black bg-opacity-60 border border-gray-500 rounded p-3 text-center text-[9px] md:text-xs text-gray-300 shadow-sm mb-4">
+              <p className="mb-1 leading-relaxed">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。</p>
+              <p>© ninin consulting & counseling LLC. All rights reserved.</p>
+            </div>
+
+            {/* 区切り線とリンク・ページ番号 */}
+            <div className="w-full border-t border-gray-500/50 pt-3 flex flex-col items-center justify-center gap-1.5 text-[10px] md:text-xs text-gray-400">
+              <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors underline underline-offset-4">
+                © 2026 ninin consulting＆counseling
+              </a>
+              <div className="font-mono opacity-70">
+                PageNO: {step === 'question' ? qIndex + 1 : step}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
