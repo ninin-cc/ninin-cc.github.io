@@ -66,7 +66,7 @@
       const [importMessage, setImportMessage] = useState('');
       const [saveMessage, setSaveMessage] = useState('');
       const [summaryOpenSections, setSummaryOpenSections] = useState({
-        memory: false,
+        memory: true,
         can: false,
         will: false,
         must: false,
@@ -2311,6 +2311,15 @@
             </button>
             <div className={`summary-accordion-body ${isOpen ? 'is-open mt-3' : 'is-closed'}`}>
               {children}
+              <div className="summary-accordion-close print-hidden mt-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={toggleSection}
+                  className="rpg-button px-8 py-2 text-sm"
+                >
+                  閉じる
+                </button>
+              </div>
             </div>
           </section>
         );
