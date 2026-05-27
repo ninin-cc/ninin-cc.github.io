@@ -662,5 +662,31 @@
 
     .app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
+    .summary-accordion-toggle {
+      transition: color 0.2s ease;
+    }
+    .summary-accordion-toggle:hover {
+      color: #fff7ad;
+    }
+    .summary-accordion-body.is-closed {
+      display: none;
+    }
+    .summary-accordion-body.is-open {
+      display: block;
+    }
+    @media print {
+      .summary-accordion-body.is-closed {
+        display: block !important;
+        margin-top: 0.75rem !important;
+      }
+      .summary-accordion-toggle {
+        pointer-events: none !important;
+      }
+      .summary-accordion-toggle .fa-chevron-down,
+      .summary-accordion-toggle .fa-chevron-up {
+        display: none !important;
+      }
+    }
+
 
   

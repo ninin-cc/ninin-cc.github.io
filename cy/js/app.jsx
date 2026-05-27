@@ -65,6 +65,13 @@
       const [importText, setImportText] = useState('');
       const [importMessage, setImportMessage] = useState('');
       const [saveMessage, setSaveMessage] = useState('');
+      const [summaryOpenSections, setSummaryOpenSections] = useState({
+        memory: false,
+        can: false,
+        will: false,
+        must: false,
+        route: true
+      });
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
@@ -2280,14 +2287,34 @@
         });
       };
 
-      const SummarySection = ({ title, iconName, children }) => (
-        <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly print-avoid-break">
-          <h3 className="text-xl text-yellow-300 font-bold mb-3 flex items-center gap-2">
-            <i className={iconName}></i>{title}
-          </h3>
-          {children}
-        </section>
-      );
+      const SummarySection = ({ title, iconName, children, sectionKey, defaultOpen = false }) => {
+        const isOpen = summaryOpenSections[sectionKey] ?? defaultOpen;
+        const toggleSection = () => {
+          setSummaryOpenSections(current => ({
+            ...current,
+            [sectionKey]: !(current[sectionKey] ?? defaultOpen)
+          }));
+        };
+
+        return (
+          <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly print-avoid-break">
+            <button
+              type="button"
+              onClick={toggleSection}
+              className="summary-accordion-toggle w-full text-left text-xl text-yellow-300 font-bold flex items-center justify-between gap-3"
+              aria-expanded={isOpen}
+            >
+              <span className="flex items-center gap-2">
+                <i className={iconName}></i>{title}
+              </span>
+              <i className={`fa-solid ${isOpen ? 'fa-chevron-up' : 'fa-chevron-down'} text-base`}></i>
+            </button>
+            <div className={`summary-accordion-body ${isOpen ? 'is-open mt-3' : 'is-closed'}`}>
+              {children}
+            </div>
+          </section>
+        );
+      };
 
       const MemoBox = ({ title, text }) => (
         <div className="mt-4 bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly print-avoid-break">
@@ -2353,7 +2380,7 @@
                     </div>
                   </div>
 
-                  <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line">
+                  <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line" sectionKey="memory">
                     <LifelineChart data={memories} />
                     <MemoBox title="ライフラインを見て気づいたこと" text={chartInsight} />
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2375,7 +2402,7 @@
                 </div>
 
                 <div className="space-y-5 print-page-break">
-                  <SummarySection title="ステータス：Can" iconName="fa-solid fa-shield-halved">
+                  <SummarySection title="ステータス：Can" iconName="fa-solid fa-shield-halved" sectionKey="can">
                     <div className="print-hidden mb-4 flex flex-col md:flex-row gap-2">
                       <button type="button" onClick={() => goToCanInput(0)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> 武器・魔法を書き直す
@@ -2400,7 +2427,7 @@
                     <MemoBox title="仲間・関係性から見えた気づき" text={allyInsight} />
                   </SummarySection>
 
-                  <SummarySection title="次なる冒険：Will" iconName="fa-solid fa-map">
+                  <SummarySection title="次なる冒険：Will" iconName="fa-solid fa-map" sectionKey="will">
                     <div className="print-hidden mb-4 flex flex-col md:flex-row gap-2">
                       <button type="button" onClick={() => goToWillInput(0)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> 1年後を書き直す
@@ -2426,7 +2453,7 @@
                     <MemoBox title="3年後の気づき" text={willThreeYearsInsight} />
                   </SummarySection>
 
-                  <SummarySection title="現実のクエスト：Must" iconName="fa-solid fa-scroll">
+                  <SummarySection title="現実のクエスト：Must" iconName="fa-solid fa-scroll" sectionKey="must">
                     <div className="print-hidden mb-4">
                       <button type="button" onClick={goToMustEdit} className="rpg-button w-full py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> クエストを書き直す
@@ -2458,7 +2485,7 @@
                       { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
                     ]} />
                   </div>
-                  <SummarySection title="ここから先の旅" iconName="fa-solid fa-route">
+                  <SummarySection title="ここから先の旅" iconName="fa-solid fa-route" sectionKey="route" defaultOpen>
                     <div className="text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap">
 {`ここまでのあなたの物語が綴られました。
 
