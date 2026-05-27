@@ -152,35 +152,35 @@
     const ANCHOR_DESCRIPTIONS = {
       TF: {
         strength: "特定の分野で高度なスキルと知識を発揮し、その専門性を深めることに最大の喜びを感じます。スペシャリストとしての道を歩むことが重要です。",
-        weakness: "専門性が活かせないジェネラリスト的な役割や、浅く広く業務をこなさなければならない環境では、モチベーションを維持しにくいでしょう。"
+        weakness: "「専門家としての高度な知識」や「一つのスキルを極め続けること」を過度に求められると、プレッシャーで疲弊してしまうかもしれません。特定の分野に縛られず、様々な業務に柔軟に関われる環境の方が向いているでしょう。"
       },
       GM: {
         strength: "組織全体の責任を担い、多様な人々をまとめ上げて大きな成果を出すことにやりがいを感じます。リーダーシップを発揮できるポジションが向いています。",
-        weakness: "権限や責任が限定され、組織全体への影響力が持てない、または専門的な実務のみを延々と求められる環境は避けるべきです。"
+        weakness: "「組織全体を引っ張ること」や「多様な人をまとめ上げるリーダーシップ」を過度に求められると、重圧で大きなストレスを感じる可能性があります。人の管理よりも、自分自身の仕事に集中できる環境の方が安心できるでしょう。"
       },
       AU: {
         strength: "組織のルールや制約に縛られず、自分自身のやり方とペースで仕事を進めることに価値を置きます。裁量が大きい環境で力を発揮します。",
-        weakness: "細かい規則やマニュアルで管理され、仕事の進め方や時間に厳しい制約があるマイクロマネジメントな環境では息苦しさを感じます。"
+        weakness: "すべてを自分一人で判断する「完全な裁量」や「孤独な自律」を強いられると、かえって負担や心細さを感じやすいかもしれません。明確なルールや、仲間と助け合える体制が整っている環境の方が力を発揮しやすいでしょう。"
       },
       SE: {
         strength: "雇用や収入が長期的に安定していることに安心感を覚え、組織に対する忠誠心も高くなります。予測可能で落ち着いた環境で着実に成果を出します。",
-        weakness: "雇用が不安定で、将来の予測が立たない、または過度な成果主義やリスクを常に伴うような環境は大きなストレスになります。"
+        weakness: "ルールに守られすぎた「絶対に安全な環境」や、何の変化も起きない「単調な毎日」にずっといると、退屈で息苦しくなってしまうかもしれません。ある程度のリスクや、新しい刺激・変化がある環境の方がモチベーションを保てるでしょう。"
       },
       EC: {
         strength: "リスクを恐れず、自分自身のアイデアで全く新しい事業や製品をゼロから創り出すことに強い情熱を持っています。起業や新規事業開発が天職です。",
-        weakness: "既存の枠組みの中で、すでに決まった業務をルール通りにルーチンとしてこなすだけの環境では、あなたの創造性が枯渇してしまいます。"
+        weakness: "「ゼロから新しいビジネスを生み出すこと」や「常に斬新なアイデアを出すこと」を強要されると、プレッシャーで疲れてしまうかもしれません。すでにある仕組みをより良くしたり、着実に運用していく役割の方が向いているでしょう。"
       },
       SV: {
         strength: "個人の利益よりも、社会を良くすることや他者を支援するという大義に貢献することに価値を見出します。自身の価値観と仕事が一致することが重要です。",
-        weakness: "社会的な意義が感じられない、または自身の倫理観と反するような「利益のみを追求する環境」では、働く意味を見失ってしまいます。"
+        weakness: "「社会への貢献」や「他者のための自己犠牲」といった大義名分を過度に押し付けられると、重荷に感じて疲弊してしまう可能性があります。もっと自分自身の目標達成や、具体的な成果に集中できる環境の方が合っているでしょう。"
       },
       CH: {
         strength: "解決不可能と思われるような困難な問題や、手強いライバルとの競争に打ち勝つことにやりがいを感じます。タフな状況ほど燃え上がります。",
-        weakness: "簡単に解決できるような容易な仕事や、競争がなく刺激に欠けるルーチンワーク中心の環境では、すぐに退屈してしまうでしょう。"
+        weakness: "「絶対に無理だと思われる課題」に立ち向かうことや、他者との「激しい競争」を強要されると、心身ともにすり減ってしまうかもしれません。勝敗や難易度よりも、自分のペースで着実に穏やかに取り組める環境の方が安心できるでしょう。"
       },
       LS: {
         strength: "仕事、家族、個人の時間など、人生全体のバランスを最優先します。柔軟な働き方ができることで、仕事にも高いモチベーションを保てます。",
-        weakness: "長時間労働が常態化し、プライベートや家族との時間を常に犠牲にしなければならない環境は、あなたの人生の質を大きく損ないます。"
+        weakness: "「仕事はほどほどにして休むべき」といった、一律のワークライフバランスを無理に押し付けられると、かえって不完全燃焼でストレスを感じるかもしれません。仕事にやりがいを感じた時は、思い切り没頭できる環境の方が充実感を得られるでしょう。"
       }
     };
 
@@ -253,6 +253,66 @@
       );
     };
 
+    const AnswerCircle = ({ val, onSelect }) => {
+      // ベージュ(A)と茶色(B)のサイズ配列
+      const sizeA = [
+        'w-12 h-12 md:w-16 md:h-16', 
+        'w-9 h-9 md:w-12 md:h-12',   
+        'w-6 h-6 md:w-8 md:h-8',     
+        'w-3 h-3 md:w-4 md:h-4',     
+        'w-0 h-0',                   
+        'w-0 h-0'                    
+      ];
+      const sizeB = [
+        'w-0 h-0',                   
+        'w-0 h-0',                   
+        'w-3 h-3 md:w-4 md:h-4',     
+        'w-6 h-6 md:w-8 md:h-8',     
+        'w-9 h-9 md:w-12 md:h-12',   
+        'w-12 h-12 md:w-16 md:h-16'  
+      ];
+
+      const textMap = [
+        "Aに非常に\nあてはまる",
+        "Aに\nあてはまる",
+        "どちらかと\nいえばA",
+        "どちらかと\nいえばB",
+        "Bに\nあてはまる",
+        "Bに非常に\nあてはまる"
+      ];
+
+      return (
+        <button 
+          onClick={() => onSelect(val)} 
+          className="flex-1 flex flex-col items-center group relative z-10 hover:bg-gray-800 hover:bg-opacity-60 rounded-lg transition-all py-2"
+        >
+          <div className="h-28 md:h-32 w-full flex flex-col relative justify-center">
+            {/* 中央の基準線 */}
+            <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 5 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+            
+            {/* A: ベージュ (下揃え) */}
+            <div className="flex-1 flex items-end justify-center pb-0.5 relative z-10">
+              {val <= 3 && (
+                <div className={`rounded-full bg-[#e6c280] transform group-hover:scale-110 transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8] shadow-[0_0_20px_rgba(230,194,128,0.8)]' : 'shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
+              )}
+            </div>
+            
+            {/* B: 茶色 (上揃え) */}
+            <div className="flex-1 flex items-start justify-center pt-0.5 relative z-10">
+              {val >= 2 && (
+                <div className={`rounded-full bg-[#784a23] transform group-hover:scale-110 transition-all duration-300 ${sizeB[val]} ${val === 5 ? 'border-2 border-[#d4b895] shadow-[0_0_20px_rgba(120,74,35,0.8)]' : 'shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
+              )}
+            </div>
+          </div>
+          <div className="h-10 mt-1 flex items-center justify-center w-full">
+            <span className="text-[9px] md:text-xs text-gray-400 group-hover:text-yellow-200 text-left leading-tight whitespace-pre-wrap font-bold transition-colors">
+              {textMap[val]}
+            </span>
+          </div>
+        </button>
+      );
+    };
+
     // --- メインアプリケーション ---
     const App = () => {
       const [step, setStep] = useState('intro'); // intro, question, bonus, calculating, result
@@ -262,7 +322,7 @@
       const [selectedBonus, setSelectedBonus] = useState([]);
       const [results, setResults] = useState(null);
       const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
-      const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about'
+      const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about', 'start', 'notYet'
 
       // --- スコア処理 ---
       const handleAnswer = (val) => {
@@ -300,6 +360,17 @@
 
           setStep('bonus');
           window.scrollTo(0, 0);
+        }
+      };
+
+      // --- 例題（イントロ）での選択処理 ---
+      const handleExampleAnswer = (val) => {
+        // 右側（B寄り）の3つ（3, 4, 5）を選んだ場合はスタート
+        if (val >= 3) {
+          setPopupType('start');
+        } else {
+          // 左側（A寄り）を選んだ場合はまだスタートしない
+          setPopupType('notYet');
         }
       };
 
@@ -420,16 +491,38 @@
           <DialogBox 
             charConfig={CONFIG.char2} 
             imageSide="right"
-            text={`「全部で16問あります。\nAとB、ふたつの価値観のうち、より自分にしっくりくる方を選んでくださいね！」`} 
+            text={`「全部で16問、5分くらいで終わると思います。\nAとB、下記のように出題されるので、ふたつの価値観のうち、より自分にしっくりくる方を選んでくださいね！」`} 
           />
 
-          <button onClick={() => setStep('question')} className="rpg-button text-xl px-10 py-4 mt-4 animate-pulse">
-            診断をはじめる
-          </button>
+          {/* 例題UI */}
+          <WindowBox title="練習もんだい" iconName="fa-solid fa-gamepad" className="bg-opacity-90 mb-8 animate-fade-in">
+            <div className="flex flex-col w-full py-2">
+              {/* 選択肢 A */}
+              <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 pt-8 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)]">
+                <div className="absolute top-0 left-0 bg-[#e6c280] text-black text-xs font-bold px-3 py-1 rounded-br-lg shadow-md">A</div>
+                <p className="text-base md:text-xl font-bold text-[#fdf6e3] leading-relaxed">まだやらない</p>
+              </div>
 
-          <div className="flex flex-col gap-4 mt-8 w-full items-center">
+              {/* 円ボタン群 */}
+              <div className="relative my-6 md:my-8 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
+                <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                  {[0, 1, 2, 3, 4, 5].map(val => (
+                    <AnswerCircle key={val} val={val} onSelect={handleExampleAnswer} />
+                  ))}
+                </div>
+              </div>
+
+              {/* 選択肢 B */}
+              <div className="bg-[#3a2012] bg-opacity-50 border border-[#8b5a2b] rounded-lg p-5 pt-8 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(139,90,43,0.1)]">
+                <div className="absolute top-0 left-0 bg-[#8b5a2b] text-white text-xs font-bold px-3 py-1 rounded-br-lg shadow-md">B</div>
+                <p className="text-base md:text-xl font-bold text-[#e8d5c4] leading-relaxed">さっそくやってみる</p>
+              </div>
+            </div>
+          </WindowBox>
+
+          <div className="flex flex-col gap-4 w-full items-center">
             <button onClick={() => openPopup('about')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
-              <i className="fa-solid fa-book-open"></i> 心の錨の魔法とは？
+              <i className="fa-solid fa-book-open"></i> 心の錨の魔法とは何かを聞く
             </button>
             <button onClick={() => openPopup('talk')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
               <i className="fa-solid fa-comments"></i> ひとに話してみる
@@ -441,66 +534,6 @@
       const renderQuestion = () => {
         const q = QUESTIONS[qIndex];
         
-        const AnswerCircle = ({ val }) => {
-          // ベージュ(A)と茶色(B)のサイズ配列
-          const sizeA = [
-            'w-12 h-12 md:w-16 md:h-16', 
-            'w-9 h-9 md:w-12 md:h-12',   
-            'w-6 h-6 md:w-8 md:h-8',     
-            'w-3 h-3 md:w-4 md:h-4',     
-            'w-0 h-0',                   
-            'w-0 h-0'                    
-          ];
-          const sizeB = [
-            'w-0 h-0',                   
-            'w-0 h-0',                   
-            'w-3 h-3 md:w-4 md:h-4',     
-            'w-6 h-6 md:w-8 md:h-8',     
-            'w-9 h-9 md:w-12 md:h-12',   
-            'w-12 h-12 md:w-16 md:h-16'  
-          ];
-
-          const textMap = [
-            "Aに非常に\nあてはまる",
-            "Aに\nあてはまる",
-            "どちらかと\nいえばA",
-            "どちらかと\nいえばB",
-            "Bに\nあてはまる",
-            "Bに非常に\nあてはまる"
-          ];
-
-          return (
-            <button 
-              onClick={() => handleAnswer(val)} 
-              className="flex-1 flex flex-col items-center group relative z-10 hover:bg-gray-800 hover:bg-opacity-60 rounded-lg transition-all py-2"
-            >
-              <div className="h-28 md:h-32 w-full flex flex-col relative justify-center">
-                {/* 中央の基準線 */}
-                <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 5 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
-                
-                {/* A: ベージュ (下揃え) */}
-                <div className="flex-1 flex items-end justify-center pb-0.5 relative z-10">
-                  {val <= 3 && (
-                    <div className={`rounded-full bg-[#e6c280] transform group-hover:scale-110 transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8] shadow-[0_0_20px_rgba(230,194,128,0.8)]' : 'shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
-                  )}
-                </div>
-                
-                {/* B: 茶色 (上揃え) */}
-                <div className="flex-1 flex items-start justify-center pt-0.5 relative z-10">
-                  {val >= 2 && (
-                    <div className={`rounded-full bg-[#784a23] transform group-hover:scale-110 transition-all duration-300 ${sizeB[val]} ${val === 5 ? 'border-2 border-[#d4b895] shadow-[0_0_20px_rgba(120,74,35,0.8)]' : 'shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
-                  )}
-                </div>
-              </div>
-              <div className="h-10 mt-1 flex items-center justify-center w-full">
-                <span className="text-[9px] md:text-xs text-gray-400 group-hover:text-yellow-200 text-left leading-tight whitespace-pre-wrap font-bold transition-colors">
-                  {textMap[val]}
-                </span>
-              </div>
-            </button>
-          );
-        };
-
         return (
           <div className="animate-fade-in w-full">
             <ProgressBar current={qIndex + 1} total={QUESTIONS.length} label="診断の進捗" />
@@ -518,7 +551,7 @@
                 <div className="relative my-6 md:my-8 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
                   <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
                     {[0, 1, 2, 3, 4, 5].map(val => (
-                      <AnswerCircle key={val} val={val} />
+                      <AnswerCircle key={val} val={val} onSelect={handleAnswer} />
                     ))}
                   </div>
                 </div>
@@ -555,7 +588,7 @@
 
             <DialogBox 
               charConfig={CONFIG.char1} 
-              text={`「よくぞ答えた。\nここからは最後の試練じゃ。\n\n王様から、冒険者ギルドに特別なクエストが告げられた。\nその依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せたのじゃ。\n\nお主の心が動く言葉を、2つ選んでみるがよい。」`} 
+              text={`「よくぞ答えた。\nこれは最後の設問じゃ。\n\nある時、王から冒険者ギルドに特別なクエストが告げられた。\nその依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せたのじゃ。\n\nお主の心が動く言葉を、2つ選んでみるがよい。」`} 
             />
 
             {/* 物語文 */}
@@ -708,11 +741,11 @@
               <DialogBox 
                 charConfig={CONFIG.char2} 
                 imageSide="right"
-                text={`「すごいですね！これがあなたの強みなんですね✨\nでも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」`} 
+                text={`「これがあなたの『心の錨』なんですね✨\nでも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」`} 
               />
 
               <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
-                <p className="text-sm text-gray-300 mb-4 px-2">逆に、以下の要素はあなたが「犠牲にしてもよい」と感じやすく、この環境を強制されると強いストレスを感じる可能性があります。</p>
+                <p className="text-sm text-gray-300 mb-4 px-2">以下の要素はあなたが「なくてもいいかな？」と手放しをしやすく、逆にこの環境を強制されると強いストレスを感じる可能性があるので気を付けてください。</p>
                 
                 <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
                   <div className="flex items-center gap-3 mb-2">
@@ -753,6 +786,58 @@
       const renderPopup = () => {
         if (popupType === 'none') return null;
 
+        if (popupType === 'start') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="bg-opacity-100 border-yellow-500 shadow-2xl">
+                  <DialogBox 
+                    charConfig={CONFIG.char2} 
+                    imageSide="right"
+                    text={`「では、早速始めるね！」`} 
+                  />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button 
+                      onClick={() => {
+                        closePopup();
+                        setStep('question');
+                        window.scrollTo(0, 0);
+                      }}
+                      className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
+                    >
+                      設問へ進む
+                    </button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+
+        if (popupType === 'notYet') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="ゆっくりで大丈夫" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-blue-500 shadow-2xl">
+                  <DialogBox 
+                    charConfig={CONFIG.char2} 
+                    imageSide="right"
+                    text={`「今はまだやらないんだね！\n心の準備ができたら、右の『さっそくやってみる』寄りのボタンを選んでね！」`} 
+                  />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button 
+                      onClick={closePopup}
+                      className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
+                    >
+                      閉じる
+                    </button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+
         if (popupType === 'about') {
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
@@ -760,7 +845,7 @@
                 <WindowBox title="心の錨の魔法とは？" iconName="fa-solid fa-book-open" className="bg-opacity-100 border-blue-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={`「『心の錨（キャリアアンカー）』とはな、遠い異国の賢者エドガー・シャインが提唱した、人が働くうえで【これだけはどうしても譲れない】という大切な価値観のことじゃ。\n\n人生という航海で選択に迷ったとき、この錨のありかを知っておけば、嵐の中でも自分を見失わず、お主らしい道を選ぶことができるのじゃよ。\n\nお主の心の奥底に眠る錨を探す……それがこの魔法じゃ！」`} 
+                    text={`「『心の錨（キャリアアンカー）』とは、シャインという心理学の賢者がとなえた、働くうえで【どうしても譲れない価値観】のことじゃ。\n\n自分の錨を知っておけば、人生の航海で迷ったときにも、自分を見失わずに納得のいく選択ができるようになるぞよ。\n\nお主の心の奥底に眠る錨を探す……それがこの魔法じゃ！」`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
