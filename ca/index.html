@@ -262,7 +262,7 @@
       const [selectedBonus, setSelectedBonus] = useState([]);
       const [results, setResults] = useState(null);
       const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
-      const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save'
+      const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about'
 
       // --- スコア処理 ---
       const handleAnswer = (val) => {
@@ -427,9 +427,14 @@
             診断をはじめる
           </button>
 
-          <button onClick={() => openPopup('talk')} className="mt-8 text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
-            <i className="fa-solid fa-comments"></i> ひとに話してみる
-          </button>
+          <div className="flex flex-col gap-4 mt-8 w-full items-center">
+            <button onClick={() => openPopup('about')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+              <i className="fa-solid fa-book-open"></i> 心の錨の魔法とは？
+            </button>
+            <button onClick={() => openPopup('talk')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+              <i className="fa-solid fa-comments"></i> ひとに話してみる
+            </button>
+          </div>
         </div>
       );
 
@@ -747,6 +752,29 @@
 
       const renderPopup = () => {
         if (popupType === 'none') return null;
+
+        if (popupType === 'about') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="心の錨の魔法とは？" iconName="fa-solid fa-book-open" className="bg-opacity-100 border-blue-500 shadow-2xl">
+                  <DialogBox 
+                    charConfig={CONFIG.char1} 
+                    text={`「『心の錨（キャリアアンカー）』とはな、遠い異国の賢者エドガー・シャインが提唱した、人が働くうえで【これだけはどうしても譲れない】という大切な価値観のことじゃ。\n\n人生という航海で選択に迷ったとき、この錨のありかを知っておけば、嵐の中でも自分を見失わず、お主らしい道を選ぶことができるのじゃよ。\n\nお主の心の奥底に眠る錨を探す……それがこの魔法じゃ！」`} 
+                  />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button 
+                      onClick={closePopup}
+                      className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
+                    >
+                      閉じる
+                    </button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
 
         if (popupType === 'talk') {
           return (
