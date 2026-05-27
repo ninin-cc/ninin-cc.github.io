@@ -18,6 +18,9 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- html2canvas (画像保存用) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
     body { margin: 0; padding: 0; background: #000; color: #f3f4f6; }
@@ -109,6 +112,41 @@
       SV: { name: '奉仕・社会貢献', short: '社会や人の役に立ちたい', icon: 'fa-solid fa-hand-holding-heart', color: 'text-pink-400' },
       CH: { name: '純粋な挑戦', short: '困難な課題に挑みたい', icon: 'fa-solid fa-mountain', color: 'text-red-400' },
       LS: { name: '生活様式', short: '仕事とプライベートのバランスを保ちたい', icon: 'fa-solid fa-mug-hot', color: 'text-orange-400' }
+    };
+
+    const ANCHOR_STORY_REACTIONS = {
+      TF: {
+        roleName: '技を極める職人',
+        quote: 'この町づくりには、水路、建築、交易路、治療所……いろいろな技術が必要になるはずだ。私は、自分の専門を活かして、この町の基盤を誰にも負けない精度でつくりたい。“この分野ならあの人に任せれば大丈夫”と言われる仕事がしたいんだ。'
+      },
+      GM: {
+        roleName: '仲間を束ねる指揮官',
+        quote: 'これは一人の力では無理だな。職人、兵士、商人、癒し手、住民……多くの人をまとめなければならない。私は、この計画全体を見渡して、人と資源を動かし、町づくりを成功に導く役割を担いたい。'
+      },
+      AU: {
+        roleName: '自由を重んじる旅人',
+        quote: '面白そうだけど、王様やギルドの細かい指示で動かされるのはごめんだな。やるなら、自分の判断で動ける領域がほしい。自分で計画を立て、自分のやり方で成果を出せるなら、この依頼に加わりたい。'
+      },
+      SE: {
+        roleName: '堅実に支える守り人',
+        quote: '辺境の町づくりか……夢はあるが、危険も多そうだ。参加するなら、住む場所、報酬、身分の保障、失敗したときの支援体制が必要だと思う。安心して長く関われる仕組みがあるなら、私は着実に貢献できる。'
+      },
+      EC: {
+        roleName: 'ゼロから創る開拓者',
+        quote: '何もない土地に、新しい町をつくるのか……最高じゃないか。まだ誰も見たことのない市場、店、仕組み、文化を自分の手で生み出せる。私は、この町に新しい価値を創る最初の一人になりたい。'
+      },
+      SV: {
+        roleName: '人々を支える癒し手',
+        quote: 'この町ができれば、住む場所を失った人や、働く場所を探している人たちの支えになるかもしれない。私は、町の成功そのものよりも、そこに暮らす人たちが安心して生きられることを大切にしたい。人の役に立てるなら、この依頼には意味がある。'
+      },
+      CH: {
+        roleName: '困難に挑む冒険者',
+        quote: '道もない、危険もある、何が起きるかわからない……だからこそ燃えるな。簡単な仕事なら、他の誰かがやればいい。私は、誰も成功できないと言うような難しい計画だからこそ、挑んでみたい。'
+      },
+      LS: {
+        roleName: '暮らしを大切にする生活者',
+        quote: '町づくりは魅力的だけど、それで自分の生活が壊れてしまうなら続かない。家族や仲間との時間、自分の休息、日々の暮らしも大切にしたい。無理をし続けるのではなく、人生全体と調和する形で関われるなら参加したい。'
+      }
     };
 
     const ANCHOR_DESCRIPTIONS = {
@@ -223,6 +261,8 @@
       const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
       const [selectedBonus, setSelectedBonus] = useState([]);
       const [results, setResults] = useState(null);
+      const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
+      const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save'
 
       // --- スコア処理 ---
       const handleAnswer = (val) => {
@@ -246,6 +286,18 @@
           setQIndex(qIndex + 1);
           window.scrollTo(0, 0);
         } else {
+          // ボーナス画面へ移行する際に、上位4つにランダムな画像を割り当てる
+          const availableImgs = [1, 2, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random());
+          const top4 = Object.entries(newScores)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 4)
+            .map(item => item[0]);
+          const imgMap = {};
+          top4.forEach((k, idx) => {
+            imgMap[k] = availableImgs[idx];
+          });
+          setRandomImages(imgMap);
+
           setStep('bonus');
           window.scrollTo(0, 0);
         }
@@ -253,6 +305,13 @@
 
       // --- 戻る処理 ---
       const handleBack = () => {
+        // 第一問目の場合はイントロ画面に戻る
+        if (step === 'question' && qIndex === 0) {
+          setStep('intro');
+          window.scrollTo(0, 0);
+          return;
+        }
+
         if (scoreHistory.length === 0) return;
 
         // 履歴から1つ前のスコアを取り出して復元
@@ -305,9 +364,42 @@
           setScores({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
           setScoreHistory([]);
           setSelectedBonus([]);
+          setRandomImages({});
           setResults(null);
+          setPopupType('none');
           window.scrollTo(0, 0);
         }
+      };
+
+      const openPopup = (type) => setPopupType(type);
+      const closePopup = () => setPopupType('none');
+
+      // --- 画像保存処理 ---
+      const handleSaveImage = () => {
+        const element = document.getElementById('result-capture-area');
+        if (!element) return;
+        
+        // スマホなどで上部が切れないように、一度トップへスクロールする
+        window.scrollTo(0, 0);
+
+        // 少し待機して描画を安定させてからキャプチャを実行
+        setTimeout(() => {
+          html2canvas(element, { 
+            backgroundColor: '#0a0a0a', // スクショしたときに透過して見えなくなるのを防ぐため、暗い背景を敷く
+            scale: 2, // 高画質化
+            useCORS: true
+          }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'career_anchor_result.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            closePopup();
+          }).catch(err => {
+            console.error('画像保存エラー', err);
+            alert('画像の保存に失敗しました。');
+            closePopup();
+          });
+        }, 300);
       };
 
       // --- 各画面のレンダリング ---
@@ -333,6 +425,10 @@
 
           <button onClick={() => setStep('question')} className="rpg-button text-xl px-10 py-4 mt-4 animate-pulse">
             診断をはじめる
+          </button>
+
+          <button onClick={() => openPopup('talk')} className="mt-8 text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+            <i className="fa-solid fa-comments"></i> ひとに話してみる
           </button>
         </div>
       );
@@ -403,15 +499,6 @@
         return (
           <div className="animate-fade-in w-full">
             <ProgressBar current={qIndex + 1} total={QUESTIONS.length} label="診断の進捗" />
-            
-            {/* 戻るボタン */}
-            {qIndex > 0 && (
-              <div className="mb-4">
-                <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
-                  <i className="fa-solid fa-chevron-left"></i> 前の質問に戻る
-                </button>
-              </div>
-            )}
 
             <WindowBox title={`第 ${qIndex + 1} 問`} iconName="fa-solid fa-clipboard-question" className="bg-opacity-90">
               <div className="flex flex-col w-full py-2">
@@ -439,6 +526,13 @@
 
               </div>
             </WindowBox>
+
+            {/* 戻るボタン（設問の直下） */}
+            <div className="mt-6 flex justify-center">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                ◀ もどる
+              </button>
+            </div>
           </div>
         );
       };
@@ -453,40 +547,80 @@
         return (
           <div className="animate-fade-in w-full">
             <ProgressBar current={QUESTIONS.length} total={QUESTIONS.length} label="最終確認" />
-            
-            {/* 戻るボタン */}
-            <div className="mb-4">
-              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
-                <i className="fa-solid fa-chevron-left"></i> 前の質問に戻る
-              </button>
-            </div>
 
             <DialogBox 
               charConfig={CONFIG.char1} 
-              text={`「よくぞ答えた。\nこれまでの回答から、お主の中で特に強そうな【4つの価値観】を導き出したぞい。\nこの中から【これだけは絶対に譲れない】と思うものを 2つ 選んでくれい。」`} 
+              text={`「よくぞ答えた。\nここからは最後の試練じゃ。\n\n王様から、冒険者ギルドに特別なクエストが告げられた。\nその依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せたのじゃ。\n\nお主の心が動く言葉を、2つ選んでみるがよい。」`} 
             />
 
-            <WindowBox title="絶対に譲れない価値観（2つ選択）" iconName="fa-solid fa-crown" className="bg-opacity-90">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-2">
+            {/* 物語文 */}
+            <div className="mb-6 p-5 bg-black bg-opacity-70 border-2 border-gray-500 rounded-lg shadow-xl text-gray-200 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+{`王国に、新しい町をつくる計画が持ち上がった。
+
+その地は、森と山に囲まれた辺境にある。
+道はまだ整っておらず、住む人も少ない。
+魔物の影もあり、一般の民だけで開拓するには危険が大きい。
+騎士団を常駐させるには、護衛の費用もかかりすぎる。
+
+だが、その地には古い遺跡が眠り、豊かな水源がある。
+うまく育てれば、王国の未来を支える大切な拠点になるかもしれない。
+
+そこで白羽の矢が立ったのが、冒険者ギルドだった。
+
+さまざまな経歴を持ち、未知の土地を歩き、自らの身を守る力を持つ冒険者たち。
+王様は、君たちのギルドに特別なクエストを告げた。
+
+「この辺境の地に、新たな町を築いてほしい。
+必要な役割はひとつではない。
+そなたたちは、それぞれの力と望む生き方に応じて、この計画に加わってよい」
+
+こうして、君たちのギルドに、王国の未来を左右するスペシャルクエストが託されたのだった。`}
+            </div>
+
+            {/* 問いかけ文 */}
+            <div className="mb-6 text-center space-y-2 animate-fade-in">
+              <p className="text-gray-200 font-bold">この依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せました。</p>
+              <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間を2人選んでください。</p>
+              <p className="text-xs text-gray-400">その反応には、あなたが仕事や人生で大切にしている“心の錨”があらわれているかもしれません。</p>
+            </div>
+
+            <WindowBox title="心が動いた仲間の言葉（2人選択）" iconName="fa-solid fa-crown" className="bg-opacity-90">
+              <div className="flex flex-col gap-4 p-2">
                 {top4Keys.map((key) => {
-                  const data = ANCHORS[key];
+                  const story = ANCHOR_STORY_REACTIONS[key];
                   const isSelected = selectedBonus.includes(key);
                   const isDisabled = !isSelected && selectedBonus.length >= 2;
+                  const order = selectedBonus.indexOf(key);
+                  const imgNum = randomImages[key] || 1;
                   
                   return (
                     <button 
                       key={key}
                       onClick={() => toggleBonus(key)}
                       disabled={isDisabled}
-                      className={`flex flex-col items-start p-3 border-2 rounded transition-colors text-left ${isSelected ? 'bg-yellow-900 border-yellow-400' : 'bg-gray-800 border-gray-600 hover:border-gray-400'} ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`flex flex-row items-center p-3 md:p-4 border-2 rounded-lg transition-colors text-left gap-4 ${
+                        isSelected 
+                          ? 'bg-yellow-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]' 
+                          : 'bg-gray-900 border-gray-600 hover:border-gray-400'
+                      } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      <div className="flex items-center justify-between w-full mb-1">
-                        <span className={`font-bold ${isSelected ? 'text-yellow-300' : data.color}`}>
-                          <i className={`${data.icon} w-5 mr-1`}></i> {data.name}
-                        </span>
-                        {isSelected && <i className="fa-solid fa-check text-yellow-400"></i>}
+                      {/* 顔アイコン */}
+                      <div className={`shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-800 border-2 rounded overflow-hidden flex items-center justify-center shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
+                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-xs text-gray-300">{data.short}</span>
+
+                      {/* セリフ */}
+                      <div className="flex-1 relative pr-8">
+                        <p className="text-sm md:text-base leading-relaxed text-gray-100 whitespace-pre-wrap">
+                          「{story.quote}」
+                        </p>
+                        {/* 選択番号表示 */}
+                        {isSelected && (
+                          <div className="absolute top-1/2 -translate-y-1/2 right-0 text-yellow-400 text-xl md:text-2xl font-bold drop-shadow-md">
+                            {order === 0 ? '①' : '②'}
+                          </div>
+                        )}
+                      </div>
                     </button>
                   );
                 })}
@@ -501,10 +635,17 @@
                   disabled={selectedBonus.length !== 2}
                   className={`rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold ${selectedBonus.length === 2 ? 'bg-white text-black animate-pulse' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}
                 >
-                  結果を見る
+                  心の錨を見極める
                 </button>
               </div>
             </WindowBox>
+
+            {/* 戻るボタン（最終確認の直下） */}
+            <div className="mt-6 flex justify-center">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                ◀ もどる
+              </button>
+            </div>
           </div>
         );
       };
@@ -522,66 +663,151 @@
 
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-yellow-300" style={{ textShadow: '2px 2px 0 #000' }}>診断完了</h2>
+            {/* 画像保存の対象範囲。
+              スクショ時に背景が透過して文字が見えなくなるのを防ぐため、
+              html2canvas側で背景色を真っ黒（#0a0a0a）にして保存します。
+            */}
+            <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-yellow-300" style={{ textShadow: '2px 2px 0 #000' }}>診断完了</h2>
+              </div>
+
+              <DialogBox 
+                charConfig={CONFIG.char1} 
+                text={`「ふむ…見えたぞ。お主のキャリアの軸、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。」`} 
+              />
+
+              <WindowBox title="あなたのキャリアの軸（強み）" iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
+                <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、あなたが仕事において無意識に大切にしている「譲れない価値観」です。</p>
+                <div className="space-y-4">
+                  {top3.map((key, idx) => {
+                    const data = ANCHORS[key];
+                    const desc = ANCHOR_DESCRIPTIONS[key];
+                    const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
+                    const rankIcons = ['fa-crown text-yellow-400', 'fa-medal text-gray-300', 'fa-award text-amber-600'];
+                    
+                    return (
+                      <div key={key} className={`${cardClass} p-4 rounded-lg relative overflow-hidden`}>
+                        <div className="flex items-center gap-3 mb-2">
+                          <i className={`fa-solid ${rankIcons[idx]} text-2xl`}></i>
+                          <h3 className={`text-xl font-bold ${data.color}`}>{data.name}</h3>
+                        </div>
+                        <p className="text-sm font-bold text-gray-400 mb-2 border-b border-gray-700 pb-2">「{data.short}」</p>
+                        <p className="text-sm leading-relaxed text-gray-100">{desc.strength}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </WindowBox>
+
+              <DialogBox 
+                charConfig={CONFIG.char2} 
+                imageSide="right"
+                text={`「すごいですね！これがあなたの強みなんですね✨\nでも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」`} 
+              />
+
+              <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
+                <p className="text-sm text-gray-300 mb-4 px-2">逆に、以下の要素はあなたが「犠牲にしてもよい」と感じやすく、この環境を強制されると強いストレスを感じる可能性があります。</p>
+                
+                <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className={`text-xl font-bold ${ANCHORS[bottom1].color}`}>
+                      <i className={`${ANCHORS[bottom1].icon} mr-2`}></i>
+                      {ANCHORS[bottom1].name}
+                    </h3>
+                  </div>
+                  <p className="text-sm font-bold text-gray-400 mb-2 border-b border-red-900 pb-2">「{ANCHORS[bottom1].short}」に反する環境</p>
+                  <p className="text-sm leading-relaxed text-red-100">{ANCHOR_DESCRIPTIONS[bottom1].weakness}</p>
+                </div>
+              </WindowBox>
+
+              <DialogBox 
+                charConfig={CONFIG.char1} 
+                text={`「どうじゃ、何かのヒントになったかの？\nここで得たヒントを基にゆっくり考えてみたり、人に話してみたりするとよいぞよー。\n汝の航海に光あれ！なのじゃー」`} 
+              />
             </div>
 
-            <DialogBox 
-              charConfig={CONFIG.char1} 
-              text={`「ふむ…見えたぞ。お主のキャリアの軸、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。」`} 
-            />
+            {/* アクションボタン群 */}
+            <div className="text-center pt-4 flex flex-col items-center gap-4">
+              <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                <i className="fa-solid fa-camera"></i> じぶんで考えてみる
+              </button>
 
-            <WindowBox title="あなたのキャリアの軸（強み）" iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
-              <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、あなたが仕事において無意識に大切にしている「譲れない価値観」です。</p>
-              <div className="space-y-4">
-                {top3.map((key, idx) => {
-                  const data = ANCHORS[key];
-                  const desc = ANCHOR_DESCRIPTIONS[key];
-                  const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
-                  const rankIcons = ['fa-crown text-yellow-400', 'fa-medal text-gray-300', 'fa-award text-amber-600'];
-                  
-                  return (
-                    <div key={key} className={`${cardClass} p-4 rounded-lg relative overflow-hidden`}>
-                      <div className="flex items-center gap-3 mb-2">
-                        <i className={`fa-solid ${rankIcons[idx]} text-2xl`}></i>
-                        <h3 className={`text-xl font-bold ${data.color}`}>{data.name}</h3>
-                      </div>
-                      <p className="text-sm font-bold text-gray-400 mb-2 border-b border-gray-700 pb-2">「{data.short}」</p>
-                      <p className="text-sm leading-relaxed text-gray-100">{desc.strength}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </WindowBox>
+              <button onClick={() => openPopup('talk')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+                <i className="fa-solid fa-comments"></i> ひとに話してみる
+              </button>
 
-            <DialogBox 
-              charConfig={CONFIG.char2} 
-              imageSide="right"
-              text={`「すごいですね！これがあなたの強みなんですね✨\nでも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」`} 
-            />
-
-            <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
-              <p className="text-sm text-gray-300 mb-4 px-2">逆に、以下の要素はあなたが「犠牲にしてもよい」と感じやすく、この環境を強制されると強いストレスを感じる可能性があります。</p>
-              
-              <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className={`text-xl font-bold ${ANCHORS[bottom1].color}`}>
-                    <i className={`${ANCHORS[bottom1].icon} mr-2`}></i>
-                    {ANCHORS[bottom1].name}
-                  </h3>
-                </div>
-                <p className="text-sm font-bold text-gray-400 mb-2 border-b border-red-900 pb-2">「{ANCHORS[bottom1].short}」に反する環境</p>
-                <p className="text-sm leading-relaxed text-red-100">{ANCHOR_DESCRIPTIONS[bottom1].weakness}</p>
-              </div>
-            </WindowBox>
-
-            <div className="text-center pt-6">
-              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm">
+              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-4">
                 もう一度最初から診断する
               </button>
             </div>
           </div>
         );
+      };
+
+      const renderPopup = () => {
+        if (popupType === 'none') return null;
+
+        if (popupType === 'talk') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="酒場の片隅で" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-yellow-500 shadow-2xl">
+                  <DialogBox 
+                    charConfig={CONFIG.char1} 
+                    text={`「どうじゃったかな？ 自分の内側を見つめて、どんなことを感じたか……。\n\nその思いは、ひとに話してみるとさらに深まるかもしれぬぞ。\n\n『nininキャリアルーム』という、旅人の話をじっくり聞いてくれる場所があるそうじゃ。\n足を運んでみるのもよいじゃろう。」`} 
+                  />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <a 
+                      href="https://ninin-cc.github.io/" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-door-open"></i> nininキャリアルームへ向かう
+                    </a>
+                    <button 
+                      onClick={closePopup}
+                      className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
+                    >
+                      今はやめておく
+                    </button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+
+        if (popupType === 'save') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="思い出の記録" iconName="fa-solid fa-camera" className="bg-opacity-100 border-blue-500 shadow-2xl">
+                  <DialogBox 
+                    charConfig={CONFIG.char2} 
+                    imageSide="right"
+                    text={`「いいですね！\nご自身の『心の錨』を画像で保存しましょうか？\nあとでゆっくり見返して、自分と対話するヒントにしてくださいね！」`} 
+                  />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button 
+                      onClick={handleSaveImage}
+                      className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-download"></i> 画像として保存する
+                    </button>
+                    <button 
+                      onClick={closePopup}
+                      className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
+                    >
+                      今はやめておく
+                    </button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
       };
 
       return (
@@ -596,11 +822,19 @@
           
           {/* フッター・開発用 採番表示 */}
           <div className="w-full mt-12 mb-4 flex flex-col items-center animate-fade-in">
-            {/* 説明ボックス */}
-            <div className="w-full bg-black bg-opacity-60 border border-gray-500 rounded p-3 text-center text-[9px] md:text-xs text-gray-300 shadow-sm mb-4">
-              <p className="mb-1 leading-relaxed">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。</p>
-              <p>© ninin consulting & counseling LLC. All rights reserved.</p>
-            </div>
+            {/* 説明ボックス (intro と result 画面のみ表示) */}
+            {(step === 'intro' || step === 'result') && (
+              <div className="w-full bg-black bg-opacity-60 border border-gray-500 rounded p-3 text-center text-[9px] md:text-xs text-gray-300 shadow-sm mb-4">
+                <p className="mb-3 text-yellow-100 opacity-90 leading-relaxed">
+                  ※本アプリは医療的な診断や占い、性格を決めつけるものではありません。<br className="hidden md:block" />
+                  ご自身の「心の錨」に気づき、これからの生き方を考えるための「自己理解のきっかけ」としてご活用ください。
+                </p>
+                <div className="border-t border-gray-600/50 pt-2">
+                  <p className="mb-1 leading-relaxed text-gray-400">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。</p>
+                  <p className="text-gray-400">© ninin consulting & counseling LLC. All rights reserved.</p>
+                </div>
+              </div>
+            )}
 
             {/* 区切り線とリンク・ページ番号 */}
             <div className="w-full border-t border-gray-500/50 pt-3 flex flex-col items-center justify-center gap-1.5 text-[10px] md:text-xs text-gray-400">
@@ -612,6 +846,9 @@
               </div>
             </div>
           </div>
+
+          {/* ポップアップ */}
+          {renderPopup()}
         </div>
       );
     };
