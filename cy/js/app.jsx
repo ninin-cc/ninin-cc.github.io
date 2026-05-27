@@ -880,6 +880,17 @@
                     <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
                       ハルカの案内に進む
                     </button>
+                    <div className="mt-4 flex justify-center">
+                      <a
+                        href={APP_CONFIG.bookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rpg-button inline-flex items-center justify-center gap-2 px-6 py-3 text-base"
+                      >
+                        <i className="fa-regular fa-comments"></i>
+                        {APP_CONFIG.bookingButtonText}
+                      </a>
+                    </div>
                     {renderAppNote('mt-5')}
                   </div>
                 )}
@@ -2471,7 +2482,7 @@
                           aria-describedby="think-alone-tooltip"
                           className="rpg-button w-full py-3 text-base"
                         >
-                          今は、ひとりで考えてみる
+                          今は、ひとりで考えてみる（PDF保存）
                         </button>
                       </div>
                       <div className="relative flex-1 route-choice-item">
