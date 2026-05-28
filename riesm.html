@@ -56,12 +56,13 @@
         <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-stone-800">
             【自分を知り、相手を知る】
         </h1>
-        <p class="text-base md:text-lg text-stone-600 font-medium leading-relaxed mb-6">
+        <p class="text-base md:text-lg text-stone-600 font-medium leading-relaxed mb-8">
             よりよい関係性を築くための<br class="hidden md:block"/>
             アプローチ「RIESM™（リズム）」
         </p>
-        
-        <div class="bg-white/60 p-4 md:p-5 rounded-xl border border-stone-200/50 mb-4 max-w-md w-full">
+
+        <!-- プラン案内とレポート抜粋セクション -->
+        <div class="bg-white/60 p-4 md:p-5 rounded-xl border border-stone-200/50 mb-10 max-w-md w-full mx-auto">
             <p class="text-sm text-stone-500 leading-relaxed text-left mb-4">
                 あなたの状況に合わせて、最適なプランをお選びください。<br>
                 受検後おおよそ一週間程度で、アセスメント結果をレポート（PDFファイル）にてお送りいたします。
@@ -93,6 +94,40 @@
                 <span class="inline-flex items-start md:items-center border-b border-sky-300 hover:border-sky-500 pb-0.5 leading-relaxed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 mt-0.5 md:mt-0 flex-shrink-0"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
                     <span>ページ最下部で【あなたのコックピット詳細レポート】の全体イメージをご確認いただけます。(約18枚)</span>
+                </span>
+            </a>
+        </div>
+
+        <!-- 漫画でわかるRIESM™ エリア -->
+        <div class="mb-8 w-full max-w-xl mx-auto fade-in">
+            <p class="text-lg md:text-xl font-bold text-stone-800 text-center mb-4">
+                マンガでわかる！RIESM™
+            </p>
+            <div 
+                class="relative cursor-pointer group rounded-2xl overflow-hidden border-2 border-stone-200 shadow-md transition-transform hover:scale-[1.02]"
+                onclick="openMangaModal()"
+            >
+                <!-- 1コマ目の画像。画像がない場合はプレースホルダーを表示 -->
+                <img src="./img/m/1.jpg" alt="漫画1コマ目" class="w-full h-auto block" onerror="this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=Manga+Cover+(1.jpg)'">
+                
+                <!-- ホバー時のオーバーレイ（漫画を読むボタン） -->
+                <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="bg-white text-stone-800 font-bold py-3 px-6 rounded-full shadow-lg flex items-center transform translate-y-4 group-hover:translate-y-0 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        漫画を読む
+                    </span>
+                </div>
+            </div>
+            <p class="text-xs text-stone-500 text-center mt-3">画像をクリックすると漫画が開きます</p>
+        </div>
+        <!-- /漫画でわかるRIESM™ エリア終了 -->
+
+        <!-- ページ最下部へのリンク（漫画下再掲） -->
+        <div class="mb-4 w-full max-w-md mx-auto fade-in bg-white/40 p-3 rounded-lg border border-stone-200/50">
+            <a href="#cockpit-image" class="block text-sky-600 hover:text-sky-700 transition-colors font-medium text-xs md:text-sm text-center">
+                <span class="inline-flex items-start md:items-center justify-center border-b border-sky-300 hover:border-sky-500 pb-0.5 leading-relaxed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 mt-0.5 md:mt-0 flex-shrink-0"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+                    <span>ページ最下部で【コックピット詳細レポート】の全体イメージをご確認いただけます。</span>
                 </span>
             </a>
         </div>
@@ -416,5 +451,55 @@
         </p>
     </footer>
 
+    <!-- 漫画表示用モーダル（初期状態は非表示） -->
+    <div id="mangaModal" class="fixed inset-0 z-50 hidden bg-black/90 overflow-y-auto">
+        <div class="min-h-screen px-0 md:px-4 py-0 md:py-8 flex flex-col items-center">
+            
+            <!-- 右上の固定閉じるボタン -->
+            <button onclick="closeMangaModal()" class="fixed top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors z-[60]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            <!-- 漫画コンテナ -->
+            <!-- space-y-36 (約144px = 6行程度の間隔) に変更 -->
+            <div class="w-full max-w-2xl bg-white flex flex-col items-center relative shadow-2xl space-y-36 py-12">
+                <!-- 縦読み用画像（2.jpg〜10.jpg、最後に1.jpg） -->
+                <img src="./img/m/2.jpg" alt="漫画 2ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/f5f5f4/a8a29e?text=Page+2'">
+                <img src="./img/m/3.jpg" alt="漫画 3ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/fdfcf9/a8a29e?text=Page+3'">
+                <img src="./img/m/4.jpg" alt="漫画 4ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/f5f5f4/a8a29e?text=Page+4'">
+                <img src="./img/m/5.jpg" alt="漫画 5ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/fdfcf9/a8a29e?text=Page+5'">
+                <img src="./img/m/6.jpg" alt="漫画 6ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/f5f5f4/a8a29e?text=Page+6'">
+                <img src="./img/m/7.jpg" alt="漫画 7ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/fdfcf9/a8a29e?text=Page+7'">
+                <img src="./img/m/8.jpg" alt="漫画 8ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/f5f5f4/a8a29e?text=Page+8'">
+                <img src="./img/m/9.jpg" alt="漫画 9ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/fdfcf9/a8a29e?text=Page+9'">
+                <img src="./img/m/10.jpg" alt="漫画 10ページ目" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/f5f5f4/a8a29e?text=Page+10'">
+                <img src="./img/m/1.jpg" alt="漫画 1ページ目（表紙）" class="w-full h-auto" onerror="this.src='https://placehold.co/800x1200/fdfcf9/a8a29e?text=Page+1+(Cover)'">
+            </div>
+
+            <!-- 下部の閉じるボタン -->
+            <div class="w-full max-w-2xl flex justify-center mt-6 mb-12">
+                <button onclick="closeMangaModal()" class="bg-white text-stone-800 font-bold py-3 px-8 rounded-full shadow-lg flex items-center transition-transform hover:scale-105">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル制御用スクリプト -->
+    <script>
+        function openMangaModal() {
+            const modal = document.getElementById('mangaModal');
+            modal.classList.remove('hidden');
+            // 背景のスクロールを無効化
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMangaModal() {
+            const modal = document.getElementById('mangaModal');
+            modal.classList.add('hidden');
+            // 背景のスクロールを有効化
+            document.body.style.overflow = '';
+        }
+    </script>
 </body>
 </html>
