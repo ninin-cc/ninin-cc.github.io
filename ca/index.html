@@ -5,20 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>キャリアアンカー ～心の錨を観る魔法～</title>
 
-  <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 
-  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- html2canvas (画像保存用) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -253,7 +248,7 @@
         {title && (
           <div className="absolute left-4 top-0 -translate-y-1/2 bg-black px-3 py-2 flex items-center space-x-2 border-2 border-gray-400 rounded max-w-[85%]">
             {iconName && <i className={`${iconName} text-yellow-300 shrink-0`}></i>}
-            <h2 className="text-sm md:text-lg font-bold tracking-widest text-yellow-100 leading-relaxed">{title}</h2>
+            <h2 className="text-sm md:text-lg font-bold tracking-widest text-yellow-100 leading-snug">{title}</h2>
           </div>
         )}
         <div className="w-full">{children}</div>
@@ -901,7 +896,7 @@
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`「では、早速始めるね！」`} 
+                    text={`「そうそう！そんな感じ♪\nじゃあ、早速始めるね！」`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
