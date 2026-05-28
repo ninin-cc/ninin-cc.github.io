@@ -5,15 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>キャリアアンカー ～心の錨を観る魔法～</title>
 
+  <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 
+  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- html2canvas (画像保存用) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -364,7 +369,7 @@
 
     // --- メインアプリケーション ---
     const App = () => {
-      const [step, setStep] = useState('intro'); // intro, question, bonus, calculating, result
+      const [step, setStep] = useState('intro'); // intro, practice, question, bonus, calculating, result
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
@@ -428,7 +433,7 @@
         }
       };
 
-      // --- 例題（イントロ）での選択処理 ---
+      // --- 例題（練習画面）での選択処理 ---
       const handleExampleAnswer = (val) => {
         // 1回目のタップ：光らせて選択状態にする
         if (tempSelectedVal !== val) {
@@ -454,9 +459,15 @@
         setAnimationKey(prev => prev + 1);
         setTempSelectedVal(null); // 戻る時に選択状態もリセット
 
-        // 第一問目の場合はイントロ画面に戻る
-        if (step === 'question' && qIndex === 0) {
+        if (step === 'practice') {
           setStep('intro');
+          window.scrollTo(0, 0);
+          return;
+        }
+
+        // 第一問目の場合は練習画面に戻る
+        if (step === 'question' && qIndex === 0) {
+          setStep('practice');
           window.scrollTo(0, 0);
           return;
         }
@@ -573,17 +584,32 @@
             text={`「全部で16問、5分くらいで終わると思います。\n6段階の◯から、自分が『そう感じる』ところを選んでくださいね！」`} 
           />
 
-          {/* ボタン群を練習問題の上に移動 */}
           <div className="flex flex-col gap-4 w-full items-center mb-8 mt-4">
-            <button onClick={() => openPopup('about')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
-              <i className="fa-solid fa-book-open"></i> 心の錨の魔法とは？
+            <button 
+              onClick={() => {
+                setAnimationKey(prev => prev + 1);
+                setStep('practice');
+                window.scrollTo(0, 0);
+              }}
+              className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black w-full md:w-auto px-10 py-4 text-lg font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+            >
+              練習もんだいへ進む
             </button>
-            <button onClick={() => openPopup('talk')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
-              <i className="fa-solid fa-comments"></i> ひとに話してみる
-            </button>
-          </div>
 
-          {/* 例題UI */}
+            <div className="flex flex-col gap-2 mt-2">
+              <button onClick={() => openPopup('about')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+                <i className="fa-solid fa-book-open"></i> 心の錨の魔法とは？
+              </button>
+              <button onClick={() => openPopup('talk')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+                <i className="fa-solid fa-comments"></i> ひとに話してみる
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderPractice = () => (
+        <div className="w-full flex flex-col items-center">
           <WindowBox title="練習もんだい" iconName="fa-solid fa-gamepad" className="bg-opacity-90 mb-8 animate-fade-in">
             <p className="text-sm md:text-base text-gray-300 text-center mb-3 font-bold border-b border-gray-600 pb-2">
               左がA、右がBに近づきます。<br />6段階の◯から、自分がそうだと感じたところを選んでください。
@@ -618,6 +644,11 @@
             </div>
           </WindowBox>
 
+          <div className="flex justify-center mt-2">
+            <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+              ◀ もどる
+            </button>
+          </div>
         </div>
       );
 
@@ -1031,6 +1062,7 @@
           <div className="w-full">
             <div key={animationKey} className={animationKey > 0 ? "animate-page-turn w-full" : "w-full"}>
               {step === 'intro' && renderIntro()}
+              {step === 'practice' && renderPractice()}
               {step === 'question' && renderQuestion()}
               {step === 'bonus' && renderBonus()}
             </div>
