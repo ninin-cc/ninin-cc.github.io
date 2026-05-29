@@ -297,22 +297,24 @@
       </div>
     );
 
+    // キャラクターのセリフボックス（アイコンの回り込み対応）
     const DialogBox = ({ charConfig, text, imageSide = 'left' }) => {
       const { name, img, dialogColor, imgBg } = charConfig;
       const isImageRight = imageSide === 'right';
 
       return (
-        <div className={`w-full ${dialogColor} border-2 p-4 rounded-lg mb-6 relative animate-fade-in shadow-xl mt-6`}>
+        <div className={`w-full ${dialogColor} border-2 p-4 md:p-5 rounded-lg mb-6 relative animate-fade-in shadow-xl mt-6`}>
           <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${dialogColor.split(' ')[0]} px-3 border border-white rounded-full text-white text-sm font-bold tracking-widest shadow-sm z-10`}>
             {name}
           </div>
-          <div className={`flex items-start gap-4 mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
-            <div className={`shrink-0 self-start w-20 h-20 ${imgBg} border-2 border-white rounded-md overflow-hidden flex items-center justify-center shadow-inner`}>
+          <div className="mt-2 w-full block">
+            <div className={`w-16 h-16 md:w-20 md:h-20 ${imgBg} border-2 border-white rounded-md overflow-hidden shadow-inner ${isImageRight ? 'float-right ml-4 mb-2' : 'float-left mr-4 mb-2'}`}>
               <img src={img} alt={name} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated', transform: isImageRight ? 'scaleX(-1) scale(1.1)' : 'scale(1.1)' }} />
             </div>
-            <div className="text-white text-sm md:text-base leading-relaxed flex-1 whitespace-pre-wrap">
+            <div className="text-white text-sm md:text-base leading-relaxed whitespace-pre-wrap">
               {text}
             </div>
+            <div className="clear-both"></div>
           </div>
         </div>
       );
@@ -400,7 +402,7 @@
 
     // --- メインアプリケーション ---
     const App = () => {
-      const [step, setStep] = useState('intro'); // intro, practice, question, bonus1, bonus2, calculating, result
+      const [step, setStep] = useState('intro'); // intro, practice, question, bonus1_story, bonus1_intro, bonus1_select, bonus2, calculating, result
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
@@ -460,7 +462,7 @@
           });
           setRandomImages(imgMap);
 
-          setStep('bonus1');
+          setStep('bonus1_story');
           window.scrollTo(0, 0);
         }
       };
@@ -505,7 +507,19 @@
         }
 
         if (step === 'bonus2') {
-          setStep('bonus1');
+          setStep('bonus1_select');
+          window.scrollTo(0, 0);
+          return;
+        }
+
+        if (step === 'bonus1_select') {
+          setStep('bonus1_intro');
+          window.scrollTo(0, 0);
+          return;
+        }
+
+        if (step === 'bonus1_intro') {
+          setStep('bonus1_story');
           window.scrollTo(0, 0);
           return;
         }
@@ -517,7 +531,7 @@
         setScores(prevScores);
         setScoreHistory(scoreHistory.slice(0, -1));
 
-        if (step === 'bonus1') {
+        if (step === 'bonus1_story') {
           // ボーナス画面から最後の質問に戻る
           setStep('question');
           window.scrollTo(0, 0);
@@ -622,12 +636,12 @@
 
           <DialogBox 
             charConfig={CONFIG.char1} 
-            text={`「よく来たな。\n\nここでは　お主が大切にしている【Role＝役割】における【絶対に譲れない軸】を見極めるための 問い を用意したぞい。 直感で答えてゆくのじゃ。」`} 
+            text={`よく来たな。\nここでは　お主が大切にしている【Role＝役割】における【絶対に譲れない軸】を見極めるための 問い を用意したぞい。 直感で答えてゆくのじゃ。`} 
           />
           <DialogBox 
             charConfig={CONFIG.char2} 
             imageSide="right"
-            text={`「全部で12問、5分くらいで終わると思います。\n4段階の◯から、自分が『そう感じる』ところを選んでくださいね！」`} 
+            text={`全部で10問、3分くらいで終わると思います。\n4段階の◯から、自分が『そう感じる』ところを選んでくださいね！`} 
           />
 
           <div className="flex flex-col gap-4 w-full items-center mb-8 mt-4">
@@ -751,7 +765,93 @@
         );
       };
 
-      const renderBonus1 = () => {
+      const renderBonus1_story = () => {
+        return (
+          <div className="w-full">
+            <DialogBox 
+              charConfig={CONFIG.char1} 
+              text={`よくぞ答えた。\nこれは最後の設問じゃ。`} 
+            />
+
+            {/* 物語文 */}
+            <div className="mb-6 relative rounded-lg shadow-xl overflow-hidden border-2 border-gray-500">
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('./img/tabidachi.jpg')" }}></div>
+              <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+              <div className="relative p-5 text-gray-100 text-sm md:text-base leading-relaxed whitespace-pre-wrap font-bold drop-shadow-md" style={{ textShadow: '1px 1px 2px black' }}>
+{`王国の辺境に、新たな町を築く計画が持ち上がった。
+豊かな資源と遺跡が眠る希望の地だが、魔物も潜む未開の地でもある。
+そこで王が頼ったのは、未知を切り拓く力を持つ「冒険者ギルド」だった。
+「この地に町を築いてほしい。必要な役割はひとつではない。
+己の力と、望む生き方に応じてこの計画に加わるがよい」`}
+              </div>
+            </div>
+
+            <div className="text-center mt-6">
+              <button 
+                onClick={() => {
+                  setAnimationKey(prev => prev + 1);
+                  setStep('bonus1_intro');
+                  window.scrollTo(0, 0);
+                }}
+                className="rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold bg-white text-black animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+              >
+                次へ進む
+              </button>
+            </div>
+
+            {/* 進捗バーを問題の下側に配置 */}
+            <div className="mt-4">
+              <ProgressBar current={1} total={4} label="最終確認" />
+            </div>
+
+            {/* 戻るボタン（最終確認の直下） */}
+            <div className="flex justify-center mt-2">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                ◀ もどる
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderBonus1_intro = () => {
+        return (
+          <div className="w-full">
+            <DialogBox 
+              charConfig={CONFIG.char2} 
+              imageSide="right"
+              text={`この依頼を聞いたとき、仲間たちはそれぞれ違う事を言いました。\n\nあなたが「わかる」「自分もそう感じる」と思った順に、仲間の言葉を2つ選んでください。`} 
+            />
+
+            <div className="text-center mt-6">
+              <button 
+                onClick={() => {
+                  setAnimationKey(prev => prev + 1);
+                  setStep('bonus1_select');
+                  window.scrollTo(0, 0);
+                }}
+                className="rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold bg-white text-black animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+              >
+                仲間たちの言葉を聞く
+              </button>
+            </div>
+
+            {/* 進捗バー */}
+            <div className="mt-4">
+              <ProgressBar current={2} total={4} label="最終確認" />
+            </div>
+
+            {/* 戻るボタン */}
+            <div className="flex justify-center mt-2">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                ◀ もどる
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderBonus1_select = () => {
         // 現在のスコアから上位4つを抽出
         const top4Keys = Object.entries(scores)
           .sort((a, b) => b[1] - a[1])
@@ -760,28 +860,11 @@
 
         return (
           <div className="w-full">
-            <DialogBox 
-              charConfig={CONFIG.char1} 
-              text={`「よくぞ答えた。\nこれは最後の設問じゃ。\n\nお主の心が動く仲間の言葉を、2つ選んでみるがよい。」`} 
-            />
-
-            {/* 物語文 */}
-            <div className="mb-6 p-5 bg-black bg-opacity-70 border-2 border-gray-500 rounded-lg shadow-xl text-gray-200 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-{`王国の辺境に、新たな町を築く計画が持ち上がった。
-豊かな資源と遺跡が眠る希望の地だが、魔物も潜む未開の地でもある。
-そこで王が頼ったのは、未知を切り拓く力を持つ「冒険者ギルド」だった。
-「この地に町を築いてほしい。必要な役割はひとつではない。
-己の力と、望む生き方に応じてこの計画に加わるがよい」`}
-            </div>
-
-            {/* 問いかけ文 */}
             <div className="mb-6 text-center space-y-2 animate-fade-in">
-              <p className="text-gray-200 font-bold">この依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せました。</p>
               <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間を2人選んでください。</p>
-              <p className="text-xs text-gray-400">その反応には、あなたが仕事や人生で大切にしている“心の<ruby>錨<rt>いかり</rt></ruby>”があらわれているかもしれません。</p>
             </div>
 
-            <WindowBox title="心が動いた仲間の言葉（2人選択）" iconName="fa-solid fa-crown" className="bg-opacity-90">
+            <WindowBox title="心が動いた仲間の言葉" iconName="fa-solid fa-crown" className="bg-opacity-90">
               <div className="flex flex-col gap-4 p-2">
                 {top4Keys.map((key) => {
                   const story = ANCHOR_STORY_REACTIONS[key];
@@ -795,29 +878,29 @@
                       key={key}
                       onClick={() => toggleBonus(key)}
                       disabled={isDisabled}
-                      className={`flex flex-row items-center p-3 md:p-4 border-2 rounded-lg transition-colors text-left gap-4 ${
+                      className={`relative block w-full p-3 md:p-4 pr-10 md:pr-12 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
                           ? 'bg-yellow-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]' 
                           : 'bg-gray-900 border-gray-600 hover:border-gray-400'
                       } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-800 border-2 rounded overflow-hidden flex items-center justify-center shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
+                      <div className={`float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
                         <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover" />
                       </div>
 
                       {/* セリフ */}
-                      <div className="flex-1 relative pr-8">
-                        <p className="text-sm md:text-base leading-relaxed text-gray-100 whitespace-pre-wrap">
-                          「{story.quote}」
-                        </p>
-                        {/* 選択番号表示 */}
-                        {isSelected && (
-                          <div className="absolute top-1/2 -translate-y-1/2 right-0 text-yellow-400 text-xl md:text-2xl font-bold drop-shadow-md">
-                            {order === 0 ? '①' : '②'}
-                          </div>
-                        )}
+                      <div className="text-sm md:text-base leading-relaxed text-gray-100">
+                        {story.quote}
                       </div>
+                      <div className="clear-both"></div>
+
+                      {/* 選択番号表示 */}
+                      {isSelected && (
+                        <div className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 text-yellow-400 text-xl md:text-2xl font-bold drop-shadow-md">
+                          {order === 0 ? '①' : '②'}
+                        </div>
+                      )}
                     </button>
                   );
                 })}
@@ -843,7 +926,7 @@
 
             {/* 進捗バーを問題の下側に配置 */}
             <div className="mt-4">
-              <ProgressBar current={1} total={2} label="最終確認" />
+              <ProgressBar current={3} total={4} label="最終確認" />
             </div>
 
             {/* 戻るボタン（最終確認の直下） */}
@@ -868,7 +951,7 @@
             <DialogBox 
               charConfig={CONFIG.char2} 
               imageSide="right"
-              text={`「教えてくれてありがとう！\nほかに、こんなことを言ってる人もいたよ。」`} 
+              text={`教えてくれてありがとう！\nほかに、こんなことを言ってる人もいたよ。`} 
             />
 
             {/* 問いかけ文 */}
@@ -887,29 +970,29 @@
                     <button 
                       key={key}
                       onClick={() => setSelectedMinusBonus(key)}
-                      className={`flex flex-row items-center p-3 md:p-4 border-2 rounded-lg transition-colors text-left gap-4 ${
+                      className={`relative block w-full p-3 md:p-4 pr-10 md:pr-12 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
                           ? 'bg-red-950 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
                           : 'bg-gray-900 border-gray-600 hover:border-gray-400'
                       }`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-800 border-2 rounded overflow-hidden flex items-center justify-center shadow-inner ${isSelected ? 'border-red-500 opacity-70' : 'border-gray-500'}`}>
+                      <div className={`float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-red-500 opacity-70' : 'border-gray-500'}`}>
                         <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover grayscale" />
                       </div>
 
                       {/* セリフ */}
-                      <div className="flex-1 relative pr-8">
-                        <p className={`text-sm md:text-base leading-relaxed whitespace-pre-wrap ${isSelected ? 'text-red-100' : 'text-gray-300'}`}>
-                          「{story.quote}」
-                        </p>
-                        {/* 選択マーク */}
-                        {isSelected && (
-                          <div className="absolute top-1/2 -translate-y-1/2 right-0 text-red-500 text-xl md:text-2xl font-bold drop-shadow-md">
-                            <i className="fa-solid fa-xmark"></i>
-                          </div>
-                        )}
+                      <div className={`text-sm md:text-base leading-relaxed ${isSelected ? 'text-red-100' : 'text-gray-300'}`}>
+                        {story.quote}
                       </div>
+                      <div className="clear-both"></div>
+
+                      {/* 選択マーク */}
+                      {isSelected && (
+                        <div className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 text-red-500 text-xl md:text-2xl font-bold drop-shadow-md">
+                          <i className="fa-solid fa-xmark"></i>
+                        </div>
+                      )}
                     </button>
                   );
                 })}
@@ -928,7 +1011,7 @@
 
             {/* 進捗バーを問題の下側に配置 */}
             <div className="mt-4">
-              <ProgressBar current={2} total={2} label="最終確認" />
+              <ProgressBar current={4} total={4} label="最終確認" />
             </div>
 
             {/* 戻るボタン（最終確認の直下） */}
@@ -965,7 +1048,7 @@
 
               <DialogBox 
                 charConfig={CONFIG.char1} 
-                text={`「ふむ…見えたぞ。お主のキャリアの錨、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。」`} 
+                text={`ふむ…見えたぞ。お主のキャリアの錨、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。`} 
               />
 
               <WindowBox title={<span>あなたのキャリアの<ruby>錨<rt>いかり</rt></ruby>（強み）</span>} iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
@@ -994,7 +1077,7 @@
               <DialogBox 
                 charConfig={CONFIG.char2} 
                 imageSide="right"
-                text={<span>「これがあなたの『心の<ruby>錨<rt>いかり</rt></ruby>』なんですね✨<br />でも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！」</span>} 
+                text={<span>これがあなたの『心の<ruby>錨<rt>いかり</rt></ruby>』なんですね✨<br />でも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！</span>} 
               />
 
               <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
@@ -1014,7 +1097,7 @@
 
               <DialogBox 
                 charConfig={CONFIG.char1} 
-                text={`「どうじゃ、何かのヒントになったかの？\nここで得たヒントを基にゆっくり考えてみたり、人に話してみたりするとよいぞよー。\n汝の航海に光あれ！なのじゃー」`} 
+                text={`どうじゃ、何かのヒントになったかの？\nここで得たヒントを基にゆっくり考えてみたり、人に話してみたりするとよいぞよー。\n汝の航海に光あれ！なのじゃー`} 
               />
             </div>
 
@@ -1047,7 +1130,7 @@
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`「そうそう！そんな感じ♪\nじゃあ、早速始めるね！」`} 
+                    text={`そうそう！そんな感じ♪\nじゃあ、早速始めるね！`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1076,7 +1159,7 @@
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`「今はまだやらないんだね！\n心の準備ができたら、右の『さっそくやってみる』寄りのボタンを選んでね！」`} 
+                    text={`今はまだやらないんだね！\n心の準備ができたら、右の『さっそくやってみる』寄りのボタンを選んでね！`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1099,7 +1182,7 @@
                 <WindowBox title={<span>心の<ruby>錨<rt>いかり</rt></ruby>の魔法とは？</span>} iconName="fa-solid fa-book-open" className="bg-opacity-100 border-blue-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={<span>「『心の<ruby>錨<rt>いかり</rt></ruby>（キャリアアンカー）』とは、シャインという心理学の賢者がとなえた、働くうえで【どうしても譲れない価値観】のことじゃ。<br /><br />自分の<ruby>錨<rt>いかり</rt></ruby>を知っておけば、人生の航海で迷ったときにも、自分を見失わずに納得のいく選択ができるようになるぞよ。<br /><br />お主の心の奥底に眠る<ruby>錨<rt>いかり</rt></ruby>を探す……それがこの魔法じゃ！」</span>} 
+                    text={<span>『心の<ruby>錨<rt>いかり</rt></ruby>（キャリアアンカー）』とは、シャインという心理学の賢者がとなえた、働くうえで【どうしても譲れない価値観】のことじゃ。<br /><br />自分の<ruby>錨<rt>いかり</rt></ruby>を知っておけば、人生の航海で迷ったときにも、自分を見失わずに納得のいく選択ができるようになるぞよ。<br /><br />お主の心の奥底に眠る<ruby>錨<rt>いかり</rt></ruby>を探す……それがこの魔法じゃ！</span>} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1122,7 +1205,7 @@
                 <WindowBox title="酒場の片隅で" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-yellow-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={`「どうじゃったかな？ 自分の内側を見つめて、どんなことを感じたか……。\n\nその思いは、ひとに話してみるとさらに深まるかもしれぬぞ。\n\n『nininキャリアルーム』という、旅人の話をじっくり聞いてくれる場所があるそうじゃ。\n足を運んでみるのもよいじゃろう。」`} 
+                    text={`どうじゃったかな？ お主の【Role=役割】の内側を見つめて、どんなことを感じたか……。\n\nその思いは、ひとに話してみるとさらに深まるかもしれぬぞ。\n\n『nininキャリアルーム』という、旅人の話をじっくり聞いてくれる場所があるそうじゃ。\n足を運んでみるのもよいじゃろう。`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <a 
@@ -1154,7 +1237,7 @@
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={<span>「いいですね！<br />ご自身の『心の<ruby>錨<rt>いかり</rt></ruby>』を画像で保存しましょうか？<br />あとでゆっくり見返して、自分と対話するヒントにしてくださいね！」</span>} 
+                    text={<span>いいですね！<br />ご自身の『心の<ruby>錨<rt>いかり</rt></ruby>』を画像で保存しましょうか？<br />あとでゆっくり見返して、自分と対話するヒントにしてくださいね！</span>} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1184,7 +1267,9 @@
               {step === 'intro' && renderIntro()}
               {step === 'practice' && renderPractice()}
               {step === 'question' && renderQuestion()}
-              {step === 'bonus1' && renderBonus1()}
+              {step === 'bonus1_story' && renderBonus1_story()}
+              {step === 'bonus1_intro' && renderBonus1_intro()}
+              {step === 'bonus1_select' && renderBonus1_select()}
               {step === 'bonus2' && renderBonus2()}
             </div>
             {step === 'calculating' && renderCalculating()}
