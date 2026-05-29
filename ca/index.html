@@ -878,15 +878,21 @@
                       key={key}
                       onClick={() => toggleBonus(key)}
                       disabled={isDisabled}
-                      className={`relative block w-full p-3 md:p-4 pr-10 md:pr-12 border-2 rounded-lg transition-colors text-left ${
+                      className={`relative block w-full p-3 md:p-4 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
                           ? 'bg-yellow-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]' 
                           : 'bg-gray-900 border-gray-600 hover:border-gray-400'
                       } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
-                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover" />
+                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
+                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className={`w-full h-full object-cover ${isSelected ? 'opacity-40' : ''}`} />
+                        {/* 選択番号表示 */}
+                        {isSelected && (
+                          <div className="absolute inset-0 flex items-center justify-center text-yellow-400 text-3xl md:text-4xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                            {order === 0 ? '①' : '②'}
+                          </div>
+                        )}
                       </div>
 
                       {/* セリフ */}
@@ -894,13 +900,6 @@
                         {story.quote}
                       </div>
                       <div className="clear-both"></div>
-
-                      {/* 選択番号表示 */}
-                      {isSelected && (
-                        <div className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 text-yellow-400 text-xl md:text-2xl font-bold drop-shadow-md">
-                          {order === 0 ? '①' : '②'}
-                        </div>
-                      )}
                     </button>
                   );
                 })}
@@ -970,15 +969,21 @@
                     <button 
                       key={key}
                       onClick={() => setSelectedMinusBonus(key)}
-                      className={`relative block w-full p-3 md:p-4 pr-10 md:pr-12 border-2 rounded-lg transition-colors text-left ${
+                      className={`relative block w-full p-3 md:p-4 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
                           ? 'bg-red-950 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
                           : 'bg-gray-900 border-gray-600 hover:border-gray-400'
                       }`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-red-500 opacity-70' : 'border-gray-500'}`}>
-                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover grayscale" />
+                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-red-500' : 'border-gray-500'}`}>
+                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className={`w-full h-full object-cover grayscale ${isSelected ? 'opacity-30' : ''}`} />
+                        {/* 選択マーク */}
+                        {isSelected && (
+                          <div className="absolute inset-0 flex items-center justify-center text-red-500 text-4xl md:text-5xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                            <i className="fa-solid fa-xmark"></i>
+                          </div>
+                        )}
                       </div>
 
                       {/* セリフ */}
@@ -986,13 +991,6 @@
                         {story.quote}
                       </div>
                       <div className="clear-both"></div>
-
-                      {/* 選択マーク */}
-                      {isSelected && (
-                        <div className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 text-red-500 text-xl md:text-2xl font-bold drop-shadow-md">
-                          <i className="fa-solid fa-xmark"></i>
-                        </div>
-                      )}
                     </button>
                   );
                 })}
