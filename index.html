@@ -43,37 +43,37 @@
 </head>
 <body class="text-stone-800 min-h-screen flex flex-col items-center">
 
-    <!-- ヒーローセクション -->
-    <header class="w-full max-w-2xl pt-10 pb-4 px-6 text-center flex flex-col items-center">
-        <div class="mb-4 flex justify-center min-h-[80px] items-center">
-            <!-- ninin ロゴ画像 -->
-            <img 
-                src="https://ninin-cc.github.io/img/ninin.png" 
-                alt="ninin logo" 
-                class="h-20 w-20 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
-                onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
-            >
-        </div>
-        
-        <div class="max-w-xs w-full h-px bg-stone-200 mt-2"></div>
-    </header>
-
-    <!-- 企業理念 (Philosophy) -->
-    <section class="w-full max-w-2xl px-6 mb-6 text-center fade-in">
-        <div class="bg-white px-5 pt-5 pb-3 md:px-6 md:pt-6 md:pb-4 rounded-2xl border border-stone-100 shadow-sm relative mt-3">
-            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-4 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
+    <!-- ヒーローセクション 兼 企業理念 -->
+    <header class="w-full max-w-4xl px-6 mb-8 mt-12 text-center fade-in">
+        <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-stone-100 shadow-sm relative flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+            <!-- バッジ -->
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-5 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
                 Philosophy
             </div>
-            <p class="text-stone-700 font-medium leading-relaxed md:text-base mt-2">
-                私たちは、自分らしく生きていける<br class="hidden md:block"/>
-                社会 / 心理支援を<br class="hidden md:block"/>
-                「日本のあたり前」にしてゆきます
-            </p>
-            <div class="text-right mt-2 md:mt-3 leading-none">
-                <span class="text-[10px] text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
+            
+            <!-- 左側：ロゴ -->
+            <div class="flex-shrink-0">
+                <img 
+                    src="https://ninin-cc.github.io/img/ninin.png" 
+                    alt="ninin logo" 
+                    class="h-24 w-24 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
+                    onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-24 w-24 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
+                >
+            </div>
+
+            <!-- 右側：テキスト -->
+            <div class="flex flex-col justify-center items-center sm:items-stretch">
+                <p class="text-stone-700 font-medium leading-relaxed text-[15px] sm:text-base md:text-lg text-center">
+                    私たちは、自分らしく生きていける<br />
+                    社会 / 心理支援を<br />
+                    「日本のあたり前」にしてゆきます
+                </p>
+                <div class="text-right w-full mt-4 sm:mt-6 leading-none">
+                    <span class="text-[10px] md:text-xs text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
+                </div>
             </div>
         </div>
-    </section>
+    </header>
 
     <!-- メインリンク一覧 -->
     <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
