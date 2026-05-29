@@ -166,35 +166,71 @@
     const ANCHOR_STORY_REACTIONS = {
       TF: {
         roleName: '技を極める職人',
-        quote: 'この町づくりには、水路、建築、交易路、治療所……いろいろな技術が必要になるはずだ。私は、自分の専門を活かして、この町の基盤を誰にも負けない精度でつくりたい。“この分野ならあの人に任せれば大丈夫”と言われる仕事がしたいんだ。'
+        quote: '『その事なら私に任せろ』と言える仕事をしたい。この未開の地こそ、私の専門スキルを極め、最高精度の基盤を築く絶好の舞台だからな。'
       },
       GM: {
         roleName: '仲間を束ねる指揮官',
-        quote: 'これは一人の力では無理だな。職人、兵士、商人、癒し手、住民……多くの人をまとめなければならない。私は、この計画全体を見渡して、人と資源を動かし、町づくりを成功に導く役割を担いたい。'
+        quote: '私が全体を指揮し、この町づくりを成功に導こう。多くの職人や民を束ねて動かす『まとめ役』がいなければ、この巨大な計画は実現できないからな。'
       },
       AU: {
         roleName: '自由を重んじる旅人',
-        quote: '面白そうだけど、王様やギルドの細かい指示で動かされるのはごめんだな。やるなら、自分の判断で動ける領域がほしい。自分で計画を立て、自分のやり方で成果を出せるなら、この依頼に加わりたい。'
+        quote: '自分の裁量とやり方でやらせてくれるなら参加しよう。王様やギルドから、いちいち細かい指示やルールで縛られるのはごめんだからな。'
       },
       SE: {
         roleName: '堅実に支える守り人',
-        quote: '辺境の町づくりか……夢はあるが、危険も多そうだ。参加するなら、住む場所、報酬、身分の保障、失敗したときの支援体制が必要だと思う。安心して長く関われる仕組みがあるなら、私は着実に貢献できる。'
+        quote: '身の安全と長期的な報酬が『保障』されるなら参加しよう。夢のある話だが、生活基盤や支援体制がない危険な環境では、安心して働けないからな。'
       },
       EC: {
         roleName: 'ゼロから創る開拓者',
-        quote: '何もない土地に、新しい町をつくるのか……最高じゃないか。まだ誰も見たことのない市場、店、仕組み、文化を自分の手で生み出せる。私は、この町に新しい価値を創る最初の一人になりたい。'
+        quote: '全く新しい価値や文化を創る『最初の一人』になりたい。何もないゼロの土地から、自分のアイデアで事業や仕組みを生み出せるなんて最高じゃないか。'
       },
       SV: {
         roleName: '人々を支える癒し手',
-        quote: 'この町ができれば、住む場所を失った人や、働く場所を探している人たちの支えになるかもしれない。私は、町の成功そのものよりも、そこに暮らす人たちが安心して生きられることを大切にしたい。人の役に立てるなら、この依頼には意味がある。'
+        quote: '町に暮らす人々の『支え』になるために参加したい。町の発展というより、居場所を求める人たちを助け、役に立つことにこそ本当の意味があると思うからだ。'
       },
       CH: {
         roleName: '困難に挑む冒険者',
-        quote: '道もない、危険もある、何が起きるかわからない……だからこそ燃えるな。簡単な仕事なら、他の誰かがやればいい。私は、誰も成功できないと言うような難しい計画だからこそ、挑んでみたい。'
+        quote: '絶対に不可能だと言われる『困難』だからこそ挑んでみたい。安全で簡単な仕事なら誰かがやればいい。先が見えない危険な状況ほど燃えるんだ。'
       },
       LS: {
         roleName: '暮らしを大切にする生活者',
-        quote: '町づくりは魅力的だけど、それで自分の生活が壊れてしまうなら続かない。家族や仲間との時間、自分の休息、日々の暮らしも大切にしたい。無理をし続けるのではなく、人生全体と調和する形で関われるなら参加したい。'
+        quote: '自分の『生活と調和する』働き方でなら参加したい。仕事も大事だが、家族との時間や自分の休息が壊れてしまうような無理はしたくないからね。'
+      }
+    };
+
+    // シーン2（マイナスボーナス）用の極端な価値観の主張
+    const ANCHOR_MINUS_REACTIONS = {
+      TF: {
+        roleName: '技を極める職人',
+        quote: '私は自分の専門分野にしか興味がないな。雑務や専門外の作業には一切関わりたくないし、とにかく自分の技術だけをずっと磨き続けられるなら参加するよ。'
+      },
+      GM: {
+        roleName: '仲間を束ねる指揮官',
+        quote: 'やるからには、私が全体を仕切ってトップに立ちたいな。誰かの下で指示通りに動くつもりはないし、人や物事をすべて自分の権限でコントロールできないなら意味がないよ。'
+      },
+      AU: {
+        roleName: '自由を重んじる旅人',
+        quote: '王様やギルドのルールに縛られるのは絶対に嫌だな。誰にも干渉されず、すべて自分のやり方とペースで進められないなら、一人で勝手にやったほうがマシだよ。'
+      },
+      SE: {
+        roleName: '堅実に支える守り人',
+        quote: '将来の報酬や身の安全が100%約束されていないと動きたくないな。少しでも失敗するリスクがあったり、先行きが分からないような危険な計画には絶対に関わりたくない。'
+      },
+      EC: {
+        roleName: 'ゼロから創る開拓者',
+        quote: '常にゼロから新しいものを創り出し続けないと気が済まないんだ。すでにあるものを維持したり、ただルール通りに町を回していくような普通の仕事なんて退屈でやってられないよ。'
+      },
+      SV: {
+        roleName: '人々を支える癒し手',
+        quote: '自分の利益や生活なんてどうでもいいんだ。困っている人を助け、世の中を良くするためなら、自己犠牲もいとわない。それ以外の仕事には全く価値を感じないな。'
+      },
+      CH: {
+        roleName: '困難に挑む冒険者',
+        quote: '誰もが無理だと言うような、最高に困難な課題じゃないと燃えないんだよね。安全で確実にこなせる仕事なんてつまらないし、常に限界ギリギリの挑戦だけをしていたいな。'
+      },
+      LS: {
+        roleName: '暮らしを大切にする生活者',
+        quote: '仕事の成功よりも、自分の休みやプライベートの時間が絶対に最優先だな。この依頼のせいで自分の生活リズムが少しでも崩れるくらいなら、最初から参加するつもりはないよ。'
       }
     };
 
@@ -233,24 +269,18 @@
       }
     };
 
-    // --- 設問データ (Q1 - Q16) ---
+    // --- 設問データ (Q1 - Q10) ---
     const QUESTIONS = [
-      { id: 1, typeA: 'TF', typeB: 'GM', textA: '自分の専門分野でスキルを極め、その領域で存分に力を発揮する役割を担いたい。', textB: 'チーム全体を率いて組織を動かし、より大きな目標を達成するマネジメントの役割を担いたい。' },
-      { id: 2, typeA: 'AU', typeB: 'SE', textA: '細かく指示を受けず、自分の裁量とペースで自由に仕事を進められる環境で働きたい。', textB: '将来の雇用や収入が長期的に安定しており、心から安心して取り組める環境で働きたい。' },
-      { id: 3, typeA: 'EC', typeB: 'SE', textA: '自分のアイデアを形にし、ゼロから新しい事業や価値を創り出す働き方をしたい。', textB: '身分や経済的な基盤がしっかりと約束された、安心できる環境での働き方をしたい。' },
-      { id: 4, typeA: 'GM', typeB: 'SV', textA: '組織の中で責任あるポジションに就き、多くの人を動かして大きな成果を上げることを重視する。', textB: '自分の仕事が世の中を良くし、他者の役に立っていると実感できることを重視する。' },
-      { id: 5, typeA: 'GM', typeB: 'LS', textA: '組織のトップを目指し、より大きな責任と権限を持って物事を動かす働き方を大切にしたい。', textB: '自分や家族の生活全体が調和し、無理なくプライベートと両立できる働き方を大切にしたい。' },
-      { id: 6, typeA: 'TF', typeB: 'SE', textA: '現場で自分の専門性をどこまでも深く追求し、スペシャリストとして働き続けたい。', textB: '安定した組織の中で、見通しを持って着実に長く働き続けたい。' },
-      { id: 7, typeA: 'CH', typeB: 'SE', textA: '解決が難しそうなタスクや、困難な課題に挑める環境に魅力を感じる。', textB: '将来の見通しが立ち、落ち着いて業務に取り組める安心できる環境に魅力を感じる。' },
-      { id: 8, typeA: 'CH', typeB: 'LS', textA: '非常に難しい課題や、難局の打開に全力で挑む働き方を優先したい。', textB: '自分や家族のプライベートな時間がしっかりと守られる働き方を優先したい。' },
-      { id: 9, typeA: 'SV', typeB: 'LS', textA: '仕事を通じて世の中や他者のために貢献することに、大きな喜びを感じる。', textB: '自分や家族と過ごす時間を充実させ、豊かな暮らしを送ることに、大きな喜びを感じる。' },
-      { id: 10, typeA: 'AU', typeB: 'GM', textA: '自分自身の判断で自由に動け、自律的に完結できる働き方を望んでいる。', textB: 'チームをまとめ上げ、組織としての大きな成果を創り出す働き方を望んでいる。' },
-      { id: 11, typeA: 'AU', typeB: 'EC', textA: '誰のルールにも縛られない「自分のペースで自由に働ける環境」を創り出すために独立したい。', textB: '「全く新しい価値や事業」を自分の手でゼロから生み出し、世に問うために独立したい。' },
-      { id: 12, typeA: 'GM', typeB: 'EC', textA: 'すでにある組織の仕組みを活かし、ゼネラルマネージャーとして全体を統括することに魅力を感じる。', textB: '自分自身で新しい会社や事業を立ち上げ、トップとして牽引することに魅力を感じる。' },
-      { id: 13, typeA: 'SV', typeB: 'EC', textA: '世の中を良くしたり、他者を支援したりする活動に全力を尽くしたい。', textB: '自分の発案した製品やサービスを世に送り出し、事業として成長させることに全力を尽くしたい。' },
-      { id: 14, typeA: 'TF', typeB: 'AU', textA: '自分が心から納得できるレベルまで、高度な専門性を深め続ける働き方を理想とする。', textB: '誰の干渉も受けず、自分の裁量で自由に仕事の進め方を決められる働き方を理想とする。' },
-      { id: 15, typeA: 'CH', typeB: 'TF', textA: '自分の専門外であっても、解決困難でタフな課題に立ち向かうことに強い意欲を感じる。', textB: '自分の得意とする専門領域をひたすら深く磨き上げることに強い意欲を感じる。' },
-      { id: 16, typeA: 'EC', typeB: 'CH', textA: 'まだ世の中にない新しい事業や価値を自分の手でゼロから生み出すことに情熱を注ぎたい。', textB: '不可能に見える難局を自らの力で打開し、限界に挑むことに情熱を注ぎたい。' }
+      { id: 1, typeA: 'TF', typeB: 'GM', textA: '自分の専門性を深く極め、スペシャリストとして活躍したい', textB: 'チームを率いて組織を動かし、ゼネラルマネージャーになりたい' },
+      { id: 2, typeA: 'AU', typeB: 'SE', textA: '誰の指示も受けず、自分の裁量とペースで自由に働きたい', textB: '将来の雇用や収入が長期的に保障され、安心して働きたい' },
+      { id: 3, typeA: 'EC', typeB: 'SE', textA: 'リスクを取ってでも、ゼロから新しい事業や価値を創り出したい', textB: 'リスクを避け、安定した基盤のある組織で着実に働きたい' },
+      { id: 4, typeA: 'GM', typeB: 'SV', textA: '出世して大きな権限を持ち、より大きな影響力を発揮したい', textB: '出世よりも、自分の仕事で世の中や他者の役に立ちたい' },
+      { id: 5, typeA: 'CH', typeB: 'LS', textA: 'プライベートを削ってでも、非常に困難な課題や難局に挑みたい', textB: '仕事よりも、自分や家族のプライベートな時間をしっかり守りたい' },
+      { id: 6, typeA: 'TF', typeB: 'AU', textA: '特定の分野で「この道ならあの人」と呼ばれるプロになりたい', textB: '特定の枠にとらわれず、誰のルールにも縛られず独立して動きたい' },
+      { id: 7, typeA: 'SV', typeB: 'LS', textA: '仕事を通じて社会や他者に奉仕することに、人生の大きな喜びを感じる', textB: '仕事と私生活をうまく調和させ、豊かな暮らしを送ることに喜びを感じる' },
+      { id: 8, typeA: 'CH', typeB: 'EC', textA: '不可能に見える難問を打開し、限界に打ち勝つことに燃える', textB: '全く新しい製品や仕組みを、自分のアイデアで生み出すことに燃える' },
+      { id: 9, typeA: 'GM', typeB: 'EC', textA: 'すでにある組織の仕組みを活かし、トップとして全体を統括したい', textB: 'すでにある組織ではなく、自分で会社や事業を立ち上げてトップになりたい' },
+      { id: 10, typeA: 'TF', typeB: 'CH', textA: '自分の専門外のことには手を出さず、今の得意領域をひたすら磨きたい', textB: '自分の専門外であっても、解決困難でタフな問題なら立ち向かいたい' }
     ];
 
     // --- 共通UIコンポーネント ---
@@ -306,29 +336,23 @@
     const AnswerCircle = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
       // ベージュ(A)と茶色(B)のサイズ配列
       const sizeA = [
-        'w-10 h-10 md:w-14 md:h-14', 
-        'w-7 h-7 md:w-10 md:h-10',   
-        'w-5 h-5 md:w-7 md:h-7',     
-        'w-3 h-3 md:w-4 md:h-4',     
-        'w-0 h-0',                   
-        'w-0 h-0'                    
+        'w-10 h-10 md:w-14 md:h-14', // 0: A(強)
+        'w-6 h-6 md:w-8 md:h-8',     // 1: A(弱)
+        'w-0 h-0',                   // 2: B(弱)
+        'w-0 h-0'                    // 3: B(強)
       ];
       const sizeB = [
-        'w-0 h-0',                   
-        'w-0 h-0',                   
-        'w-3 h-3 md:w-4 md:h-4',     
-        'w-5 h-5 md:w-7 md:h-7',     
-        'w-7 h-7 md:w-10 md:h-10',   
-        'w-10 h-10 md:w-14 md:h-14'  
+        'w-0 h-0',                   // 0: A(強)
+        'w-0 h-0',                   // 1: A(弱)
+        'w-6 h-6 md:w-8 md:h-8',     // 2: B(弱)
+        'w-10 h-10 md:w-14 md:h-14'  // 3: B(強)
       ];
 
       const textMap = [
-        "Aに非常に\nあてはまる",
-        "Aに\nあてはまる",
+        "Aに近い",
         "どちらかと\nいえばA",
         "どちらかと\nいえばB",
-        "Bに\nあてはまる",
-        "Bに非常に\nあてはまる"
+        "Bに近い"
       ];
 
       const isSelected = selectedVal === val;
@@ -340,7 +364,7 @@
         >
           <div className="h-20 md:h-24 w-full relative">
             {/* 中央の基準線 */}
-            <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 5 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+            <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 3 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
             
             {/* 「もう一度押して決定」を線上に表示 (練習問題のときのみ) */}
             {isSelected && showDoubleTapMessage && (
@@ -352,7 +376,7 @@
             )}
 
             {/* A: ベージュ (下揃え) absolute で中央線から上に配置 */}
-            {val <= 3 && (
+            {val <= 1 && (
               <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-[3px]">
                 <div className={`rounded-full bg-[#e6c280] transform origin-bottom transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8]' : ''} ${isSelected ? 'aura-effect-a scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
               </div>
@@ -361,7 +385,7 @@
             {/* B: 茶色 (上揃え) absolute で中央線から下に配置 */}
             {val >= 2 && (
               <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-[3px]">
-                <div className={`rounded-full bg-[#784a23] transform origin-top transition-all duration-300 ${sizeB[val]} ${val === 5 ? 'border-2 border-[#d4b895]' : ''} ${isSelected ? 'aura-effect-b scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
+                <div className={`rounded-full bg-[#784a23] transform origin-top transition-all duration-300 ${sizeB[val]} ${val === 3 ? 'border-2 border-[#d4b895]' : ''} ${isSelected ? 'aura-effect-b scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
               </div>
             )}
           </div>
@@ -376,11 +400,14 @@
 
     // --- メインアプリケーション ---
     const App = () => {
-      const [step, setStep] = useState('intro'); // intro, practice, question, bonus, calculating, result
+      const [step, setStep] = useState('intro'); // intro, practice, question, bonus1, bonus2, calculating, result
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
-      const [selectedBonus, setSelectedBonus] = useState([]);
+      
+      const [selectedBonus, setSelectedBonus] = useState([]); // シーン1用（2つ選択）
+      const [selectedMinusBonus, setSelectedMinusBonus] = useState(null); // シーン2用（1つ選択）
+      
       const [results, setResults] = useState(null);
       const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
       const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about', 'start', 'notYet'
@@ -405,13 +432,11 @@
 
         const newScores = { ...scores };
 
-        // 3 2.5 2 1 0 0 の配分ロジック
+        // 4択の配分ロジック (3-2-1-0)
         if (val === 0) { newScores[q.typeA] += 3; }
-        else if (val === 1) { newScores[q.typeA] += 2.5; }
-        else if (val === 2) { newScores[q.typeA] += 2; newScores[q.typeB] += 1; }
-        else if (val === 3) { newScores[q.typeA] += 1; newScores[q.typeB] += 2; }
-        else if (val === 4) { newScores[q.typeB] += 2.5; }
-        else if (val === 5) { newScores[q.typeB] += 3; }
+        else if (val === 1) { newScores[q.typeA] += 2; newScores[q.typeB] += 1; }
+        else if (val === 2) { newScores[q.typeA] += 1; newScores[q.typeB] += 2; }
+        else if (val === 3) { newScores[q.typeB] += 3; }
 
         setScores(newScores);
         setTempSelectedVal(null); // 選択状態をリセット
@@ -423,19 +448,19 @@
           setQIndex(qIndex + 1);
           window.scrollTo(0, 0);
         } else {
-          // ボーナス画面へ移行する際に、上位4つにランダムな画像を割り当てる
+          // ボーナス画面へ移行する際に、全アンカーにランダムな画像を割り当てる
           const availableImgs = [1, 2, 3, 4, 5, 6, 7, 8].sort(() => 0.5 - Math.random());
-          const top4 = Object.entries(newScores)
+          const sortedKeys = Object.entries(newScores)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 4)
             .map(item => item[0]);
+          
           const imgMap = {};
-          top4.forEach((k, idx) => {
+          sortedKeys.forEach((k, idx) => {
             imgMap[k] = availableImgs[idx];
           });
           setRandomImages(imgMap);
 
-          setStep('bonus');
+          setStep('bonus1');
           window.scrollTo(0, 0);
         }
       };
@@ -451,8 +476,8 @@
         // 2回目のタップ：決定処理へ進む
         setTempSelectedVal(null); // 選択状態をリセット
 
-        // 右側（B寄り）の3つ（3, 4, 5）を選んだ場合はスタート
-        if (val >= 3) {
+        // 右側（B寄り）の2つ（2, 3）を選んだ場合はスタート
+        if (val >= 2) {
           setPopupType('start');
         } else {
           // 左側（A寄り）を選んだ場合はまだスタートしない
@@ -479,6 +504,12 @@
           return;
         }
 
+        if (step === 'bonus2') {
+          setStep('bonus1');
+          window.scrollTo(0, 0);
+          return;
+        }
+
         if (scoreHistory.length === 0) return;
 
         // 履歴から1つ前のスコアを取り出して復元
@@ -486,7 +517,7 @@
         setScores(prevScores);
         setScoreHistory(scoreHistory.slice(0, -1));
 
-        if (step === 'bonus') {
+        if (step === 'bonus1') {
           // ボーナス画面から最後の質問に戻る
           setStep('question');
           window.scrollTo(0, 0);
@@ -509,13 +540,20 @@
         setStep('calculating');
         
         const finalScores = { ...scores };
-        selectedBonus.forEach(key => {
-          finalScores[key] += 4; // ボーナス加点は維持
+        
+        // シーン1のプラス加点
+        selectedBonus.forEach((key, index) => {
+          finalScores[key] += (index === 0) ? 3 : 2; 
         });
+        
+        // シーン2のマイナス減点
+        if (selectedMinusBonus) {
+          finalScores[selectedMinusBonus] -= 1;
+        }
 
         const sorted = Object.entries(finalScores).sort((a, b) => b[1] - a[1]);
         const top3 = sorted.slice(0, 3).map(item => item[0]);
-        const bottom1 = sorted[sorted.length - 1][0];
+        const bottom1 = sorted[sorted.length - 1][0]; // 減点によってワースト1がより正確になる
 
         setTimeout(() => {
           setResults({ top3, bottom1, finalScores });
@@ -531,6 +569,7 @@
           setScores({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
           setScoreHistory([]);
           setSelectedBonus([]);
+          setSelectedMinusBonus(null);
           setRandomImages({});
           setResults(null);
           setPopupType('none');
@@ -583,12 +622,12 @@
 
           <DialogBox 
             charConfig={CONFIG.char1} 
-            text={`「よく来たな。ここではお主のキャリアにおける【絶対に譲れない軸】を見極めるための試練を用意したぞい。\n直感で答えてゆくのじゃ。」`} 
+            text={`「よく来たな。\n\nここでは　お主が大切にしている【Role＝役割】における【絶対に譲れない軸】を見極めるための 問い を用意したぞい。 直感で答えてゆくのじゃ。」`} 
           />
           <DialogBox 
             charConfig={CONFIG.char2} 
             imageSide="right"
-            text={`「全部で16問、5分くらいで終わると思います。\n6段階の◯から、自分が『そう感じる』ところを選んでくださいね！」`} 
+            text={`「全部で12問、5分くらいで終わると思います。\n4段階の◯から、自分が『そう感じる』ところを選んでくださいね！」`} 
           />
 
           <div className="flex flex-col gap-4 w-full items-center mb-8 mt-4">
@@ -619,7 +658,7 @@
         <div className="w-full flex flex-col items-center">
           <WindowBox title="練習もんだい" iconName="fa-solid fa-gamepad" className="bg-opacity-90 mb-8 animate-fade-in">
             <p className="text-sm md:text-base text-gray-300 text-center mb-3 font-bold border-b border-gray-600 pb-2">
-              左がA、右がBに近づきます。<br />6段階の◯から、自分がそうだと感じたところを選んでください。
+              左がA、右がBに近づきます。<br />4段階の◯から、自分がそうだと感じたところを選んでください。
             </p>
             <div className="flex flex-col w-full py-1">
               {/* 選択肢 A */}
@@ -631,7 +670,7 @@
               {/* 円ボタン群 */}
               <div className="relative my-3 md:my-4 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
                 <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
-                  {[0, 1, 2, 3, 4, 5].map(val => (
+                  {[0, 1, 2, 3].map(val => (
                     <AnswerCircle 
                       key={val} 
                       val={val} 
@@ -676,7 +715,7 @@
                 {/* 円ボタン群 */}
                 <div className="relative my-3 md:my-4 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
                   <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
-                    {[0, 1, 2, 3, 4, 5].map(val => (
+                    {[0, 1, 2, 3].map(val => (
                       <AnswerCircle 
                         key={val} 
                         val={val} 
@@ -712,7 +751,7 @@
         );
       };
 
-      const renderBonus = () => {
+      const renderBonus1 = () => {
         // 現在のスコアから上位4つを抽出
         const top4Keys = Object.entries(scores)
           .sort((a, b) => b[1] - a[1])
@@ -723,38 +762,23 @@
           <div className="w-full">
             <DialogBox 
               charConfig={CONFIG.char1} 
-              text={`「よくぞ答えた。\nこれは最後の設問じゃ。\n\nある時、王から冒険者ギルドに特別なクエストが告げられた。\nその依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せたのじゃ。\n\nお主の心が動く言葉を、2つ選んでみるがよい。」`} 
+              text={`「よくぞ答えた。\nこれは最後の設問じゃ。\n\nお主の心が動く仲間の言葉を、2つ選んでみるがよい。」`} 
             />
 
             {/* 物語文 */}
             <div className="mb-6 p-5 bg-black bg-opacity-70 border-2 border-gray-500 rounded-lg shadow-xl text-gray-200 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-{`王国に、新しい町をつくる計画が持ち上がった。
-
-その地は、森と山に囲まれた辺境にある。
-道はまだ整っておらず、住む人も少ない。
-魔物の影もあり、一般の民だけで開拓するには危険が大きい。
-騎士団を常駐させるには、護衛の費用もかかりすぎる。
-
-だが、その地には古い遺跡が眠り、豊かな水源がある。
-うまく育てれば、王国の未来を支える大切な拠点になるかもしれない。
-
-そこで白羽の矢が立ったのが、冒険者ギルドだった。
-
-さまざまな経歴を持ち、未知の土地を歩き、自らの身を守る力を持つ冒険者たち。
-王様は、君たちのギルドに特別なクエストを告げた。
-
-「この辺境の地に、新たな町を築いてほしい。
-必要な役割はひとつではない。
-そなたたちは、それぞれの力と望む生き方に応じて、この計画に加わってよい」
-
-こうして、君たちのギルドに、王国の未来を左右するスペシャルクエストが託されたのだった。`}
+{`王国の辺境に、新たな町を築く計画が持ち上がった。
+豊かな資源と遺跡が眠る希望の地だが、魔物も潜む未開の地でもある。
+そこで王が頼ったのは、未知を切り拓く力を持つ「冒険者ギルド」だった。
+「この地に町を築いてほしい。必要な役割はひとつではない。
+己の力と、望む生き方に応じてこの計画に加わるがよい」`}
             </div>
 
             {/* 問いかけ文 */}
             <div className="mb-6 text-center space-y-2 animate-fade-in">
               <p className="text-gray-200 font-bold">この依頼を聞いたとき、仲間たちはそれぞれ違う反応を見せました。</p>
               <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間を2人選んでください。</p>
-              <p className="text-xs text-gray-400">その反応には、あなたが仕事や人生で大切にしている“心の錨”があらわれているかもしれません。</p>
+              <p className="text-xs text-gray-400">その反応には、あなたが仕事や人生で大切にしている“心の<ruby>錨<rt>いかり</rt></ruby>”があらわれているかもしれません。</p>
             </div>
 
             <WindowBox title="心が動いた仲間の言葉（2人選択）" iconName="fa-solid fa-crown" className="bg-opacity-90">
@@ -804,18 +828,107 @@
                   選択中: {selectedBonus.length} / 2
                 </p>
                 <button 
-                  onClick={calculateResult} 
+                  onClick={() => {
+                    setAnimationKey(prev => prev + 1);
+                    setStep('bonus2');
+                    window.scrollTo(0, 0);
+                  }}
                   disabled={selectedBonus.length !== 2}
                   className={`rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold ${selectedBonus.length === 2 ? 'bg-white text-black animate-pulse' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}
                 >
-                  心の錨を見極める
+                  次へ進む
                 </button>
               </div>
             </WindowBox>
 
             {/* 進捗バーを問題の下側に配置 */}
             <div className="mt-4">
-              <ProgressBar current={QUESTIONS.length} total={QUESTIONS.length} label="最終確認" />
+              <ProgressBar current={1} total={2} label="最終確認" />
+            </div>
+
+            {/* 戻るボタン（最終確認の直下） */}
+            <div className="flex justify-center mt-2">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+                ◀ もどる
+              </button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderBonus2 = () => {
+        // 現在のスコアから下位4つを抽出
+        const bottom4Keys = Object.entries(scores)
+          .sort((a, b) => b[1] - a[1])
+          .slice(4, 8)
+          .map(item => item[0]);
+
+        return (
+          <div className="w-full">
+            <DialogBox 
+              charConfig={CONFIG.char2} 
+              imageSide="right"
+              text={`「教えてくれてありがとう！\nほかに、こんなことを言ってる人もいたよ。」`} 
+            />
+
+            {/* 問いかけ文 */}
+            <div className="mb-6 text-center space-y-2 animate-fade-in">
+              <p className="text-red-400 font-bold">あなたが「自分は絶対こうは思わない」「この働き方はごめんだ」と一番強く感じる者を1人選んでください。</p>
+            </div>
+
+            <WindowBox title="考え方が合わない仲間の言葉（1人選択）" iconName="fa-solid fa-skull" className="bg-opacity-90 border-red-900">
+              <div className="flex flex-col gap-4 p-2">
+                {bottom4Keys.map((key) => {
+                  const story = ANCHOR_MINUS_REACTIONS[key];
+                  const isSelected = selectedMinusBonus === key;
+                  const imgNum = randomImages[key] || 1;
+                  
+                  return (
+                    <button 
+                      key={key}
+                      onClick={() => setSelectedMinusBonus(key)}
+                      className={`flex flex-row items-center p-3 md:p-4 border-2 rounded-lg transition-colors text-left gap-4 ${
+                        isSelected 
+                          ? 'bg-red-950 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
+                          : 'bg-gray-900 border-gray-600 hover:border-gray-400'
+                      }`}
+                    >
+                      {/* 顔アイコン */}
+                      <div className={`shrink-0 w-16 h-16 md:w-20 md:h-20 bg-gray-800 border-2 rounded overflow-hidden flex items-center justify-center shadow-inner ${isSelected ? 'border-red-500 opacity-70' : 'border-gray-500'}`}>
+                        <img src={`./img/${imgNum}.jpg`} alt="仲間" className="w-full h-full object-cover grayscale" />
+                      </div>
+
+                      {/* セリフ */}
+                      <div className="flex-1 relative pr-8">
+                        <p className={`text-sm md:text-base leading-relaxed whitespace-pre-wrap ${isSelected ? 'text-red-100' : 'text-gray-300'}`}>
+                          「{story.quote}」
+                        </p>
+                        {/* 選択マーク */}
+                        {isSelected && (
+                          <div className="absolute top-1/2 -translate-y-1/2 right-0 text-red-500 text-xl md:text-2xl font-bold drop-shadow-md">
+                            <i className="fa-solid fa-xmark"></i>
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <div className="text-center mt-6">
+                <button 
+                  onClick={calculateResult} 
+                  disabled={selectedMinusBonus === null}
+                  className={`rpg-button w-full md:w-auto px-10 py-4 text-lg font-bold ${selectedMinusBonus !== null ? 'bg-red-900 border-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-gray-800 text-gray-500 cursor-not-allowed'}`}
+                >
+                  心の<ruby>錨<rt>いかり</rt></ruby>を見極める
+                </button>
+              </div>
+            </WindowBox>
+
+            {/* 進捗バーを問題の下側に配置 */}
+            <div className="mt-4">
+              <ProgressBar current={2} total={2} label="最終確認" />
             </div>
 
             {/* 戻るボタン（最終確認の直下） */}
@@ -1071,7 +1184,8 @@
               {step === 'intro' && renderIntro()}
               {step === 'practice' && renderPractice()}
               {step === 'question' && renderQuestion()}
-              {step === 'bonus' && renderBonus()}
+              {step === 'bonus1' && renderBonus1()}
+              {step === 'bonus2' && renderBonus2()}
             </div>
             {step === 'calculating' && renderCalculating()}
             {step === 'result' && renderResult()}
