@@ -103,13 +103,14 @@
                             RIESM™は一人ひとりの個性を可視化し【<span class="text-slate-600 font-medium">人生のパイロットとしてのあなた</span>】を<span class="text-slate-600 font-medium">ナビゲート</span>するためのアセスメントツールです。
                         </p>
                         
-                        <!-- 挿入画像 (幅を80%に縮小) -->
-                        <div class="mt-4 mb-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 w-4/5 mx-auto">
+                        <!-- 挿入画像 (高さ300px固定、幅80%、画像全体を表示・スライドショー化) -->
+                        <div class="mt-4 mb-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 w-4/5 mx-auto h-[300px] flex items-center justify-center">
                             <img 
-                                src="./img/m/1.jpg" 
+                                id="riesm-slideshow"
+                                src="./img/m/2.jpg" 
                                 alt="RIESM イメージ画像" 
-                                class="w-full h-auto object-cover"
-                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=1.jpg';"
+                                class="w-full h-full object-contain transition-opacity duration-300"
+                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=Image';"
                             >
                         </div>
 
@@ -385,6 +386,35 @@
                 icon.classList.remove('rotate-180');
             }
         }
+
+        // RIESM スライドショーのスクリプト
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = [
+                './img/m/2.jpg',
+                './img/m/4.jpg',
+                './img/m/6.jpg',
+                './img/m/1.jpg'
+            ];
+            let currentIndex = 0;
+            const imgElement = document.getElementById('riesm-slideshow');
+            
+            if (imgElement) {
+                // 初期画像のセット（HTML側で既に2.jpgを指定していますが念のため）
+                imgElement.src = images[currentIndex];
+                
+                setInterval(() => {
+                    // ふわっと消える
+                    imgElement.classList.add('opacity-0');
+                    
+                    // 消えきったタイミング(300ms後)で画像を差し替えて、再び表示
+                    setTimeout(() => {
+                        currentIndex = (currentIndex + 1) % images.length;
+                        imgElement.src = images[currentIndex];
+                        imgElement.classList.remove('opacity-0');
+                    }, 300);
+                }, 5000); // 5秒ごとに実行
+            }
+        });
     </script>
 </body>
 </html>
