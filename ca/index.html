@@ -338,16 +338,16 @@
     const AnswerCircle = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
       // ベージュ(A)と茶色(B)のサイズ配列
       const sizeA = [
-        'w-10 h-10 md:w-14 md:h-14', // 0: A(強)
-        'w-6 h-6 md:w-8 md:h-8',     // 1: A(弱)
-        'w-0 h-0',                   // 2: B(弱)
-        'w-0 h-0'                    // 3: B(強)
+        'w-10 h-10 md:w-14 md:h-14', // 0: A(大)
+        'w-6 h-6 md:w-8 md:h-8',     // 1: A(中)
+        'w-3 h-3 md:w-4 md:h-4',     // 2: A(小)
+        'w-0 h-0'                    // 3: A(無)
       ];
       const sizeB = [
-        'w-0 h-0',                   // 0: A(強)
-        'w-0 h-0',                   // 1: A(弱)
-        'w-6 h-6 md:w-8 md:h-8',     // 2: B(弱)
-        'w-10 h-10 md:w-14 md:h-14'  // 3: B(強)
+        'w-0 h-0',                   // 0: B(無)
+        'w-3 h-3 md:w-4 md:h-4',     // 1: B(小)
+        'w-6 h-6 md:w-8 md:h-8',     // 2: B(中)
+        'w-10 h-10 md:w-14 md:h-14'  // 3: B(大)
       ];
 
       const textMap = [
@@ -378,14 +378,14 @@
             )}
 
             {/* A: ベージュ (下揃え) absolute で中央線から上に配置 */}
-            {val <= 1 && (
+            {val <= 2 && (
               <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-[3px]">
                 <div className={`rounded-full bg-[#e6c280] transform origin-bottom transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8]' : ''} ${isSelected ? 'aura-effect-a scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
               </div>
             )}
             
             {/* B: 茶色 (上揃え) absolute で中央線から下に配置 */}
-            {val >= 2 && (
+            {val >= 1 && (
               <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-[3px]">
                 <div className={`rounded-full bg-[#784a23] transform origin-top transition-all duration-300 ${sizeB[val]} ${val === 3 ? 'border-2 border-[#d4b895]' : ''} ${isSelected ? 'aura-effect-b scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
               </div>
@@ -1040,10 +1040,6 @@
               html2canvas側で背景色を真っ黒（#0a0a0a）にして保存します。
             */}
             <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-yellow-300" style={{ textShadow: '2px 2px 0 #000' }}>診断完了</h2>
-              </div>
-
               <DialogBox 
                 charConfig={CONFIG.char1} 
                 text={`ふむ…見えたぞ。お主のキャリアの錨、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。`} 
@@ -1281,7 +1277,7 @@
               <div className="w-full bg-black bg-opacity-60 border border-gray-500 rounded p-3 text-center text-[9px] md:text-xs text-gray-300 shadow-sm mb-4">
                 <p className="mb-3 text-yellow-100 opacity-90 leading-relaxed">
                   ※本アプリは医療的な診断や占い、性格を決めつけるものではありません。<br className="hidden md:block" />
-                  ご自身の「心の<ruby>錨<rt>いかり</rt></ruby>」に気づき、これからの生き方を考えるための「自己理解のきっかけ」としてご活用ください。
+                  ご自身の「心の<ruby>錨<rt>いかり</rt></ruby>」に気づき、これからのキャリア（生き方）を考えるための「自己理解のきっかけ」としてご活用ください。
                 </p>
                 <div className="border-t border-gray-600/50 pt-2">
                   <p className="mb-1 leading-relaxed text-gray-400">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。</p>
