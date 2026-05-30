@@ -170,7 +170,7 @@
       },
       GM: {
         roleName: '仲間を束ねる指揮官',
-        quote: '私が全体を指揮し、この町づくりを成功に導こう。多くの職人や民を束ねて動かす『まとめ役』がいなければ、この巨大な計画は実現できないからな。'
+        quote: '全体を指揮し、この町づくりを成功に導こう。多くの職人や民を束ねて動かす『まとめ役』がいなければ、この巨大な計画は実現できないからな。'
       },
       AU: {
         roleName: '自由を重んじる旅人',
@@ -202,11 +202,11 @@
     const ANCHOR_MINUS_REACTIONS = {
       TF: {
         roleName: '技を極める職人',
-        quote: '私は自分の専門分野にしか興味がないな。雑務や専門外の作業には一切関わりたくないし、とにかく自分の技術だけをずっと磨き続けられるなら参加するよ。'
+        quote: '自分の専門分野にしか興味がないな。雑務や専門外の作業には一切関わりたくないし、とにかく自分の技術だけをずっと磨き続けられるなら参加するよ。'
       },
       GM: {
         roleName: '仲間を束ねる指揮官',
-        quote: 'やるからには、私が全体を仕切ってトップに立ちたいな。誰かの下で指示通りに動くつもりはないし、人や物事をすべて自分の権限でコントロールできないなら意味がないよ。'
+        quote: 'やるからには、全体を仕切ってトップに立ちたいな。誰かの下で指示通りに動くつもりはないし、人や物事をすべて自分の権限でコントロールできないなら意味がないよ。'
       },
       AU: {
         roleName: '自由を重んじる旅人',
@@ -562,7 +562,7 @@
         
         // シーン2のマイナス減点
         if (selectedMinusBonus) {
-          finalScores[selectedMinusBonus] -= 1;
+          finalScores[selectedMinusBonus] -= 2;
         }
 
         const sorted = Object.entries(finalScores).sort((a, b) => b[1] - a[1]);
@@ -852,10 +852,10 @@
       };
 
       const renderBonus1_select = () => {
-        // 現在のスコアから上位4つを抽出
-        const top4Keys = Object.entries(scores)
+        // 現在のスコアから上位3つを抽出
+        const top3Keys = Object.entries(scores)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 4)
+          .slice(0, 3)
           .map(item => item[0]);
 
         return (
@@ -866,7 +866,7 @@
 
             <WindowBox title="心が動いた仲間の言葉" iconName="fa-solid fa-crown" className="bg-opacity-90">
               <div className="flex flex-col gap-4 p-2">
-                {top4Keys.map((key) => {
+                {top3Keys.map((key) => {
                   const story = ANCHOR_STORY_REACTIONS[key];
                   const isSelected = selectedBonus.includes(key);
                   const isDisabled = !isSelected && selectedBonus.length >= 2;
@@ -939,10 +939,10 @@
       };
 
       const renderBonus2 = () => {
-        // 現在のスコアから下位4つを抽出
-        const bottom4Keys = Object.entries(scores)
+        // 現在のスコアから下位3つを抽出
+        const bottom3Keys = Object.entries(scores)
           .sort((a, b) => b[1] - a[1])
-          .slice(4, 8)
+          .slice(5, 8)
           .map(item => item[0]);
 
         return (
@@ -960,7 +960,7 @@
 
             <WindowBox title="考え方が合わない仲間の言葉（1人選択）" iconName="fa-solid fa-skull" className="bg-opacity-90 border-red-900">
               <div className="flex flex-col gap-4 p-2">
-                {bottom4Keys.map((key) => {
+                {bottom3Keys.map((key) => {
                   const story = ANCHOR_MINUS_REACTIONS[key];
                   const isSelected = selectedMinusBonus === key;
                   const imgNum = randomImages[key] || 1;
@@ -1049,8 +1049,8 @@
                 text={`ふむ…見えたぞ。お主のキャリアの錨、そして手放してもよい環境じゃ。\nしっかりと目に焼き付けるがよい。`} 
               />
 
-              <WindowBox title={<span>あなたのキャリアの<ruby>錨<rt>いかり</rt></ruby>（強み）</span>} iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
-                <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、あなたが仕事において無意識に大切にしている「譲れない価値観」です。</p>
+              <WindowBox title={<span>あなたのキャリアの<ruby>錨<rt>いかり</rt></ruby></span>} iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
+                <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、あなたが無意識に大切にしている「譲れない価値観」です。</p>
                 <div className="space-y-4">
                   {top3.map((key, idx) => {
                     const data = ANCHORS[key];
@@ -1078,8 +1078,8 @@
                 text={<span>これがあなたの『心の<ruby>錨<rt>いかり</rt></ruby>』なんですね✨<br />でも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！</span>} 
               />
 
-              <WindowBox title="避けるべき？・ストレスを感じる環境" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
-                <p className="text-sm text-gray-300 mb-4 px-2">以下の要素はあなたが「なくてもいいかな？」と手放しをしやすく、逆にこの環境を強制されると強いストレスを感じる可能性があるので気を付けてください。</p>
+              <WindowBox title="避けるべき？ストレスを感じる場面" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
+                <p className="text-sm text-gray-300 mb-4 px-2">以下の要素はあなたが「そこまでは大事では無いかな？」と感じたり、逆にこの場面が長く続くと強いストレスを感じる可能性があるので気を付けてください。</p>
                 
                 <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
                   <div className="flex items-center gap-3 mb-2">
