@@ -432,6 +432,7 @@
       const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
       const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about', 'start', 'notYet'
       const [animationKey, setAnimationKey] = useState(0); // ページめくりアニメーション用キー
+      const [storyChoicesOpen, setStoryChoicesOpen] = useState(false); // アコーディオン開閉状態
 
       // 現在選択中の値（一度目のタップで保存し、二度目で決定する）
       const [tempSelectedVal, setTempSelectedVal] = useState(null);
@@ -606,6 +607,7 @@
           setResults(null);
           setPopupType('none');
           setTempSelectedVal(null);
+          setStoryChoicesOpen(false); // アコーディオンも閉じる
           window.scrollTo(0, 0);
         }
       };
@@ -1051,6 +1053,16 @@
         if (!results) return null;
         const { top3, bottom1 } = results;
 
+        const matchedStoryChoices = selectedBonus.map((key, index) => ({
+          key,
+          label: `価値観が合う ${index + 1}`,
+          story: ANCHOR_STORY_REACTIONS[key]
+        }));
+        
+        const mismatchStoryChoice = selectedMinusBonus
+          ? ANCHOR_MINUS_REACTIONS[selectedMinusBonus]
+          : null;
+
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
             {/* 画像保存の対象範囲。
@@ -1111,6 +1123,34 @@
                 charConfig={CONFIG.char1} 
                 text={`どうじゃ、何かのヒントになったかの？\nここで得たヒントを基にゆっくり考えてみたり、人に話してみたりするとよいぞよー。\n汝の航海に光あれ！なのじゃー`} 
               />
+
+              <WindowBox title="物語で選んだ言葉" iconName="fa-solid fa-book-open" className="bg-opacity-95 border-amber-500">
+                <button
+                  type="button"
+                  onClick={() => setStoryChoicesOpen(!storyChoicesOpen)}
+                  aria-expanded={storyChoicesOpen}
+                  className="w-full flex items-center justify-between gap-3 text-left rounded-md border border-amber-600/70 bg-[#2f1d10] px-4 py-3 text-yellow-100 font-bold shadow-inner hover:bg-[#3d2716] transition-colors"
+                >
+                  <span>物語で選んだ言葉を見る</span>
+                  <i className={`fa-solid fa-chevron-down transition-transform ${storyChoicesOpen ? 'rotate-180' : ''}`}></i>
+                </button>
+                {storyChoicesOpen && (
+                  <div className="mt-4 space-y-4 animate-fade-in">
+                    {matchedStoryChoices.map((choice) => (
+                      <div key={choice.key} className="rounded-lg border border-yellow-700/70 bg-yellow-950/40 p-4">
+                        <p className="text-xs font-bold tracking-widest text-yellow-300 mb-2">{choice.label}</p>
+                        <p className="text-sm md:text-base leading-relaxed text-gray-100">{choice.story.quote}</p>
+                      </div>
+                    ))}
+                    {mismatchStoryChoice && (
+                      <div className="rounded-lg border border-red-700/70 bg-red-950/40 p-4">
+                        <p className="text-xs font-bold tracking-widest text-red-300 mb-2">価値観が合わない</p>
+                        <p className="text-sm md:text-base leading-relaxed text-red-100">{mismatchStoryChoice.quote}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </WindowBox>
             </div>
 
             {/* アクションボタン群 */}
