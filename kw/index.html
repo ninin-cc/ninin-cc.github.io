@@ -171,19 +171,19 @@
       transition: width 0.3s ease-out;
     }
 
-    /* 結果カードのスタイル */
+    /* 結果カードのスタイル（透過度を上げてノートの罫線を見せる） */
     .result-card-gold {
-      background: linear-gradient(135deg, rgba(30,25,0,0.9), rgba(10,5,0,0.95));
-      border: 2px solid #facc15;
-      box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+      background: linear-gradient(135deg, rgba(40,30,0,0.3), rgba(10,5,0,0.4));
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      box-shadow: inset 0 0 10px rgba(250, 204, 21, 0.1);
     }
     .result-card-silver {
-      background: linear-gradient(135deg, rgba(20,25,30,0.9), rgba(5,10,15,0.95));
-      border: 2px solid #94a3b8;
+      background: linear-gradient(135deg, rgba(20,30,40,0.3), rgba(5,10,15,0.4));
+      border: 1px solid rgba(148, 163, 184, 0.5);
     }
     .result-card-bronze {
-      background: linear-gradient(135deg, rgba(30,15,5,0.9), rgba(15,5,0,0.95));
-      border: 2px solid #b45309;
+      background: linear-gradient(135deg, rgba(40,15,5,0.3), rgba(15,5,0,0.4));
+      border: 1px solid rgba(180, 83, 9, 0.5);
     }
   </style>
 </head>
@@ -470,9 +470,20 @@
       const calculateResult = (finalScores) => {
         setStep('calculating');
         
-        // スコア順にソートして上位3つを抽出
+        // スコア順にソートして上位を抽出
         const sorted = Object.entries(finalScores).sort((a, b) => b[1] - a[1]);
-        const top3 = sorted.slice(0, 3).map(item => item[0]);
+        
+        const top3 = [];
+        // 1位は必ず表示
+        top3.push(sorted[0][0]);
+        // 2位はスコアが2点（やや当てはまる）以上の場合のみ表示
+        if (sorted[1][1] >= 2) {
+          top3.push(sorted[1][0]);
+        }
+        // 3位はスコアが2点（やや当てはまる）以上の場合のみ表示
+        if (sorted[2][1] >= 2) {
+          top3.push(sorted[2][0]);
+        }
         
         const totalScore = Object.values(finalScores).reduce((sum, val) => sum + val, 0);
 
@@ -681,99 +692,126 @@
         let alertMessage = null;
         if (totalScore >= 25) {
           alertMessage = (
-            <div className="bg-red-950 border border-red-500 text-red-100 p-2 md:p-4 rounded-lg mt-2 md:mt-4 shadow-md text-[10px] md:text-sm leading-relaxed">
+            <div className="bg-red-950 bg-opacity-40 border border-red-500/50 text-red-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
-              <p>複数の役割を同時に背負っている状態かもしれません。</p>
-              <p className="mt-1">ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
+              <p className="drop-shadow-md">複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
             </div>
           );
         } else if (totalScore <= 5) {
           alertMessage = (
-            <div className="bg-blue-950 border border-blue-500 text-blue-100 p-2 md:p-4 rounded-lg mt-2 md:mt-4 shadow-md text-[10px] md:text-sm leading-relaxed">
+            <div className="bg-blue-950 bg-opacity-40 border border-blue-500/50 text-blue-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様です</p>
-              <p>心の天気が安定しているようです。</p>
-              <p className="mt-1">当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。</p>
+              <p className="drop-shadow-md">心の天気が安定しているようです。当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。</p>
             </div>
           );
         }
 
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
-            <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
+            <div id="result-capture-area" className="w-full pt-4 pb-4 px-2">
               <DialogBox 
                 charConfig={CONFIG.char1} 
                 text={`お疲れ様でした。\nここに出た結果は、あなたを決めつけるものではありません。\n\n今、心がどんな天気なのか、どんな役割を背負っているのか。\nそれを少しだけ言葉にして、外に出してみるためのものです。`} 
               />
 
-              <div className="flex flex-row gap-2 md:gap-4 items-stretch mt-8 w-full">
-                {/* 左：近い物語 */}
-                <div className="flex-1 min-w-0 flex flex-col">
-                  <WindowBox title="近い物語" iconName="fa-solid fa-book-open-reader" className="bg-opacity-95 border-blue-500 flex-1 !mt-0">
-                    <div className="space-y-2 h-full flex flex-col justify-center">
-                      {top3.map((key, idx) => {
+              {/* 1枚のノートに全てをまとめる */}
+              <div className="w-full dialog-note border-2 border-amber-600 mt-6 shadow-xl animate-fade-in relative">
+                <div className="relative z-10 flex flex-col h-full">
+
+                  {/* 上部：近い物語 と 心の天気 の横並び */}
+                  <div className="flex flex-row gap-2 md:gap-4 items-stretch w-full mb-5">
+                    {/* 左：近い物語 */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
+                        <i className="fa-solid fa-book-open-reader text-amber-800"></i> 近い物語
+                      </h4>
+                      <div className="space-y-2 h-full flex flex-col justify-center">
+                        {top3.map((key, idx) => {
+                          const data = WEATHER_DATA[key];
+                          const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
+                          
+                          return (
+                            <div key={key} className={`${cardClass} p-1.5 md:p-3 rounded-lg relative overflow-hidden flex flex-row items-center shadow-sm`}>
+                              <div className="font-bold text-[10px] md:text-lg mr-2 md:mr-4 text-amber-100/60 w-4 md:w-8 text-center shrink-0">
+                                {idx + 1}
+                              </div>
+                              <div className="flex flex-col md:flex-row items-start md:items-center gap-0.5 md:gap-3">
+                                <i className={`${data.icon} text-sm md:text-2xl ${data.color} drop-shadow-md`}></i>
+                                <h3 className={`text-[10px] md:text-base font-bold text-white leading-tight text-left drop-shadow-md`}>{data.name}</h3>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 右：心の天気 */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
+                        <i className="fa-solid fa-cloud-sun text-amber-800"></i> 心の天気
+                      </h4>
+                      <div className="flex flex-col items-center justify-center p-3 md:p-4 bg-[rgba(20,10,5,0.3)] rounded-lg border border-amber-800/30 flex-1 shadow-inner">
+                        <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3 drop-shadow-md`}></i>
+                        <p className="text-[10px] md:text-lg font-bold text-[#fff8df] tracking-widest text-center drop-shadow-md">{weatherText}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* アラートメッセージ */}
+                  {alertMessage && (
+                    <div className="mb-5">
+                      {alertMessage}
+                    </div>
+                  )}
+
+                  {/* 重くなっている役割 */}
+                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                    <h4 className="font-bold text-[#5c3620] mb-3 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-suitcase text-amber-800"></i> 今、重くなっているかもしれない役割
+                    </h4>
+                    <div className="space-y-3 pl-1 md:pl-2">
+                      {top3.map((key) => {
                         const data = WEATHER_DATA[key];
-                        const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
-                        
                         return (
-                          <div key={key} className={`${cardClass} p-1.5 md:p-3 rounded-lg relative overflow-hidden flex flex-row items-center`}>
-                            <div className="font-bold text-[10px] md:text-lg mr-2 md:mr-4 text-gray-400 w-4 md:w-8 text-center shrink-0">
-                              {idx + 1}
-                            </div>
-                            <div className="flex flex-col md:flex-row items-start md:items-center gap-0.5 md:gap-3">
-                              <i className={`${data.icon} text-sm md:text-2xl ${data.color}`}></i>
-                              <h3 className={`text-[10px] md:text-base font-bold text-white leading-tight text-left`}>{data.name}</h3>
-                            </div>
+                          <div key={`role-${key}`} className="flex items-start gap-2">
+                            <i className="fa-solid fa-check text-amber-700 mt-1"></i>
+                            <p className="text-sm md:text-base text-[#2d1b10] font-bold leading-relaxed">{data.role}</p>
                           </div>
                         );
                       })}
                     </div>
-                  </WindowBox>
-                </div>
+                  </div>
 
-                {/* 右：こころの天気 */}
-                <div className="flex-1 min-w-0 flex flex-col">
-                  <WindowBox title="心の天気" iconName="fa-solid fa-cloud-sun" className="bg-opacity-95 border-gray-400 flex-1 !mt-0 flex flex-col">
-                    <div className="flex flex-col items-center justify-center p-3 md:p-4 bg-black bg-opacity-50 rounded-lg border border-gray-600 flex-1">
-                      <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3`}></i>
-                      <p className="text-[10px] md:text-lg font-bold text-white tracking-widest text-center">{weatherText}</p>
+                  {/* 小さな問い */}
+                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                    <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-seedling text-emerald-700"></i> 小さな問い
+                    </h4>
+                    <div className="pl-2 md:pl-4 space-y-1.5 border-l-4 border-emerald-600/50 ml-1 py-1">
+                      <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">その役割は、いつから少し重くなっていたのでしょうか。</p>
+                      <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">もし一つだけ軽くできるとしたら、何を少し手放したいでしょうか。</p>
                     </div>
-                    {alertMessage}
-                  </WindowBox>
+                  </div>
+
+                  {/* 相談への道しるべ */}
+                  <div className="pt-4 border-t border-amber-800/20">
+                    <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-door-open text-amber-800"></i> 相談への道しるべ
+                    </h4>
+                    <div className="pl-2 md:pl-4 space-y-1.5 border-l-4 border-amber-600/50 ml-1 py-1">
+                      <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">
+                        うまく話せなくても大丈夫です。<br />
+                        重すぎる役割はつらい荷物にもなりがちです。<br />
+                        この結果を見ながら、整理し、持っている荷物を軽くすることもできるかもしれません。
+                      </p>
+                      <p className="pt-2 text-emerald-800 text-[11px] md:text-xs font-bold">
+                        ※相談をご希望の方は、下の「ひとに話してみる」ボタンからお進みください。
+                      </p>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
-              <WindowBox title="今、重くなっているかもしれない役割" iconName="fa-solid fa-suitcase" className="bg-opacity-95 border-yellow-600">
-                <div className="space-y-3 px-2">
-                  {top3.map((key) => {
-                    const data = WEATHER_DATA[key];
-                    return (
-                      <div key={`role-${key}`} className="flex items-start gap-3 bg-black bg-opacity-40 p-3 rounded border-l-4 border-yellow-500">
-                        <i className="fa-solid fa-check text-yellow-500 mt-1"></i>
-                        <p className="text-sm md:text-base text-gray-200 font-bold leading-relaxed">{data.role}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </WindowBox>
-
-              <WindowBox title="小さな問い" iconName="fa-solid fa-seedling" className="bg-opacity-95 border-emerald-600">
-                <div className="space-y-4 px-2 py-2">
-                  <div className="bg-black bg-opacity-40 p-4 rounded-md border-l-4 border-emerald-500">
-                    <p className="text-emerald-100 font-bold mb-1">その役割は、いつから少し重くなっていたのでしょうか。</p>
-                  </div>
-                  <div className="bg-black bg-opacity-40 p-4 rounded-md border-l-4 border-emerald-500">
-                    <p className="text-emerald-100 font-bold mb-1">もし一つだけ軽くできるとしたら、何を少し手放したいでしょうか。</p>
-                  </div>
-                </div>
-              </WindowBox>
-
-              <WindowBox title="相談への道しるべ" iconName="fa-solid fa-door-open" className="bg-opacity-95 border-amber-500 mt-6">
-                <div className="px-2 py-2 text-gray-200 leading-relaxed text-sm md:text-base">
-                  <p className="mb-3 font-bold text-amber-200">うまく話せなくても大丈夫です。<br />重すぎる役割はつらい荷物にもなりがちです。</p>
-                  <p>この結果を見ながら、整理し、持っている荷物を軽くすることもできるかもしれません。</p>
-                  <p className="mt-4 text-gray-400 text-xs">※相談をご希望の方は、下の「ひとに話してみる」ボタンからお進みください。</p>
-                </div>
-              </WindowBox>
 
             </div>
 
