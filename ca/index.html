@@ -153,14 +153,14 @@
 
     // --- キャリアアンカーの定義 ---
     const ANCHORS = {
-      TF: { name: '専門・職能別能力', short: '専門性を極めたい', icon: 'fa-solid fa-wrench', color: 'text-blue-400' },
-      GM: { name: '経営管理能力', short: '組織を動かしたい', icon: 'fa-solid fa-chess-king', color: 'text-purple-400' },
-      AU: { name: '自律・独立', short: '自分のペースで自由に働きたい', icon: 'fa-solid fa-dove', color: 'text-green-400' },
-      SE: { name: '保障・安定', short: '安定と保障がほしい', icon: 'fa-solid fa-shield-halved', color: 'text-teal-400' },
-      EC: { name: '起業家的創造性', short: 'ゼロから新しいものを創りたい', icon: 'fa-solid fa-lightbulb', color: 'text-yellow-400' },
-      SV: { name: '奉仕・社会貢献', short: '社会や人の役に立ちたい', icon: 'fa-solid fa-hand-holding-heart', color: 'text-pink-400' },
-      CH: { name: '純粋な挑戦', short: '困難な課題に挑みたい', icon: 'fa-solid fa-mountain', color: 'text-red-400' },
-      LS: { name: '生活様式', short: '仕事とプライベートのバランスを保ちたい', icon: 'fa-solid fa-mug-hot', color: 'text-orange-400' }
+      TF: { name: '専門・職能別能力', short: '専門性を極めたい', expectation: '専門性を極める', icon: 'fa-solid fa-wrench', color: 'text-blue-400' },
+      GM: { name: '経営管理能力', short: '組織を動かしたい', expectation: '組織を動かす', icon: 'fa-solid fa-chess-king', color: 'text-purple-400' },
+      AU: { name: '自律・独立', short: '自分のペースで自由に働きたい', expectation: '自分のペースで自由に働く', icon: 'fa-solid fa-dove', color: 'text-green-400' },
+      SE: { name: '保障・安定', short: '安定と保障がほしい', expectation: '安定と保障を優先する', icon: 'fa-solid fa-shield-halved', color: 'text-teal-400' },
+      EC: { name: '起業家的創造性', short: 'ゼロから新しいものを創りたい', expectation: 'ゼロから新しいものを創る', icon: 'fa-solid fa-lightbulb', color: 'text-yellow-400' },
+      SV: { name: '奉仕・社会貢献', short: '社会や人の役に立ちたい', expectation: '社会や人の役に立つ', icon: 'fa-solid fa-hand-holding-heart', color: 'text-pink-400' },
+      CH: { name: '純粋な挑戦', short: '困難な課題に挑みたい', expectation: '困難な課題に挑む', icon: 'fa-solid fa-mountain', color: 'text-red-400' },
+      LS: { name: '生活様式', short: '仕事とプライベートのバランスを保ちたい', expectation: '仕事とプライベートのバランスを保つ', icon: 'fa-solid fa-mug-hot', color: 'text-orange-400' }
     };
 
     const ANCHOR_STORY_REACTIONS = {
@@ -1075,7 +1075,7 @@
               <DialogBox 
                 charConfig={CONFIG.char2} 
                 imageSide="right"
-                text={<span>これがあなたの『心の<ruby>錨<rt>いかり</rt></ruby>』なんですね✨<br />でも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』という環境も知っておくといいですよ！</span>} 
+                text={<span>これがあなたの『心の<ruby>錨<rt>いかり</rt></ruby>』なんですね✨<br />でも、全部を持とうとすると疲れちゃいますから、『これは手放してもいい』というシーンも知っておくといいですよ！</span>} 
               />
 
               <WindowBox title="避けるべき？ストレスを感じる場面" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
@@ -1088,7 +1088,7 @@
                       {ANCHORS[bottom1].name}
                     </h3>
                   </div>
-                  <p className="text-sm font-bold text-gray-400 mb-2 border-b border-red-900 pb-2">「{ANCHORS[bottom1].short}」に反する環境</p>
+                  <p className="text-sm font-bold text-gray-400 mb-2 border-b border-red-900 pb-2">「{ANCHORS[bottom1].expectation}」という周囲からの期待に対する反応</p>
                   <p className="text-sm leading-relaxed text-red-100">{ANCHOR_DESCRIPTIONS[bottom1].weakness}</p>
                 </div>
               </WindowBox>
