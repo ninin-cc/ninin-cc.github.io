@@ -1240,7 +1240,15 @@
                 <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={`自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。\n\n言葉にして、誰かに話してみることで、\n「ああ、自分はこんなに背負っていたんだ」と気づくこともあります。\n\nもしよければ、${CONTACT_CONFIG.consultationName}で、あなたの話をゆっくり聞かせてください。`} 
+                    text={
+                      <>
+                        {'いかがでしたか。\n自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。言葉にして、誰かに話してみることで、「'}
+                        <strong className="font-bold">ああ、自分はこんなに背負っていたんだ</strong>
+                        {'」と気づくこともあります。\n\n…そうですね。\nどうでしょう？私が知っている【 '}
+                        <strong className="font-bold">{CONTACT_CONFIG.consultationName}</strong>
+                        {' 】で、よかったらゆっくりお話ししてみては――'}
+                      </>
+                    } 
                   />
                   <div className="flex flex-col gap-3 mt-4">
                     <a 
