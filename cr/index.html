@@ -1710,15 +1710,25 @@
 
         if (popupType === 'talk') {
           return (
-            <div className="translucent-popup-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
-              <div className="w-full max-w-lg">
+            <div className="translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in">
+              <div className="min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6">
                 <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
                   <DialogBox 
                     charConfig={CONFIG.char1} 
                     text={`いかがでしたか。\n自分の価値観は、一人で考えているだけでは見えにくいことがあります。言葉にして、誰かに話してみることで、「ああ、自分はこれを大切にしていたんだ」と気づくこともありますよ。\n\n…そうですね。よかったら私が知っているところなのですが【 ${CONTACT_CONFIG.consultationName} 】でゆっくり話されたらいかがでしょうか。`} 
                   />
+                  <div className="flex flex-col gap-3 mt-4">
+                    <a 
+                      href={CONTACT_CONFIG.consultationUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-door-open"></i> {CONTACT_CONFIG.consultationName}へ
+                    </a>
+                  </div>
                   <div
-                    className="letter-note relative mt-2 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]"
+                    className="letter-note relative mt-5 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]"
                   >
                     <div className="absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow">
                       📝紹介文
@@ -1741,19 +1751,17 @@
                     )}
                   </div>
                   <div className="flex flex-col gap-3 mt-6">
-                    <a 
-                      href={CONTACT_CONFIG.consultationUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
-                    >
-                      <i className="fa-solid fa-door-open"></i> {CONTACT_CONFIG.consultationName}へ
-                    </a>
                     <button 
                       onClick={closePopup}
                       className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
                     >
                       今は閉じる
+                    </button>
+                    <button 
+                      onClick={() => setPopupType('save')}
+                      className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-camera"></i> あとで見返す（結果保存）
                     </button>
                   </div>
                 </WindowBox>
