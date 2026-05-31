@@ -1715,7 +1715,15 @@
                 <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={`いかがでしたか。\n自分の価値観は、一人で考えているだけでは見えにくいことがあります。言葉にして、誰かに話してみることで、「ああ、自分はこれを大切にしていたんだ」と気づくこともありますよ。\n\n…そうですね。よかったら私が知っているところなのですが【 ${CONTACT_CONFIG.consultationName} 】でゆっくり話されたらいかがでしょうか。`} 
+                    text={
+                      <>
+                        {'いかがでしたか。\n…価値観って、一人で考えているだけでは見えにくいですが、言葉にしたり、誰かに話してみることで、「'}
+                        <strong className="font-bold">ああ、自分はこれを大切にしていたんだ</strong>
+                        {'」と気づくこともあるみたいです。\n\n…そうですね。\nどうでしょう？私が知っている【 '}
+                        <strong className="font-bold">{CONTACT_CONFIG.consultationName}</strong>
+                        {' 】で、よかったらゆっくりお話ししてみては――'}
+                      </>
+                    } 
                   />
                   <div className="flex flex-col gap-3 mt-4">
                     <a 
