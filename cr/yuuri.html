@@ -130,6 +130,14 @@
     .translucent-popup-window .letter-note {
       background-color: rgba(255, 255, 253, 0.95);
     }
+    .talk-popup-window {
+      background-color: rgba(18, 12, 8, 0.06) !important;
+      backdrop-filter: blur(1px);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28) !important;
+    }
+    .talk-popup-window > div.absolute {
+      background-color: rgba(18, 12, 8, 0.44) !important;
+    }
 
     .dialog-note {
       position: relative;
@@ -173,6 +181,57 @@
     }
     .dialog-note rt {
       color: #5c3620;
+    }
+
+    .question-frame-transparent {
+      background: transparent !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    .question-frame-soft {
+      background: rgba(0, 0, 0, 0.32) !important;
+      backdrop-filter: blur(1px);
+    }
+    .question-frame-letter {
+      background:
+        repeating-linear-gradient(to bottom, rgba(248,234,194,0.96) 0 27px, rgba(126,73,34,0.16) 28px, rgba(248,234,194,0.96) 29px),
+        linear-gradient(135deg, rgba(248,234,194,0.96), rgba(224,190,123,0.94)) !important;
+      color: #2d1b10 !important;
+      box-shadow:
+        inset 0 0 26px rgba(90,48,18,0.18),
+        0 10px 24px rgba(0,0,0,0.24) !important;
+    }
+    .question-frame-black {
+      background: #050505 !important;
+    }
+    .question-choice-transparent {
+      background: transparent !important;
+      box-shadow: inset 0 0 14px rgba(230,194,128,0.10) !important;
+    }
+    .question-choice-soft {
+      background: rgba(0, 0, 0, 0.34) !important;
+      box-shadow: inset 0 0 18px rgba(230,194,128,0.10) !important;
+    }
+    .question-choice-letter {
+      background:
+        linear-gradient(90deg, rgba(126,73,34,0.12) 0 1px, transparent 1px 100%),
+        repeating-linear-gradient(to bottom, rgba(255,248,223,0.9) 0 27px, rgba(126,73,34,0.14) 28px, rgba(255,248,223,0.9) 29px) !important;
+      box-shadow: inset 0 0 14px rgba(90,48,18,0.13) !important;
+    }
+    .question-choice-black {
+      background: #050505 !important;
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04) !important;
+    }
+    .question-answer-transparent {
+      background: transparent !important;
+    }
+    .question-answer-soft {
+      background: rgba(0, 0, 0, 0.34) !important;
+    }
+    .question-answer-letter {
+      background: rgba(255,248,223,0.72) !important;
+    }
+    .question-answer-black {
+      background: #050505 !important;
     }
 
     .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -243,6 +302,40 @@
       background: linear-gradient(135deg, rgba(40,0,0,0.9), rgba(10,0,0,0.95));
       border: 2px solid #ef4444;
       box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+    .result-window-translucent {
+      background: rgba(0, 0, 0, 0.62) !important;
+      backdrop-filter: blur(1px);
+    }
+    .result-window-translucent > div.absolute {
+      background-color: rgba(0, 0, 0, 0.74) !important;
+    }
+    .result-window-translucent .result-card-gold {
+      background: linear-gradient(135deg, rgba(30,25,0,0.72), rgba(10,5,0,0.78));
+    }
+    .result-window-translucent .result-card-silver {
+      background: linear-gradient(135deg, rgba(20,25,30,0.72), rgba(5,10,15,0.78));
+    }
+    .result-window-translucent .result-card-bronze {
+      background: linear-gradient(135deg, rgba(30,15,5,0.72), rgba(15,5,0,0.78));
+    }
+    .result-window-translucent .result-card-danger {
+      background: linear-gradient(135deg, rgba(40,0,0,0.72), rgba(10,0,0,0.78));
+    }
+    .result-story-toggle {
+      background: rgba(47, 29, 16, 0.62) !important;
+    }
+    .result-story-toggle:hover {
+      background: rgba(61, 39, 22, 0.72) !important;
+    }
+    .result-story-choice-positive {
+      background: rgba(66, 32, 6, 0.52) !important;
+    }
+    .result-story-choice-negative {
+      background: rgba(69, 10, 10, 0.52) !important;
+    }
+    .result-story-note {
+      background: rgba(69, 26, 3, 0.48) !important;
     }
   </style>
 </head>
@@ -566,12 +659,67 @@
       return `CA_${yy}${mm}${dd}_${hh}`;
     };
 
+    const QUESTION_FRAME_THEMES = {
+      default: {
+        windowClass: 'bg-opacity-90',
+        choiceAClass: 'bg-[#5c4a30] bg-opacity-40 border-[#e6c280]',
+        choiceBClass: 'bg-[#3a2012] bg-opacity-50 border-[#8b5a2b]',
+        answerClass: 'bg-black bg-opacity-40 border-gray-700',
+        labelAClass: 'bg-[#e6c280] text-black',
+        labelBClass: 'bg-[#8b5a2b] text-white',
+        textAClass: 'text-[#fdf6e3]',
+        textBClass: 'text-[#e8d5c4]'
+      },
+      0: {
+        windowClass: 'question-frame-letter border-amber-700',
+        choiceAClass: 'question-choice-letter border-[#b7791f]',
+        choiceBClass: 'question-choice-letter border-[#8b5a2b]',
+        answerClass: 'question-answer-letter border-amber-700/60',
+        labelAClass: 'bg-[#e6c280] text-black',
+        labelBClass: 'bg-[#8b5a2b] text-white',
+        textAClass: 'text-[#2d1b10]',
+        textBClass: 'text-[#2d1b10]'
+      },
+      1: {
+        windowClass: 'question-frame-transparent border-amber-400',
+        choiceAClass: 'question-choice-transparent border-[#e6c280]',
+        choiceBClass: 'question-choice-transparent border-[#8b5a2b]',
+        answerClass: 'question-answer-transparent border-amber-300/70',
+        labelAClass: 'bg-[#e6c280] text-black',
+        labelBClass: 'bg-[#8b5a2b] text-white',
+        textAClass: 'text-[#fff8df] drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]',
+        textBClass: 'text-[#fff8df] drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]'
+      },
+      2: {
+        windowClass: 'question-frame-soft border-amber-500',
+        choiceAClass: 'question-choice-soft border-[#e6c280]',
+        choiceBClass: 'question-choice-soft border-[#8b5a2b]',
+        answerClass: 'question-answer-soft border-gray-600',
+        labelAClass: 'bg-[#e6c280] text-black',
+        labelBClass: 'bg-[#8b5a2b] text-white',
+        textAClass: 'text-[#fdf6e3]',
+        textBClass: 'text-[#fdf6e3]'
+      },
+      3: {
+        windowClass: 'question-frame-black border-gray-500',
+        choiceAClass: 'question-choice-black border-[#e6c280]',
+        choiceBClass: 'question-choice-black border-[#8b5a2b]',
+        answerClass: 'question-answer-black border-gray-700',
+        labelAClass: 'bg-[#e6c280] text-black',
+        labelBClass: 'bg-[#8b5a2b] text-white',
+        textAClass: 'text-[#fdf6e3]',
+        textBClass: 'text-[#e8d5c4]'
+      }
+    };
+
     // --- メインアプリケーション ---
     const App = () => {
-      const [step, setStep] = useState('intro'); // intro, practice, question, bonus1_story, bonus1_intro, bonus1_select, bonus2, calculating, result
+      const [step, setStep] = useState('intro'); // intro, practice, colorPractice, question, bonus1_story, bonus1_intro, bonus1_select, bonus2, calculating, result
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ TF: 0, GM: 0, AU: 0, SE: 0, EC: 0, SV: 0, CH: 0, LS: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); // 戻るボタン用のスコア履歴
+      const [questionFrameTone, setQuestionFrameTone] = useState(null);
+      const [questionEntryStep, setQuestionEntryStep] = useState('colorPractice');
       
       const [selectedBonus, setSelectedBonus] = useState([]); // シーン1用（2つ選択）
       const [selectedMinusBonus, setSelectedMinusBonus] = useState(null); // シーン2用（1つ選択）
@@ -585,6 +733,53 @@
       // 現在選択中の値（一度目のタップで保存し、二度目で決定する）
       const [tempSelectedVal, setTempSelectedVal] = useState(null);
       const [visibleStoryLines, setVisibleStoryLines] = useState(0);
+
+      const getQuestionFrameTheme = () => (
+        questionFrameTone === null
+          ? QUESTION_FRAME_THEMES.default
+          : QUESTION_FRAME_THEMES[questionFrameTone]
+      );
+
+      const getStoryChoiceTheme = () => {
+        const frameTheme = getQuestionFrameTheme();
+        if (questionFrameTone === null) {
+          return {
+            windowClass: 'bg-opacity-90',
+            cardClass: 'bg-gray-900 border-gray-600 hover:border-gray-400',
+            plusSelectedClass: 'bg-yellow-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]',
+            minusSelectedClass: 'bg-red-950 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]',
+            textClass: 'text-gray-100',
+            minusTextClass: 'text-gray-300',
+            plusSelectedTextClass: 'text-gray-100',
+            minusSelectedTextClass: 'text-red-100',
+            imageClass: 'bg-gray-800 border-gray-500',
+            plusImageSelectedClass: 'border-yellow-400',
+            minusImageSelectedClass: 'border-red-500'
+          };
+        }
+
+        const isLetter = questionFrameTone === 0;
+        const isTransparent = questionFrameTone === 1;
+        const textClass = isLetter
+          ? 'text-[#2d1b10]'
+          : isTransparent
+            ? 'text-[#fff8df] drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]'
+            : 'text-[#fdf6e3]';
+
+        return {
+          windowClass: frameTheme.windowClass,
+          cardClass: `${frameTheme.choiceAClass} ${isTransparent ? 'hover:border-amber-200' : 'hover:border-amber-500'}`,
+          plusSelectedClass: `${frameTheme.choiceAClass} !border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]`,
+          minusSelectedClass: `${frameTheme.choiceAClass} !border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]`,
+          textClass,
+          minusTextClass: textClass,
+          plusSelectedTextClass: textClass,
+          minusSelectedTextClass: textClass,
+          imageClass: isLetter ? 'bg-amber-100/50 border-amber-700' : 'bg-gray-800/80 border-gray-500',
+          plusImageSelectedClass: '!border-yellow-400',
+          minusImageSelectedClass: '!border-red-500'
+        };
+      };
 
       useEffect(() => {
         if (step !== 'bonus1_story') return;
@@ -662,6 +857,7 @@
 
         // 2回目のタップ：決定処理へ進む
         setTempSelectedVal(null); // 選択状態をリセット
+        setQuestionEntryStep('practice');
 
         // 右側（B寄り）の2つ（2, 3）を選んだ場合はスタート
         if (val >= 2) {
@@ -672,13 +868,26 @@
         }
       };
 
+      const handleColorPracticeAnswer = (val) => {
+        if (tempSelectedVal !== val) {
+          setTempSelectedVal(val);
+          setQuestionFrameTone(val);
+          return;
+        }
+
+        setQuestionFrameTone(val);
+        setQuestionEntryStep('colorPractice');
+        setTempSelectedVal(null);
+        setPopupType('start');
+      };
+
       // --- 戻る処理 ---
       const handleBack = () => {
         // 戻る際もアニメーションを発火
         setAnimationKey(prev => prev + 1);
         setTempSelectedVal(null); // 戻る時に選択状態もリセット
 
-        if (step === 'practice') {
+        if (step === 'practice' || step === 'colorPractice') {
           setStep('intro');
           window.scrollTo(0, 0);
           return;
@@ -686,7 +895,7 @@
 
         // 第一問目の場合は練習画面に戻る
         if (step === 'question' && qIndex === 0) {
-          setStep('practice');
+          setStep(questionEntryStep);
           window.scrollTo(0, 0);
           return;
         }
@@ -773,6 +982,8 @@
         setStoryChoicesOpen(false);
         setTempSelectedVal(null);
         setVisibleStoryLines(0);
+        setQuestionFrameTone(null);
+        setQuestionEntryStep('colorPractice');
         setStep('result');
         window.scrollTo(0, 0);
       };
@@ -791,6 +1002,8 @@
           setStoryChoicesOpen(false);
           setTempSelectedVal(null);
           setVisibleStoryLines(0);
+          setQuestionFrameTone(null);
+          setQuestionEntryStep('colorPractice');
           window.scrollTo(0, 0);
         }
       };
@@ -940,7 +1153,10 @@
             <button 
               onClick={() => {
                 setAnimationKey(prev => prev + 1);
-                setStep('practice');
+                setQuestionFrameTone(null);
+                setQuestionEntryStep('colorPractice');
+                setTempSelectedVal(null);
+                setStep('colorPractice');
                 window.scrollTo(0, 0);
               }}
               className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black w-full md:w-auto px-10 py-4 text-lg font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)]"
@@ -1007,22 +1223,77 @@
         </div>
       );
 
+      const renderColorPractice = () => (
+        <div className="w-full flex flex-col items-center">
+          {(() => {
+            const previewTheme = tempSelectedVal === null
+              ? (questionFrameTone === null ? QUESTION_FRAME_THEMES.default : QUESTION_FRAME_THEMES[questionFrameTone])
+              : QUESTION_FRAME_THEMES[tempSelectedVal];
+
+            return (
+          <WindowBox title="色を変えて始める" iconName="fa-solid fa-palette" className={`${previewTheme.windowClass} mb-8 animate-fade-in`}>
+            <div className="flex flex-col w-full py-1">
+              <div className={`${previewTheme.choiceAClass} border rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden`}>
+                <div className={`absolute top-0 left-0 ${previewTheme.labelAClass} text-[10px] md:text-xs font-bold px-2 py-1 rounded-br-lg shadow-md`}>A</div>
+                <p className={`text-sm md:text-lg font-bold ${previewTheme.textAClass} leading-relaxed`}>紙っぽいほうが好み</p>
+              </div>
+
+              <div className={`${previewTheme.answerClass} relative my-3 md:my-4 rounded-xl p-1 md:p-2 border shadow-inner`}>
+                <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                  {[0, 1, 2, 3].map(val => (
+                    <AnswerCircle
+                      key={val}
+                      val={val}
+                      selectedVal={tempSelectedVal}
+                      onSelect={handleColorPracticeAnswer}
+                      showDoubleTapMessage={true}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className={`${previewTheme.choiceBClass} border rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden`}>
+                <div className={`absolute top-0 right-0 ${previewTheme.labelBClass} text-[10px] md:text-xs font-bold px-2 py-1 rounded-bl-lg shadow-md`}>B</div>
+                <p className={`text-sm md:text-lg font-bold ${previewTheme.textBClass} leading-relaxed`}>黒っぽいほうが好み</p>
+              </div>
+
+              <div className="mt-4 rounded-lg border border-amber-700/60 bg-black/35 px-3 py-3 text-xs md:text-sm leading-relaxed text-amber-100">
+                <p className="mb-2 font-bold text-yellow-300">選択中の見え方がこの画面に反映されます。もう一度押すと決定します。</p>
+                <p>Aに近い：ベージュの便箋のような背景。</p>
+                <p>どちらかといえばA：背景のカフェがよく見える透明。</p>
+                <p>どちらかといえばB：少しだけ透明を落として黒っぽさを出す。</p>
+                <p>Bに近い：黒をしっかり出す。</p>
+              </div>
+            </div>
+          </WindowBox>
+            );
+          })()}
+
+          <div className="flex justify-center mt-2">
+            <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">
+              ◀ もどる
+            </button>
+          </div>
+        </div>
+      );
+
       const renderQuestion = () => {
         const q = QUESTIONS[qIndex];
+        const frameTheme = getQuestionFrameTheme();
         
         return (
           <div className="w-full">
-            <WindowBox title={`第 ${qIndex + 1} 問`} iconName="fa-solid fa-clipboard-question" className="bg-opacity-90">
+            <WindowBox title={`第 ${qIndex + 1} 問`} iconName="fa-solid fa-clipboard-question" className={frameTheme.windowClass}>
               <div className="flex flex-col w-full py-1">
                 
                 {/* 選択肢 A (ベージュ系) */}
-                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)]">
-                  <div className="absolute top-0 left-0 bg-[#e6c280] text-black text-[10px] md:text-xs font-bold px-2 py-1 rounded-br-lg shadow-md">A</div>
-                  <p className="text-sm md:text-lg font-bold text-[#fdf6e3] leading-relaxed">{q.textA}</p>
+                <div className={`${frameTheme.choiceAClass} border rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)]`}>
+                  <div className={`absolute top-0 left-0 ${frameTheme.labelAClass} text-[10px] md:text-xs font-bold px-2 py-1 rounded-br-lg shadow-md`}>A</div>
+                  <p className={`text-sm md:text-lg font-bold ${frameTheme.textAClass} leading-relaxed`}>{q.textA}</p>
                 </div>
 
                 {/* 円ボタン群 */}
-                <div className="relative my-3 md:my-4 bg-black bg-opacity-40 rounded-xl p-1 md:p-2 border border-gray-700 shadow-inner">
+                <div className={`${frameTheme.answerClass} relative my-3 md:my-4 rounded-xl p-1 md:p-2 border shadow-inner`}>
                   <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
                     {[0, 1, 2, 3].map(val => (
                       <AnswerCircle 
@@ -1037,9 +1308,9 @@
                 </div>
 
                 {/* 選択肢 B (茶色系) */}
-                <div className="bg-[#3a2012] bg-opacity-50 border border-[#8b5a2b] rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(139,90,43,0.1)]">
-                  <div className="absolute top-0 right-0 bg-[#8b5a2b] text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-bl-lg shadow-md">B</div>
-                  <p className="text-sm md:text-lg font-bold text-[#e8d5c4] leading-relaxed">{q.textB}</p>
+                <div className={`${frameTheme.choiceBClass} border rounded-lg p-3 pt-6 md:p-4 md:pt-7 text-left relative overflow-hidden shadow-[inset_0_0_20px_rgba(139,90,43,0.1)]`}>
+                  <div className={`absolute top-0 right-0 ${frameTheme.labelBClass} text-[10px] md:text-xs font-bold px-2 py-1 rounded-bl-lg shadow-md`}>B</div>
+                  <p className={`text-sm md:text-lg font-bold ${frameTheme.textBClass} leading-relaxed`}>{q.textB}</p>
                 </div>
 
               </div>
@@ -1175,14 +1446,11 @@
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
           .map(item => item[0]);
+        const storyTheme = getStoryChoiceTheme();
 
         return (
           <div className="w-full">
-            <div className="mb-6 text-center space-y-2 animate-fade-in">
-              <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間の言葉を2つ選んでください。</p>
-            </div>
-
-            <WindowBox title="心が動いた仲間の言葉" iconName="fa-solid fa-crown" className="bg-opacity-90">
+            <WindowBox title="心が動いた仲間の言葉" iconName="fa-solid fa-crown" className={storyTheme.windowClass}>
               <div className="flex flex-col gap-4 p-2">
                 {top3Keys.map((key) => {
                   const story = ANCHOR_STORY_REACTIONS[key];
@@ -1198,12 +1466,12 @@
                       disabled={isDisabled}
                       className={`relative block w-full p-3 md:p-4 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
-                          ? 'bg-yellow-900 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.25)]' 
-                          : 'bg-gray-900 border-gray-600 hover:border-gray-400'
+                          ? storyTheme.plusSelectedClass 
+                          : storyTheme.cardClass
                       } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-yellow-400' : 'border-gray-500'}`}>
+                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 border-2 rounded overflow-hidden shadow-inner ${storyTheme.imageClass} ${isSelected ? storyTheme.plusImageSelectedClass : ''}`}>
                         <img src={`./img/${imgNum}.jpg`} alt="仲間" className={`w-full h-full object-cover ${isSelected ? 'opacity-40' : ''}`} />
                         {/* 選択番号表示 */}
                         {isSelected && (
@@ -1214,7 +1482,7 @@
                       </div>
 
                       {/* セリフ */}
-                      <div className="text-sm md:text-base leading-relaxed text-gray-100">
+                      <div className={`text-sm md:text-base leading-relaxed ${isSelected ? storyTheme.plusSelectedTextClass : storyTheme.textClass}`}>
                         {story.quote}
                       </div>
                       <div className="clear-both"></div>
@@ -1224,9 +1492,6 @@
               </div>
               
               <div className="text-center mt-6">
-                <p className="text-sm text-yellow-300 mb-3 font-bold">
-                  選択中: {selectedBonus.length} / 2
-                </p>
                 <button 
                   onClick={() => {
                     setAnimationKey(prev => prev + 1);
@@ -1240,6 +1505,10 @@
                 </button>
               </div>
             </WindowBox>
+
+            <div className="mt-4 text-center space-y-2 animate-fade-in">
+              <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間の言葉を2つ選んでください。</p>
+            </div>
 
             {/* 進捗バーを問題の下側に配置 */}
             <div className="mt-4">
@@ -1262,6 +1531,7 @@
           .sort((a, b) => b[1] - a[1])
           .slice(5, 8)
           .map(item => item[0]);
+        const storyTheme = getStoryChoiceTheme();
 
         return (
           <div className="w-full">
@@ -1276,7 +1546,7 @@
               <p className="text-red-400 font-bold">あなたが「自分は絶対こうは思わない」「この働き方は少し苦しいかもしれない」と一番強く感じるものを、1つ選んでください。</p>
             </div>
 
-            <WindowBox title="少し距離を感じる仲間の言葉（1つ選択）" iconName="fa-solid fa-skull" className="bg-opacity-90 border-red-900">
+            <WindowBox title="少し距離を感じる仲間の言葉（1つ選択）" iconName="fa-solid fa-skull" className={storyTheme.windowClass}>
               <div className="flex flex-col gap-4 p-2">
                 {bottom3Keys.map((key) => {
                   const story = ANCHOR_MINUS_REACTIONS[key];
@@ -1289,12 +1559,12 @@
                       onClick={() => setSelectedMinusBonus(key)}
                       className={`relative block w-full p-3 md:p-4 border-2 rounded-lg transition-colors text-left ${
                         isSelected 
-                          ? 'bg-red-950 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
-                          : 'bg-gray-900 border-gray-600 hover:border-gray-400'
+                          ? storyTheme.minusSelectedClass 
+                          : storyTheme.cardClass
                       }`}
                     >
                       {/* 顔アイコン */}
-                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 bg-gray-800 border-2 rounded overflow-hidden shadow-inner ${isSelected ? 'border-red-500' : 'border-gray-500'}`}>
+                      <div className={`relative float-left w-16 h-16 md:w-20 md:h-20 mr-3 mb-1 border-2 rounded overflow-hidden shadow-inner ${storyTheme.imageClass} ${isSelected ? storyTheme.minusImageSelectedClass : ''}`}>
                         <img src={`./img/${imgNum}.jpg`} alt="仲間" className={`w-full h-full object-cover grayscale ${isSelected ? 'opacity-30' : ''}`} />
                         {/* 選択マーク */}
                         {isSelected && (
@@ -1305,7 +1575,7 @@
                       </div>
 
                       {/* セリフ */}
-                      <div className={`text-sm md:text-base leading-relaxed ${isSelected ? 'text-red-100' : 'text-gray-300'}`}>
+                      <div className={`text-sm md:text-base leading-relaxed ${isSelected ? storyTheme.minusSelectedTextClass : storyTheme.minusTextClass}`}>
                         {story.quote}
                       </div>
                       <div className="clear-both"></div>
@@ -1380,10 +1650,10 @@
             <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
               <DialogBox 
                 charConfig={CONFIG.char1} 
-                text={`結果が出ました。\n\nここに表示されているのは、あなたを決めつけるものではありません。\nけれど、今のあなたが働くうえで大切にしている価値観の傾向が、少し見えているかもしれません。\n\nまずは、あなたの心の錨として表れたものを見てみましょう。`} 
+                text={`結果が出ましたね。\n\nでも、ここに表示されているのは、あなたを決めつけるものではないんですよ。\n\n…けれど、今のあなたが働くうえで大切にしている価値観の傾向が、少し見えているかもしれません。\n\nまずは、あなたの心の錨として表れたものを見てみましょう。`} 
               />
 
-              <WindowBox title={<span>あなたの心の<ruby>錨<rt>いかり</rt></ruby></span>} iconName="fa-solid fa-gem" className="bg-opacity-95 border-yellow-500">
+              <WindowBox title={<span>あなたの心の<ruby>錨<rt>いかり</rt></ruby></span>} iconName="fa-solid fa-gem" className="result-window-translucent border-yellow-500">
                 <p className="text-sm text-gray-300 mb-4 px-2">以下の3つが、今のあなたが働くうえで大切にしている価値観の傾向です。</p>
                 <div className="space-y-4">
                   {top3.map((key, idx) => {
@@ -1412,7 +1682,7 @@
                 text={<span>これが、あなたの「心の錨」なんですね。<br /><br />でも、全部を大切にしようとすると、少し疲れてしまうこともあります。<br /><br />だからこそ、「これは無理に背負わなくてもいいかもしれない」という場面も、あわせて見ておくといいと思います。</span>} 
               />
 
-              <WindowBox title="ストレスを感じやすいかもしれない場面" iconName="fa-solid fa-skull-crossbones" className="bg-opacity-95 border-red-500">
+              <WindowBox title="ストレスを感じやすいかもしれない場面" iconName="fa-solid fa-skull-crossbones" className="result-window-translucent border-red-500">
                 <p className="text-sm text-gray-300 mb-4 px-2">以下の要素は、無理に背負い続けると負担になりやすい場面として見ておいてください。</p>
                 
                 <div className="result-card-danger p-4 rounded-lg relative overflow-hidden">
@@ -1427,12 +1697,12 @@
                 </div>
               </WindowBox>
 
-              <WindowBox title="物語で選んだ言葉" iconName="fa-solid fa-book-open" className="bg-opacity-95 border-amber-500">
+              <WindowBox title="物語で選んだ言葉" iconName="fa-solid fa-book-open" className="result-window-translucent border-amber-500">
                 <button
                   type="button"
                   onClick={() => setStoryChoicesOpen(!storyChoicesOpen)}
                   aria-expanded={storyChoicesOpen}
-                  className="w-full flex items-center justify-between gap-3 text-left rounded-md border border-amber-600/70 bg-[#2f1d10] px-4 py-3 text-yellow-100 font-bold shadow-inner hover:bg-[#3d2716] transition-colors"
+                  className="result-story-toggle w-full flex items-center justify-between gap-3 text-left rounded-md border border-amber-600/70 px-4 py-3 text-yellow-100 font-bold shadow-inner transition-colors"
                 >
                   <span>物語で選んだ言葉を見る</span>
                   <i className={`fa-solid fa-chevron-down transition-transform ${storyChoicesOpen ? 'rotate-180' : ''}`}></i>
@@ -1441,20 +1711,20 @@
                 {storyChoicesOpen && (
                   <div className="mt-4 space-y-4 animate-fade-in">
                     {matchedStoryChoices.map((choice) => (
-                      <div key={choice.key} className="rounded-lg border border-yellow-700/70 bg-yellow-950/40 p-4">
+                      <div key={choice.key} className="result-story-choice-positive rounded-lg border border-yellow-700/70 p-4">
                         <p className="text-xs font-bold tracking-widest text-yellow-300 mb-2">{choice.label}</p>
                         <p className="text-sm md:text-base leading-relaxed text-gray-100">{choice.story.quote}</p>
                       </div>
                     ))}
 
                     {mismatchStoryChoice && (
-                      <div className="rounded-lg border border-red-700/70 bg-red-950/40 p-4">
+                      <div className="result-story-choice-negative rounded-lg border border-red-700/70 p-4">
                         <p className="text-xs font-bold tracking-widest text-red-300 mb-2">価値観が合わない</p>
                         <p className="text-sm md:text-base leading-relaxed text-red-100">{mismatchStoryChoice.quote}</p>
                       </div>
                     )}
 
-                    <p className="rounded-lg border border-amber-500/60 bg-amber-950/35 px-4 py-3 text-sm leading-relaxed text-amber-100">
+                    <p className="result-story-note rounded-lg border border-amber-500/60 px-4 py-3 text-sm leading-relaxed text-amber-100">
                       {STORY_CHOICES_APP_NOTE}
                     </p>
                   </div>
@@ -1634,13 +1904,13 @@
 
         if (popupType === 'start') {
           return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+            <div className="translucent-popup-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
               <div className="w-full max-w-lg">
-                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="bg-opacity-100 border-yellow-500 shadow-2xl" onClose={closePopup}>
+                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`迷ったときは、“どちらが少し近いかな”くらいで大丈夫です。`} 
+                    text={`色合いはこんな感じですね！\n\n次から設問が始まりますが、迷ったときは、“どちらが少し近いかな”くらいで大丈夫ですよ。`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1652,7 +1922,7 @@
                       }}
                       className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
                     >
-                      質問へ進む
+                      設問へ進む
                     </button>
                   </div>
                 </WindowBox>
@@ -1712,7 +1982,7 @@
           return (
             <div className="translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in">
               <div className="min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6">
-                <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
+                <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window talk-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
                   <DialogBox 
                     charConfig={CONFIG.char1} 
                     text={
@@ -1821,6 +2091,7 @@
             <div key={animationKey} className={animationKey > 0 ? "animate-page-turn w-full" : "w-full"}>
               {step === 'intro' && renderIntro()}
               {step === 'practice' && renderPractice()}
+              {step === 'colorPractice' && renderColorPractice()}
               {step === 'question' && renderQuestion()}
               {step === 'bonus1_story' && renderBonus1_story()}
               {step === 'bonus1_intro' && renderBonus1_intro()}
