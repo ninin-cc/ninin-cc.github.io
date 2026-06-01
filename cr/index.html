@@ -1442,10 +1442,6 @@
 
         return (
           <div className="w-full">
-            <div className="mb-6 text-center space-y-2 animate-fade-in">
-              <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間の言葉を2つ選んでください。</p>
-            </div>
-
             <WindowBox title="心が動いた仲間の言葉" iconName="fa-solid fa-crown" className={storyTheme.windowClass}>
               <div className="flex flex-col gap-4 p-2">
                 {top3Keys.map((key) => {
@@ -1501,6 +1497,10 @@
                 </button>
               </div>
             </WindowBox>
+
+            <div className="mt-4 text-center space-y-2 animate-fade-in">
+              <p className="text-yellow-300 font-bold">あなたが「わかる」「自分もそう感じる」と思った仲間の言葉を2つ選んでください。</p>
+            </div>
 
             {/* 進捗バーを問題の下側に配置 */}
             <div className="mt-4">
@@ -1642,7 +1642,7 @@
             <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
               <DialogBox 
                 charConfig={CONFIG.char1} 
-                text={`結果が出ました。\n\nここに表示されているのは、あなたを決めつけるものではありません。\nけれど、今のあなたが働くうえで大切にしている価値観の傾向が、少し見えているかもしれません。\n\nまずは、あなたの心の錨として表れたものを見てみましょう。`} 
+                text={`結果が出ましたね。\n\nでも、ここに表示されているのは、あなたを決めつけるものではないんですよ。\n\n…けれど、今のあなたが働くうえで大切にしている価値観の傾向が、少し見えているかもしれません。\n\nまずは、あなたの心の錨として表れたものを見てみましょう。`} 
               />
 
               <WindowBox title={<span>あなたの心の<ruby>錨<rt>いかり</rt></ruby></span>} iconName="fa-solid fa-gem" className="result-window-translucent border-yellow-500">
@@ -1902,7 +1902,7 @@
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`迷ったときは、“どちらが少し近いかな”くらいで大丈夫です。`} 
+                    text={`色合いはこんな感じですね！\n\n次から設問が始まりますが、迷ったときは、“どちらが少し近いかな”くらいで大丈夫ですよ。`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1914,7 +1914,7 @@
                       }}
                       className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
                     >
-                      質問へ進む
+                      設問へ進む
                     </button>
                   </div>
                 </WindowBox>
