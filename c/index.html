@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企業向けキャリアアンカーアプリ | ninin</title>
+  <meta name="description" content="企業のキャリア面談や1on1で使える、自己理解と対話のきっかけづくりのためのキャリアアンカーアプリです。" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    :root {
+      --ink: #171717;
+      --paper: #fffaf0;
+      --paper-soft: #f8f3e8;
+      --line: rgba(23, 23, 23, 0.16);
+      --amber: #b97832;
+      --teal: #0f766e;
+      --indigo: #3730a3;
+      --rose: #be185d;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      letter-spacing: 0;
+      line-height: 1.75;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      color: var(--white);
+      background-image:
+        linear-gradient(90deg, rgba(11, 16, 22, 0.82), rgba(11, 16, 22, 0.50) 48%, rgba(11, 16, 22, 0.28)),
+        url('./img/cafeei.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-inner,
+    .section-inner {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero-copy {
+      width: min(720px, 100%);
+      padding: 72px 0 230px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: #fcd34d;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 72px);
+      line-height: 1.08;
+      font-weight: 900;
+      text-wrap: balance;
+      text-shadow: 0 3px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .title-keep {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .lead {
+      width: min(620px, 100%);
+      margin: 24px 0 0;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: clamp(15px, 2.5vw, 19px);
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .trial-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .hero-guide-trial {
+      position: absolute;
+      left: 50%;
+      bottom: 118px;
+      z-index: 2;
+      width: min(1080px, calc(100% - 32px));
+      margin-top: 0;
+      align-items: center;
+      transform: translateX(-50%);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .blink-arrow {
+      color: #dc2626;
+      animation: blinkArrow 1s ease-in-out infinite;
+    }
+
+    @keyframes blinkArrow {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    .button-primary {
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    .button-secondary {
+      border-color: rgba(255, 255, 255, 0.72);
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .guide-strip {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: min(1080px, calc(100% - 32px));
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding-bottom: 18px;
+    }
+
+    .guide {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      min-height: 76px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(2px);
+    }
+
+    .guide img {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #111827;
+    }
+
+    .guide strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .guide span {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    section {
+      padding: 72px 0;
+    }
+
+    .section-kicker {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.25;
+      font-weight: 900;
+      text-wrap: balance;
+    }
+
+    .section-lead {
+      width: min(760px, 100%);
+      margin: 18px 0 0;
+      color: #404040;
+      font-size: 16px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 34px;
+    }
+
+    .feature {
+      min-height: 210px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    .feature-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      color: var(--white);
+      font-weight: 900;
+    }
+
+    .feature:nth-child(1) .feature-mark {
+      background: var(--teal);
+    }
+
+    .feature:nth-child(2) .feature-mark {
+      background: var(--indigo);
+    }
+
+    .feature:nth-child(3) .feature-mark {
+      background: var(--rose);
+    }
+
+    .feature h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .feature p {
+      margin: 0;
+      color: #4a4a4a;
+      font-size: 14px;
+    }
+
+    .worlds {
+      background: #111827;
+      color: var(--white);
+    }
+
+    .worlds .section-kicker {
+      color: #fcd34d;
+    }
+
+    .worlds .section-lead {
+      color: rgba(255, 255, 255, 0.74);
+    }
+
+    .world-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .trial-password {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .world {
+      min-height: 300px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .world-cafe {
+      background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.72)),
+        url('./img/cafeei.jpg');
+    }
+
+    .world-magic {
+      background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.72)),
+        url('https://ninin-cc.github.io/cq/img/sakaba.jpg');
+    }
+
+    .world-copy {
+      padding: 24px;
+    }
+
+    .world-copy h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    .world-copy p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+    }
+
+    .cta {
+      background: var(--paper-soft);
+    }
+
+    .cta-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    .cta-box p {
+      margin: 12px 0 0;
+      color: #454545;
+    }
+
+    .button-dark {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .cta-actions {
+      display: grid;
+      gap: 10px;
+      width: 220px;
+    }
+
+    .cta-actions .button {
+      width: 100%;
+    }
+
+    footer {
+      padding: 24px 0 34px;
+      color: #666;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        min-height: 92vh;
+      }
+
+      .hero-copy {
+        padding-top: 48px;
+        padding-bottom: 430px;
+      }
+
+      .guide-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-guide-trial {
+        bottom: 184px;
+      }
+
+      .feature-grid,
+      .world-grid,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-box {
+        padding: 24px;
+      }
+
+      .cta-actions {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 460px) {
+      h1 {
+        font-size: clamp(30px, 10vw, 42px);
+      }
+
+      .hero-inner,
+      .section-inner,
+      .guide-strip,
+      .hero-guide-trial {
+        width: min(100% - 24px, 1080px);
+      }
+
+      .hero-copy {
+        padding-bottom: 456px;
+      }
+
+      .guide {
+        grid-template-columns: 44px minmax(0, 1fr);
+        min-height: 68px;
+        padding: 8px;
+      }
+
+      .guide img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">企業用 / キャリア面談・1on1支援</p>
+        <h1><span class="title-keep">キャリア</span><span class="title-keep">アンカーアプリ</span></h1>
+        <p class="lead">
+          働くうえで譲れない価値観を、短い設問と物語の選択から見つめるための企業向けWebアプリです。
+          結果は面談や1on1での対話のきっかけとして活用できます。
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
+          <a class="button button-secondary" href="#overview">概要を見る</a>
+        </div>
+        <div class="trial-actions">
+          <a class="button button-primary" href="./ninin.html" target="_blank" rel="noopener noreferrer">アプリを試してみる</a>
+          <p class="trial-password">お試しアプリのパスワードは ninin です</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="trial-actions hero-guide-trial">
+      <a class="button button-primary" href="./ninin.html" target="_blank" rel="noopener noreferrer">アプリを試してみる</a>
+      <p class="trial-password">お試しアプリのパスワードは ninin です</p>
+    </div>
+
+    <div class="guide-strip" aria-label="登場人物">
+      <div class="guide">
+        <img src="./img/mt.jpg" alt="マスター" />
+        <div><strong>マスター</strong><span>落ち着いたカフェの案内役</span></div>
+      </div>
+      <div class="guide">
+        <img src="./img/rz.jpg" alt="理澄" />
+        <div><strong>理澄</strong><span>言葉をやさしく整える伴走役</span></div>
+      </div>
+      <div class="guide">
+        <img src="https://ninin-cc.github.io/cq/img/rf.png" alt="リフレム" />
+        <div><strong>リフレム</strong><span>魔法世界の導き手</span></div>
+      </div>
+      <div class="guide">
+        <img src="https://ninin-cc.github.io/cq/img/hr.png" alt="ハルカ" />
+        <div><strong>ハルカ</strong><span>選択を明るく支える案内役</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="overview">
+      <div class="section-inner">
+        <p class="section-kicker">Overview</p>
+        <h2>自己理解を、面談で話せる言葉にする。</h2>
+        <p class="section-lead">
+          キャリアアンカーアプリは、社員一人ひとりが「自分が大切にしている役割や働き方」を見つめるための入口です。
+          診断結果で人を決めつけるのではなく、本人が納得して話しやすくなる材料をつくります。
+        </p>
+
+        <div class="feature-grid">
+          <article class="feature">
+            <div class="feature-mark">01</div>
+            <h3>個人情報の入力なし</h3>
+            <p>氏名・年齢・社員番号などの入力は不要です。回答と結果は利用者本人のブラウザ内で処理されます。</p>
+          </article>
+          <article class="feature">
+            <div class="feature-mark">02</div>
+            <h3>企業ごとの専用入口</h3>
+            <p>会社名とパスワードを設定した専用ページとして展開できます。必要に応じて社内相談先の案内も掲載できます。</p>
+          </article>
+          <article class="feature">
+            <div class="feature-mark">03</div>
+            <h3>PDFで持ち運べる結果</h3>
+            <p>結果はPDFとして保存できます。キャリア面談や1on1に本人が持参し、対話の起点として活用できます。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="worlds">
+      <div class="section-inner">
+        <p class="section-kicker">Two Scenes</p>
+        <h2>カフェ版と魔法世界版、2つの世界観。</h2>
+        <p class="section-lead">
+          同じ構成のアプリを、利用者の雰囲気や導入場面に合わせて切り替えられます。
+          まじめに落ち着いて使う場にも、少し遊び心を入れたい研修にも対応できます。
+        </p>
+        <div class="world-grid">
+          <article class="world world-cafe">
+            <div class="world-copy">
+              <h3>カフェ版</h3>
+              <p>マスターと理澄が、静かに内省する時間を案内します。</p>
+            </div>
+          </article>
+          <article class="world world-magic">
+            <div class="world-copy">
+              <h3>魔法世界版</h3>
+              <p>リフレムとハルカが、物語に入るように自己理解を支えます。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="section-inner">
+        <div class="cta-box">
+          <div>
+            <p class="section-kicker">Contact</p>
+            <h2>導入に興味がある方へ</h2>
+            <p>
+              企業向けのキャリア面談、1on1、研修、社内相談導線への活用については、nininまでご相談ください。
+              現在はninin公式サイトのTOPページへご案内しています。
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="button button-dark" href="../index.html">ninin公式サイトへ</a>
+            <a class="button button-primary" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © ninin consulting & counseling LLC. All rights reserved.
+  </footer>
+</body>
+</html>
