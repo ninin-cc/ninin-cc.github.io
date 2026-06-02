@@ -491,7 +491,7 @@
       { id: 3, typeA: 'EC', typeB: 'SE', textA: 'リスクを取ってでも、ゼロから新しい事業や価値を創り出したい', textB: 'リスクを避け、安定した基盤のある組織で着実に働きたい' },
       { id: 4, typeA: 'GM', typeB: 'SV', textA: '出世して大きな権限を持ち、より大きな影響力を発揮したい', textB: '出世よりも、自分の仕事で世の中や他者の役に立ちたい' },
       { id: 5, typeA: 'CH', typeB: 'LS', textA: 'プライベートを削ってでも、非常に困難な課題や難局に挑みたい', textB: '仕事よりも、自分や家族のプライベートな時間をしっかり守りたい' },
-      { id: 6, typeA: 'TF', typeB: 'AU', textA: '特定の分野で「この道ならあの人」と呼ばれるプロになりたい', textB: '特定の枠にとらわれず、誰のルールにも縛られず独立して動きたい' },
+      { id: 6, typeA: 'TF', typeB: 'AU', textA: 'ひとつの分野を深く磨き、「この仕事なら自分」と言えるようになりたい', textB: '特定の分野や組織に縛られず、自分の判断で自由に働きたい' },
       { id: 7, typeA: 'SV', typeB: 'LS', textA: '仕事を通じて社会や他者に奉仕することに、人生の大きな喜びを感じる', textB: '仕事と私生活をうまく調和させ、豊かな暮らしを送ることに喜びを感じる' },
       { id: 8, typeA: 'CH', typeB: 'EC', textA: '不可能に見える難問を打開し、限界に打ち勝つことに燃える', textB: '全く新しい製品や仕組みを、自分のアイデアで生み出すことに燃える' },
       { id: 9, typeA: 'GM', typeB: 'EC', textA: 'すでにある組織の仕組みを活かし、トップとして全体を統括したい', textB: 'すでにある組織ではなく、自分で会社や事業を立ち上げてトップになりたい' },
@@ -2153,6 +2153,33 @@
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
+  </script>
+  <script>
+    (() => {
+      const blockedCommandKeys = new Set(['u', 's']);
+      const blockedDevtoolKeys = new Set(['i', 'j', 'c']);
+
+      document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        const commandKey = event.ctrlKey || event.metaKey;
+        const shouldBlock =
+          event.key === 'F12' ||
+          (commandKey && blockedCommandKeys.has(key)) ||
+          (commandKey && event.shiftKey && blockedDevtoolKeys.has(key));
+
+        if (!shouldBlock) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
+    })();
   </script>
 </body>
 </html>
