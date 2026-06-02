@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>睡眠チェックテスト ～働く人のための睡眠魔法～</title>
+
+  <!-- LINE内蔵ブラウザ対策 -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- html2canvas / jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Yomogi&display=swap');
+    body { margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; }
+    html, body { -webkit-touch-callout: none; }
+    img { -webkit-user-drag: none; user-select: none; }
+    .rpg-font { font-family: 'DotGothic16', sans-serif; letter-spacing: 0.05em; }
+    
+    ruby { ruby-align: center; }
+    rt { font-size: 0.5em; color: white; }
+    h1 rt { font-size: 0.35em; }
+
+    .rpg-button { 
+      border: 2px solid white; 
+      padding: 12px 16px; 
+      border-radius: 6px; 
+      transition: all 0.2s; 
+      background: black; 
+      color: white; 
+      cursor: pointer; 
+      text-align: center; 
+      font-weight: bold;
+    }
+    .rpg-button:hover:not(:disabled) { 
+      background: white; 
+      color: black; 
+    }
+    .rpg-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .transparent-save-button {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      color: #fff8df !important;
+    }
+    .transparent-save-button:hover:not(:disabled) {
+      background: rgba(255, 248, 223, 0.08) !important;
+      border-color: rgba(255, 248, 223, 0.18) !important;
+      color: #fff8df !important;
+    }
+
+    .letter-note {
+      font-family: 'Yomogi', 'DotGothic16', sans-serif;
+      background-color: #fffffd;
+      background-image:
+        linear-gradient(90deg, transparent 0, transparent 34px, rgba(170, 70, 65, 0.12) 35px, transparent 36px),
+        repeating-linear-gradient(178deg, transparent 0, transparent 27px, rgba(92, 72, 48, 0.16) 28px, transparent 29px);
+      box-shadow: inset 0 0 18px rgba(120, 90, 60, 0.10), 0 6px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    .translucent-popup-overlay {
+      background: rgba(0, 0, 0, 0.42) !important;
+      backdrop-filter: blur(2px);
+    }
+    .translucent-popup-window {
+      background-color: rgba(18, 12, 8, 0.34) !important;
+      backdrop-filter: blur(3px);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42) !important;
+    }
+    .translucent-popup-window > div.absolute {
+      background-color: rgba(18, 12, 8, 0.48) !important;
+      backdrop-filter: blur(2px);
+    }
+
+    .question-frame-transparent { background: transparent !important; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important; }
+    .question-frame-soft { background: rgba(0, 0, 0, 0.32) !important; backdrop-filter: blur(1px); }
+    .question-frame-letter { background: url('./img/youhishi.jpg') center / cover repeat !important; color: #2d1b10 !important; box-shadow: inset 0 0 26px rgba(90,48,18,0.18), 0 10px 24px rgba(0,0,0,0.24) !important; }
+    .question-frame-black { background: #050505 !important; }
+    
+    .question-choice-transparent { background: transparent !important; box-shadow: inset 0 0 14px rgba(230,194,128,0.10) !important; }
+    .question-choice-soft { background: rgba(0, 0, 0, 0.34) !important; box-shadow: inset 0 0 18px rgba(230,194,128,0.10) !important; }
+    .question-choice-letter { background: rgba(255,255,255,0.4) !important; box-shadow: inset 0 0 14px rgba(90,48,18,0.13) !important; }
+    .question-choice-black { background: #050505 !important; box-shadow: inset 0 0 18px rgba(255,255,255,0.04) !important; }
+    
+    .question-answer-transparent { background: transparent !important; }
+    .question-answer-soft { background: rgba(0, 0, 0, 0.34) !important; }
+    .question-answer-letter { background: rgba(255,248,223,0.72) !important; }
+    .question-answer-black { background: #050505 !important; }
+
+    .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .animate-page-turn { position: relative; animation: fadeIn 0.3s ease-out forwards; }
+
+    .page-flip-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(to right, #050505 0%, #1a1a1a 95%, #3a3a3a 100%);
+      z-index: 100; transform-origin: left center;
+      animation: flipLeft 0.5s ease-in-out forwards; pointer-events: none;
+    }
+    @keyframes flipLeft {
+      0% { transform: scaleX(1); opacity: 1; }
+      99% { transform: scaleX(0); opacity: 1; }
+      100% { transform: scaleX(0); opacity: 0; }
+    }
+    
+    .aura-effect-a { animation: pulseAuraA 1.5s infinite; box-shadow: 0 0 20px 10px rgba(230,194,128,0.6); }
+    @keyframes pulseAuraA {
+      0% { box-shadow: 0 0 20px 10px rgba(230,194,128,0.6); transform: scale(1); }
+      50% { box-shadow: 0 0 30px 15px rgba(230,194,128,0.8); transform: scale(1.05); }
+      100% { box-shadow: 0 0 20px 10px rgba(230,194,128,0.6); transform: scale(1); }
+    }
+
+    .aura-effect-b { animation: pulseAuraB 1.5s infinite; box-shadow: 0 0 20px 10px rgba(212,184,149,0.6); }
+    @keyframes pulseAuraB {
+      0% { box-shadow: 0 0 20px 10px rgba(212,184,149,0.6); transform: scale(1); }
+      50% { box-shadow: 0 0 30px 15px rgba(212,184,149,0.8); transform: scale(1.05); }
+      100% { box-shadow: 0 0 20px 10px rgba(212,184,149,0.6); transform: scale(1); }
+    }
+
+    .progress-bar-fill { transition: width 0.3s ease-out; }
+
+    .result-card-gold { background: linear-gradient(135deg, rgba(30,25,0,0.9), rgba(10,5,0,0.95)); border: 2px solid #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.2); }
+    .result-card-silver { background: linear-gradient(135deg, rgba(20,25,30,0.9), rgba(5,10,15,0.95)); border: 2px solid #94a3b8; }
+    .result-card-bronze { background: linear-gradient(135deg, rgba(30,15,5,0.9), rgba(15,5,0,0.95)); border: 2px solid #b45309; }
+    .result-card-danger { background: linear-gradient(135deg, rgba(40,0,0,0.9), rgba(10,0,0,0.95)); border: 2px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+    .result-window-translucent { background: rgba(0, 0, 0, 0.62) !important; backdrop-filter: blur(1px); }
+    .result-window-translucent > div.absolute { background-color: rgba(0, 0, 0, 0.74) !important; }
+  </style>
+</head>
+<body class="rpg-font min-h-screen relative" style="background-image: url('https://ninin-cc.github.io/cq/img/sakaba.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <!-- 背景の暗さを和らげる -->
+  <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
+  <div id="root" class="relative z-10 w-full max-w-2xl mx-auto p-4 md:p-6 min-h-screen flex flex-col overflow-hidden"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- 設定データ ---
+    const CONFIG = {
+      appTitlePre: "働く人のための",
+      appTitleMain: "睡眠チェックテスト",
+      appSubtitle: "-RIESM亭での睡眠魔法診断-",
+      char1: {
+        name: "リフレム",
+        img: "https://ninin-cc.github.io/cq/img/rf.png",
+        dialogColor: "bg-amber-900 border-yellow-500",
+        imgBg: "bg-gradient-to-b from-amber-700 to-amber-950"
+      },
+      char2: {
+        name: "ハルカ",
+        img: "https://ninin-cc.github.io/cq/img/hr.png",
+        dialogColor: "bg-rose-900 border-rose-400",
+        imgBg: "bg-gradient-to-b from-rose-700 to-rose-950"
+      }
+    };
+
+    // --- 設問データ (全10問) ---
+    const QUESTIONS = [
+      { id: 1, text: '寝つき：布団に入っても、あれこれ考えてしまい眠りにつくまで30分以上かかる。' },
+      { id: 2, text: '途中覚醒：夜中に何度も目が覚めたり、予定より早く起きてしまい二度寝ができない。' },
+      { id: 3, text: '熟眠感：朝起きたとき、「ぐっすり寝た」「疲れが取れた」というスッキリ感がない。' },
+      { id: 4, text: '日中の眠気：会議中やデスクワーク中など、座っていると強い眠気に襲われることがある。' },
+      { id: 5, text: '日中の機能：睡眠不足のせいで、仕事中の集中力が途切れたり、気力が湧かない日がある。' },
+      { id: 6, text: '睡眠時間の不足：仕事やプライベートが忙しく、自分が理想とする睡眠時間を確保できていない。' },
+      { id: 7, text: '休日の寝だめ：休日は平日と比べて、起きる時間が2時間以上遅い（ソーシャルジェットラグ）。' },
+      { id: 8, text: '寝る前のスマホ：ベッドに入ってからも、寝る直前までスマホやパソコンの画面を見ている。' },
+      { id: 9, text: 'ストレス：仕事のプレッシャーや人間関係の悩みが頭から離れず、眠りを妨げていると感じる。' },
+      { id: 10, text: '寝酒の習慣：眠りにつくために、お酒の力に頼ること（寝酒）がある。' }
+    ];
+
+    // --- 結果判定データ ---
+    const RESULTS_DATA = {
+      rank1: {
+        title: "睡眠魔法一級じゃ！",
+        colorClass: "result-card-gold",
+        icon: "fa-star",
+        message: "見事な自己管理！そなたの睡眠魔法はもはや達人の域じゃ。心身の修復もバッチリで、日中の仕事（パフォーマンス）も申し分なかろう。この調子で良き眠りの結界を保ち続けるのじゃぞ！"
+      },
+      rank2: {
+        title: "睡眠魔法二級じゃな",
+        colorClass: "result-card-silver",
+        icon: "fa-moon",
+        message: "まずまずの眠りを得ておるようじゃが、時折疲れやストレスに隙を突かれておるようじゃのう。「休日の寝だめ」や「寝る前のスマホ」など、ちょっとした悪習慣の呪いを解けば、一級はすぐそこじゃぞ。"
+      },
+      rank3: {
+        title: "睡眠魔法見習いじゃ！",
+        colorClass: "result-card-bronze",
+        icon: "fa-battery-quarter",
+        message: "むむむ……魔力（体力）が底を突きかけておるぞ！日中の眠気や集中力低下は、眠りの質が落ちているサインじゃ。まずは寝る前のスマホを手放すなど、簡単なところから眠りの儀式（習慣）を整え直すのじゃ！"
+      },
+      rank4: {
+        title: "睡眠の基礎ができておらんな！",
+        colorClass: "result-card-danger",
+        icon: "fa-skull",
+        message: "これはいかん！そなたの睡眠結界はボロボロじゃ！このままでは心身の魔力が尽き、仕事でも大失敗（暴発）しかねんぞ。まずは何より休息の時間を確保するのじゃ。どうしても眠れぬ夜が続くようなら、迷わず専門の回復魔法使い（医師）に診てもらうことも考えるのじゃぞ！"
+      }
+    };
+
+    // --- 相談導線設定 ---
+    const CONTACT_CONFIG = {
+      consultationName: 'nininキャリアルーム',
+      consultationUrl: 'https://ninin-cc.github.io/',
+      consultationDescription: '副業、独立、セカンドキャリアについてのご相談を得意とする男性カウンセラーと、レジリエンスや一次予防を専門とする女性カウンセラーが在籍。どちらも相談者さまを尊重するスタイルです。\nまた、自分が自然にできる役割、疲れる役割を知り、今後のキャリアに活かすアセスメント【RIESM™】も好評です。',
+      profileText: '',
+      profileUrl: 'https://note.com/ninin2025/n/n236a6f29ad63',
+      profileLinkLabel: '自己紹介ページ'
+    };
+    const NININ_HOME_URL = 'https://ninin-cc.github.io/';
+
+    const WindowBox = ({ title, children, iconName, className = "", onClose = null }) => (
+      <div className={`bg-black text-white border-4 border-gray-400 px-4 pb-4 pt-16 md:px-5 md:pb-5 md:pt-20 rounded-lg shadow-xl relative w-full mt-10 ${className}`}>
+        {onClose && (
+          <button type="button" onClick={onClose} aria-label="閉じる" className="absolute right-3 top-3 z-30 flex h-8 w-8 items-center justify-center rounded-full border border-amber-200/70 bg-stone-900/80 text-amber-100 shadow-md transition-colors hover:bg-amber-100 hover:text-stone-900">✖</button>
+        )}
+        {title && (
+          <div className="absolute left-4 top-0 -translate-y-1/2 bg-black px-3 py-2 flex items-center space-x-2 border-2 border-gray-400 rounded max-w-[85%]">
+            {iconName && <i className={`${iconName} text-yellow-300 shrink-0`}></i>}
+            <h2 className="text-sm md:text-lg font-bold tracking-widest text-yellow-100 leading-snug">{title}</h2>
+          </div>
+        )}
+        <div className="w-full">{children}</div>
+      </div>
+    );
+
+    const DialogBox = ({ charConfig, text, imageSide = 'left' }) => {
+      const { name, img, dialogColor, imgBg } = charConfig;
+      const isImageRight = imageSide === 'right';
+      return (
+        <div className={`w-full ${dialogColor} border-2 p-4 md:p-5 rounded-lg mb-6 relative animate-fade-in shadow-xl mt-6`}>
+          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${dialogColor.split(' ')[0]} px-3 border border-white rounded-full text-white text-sm font-bold tracking-widest shadow-sm z-10`}>{name}</div>
+          <div className="mt-2 w-full block">
+            <div className={`w-16 h-16 md:w-20 md:h-20 ${imgBg} border-2 border-white rounded-md overflow-hidden shadow-inner ${isImageRight ? 'float-right ml-4 mb-2' : 'float-left mr-4 mb-2'}`}>
+              <img src={img} alt={name} className="w-full h-full object-contain scale-110" style={{ imageRendering: 'pixelated', transform: isImageRight ? 'scaleX(-1) scale(1.1)' : 'scale(1.1)' }} />
+            </div>
+            <div className="text-white text-sm md:text-base leading-relaxed whitespace-pre-wrap">{text}</div>
+            <div className="clear-both"></div>
+          </div>
+        </div>
+      );
+    };
+
+    const ProgressBar = ({ current, total, label }) => {
+      const percentage = Math.max(0, Math.min(100, (current / total) * 100));
+      return (
+        <div className="w-full mb-4 relative z-20 bg-black bg-opacity-80 p-3 rounded-lg border border-gray-600 shadow-md">
+          <div className="flex justify-between text-xs text-gray-300 mb-2 px-1 font-bold">
+            <span>{label}</span>
+            <span>{current} / {total}</span>
+          </div>
+          <div className="w-full bg-gray-800 rounded-full h-2 border border-gray-600 overflow-hidden">
+            <div className="bg-yellow-400 h-full progress-bar-fill" style={{ width: `${percentage}%` }}></div>
+          </div>
+        </div>
+      );
+    };
+
+    const AnswerCircle = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
+      // 睡眠診断用: 0:全くない 1:あまりない 2:時々ある 3:よくある
+      const sizeA = ['w-10 h-10 md:w-14 md:h-14', 'w-6 h-6 md:w-8 md:h-8', 'w-3 h-3 md:w-4 md:h-4', 'w-0 h-0'];
+      const sizeB = ['w-0 h-0', 'w-3 h-3 md:w-4 md:h-4', 'w-6 h-6 md:w-8 md:h-8', 'w-10 h-10 md:w-14 md:h-14'];
+      const textMap = ["全くない", "あまり\nない", "時々\nある", "よく\nある"];
+      const isSelected = selectedVal === val;
+
+      return (
+        <button onClick={() => onSelect(val)} className="flex-1 flex flex-col items-center group relative z-10 hover:bg-gray-800 hover:bg-opacity-60 rounded-lg transition-all py-1">
+          <div className="h-20 md:h-24 w-full relative">
+            <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 3 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+            {isSelected && showDoubleTapMessage && (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none w-max">
+                <span className="bg-black bg-opacity-90 px-3 py-1.5 rounded-full text-[10px] md:text-xs text-yellow-300 font-bold animate-pulse border border-yellow-500 shadow-[0_0_10px_rgba(250,204,21,0.5)]">もう一度押して決定</span>
+              </div>
+            )}
+            {val <= 2 && (
+              <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-[3px]">
+                <div className={`rounded-full bg-[#e6c280] transform origin-bottom transition-all duration-300 ${sizeA[val]} ${val === 0 ? 'border-2 border-[#fefce8]' : ''} ${isSelected ? 'aura-effect-a scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(230,194,128,0.4)]'}`}></div>
+              </div>
+            )}
+            {val >= 1 && (
+              <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-[3px]">
+                <div className={`rounded-full bg-[#784a23] transform origin-top transition-all duration-300 ${sizeB[val]} ${val === 3 ? 'border-2 border-[#d4b895]' : ''} ${isSelected ? 'aura-effect-b scale-110 border-2 border-white' : 'group-hover:scale-110 shadow-[0_0_10px_rgba(120,74,35,0.4)]'}`}></div>
+              </div>
+            )}
+          </div>
+          <div className="h-8 mt-1 flex items-center justify-center w-full relative">
+            <span className={`text-[9px] md:text-[11px] text-center leading-tight whitespace-pre-wrap font-bold transition-colors ${isSelected ? 'text-yellow-300' : 'text-gray-400 group-hover:text-yellow-200'}`}>{textMap[val]}</span>
+          </div>
+        </button>
+      );
+    };
+
+    const getFormattedDateStr = () => {
+      const now = new Date();
+      const yy = String(now.getFullYear()).slice(-2);
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      return `SleepTest_${yy}${mm}${dd}_${hh}`;
+    };
+
+    const QUESTION_FRAME_THEMES = {
+      default: { windowClass: 'bg-opacity-90', answerClass: 'bg-black bg-opacity-40 border-gray-700', textClass: 'text-[#fdf6e3]' },
+      0: { windowClass: 'question-frame-letter border-amber-700', answerClass: 'question-answer-letter border-amber-700/60', textClass: 'text-[#2d1b10]' },
+      1: { windowClass: 'question-frame-transparent border-amber-400', answerClass: 'question-answer-transparent border-amber-300/70', textClass: 'text-[#fff8df] drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]' },
+      2: { windowClass: 'question-frame-soft border-amber-500', answerClass: 'question-answer-soft border-gray-600', textClass: 'text-[#fdf6e3]' },
+      3: { windowClass: 'question-frame-black border-gray-500', answerClass: 'question-answer-black border-gray-700', textClass: 'text-[#fdf6e3]' }
+    };
+
+    const App = () => {
+      const [step, setStep] = useState('intro'); // intro, practice, colorPractice, question, calculating, result
+      const [qIndex, setQIndex] = useState(0);
+      const [yesCount, setYesCount] = useState(0); // 「はい(2,3)」の数
+      const [history, setHistory] = useState([]); // 戻るボタン用のyesCount履歴
+      const [questionFrameTone, setQuestionFrameTone] = useState(null);
+      const [questionEntryStep, setQuestionEntryStep] = useState('colorPractice');
+      const [popupType, setPopupType] = useState('none');
+      const [animationKey, setAnimationKey] = useState(0);
+      const [tempSelectedVal, setTempSelectedVal] = useState(null);
+
+      const getQuestionFrameTheme = () => questionFrameTone === null ? QUESTION_FRAME_THEMES.default : QUESTION_FRAME_THEMES[questionFrameTone];
+
+      const getResultConfig = (count) => {
+        if (count <= 2) return RESULTS_DATA.rank1;
+        if (count <= 5) return RESULTS_DATA.rank2;
+        if (count <= 8) return RESULTS_DATA.rank3;
+        return RESULTS_DATA.rank4;
+      };
+
+      const handleAnswer = (val) => {
+        if (tempSelectedVal !== val) {
+          setTempSelectedVal(val);
+          return;
+        }
+
+        // 決定処理
+        setHistory([...history, yesCount]); // 現在のスコアを保存
+        let newYesCount = yesCount;
+        if (val >= 2) {
+          newYesCount += 1; // 右側2つが選ばれたら「はい」として+1
+        }
+        setYesCount(newYesCount);
+        setTempSelectedVal(null);
+        setAnimationKey(prev => prev + 1);
+
+        if (qIndex < QUESTIONS.length - 1) {
+          setQIndex(qIndex + 1);
+          window.scrollTo(0, 0);
+        } else {
+          // 全問終了
+          setStep('calculating');
+          window.scrollTo(0, 0);
+          setTimeout(() => {
+            setStep('result');
+            window.scrollTo(0, 0);
+          }, 1500);
+        }
+      };
+
+      const handleExampleAnswer = (val) => {
+        if (tempSelectedVal !== val) {
+          setTempSelectedVal(val);
+          return;
+        }
+        setTempSelectedVal(null);
+        setQuestionEntryStep('practice');
+        if (val >= 2) setPopupType('start');
+        else setPopupType('notYet');
+      };
+
+      const handleColorPracticeAnswer = (val) => {
+        if (tempSelectedVal !== val) {
+          setTempSelectedVal(val);
+          setQuestionFrameTone(val);
+          return;
+        }
+        setQuestionFrameTone(val);
+        setQuestionEntryStep('colorPractice');
+        setTempSelectedVal(null);
+        setPopupType('start');
+      };
+
+      const handleBack = () => {
+        setAnimationKey(prev => prev + 1);
+        setTempSelectedVal(null);
+
+        if (step === 'practice' || step === 'colorPractice') {
+          setStep('intro');
+          window.scrollTo(0, 0);
+          return;
+        }
+        if (step === 'question' && qIndex === 0) {
+          setStep(questionEntryStep);
+          window.scrollTo(0, 0);
+          return;
+        }
+        if (history.length === 0) return;
+
+        // 履歴復元
+        const prevYesCount = history[history.length - 1];
+        setYesCount(prevYesCount);
+        setHistory(history.slice(0, -1));
+
+        if (step === 'question' && qIndex > 0) {
+          setQIndex(qIndex - 1);
+          window.scrollTo(0, 0);
+        }
+      };
+
+      const resetApp = () => {
+        if(window.confirm('最初からやり直しますか？')) {
+          setStep('intro');
+          setQIndex(0);
+          setYesCount(0);
+          setHistory([]);
+          setPopupType('none');
+          setTempSelectedVal(null);
+          setQuestionFrameTone(null);
+          setQuestionEntryStep('colorPractice');
+          window.scrollTo(0, 0);
+        }
+      };
+
+      const openPopup = (type) => setPopupType(type);
+      const closePopup = () => setPopupType('none');
+
+      const captureResultPages = () => {
+        const pageElements = Array.from(document.querySelectorAll('.result-export-page'));
+        if (pageElements.length === 0) return Promise.reject(new Error('保存対象が見つかりません。'));
+        window.scrollTo(0, 0);
+        return new Promise((resolve, reject) => {
+          setTimeout(async () => {
+            try {
+              const captureScale = 2;
+              const pages = await Promise.all(pageElements.map(async (element) => {
+                const pageRect = element.getBoundingClientRect();
+                let canvas = await html2canvas(element, { backgroundColor: '#fffaf0', scale: captureScale, useCORS: true });
+                const expectedWidth = Math.round(pageRect.width * captureScale);
+                const expectedHeight = Math.round(pageRect.height * captureScale);
+                if (canvas.width !== expectedWidth || canvas.height !== expectedHeight) {
+                  const croppedCanvas = document.createElement('canvas');
+                  croppedCanvas.width = expectedWidth;
+                  croppedCanvas.height = expectedHeight;
+                  croppedCanvas.getContext('2d').drawImage(canvas, 0, 0, expectedWidth, expectedHeight, 0, 0, expectedWidth, expectedHeight);
+                  canvas = croppedCanvas;
+                }
+                const linkElements = Array.from(element.querySelectorAll('[data-pdf-link-url]'));
+                const linkRects = linkElements.map(linkElement => {
+                  const rect = linkElement.getBoundingClientRect();
+                  return { url: linkElement.getAttribute('data-pdf-link-url'), x: rect.left - pageRect.left, y: rect.top - pageRect.top, width: rect.width, height: rect.height, pageWidth: pageRect.width, pageHeight: pageRect.height };
+                });
+                return { canvas, linkRects };
+              }));
+              resolve(pages);
+            } catch (err) { reject(err); }
+          }, 300);
+        });
+      };
+
+      const handleSaveImage = () => {
+        captureResultPages().then(pages => {
+          const dateStr = getFormattedDateStr();
+          pages.forEach(({ canvas }, index) => {
+            const link = document.createElement('a');
+            link.download = `${dateStr}_${index + 1}of${pages.length}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          });
+        }).catch(err => { alert('画像の保存に失敗しました。'); });
+      };
+
+      const handleSavePdf = () => {
+        captureResultPages().then(pages => {
+          if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDFが読み込まれていません。');
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          pages.forEach(({ canvas, linkRects }, index) => {
+            if (index > 0) pdf.addPage();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pageWidth, pageHeight);
+            linkRects.forEach(linkRect => {
+              const scale = pageWidth / linkRect.pageWidth;
+              pdf.link(linkRect.x * scale, linkRect.y * scale, linkRect.width * scale, linkRect.height * scale, { url: linkRect.url });
+            });
+          });
+          pdf.save(`${getFormattedDateStr()}.pdf`);
+        }).catch(err => { alert('PDFの保存に失敗しました。'); });
+      };
+
+      const renderIntro = () => (
+        <div className="animate-fade-in flex-1 flex flex-col items-center justify-center">
+          <div className="text-center mb-4 mt-6">
+            <h1 className="font-bold text-white mb-2 leading-tight flex flex-col items-center justify-center" style={{ textShadow: '2px 2px 0 #000' }}>
+              <span className="text-lg md:text-2xl mb-1 text-gray-300">{CONFIG.appTitlePre}</span>
+              <span className="text-3xl md:text-5xl">{CONFIG.appTitleMain}</span>
+            </h1>
+            <p className="text-yellow-300 text-sm md:text-base font-bold tracking-widest mt-2">{CONFIG.appSubtitle}</p>
+          </div>
+
+          <DialogBox charConfig={CONFIG.char1} text={`よく来たな。\nここでは、そなたの『睡眠魔法』の熟練度を見極めるぞい。\n最近1ヶ月の状況を振り返って答えるのじゃ。`} />
+          <DialogBox charConfig={CONFIG.char2} imageSide="right" text={`全部で10問、3分くらいで終わると思います。\n4段階の◯から、自分が『そう感じる』ところを選んでくださいね！`} />
+
+          <div className="flex flex-col gap-4 w-full items-center mb-8 mt-4">
+            <button onClick={() => {
+                setAnimationKey(prev => prev + 1); setQuestionFrameTone(null); setQuestionEntryStep('colorPractice');
+                setTempSelectedVal(null); setStep('colorPractice'); window.scrollTo(0, 0);
+              }}
+              className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black w-full md:w-auto px-10 py-4 text-lg font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+            >診断をはじめる（練習へ）</button>
+            <div className="flex flex-col gap-2 mt-2">
+              <button onClick={() => openPopup('talk')} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4">
+                <i className="fa-solid fa-comments"></i> ひとに話してみる
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderPractice = () => (
+        <div className="w-full flex flex-col items-center">
+          <WindowBox title="練習もんだい" iconName="fa-solid fa-gamepad" className="bg-opacity-90 mb-8 animate-fade-in">
+            <p className="text-sm md:text-base text-gray-300 text-center mb-4 font-bold border-b border-gray-600 pb-2">
+              左が「全くない」、右が「よくある」に近づきます。<br />4段階の◯から、自分がそうだと感じたところを選んでください。
+            </p>
+            <div className="flex flex-col w-full py-2">
+              <h3 className="text-base md:text-xl font-bold text-yellow-300 mb-4 text-center leading-relaxed">
+                Q. さっそく診断をやってみたいと思う。
+              </h3>
+              <div className="bg-black bg-opacity-40 rounded-xl p-2 md:p-4 border border-gray-700 shadow-inner">
+                <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                  {[0, 1, 2, 3].map(val => (
+                    <AnswerCircle key={val} val={val} selectedVal={tempSelectedVal} onSelect={handleExampleAnswer} showDoubleTapMessage={true} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </WindowBox>
+          <div className="flex justify-center mt-2">
+            <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">◀ もどる</button>
+          </div>
+        </div>
+      );
+
+      const renderColorPractice = () => {
+        const previewTheme = tempSelectedVal === null
+          ? (questionFrameTone === null ? QUESTION_FRAME_THEMES.default : QUESTION_FRAME_THEMES[questionFrameTone])
+          : QUESTION_FRAME_THEMES[tempSelectedVal];
+
+        return (
+          <div className="w-full flex flex-col items-center">
+            <WindowBox title="魔法陣の色を選ぶ" iconName="fa-solid fa-wand-magic-sparkles" className={`${previewTheme.windowClass} mb-8 animate-fade-in`}>
+              <div className="flex flex-col w-full py-2">
+                <h3 className={`text-base md:text-xl font-bold mb-4 text-center leading-relaxed ${previewTheme.textClass}`}>
+                  Q. 黒い魔法書よりも、羊皮紙っぽい色のほうが好みだ。
+                </h3>
+                <div className={`${previewTheme.answerClass} relative my-2 rounded-xl p-2 md:p-4 border shadow-inner`}>
+                  <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                    {[0, 1, 2, 3].map(val => (
+                      <AnswerCircle key={val} val={val} selectedVal={tempSelectedVal} onSelect={handleColorPracticeAnswer} showDoubleTapMessage={true} />
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 rounded-lg border border-amber-700/60 bg-black/50 px-3 py-3 text-xs md:text-sm leading-relaxed text-amber-100">
+                  <p className="mb-2 font-bold text-yellow-300">選んだ色味が、この先の問いの枠に反映されます。もう一度同じ印を押すと決定します。</p>
+                  <p>全くない：黒い魔法書のような背景。</p>
+                  <p>あまりない：少しだけ透明を落として黒っぽさを出す。</p>
+                  <p>時々ある：背景の酒場がよく見える透明。</p>
+                  <p>よくある：羊皮紙のような背景。</p>
+                </div>
+              </div>
+            </WindowBox>
+            <div className="flex justify-center mt-2">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">◀ もどる</button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderQuestion = () => {
+        const q = QUESTIONS[qIndex];
+        const frameTheme = getQuestionFrameTheme();
+        
+        return (
+          <div className="w-full">
+            <WindowBox title={`第 ${qIndex + 1} 問`} iconName="fa-solid fa-clipboard-question" className={frameTheme.windowClass}>
+              <div className="flex flex-col w-full py-2">
+                <h3 className={`text-base md:text-xl font-bold mb-6 text-center leading-relaxed ${frameTheme.textClass}`}>
+                  {q.text}
+                </h3>
+                <div className={`${frameTheme.answerClass} relative rounded-xl p-2 md:p-4 border shadow-inner`}>
+                  <div className="flex justify-between items-start relative z-10 w-full gap-1 md:gap-2">
+                    {[0, 1, 2, 3].map(val => (
+                      <AnswerCircle key={val} val={val} selectedVal={tempSelectedVal} onSelect={handleAnswer} showDoubleTapMessage={false} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </WindowBox>
+            <div className="mt-4">
+              <ProgressBar current={qIndex + 1} total={QUESTIONS.length} label="診断の進捗" />
+            </div>
+            <div className="flex justify-center mt-2">
+              <button onClick={handleBack} className="text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center gap-1">◀ もどる</button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderCalculating = () => (
+        <div className="flex-1 flex flex-col items-center justify-center animate-pulse mt-20">
+          <i className="fa-solid fa-hat-wizard text-5xl text-yellow-400 mb-4"></i>
+          <p className="text-xl font-bold text-white tracking-widest">お主の睡眠魔法を見極めておる...</p>
+        </div>
+      );
+
+      const renderResult = () => {
+        const resultConf = getResultConfig(yesCount);
+        return (
+          <div className="animate-fade-in w-full space-y-6 pb-12">
+            <div id="result-capture-area" className="w-full space-y-6 pt-4 pb-4 px-2">
+              <DialogBox charConfig={CONFIG.char1} text={`ふむ…見えたぞ。\nここ1ヶ月のそなたの「当てはまる（はい）」の数は【${yesCount}個】じゃな。\nしっかりと目に焼き付けるがよい。`} />
+
+              <WindowBox title={<span>あなたの診断結果</span>} iconName="fa-solid fa-bed" className="result-window-translucent border-blue-400">
+                <div className={`${resultConf.colorClass} p-5 rounded-lg relative overflow-hidden`}>
+                  <div className="flex items-center gap-3 mb-4 border-b border-white/20 pb-3">
+                    <i className={`fa-solid ${resultConf.icon} text-3xl text-white drop-shadow-md`}></i>
+                    <h3 className="text-xl md:text-2xl font-bold text-white drop-shadow-md">{resultConf.title}</h3>
+                  </div>
+                  <p className="text-sm md:text-base leading-relaxed text-gray-100 font-bold whitespace-pre-wrap">
+                    {resultConf.message}
+                  </p>
+                </div>
+              </WindowBox>
+            </div>
+
+            {/* エクスポート用隠し領域 */}
+            <div id="result-export-area" style={{ position: 'absolute', left: '-9999px', top: 0, width: '900px', color: '#2d1b10', fontFamily: "sans-serif", boxSizing: 'border-box' }}>
+              <div className="result-export-page" style={{ width: '900px', height: '1272px', overflow: 'hidden', padding: '44px', background: '#fffaf0', boxSizing: 'border-box' }}>
+                <div style={{ height: '1184px', border: '3px solid #1e3a8a', borderRadius: '12px', padding: '32px', background: '#f0f9ff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+                  <div style={{ borderBottom: '2px solid #3b82f6', paddingBottom: '18px', marginBottom: '24px' }}>
+                    <p style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#1e3a8a' }}>{CONFIG.appTitlePre}</p>
+                    <h1 style={{ margin: '6px 0 8px', fontSize: '34px', lineHeight: 1.35, color: '#0f172a' }}>睡眠チェックテスト 結果レポート</h1>
+                    <p style={{ margin: 0, fontSize: '16px', color: '#334155' }}>あなたの「はい（当てはまる）」の数: {yesCount}個</p>
+                  </div>
+                  <section style={{ marginBottom: '22px' }}>
+                    <div style={{ border: '1px solid #3b82f6', borderRadius: '10px', padding: '24px', background: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                      <h3 style={{ margin: '0 0 12px', fontSize: '26px', color: '#1e40af', borderBottom: '2px solid #bfdbfe', paddingBottom: '10px' }}>
+                        {resultConf.title}
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '18px', lineHeight: 1.75, color: '#334155', fontWeight: 'bold' }}>{resultConf.message}</p>
+                    </div>
+                  </section>
+                  <section style={{ marginTop: 'auto', borderTop: '2px solid #3b82f6', paddingTop: '12px' }}>
+                    <div style={{ marginBottom: '8px', textAlign: 'left', width: '80%', maxWidth: '80%', border: '1px solid #bfdbfe', borderRadius: '10px', background: '#ffffff', padding: '12px 16px', boxSizing: 'border-box' }}>
+                      <p style={{ margin: '0 0 6px', fontSize: '14px', lineHeight: 1.45, color: '#1e3a8a' }}>
+                        <span style={{ fontWeight: 700 }}>{CONTACT_CONFIG.consultationName}</span>：
+                        <a href={CONTACT_CONFIG.consultationUrl} data-pdf-link-url={CONTACT_CONFIG.consultationUrl} style={{ color: '#2563eb', textDecoration: 'underline' }}>{CONTACT_CONFIG.consultationUrl}</a>
+                      </p>
+                      <p style={{ margin: '0 0 6px', fontSize: '12px', lineHeight: 1.5, color: '#334155' }}>{CONTACT_CONFIG.consultationDescription}</p>
+                    </div>
+                    <div style={{ position: 'relative', textAlign: 'center', fontSize: '12px', color: '#64748b', marginTop: '16px' }}>
+                      <a href={NININ_HOME_URL} data-pdf-link-url={NININ_HOME_URL} style={{ margin: 0, color: '#64748b', textDecoration: 'none' }}>© ninin consulting & counseling LLC. All rights reserved.</a>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center pt-4 flex flex-col items-center gap-4">
+              <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                <i className="fa-solid fa-camera"></i> あとで見返す（結果保存）
+              </button>
+              <button onClick={() => openPopup('talk')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+                <i className="fa-solid fa-comments"></i> ひとに話してみる
+              </button>
+              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-4">もう一度最初から診断する</button>
+            </div>
+          </div>
+        );
+      };
+
+      const renderPopup = () => {
+        if (popupType === 'none') return null;
+
+        if (popupType === 'start') {
+          return (
+            <div className="translucent-popup-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+              <div className="w-full max-w-lg">
+                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
+                  <DialogBox charConfig={CONFIG.char2} imageSide="right" text={`そうそう！そんな感じ♪\nじゃあ、早速始めるね！`} />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button onClick={() => { closePopup(); setAnimationKey(prev => prev + 1); setStep('question'); window.scrollTo(0, 0); }} className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2">設問へ進む</button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+        if (popupType === 'notYet') {
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="ゆっくりで大丈夫" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-blue-500 shadow-2xl" onClose={closePopup}>
+                  <DialogBox charConfig={CONFIG.char2} imageSide="right" text={`今はまだやらないんだね！\n心の準備ができたら、右の『時々ある』寄りのボタンを選んでね！`} />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button onClick={closePopup} className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400">閉じる</button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+        if (popupType === 'talk') {
+          return (
+            <div className="translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in">
+              <div className="min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6">
+                <WindowBox title="酒場の片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
+                  <DialogBox charConfig={CONFIG.char1} text={`どうじゃったかな？ 最近の睡眠を振り返ってみて、どんなことを感じたか……。\n\nその思いは、ひとに話してみるとさらに深まるかもしれぬぞ。\n\nそうじゃな。わしの知っておる場所なのじゃが【 ${CONTACT_CONFIG.consultationName} 】で、ゆっくり話してみるのもよいじゃろう。`} />
+                  <div className="flex flex-col gap-3 mt-4">
+                    <a href={CONTACT_CONFIG.consultationUrl} target="_blank" rel="noopener noreferrer" className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"><i className="fa-solid fa-door-open"></i> {CONTACT_CONFIG.consultationName}へ向かう</a>
+                  </div>
+                  <div className="letter-note relative mt-5 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]">
+                    <div className="absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow">📝紹介状</div>
+                    <p className="text-[12px] leading-7 font-medium whitespace-pre-wrap">{CONTACT_CONFIG.consultationDescription}</p>
+                    {CONTACT_CONFIG.profileUrl && (
+                      <p className="mt-3 border-t border-stone-300/60 pt-2 text-[10px] leading-relaxed text-stone-500">
+                        <span>{CONTACT_CONFIG.profileLinkLabel || '自己紹介ページ'}：</span>
+                        <a href={CONTACT_CONFIG.profileUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-stone-700 break-all">{CONTACT_CONFIG.profileUrl}</a>
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button onClick={closePopup} className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400">今はやめておく</button>
+                    {step === 'result' && (
+                      <button onClick={() => setPopupType('save')} className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"><i className="fa-solid fa-camera"></i> あとで見返す（結果保存）</button>
+                    )}
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+        if (popupType === 'save') {
+          return (
+            <div className="translucent-popup-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+              <div className="w-full max-w-lg">
+                <WindowBox title="保存" iconName="fa-solid fa-camera" className="translucent-popup-window border-blue-500 shadow-2xl" onClose={closePopup}>
+                  <DialogBox charConfig={CONFIG.char2} imageSide="right" text={<span>いいですね！<br />ご自身の『睡眠魔法』の結果レポートを保存しましょうか？</span>} />
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button onClick={handleSavePdf} className="rpg-button bg-amber-900 border-amber-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"><i className="fa-solid fa-file-pdf"></i> PDFで保存</button>
+                    <button onClick={() => setPopupType('talk')} className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"><i className="fa-solid fa-comments"></i> ひとに話してみる</button>
+                    <button onClick={handleSaveImage} className="rpg-button transparent-save-button flex items-center justify-center gap-2"><i className="fa-solid fa-download"></i> 画像として保存</button>
+                  </div>
+                </WindowBox>
+              </div>
+            </div>
+          );
+        }
+      };
+
+      return (
+        <div className="flex flex-col flex-1 w-full justify-between">
+          <div className="w-full">
+            <div key={animationKey} className={animationKey > 0 ? "animate-page-turn w-full" : "w-full"}>
+              {step === 'intro' && renderIntro()}
+              {step === 'practice' && renderPractice()}
+              {step === 'colorPractice' && renderColorPractice()}
+              {step === 'question' && renderQuestion()}
+              {step === 'calculating' && renderCalculating()}
+              {step === 'result' && renderResult()}
+            </div>
+          </div>
+          
+          <div className="w-full mt-12 mb-4 flex flex-col items-center animate-fade-in">
+            {(step === 'intro' || step === 'result') && (
+              <div className="w-full bg-black bg-opacity-60 border border-gray-500 rounded p-3 text-center text-[9px] md:text-xs text-gray-300 shadow-sm mb-4">
+                <p className="mb-3 text-yellow-100 opacity-90 leading-relaxed">
+                  ※本アプリは医療的な診断を行うものではありません。<br className="hidden md:block" />
+                  ご自身の「睡眠状態」に気づき、これからの健康管理や生活習慣を見直すための「自己理解のきっかけ」としてご活用ください。
+                </p>
+                <div className="border-t border-gray-600/50 pt-2">
+                  <p className="text-gray-400">© ninin consulting & counseling LLC. All rights reserved.</p>
+                </div>
+              </div>
+            )}
+            <div className="w-full border-t border-gray-500/50 pt-3 flex flex-col items-center justify-center gap-1.5 text-[10px] md:text-xs text-gray-400">
+              <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300 transition-colors underline underline-offset-4">
+                © 2026 ninin consulting＆counseling
+              </a>
+              <div className="font-mono opacity-70">PageNO: {step === 'question' ? qIndex + 1 : step}</div>
+            </div>
+          </div>
+
+          {renderPopup()}
+
+          {animationKey > 0 && step !== 'calculating' && step !== 'result' && (
+            <div key={`page-turn-${animationKey}`} className="page-flip-overlay"></div>
+          )}
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
