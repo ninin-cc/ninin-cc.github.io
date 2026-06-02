@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+<script>
+  if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+    var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+    window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+  }
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z1T35THNDV');
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIESM™ mini 支援モードチェック</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    @keyframes riesmOrbPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      55% { transform: scale(1.18); filter: brightness(1.18); }
+      100% { transform: scale(1.08); filter: brightness(1.08); }
+    }
+    .riesm-orb-selected {
+      animation: riesmOrbPulse 0.42s ease-out both;
+    }
+    .loading-screen { 
+      display: flex; justify-content: center; align-items: center; 
+      height: 100vh; font-family: sans-serif; color: #4b5563; 
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans">
+  
+  <div id="root">
+    <div class="loading-screen">
+      <div>システムを起動中...</div>
+    </div>
+  </div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- RIESM モードアイコン (SVG) ---
+    
+    // ワンダー: 🚀
+    const WonderIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+        <path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"/>
+        <path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"/>
+      </svg>
+    );
+
+    // キーパー: 🛡️
+    const KeeperIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    );
+
+    // ナーチャー: 💗 (Heart)
+    const NurturerIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </svg>
+    );
+
+    // アダプター: レーダー
+    const AdapterIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19.07 4.93a10 10 0 0 0-14.14 0"/>
+        <path d="M16.24 7.76a6 6 0 0 0-8.48 0"/>
+        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
+        <path d="m12 12 5-5" strokeOpacity="0.8"/>
+      </svg>
+    );
+
+    const ModeIcon = ({ type, className }) => {
+      switch(type) {
+        case 'W': return <WonderIcon className={className} />;
+        case 'K': return <KeeperIcon className={className} />;
+        case 'N': return <NurturerIcon className={className} />;
+        case 'A': return <AdapterIcon className={className} />;
+        default: return null;
+      }
+    };
+
+    // UIアイコン
+    const ExternalLinkIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    );
+    const RefreshCwIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+    );
+    const InfoIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    );
+    const ArrowLeftIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    );
+
+    // ==========================================
+    // 問題プール
+    // ==========================================
+    const questionsPool = [
+      { id: 1, group: 'A', text: "クライエントが堂々巡りしていると感じた時、あなたは…", options: [ { text: "新しい視点を投げかける", type: "W" }, { text: "これまでの話を要約し整理する", type: "K" }] },
+      { id: 2, group: 'A', text: "話が複数のテーマに広がってきた時、あなたは…", options: [ { text: "そこに新しい意味があるか探索する", type: "W" }, { text: "論点を整理し中心テーマを見つける", type: "K" }] },
+      { id: 3, group: 'A', text: "面談の序盤で意識しやすいのは？", options: [ { text: "どんな話が出るか可能性を広げて聴く", type: "W" }, { text: "相談の背景と主訴を的確に掴む", type: "K" }] },
+      { id: 4, group: 'A', text: "クライエントが「どうしたらいいかわからない」と言う時", options: [ { text: "別の見方や小さな一歩を一緒に探す", type: "W" }, { text: "状況・気持ち・選択肢を分けて整理する", type: "K" }] },
+      { id: 5, group: 'A', text: "面談時間が残り少ない時、気になりやすいのは？", options: [ { text: "まだ話せていない大切なことがないか", type: "W" }, { text: "時間内にクロージングへ向けてまとまるか", type: "K" }] },
+      { id: 6, group: 'A', text: "クライエントの発言に矛盾を感じた時", options: [ { text: "その矛盾に隠された本音や可能性を探る", type: "W" }, { text: "矛盾点を整理し、事実関係を確認する", type: "K" }] },
+      { id: 7, group: 'A', text: "クライエントが沈黙した時、どう捉えやすいですか？", options: [ { text: "新しい気づきが生まれる瞬間かもしれない", type: "W" }, { text: "何について考えている沈黙か分析する", type: "K" }] },
+      { id: 8, group: 'A', text: "面談中、支援に行き詰まりを感じた時", options: [ { text: "思い切って視点を変えるアプローチを試みる", type: "W" }, { text: "見立てを振り返り、プロセスを再評価する", type: "K" }] },
+      { id: 9, group: 'A', text: "クライエントの強みを見つけた時", options: [ { text: "その強みを活かした未来の可能性を広げる", type: "W" }, { text: "その強みが現在の課題にどう影響しているか分析する", type: "K" }] },
+      
+      { id: 10, group: 'B', text: "クライエントが急に大きな決断を口にした時", options: [ { text: "その前向きなエネルギーを後押しする", type: "W" }, { text: "決断に伴うリスクや現実的な影響を考える", type: "A" }] },
+      { id: 11, group: 'B', text: "面談中、クライエントの感情が高ぶってきた時", options: [ { text: "その感情の奥にある本当の願いを探る", type: "W" }, { text: "心理的負荷が高すぎないか安全に配慮する", type: "A" }] },
+      { id: 12, group: 'B', text: "クライエントが新しい行動を起こそうとしている時", options: [ { text: "「やってみましょう！」と可能性を広げる", type: "W" }, { text: "うまくいかなかった時の備えを一緒に考える", type: "A" }] },
+      { id: 13, group: 'B', text: "これまでと全く違うテーマが出てきた時", options: [ { text: "新鮮な展開として興味深く聴く", type: "W" }, { text: "本題から外れることの面談への影響を懸念する", type: "A" }] },
+      { id: 14, group: 'B', text: "職場での対人関係トラブルの相談の際", options: [ { text: "本人の捉え方を変えるリフレーミングを試みる", type: "W" }, { text: "パワハラ等、現実的な環境リスクがないか察知する", type: "A" }] },
+      { id: 15, group: 'B', text: "クライエントが黙り込んでいる時", options: [ { text: "次にどんな言葉が出るか期待して待つ", type: "W" }, { text: "沈黙が苦痛になっていないか負担を気にかける", type: "A" }] },
+      { id: 16, group: 'B', text: "面談の目標設定をする時、意識しやすいのは？", options: [ { text: "本人が本当にワクワクする理想の姿", type: "W" }, { text: "確実で無理のない、安全な目標", type: "A" }] },
+      { id: 17, group: 'B', text: "面談の終盤、クライエントがすっきりした顔をしている時", options: [ { text: "次のステップへの期待感を共有する", type: "W" }, { text: "一時的な高揚感の後の揺り戻し（リスク）に備える", type: "A" }] },
+      { id: 18, group: 'B', text: "支援方針に迷った時", options: [ { text: "直感を信じて、新しい問いを投げかけてみる", type: "W" }, { text: "無理に動かず、現状の安全を維持する関わりにとどめる", type: "A" }] },
+
+      { id: 19, group: 'C', text: "クライエントが涙ぐんでいる場面", options: [ { text: "気持ちに寄り添い、静かに待つ", type: "N" }, { text: "なぜ涙が出たのか、その背景を頭の中で整理する", type: "K" }] },
+      { id: 20, group: 'C', text: "クライエントの話がまとまらず、長く続いている時", options: [ { text: "言葉にならない思いをまずは受け止める", type: "N" }, { text: "要点を掴み、話を整理して返す機会をうかがう", type: "K" }] },
+      { id: 21, group: 'C', text: "クライエントが怒りをあらわにしている時", options: [ { text: "怒りの感情そのものに共感し、受け止める", type: "N" }, { text: "怒りの原因となっている出来事と認知を分析する", type: "K" }] },
+      { id: 22, group: 'C', text: "面談の冒頭、クライエントが緊張している時", options: [ { text: "柔らかな雰囲気を作り、安心感を提供する", type: "N" }, { text: "今日の面談の目的や枠組みを明確に伝える", type: "K" }] },
+      { id: 23, group: 'C', text: "クライエントが「つらい」と繰り返す時", options: [ { text: "そのつらさに深く共鳴し、寄り添う", type: "N" }, { text: "「つらい」と感じる具体的な状況を特定しようとする", type: "K" }] },
+      { id: 24, group: 'C', text: "面談の振り返りをする時、あなたの関心は？", options: [ { text: "クライエントと良い関係性が築けたか", type: "N" }, { text: "適切な見立てができ、目標に向かって進めたか", type: "K" }] },
+      { id: 25, group: 'C', text: "沈黙が続いている時、あなたはどうしやすいですか？", options: [ { text: "言葉が出ない苦しさに共感し、一緒にその場にいる", type: "N" }, { text: "これまでの会話を振り返り、沈黙の意味を分析する", type: "K" }] },
+      { id: 26, group: 'C', text: "面談終盤、まだ感情が大きく揺れている時", options: [ { text: "時間が許す限り、その感情に寄り添い続ける", type: "N" }, { text: "安全に終わらせるため、感情を収束・整理させる", type: "K" }] },
+      { id: 27, group: 'C', text: "ロールプレイの練習で指摘されたいのは", options: [ { text: "受容的な態度や傾聴の姿勢について", type: "N" }, { text: "主訴の把握や面談の構造化について", type: "K" }] },
+
+      { id: 28, group: 'D', text: "クライエントが自分を強く責めている時", options: [ { text: "その苦しみに深く寄り添い、受け止める", type: "N" }, { text: "自責の念が強すぎないか、精神的な安全性を気にかける", type: "A" }] },
+      { id: 29, group: 'D', text: "クライエントが「会社を辞めたい」と言った時", options: [ { text: "その切実な思いをまずは受け止める", type: "N" }, { text: "辞めた後の生活など、現実的なリスクが頭をよぎる", type: "A" }] },
+      { id: 30, group: 'D', text: "クライエントの話に矛盾や曖昧さを感じた時", options: [ { text: "矛盾も含めて、今のありのままを受け入れる", type: "N" }, { text: "曖昧なまま進むことで生じる、後々の誤解やリスクを警戒する", type: "A" }] },
+      { id: 31, group: 'D', text: "次回予約を決める時、意識しやすいのは？", options: [ { text: "クライエントの気持ちが落ち着くタイミング", type: "N" }, { text: "期間が空きすぎることによるリスクや負担", type: "A" }] },
+      { id: 32, group: 'D', text: "面談中、あなたが少し違意感を覚えた時", options: [ { text: "一旦脇に置き、相手の感情に集中する", type: "N" }, { text: "何らかのリスクのサインではないかと警戒する", type: "A" }] },
+      { id: 33, group: 'D', text: "クライエントが重いトラウマ体験を語り始めた時", options: [ { text: "痛みに寄り添い、そのまま話を聴き続ける", type: "N" }, { text: "これ以上話すことでトラウマが再燃しないか安全を確保する", type: "A" }] },
+      { id: 34, group: 'D', text: "クライエントが支援者に強く依存していると感じた時", options: [ { text: "頼ってくれる思いを受け止め、包み込む", type: "N" }, { text: "依存がエスカレートするリスクを考え、適切な距離を保つ", type: "A" }] },
+      { id: 35, group: 'D', text: "「大丈夫です」と笑顔で言ったが、無理をしているように見える時", options: [ { text: "笑顔の裏にある本当の気持ちに優しく寄り添う", type: "N" }, { text: "無理をしていることによる心身の限界（リスク）を危惧する", type: "A" }] },
+      { id: 36, group: 'D', text: "スーパービジョンを受けるとしたら、相談したいのは", options: [ { text: "クライエントの感情に巻き込まれそうになること", type: "N" }, { text: "慎重になりすぎて面談が停滞してしまうこと", type: "A" }] }
+    ];
+
+    const situationQuestionsPool = [
+      { id: 101, isSituation: true, text: "相談者が森の分かれ道で立ち止まっています。右は安全ですが退屈、左は明るいですが見通せません。あなたの意識はどちらに向きやすいですか？", options: [ { text: "左の道の先にある新しい景色や可能性", type: "W" }, { text: "どちらの道を選ぶにせよ、その決断に至る理由の整理", type: "K" }] },
+      { id: 102, isSituation: true, text: "旅人が重い荷物を抱えて宿にたどり着きました。あなたが最初にかけたい言葉のニュアンスは？", options: [ { text: "「重かったでしょう。まずはゆっくり休んでください」", type: "N" }, { text: "「どのような荷物ですか？整理して軽くしましょう」", type: "K" }] },
+      { id: 103, isSituation: true, text: "灯台の前で、船が進むか戻るか迷っています。あなたが船長と話すなら？", options: [ { text: "「この先に、まだ見ぬ素晴らしい大陸があるかもしれません」", type: "W" }, { text: "「嵐が来る前に、安全な港へ戻ることも大切です」", type: "A" }] },
+      { id: 104, isSituation: true, text: "小さな芽が、嵐の前で震えています。あなたが寄り添うなら？", options: [ { text: "その震えに寄り添い、風除けとなって見守る", type: "N" }, { text: "嵐に耐えられるよう、支柱を立てたり安全な場所へ移す", type: "A" }] },
+      { id: 105, isSituation: true, text: "地図を持たない旅人が、遠くの町を見つめています。あなたはどう関わりますか？", options: [ { text: "「あの町でどんな出会いがあるか、想像してみましょう」", type: "W" }, { text: "「あそこへ向かうための現在地とルートを一緒に確認しましょう」", type: "K" }] },
+      { id: 106, isSituation: true, text: "古い時計が止まってしまいました。持ち主は途方に暮れています。", options: [ { text: "持ち主の悲しい気持ちに寄り添う", type: "N" }, { text: "なぜ止まったのか、構造を分析して修理の方法を考える", type: "K" }] },
+      { id: 107, isSituation: true, text: "目の前に、誰も開けたことのない古い扉があります。", options: [ { text: "何があるかワクワクして、扉を開けることを促す", type: "W" }, { text: "危険がないか、慎重に確認してから開けるか話し合う", type: "A" }] },
+      { id: 108, isSituation: true, text: "深い霧の中で、周りがよく見えません。あなたはどうしますか？", options: [ { text: "不安な気持ちを受け止め、隣で静かに待つ", type: "N" }, { text: "足元の安全を確保し、動かずに霧が晴れるのを待つ", type: "A" }] },
+      { id: 109, isSituation: true, text: "パズルピースがバラバラに散らばっています。", options: [ { text: "完成図を想像し、ピースを種類ごとに分類・整理する", type: "K" }, { text: "既存の枠にとらわれず、全く新しい形を作れないか試す", type: "W" }] }
+    ];
+
+    const resultsData = {
+      W: {
+        title: "発想型（ワンダー）",
+        subTitle: "（可能性・視点転換・リフレーミング）",
+        detail: [
+          "あなたは、クライエントの話の中から可能性や別の見方を見つける力が自然に働きやすい支援者です。未来への展望やリフレーミング、小さな行動のきっかけを見出すことに長けています。\n\n一方で、可能性が見える分、助言や提案が早くなり、クライエント自身の言葉が育つ前に先回りしてしまうことがあります。\n\n浮かんだアイデアをすぐに出すのではなく、「これは相手の気づきか、自分の発想か」と一度確認することで、よりクライエント中心 of 支援になります。練習では、発想を保留し、問いに変えることを意識してみてください。"
+        ],
+        theme: { bg: "bg-amber-50", border: "border-amber-200", cardBg: "bg-amber-100/50", header: "from-amber-400 to-orange-500", text: "text-amber-900", textLight: "text-amber-700", btnBg: "bg-amber-100", btnHover: "hover:bg-amber-200" }
+      },
+      K: {
+        title: "構造型（キーパー）",
+        subTitle: "（整理・分析・見立て）",
+        detail: [
+          "あなたは、クライエントの話を整理し、背景や流れを捉える力が自然に働きやすい支援者です。面談の全体像をつかみ、限られた時間の中で話を進める安定感があります。\n\n一方で、理解が早い分、クライエント自身がまだ言葉にしきれていない感情や迷いを、少し先に整理してしまうことがあります。\n\n「わかった」と感じたところから、もう一呼吸待つことで、相手の内省がさらに深まりやすくなります。練習では、感情語の反映と、沈黙を待つ力を意識してみてください。"
+        ],
+        theme: { bg: "bg-blue-50", border: "border-blue-200", cardBg: "bg-blue-100/50", header: "from-blue-500 to-indigo-600", text: "text-blue-900", textLight: "text-blue-700", btnBg: "bg-blue-100", btnHover: "hover:bg-blue-200" }
+      },
+      N: {
+        title: "共感型（ナーチャー）",
+        subTitle: "（受容・感情理解・関係構築）",
+        detail: [
+          "あなたは、クライエントが安心して話せる場をつくる力が自然に働きやすい支援者です。表情や声の変化を受け取り、相手の感情に自然に寄り添うことができます。\n\n一方で、話を受けとめる力が強い分、テーマが広がりすぎたり、主訴がぼやけたりすることがあります。\n\n共感を土台にしながら、時折「今、何が一番大切なテーマなのか」をやわらかく確認すると、面談の輪郭が見えやすくなります。練習では、主訴の一文化と、面談の目標を意識した構造化を心がけてみてください。"
+        ],
+        theme: { bg: "bg-pink-50", border: "border-pink-200", cardBg: "bg-pink-100/50", header: "from-pink-400 to-rose-500", text: "text-pink-900", textLight: "text-pink-700", btnBg: "bg-pink-100", btnHover: "hover:bg-pink-200" }
+      },
+      A: {
+        title: "調整型（アダプター）",
+        subTitle: "（安全配慮・リスク察知・慎重さ）",
+        detail: [
+          "あなたは、心理的安全性や現実的リスクに気づく力が自然に働きやすい支援者です。クライエントの負荷、環境要因、慎重に扱うべきテーマを見落としにくい安定感があります。\n\n一方で、リスクを察知する力が強い分、可能性が芽生えた瞬間に「危ないかもしれない」と感じ、無意識にブレーキをかけてしまうことがあります。\n\n安全配慮を大切にしながらも、判断を急がず、クライエント自身が不安や可能性を言葉にする余白を残すことが大切です。練習では、警告を助言ではなく問いに変え、可能性を閉じない関わりを意識してみてください。"
+        ],
+        theme: { bg: "bg-cyan-50", border: "border-cyan-200", cardBg: "bg-cyan-100/50", header: "from-cyan-400 to-teal-500", text: "text-cyan-900", textLight: "text-cyan-700", btnBg: "bg-cyan-100", btnHover: "hover:bg-cyan-200" }
+      }
+    };
+
+    // --- ダブルフロント用アドオンテキスト ---
+    const secondAdditions = {
+      W: "さらに、発想型（ワンダー）の「可能性や視点転換の力」も同時に強く働いているため、ただ枠に収まるだけでなく、新しい気づきや選択肢も積極的に探っていける素晴らしいバランスです。",
+      K: "さらに、構造型（キーパー）の「整理・分析の力」も同時に強く働いているため、勢い任せになるのではなく、しっかりと現実的な形に落とし込みながら面談を進めていける非常に安定した状態です。",
+      N: "さらに、共感型（ナーチャー）の「他者への思いやりや受容の力」も同時に強く働いているため、クライエントを温かく包み込み、深い関係性を保ちながら進んでいける状態です。",
+      A: "さらに、調整型（アダプター）の「慎重さやリスク回避の視点」も同時に強く働いているため、細部まで気を配り、クライエントの負荷や失敗を防ぐ確かな足場も確保できているとても頼もしい状態です。"
+    };
+
+    // --- ダブルフロント用テーマカラー（既存デザイン踏襲） ---
+    const doubleThemes = {
+      K_W: { bg: "bg-teal-50", border: "border-teal-200", cardBg: "bg-teal-100/50", header: "from-amber-400 to-blue-500", text: "text-teal-900", textLight: "text-teal-700", btnBg: "bg-teal-100", btnHover: "hover:bg-teal-200" },
+      N_W: { bg: "bg-orange-50", border: "border-orange-200", cardBg: "bg-orange-100/50", header: "from-amber-400 to-pink-400", text: "text-orange-900", textLight: "text-orange-700", btnBg: "bg-orange-100", btnHover: "hover:bg-orange-200" },
+      A_W: { bg: "bg-lime-50", border: "border-lime-200", cardBg: "bg-lime-100/50", header: "from-amber-400 to-cyan-400", text: "text-lime-900", textLight: "text-lime-700", btnBg: "bg-lime-100", btnHover: "hover:bg-lime-200" },
+      K_N: { bg: "bg-violet-50", border: "border-violet-200", cardBg: "bg-violet-100/50", header: "from-blue-500 to-pink-500", text: "text-violet-900", textLight: "text-violet-700", btnBg: "bg-violet-100", btnHover: "hover:bg-violet-200" },
+      A_K: { bg: "bg-sky-50", border: "border-sky-200", cardBg: "bg-sky-100/50", header: "from-blue-500 to-cyan-500", text: "text-sky-900", textLight: "text-sky-700", btnBg: "bg-sky-100", btnHover: "hover:bg-sky-200" },
+      A_N: { bg: "bg-fuchsia-50", border: "border-fuchsia-200", cardBg: "bg-fuchsia-100/50", header: "from-pink-400 to-cyan-400", text: "text-fuchsia-900", textLight: "text-fuchsia-700", btnBg: "bg-fuchsia-100", btnHover: "hover:bg-fuchsia-200" }
+    };
+
+    // グラデーション色定義 (RGB)
+    const bgColors = {
+      W: '251, 191, 36',  // amber-400
+      K: '59, 130, 246',  // blue-500
+      N: '244, 114, 182', // pink-400
+      A: '34, 211, 238'   // cyan-400
+    };
+
+    const practiceQuestion = {
+      isPractice: true,
+      text: "喉が渇いて何かを飲もうとしています",
+      options: [
+        { text: "紅茶を飲む", type: "A" },
+        { text: "麦茶を飲む", type: "N" }
+      ]
+    };
+
+    function App() {
+      const [started, setStarted] = useState(false);
+      const [currentQuestions, setCurrentQuestions] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [resultType, setResultType] = useState(null);
+      const [resultScores, setResultScores] = useState(null);
+      const [toastMessage, setToastMessage] = useState('');
+      const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null);
+      const [isPractice, setIsPractice] = useState(false);
+      const [tutorialCompleted, setTutorialCompleted] = useState(false);
+      
+      // ホバーアニメーション用 (0〜100)
+      const [hoverPos, setHoverPos] = useState(50);
+
+      // 質問が変わるたびにホバー位置をリセット
+      useEffect(() => {
+        if (started && !resultType) {
+          setHoverPos(50);
+          setSelectedChoiceIndex(null);
+        }
+      }, [currentIndex, started, resultType, isPractice]);
+
+      const shuffleArray = (array) => {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+      }
+
+      const generateTodayQuestions = () => {
+        const getRandom = (arr, n) => shuffleArray([...arr]).slice(0, n);
+        let textSelected = [
+          ...getRandom(questionsPool.filter(q => q.group === 'A'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'B'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'C'), 3),
+          ...getRandom(questionsPool.filter(q => q.group === 'D'), 3),
+        ];
+        textSelected = shuffleArray(textSelected).map(q => ({ ...q, options: shuffleArray(q.options) }));
+        let situationSelected = shuffleArray(situationQuestionsPool).slice(0, 3).map(q => ({ ...q, options: shuffleArray(q.options) }));
+        return [...textSelected, ...situationSelected];
+      };
+
+      const startQuiz = () => {
+        const questions = generateTodayQuestions();
+        setCurrentQuestions(questions);
+        setCurrentIndex(0);
+        setAnswers([]);
+        setResultType(null);
+        setResultScores(null);
+        setSelectedChoiceIndex(null);
+        setIsPractice(false);
+        setTutorialCompleted(false);
+        setStarted(true);
+      };
+
+      const startTutorial = () => {
+        setCurrentQuestions([]);
+        setCurrentIndex(0);
+        setAnswers([]);
+        setResultType(null);
+        setResultScores(null);
+        setSelectedChoiceIndex(null);
+        setIsPractice(true);
+        setTutorialCompleted(false);
+        setHoverPos(50);
+        setStarted(true);
+      };
+
+      const returnToTop = () => {
+        setStarted(false);
+        setIsPractice(false);
+        setTutorialCompleted(false);
+        setSelectedChoiceIndex(null);
+        setHoverPos(50);
+      };
+
+      const handleAnswer = (scoreUpdates) => {
+        const newAnswers = [...answers, scoreUpdates];
+        setAnswers(newAnswers);
+        if (currentIndex < currentQuestions.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+        } else {
+          calculateResult(newAnswers);
+        }
+      };
+
+      const handleBack = () => {
+        if (isPractice) return;
+        if (currentIndex > 0) {
+          setSelectedChoiceIndex(null);
+          setCurrentIndex(currentIndex - 1);
+          setAnswers(answers.slice(0, -1));
+        }
+      };
+
+      const handleChoiceSelect = (choice) => {
+        if (selectedChoiceIndex !== null) return;
+        setSelectedChoiceIndex(choice.index);
+        setHoverPos(choice.hoverPos);
+        window.setTimeout(() => {
+          if (isPractice) {
+            setTutorialCompleted(true);
+            return;
+          }
+          handleAnswer(choice.scoreUpdates);
+        }, 420);
+      };
+
+      const calculateResult = (finalAnswers) => {
+        const scores = { W: 0, K: 0, N: 0, A: 0 };
+        finalAnswers.forEach(updates => {
+          updates.forEach(update => { if (scores[update.type] !== undefined) scores[update.type] += update.weight; });
+        });
+        const sortedTypes = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+        const maxType = sortedTypes[0];
+        const maxScore = scores[maxType];
+        const secondType = sortedTypes[1];
+        const secondScore = scores[secondType];
+        const minType = sortedTypes[3];
+
+        let front = maxType; 
+        let isDouble = false;
+        let frontKey = "";
+
+        // 85%以上でダブルフロントと判定する
+        if (maxScore > 0) {
+          const ratio = secondScore / maxScore;
+          if (ratio >= 0.85) {
+            isDouble = true;
+            // テーマ取得用にアルファベット順のキーを作っておく（既存テーマ流用のため）
+            frontKey = [maxType, secondType].sort().join('_');
+          }
+        }
+
+        setResultScores(scores);
+        // 詳細は3パターンのうちどれか1つをランダムに選ぶ
+        const detailIndex = 0; // 今回のバージョンでは1パターンしか設定していないので固定
+        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
+      };
+
+      const showToast = (message) => {
+        setToastMessage(message);
+        setTimeout(() => setToastMessage(''), 5000);
+      };
+
+      if (!started) {
+        return (
+          <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 flex-col">
+            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-fade-in border border-slate-100">
+              <div className="mb-6 flex items-center justify-center gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-6">
+                  <span className="text-3xl sm:text-4xl">🌈</span>
+                </div>
+                <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">支援モードチェック</span></h1>
+              </div>
+              
+              {/* ▼ アコーディオンに変更した説明文 ▼ */}
+              <details open className="mb-8 group border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden text-left">
+                <summary className="cursor-pointer font-bold text-slate-700 p-4 bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
+                  <span className="flex items-center gap-2">アプリの説明と注意</span>
+                  <svg className="w-5 h-5 text-slate-400 transition-transform duration-300 group-open:-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="p-4 text-slate-600 font-medium leading-relaxed text-[13px] sm:text-sm border-t border-slate-100 bg-white">
+                  カウンセラー・キャリアコンサルタント、または上司であるあなたが――
+                  <div className="my-2.5 p-3 bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-md text-slate-800 font-bold leading-relaxed">
+                    面談や1on1のさなかに入りやすい支援モードを観るための簡易チェックです。<br/>
+                    優劣を測るものではありません。
+                  </div>
+                  直感で、今の自分に近い方を選んでください。
+                </div>
+              </details>
+              
+              <div className="space-y-4 mb-8">
+                <button onClick={startTutorial} className="w-full py-4 px-6 bg-white text-slate-800 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all shadow-md active:scale-[0.98] border border-slate-200">
+                  チュートリアル
+                </button>
+                <button onClick={startQuiz} className="w-full py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-all shadow-md active:scale-[0.98]">
+                  いまの自分を観る
+                </button>
+              </div>
+
+              {/* ▼ インフォメーション＆観測のヒントエリア ▼ */}
+              <div className="bg-blue-50 rounded-xl p-4 text-left border border-blue-100 mb-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="mt-0.5"><InfoIcon /></div>
+                  <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                    <span className="font-bold">面談スタイルは状況によっても揺らぎます。</span><br/>
+                    このアプリは、変化する支援モードを観る「鏡」のようなものです。<br/>
+                    基礎体温を測るように、気になった時に何度でも試してみてください。<br/>
+                    逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、自己研鑽の大きな一歩です。
+                  </p>
+                </div>
+                <div className="bg-white/60 rounded-lg p-2.5 text-[11px] sm:text-xs text-blue-900 font-medium flex items-center justify-center gap-1.5 shadow-sm border border-blue-100/50">
+                  <span className="text-sm">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】すると便利です
+                </div>
+              </div>
+              {/* ▲ インフォメーションエリア ここまで ▲ */}
+
+              {/* ▼ 完全版への導線エリア ▼ */}
+              <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
+                <p className="text-[13px] text-slate-600 mb-3 leading-relaxed font-medium">
+                  さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
+                  <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm text-slate-800">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
+                </p>
+                <div className="space-y-2">
+                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
+                    <div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">仕事や人間関係で本格的に活かしたい方は</div>
+                      <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 完全版RIESM™へ</div>
+                    </div>
+                    <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
+                  </a>
+                </div>
+              </div>
+              {/* ▲ 導線エリア ここまで ▲ */}
+
+              <div className="mt-8 text-center">
+                <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
+                  🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
+                </a>
+                <div className="h-4"></div>
+                <div>
+                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                    © 2026 ninin consulting＆counseling
+                  </a>
+                </div>
+                <div className="h-4"></div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (resultType) {
+        // ダブルフロント時の情報を動的生成
+        let result;
+        if (resultType.isDouble) {
+          const frontData = resultsData[resultType.front];
+          const secondData = resultsData[resultType.second];
+          const themeKey = resultType.frontKey;
+          
+          result = {
+            title: `${frontData.title} ＆ ${secondData.title}`,
+            subTitle: `（${frontData.subTitle.replace(/[（）]/g, '')} × ${secondData.subTitle.replace(/[（）]/g, '')}）`,
+            detail: [`${frontData.detail[0]}\n\n${secondAdditions[resultType.second]}`],
+            theme: doubleThemes[themeKey] || frontData.theme
+          };
+        } else {
+          result = resultsData[resultType.front];
+        }
+
+        const t = result.theme;
+        const backsData = {
+          W: { title: "発想型（ワンダー）", desc: "あなたは、面談を確実かつ安全に進めたり、相手に深く寄り添ったりする力が自然に働きやすい一方で、クライエントに新しい視点を投げかけたり、現状の枠組みを外すようなアプローチは、意識しないと出てきにくいかもしれません。\n突飛なアイデアよりも、地に足のついた支援を大切にする傾向があります。" },
+          K: { title: "構造型（キーパー）", desc: "あなたは、相手の感情に寄り添ったり、柔軟な発想で話を広げたりする力が自然に働きやすい一方で、話を論理的に整理したり、時間内に面談をまとめる関わりは、意識しないと後回しになりやすいかもしれません。\n枠にはめるよりも、その場の自然な流れを大切にする傾向があります。" },
+          N: { title: "共感型（ナーチャー）", desc: "あなたは、話を整理して見立てを立てたり、解決への道筋を考えたりする力が自然に働きやすい一方で、相手の感情にただ浸り、何もしないで待つような関わりは、意識しないと短くなりやすいかもしれません。\nただ受け止めるよりも、前に進むための具体的な支援を大切にする傾向があります。" },
+          A: { title: "調整型（アダプター）", desc: "あなたは、相手の可能性を信じて背中を押したり、感情に深く寄り添う力が自然に働きやすい一方で、現実的なリスクを指摘したり、心理的負荷を警戒してブレーキを踏む関わりは、意識しないと後回しになりやすいかもしれません。\n恐れずに一歩を踏み出すことを大切にする傾向があります。" }
+        };
+        const backResult = backsData[resultType.back];
+
+        return (
+          <div className={`min-h-screen flex items-center justify-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg}`}>
+            <div className="max-w-lg w-full animate-fade-in relative">
+              {toastMessage && (
+                <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold text-center whitespace-pre-line w-[90%] max-w-sm border border-slate-600">
+                  {toastMessage}
+                </div>
+              )}
+              
+              <div id="result-card" className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 ${t.border}`}>
+                
+                <div className="bg-white">
+                  <div className={`p-6 sm:p-8 text-center relative overflow-hidden bg-gradient-to-r ${t.header} text-white`}>
+                    <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                    <h2 className="text-xs sm:text-sm font-bold tracking-widest text-white/90 mb-3 relative z-10">
+                      あなたの【主モード】
+                    </h2>
+                    <div className="flex items-center justify-center gap-4 mb-2 relative z-10">
+                      <ModeIcon type={resultType.front} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                      {resultType.isDouble && (
+                        <>
+                          <span className="text-xl sm:text-2xl font-bold opacity-70">+</span>
+                          <ModeIcon type={resultType.second} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                        </>
+                      )}
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-extrabold relative z-10 drop-shadow-md">
+                      {result.title}
+                      {result.subTitle && (
+                        <>
+                          <br />
+                          <span className="text-sm sm:text-lg font-bold opacity-90">{result.subTitle}</span>
+                        </>
+                      )}
+                    </h1>
+                  </div>
+                  
+                  <div className="p-4 sm:p-8 pb-1 sm:pb-2">
+                    <div className={`rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
+                      <h3 className={`font-bold text-xs sm:text-sm mb-4 sm:mb-5 tracking-wide text-center ${t.textLight}`}>今のあなたのモードバランス</h3>
+                      <div className="space-y-3 sm:space-y-4">
+                        {['W', 'K', 'N', 'A'].sort((a, b) => resultScores[b] - resultScores[a]).map(type => {
+                          const score = resultScores[type];
+                          const maxScore = Math.max(...Object.values(resultScores));
+                          const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
+                          const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
+                          const labels = { W: '発想型', K: '構造型', N: '共感型', A: '調整型' };
+                          return (
+                            <div key={type} className="flex items-center gap-2">
+                              <div className={`w-5 sm:w-6 flex justify-center`}>
+                                <ModeIcon type={type} className={`w-4 h-4 sm:w-5 sm:h-5 ${t.textLight}`} />
+                              </div>
+                              <div className={`w-14 sm:w-16 text-left sm:text-right text-[10px] sm:text-xs font-bold ${t.textLight}`}>{labels[type]}</div>
+                              <div className="flex-1 h-3 sm:h-4 bg-slate-200/50 rounded-full overflow-hidden">
+                                <div className={`h-full ${barColors[type]} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${percent}%` }}></div>
+                              </div>
+                              <div className={`w-8 sm:w-10 text-right text-xs font-bold ${t.text}`}>{percent}%</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-4 sm:px-8 pb-0">
+                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
+                    <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[0]}</p>
+                  </div>
+                </div>
+
+                <div className="px-4 sm:px-8 pb-4 space-y-3 sm:space-y-4">
+                  <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
+                    <RefreshCwIcon /> もう一度観る
+                  </button>
+
+                  {/* ▼ 完全版への導線エリア ▼ */}
+                  <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
+                    <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
+                      さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
+                      <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
+                    </p>
+                    <div className="space-y-2">
+                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 rounded-lg shadow-sm hover:shadow transition-all group text-white bg-gradient-to-r ${t.header}`}>
+                        <div>
+                          <div className="text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-90">仕事や人間関係で本格的に活かしたい方は</div>
+                          <div className="text-[13px] sm:text-sm font-bold">🌈 完全版RIESM™へ</div>
+                        </div>
+                        <div className="opacity-80 group-hover:opacity-100"><ExternalLinkIcon /></div>
+                      </a>
+                    </div>
+                  </div>
+                  {/* ▲ 導線エリア ここまで ▲ */}
+                </div>
+
+                <div className="px-4 sm:px-8 pb-6 sm:pb-8">
+                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
+                    <div>
+                      <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ バックスについて</h4>
+                      <p className={`text-[13px] md:text-sm font-medium opacity-80 whitespace-pre-line leading-relaxed ${t.text}`}>{backResult.desc}</p>
+                      
+                      <div className={`mt-6 p-4 sm:p-5 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
+                         <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
+                           💡 バックスとは、意識しないと使いにくい、または後回しになりやすい支援モードです。苦手や欠点ではなく、今後鍛えることで支援の幅が広がる可能性のある領域です。
+                         </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-2 sm:pt-3 space-y-2">
+                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
+                      🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
+                    </a>
+                    <div>
+                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                        © 2026 ninin consulting＆counseling
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      const q = isPractice ? practiceQuestion : currentQuestions[currentIndex];
+      const progress = isPractice ? 4 : ((currentIndex + 1) / currentQuestions.length) * 100;
+      const labelStrong = q.isSituation ? "に、強く惹かれる" : "と、強くそう思う";
+      const labelMid = q.isSituation ? "に、惹かれる" : "と、そう思う";
+
+      const topType = q.options[0].type;
+      const bottomType = q.options[1].type;
+      const topColorRGB = bgColors[topType];
+      const bottomColorRGB = bgColors[bottomType];
+      const answerChoices = [
+        {
+          index: 0,
+          hoverPos: 15,
+          caption: 'かなりA',
+          topSize: 'w-10 h-10 sm:w-12 sm:h-12',
+          bottomSize: null,
+          scoreUpdates: [{ type: q.options[0].type, weight: 4 }],
+          ariaLabel: `【${q.options[0].text}】${labelStrong}`
+        },
+        {
+          index: 1,
+          hoverPos: 30,
+          caption: 'A',
+          topSize: 'w-8 h-8 sm:w-10 sm:h-10',
+          bottomSize: null,
+          scoreUpdates: [{ type: q.options[0].type, weight: 3 }],
+          ariaLabel: `【${q.options[0].text}】${labelMid}`
+        },
+        {
+          index: 2,
+          hoverPos: 45,
+          caption: 'ややA',
+          topSize: 'w-7 h-7 sm:w-8 sm:h-8',
+          bottomSize: 'w-4 h-4 sm:w-5 sm:h-5',
+          scoreUpdates: [{ type: q.options[0].type, weight: 2 }, { type: q.options[1].type, weight: 1 }],
+          ariaLabel: `どちらかといえば【${q.options[0].text}】だが、【${q.options[1].text}】もある`
+        },
+        {
+          index: 3,
+          hoverPos: 55,
+          caption: 'ややB',
+          topSize: 'w-4 h-4 sm:w-5 sm:h-5',
+          bottomSize: 'w-7 h-7 sm:w-8 sm:h-8',
+          scoreUpdates: [{ type: q.options[1].type, weight: 2 }, { type: q.options[0].type, weight: 1 }],
+          ariaLabel: `どちらかといえば【${q.options[1].text}】だが、【${q.options[0].text}】もある`
+        },
+        {
+          index: 4,
+          hoverPos: 70,
+          caption: 'B',
+          topSize: null,
+          bottomSize: 'w-8 h-8 sm:w-10 sm:h-10',
+          scoreUpdates: [{ type: q.options[1].type, weight: 3 }],
+          ariaLabel: `【${q.options[1].text}】${labelMid}`
+        },
+        {
+          index: 5,
+          hoverPos: 85,
+          caption: 'かなりB',
+          topSize: null,
+          bottomSize: 'w-10 h-10 sm:w-12 sm:h-12',
+          scoreUpdates: [{ type: q.options[1].type, weight: 4 }],
+          ariaLabel: `【${q.options[1].text}】${labelStrong}`
+        }
+      ];
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-50 transition-colors duration-1000">
+          <div className="max-w-md w-full bg-white/90 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-white/60 animate-fade-in relative backdrop-blur-2xl">
+            
+            {/* 背景グラデーション: 上 */}
+            <div 
+              className="absolute top-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
+              style={{ 
+                height: `${100 - hoverPos + 10}%`, 
+                background: `linear-gradient(to bottom, rgba(${topColorRGB}, 0.35) 0%, rgba(${topColorRGB}, 0) 100%)`,
+              }}
+            ></div>
+
+            {/* 背景グラデーション: 下 */}
+            <div 
+              className="absolute bottom-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
+              style={{ 
+                height: `${hoverPos + 10}%`, 
+                background: `linear-gradient(to top, rgba(${bottomColorRGB}, 0.35) 0%, rgba(${bottomColorRGB}, 0) 100%)`,
+              }}
+            ></div>
+
+            <div className="relative z-20 h-1.5 bg-slate-100/50 w-full">
+              <div className="h-full bg-indigo-500 transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
+            </div>
+
+            <div className="relative z-10 p-3 sm:p-8 pb-2 sm:pb-6">
+              <div className="text-[11px] sm:text-sm font-bold text-slate-500 mb-2 sm:mb-4 tracking-wider flex justify-between drop-shadow-sm px-1">
+                <span>{isPractice ? 'PRACTICE' : 'QUESTION'}</span>
+                <span>{isPractice ? '練習' : `${currentIndex + 1} / ${currentQuestions.length}`}</span>
+              </div>
+              
+              <h2 className="min-h-[5rem] sm:min-h-[7rem] flex items-center text-base sm:text-xl font-bold text-slate-800 mb-3 sm:mb-6 leading-relaxed bg-white p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-md border border-slate-200">
+                {q.text}
+              </h2>
+              
+              <div className="space-y-3 sm:space-y-4 animate-fade-in relative z-10">
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 p-3 pt-6 sm:p-4 pt-7 shadow-sm backdrop-blur-md">
+                  <span
+                    className="absolute -top-3 left-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-black text-white ring-2 ring-white shadow-md"
+                    style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: `0 0 14px rgba(${topColorRGB}, 0.55)` }}
+                  >
+                    A
+                  </span>
+                  <p className="w-full text-center text-[13px] sm:text-base font-bold leading-relaxed text-slate-900">{q.options[0].text}</p>
+                </div>
+
+                <div className="relative rounded-2xl border border-white/70 bg-white/55 p-2 sm:p-3 shadow-inner backdrop-blur-md">
+                  <div className="grid grid-cols-6 items-start gap-0.5 sm:gap-1">
+                    {answerChoices.map(choice => {
+                      const isSelected = selectedChoiceIndex === choice.index;
+                      const isDimmed = selectedChoiceIndex !== null && !isSelected;
+                      const topShadow = isSelected ? `0 0 24px 8px rgba(${topColorRGB}, 0.55)` : `0 0 10px rgba(${topColorRGB}, 0.25)`;
+                      const bottomShadow = isSelected ? `0 0 24px 8px rgba(${bottomColorRGB}, 0.55)` : `0 0 10px rgba(${bottomColorRGB}, 0.25)`;
+
+                      return (
+                        <button
+                          key={choice.index}
+                          type="button"
+                          aria-label={choice.ariaLabel}
+                          title={choice.ariaLabel}
+                          disabled={selectedChoiceIndex !== null}
+                          onMouseEnter={() => setHoverPos(choice.hoverPos)}
+                          onMouseLeave={() => selectedChoiceIndex === null && setHoverPos(50)}
+                          onClick={() => handleChoiceSelect(choice)}
+                          className={`group flex min-w-0 flex-col items-center rounded-xl border py-1 sm:py-2 transition-all duration-300 active:scale-[0.97] disabled:cursor-wait ${isSelected ? 'border-white bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.95)]' : 'border-transparent hover:bg-white/70 hover:shadow-sm'} ${isDimmed ? 'opacity-45' : ''}`}
+                        >
+                          <div className="relative h-20 sm:h-24 w-full">
+                            <div className={`absolute top-1/2 h-px -translate-y-1/2 bg-slate-300/80 ${choice.index === 0 ? 'left-1/2 right-0' : choice.index === answerChoices.length - 1 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+                            <span className={`absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/85 px-1 py-0.5 text-[10px] sm:text-[11px] font-black leading-none shadow-sm transition-colors ${isSelected ? 'text-slate-900 ring-1 ring-white' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                              {choice.caption}
+                            </span>
+                            {choice.topSize && (
+                              <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-1">
+                                <div
+                                  className={`rounded-full transition-all duration-300 ${choice.topSize} ${isSelected ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                  style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: topShadow }}
+                                ></div>
+                              </div>
+                            )}
+                            {choice.bottomSize && (
+                              <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-1">
+                                <div
+                                  className={`rounded-full transition-all duration-300 ${choice.bottomSize} ${isSelected ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                  style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: bottomShadow }}
+                                ></div>
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 p-3 pt-6 sm:p-4 pt-7 shadow-sm backdrop-blur-md">
+                  <span
+                    className="absolute -top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-black text-white ring-2 ring-white shadow-md"
+                    style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: `0 0 14px rgba(${bottomColorRGB}, 0.55)` }}
+                  >
+                    B
+                  </span>
+                  <p className="w-full text-center text-[13px] sm:text-base font-bold leading-relaxed text-slate-900">{q.options[1].text}</p>
+                </div>
+              </div>
+
+              {isPractice && tutorialCompleted && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/25 p-4 backdrop-blur-sm">
+                  <div role="dialog" aria-modal="true" className="w-full max-w-xs rounded-2xl border border-white/80 bg-white/95 p-5 text-center shadow-2xl animate-fade-in">
+                    <p className="mb-3 text-base sm:text-lg font-extrabold leading-relaxed text-slate-900">
+                      選択方法はわかりましたでしょうか？
+                    </p>
+                    <p className="mb-5 text-sm sm:text-base font-bold leading-relaxed text-slate-700">
+                      このように自分の気持ちを素直に感じて選んで下さい。
+                    </p>
+                    <button
+                      onClick={returnToTop}
+                      className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm sm:text-base font-bold text-white shadow-sm transition-all hover:bg-slate-700 active:scale-[0.98]"
+                    >
+                      TOP画面にもどる
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-2 sm:mt-6 flex items-center justify-between border-t border-slate-200 pt-2 sm:pt-4 relative z-10 px-1">
+                <button 
+                  onClick={handleBack} 
+                  disabled={isPractice || currentIndex === 0 || selectedChoiceIndex !== null} 
+                  className={`flex items-center gap-1 text-[13px] sm:text-base font-extrabold text-slate-800 transition-opacity ${isPractice || currentIndex === 0 || selectedChoiceIndex !== null ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70'}`}
+                >
+                  <ArrowLeftIcon /> もどる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
