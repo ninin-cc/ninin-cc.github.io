@@ -124,92 +124,68 @@
     );
 
     // ==========================================
-    // 問題プール
+    // 厳選16問プール (日常コミュニケーションベース・対立軸バランス)
     // ==========================================
     const questionsPool = [
-      { id: 1, group: 'A', text: "クライエントが堂々巡りしていると感じた時、あなたは…", options: [ { text: "新しい視点を投げかける", type: "W" }, { text: "これまでの話を要約し整理する", type: "K" }] },
-      { id: 2, group: 'A', text: "話が複数のテーマに広がってきた時、あなたは…", options: [ { text: "そこに新しい意味があるか探索する", type: "W" }, { text: "論点を整理し中心テーマを見つける", type: "K" }] },
-      { id: 3, group: 'A', text: "面談の序盤で意識しやすいのは？", options: [ { text: "どんな話が出るか可能性を広げて聴く", type: "W" }, { text: "相談の背景と主訴を的確に掴む", type: "K" }] },
-      { id: 4, group: 'A', text: "クライエントが「どうしたらいいかわからない」と言う時", options: [ { text: "別の見方や小さな一歩を一緒に探す", type: "W" }, { text: "状況・気持ち・選択肢を分けて整理する", type: "K" }] },
-      { id: 5, group: 'A', text: "面談時間が残り少ない時、気になりやすいのは？", options: [ { text: "まだ話せていない大切なことがないか", type: "W" }, { text: "時間内にクロージングへ向けてまとまるか", type: "K" }] },
-      { id: 6, group: 'A', text: "クライエントの発言に矛盾を感じた時", options: [ { text: "その矛盾に隠された本音や可能性を探る", type: "W" }, { text: "矛盾点を整理し、事実関係を確認する", type: "K" }] },
-      { id: 7, group: 'A', text: "クライエントが沈黙した時、どう捉えやすいですか？", options: [ { text: "新しい気づきが生まれる瞬間かもしれない", type: "W" }, { text: "何について考えている沈黙か分析する", type: "K" }] },
-      { id: 8, group: 'A', text: "面談中、支援に行き詰まりを感じた時", options: [ { text: "思い切って視点を変えるアプローチを試みる", type: "W" }, { text: "見立てを振り返り、プロセスを再評価する", type: "K" }] },
-      { id: 9, group: 'A', text: "クライエントの強みを見つけた時", options: [ { text: "その強みを活かした未来の可能性を広げる", type: "W" }, { text: "その強みが現在の課題にどう影響しているか分析する", type: "K" }] },
+      // 1. 発想(W) vs 構造(K) (3問)
+      { id: 1, text: "知人の相談に乗っている時、話が堂々巡りしていると感じたら、あなたは…", options: [ { text: "全く別の新しい話題や視点を振ってみる", type: "W" }, { text: "「つまりこういうこと？」とこれまでの話を整理して返す", type: "K" }] },
+      { id: 2, text: "「どうしたらいいかわからない」と愚痴をこぼされた時、あなたは…", options: [ { text: "「じゃあ、こんなのはどう？」といくつかアイデアを出す", type: "W" }, { text: "「今どういう状況なの？」と問題点を整理しようとする", type: "K" }] },
+      { id: 3, text: "家でちょっとした組み立て家具を作ることになりました。あなたの進め方は？", options: [ { text: "「大体わかるでしょ」と完成図を想像し、直感で組み立て始める", type: "W" }, { text: "説明書通りに部品を並べ、順番通りに正確に組み立てる", type: "K" }] },
       
-      { id: 10, group: 'B', text: "クライエントが急に大きな決断を口にした時", options: [ { text: "その前向きなエネルギーを後押しする", type: "W" }, { text: "決断に伴うリスクや現実的な影響を考える", type: "A" }] },
-      { id: 11, group: 'B', text: "面談中、クライエントの感情が高ぶってきた時", options: [ { text: "その感情の奥にある本当の願いを探る", type: "W" }, { text: "心理的負荷が高すぎないか安全に配慮する", type: "A" }] },
-      { id: 12, group: 'B', text: "クライエントが新しい行動を起こそうとしている時", options: [ { text: "「やってみましょう！」と可能性を広げる", type: "W" }, { text: "うまくいかなかった時の備えを一緒に考える", type: "A" }] },
-      { id: 13, group: 'B', text: "これまでと全く違うテーマが出てきた時", options: [ { text: "新鮮な展開として興味深く聴く", type: "W" }, { text: "本題から外れることの面談への影響を懸念する", type: "A" }] },
-      { id: 14, group: 'B', text: "職場での対人関係トラブルの相談の際", options: [ { text: "本人の捉え方を変えるリフレーミングを試みる", type: "W" }, { text: "パワハラ等、現実的な環境リスクがないか察知する", type: "A" }] },
-      { id: 15, group: 'B', text: "クライエントが黙り込んでいる時", options: [ { text: "次にどんな言葉が出るか期待して待つ", type: "W" }, { text: "沈黙が苦痛になっていないか負担を気にかける", type: "A" }] },
-      { id: 16, group: 'B', text: "面談の目標設定をする時、意識しやすいのは？", options: [ { text: "本人が本当にワクワクする理想の姿", type: "W" }, { text: "確実で無理のない、安全な目標", type: "A" }] },
-      { id: 17, group: 'B', text: "面談の終盤、クライエントがすっきりした顔をしている時", options: [ { text: "次のステップへの期待感を共有する", type: "W" }, { text: "一時的な高揚感の後の揺り戻し（リスク）に備える", type: "A" }] },
-      { id: 18, group: 'B', text: "支援方針に迷った時", options: [ { text: "直感を信じて、新しい問いを投げかけてみる", type: "W" }, { text: "無理に動かず、現状の安全を維持する関わりにとどめる", type: "A" }] },
+      // 2. 発想(W) vs 調整(A) (3問)
+      { id: 4, text: "同僚や友人が「会社辞めて起業しようかな」と急に言い出した時、あなたは…", options: [ { text: "「いいね！何やるの？」とワクワクして聞く", type: "W" }, { text: "「生活やリスクは大丈夫なの？」と現実的に考える", type: "A" }] },
+      { id: 5, text: "友人が「明日からダイエットする！」と宣言した時、あなたは…", options: [ { text: "「頑張れ！応援するよ！」と背中を押す", type: "W" }, { text: "「無理な計画じゃない？続かなくなるよ」と心配する", type: "A" }] },
+      { id: 6, text: "SNS等で新しい面白そうなサービスや流行りの広告を見かけた時、あなたは…", options: [ { text: "「どんな仕組みだろう？」と好奇心でクリックして詳細を見てみる", type: "W" }, { text: "「何かトラブルがあったら嫌だな」と少し慎重に様子を見る", type: "A" }] },
 
-      { id: 19, group: 'C', text: "クライエントが涙ぐんでいる場面", options: [ { text: "気持ちに寄り添い、静かに待つ", type: "N" }, { text: "なぜ涙が出たのか、その背景を頭の中で整理する", type: "K" }] },
-      { id: 20, group: 'C', text: "クライエントの話がまとまらず、長く続いている時", options: [ { text: "言葉にならない思いをまずは受け止める", type: "N" }, { text: "要点を掴み、話を整理して返す機会をうかがう", type: "K" }] },
-      { id: 21, group: 'C', text: "クライエントが怒りをあらわにしている時", options: [ { text: "怒りの感情そのものに共感し、受け止める", type: "N" }, { text: "怒りの原因となっている出来事と認知を分析する", type: "K" }] },
-      { id: 22, group: 'C', text: "面談の冒頭、クライエントが緊張している時", options: [ { text: "柔らかな雰囲気を作り、安心感を提供する", type: "N" }, { text: "今日の面談の目的や枠組みを明確に伝える", type: "K" }] },
-      { id: 23, group: 'C', text: "クライエントが「つらい」と繰り返す時", options: [ { text: "そのつらさに深く共鳴し、寄り添う", type: "N" }, { text: "「つらい」と感じる具体的な状況を特定しようとする", type: "K" }] },
-      { id: 24, group: 'C', text: "面談の振り返りをする時、あなたの関心は？", options: [ { text: "クライエントと良い関係性が築けたか", type: "N" }, { text: "適切な見立てができ、目標に向かって進めたか", type: "K" }] },
-      { id: 25, group: 'C', text: "沈黙が続いている時、あなたはどうしやすいですか？", options: [ { text: "言葉が出ない苦しさに共感し、一緒にその場にいる", type: "N" }, { text: "これまでの会話を振り返り、沈黙の意味を分析する", type: "K" }] },
-      { id: 26, group: 'C', text: "面談終盤、まだ感情が大きく揺れている時", options: [ { text: "時間が許す限り、その感情に寄り添い続ける", type: "N" }, { text: "安全に終わらせるため、感情を収束・整理させる", type: "K" }] },
-      { id: 27, group: 'C', text: "ロールプレイの練習で指摘されたいのは", options: [ { text: "受容的な態度や傾聴の姿勢について", type: "N" }, { text: "主訴の把握や面談の構造化について", type: "K" }] },
+      // 3. 発想(W) vs 共感(N) (2問)
+      { id: 7, text: "相手が悩み事を一生懸命話している時、あなたの中で湧き上がりやすい意識は？", options: [ { text: "「こうしたらもっと良くなるのに！」という新しい視点や解決策", type: "W" }, { text: "「それは大変だったね、辛いよね」と、まずは気持ちに寄り添うこと", type: "N" }] },
+      { id: 8, text: "次の休日に何をするか決める時、あなたがより大切にしたいのは？", options: [ { text: "「行ったことのない新しい場所」を求めてワクワクする体験", type: "W" }, { text: "「一緒に行く人が楽しんでくれるか、お互い心地よく過ごせるか」", type: "N" }] },
 
-      { id: 28, group: 'D', text: "クライエントが自分を強く責めている時", options: [ { text: "その苦しみに深く寄り添い、受け止める", type: "N" }, { text: "自責の念が強すぎないか、精神的な安全性を気にかける", type: "A" }] },
-      { id: 29, group: 'D', text: "クライエントが「会社を辞めたい」と言った時", options: [ { text: "その切実な思いをまずは受け止める", type: "N" }, { text: "辞めた後の生活など、現実的なリスクが頭をよぎる", type: "A" }] },
-      { id: 30, group: 'D', text: "クライエントの話に矛盾や曖昧さを感じた時", options: [ { text: "矛盾も含めて、今のありのままを受け入れる", type: "N" }, { text: "曖昧なまま進むことで生じる、後々の誤解やリスクを警戒する", type: "A" }] },
-      { id: 31, group: 'D', text: "次回予約を決める時、意識しやすいのは？", options: [ { text: "クライエントの気持ちが落ち着くタイミング", type: "N" }, { text: "期間が空きすぎることによるリスクや負担", type: "A" }] },
-      { id: 32, group: 'D', text: "面談中、あなたが少し違意感を覚えた時", options: [ { text: "一旦脇に置き、相手の感情に集中する", type: "N" }, { text: "何らかのリスクのサインではないかと警戒する", type: "A" }] },
-      { id: 33, group: 'D', text: "クライエントが重いトラウマ体験を語り始めた時", options: [ { text: "痛みに寄り添い、そのまま話を聴き続ける", type: "N" }, { text: "これ以上話すことでトラウマが再燃しないか安全を確保する", type: "A" }] },
-      { id: 34, group: 'D', text: "クライエントが支援者に強く依存していると感じた時", options: [ { text: "頼ってくれる思いを受け止め、包み込む", type: "N" }, { text: "依存がエスカレートするリスクを考え、適切な距離を保つ", type: "A" }] },
-      { id: 35, group: 'D', text: "「大丈夫です」と笑顔で言ったが、無理をしているように見える時", options: [ { text: "笑顔の裏にある本当の気持ちに優しく寄り添う", type: "N" }, { text: "無理をしていることによる心身の限界（リスク）を危惧する", type: "A" }] },
-      { id: 36, group: 'D', text: "スーパービジョンを受けるとしたら、相談したいのは", options: [ { text: "クライエントの感情に巻き込まれそうになること", type: "N" }, { text: "慎重になりすぎて面談が停滞してしまうこと", type: "A" }] }
-    ];
+      // 4. 構造(K) vs 調整(A) (2問)
+      { id: 9, text: "会議や話し合いの終了時間が迫っているのに、まだ意見がまとまらない時、あなたは…", options: [ { text: "時間内に結論を出すため、論点を絞って整理しようとする", type: "K" }, { text: "「無理に決めると後で不具合が出るかも」と、一旦持ち帰るなど慎重に進める", type: "A" }] },
+      { id: 10, text: "旅行やイベントの計画を立てる時、あなたが最も安心する進め方は？", options: [ { text: "時間やスケジュール、役割分担を明確に決めておくこと", type: "K" }, { text: "現地の天気や体調のリスク、不測の事態に備えた代替案を考えておくこと", type: "A" }] },
 
-    const situationQuestionsPool = [
-      { id: 101, isSituation: true, text: "相談者が森の分かれ道で立ち止まっています。右は安全ですが退屈、左は明るいですが見通せません。あなたの意識はどちらに向きやすいですか？", options: [ { text: "左の道の先にある新しい景色や可能性", type: "W" }, { text: "どちらの道を選ぶにせよ、その決断に至る理由の整理", type: "K" }] },
-      { id: 102, isSituation: true, text: "旅人が重い荷物を抱えて宿にたどり着きました。あなたが最初にかけたい言葉のニュアンスは？", options: [ { text: "「重かったでしょう。まずはゆっくり休んでください」", type: "N" }, { text: "「どのような荷物ですか？整理して軽くしましょう」", type: "K" }] },
-      { id: 103, isSituation: true, text: "灯台の前で、船が進むか戻るか迷っています。あなたが船長と話すなら？", options: [ { text: "「この先に、まだ見ぬ素晴らしい大陸があるかもしれません」", type: "W" }, { text: "「嵐が来る前に、安全な港へ戻ることも大切です」", type: "A" }] },
-      { id: 104, isSituation: true, text: "小さな芽が、嵐の前で震えています。あなたが寄り添うなら？", options: [ { text: "その震えに寄り添い、風除けとなって見守る", type: "N" }, { text: "嵐に耐えられるよう、支柱を立てたり安全な場所へ移す", type: "A" }] },
-      { id: 105, isSituation: true, text: "地図を持たない旅人が、遠くの町を見つめています。あなたはどう関わりますか？", options: [ { text: "「あの町でどんな出会いがあるか、想像してみましょう」", type: "W" }, { text: "「あそこへ向かうための現在地とルートを一緒に確認しましょう」", type: "K" }] },
-      { id: 106, isSituation: true, text: "古い時計が止まってしまいました。持ち主は途方に暮れています。", options: [ { text: "持ち主の悲しい気持ちに寄り添う", type: "N" }, { text: "なぜ止まったのか、構造を分析して修理の方法を考える", type: "K" }] },
-      { id: 107, isSituation: true, text: "目の前に、誰も開けたことのない古い扉があります。", options: [ { text: "何があるかワクワクして、扉を開けることを促す", type: "W" }, { text: "危険がないか、慎重に確認してから開けるか話し合う", type: "A" }] },
-      { id: 108, isSituation: true, text: "深い霧の中で、周りがよく見えません。あなたはどうしますか？", options: [ { text: "不安な気持ちを受け止め、隣で静かに待つ", type: "N" }, { text: "足元の安全を確保し、動かずに霧が晴れるのを待つ", type: "A" }] },
-      { id: 109, isSituation: true, text: "パズルピースがバラバラに散らばっています。", options: [ { text: "完成図を想像し、ピースを種類ごとに分類・整理する", type: "K" }, { text: "既存の枠にとらわれず、全く新しい形を作れないか試す", type: "W" }] }
+      // 5. 構造(K) vs 共感(N) (3問)
+      { id: 11, text: "パートナーや友人が感情的になって怒っている時、あなたは…", options: [ { text: "「何が原因だったの？」と、事実関係を論理的に整理しようとする", type: "K" }, { text: "「怒るのも無理ないよ」と、まずは感情に共感する", type: "N" }] },
+      { id: 12, text: "初めて会う人と話す時、あなたがまず意識するのは？", options: [ { text: "今日会った目的や、お互いの立場や共通点をクリアにすること", type: "K" }, { text: "相手がリラックスできるような、温かい雰囲気を作ること", type: "N" }] },
+      { id: 13, text: "子供や後輩が「もうやりたくない」と繰り返す時、あなたは…", options: [ { text: "「何が嫌なの？人間関係？内容？」と具体的な理由を特定しようとする", type: "K" }, { text: "「やりたくないんだね、辛いね」と気持ちをそのまま受け入れる", type: "N" }] },
+
+      // 6. 調整(A) vs 共感(N) (3問)
+      { id: 14, text: "知り合いが「私ってダメだな」と強く落ち込んでいる時、あなたは…", options: [ { text: "「そんなことないよ、頑張ってるよ」と慰め、深く共感する", type: "N" }, { text: "落ち込みすぎて心身のバランスを崩さないか、そっと気にかける", type: "A" }] },
+      { id: 15, text: "次の約束を決める時、あなたが優先しやすいのは？", options: [ { text: "お互いが「会いたい！」と盛り上がったタイミング", type: "N" }, { text: "お互いのスケジュールに無理がないか、負担にならないか", type: "A" }] },
+      { id: 16, text: "「全然大丈夫だよ！」と笑顔で言う相手が、無理をしているように見える時、あなたは…", options: [ { text: "「本当は辛いんだよね」とその心の内に優しく寄り添う", type: "N" }, { text: "「このままだと体調を崩してしまうのではないか」と現実的な限界を心配する", type: "A" }] }
     ];
 
     const resultsData = {
       W: {
         title: "発想型（ワンダー）",
-        subTitle: "（可能性・視点転換・リフレーミング）",
+        subTitle: "（自由・発見・挑戦）",
         detail: [
-          "あなたは、クライエントの話の中から可能性や別の見方を見つける力が自然に働きやすい支援者です。未来への展望やリフレーミング、小さな行動のきっかけを見出すことに長けています。\n\n一方で、可能性が見える分、助言や提案が早くなり、クライエント自身の言葉が育つ前に先回りしてしまうことがあります。\n\n浮かんだアイデアをすぐに出すのではなく、「これは相手の気づきか、自分の発想か」と一度確認することで、よりクライエント中心 of 支援になります。練習では、発想を保留し、問いに変えることを意識してみてください。"
+          "あなたは、会話の中から「面白さ」や「新しい可能性」を見つける力が、自然に働きやすい傾向があるかもしれません。相手の話にインスピレーションを受け、ワクワクするようなアイデアを提案したり、場の空気を明るくしたりすることに長けている可能性があります。\n\n一方で、次々と新しい発想が浮かぶため、話があちこちに飛んだり、相手がまだ整理できていない段階で「解決策（アイデア）」を先走りして伝えてしまうことがあるかもしれません。\n\n思いついたアイデアをすぐに伝えるのではなく、「今、相手は解決策を求めているのか、ただ聞いてほしいのか？」と一度立ち止まることで、より相手のペースに寄り添ったコミュニケーションになる可能性があります。相手の反応を見ながら、発想のアクセルを調整してみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-amber-50", border: "border-amber-200", cardBg: "bg-amber-100/50", header: "from-amber-400 to-orange-500", text: "text-amber-900", textLight: "text-amber-700", btnBg: "bg-amber-100", btnHover: "hover:bg-amber-200" }
       },
       K: {
         title: "構造型（キーパー）",
-        subTitle: "（整理・分析・見立て）",
+        subTitle: "（論理・整理・信念）",
         detail: [
-          "あなたは、クライエントの話を整理し、背景や流れを捉える力が自然に働きやすい支援者です。面談の全体像をつかみ、限られた時間の中で話を進める安定感があります。\n\n一方で、理解が早い分、クライエント自身がまだ言葉にしきれていない感情や迷いを、少し先に整理してしまうことがあります。\n\n「わかった」と感じたところから、もう一呼吸待つことで、相手の内省がさらに深まりやすくなります。練習では、感情語の反映と、沈黙を待つ力を意識してみてください。"
+          "あなたは、相手の話を論理的に整理し、状況を正確に把握する力が、自然に働きやすい傾向があるかもしれません。感情に流されず、「何が問題なのか」「どうすれば解決するのか」という道筋を立て、的確なアドバイスをする安定感があると言えそうです。\n\n一方で、物事を整理・解決しようとする力が強いため、相手がただ感情に寄り添ってほしいだけの時に、「それはつまり〇〇だね」と正論をぶつけてしまい、相手に「冷たい」と誤解されてしまうことがあるかもしれません。\n\n「わかった」と感じたところから、すぐに結論を出すのではなく、もう一呼吸置いて「相手の感情」にフォーカスする時間を作ることで、関係性がより深まりやすくなる可能性があります。解決を急がず、まずは共感を示すことを意識してみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-blue-50", border: "border-blue-200", cardBg: "bg-blue-100/50", header: "from-blue-500 to-indigo-600", text: "text-blue-900", textLight: "text-blue-700", btnBg: "bg-blue-100", btnHover: "hover:bg-blue-200" }
       },
       N: {
         title: "共感型（ナーチャー）",
-        subTitle: "（受容・感情理解・関係構築）",
+        subTitle: "（受容・保護・調和）",
         detail: [
-          "あなたは、クライエントが安心して話せる場をつくる力が自然に働きやすい支援者です。表情や声の変化を受け取り、相手の感情に自然に寄り添うことができます。\n\n一方で、話を受けとめる力が強い分、テーマが広がりすぎたり、主訴がぼやけたりすることがあります。\n\n共感を土台にしながら、時折「今、何が一番大切なテーマなのか」をやわらかく確認すると、面談の輪郭が見えやすくなります。練習では、主訴の一文化と、面談の目標を意識した構造化を心がけてみてください。"
+          "あなたは、相手の感情に深く寄り添い、安心できる居場所を作る力が、自然に働きやすい傾向があるかもしれません。相手の言葉の裏にある「辛さ」や「喜び」に共鳴し、温かい態度で受け入れるため、周囲から「話しやすい」「優しい」と頼りにされることが多い可能性があります。\n\n一方で、相手の感情を受け止める力が強い分、ネガティブな感情に引きずられて自分まで疲弊してしまったり、優しさゆえに厳しいこと（相手のためになる指摘）が言えなかったりすることがあるかもしれません。\n\n共感を大切にしながらも、相手の問題と自分の感情の境界線を引くことを意識すると、コミュニケーションの負担が減りやすくなる可能性があります。「共感」と「同情」は違う、という視点を持ってみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-pink-50", border: "border-pink-200", cardBg: "bg-pink-100/50", header: "from-pink-400 to-rose-500", text: "text-pink-900", textLight: "text-pink-700", btnBg: "bg-pink-100", btnHover: "hover:bg-pink-200" }
       },
       A: {
         title: "調整型（アダプター）",
-        subTitle: "（安全配慮・リスク察知・慎重さ）",
+        subTitle: "（洞察・適応・安全配慮）",
         detail: [
-          "あなたは、心理的安全性や現実的リスクに気づく力が自然に働きやすい支援者です。クライエントの負荷、環境要因、慎重に扱うべきテーマを見落としにくい安定感があります。\n\n一方で、リスクを察知する力が強い分、可能性が芽生えた瞬間に「危ないかもしれない」と感じ、無意識にブレーキをかけてしまうことがあります。\n\n安全配慮を大切にしながらも、判断を急がず、クライエント自身が不安や可能性を言葉にする余白を残すことが大切です。練習では、警告を助言ではなく問いに変え、可能性を閉じない関わりを意識してみてください。"
+          "あなたは、その場の空気を読み、相手の期待や周囲の状況（リスク）を察知する力が、自然に働きやすい傾向があるかもしれません。トラブルの火種を未然に防いだり、相手の負担にならないよう細やかな配慮をしたりする、縁の下の力持ちのような安定感があると言えそうです。\n\n一方で、周囲の空気を読んだりリスクを回避しようとする力が強い分、自分の本当の気持ちや意見を抑え込んでしまったり、慎重になりすぎてチャンスを逃してしまうことがあるかもしれません。\n\n安全配慮や気遣いはあなたの素晴らしい才能ですが、時には「自分はどうしたいか」という直感（ワンダー）の声にも耳を傾けることで、コミュニケーションの幅が広がる可能性があります。小さなことからでも、自己主張を試してみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-cyan-50", border: "border-cyan-200", cardBg: "bg-cyan-100/50", header: "from-cyan-400 to-teal-500", text: "text-cyan-900", textLight: "text-cyan-700", btnBg: "bg-cyan-100", btnHover: "hover:bg-cyan-200" }
       }
@@ -217,13 +193,13 @@
 
     // --- ダブルフロント用アドオンテキスト ---
     const secondAdditions = {
-      W: "さらに、発想型（ワンダー）の「可能性や視点転換の力」も同時に強く働いているため、ただ枠に収まるだけでなく、新しい気づきや選択肢も積極的に探っていける素晴らしいバランスです。",
-      K: "さらに、構造型（キーパー）の「整理・分析の力」も同時に強く働いているため、勢い任せになるのではなく、しっかりと現実的な形に落とし込みながら面談を進めていける非常に安定した状態です。",
-      N: "さらに、共感型（ナーチャー）の「他者への思いやりや受容の力」も同時に強く働いているため、クライエントを温かく包み込み、深い関係性を保ちながら進んでいける状態です。",
-      A: "さらに、調整型（アダプター）の「慎重さやリスク回避の視点」も同時に強く働いているため、細部まで気を配り、クライエントの負荷や失敗を防ぐ確かな足場も確保できているとても頼もしい状態です。"
+      W: "さらに、発想型（ワンダー）の「自由や楽しさを求める力」も同時に強く働いている可能性があるため、ただ枠に収まるだけでなく、会話の中に新しい発見やワクワク感を生み出せる、とても魅力的なバランスかもしれません。",
+      K: "さらに、構造型（キーパー）の「論理的に整理・分析する力」も同時に強く働いている可能性があるため、感情や勢いだけでなく、しっかりと地に足のついた現実的な視点も持ち合わせている、非常に頼もしい状態かもしれません。",
+      N: "さらに、共感型（ナーチャー）の「他者への思いやりや受容の力」も同時に強く働いている可能性があるため、相手の心を温かく包み込み、深い信頼関係を築きながら対話を進めていける状態かもしれません。",
+      A: "さらに、調整型（アダプター）の「空気を読む力や慎重さ」も同時に強く働いている可能性があるため、相手の負担や周囲への影響にも細やかに気を配れる、とてもバランスの取れた大人のコミュニケーションができている状態かもしれません。"
     };
 
-    // --- ダブルフロント用テーマカラー（既存デザイン踏襲） ---
+    // --- ダブルフロント用テーマカラー ---
     const doubleThemes = {
       K_W: { bg: "bg-teal-50", border: "border-teal-200", cardBg: "bg-teal-100/50", header: "from-amber-400 to-blue-500", text: "text-teal-900", textLight: "text-teal-700", btnBg: "bg-teal-100", btnHover: "hover:bg-teal-200" },
       N_W: { bg: "bg-orange-50", border: "border-orange-200", cardBg: "bg-orange-100/50", header: "from-amber-400 to-pink-400", text: "text-orange-900", textLight: "text-orange-700", btnBg: "bg-orange-100", btnHover: "hover:bg-orange-200" },
@@ -243,7 +219,7 @@
 
     const practiceQuestion = {
       isPractice: true,
-      text: "喉が渇いて何かを飲もうとしています",
+      text: "喉が渇いて何かを飲おうとしています",
       options: [
         { text: "紅茶を飲む", type: "A" },
         { text: "麦茶を飲む", type: "N" }
@@ -280,19 +256,14 @@
           [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
         return newArray;
-      }
+      };
 
       const generateTodayQuestions = () => {
-        const getRandom = (arr, n) => shuffleArray([...arr]).slice(0, n);
-        let textSelected = [
-          ...getRandom(questionsPool.filter(q => q.group === 'A'), 3),
-          ...getRandom(questionsPool.filter(q => q.group === 'B'), 3),
-          ...getRandom(questionsPool.filter(q => q.group === 'C'), 3),
-          ...getRandom(questionsPool.filter(q => q.group === 'D'), 3),
-        ];
-        textSelected = shuffleArray(textSelected).map(q => ({ ...q, options: shuffleArray(q.options) }));
-        let situationSelected = shuffleArray(situationQuestionsPool).slice(0, 3).map(q => ({ ...q, options: shuffleArray(q.options) }));
-        return [...textSelected, ...situationSelected];
+        // 厳選された16問すべてをランダムにシャッフルして出題
+        return shuffleArray(questionsPool).map(q => ({
+          ...q,
+          options: shuffleArray(q.options)
+        }));
       };
 
       const startQuiz = () => {
@@ -382,20 +353,12 @@
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
             isDouble = true;
-            // テーマ取得用にアルファベット順のキーを作っておく（既存テーマ流用のため）
             frontKey = [maxType, secondType].sort().join('_');
           }
         }
 
         setResultScores(scores);
-        // 詳細は3パターンのうちどれか1つをランダムに選ぶ
-        const detailIndex = 0; // 今回のバージョンでは1パターンしか設定していないので固定
-        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
-      };
-
-      const showToast = (message) => {
-        setToastMessage(message);
-        setTimeout(() => setToastMessage(''), 5000);
+        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: 0 });
       };
 
       if (!started) {
@@ -406,10 +369,10 @@
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-6">
                   <span className="text-3xl sm:text-4xl">🌈</span>
                 </div>
-                <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">支援モードチェック</span></h1>
+                <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">コミュニケーション・モードチェック</span></h1>
               </div>
               
-              {/* ▼ アコーディオンに変更した説明文 ▼ */}
+              {/* ▼ アコーディオンに変更した説明文 (デフォルトでオープン) ▼ */}
               <details open className="mb-8 group border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden text-left">
                 <summary className="cursor-pointer font-bold text-slate-700 p-4 bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
                   <span className="flex items-center gap-2">アプリの説明と注意</span>
@@ -441,17 +404,16 @@
                 <div className="flex items-start gap-3 mb-4">
                   <div className="mt-0.5"><InfoIcon /></div>
                   <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
-                    <span className="font-bold">面談スタイルは状況によっても揺らぎます。</span><br/>
-                    このアプリは、変化する支援モードを観る「鏡」のようなものです。<br/>
+                    <span className="font-bold">コミュニケーションのモードは、相手や状況によって揺らぎます。</span><br/>
+                    このアプリは、変化するモードを観る「鏡」のようなものです。<br/>
                     基礎体温を測るように、気になった時に何度でも試してみてください。<br/>
-                    逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、自己研鑽の大きな一歩です。
+                    逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、自己理解の大きな一歩です。
                   </p>
                 </div>
                 <div className="bg-white/60 rounded-lg p-2.5 text-[11px] sm:text-xs text-blue-900 font-medium flex items-center justify-center gap-1.5 shadow-sm border border-blue-100/50">
                   <span className="text-sm">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】すると便利です
                 </div>
               </div>
-              {/* ▲ インフォメーションエリア ここまで ▲ */}
 
               {/* ▼ 完全版への導線エリア ▼ */}
               <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
@@ -469,7 +431,6 @@
                   </a>
                 </div>
               </div>
-              {/* ▲ 導線エリア ここまで ▲ */}
 
               <div className="mt-8 text-center">
                 <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
@@ -489,7 +450,6 @@
       }
 
       if (resultType) {
-        // ダブルフロント時の情報を動的生成
         let result;
         if (resultType.isDouble) {
           const frontData = resultsData[resultType.front];
@@ -508,10 +468,10 @@
 
         const t = result.theme;
         const backsData = {
-          W: { title: "発想型（ワンダー）", desc: "あなたは、面談を確実かつ安全に進めたり、相手に深く寄り添ったりする力が自然に働きやすい一方で、クライエントに新しい視点を投げかけたり、現状の枠組みを外すようなアプローチは、意識しないと出てきにくいかもしれません。\n突飛なアイデアよりも、地に足のついた支援を大切にする傾向があります。" },
-          K: { title: "構造型（キーパー）", desc: "あなたは、相手の感情に寄り添ったり、柔軟な発想で話を広げたりする力が自然に働きやすい一方で、話を論理的に整理したり、時間内に面談をまとめる関わりは、意識しないと後回しになりやすいかもしれません。\n枠にはめるよりも、その場の自然な流れを大切にする傾向があります。" },
-          N: { title: "共感型（ナーチャー）", desc: "あなたは、話を整理して見立てを立てたり、解決への道筋を考えたりする力が自然に働きやすい一方で、相手の感情にただ浸り、何もしないで待つような関わりは、意識しないと短くなりやすいかもしれません。\nただ受け止めるよりも、前に進むための具体的な支援を大切にする傾向があります。" },
-          A: { title: "調整型（アダプター）", desc: "あなたは、相手の可能性を信じて背中を押したり、感情に深く寄り添う力が自然に働きやすい一方で、現実的なリスクを指摘したり、心理的負荷を警戒してブレーキを踏む関わりは、意識しないと後回しになりやすいかもしれません。\n恐れずに一歩を踏み出すことを大切にする傾向があります。" }
+          W: { title: "発想型（ワンダー）", desc: "あなたは、対話を論理的に進めたり、相手の感情に深く寄り添ったりする力が自然に働きやすい傾向がある一方で、「とりあえず面白そうだからやってみよう」と直感で動いたり、場のノリに合わせて自由な発想を広げたりするモードは、意識しないと出てきにくいかもしれません。\n計画性や安全性を大切にする傾向がありそうです。" },
+          K: { title: "構造型（キーパー）", desc: "あなたは、相手の感情に寄り添ったり、柔軟な発想で会話を広げたりする力が自然に働きやすい傾向がある一方で、話を論理的に整理して結論を出したり、ルールや計画に基づいて客観的に判断を下したりするモードは、意識しないと後回しになりやすいかもしれません。\n枠にはめるよりも、その場の自然な流れや感情を大切にする傾向がありそうです。" },
+          N: { title: "共感型（ナーチャー）", desc: "あなたは、問題を解決するための道筋を考えたり、リスクを回避して安全に物事を進めたりする力が自然に働きやすい傾向がある一方で、相手のネガティブな感情にただ黙って共感したり、結論を出さずに相手のペースに合わせて待つようなモードは、意識しないと短くなりやすいかもしれません。\nただ受け止めるよりも、前に進むための合理的なサポートを大切にする傾向がありそうです。" },
+          A: { title: "調整型（アダプター）", desc: "あなたは、相手の可能性を信じて背中を押したり、感情に深く寄り添ったりする力が自然に働きやすい傾向がある一方で、周囲の空気を読んで慎重に行動したり、考えられるリスクを事前に指摘してブレーキを踏んだりするモードは、意識しないと後回しになりやすいかもしれません。\n恐れずに自分や相手の想いを優先して一歩を踏み出すことを大切にする傾向がありそうです。" }
         };
         const backResult = backsData[resultType.back];
 
@@ -607,7 +567,6 @@
                       </a>
                     </div>
                   </div>
-                  {/* ▲ 導線エリア ここまで ▲ */}
                 </div>
 
                 <div className="px-4 sm:px-8 pb-6 sm:pb-8">
@@ -618,7 +577,7 @@
                       
                       <div className={`mt-6 p-4 sm:p-5 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
                          <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
-                           💡 バックスとは、意識しないと使いにくい、または後回しになりやすい支援モードです。苦手や欠点ではなく、今後鍛えることで支援の幅が広がる可能性のある領域です。
+                           💡 バックスとは、意識しないと使いにくい、または後回しになりやすい心のモードです。欠点ではなく、今後鍛えることでコミュニケーションの幅が広がる可能性のある領域かもしれません。
                          </p>
                       </div>
                     </div>
@@ -847,6 +806,7 @@
         </div>
       );
     }
+    
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
