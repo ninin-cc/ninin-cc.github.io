@@ -63,7 +63,7 @@
 
     .hero-copy {
       width: min(720px, 100%);
-      padding: 72px 0 230px;
+      padding: 72px 0 190px;
     }
 
     .eyebrow {
@@ -96,11 +96,71 @@
       font-weight: 500;
     }
 
-    .hero-actions {
+    .anchor-note {
+      width: min(620px, 100%);
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.26);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.7;
+      backdrop-filter: blur(2px);
+    }
+
+    .anchor-note p {
+      margin: 0 0 8px;
+    }
+
+    .anchor-note summary {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      margin-top: 34px;
+      color: #fcd34d;
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .anchor-note summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .anchor-note summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .anchor-note[open] summary {
+      margin-bottom: 8px;
+    }
+
+    .anchor-note[open] summary::after {
+      content: "-";
+    }
+
+    .anchor-note p:last-child {
+      margin-bottom: 0;
+    }
+
+    .anchor-note rt {
+      font-size: 9px;
+      font-weight: 700;
+      opacity: 0.88;
+    }
+
+    .hero-actions {
+      display: grid;
+      grid-template-columns: 250px 160px;
+      gap: 12px;
+      width: min(100%, 422px);
+      margin-top: 24px;
     }
 
     .trial-actions {
@@ -109,17 +169,19 @@
       align-items: flex-start;
       gap: 8px;
       margin-top: 14px;
+      width: min(100%, 422px);
     }
 
-    .hero-guide-trial {
-      position: absolute;
-      left: 50%;
-      bottom: 118px;
-      z-index: 2;
-      width: min(1080px, calc(100% - 32px));
-      margin-top: 0;
-      align-items: center;
-      transform: translateX(-50%);
+    .trial-button-group {
+      display: grid;
+      grid-template-columns: 250px 160px;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .hero-actions .button,
+    .trial-button-group .button {
+      width: 100%;
     }
 
     .button {
@@ -163,6 +225,17 @@
       border-color: rgba(255, 255, 255, 0.72);
       color: var(--white);
       background: rgba(255, 255, 255, 0.08);
+    }
+
+    .button-accent {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .button-outline {
+      border-color: var(--line);
+      background: var(--white);
+      color: var(--ink);
     }
 
     .guide-strip {
@@ -288,6 +361,45 @@
       font-size: 14px;
     }
 
+    .notice-band {
+      background: var(--paper-soft);
+    }
+
+    .principle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .principle {
+      padding: 22px;
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 10px 24px rgba(23, 23, 23, 0.06);
+    }
+
+    .principle:nth-child(2) {
+      border-left-color: var(--indigo);
+    }
+
+    .principle:nth-child(3) {
+      border-left-color: var(--rose);
+    }
+
+    .principle h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .principle p {
+      margin: 0;
+      color: #4a4a4a;
+      font-size: 14px;
+    }
+
     .worlds {
       background: #111827;
       color: var(--white);
@@ -354,6 +466,348 @@
       font-size: 14px;
     }
 
+    .manual {
+      background: var(--paper);
+    }
+
+    .manual .section-inner {
+      width: min(85%, 1180px);
+    }
+
+    .flow-list {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 16px;
+      margin: 34px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: flow;
+    }
+
+    .flow-step {
+      position: relative;
+      --step-bg: var(--white);
+      --step-border: var(--line);
+      --step-accent: var(--teal);
+      min-height: 188px;
+      padding: 16px 12px;
+      border: 1px solid var(--step-border);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--step-bg), var(--white));
+      counter-increment: flow;
+      box-shadow: 0 10px 24px rgba(23, 23, 23, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+    }
+
+    .flow-step::before {
+      content: counter(flow, decimal-leading-zero);
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: var(--step-accent);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "▶";
+      position: absolute;
+      top: 50%;
+      right: -18px;
+      z-index: 2;
+      transform: translateY(-50%);
+      color: var(--step-accent);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .flow-step:nth-child(1) {
+      --step-bg: #fff1f2;
+      --step-border: #fecdd3;
+      --step-accent: #ef6f7a;
+    }
+
+    .flow-step:nth-child(2) {
+      --step-bg: #fff7ed;
+      --step-border: #fed7aa;
+      --step-accent: #f59e0b;
+    }
+
+    .flow-step:nth-child(3) {
+      --step-bg: #fefce8;
+      --step-border: #fde68a;
+      --step-accent: #d8a308;
+    }
+
+    .flow-step:nth-child(4) {
+      --step-bg: #ecfdf5;
+      --step-border: #bbf7d0;
+      --step-accent: #22a66a;
+    }
+
+    .flow-step:nth-child(5) {
+      --step-bg: #eff6ff;
+      --step-border: #bfdbfe;
+      --step-accent: #3b82f6;
+    }
+
+    .flow-step:nth-child(6) {
+      --step-bg: #eef2ff;
+      --step-border: #c7d2fe;
+      --step-accent: #4f46e5;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .flow-step p {
+      margin: 0;
+      color: #3f3f46;
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .guide-note-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .guide-note {
+      --note-bg: var(--white);
+      --note-border: var(--line);
+      --note-accent: var(--teal);
+      border: 1px solid var(--note-border);
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--note-bg), var(--white));
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(23, 23, 23, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+    }
+
+    .guide-note-wide {
+      grid-column: 1 / -1;
+    }
+
+    .guide-note-master {
+      --note-bg: #eff6ff;
+      --note-border: #bfdbfe;
+      --note-accent: #3b82f6;
+    }
+
+    .guide-note-rizumi {
+      --note-bg: #ecfeff;
+      --note-border: #a5f3fc;
+      --note-accent: #0891b2;
+    }
+
+    .guide-note-rifrem {
+      --note-bg: #fff7ed;
+      --note-border: #fed7aa;
+      --note-accent: #f59e0b;
+    }
+
+    .guide-note-haruka {
+      --note-bg: #fff1f2;
+      --note-border: #fecdd3;
+      --note-accent: #ef6f7a;
+    }
+
+    .guide-note-all {
+      --note-bg: #fafaf9;
+      --note-border: #e7e5e4;
+      --note-accent: var(--teal);
+      border-color: #d9eee7;
+      background:
+        linear-gradient(135deg, rgba(239, 246, 255, 0.96) 0%, rgba(236, 253, 245, 0.9) 34%, rgba(254, 252, 232, 0.9) 66%, rgba(255, 241, 242, 0.96) 100%),
+        var(--white);
+    }
+
+    .guide-note h3 {
+      margin: 0 0 2px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .guide-note-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .guide-note-icon {
+      flex: 0 0 auto;
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--white);
+      border-radius: 999px;
+      background: #f5f5f4;
+      object-fit: cover;
+      box-shadow: 0 8px 18px rgba(23, 23, 23, 0.12);
+    }
+
+    .guide-note-icons {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      padding-left: 8px;
+    }
+
+    .guide-note-icons .guide-note-icon {
+      width: 42px;
+      height: 42px;
+      margin-left: -8px;
+    }
+
+    .guide-speaker {
+      display: inline-block;
+      color: var(--note-accent);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .guide-note p {
+      margin: 0 0 10px;
+      color: #404040;
+      font-size: 13.5px;
+      line-height: 1.75;
+    }
+
+    .guide-note p:last-child,
+    .guide-note ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .guide-note ul {
+      margin: 0 0 10px;
+      padding-left: 1.25em;
+      color: #404040;
+      font-size: 13.5px;
+      line-height: 1.75;
+    }
+
+    .guide-note li {
+      margin: 5px 0;
+    }
+
+    .section-accordion {
+      margin-top: 26px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .manual .section-accordion {
+      border-color: #e7dfcd;
+      background: #fffdf6;
+      box-shadow: 0 18px 42px rgba(87, 83, 78, 0.12);
+    }
+
+    .section-accordion > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 20px;
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .manual .section-accordion > summary {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 253, 246, 0.86);
+    }
+
+    .section-accordion > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .section-accordion > summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: var(--teal);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .section-accordion[open] > summary::after {
+      content: "-";
+    }
+
+    .section-accordion-body {
+      padding: 0 20px 24px;
+    }
+
+    .manual .section-accordion-body {
+      position: relative;
+      background-color: #fffdf6;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='28' viewBox='0 0 180 28'%3E%3Cpath d='M0 23.5 C18 22.6 30 24.7 48 23.6 S82 22.8 102 23.7 S138 24.8 180 23.5' fill='none' stroke='%23b7cde6' stroke-width='1.1' stroke-linecap='round' opacity='0.62'/%3E%3C/svg%3E");
+      background-position: 0 10px;
+      background-repeat: repeat;
+      background-size: 180px 28px;
+    }
+
+    .manual .section-accordion-body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 22px;
+      left: 42px;
+      width: 1px;
+      background: rgba(239, 111, 122, 0.22);
+      pointer-events: none;
+    }
+
+    .manual .section-accordion-body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-accordion-body > .section-lead {
+      margin-top: 0;
+    }
+
+    .guide-statement {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .guide-statement span {
+      display: block;
+      min-height: 76px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fef3c7;
+      font-weight: 900;
+      line-height: 1.55;
+    }
+
+    .guide-statement-light span {
+      border-color: var(--line);
+      background: var(--white);
+      color: var(--ink);
+    }
+
     .cta {
       background: var(--paper-soft);
     }
@@ -374,6 +828,30 @@
       color: #454545;
     }
 
+    .cta-trial-inline {
+      display: grid;
+      gap: 8px;
+      width: min(100%, 260px);
+      margin-top: 18px;
+    }
+
+    .cta-trial-inline .button {
+      width: 100%;
+    }
+
+    .cta-small-pricing {
+      margin-top: 10px;
+      color: #57534e;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.65;
+    }
+
+    .cta-small-pricing p {
+      margin: 0;
+      color: inherit;
+    }
+
     .button-dark {
       background: var(--ink);
       color: var(--white);
@@ -387,6 +865,14 @@
 
     .cta-actions .button {
       width: 100%;
+    }
+
+    .cta-note {
+      margin: 2px 0 0;
+      color: #57534e;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
     }
 
     footer {
@@ -403,21 +889,46 @@
 
       .hero-copy {
         padding-top: 48px;
-        padding-bottom: 430px;
+        padding-bottom: 300px;
       }
 
       .guide-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .hero-guide-trial {
-        bottom: 184px;
-      }
-
       .feature-grid,
+      .principle-grid,
       .world-grid,
+      .guide-statement,
+      .guide-note-list,
       .cta-box {
         grid-template-columns: 1fr;
+      }
+
+      .flow-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px 12px;
+      }
+
+      .flow-step {
+        min-height: 156px;
+        padding: 14px 10px;
+      }
+
+      .flow-step:not(:last-child)::after {
+        right: -12px;
+        display: block;
+        font-size: 14px;
+      }
+
+      .flow-step:nth-child(3)::after {
+        content: "↙";
+        top: auto;
+        right: auto;
+        left: 8px;
+        bottom: -23px;
+        transform: none;
+        font-size: 18px;
       }
 
       .cta-box {
@@ -436,13 +947,12 @@
 
       .hero-inner,
       .section-inner,
-      .guide-strip,
-      .hero-guide-trial {
+      .guide-strip {
         width: min(100% - 24px, 1080px);
       }
 
       .hero-copy {
-        padding-bottom: 456px;
+        padding-bottom: 330px;
       }
 
       .guide {
@@ -459,6 +969,54 @@
       .button {
         width: 100%;
       }
+
+      .hero-actions,
+      .trial-button-group {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .trial-actions {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .flow-list {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .flow-step {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        column-gap: 10px;
+        min-height: auto;
+        padding: 10px;
+      }
+
+      .flow-step::before {
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+      }
+
+      .flow-step strong {
+        margin-bottom: 2px;
+      }
+
+      .flow-step p {
+        grid-column: 2;
+      }
+
+      .flow-step:not(:last-child)::after,
+      .flow-step:nth-child(3)::after {
+        content: "▼";
+        top: auto;
+        right: 50%;
+        left: auto;
+        bottom: -15px;
+        transform: translateX(50%);
+      }
     }
   </style>
 </head>
@@ -472,20 +1030,26 @@
           働くうえで譲れない価値観を、短い設問と物語の選択から見つめるための企業向けWebアプリです。
           結果は面談や1on1での対話のきっかけとして活用できます。
         </p>
+        <details class="anchor-note">
+          <summary>キャリアアンカーとは</summary>
+          <div class="anchor-note-body">
+            <p>キャリアアンカー（<ruby>心の錨<rt>こころのいかり</rt></ruby>）とは、エドガー・シャインというキャリア理論の研究者が提唱した考え方です。簡単に言えば、働くうえで自分がどうしても譲れない価値観のことです。</p>
+            <p>収入、安定、専門性、自由、挑戦、人の役に立つこと。人によって、大切にしているものは少しずつ違います。</p>
+            <p>自分の心の錨を知っておくと、仕事や人生の選択で迷ったときに、自分を見失いにくくなります。キャリアアンカーアプリは、あなたの中にある大切な軸を、静かに見つめるためのものです。</p>
+          </div>
+        </details>
         <div class="hero-actions">
           <a class="button button-primary" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
           <a class="button button-secondary" href="#overview">概要を見る</a>
         </div>
         <div class="trial-actions">
-          <a class="button button-primary" href="./ninin.html" target="_blank" rel="noopener noreferrer">アプリを試してみる</a>
-          <p class="trial-password">お試しアプリのパスワードは ninin です</p>
+          <div class="trial-button-group">
+            <a class="button button-primary" href="./ninin.html" target="_blank" rel="noopener noreferrer">無料でアプリを試す</a>
+            <a class="button button-accent" href="https://buy.stripe.com/14A4gydh578P5de5VU9Zm08" target="_blank" rel="noopener noreferrer">導入する</a>
+          </div>
+          <p class="trial-password">お試しアプリのパスワードは otameshi です</p>
         </div>
       </div>
-    </div>
-
-    <div class="trial-actions hero-guide-trial">
-      <a class="button button-primary" href="./ninin.html" target="_blank" rel="noopener noreferrer">アプリを試してみる</a>
-      <p class="trial-password">お試しアプリのパスワードは ninin です</p>
     </div>
 
     <div class="guide-strip" aria-label="登場人物">
@@ -563,6 +1127,132 @@
       </div>
     </section>
 
+    <section class="cta cta-early">
+      <div class="section-inner">
+        <div class="cta-box">
+          <div>
+            <p class="section-kicker">Contact</p>
+            <h2>まずは無料で試してみる。</h2>
+            <p>
+              導入前に無料お試し版で、実際の画面や結果レポートの雰囲気を確認できます。
+              ご相談や導入決済も、必要なタイミングでお進みください。
+            </p>
+            <div class="cta-trial-inline">
+              <a class="button button-outline" href="./ninin.html" target="_blank" rel="noopener noreferrer">無料でアプリを試す</a>
+              <p class="cta-note">お試しアプリのパスワードは otameshi です</p>
+            </div>
+          </div>
+          <div class="cta-actions">
+            <a class="button button-dark" href="../index.html">ninin公式サイトへ</a>
+            <a class="button button-outline" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
+            <a class="button button-accent" href="https://buy.stripe.com/14A4gydh578P5de5VU9Zm08" target="_blank" rel="noopener noreferrer">導入する</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="manual" id="manual">
+      <div class="section-inner">
+        <p class="section-kicker">Guide</p>
+        <h2>使い方・面談活用ガイド</h2>
+        <details class="section-accordion" open>
+          <summary>使い方と面談活用を開く</summary>
+          <div class="section-accordion-body">
+            <p class="section-lead">
+              アプリの実施方法と、結果を面談・1on1で扱うときの基本姿勢をまとめています。
+              結果は評価や分類のためではなく、本人が自分の言葉でキャリアを考えるための材料として扱います。
+            </p>
+
+            <ol class="flow-list" aria-label="基本的な使い方">
+              <li class="flow-step"><strong>アクセス</strong><p>社内で案内されたURLを開きます。</p></li>
+              <li class="flow-step"><strong>パスワード</strong><p>必要に応じて、案内されたパスワードを入力します。</p></li>
+              <li class="flow-step"><strong>回答</strong><p>自分の感覚に近いものを選んで進みます。</p></li>
+              <li class="flow-step"><strong>結果確認</strong><p>すべての設問に回答すると、結果が表示されます。</p></li>
+              <li class="flow-step"><strong>PDF保存</strong><p>必要に応じて、結果をPDFとして保存します。</p></li>
+              <li class="flow-step"><strong>面談で活用</strong><p>本人の判断で、面談や1on1に持参・共有します。</p></li>
+            </ol>
+
+            <div class="guide-statement guide-statement-light">
+              <span>結果で決めつけない。</span>
+              <span>違和感を大切にする。</span>
+              <span>本人の言葉を聴く。</span>
+            </div>
+
+            <div class="guide-note-list">
+              <article class="guide-note guide-note-master">
+                <div class="guide-note-head">
+                  <img class="guide-note-icon" src="./img/mt.jpg" alt="マスター" />
+                  <div>
+                    <h3>1. このアプリの位置づけ</h3>
+                    <span class="guide-speaker">マスターから</span>
+                  </div>
+                </div>
+                <p>本アプリは、利用者自身が大切にしているキャリア価値観を振り返るための自己理解ツールです。</p>
+                <p>結果は評価や判断の材料ではなく、本人の内省を深め、面談や1on1で対話を始めるためのきっかけとして扱います。</p>
+                <p>氏名・年齢・社員番号などの入力は不要です。回答や結果は、利用者本人の端末・ブラウザ内で処理されます。</p>
+              </article>
+              <article class="guide-note guide-note-rizumi">
+                <div class="guide-note-head">
+                  <img class="guide-note-icon" src="./img/rz.jpg" alt="理澄" />
+                  <div>
+                    <h3>2. 基本的な使い方</h3>
+                    <span class="guide-speaker">理澄から</span>
+                  </div>
+                </div>
+                <p>社内で案内されたURLにアクセスし、必要に応じてパスワードを入力してください。表示される設問では、自分の感覚に近いものを選んでくださいね。</p>
+                <p>すべての設問に回答すると結果が表示されます。必要に応じてPDFとして保存し、面談や1on1には本人の判断で持参・共有できますよ。</p>
+              </article>
+              <article class="guide-note guide-note-rifrem">
+                <div class="guide-note-head">
+                  <img class="guide-note-icon" src="https://ninin-cc.github.io/cq/img/rf.png" alt="リフレム" />
+                  <div>
+                    <h3>3. 結果の見方</h3>
+                    <span class="guide-speaker">リフレムから</span>
+                  </div>
+                </div>
+                <p>結果に正解・不正解はないのじゃ。また、結果がすべてを決めるものでもないぞ。</p>
+                <p>「しっくりくる部分」と「少し違うと感じる部分」の両方を手がかりにして、自分が大切にしたい働き方や役割を考えてみるのじゃ。</p>
+              </article>
+              <article class="guide-note guide-note-haruka">
+                <div class="guide-note-head">
+                  <img class="guide-note-icon" src="https://ninin-cc.github.io/cq/img/hr.png" alt="ハルカ" />
+                  <div>
+                    <h3>4. 面談・1on1での活用</h3>
+                    <span class="guide-speaker">ハルカから</span>
+                  </div>
+                </div>
+                <p>面談担当者は、結果を説明したり評価したりするのではなく、本人の考えを聴くための材料として扱うと効果的ですよ。</p>
+                <p>問いかけの例です。</p>
+                <ul>
+                  <li>この結果を見て、どう感じましたか。</li>
+                  <li>しっくりくる部分や、少し意外だった部分はありますか。</li>
+                  <li>今の仕事の中で、この価値観が満たされている場面はありますか。</li>
+                  <li>これからの働き方で、もう少し大切にしたいことはありますか。</li>
+                </ul>
+                <p>問いかけた後の沈黙も、本人が自分の言葉を探している大切な時間として、ゆっくり待ってあげてくださいね。</p>
+              </article>
+              <article class="guide-note guide-note-wide guide-note-all">
+                <div class="guide-note-head">
+                  <div class="guide-note-icons">
+                    <img class="guide-note-icon" src="./img/mt.jpg" alt="マスター" />
+                    <img class="guide-note-icon" src="./img/rz.jpg" alt="理澄" />
+                    <img class="guide-note-icon" src="https://ninin-cc.github.io/cq/img/rf.png" alt="リフレム" />
+                    <img class="guide-note-icon" src="https://ninin-cc.github.io/cq/img/hr.png" alt="ハルカ" />
+                  </div>
+                  <div>
+                    <h3>5. 利用上の注意</h3>
+                    <span class="guide-speaker">4人から</span>
+                  </div>
+                </div>
+                <p>本アプリの結果は、本人の内省と対話のための参考情報です。人事評価、採用選考、配置転換、昇格・降格、処遇判断などの直接材料として使用しないでください。</p>
+                <p>結果PDFを会社や面談担当者へ提出するかどうかは、利用者本人の判断を尊重してください。アプリは主役じゃなく、主役は利用者本人なのじゃー。</p>
+              </article>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
     <section class="cta">
       <div class="section-inner">
         <div class="cta-box">
@@ -570,13 +1260,25 @@
             <p class="section-kicker">Contact</p>
             <h2>導入に興味がある方へ</h2>
             <p>
-              企業向けのキャリア面談、1on1、研修、社内相談導線への活用については、nininまでご相談ください。
-              現在はninin公式サイトのTOPページへご案内しています。
+              社内キャリアコンサルタントの設置。キャリア面談の実施、1on1への活用について、また研修実施の依頼など――nininまで気軽にご相談ください。
             </p>
+            <p>
+              アプリのご利用は、Stripeでのサブスクリプション決済（クレジット）での対応となります。
+            </p>
+            <div class="cta-small-pricing">
+              <p>50人以下の会社・組織へは：月額1,800円</p>
+              <p>50人超〜200人 は：月額2,900円</p>
+              <p>200人超・個別調整・買い切り：ご相談ください。</p>
+            </div>
+            <div class="cta-trial-inline">
+              <a class="button button-outline" href="./ninin.html" target="_blank" rel="noopener noreferrer">無料でアプリを試す</a>
+              <p class="cta-note">お試しアプリのパスワードは otameshi です</p>
+            </div>
           </div>
           <div class="cta-actions">
             <a class="button button-dark" href="../index.html">ninin公式サイトへ</a>
-            <a class="button button-primary" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
+            <a class="button button-outline" href="https://forms.gle/W6DUeLitX7HUfCLt5"><span class="blink-arrow">▶</span> nininに相談する</a>
+            <a class="button button-accent" href="https://buy.stripe.com/14A4gydh578P5de5VU9Zm08" target="_blank" rel="noopener noreferrer">導入する</a>
           </div>
         </div>
       </div>
