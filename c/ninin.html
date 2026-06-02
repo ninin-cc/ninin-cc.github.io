@@ -379,7 +379,7 @@
       appTitlePre: "キャリアアンカー",
       appTitleMain: "～心の錨を見つめる時間～",
       appSubtitle: "-喫茶-RIESM-での語らい-",
-      enterpriseLabel: "for 合同会社ninin consulting & counseling",
+      enterpriseLabel: "for 株式会社〇〇〇〇",
       char1: {
         name: "マスター",
         img: "./img/mt.jpg",
@@ -547,7 +547,9 @@
     };
     // PDF/画像レポート最下部の著作表記リンク先。相談先を変えてもここは ninin HP のままにします。
     const NININ_HOME_URL = 'https://ninin-cc.github.io/';
-    const ACCESS_SPELL = 'ninin';
+    const APP_INTRO_URL = './index.html';
+    const ACCESS_SPELL = 'otameshi';
+    const STRIPE_SUBSCRIPTION_URL = 'https://buy.stripe.com/14A4gydh578P5de5VU9Zm08';
     const STORY_CHOICES_APP_NOTE = 'アプリの設問で選択していただいたセリフですが、完全に一致というわけではないと思います。（ …ここは…ちょっと違うな… ）そのような違和感を大事にしてください。その部分に線を引くとまた違った思いが浮かんできたりします。';
     const STORY_CHOICES_EXPORT_NOTE = STORY_CHOICES_APP_NOTE;
 
@@ -556,7 +558,7 @@ const MAGIC_CONFIG = {
       appTitlePre: "キャリアアンカー",
       appTitleMain: "～心の錨を観る魔法～", // HTMLタイトル用
       appSubtitle: "-RIESM亭での語らい-",
-      enterpriseLabel: "for 合同会社ninin consulting & counseling",
+      enterpriseLabel: "for 株式会社〇〇〇〇",
       char1: {
         name: "リフレム",
         img: "https://ninin-cc.github.io/cq/img/rf.png",
@@ -1022,6 +1024,15 @@ const MAGIC_CONTACT_CONFIG = {
         </button>
       );
 
+      const renderAppIntroLink = (extraClass = '') => (
+        <a
+          href={APP_INTRO_URL}
+          className={`mt-3 mx-auto inline-flex w-fit max-w-full items-center justify-center gap-2 rounded border border-yellow-500/60 bg-black/55 px-4 py-2 text-xs md:text-sm font-bold text-yellow-100 underline-offset-4 transition-colors hover:border-yellow-300 hover:text-yellow-300 ${extraClass}`}
+        >
+          <i className="fa-solid fa-arrow-left"></i> アプリ紹介ページへ戻る
+        </a>
+      );
+
       const handleSpellSubmit = (e) => {
         e.preventDefault();
         if (spellInput.trim().toLowerCase() === ACCESS_SPELL) {
@@ -1442,6 +1453,7 @@ const MAGIC_CONTACT_CONFIG = {
               </p>
             )}
             {renderSceneSwitch()}
+            {renderAppIntroLink()}
           </div>
 
           <WindowBox title={SCENE.copy.spellGateTitle} iconName="fa-solid fa-key" className="bg-opacity-90 border-yellow-500 shadow-2xl max-w-lg w-full">
@@ -1449,6 +1461,19 @@ const MAGIC_CONTACT_CONFIG = {
               charConfig={CONFIG.char1} 
               text={SCENE.copy.spellGateDialog(CONFIG)} 
             />
+            <div className="mt-5 rounded-lg border border-cyan-400/60 bg-cyan-950/70 p-4 text-left text-[12px] md:text-sm leading-relaxed text-cyan-50 shadow-inner">
+              <h2 className="mb-2 text-sm md:text-base font-bold tracking-widest text-cyan-200">無料お試し版について</h2>
+              <p className="mb-3">
+                本ページは、導入前に実際の使い心地を確認していただくための無料お試し版です。まずは2週間程度を目安に、キャリア面談や1on1の前後などでお試しください。
+              </p>
+              <p>
+                システム上、自動的に利用を停止するものではありません。継続して社内導入として活用したいと感じられた場合は、企業のご判断で
+                <a href={STRIPE_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer" className="mx-1 font-bold text-cyan-100 underline underline-offset-4 hover:text-white">
+                  導入決済
+                </a>
+                をお願いします。
+              </p>
+            </div>
             <div className="mt-5 rounded-lg border border-yellow-700/70 bg-black/55 p-4 text-left text-[11px] md:text-xs leading-relaxed text-yellow-50 shadow-inner">
               <h2 className="mb-3 text-xs md:text-sm font-bold tracking-widest text-yellow-300">個人情報等の取扱いについて</h2>
               <p className="mb-3">
@@ -2274,6 +2299,10 @@ const MAGIC_CONTACT_CONFIG = {
                 <i className="fa-solid fa-comments"></i> ひとに話してみる
               </button>
 
+              <a href={APP_INTRO_URL} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-gray-900 border-gray-500 font-bold flex items-center justify-center gap-2 hover:bg-white hover:text-black">
+                <i className="fa-solid fa-arrow-left"></i> アプリ紹介ページへ戻る
+              </a>
+
               <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-4">
                 {SCENE.copy.resetButtonLabel}
               </button>
@@ -2575,6 +2604,33 @@ const MAGIC_CONTACT_CONFIG = {
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
+  </script>
+  <script>
+    (() => {
+      const blockedCommandKeys = new Set(['u', 's']);
+      const blockedDevtoolKeys = new Set(['i', 'j', 'c']);
+
+      document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        const commandKey = event.ctrlKey || event.metaKey;
+        const shouldBlock =
+          event.key === 'F12' ||
+          (commandKey && blockedCommandKeys.has(key)) ||
+          (commandKey && event.shiftKey && blockedDevtoolKeys.has(key));
+
+        if (!shouldBlock) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
+    })();
   </script>
 </body>
 </html>
