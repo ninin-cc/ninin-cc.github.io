@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
 <script>
   if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
     var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
@@ -26,7 +25,6 @@
   
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
 
   <style>
@@ -124,7 +122,7 @@
     );
 
     // ==========================================
-    // 厳選16問プール (日常コミュニケーションベース・対立軸バランス)
+    // 厳選16問プール (日常コミュニケーションベース・バイアス排除・対立軸バランス)
     // ==========================================
     const questionsPool = [
       // 1. 発想(W) vs 構造(K) (3問)
@@ -138,7 +136,7 @@
       { id: 6, text: "SNS等で新しい面白そうなサービスや流行りの広告を見かけた時、あなたは…", options: [ { text: "「どんな仕組みだろう？」と好奇心でクリックして詳細を見てみる", type: "W" }, { text: "「何かトラブルがあったら嫌だな」と少し慎重に様子を見る", type: "A" }] },
 
       // 3. 発想(W) vs 共感(N) (2問)
-      { id: 7, text: "相手が悩み事を一生懸命話している時、あなたの中で湧き上がりやすい意識は？", options: [ { text: "「こうしたらもっと良くなるのに！」という新しい視点や解決策", type: "W" }, { text: "「それは大変だったね、辛いよね」と、まずは気持ちに寄り添うこと", type: "N" }] },
+      { id: 7, text: "相手が悩み事を一生懸命話している時、あなたの中で湧き上がりやすい意識は？", options: [ { text: "「こうしたらもっと良くなるのに！」という新しい視点や解決策", type: "W" }, { text: "「それは大変だったね」と、まずは相手の思いをそのまま受け止めること", type: "N" }] },
       { id: 8, text: "次の休日に何をするか決める時、あなたがより大切にしたいのは？", options: [ { text: "「行ったことのない新しい場所」を求めてワクワクする体験", type: "W" }, { text: "「一緒に行く人が楽しんでくれるか、お互い心地よく過ごせるか」", type: "N" }] },
 
       // 4. 構造(K) vs 調整(A) (2問)
@@ -146,14 +144,14 @@
       { id: 10, text: "旅行やイベントの計画を立てる時、あなたが最も安心する進め方は？", options: [ { text: "時間やスケジュール、役割分担を明確に決めておくこと", type: "K" }, { text: "現地の天気や体調のリスク、不測の事態に備えた代替案を考えておくこと", type: "A" }] },
 
       // 5. 構造(K) vs 共感(N) (3問)
-      { id: 11, text: "パートナーや友人が感情的になって怒っている時、あなたは…", options: [ { text: "「何が原因だったの？」と、事実関係を論理的に整理しようとする", type: "K" }, { text: "「怒るのも無理ないよ」と、まずは感情に共感する", type: "N" }] },
+      { id: 11, text: "パートナーや友人が感情的になって怒っている時、あなたは…", options: [ { text: "「何が原因だったの？」と、事実関係を論理的に整理しようとする", type: "K" }, { text: "「怒るのも無理ないよ」と、相手の気持ちを否定せずに受け止める", type: "N" }] },
       { id: 12, text: "初めて会う人と話す時、あなたがまず意識するのは？", options: [ { text: "今日会った目的や、お互いの立場や共通点をクリアにすること", type: "K" }, { text: "相手がリラックスできるような、温かい雰囲気を作ること", type: "N" }] },
       { id: 13, text: "子供や後輩が「もうやりたくない」と繰り返す時、あなたは…", options: [ { text: "「何が嫌なの？人間関係？内容？」と具体的な理由を特定しようとする", type: "K" }, { text: "「やりたくないんだね、辛いね」と気持ちをそのまま受け入れる", type: "N" }] },
 
       // 6. 調整(A) vs 共感(N) (3問)
-      { id: 14, text: "知り合いが「私ってダメだな」と強く落ち込んでいる時、あなたは…", options: [ { text: "「そんなことないよ、頑張ってるよ」と慰め、深く共感する", type: "N" }, { text: "落ち込みすぎて心身のバランスを崩さないか、そっと気にかける", type: "A" }] },
+      { id: 14, text: "知り合いが「私ってダメだな」と強く落ち込んでいる時、あなたは…", options: [ { text: "「そんなことないよ、頑張ってるよ」と温かい言葉をかけて慰める", type: "N" }, { text: "落ち込みすぎて心身のバランスを崩さないか、そっと気にかける", type: "A" }] },
       { id: 15, text: "次の約束を決める時、あなたが優先しやすいのは？", options: [ { text: "お互いが「会いたい！」と盛り上がったタイミング", type: "N" }, { text: "お互いのスケジュールに無理がないか、負担にならないか", type: "A" }] },
-      { id: 16, text: "「全然大丈夫だよ！」と笑顔で言う相手が、無理をしているように見える時、あなたは…", options: [ { text: "「本当は辛いんだよね」とその心の内に優しく寄り添う", type: "N" }, { text: "「このままだと体調を崩してしまうのではないか」と現実的な限界を心配する", type: "A" }] }
+      { id: 16, text: "「全然大丈夫だよ！」と笑顔で言う相手が、無理をしているように見える時、あなたは…", options: [ { text: "「本当は辛いんだよね」と、隠している気持ちを優しく受け止める", type: "N" }, { text: "「このままだと体調を崩してしまうのではないか」と現実的な限界を心配する", type: "A" }] }
     ];
 
     const resultsData = {
@@ -161,7 +159,7 @@
         title: "発想型（ワンダー）",
         subTitle: "（自由・発見・挑戦）",
         detail: [
-          "あなたは、会話の中から「面白さ」や「新しい可能性」を見つける力が、自然に働きやすい傾向があるかもしれません。相手の話にインスピレーションを受け、ワクワクするようなアイデアを提案したり、場の空気を明るくしたりすることに長けている可能性があります。\n\n一方で、次々と新しい発想が浮かぶため、話があちこちに飛んだり、相手がまだ整理できていない段階で「解決策（アイデア）」を先走りして伝えてしまうことがあるかもしれません。\n\n思いついたアイデアをすぐに伝えるのではなく、「今、相手は解決策を求めているのか、ただ聞いてほしいのか？」と一度立ち止まることで、より相手のペースに寄り添ったコミュニケーションになる可能性があります。相手の反応を見ながら、発想のアクセルを調整してみてはいかがでしょうか。"
+          "あなたは、会話の中から「面白さ」や「新しい可能性」を見つける力が、自然に働きやすい傾向があるかもしれません。相手の話にインスピレーションを受け、ワクワクするようなアイデアを提案したり、場の空気を明るくしたりすることに長けている可能性があります。\n\n一方で、次々と新しい発想が浮かぶため、話があちこちに飛んだり、相手がまだ整理できていない段階で「解決策（アイデア）」を先走りして伝えてしまうことがあるかもしれません。\n\n思いついたアイデアをすぐに伝えるのではなく、「今、相手は解決策を求めているのか、ただ聞いてほしいのか？」と一度立ち止まることで、より相手のペースに合ったコミュニケーションになる可能性があります。相手の反応を見ながら、発想のアクセルを調整してみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-amber-50", border: "border-amber-200", cardBg: "bg-amber-100/50", header: "from-amber-400 to-orange-500", text: "text-amber-900", textLight: "text-amber-700", btnBg: "bg-amber-100", btnHover: "hover:bg-amber-200" }
       },
@@ -169,7 +167,7 @@
         title: "構造型（キーパー）",
         subTitle: "（論理・整理・信念）",
         detail: [
-          "あなたは、相手の話を論理的に整理し、状況を正確に把握する力が、自然に働きやすい傾向があるかもしれません。感情に流されず、「何が問題なのか」「どうすれば解決するのか」という道筋を立て、的確なアドバイスをする安定感があると言えそうです。\n\n一方で、物事を整理・解決しようとする力が強いため、相手がただ感情に寄り添ってほしいだけの時に、「それはつまり〇〇だね」と正論をぶつけてしまい、相手に「冷たい」と誤解されてしまうことがあるかもしれません。\n\n「わかった」と感じたところから、すぐに結論を出すのではなく、もう一呼吸置いて「相手の感情」にフォーカスする時間を作ることで、関係性がより深まりやすくなる可能性があります。解決を急がず、まずは共感を示すことを意識してみてはいかがでしょうか。"
+          "あなたは、相手の話を論理的に整理し、状況を正確に把握する力が、自然に働きやすい傾向があるかもしれません。感情に流されず、「何が問題なのか」「どうすれば解決するのか」という道筋を立て、的確なアドバイスをする安定感があると言えそうです。\n\n一方で、物事を整理・解決しようとする力が強いため、相手がただ話を聞いてほしいだけの時に、「それはつまり〇〇だね」と正論をぶつけてしまい、相手に「冷たい」と誤解されてしまうことがあるかもしれません。\n\n「わかった」と感じたところから、すぐに結論を出すのではなく、もう一呼吸置いて「相手がどんな気持ちで話しているか」にフォーカスする時間を作ることで、関係性がより深まりやすくなる可能性があります。解決を急がず、まずは相手の思いを受け止めることを意識してみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-blue-50", border: "border-blue-200", cardBg: "bg-blue-100/50", header: "from-blue-500 to-indigo-600", text: "text-blue-900", textLight: "text-blue-700", btnBg: "bg-blue-100", btnHover: "hover:bg-blue-200" }
       },
@@ -177,7 +175,7 @@
         title: "共感型（ナーチャー）",
         subTitle: "（受容・保護・調和）",
         detail: [
-          "あなたは、相手の感情に深く寄り添い、安心できる居場所を作る力が、自然に働きやすい傾向があるかもしれません。相手の言葉の裏にある「辛さ」や「喜び」に共鳴し、温かい態度で受け入れるため、周囲から「話しやすい」「優しい」と頼りにされることが多い可能性があります。\n\n一方で、相手の感情を受け止める力が強い分、ネガティブな感情に引きずられて自分まで疲弊してしまったり、優しさゆえに厳しいこと（相手のためになる指摘）が言えなかったりすることがあるかもしれません。\n\n共感を大切にしながらも、相手の問題と自分の感情の境界線を引くことを意識すると、コミュニケーションの負担が減りやすくなる可能性があります。「共感」と「同情」は違う、という視点を持ってみてはいかがでしょうか。"
+          "あなたは、相手の気持ちをそのまま受け止め、安心できる居場所を作る力が、自然に働きやすい傾向があるかもしれません。相手の言葉の裏にある「辛さ」や「喜び」を自分のことのように感じ、温かい態度で接するため、周囲から「話しやすい」「優しい」と頼りにされることが多い可能性があります。\n\n一方で、相手の感情を受け入れる力が強い分、ネガティブな気分に引きずられて自分まで疲弊してしまったり、相手を傷つけたくないという思いから言いづらいこと（相手のためになる指摘）が言えなかったりすることがあるかもしれません。\n\n相手の気持ちを大切にしながらも、相手の問題と自分の感情の境界線を引くことを意識すると、コミュニケーションの負担が減りやすくなる可能性があります。「相手の気持ちを理解すること」と「自分まで同じように苦しむこと」は違う、という視点を持ってみてはいかがでしょうか。"
         ],
         theme: { bg: "bg-pink-50", border: "border-pink-200", cardBg: "bg-pink-100/50", header: "from-pink-400 to-rose-500", text: "text-pink-900", textLight: "text-pink-700", btnBg: "bg-pink-100", btnHover: "hover:bg-pink-200" }
       },
@@ -199,7 +197,7 @@
       A: "さらに、調整型（アダプター）の「空気を読む力や慎重さ」も同時に強く働いている可能性があるため、相手の負担や周囲への影響にも細やかに気を配れる、とてもバランスの取れた大人のコミュニケーションができている状態かもしれません。"
     };
 
-    // --- ダブルフロント用テーマカラー ---
+    // --- ダブルフロント用テーマカラー（既存デザイン踏襲） ---
     const doubleThemes = {
       K_W: { bg: "bg-teal-50", border: "border-teal-200", cardBg: "bg-teal-100/50", header: "from-amber-400 to-blue-500", text: "text-teal-900", textLight: "text-teal-700", btnBg: "bg-teal-100", btnHover: "hover:bg-teal-200" },
       N_W: { bg: "bg-orange-50", border: "border-orange-200", cardBg: "bg-orange-100/50", header: "from-amber-400 to-pink-400", text: "text-orange-900", textLight: "text-orange-700", btnBg: "bg-orange-100", btnHover: "hover:bg-orange-200" },
@@ -219,7 +217,7 @@
 
     const practiceQuestion = {
       isPractice: true,
-      text: "喉が渇いて何かを飲おうとしています",
+      text: "喉が渇いて何かを飲もうとしています",
       options: [
         { text: "紅茶を飲む", type: "A" },
         { text: "麦茶を飲む", type: "N" }
@@ -256,7 +254,7 @@
           [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
         return newArray;
-      };
+      }
 
       const generateTodayQuestions = () => {
         // 厳選された16問すべてをランダムにシャッフルして出題
@@ -353,12 +351,20 @@
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
             isDouble = true;
+            // テーマ取得用にアルファベット順のキーを作っておく
             frontKey = [maxType, secondType].sort().join('_');
           }
         }
 
         setResultScores(scores);
-        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: 0 });
+        // 詳細は3パターンのうちどれか1つをランダムに選ぶ（現状は1パターンで固定）
+        const detailIndex = 0;
+        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
+      };
+
+      const showToast = (message) => {
+        setToastMessage(message);
+        setTimeout(() => setToastMessage(''), 5000);
       };
 
       if (!started) {
@@ -372,7 +378,7 @@
                 <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">コミュニケーション・モードチェック</span></h1>
               </div>
               
-              {/* ▼ アコーディオンに変更した説明文 (デフォルトでオープン) ▼ */}
+              {/* ▼ アコーディオンに変更した説明文 ▼ */}
               <details open className="mb-8 group border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden text-left">
                 <summary className="cursor-pointer font-bold text-slate-700 p-4 bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
                   <span className="flex items-center gap-2">アプリの説明と注意</span>
@@ -381,11 +387,12 @@
                   </svg>
                 </summary>
                 <div className="p-4 text-slate-600 font-medium leading-relaxed text-[13px] sm:text-sm border-t border-slate-100 bg-white">
-                  カウンセラー・キャリアコンサルタント、または上司であるあなたが――
+                  これは、友人、同僚、家族など、日常のコミュニケーションにおいて、
                   <div className="my-2.5 p-3 bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-md text-slate-800 font-bold leading-relaxed">
-                    面談や1on1のさなかに入りやすい支援モードを観るための簡易チェックです。<br/>
-                    優劣を測るものではありません。
+                    あなたが無意識に入りやすい「心のモード」を知るための簡易チェックです。<br/>
+                    優劣や性格の良し悪しを測るものではありません。
                   </div>
+                  あなたの会話の「クセ」や、意識しないと使いにくいモードを知るためのツールです。<br/>
                   直感で、今の自分に近い方を選んでください。
                 </div>
               </details>
@@ -414,6 +421,7 @@
                   <span className="text-sm">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】すると便利です
                 </div>
               </div>
+              {/* ▲ インフォメーションエリア ここまで ▲ */}
 
               {/* ▼ 完全版への導線エリア ▼ */}
               <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
@@ -431,6 +439,7 @@
                   </a>
                 </div>
               </div>
+              {/* ▲ 導線エリア ここまで ▲ */}
 
               <div className="mt-8 text-center">
                 <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
@@ -450,6 +459,7 @@
       }
 
       if (resultType) {
+        // ダブルフロント時の情報を動的生成
         let result;
         if (resultType.isDouble) {
           const frontData = resultsData[resultType.front];
@@ -468,12 +478,12 @@
 
         const t = result.theme;
         const backsData = {
-          W: { title: "発想型（ワンダー）", desc: "あなたは、対話を論理的に進めたり、相手の感情に深く寄り添ったりする力が自然に働きやすい傾向がある一方で、「とりあえず面白そうだからやってみよう」と直感で動いたり、場のノリに合わせて自由な発想を広げたりするモードは、意識しないと出てきにくいかもしれません。\n計画性や安全性を大切にする傾向がありそうです。" },
-          K: { title: "構造型（キーパー）", desc: "あなたは、相手の感情に寄り添ったり、柔軟な発想で会話を広げたりする力が自然に働きやすい傾向がある一方で、話を論理的に整理して結論を出したり、ルールや計画に基づいて客観的に判断を下したりするモードは、意識しないと後回しになりやすいかもしれません。\n枠にはめるよりも、その場の自然な流れや感情を大切にする傾向がありそうです。" },
-          N: { title: "共感型（ナーチャー）", desc: "あなたは、問題を解決するための道筋を考えたり、リスクを回避して安全に物事を進めたりする力が自然に働きやすい傾向がある一方で、相手のネガティブな感情にただ黙って共感したり、結論を出さずに相手のペースに合わせて待つようなモードは、意識しないと短くなりやすいかもしれません。\nただ受け止めるよりも、前に進むための合理的なサポートを大切にする傾向がありそうです。" },
-          A: { title: "調整型（アダプター）", desc: "あなたは、相手の可能性を信じて背中を押したり、感情に深く寄り添ったりする力が自然に働きやすい傾向がある一方で、周囲の空気を読んで慎重に行動したり、考えられるリスクを事前に指摘してブレーキを踏んだりするモードは、意識しないと後回しになりやすいかもしれません。\n恐れずに自分や相手の想いを優先して一歩を踏み出すことを大切にする傾向がありそうです。" }
+          W: "あなたは、対話を論理的に進めたり、相手の気持ちを深く受け止めたりする力が自然に働きやすい傾向がある一方で、「とりあえず面白そうだからやってみよう」と直感で動いたり、場のノリに合わせて自由な発想を広げたりするモードは、意識しないと出てきにくいかもしれません。\n計画性や安全性を大切にする傾向がありそうです。",
+          K: "あなたは、相手の気持ちを優しく受け止めたり、柔軟な発想で会話を広げたりする力が自然に働きやすい傾向がある一方で、話を論理的に整理して結論を出したり、ルールや計画に基づいて客観的に判断を下したりするモードは、意識しないと後回しになりやすいかもしれません。\n枠にはめるよりも、その場の自然な流れや感情を大切にする傾向がありそうです。",
+          N: "あなたは、問題を解決するための道筋を考えたり、リスクを回避して安全に物事を進めたりする力が自然に働きやすい傾向がある一方で、相手のネガティブな言葉にただ黙ってうなずいたり、結論を出さずに相手のペースに合わせて待つようなモードは、意識しないと短くなりやすいかもしれません。\nただ受け止めるよりも、前に進むための合理的なサポートを大切にする傾向がありそうです。",
+          A: "あなたは、相手の可能性を信じて背中を押したり、気持ちを深く受け止めたりする力が自然に働きやすい傾向がある一方で、周囲の空気を読んで慎重に行動したり、考えられるリスクを事前に指摘してブレーキを踏んだりするモードは、意識しないと後回しになりやすいかもしれません。\n恐れずに自分や相手の想いを優先して一歩を踏み出すことを大切にする傾向がありそうです。"
         };
-        const backResult = backsData[resultType.back];
+        const backResult = { desc: backsData[resultType.back] };
 
         return (
           <div className={`min-h-screen flex items-center justify-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg}`}>
@@ -567,6 +577,7 @@
                       </a>
                     </div>
                   </div>
+                  {/* ▲ 導線エリア ここまで ▲ */}
                 </div>
 
                 <div className="px-4 sm:px-8 pb-6 sm:pb-8">
@@ -806,7 +817,6 @@
         </div>
       );
     }
-    
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
