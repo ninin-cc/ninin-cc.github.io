@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
 <script>
   if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
     var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
@@ -25,6 +26,7 @@
   
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
 
   <style>
@@ -233,6 +235,7 @@
       const [resultScores, setResultScores] = useState(null);
       const [toastMessage, setToastMessage] = useState('');
       const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null);
+      const [tempSelectedChoiceIndex, setTempSelectedChoiceIndex] = useState(null);
       const [isPractice, setIsPractice] = useState(false);
       const [tutorialCompleted, setTutorialCompleted] = useState(false);
       
@@ -244,6 +247,7 @@
         if (started && !resultType) {
           setHoverPos(50);
           setSelectedChoiceIndex(null);
+          setTempSelectedChoiceIndex(null);
         }
       }, [currentIndex, started, resultType, isPractice]);
 
@@ -272,6 +276,7 @@
         setResultType(null);
         setResultScores(null);
         setSelectedChoiceIndex(null);
+        setTempSelectedChoiceIndex(null);
         setIsPractice(false);
         setTutorialCompleted(false);
         setStarted(true);
@@ -284,6 +289,7 @@
         setResultType(null);
         setResultScores(null);
         setSelectedChoiceIndex(null);
+        setTempSelectedChoiceIndex(null);
         setIsPractice(true);
         setTutorialCompleted(false);
         setHoverPos(50);
@@ -295,6 +301,7 @@
         setIsPractice(false);
         setTutorialCompleted(false);
         setSelectedChoiceIndex(null);
+        setTempSelectedChoiceIndex(null);
         setHoverPos(50);
       };
 
@@ -310,8 +317,16 @@
 
       const handleBack = () => {
         if (isPractice) return;
+        
+        if (tempSelectedChoiceIndex !== null) {
+          setTempSelectedChoiceIndex(null);
+          setHoverPos(50);
+          return;
+        }
+
         if (currentIndex > 0) {
           setSelectedChoiceIndex(null);
+          setTempSelectedChoiceIndex(null);
           setCurrentIndex(currentIndex - 1);
           setAnswers(answers.slice(0, -1));
         }
@@ -319,15 +334,25 @@
 
       const handleChoiceSelect = (choice) => {
         if (selectedChoiceIndex !== null) return;
-        setSelectedChoiceIndex(choice.index);
-        setHoverPos(choice.hoverPos);
-        window.setTimeout(() => {
-          if (isPractice) {
-            setTutorialCompleted(true);
-            return;
-          }
-          handleAnswer(choice.scoreUpdates);
-        }, 420);
+        
+        // 1回目のタップ（仮選択）
+        if (tempSelectedChoiceIndex !== choice.index) {
+          setTempSelectedChoiceIndex(choice.index);
+          setHoverPos(choice.hoverPos);
+        } else {
+          // 2回目のタップ（決定）
+          setSelectedChoiceIndex(choice.index);
+          setTempSelectedChoiceIndex(null);
+          setHoverPos(choice.hoverPos);
+          
+          window.setTimeout(() => {
+            if (isPractice) {
+              setTutorialCompleted(true);
+            } else {
+              handleAnswer(choice.scoreUpdates);
+            }
+          }, 420);
+        }
       };
 
       const calculateResult = (finalAnswers) => {
@@ -715,23 +740,32 @@
               </h2>
               
               <div className="space-y-3 sm:space-y-4 animate-fade-in relative z-10">
-                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 p-3 pt-6 sm:p-4 pt-7 shadow-sm backdrop-blur-md">
-                  <span
-                    className="absolute -top-3 left-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-black text-white ring-2 ring-white shadow-md"
-                    style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: `0 0 14px rgba(${topColorRGB}, 0.55)` }}
+                {/* Aの枠：左端を覆うスリムな帯状ラベルと完全中央配置のテキスト */}
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex items-center min-h-[4.5rem] overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 h-full w-6 sm:w-7 flex items-center justify-center text-[10px] sm:text-xs font-black text-white shadow-md z-10"
+                    style={{ backgroundColor: `rgb(${topColorRGB})` }}
                   >
                     A
-                  </span>
-                  <p className="w-full text-center text-[13px] sm:text-base font-bold leading-relaxed text-slate-900">{q.options[0].text}</p>
+                  </div>
+                  {/* absolute inset-0 を使って枠全体を基準にテキストを中央配置 */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center w-full">{q.options[0].text}</p>
+                  </div>
+                  {/* 高さを確保するための透明なダミー要素（テキストと同じ内容） */}
+                  <div className="w-full py-4 sm:py-5 px-8 opacity-0">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-center">{q.options[0].text}</p>
+                  </div>
                 </div>
 
                 <div className="relative rounded-2xl border border-white/70 bg-white/55 p-2 sm:p-3 shadow-inner backdrop-blur-md">
                   <div className="grid grid-cols-6 items-start gap-0.5 sm:gap-1">
                     {answerChoices.map(choice => {
                       const isSelected = selectedChoiceIndex === choice.index;
-                      const isDimmed = selectedChoiceIndex !== null && !isSelected;
-                      const topShadow = isSelected ? `0 0 24px 8px rgba(${topColorRGB}, 0.55)` : `0 0 10px rgba(${topColorRGB}, 0.25)`;
-                      const bottomShadow = isSelected ? `0 0 24px 8px rgba(${bottomColorRGB}, 0.55)` : `0 0 10px rgba(${bottomColorRGB}, 0.25)`;
+                      const isTempSelected = tempSelectedChoiceIndex === choice.index;
+                      const isDimmed = (selectedChoiceIndex !== null && !isSelected) || (tempSelectedChoiceIndex !== null && !isTempSelected);
+                      const topShadow = (isSelected || isTempSelected) ? `0 0 24px 8px rgba(${topColorRGB}, 0.55)` : `0 0 10px rgba(${topColorRGB}, 0.25)`;
+                      const bottomShadow = (isSelected || isTempSelected) ? `0 0 24px 8px rgba(${bottomColorRGB}, 0.55)` : `0 0 10px rgba(${bottomColorRGB}, 0.25)`;
 
                       return (
                         <button
@@ -741,19 +775,24 @@
                           title={choice.ariaLabel}
                           disabled={selectedChoiceIndex !== null}
                           onMouseEnter={() => setHoverPos(choice.hoverPos)}
-                          onMouseLeave={() => selectedChoiceIndex === null && setHoverPos(50)}
+                          onMouseLeave={() => selectedChoiceIndex === null && tempSelectedChoiceIndex === null && setHoverPos(50)}
                           onClick={() => handleChoiceSelect(choice)}
-                          className={`group flex min-w-0 flex-col items-center rounded-xl border py-1 sm:py-2 transition-all duration-300 active:scale-[0.97] disabled:cursor-wait ${isSelected ? 'border-white bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.95)]' : 'border-transparent hover:bg-white/70 hover:shadow-sm'} ${isDimmed ? 'opacity-45' : ''}`}
+                          className={`relative group flex min-w-0 flex-col items-center rounded-xl border py-1 sm:py-2 transition-all duration-300 active:scale-[0.97] disabled:cursor-wait ${(isSelected || isTempSelected) ? 'border-white bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.95)]' : 'border-transparent hover:bg-white/70 hover:shadow-sm'} ${isDimmed ? 'opacity-45' : ''}`}
                         >
+                          {isTempSelected && isPractice && (
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-orange-400/95 text-white text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-40 animate-fade-in pointer-events-none tracking-wide">
+                              2タップで決定
+                            </div>
+                          )}
                           <div className="relative h-20 sm:h-24 w-full">
                             <div className={`absolute top-1/2 h-px -translate-y-1/2 bg-slate-300/80 ${choice.index === 0 ? 'left-1/2 right-0' : choice.index === answerChoices.length - 1 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
-                            <span className={`absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/85 px-1 py-0.5 text-[10px] sm:text-[11px] font-black leading-none shadow-sm transition-colors ${isSelected ? 'text-slate-900 ring-1 ring-white' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                            <span className={`absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/85 px-1 py-0.5 text-[10px] sm:text-[11px] font-black leading-none shadow-sm transition-colors ${(isSelected || isTempSelected) ? 'text-slate-900 ring-1 ring-white' : 'text-slate-500 group-hover:text-slate-800'}`}>
                               {choice.caption}
                             </span>
                             {choice.topSize && (
                               <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-1">
                                 <div
-                                  className={`rounded-full transition-all duration-300 ${choice.topSize} ${isSelected ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                  className={`rounded-full transition-all duration-300 ${choice.topSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
                                   style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: topShadow }}
                                 ></div>
                               </div>
@@ -761,7 +800,7 @@
                             {choice.bottomSize && (
                               <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-1">
                                 <div
-                                  className={`rounded-full transition-all duration-300 ${choice.bottomSize} ${isSelected ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                  className={`rounded-full transition-all duration-300 ${choice.bottomSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
                                   style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: bottomShadow }}
                                 ></div>
                               </div>
@@ -773,14 +812,22 @@
                   </div>
                 </div>
 
-                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 p-3 pt-6 sm:p-4 pt-7 shadow-sm backdrop-blur-md">
-                  <span
-                    className="absolute -top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-black text-white ring-2 ring-white shadow-md"
-                    style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: `0 0 14px rgba(${bottomColorRGB}, 0.55)` }}
+                {/* Bの枠：右端を覆うスリムな帯状ラベルと完全中央配置のテキスト */}
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex items-center min-h-[4.5rem] overflow-hidden">
+                  <div
+                    className="absolute top-0 right-0 h-full w-6 sm:w-7 flex items-center justify-center text-[10px] sm:text-xs font-black text-white shadow-md z-10"
+                    style={{ backgroundColor: `rgb(${bottomColorRGB})` }}
                   >
                     B
-                  </span>
-                  <p className="w-full text-center text-[13px] sm:text-base font-bold leading-relaxed text-slate-900">{q.options[1].text}</p>
+                  </div>
+                  {/* absolute inset-0 を使って枠全体を基準にテキストを中央配置 */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center w-full">{q.options[1].text}</p>
+                  </div>
+                  {/* 高さを確保するための透明なダミー要素（テキストと同じ内容） */}
+                  <div className="w-full py-4 sm:py-5 px-8 opacity-0">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-center">{q.options[1].text}</p>
+                  </div>
                 </div>
               </div>
 
