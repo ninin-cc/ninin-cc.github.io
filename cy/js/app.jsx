@@ -211,6 +211,13 @@
         setShowRestPrompt(false);
         setIsInputPhase(false);
         if (next === 'intro') setIntroStep(0);
+        if (next === 'can') {
+          setCanStep(0);
+          setNewCan({ type: 'skill', name: '', desc: '' });
+          setCanConfirming(false);
+          setCanAddOpen(true);
+          setCanReviewing(false);
+        }
         if (next === 'memory') {
           setMemoryStep(0);
           const suggestedAges = getSuggestedAges();
@@ -323,6 +330,11 @@
             setNewCan({ type: 'skill', name: '', desc: '' });
             return;
           }
+          if (memories.length > 0 || memoryStep > 0) {
+            setScene('chart');
+            setIsInputPhase(false);
+            return;
+          }
           goToIntro();
           return;
         }
@@ -342,7 +354,7 @@
             return;
           }
           setScene('can');
-          setCanStep(1);
+          setCanStep(0);
           setIsInputPhase(false);
           return;
         }
@@ -366,7 +378,11 @@
             setWillStep(willStep - 1);
             return;
           }
-          setScene('chart');
+          setScene('can');
+          setCanStep(1);
+          setCanReviewing(true);
+          setCanConfirming(false);
+          setIsInputPhase(false);
           return;
         }
 
@@ -449,7 +465,7 @@
 
       const handleProceedFromCanReview = () => {
         setCanReviewing(false);
-        nextScene('memory');
+        nextScene('will');
       };
 
       const handleEditCanFromReview = (step) => {
@@ -1053,6 +1069,7 @@
       const renderCan = () => {
         const pName = player.name || '冒険者';
         const isWeaponMagicStep = canStep === 0;
+        const isJourneyPromptBeforeCan = isWeaponMagicStep && memories.length === 0 && memoryStep === 0 && !canReviewing;
         const allowedTypes = isWeaponMagicStep ? ['skill', 'magic'] : ['ally'];
         const activeType = allowedTypes.includes(newCan.type) ? newCan.type : allowedTypes[0];
         const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
@@ -1072,7 +1089,13 @@
               ? '…いや…まさかな。他人の空似じゃろう…。'
               : 'よい面構えじゃ。';
         const dialog = isWeaponMagicStep
-          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。」` }]
+          ? [{
+              speaker: APP_CONFIG.char1NameShort,
+              type: APP_CONFIG.char1Type,
+              text: isJourneyPromptBeforeCan
+                ? `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまでどんな冒険をしてきたか、教えてくれるぬか？」`
+                : `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。」`
+            }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         if (canReviewing) {
@@ -1081,7 +1104,7 @@
               <DialogBox
                 speaker={APP_CONFIG.char1NameShort}
                 type={APP_CONFIG.char1Type}
-                text={"「ふむ。武器、魔法、仲間との関係性が出そろったようじゃな。\n旅路の記録（ﾗｲﾌﾗｲﾝﾁｬｰﾄ）へ向かう前に、ここまでのステータスを一度眺めてみるのじゃ。」"}
+                text={"「ふむ。武器、魔法、仲間との関係性が出そろったようじゃな。\n未来へ向かう前に、ここまでのステータスを一度眺めてみるのじゃ。」"}
               />
 
               <WindowBox title="ここまでのステータス確認" iconName="fa-solid fa-shield-heart">
@@ -1126,7 +1149,7 @@
                   仲間・関係性を見直す
                 </button>
                 <button onClick={handleProceedFromCanReview} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
-                  OK、記憶を語りに進む <i className="fa-solid fa-arrow-right"></i>
+                  OK、未来を語りに進む <i className="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
             </div>
@@ -1140,8 +1163,8 @@
                 <DialogGroup dialogs={dialog}>
                   <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                     {isWeaponMagicStep ? (
-                      <button onClick={() => nextScene('intro')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
+                      <button onClick={() => isJourneyPromptBeforeCan ? nextScene('intro') : nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> {isJourneyPromptBeforeCan ? '宿屋の入口へ戻る' : '旅路の記録に戻る'}
                       </button>
                     ) : (
                       <button onClick={handleBackCanStep} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -1180,6 +1203,10 @@
                       )}
                       <button
                         onClick={() => {
+                          if (isJourneyPromptBeforeCan) {
+                            nextScene('memory');
+                            return;
+                          }
                           setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
                           setCanConfirming(false);
                           setCanAddOpen(true);
@@ -1187,7 +1214,7 @@
                         }}
                         className={`rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 ${isWeaponMagicStep ? 'mt-4' : ''}`}
                       >
-                        <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
+                        <i className="fa-regular fa-message"></i> {isJourneyPromptBeforeCan ? 'これまでの冒険を語る' : isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
                       </button>
                     </div>
                     <div className="w-40 hidden md:block order-3"></div>
@@ -1431,7 +1458,7 @@
                       <>
                         <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                           <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                            <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
+                            <i className="fa-solid fa-arrow-right rotate-180"></i> リフレムの問いに戻る
                           </button>
                           <button onClick={() => { setMemoryEditId(null); setIsInputPhase(true); }} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
                             <i className="fa-regular fa-message"></i> 記憶を語る（{memoryStep + 1}/5）
@@ -1450,7 +1477,7 @@
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> リフレムの問いに戻る
                       </button>
                       <button onClick={() => nextScene('chart')} className="rpg-button text-xl px-8 py-4 animate-pulse flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
                         旅路の記録を見る <i className="fa-solid fa-arrow-right"></i>
@@ -1588,7 +1615,7 @@
                   <button onClick={handleSuspend} className="rpg-button text-base px-8 py-3">
                     やすむ
                   </button>
-                  <button onClick={() => nextScene('will')} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
+                  <button onClick={() => nextScene('can')} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
                     つづける <i className="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
@@ -1599,7 +1626,7 @@
                   <i className="fa-solid fa-arrow-right rotate-180"></i> 記憶を語り直す
                 </button>
                 <button onClick={() => setShowRestPrompt(true)} className="rpg-button text-xl px-8 py-4 flex items-center justify-center gap-2 bg-white text-black font-bold order-1 md:order-2">
-                  これからの未来を語り合う <i className="fa-solid fa-arrow-right"></i>
+                  ステータスを語り合う <i className="fa-solid fa-arrow-right"></i>
                 </button>
                 <div className="w-40 hidden md:block order-3"></div>
               </div>
@@ -2639,9 +2666,10 @@
       };
 
       const renderProgressBar = () => {
-        const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must', 'summary'];
-        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', 'あなたの物語', '未来', 'クエスト', 'まとめ'];
-        const currentIndex = SCENES.indexOf(scene);
+        const SCENES = ['intro', 'memory', 'chart', 'can', 'will', 'must', 'summary'];
+        const SCENE_NAMES = ['宿屋', '記憶', 'あなたの物語', 'ステータス', '未来', 'クエスト', 'まとめ'];
+        const progressScene = scene === 'can' && canStep === 0 && memories.length === 0 && memoryStep === 0 ? 'memory' : scene;
+        const currentIndex = SCENES.indexOf(progressScene);
 
         return (
           <div className="w-full mb-8 relative z-20 bg-black bg-opacity-60 p-3 rounded-lg border border-gray-700 shadow-md print-hidden">
