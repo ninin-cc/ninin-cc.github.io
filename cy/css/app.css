@@ -218,48 +218,66 @@
     }
     .ui-frame-letter {
       background:
-        linear-gradient(135deg, rgba(248, 234, 194, 0.22), rgba(224, 190, 123, 0.18)),
+        linear-gradient(135deg, rgba(255, 246, 214, 0.66), rgba(232, 198, 132, 0.58)),
         url('../img/youhishi.jpg') center / cover no-repeat,
         linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
       color: #2d1b10 !important;
-      border-color: #8b5a2b !important;
+      border-color: #7c3f12 !important;
       box-shadow: inset 0 0 26px rgba(90, 48, 18, 0.18), 0 10px 24px rgba(0, 0, 0, 0.24) !important;
-    }
-    .ui-frame-blue {
-      background:
-        linear-gradient(180deg, rgba(34, 77, 156, 0.96), rgba(9, 28, 84, 0.98)) !important;
-      border-color: #dbeafe !important;
-      color: #f8fbff !important;
-      box-shadow: inset 0 0 28px rgba(147, 197, 253, 0.18), 0 10px 24px rgba(0, 0, 0, 0.30) !important;
     }
     .window-box-title {
       border: 1px solid rgba(255, 255, 255, 0.55);
       border-radius: 999px;
     }
     .ui-frame-title-letter {
-      background: rgba(252, 230, 170, 0.96) !important;
-      border-color: rgba(139, 90, 43, 0.85) !important;
-      color: #2d1b10 !important;
+      background: rgba(255, 214, 75, 0.96) !important;
+      border-color: rgba(124, 63, 18, 0.92) !important;
+      color: #1f1308 !important;
     }
     .ui-frame-title-transparent,
-    .ui-frame-title-soft,
-    .ui-frame-title-blue {
+    .ui-frame-title-soft {
       background: rgba(0, 0, 0, 0.76) !important;
     }
     .ui-frame-letter .window-box-content {
-      color: #2d1b10;
+      color: #1f1308;
+    }
+    .ui-frame-letter .window-box-content *:not(.rpg-button):not(i) {
+      color: #1f1308 !important;
+      text-shadow: none !important;
+    }
+    .ui-frame-letter .text-gray-400,
+    .ui-frame-letter .text-gray-300,
+    .ui-frame-letter .text-gray-200 {
+      color: #4b2a12 !important;
+    }
+    .ui-frame-letter .text-yellow-300,
+    .ui-frame-letter .text-yellow-400,
+    .ui-frame-letter .text-yellow-200 {
+      color: #7c2d12 !important;
+    }
+    .ui-frame-letter .border-gray-700,
+    .ui-frame-letter .border-gray-600,
+    .ui-frame-letter .border-yellow-600,
+    .ui-frame-letter .border-yellow-700 {
+      border-color: rgba(124, 63, 18, 0.82) !important;
+    }
+    .ui-frame-letter .bg-black,
+    .ui-frame-letter .bg-gray-900,
+    .ui-frame-letter .bg-gray-800 {
+      background-color: rgba(255, 247, 219, 0.72) !important;
     }
     .ui-frame-letter .rpg-input:not(.parchment-input),
     .ui-frame-letter .rpg-select {
-      background: rgba(255, 248, 223, 0.78) !important;
-      border-color: #8b5a2b !important;
-      color: #2d1b10 !important;
-      caret-color: #2d1b10;
-      box-shadow: inset 0 0 14px rgba(90, 48, 18, 0.13) !important;
+      background: rgba(255, 250, 232, 0.92) !important;
+      border-color: #9a4d14 !important;
+      border-bottom-color: #9a4d14 !important;
+      color: #1f1308 !important;
+      caret-color: #1f1308;
+      box-shadow: inset 0 0 12px rgba(90, 48, 18, 0.10), 0 0 0 1px rgba(124, 63, 18, 0.18) !important;
     }
     .ui-frame-letter .rpg-input:not(.parchment-input)::placeholder {
-      color: #6f5b3b !important;
-      opacity: 0.9;
+      color: #6f4a26 !important;
+      opacity: 1;
     }
     .ui-frame-transparent .rpg-input:not(.parchment-input),
     .ui-frame-transparent .rpg-select {
@@ -268,12 +286,6 @@
     .ui-frame-soft .rpg-input:not(.parchment-input),
     .ui-frame-soft .rpg-select {
       background: rgba(0, 0, 0, 0.42) !important;
-    }
-    .ui-frame-blue .rpg-input:not(.parchment-input),
-    .ui-frame-blue .rpg-select {
-      background: rgba(4, 18, 58, 0.82) !important;
-      border-color: #bfdbfe !important;
-      color: #f8fbff !important;
     }
     .ui-frame-picker {
       background: rgba(0, 0, 0, 0.68);
@@ -293,9 +305,6 @@
       background:
         url('../img/youhishi.jpg') center / cover no-repeat,
         linear-gradient(135deg, #f8eac2, #ddb66f);
-    }
-    .ui-swatch-blue {
-      background: linear-gradient(180deg, #224d9c, #091c54);
     }
     .ui-swatch-transparent {
       background:
@@ -452,24 +461,18 @@
     }
     .theme-cafe .ui-frame-letter {
       background:
-        linear-gradient(135deg, rgba(248, 234, 194, 0.22), rgba(224, 190, 123, 0.18)),
+        linear-gradient(135deg, rgba(255, 246, 214, 0.66), rgba(232, 198, 132, 0.58)),
         url('../img/youhishi.jpg') center / cover no-repeat,
         linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
-      color: #2d1b10 !important;
-      border-color: #8b5a2b !important;
-    }
-    .theme-cafe .ui-frame-blue {
-      background: linear-gradient(180deg, rgba(34, 77, 156, 0.96), rgba(9, 28, 84, 0.98)) !important;
-      color: #fdf6e3 !important;
-      border-color: #dbeafe !important;
+      color: #1f1308 !important;
+      border-color: #7c3f12 !important;
     }
     .theme-cafe .ui-frame-title-letter {
-      background: rgba(252, 230, 170, 0.96) !important;
-      color: #2d1b10 !important;
+      background: rgba(255, 214, 75, 0.96) !important;
+      color: #1f1308 !important;
     }
     .theme-cafe .ui-frame-title-transparent,
-    .theme-cafe .ui-frame-title-soft,
-    .theme-cafe .ui-frame-title-blue {
+    .theme-cafe .ui-frame-title-soft {
       background: rgba(0, 0, 0, 0.76) !important;
       color: #fdf6e3 !important;
     }

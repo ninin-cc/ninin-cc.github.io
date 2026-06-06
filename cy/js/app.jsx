@@ -2636,7 +2636,7 @@
       };
 
       const renderUiFramePicker = () => {
-        const uiFrameOptions = ['default', 0, 1, 2, 3];
+        const uiFrameOptions = ['default', 0, 1, 2];
 
         return (
           <div className="mt-4 flex justify-center">
@@ -2658,7 +2658,7 @@
               </button>
 
               {isUiFramePickerOpen && (
-                <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5 animate-fade-in">
+                <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 animate-fade-in">
                   {uiFrameOptions.map(optionKey => {
                     const option = UI_FRAME_THEMES[optionKey];
                     const selected = String(activeUiFrameTone) === String(optionKey);

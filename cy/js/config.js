@@ -205,14 +205,6 @@
         windowClass: "ui-frame-soft",
         titleClass: "ui-frame-title-soft",
         swatchClass: "ui-swatch-soft"
-      },
-      3: {
-        id: 3,
-        label: "青",
-        description: "FFのウィンドウのような深い青",
-        windowClass: "ui-frame-blue",
-        titleClass: "ui-frame-title-blue",
-        swatchClass: "ui-swatch-blue"
       }
     };
 
