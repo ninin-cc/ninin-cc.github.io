@@ -175,17 +175,34 @@
         ];
       };
 
+      const getPlayerNameReaction = () => {
+        const enteredName = (player.name || '').trim();
+        const sameNameNames = ['りふれむ', 'リフレム', 'はるか', 'ハルカ'];
+        const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
+        const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
+        if (sameNameNames.includes(enteredName)) return '同じ名とは奇遇じゃな。';
+        if (heroLikeNames.includes(enteredName)) return 'ふむ…古の勇者のような名前じゃのう…。';
+        if (lookalikeNames.includes(enteredName)) return '…いや…まさかな。他人の空似じゃろう…。';
+        return 'よい面構えじゃ。';
+      };
+
       const getPageNo = () => {
         switch (scene) {
           case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
+          case 'memory': {
+            const base = `2-${memoryStep + 1}`;
+            const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
+            const hasMemoryConfirmation = !isInputPhase && memoryStep < 5 && Boolean(sortedMemories[memoryStep]);
+            if (hasMemoryConfirmation) return `${base}-Confirm`;
+            return `${base}${isInputPhase ? '-Input' : ''}`;
+          }
+          case 'chart': return showRestPrompt ? '3-2' : '3-1';
           case 'can': {
-            if (canReviewing) return '2-2-Review';
-            const base = `2-${canStep + 1}`;
+            if (canReviewing) return '4-3-Review';
+            const base = `4-${canStep + 1}`;
             if (!isInputPhase) return base;
             return `${base}-${canConfirming ? 'Confirm' : 'Input'}`;
           }
-          case 'memory': return `3-${memoryStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'chart': return showRestPrompt ? '4-2' : '4-1';
           case 'will': return `5-${willStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'must':
             if (mustStep === 0) return mustRecollectionVisible ? '6-1-2' : '6-1-1';
@@ -419,7 +436,7 @@
         const suggestedAges = getSuggestedAges();
         setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
         setMemoryEditId(null);
-        setIsInputPhase(true);
+        setIsInputPhase(false);
         setScene('memory');
       };
 
@@ -1075,18 +1092,8 @@
         const skillCans = cans.filter(c => c.type === 'skill');
         const magicCans = cans.filter(c => c.type === 'magic');
         const allyCans = cans.filter(c => c.type === 'ally');
-        const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
-        const enteredName = (player.name || '').trim();
-        const sameNameNames = ['りふれむ', 'リフレム', 'はるか', 'ハルカ'];
-        const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
-        const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
-        const nameReaction = sameNameNames.includes(enteredName)
-          ? '同じ名とは奇遇じゃな。'
-          : heroLikeNames.includes(enteredName)
-            ? 'ふむ…古の勇者のような名前じゃのう…。'
-            : lookalikeNames.includes(enteredName)
-              ? '…いや…まさかな。他人の空似じゃろう…。'
-              : 'よい面構えじゃ。';
+        const title = isWeaponMagicStep ? 'シーン4-1：武器・魔法の確認' : 'シーン4-2：仲間・関係性の確認';
+        const nameReaction = getPlayerNameReaction();
         const dialog = isWeaponMagicStep
           ? [{
               speaker: APP_CONFIG.char1NameShort,
@@ -1405,12 +1412,16 @@
         const currentAge = parseInt(player.age) || 30;
         const suggestedAges = getSuggestedAges();
         const pName = player.name || '〇〇';
+        const nameReaction = getPlayerNameReaction();
         const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
         const existingStepMemory = memoryStep < 5 ? sortedMemories[memoryStep] : null;
         const memoryAges = suggestedAges.map((age, index) => sortedMemories[index]?.age || age);
 
         const dialogSteps = [
-          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${memoryAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }],
+          [
+            { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主が歩んできた冒険を聞かせてもらえぬか？」` },
+            { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${memoryAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }
+          ],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${memoryAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
           [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${memoryAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${memoryAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
@@ -1575,7 +1586,7 @@
         <div className="space-y-6 max-w-5xl mx-auto w-full">
           <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（旅路の記録）か。」`} />
 
-          <WindowBox title="シーン4：旅路の記録" iconName="fa-solid fa-chart-line">
+          <WindowBox title="シーン3：旅路の記録" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
 
