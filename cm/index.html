@@ -20,7 +20,7 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RIESM™ mini 支援モードチェック</title>
+  <title>RIESM™ mini コミュニケーション・モードチェック</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -48,6 +48,12 @@
     .loading-screen { 
       display: flex; justify-content: center; align-items: center; 
       height: 100vh; font-family: sans-serif; color: #4b5563; 
+    }
+    /* ノート風背景のCSS */
+    .notebook-bg {
+      background-color: #fdfcf8;
+      background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(148, 163, 184, 0.3) 31px, rgba(148, 163, 184, 0.3) 32px);
+      background-position: 0 10px;
     }
   </style>
 </head>
@@ -124,36 +130,151 @@
     );
 
     // ==========================================
-    // 厳選16問プール (日常コミュニケーションベース・バイアス排除・対立軸バランス)
+    // 厳選16問プール
+    // 日常コミュニケーションベース
+    // 直感型セリフ・バイアス低減版
+    // W: 発想 / K: 構造 / A: 調整 / N: 調和
     // ==========================================
     const questionsPool = [
       // 1. 発想(W) vs 構造(K) (3問)
-      { id: 1, text: "知人の相談に乗っている時、話が堂々巡りしていると感じたら、あなたは…", options: [ { text: "全く別の新しい話題や視点を振ってみる", type: "W" }, { text: "「つまりこういうこと？」とこれまでの話を整理して返す", type: "K" }] },
-      { id: 2, text: "「どうしたらいいかわからない」と愚痴をこぼされた時、あなたは…", options: [ { text: "「じゃあ、こんなのはどう？」といくつかアイデアを出す", type: "W" }, { text: "「今どういう状況なの？」と問題点を整理しようとする", type: "K" }] },
-      { id: 3, text: "家でちょっとした組み立て家具を作ることになりました。あなたの進め方は？", options: [ { text: "「大体わかるでしょ」と完成図を想像し、直感で組み立て始める", type: "W" }, { text: "説明書通りに部品を並べ、順番通りに正確に組み立てる", type: "K" }] },
-      
-      // 2. 発想(W) vs 調整(A) (3問)
-      { id: 4, text: "同僚や友人が「会社辞めて起業しようかな」と急に言い出した時、あなたは…", options: [ { text: "「いいね！何やるの？」とワクワクして聞く", type: "W" }, { text: "「生活やリスクは大丈夫なの？」と現実的に考える", type: "A" }] },
-      { id: 5, text: "友人が「明日からダイエットする！」と宣言した時、あなたは…", options: [ { text: "「頑張れ！応援するよ！」と背中を押す", type: "W" }, { text: "「無理な計画じゃない？続かなくなるよ」と心配する", type: "A" }] },
-      { id: 6, text: "SNS等で新しい面白そうなサービスや流行りの広告を見かけた時、あなたは…", options: [ { text: "「どんな仕組みだろう？」と好奇心でクリックして詳細を見てみる", type: "W" }, { text: "「何かトラブルがあったら嫌だな」と少し慎重に様子を見る", type: "A" }] },
+      {
+        id: 1,
+        text: "会話をしていて、あなたが自然と「引っ張られやすい」のは？",
+        options: [
+          { text: "「それ面白い！別の見方もあるかも」", type: "W" },
+          { text: "「つまり、どういうことだろう？」", type: "K" }
+        ]
+      },
+      {
+        id: 2,
+        text: "何かに取り組む時、あなたの意識が先に「向きやすい」のは？",
+        options: [
+          { text: "「こんなこともできそう！」", type: "W" },
+          { text: "「今、何が起きているんだろう？」", type: "K" }
+        ]
+      },
+      {
+        id: 3,
+        text: "新しい作業を始める時、あなたの心境に近いのは？",
+        options: [
+          { text: "「完成を想像して、とりあえずやってみよう」", type: "W" },
+          { text: "「手順を確認して、順番に進めよう」", type: "K" }
+        ]
+      },
 
-      // 3. 発想(W) vs 共感(N) (2問)
-      { id: 7, text: "相手が悩み事を一生懸命話している時、あなたの中で湧き上がりやすい意識は？", options: [ { text: "「こうしたらもっと良くなるのに！」という新しい視点や解決策", type: "W" }, { text: "「それは大変だったね」と、まずは相手の思いをそのまま受け止めること", type: "N" }] },
-      { id: 8, text: "次の休日に何をするか決める時、あなたがより大切にしたいのは？", options: [ { text: "「行ったことのない新しい場所」を求めてワクワクする体験", type: "W" }, { text: "「一緒に行く人が楽しんでくれるか、お互い心地よく過ごせるか」", type: "N" }] },
+      // 2. 発想(W) vs 調整(A) (3問)
+      {
+        id: 4,
+        text: "誰かが新しいことを始めようとしている時、あなたの目に「留まりやすい」のは？",
+        options: [
+          { text: "「面白そう！何やるの？」", type: "W" },
+          { text: "「生活や準備は大丈夫かな…？」", type: "A" }
+        ]
+      },
+      {
+        id: 5,
+        text: "友人が「明日からダイエットする！」と宣言した時、あなたの中で先に浮かびやすいのは？",
+        options: [
+          { text: "「いいじゃん！いけいけー！」", type: "W" },
+          { text: "「無理な計画は立てないでね…」", type: "A" }
+        ]
+      },
+      {
+        id: 6,
+        text: "SNSなどで新しい面白そうなサービスや流行りを見かけた時、あなたの反応に近いのは？",
+        options: [
+          { text: "「面白そう！どんな仕組みだろう？」", type: "W" },
+          { text: "「本当に安全かな…大丈夫？」", type: "A" }
+        ]
+      },
+
+      // 3. 発想(W) vs 調和(N) (2問)
+      {
+        id: 7,
+        text: "雑谈をしている時、あなたの意識が「向きやすい」のは？",
+        options: [
+          { text: "「たのしい話にしたいな」", type: "W" },
+          { text: "「いい雰囲気が続いてほしいな」", type: "N" }
+        ]
+      },
+      {
+        id: 8,
+        text: "グループで集まる時、あなたが自然と「大切にしている」感覚は？",
+        options: [
+          { text: "「新しい体験でワクワクしたい！」", type: "W" },
+          { text: "「みんなで楽しい時間を共有したいな」", type: "N" }
+        ]
+      },
 
       // 4. 構造(K) vs 調整(A) (2問)
-      { id: 9, text: "会議や話し合いの終了時間が迫っているのに、まだ意見がまとまらない時、あなたは…", options: [ { text: "時間内に結論を出すため、論点を絞って整理しようとする", type: "K" }, { text: "「無理に決めると後で不具合が出るかも」と、一旦持ち帰るなど慎重に進める", type: "A" }] },
-      { id: 10, text: "旅行やイベントの計画を立てる時、あなたが最も安心する進め方は？", options: [ { text: "時間やスケジュール、役割分担を明確に決めておくこと", type: "K" }, { text: "現地の天気や体調のリスク、不測の事態に備えた代替案を考えておくこと", type: "A" }] },
+      {
+        id: 9,
+        text: "話し合いの終了時間が近いのに、まだ意見がまとまっていない時、あなたの中で先に気になりやすいのは？",
+        options: [
+          { text: "「何を決める場だったっけ？」", type: "K" },
+          { text: "「無理に決めて、後で困らないかな…」", type: "A" }
+        ]
+      },
+      {
+        id: 10,
+        text: "旅行やイベントの計画を立てる時、あなたが自然に安心しやすいのは？",
+        options: [
+          { text: "「時間や役割がはっきり決まっている」", type: "K" },
+          { text: "「何かあった時の代替案がある」", type: "A" }
+        ]
+      },
 
-      // 5. 構造(K) vs 共感(N) (3問)
-      { id: 11, text: "パートナーや友人が感情的になって怒っている時、あなたは…", options: [ { text: "「何が原因だったの？」と、事実関係を論理的に整理しようとする", type: "K" }, { text: "「怒るのも無理ないよ」と、相手の気持ちを否定せずに受け止める", type: "N" }] },
-      { id: 12, text: "初めて会う人と話す時、あなたがまず意識するのは？", options: [ { text: "今日会った目的や、お互いの立場や共通点をクリアにすること", type: "K" }, { text: "相手がリラックスできるような、温かい雰囲気を作ること", type: "N" }] },
-      { id: 13, text: "子供や後輩が「もうやりたくない」と繰り返す時、あなたは…", options: [ { text: "「何が嫌なの？人間関係？内容？」と具体的な理由を特定しようとする", type: "K" }, { text: "「やりたくないんだね、辛いね」と気持ちをそのまま受け入れる", type: "N" }] },
+      // 5. 構造(K) vs 調和(N) (3問)
+      {
+        id: 11,
+        text: "パートナーや友人が感情的に怒っている時、あなたの心には何が浮かぶ？",
+        options: [
+          { text: "（…何が原因なんだろう…？）", type: "K" },
+          { text: "（…胸が締め付けられる…）", type: "N" }
+        ]
+      },
+      {
+        id: 12,
+        text: "初めて会う人と話す時、あなたが自然に意識しやすいのは？",
+        options: [
+          { text: "「今日の目的や関係性をクリアにしたい」", type: "K" },
+          { text: "「リラックスして気持ちよく話したいな」", type: "N" }
+        ]
+      },
+      {
+        id: 13,
+        text: "子供や後輩が「もうやりたくない」と繰り返している時、あなたの中で先に浮かびやすいのは？",
+        options: [
+          { text: "「何が嫌なんだろう？」", type: "K" },
+          { text: "「わかる、嫌になる時あるよね」", type: "N" }
+        ]
+      },
 
-      // 6. 調整(A) vs 共感(N) (3問)
-      { id: 14, text: "知り合いが「私ってダメだな」と強く落ち込んでいる時、あなたは…", options: [ { text: "「そんなことないよ、頑張ってるよ」と温かい言葉をかけて慰める", type: "N" }, { text: "落ち込みすぎて心身のバランスを崩さないか、そっと気にかける", type: "A" }] },
-      { id: 15, text: "次の約束を決める時、あなたが優先しやすいのは？", options: [ { text: "お互いが「会いたい！」と盛り上がったタイミング", type: "N" }, { text: "お互いのスケジュールに無理がないか、負担にならないか", type: "A" }] },
-      { id: 16, text: "「全然大丈夫だよ！」と笑顔で言う相手が、無理をしているように見える時、あなたは…", options: [ { text: "「本当は辛いんだよね」と、隠している気持ちを優しく受け止める", type: "N" }, { text: "「このままだと体調を崩してしまうのではないか」と現実的な限界を心配する", type: "A" }] }
+      // 6. 調整(A) vs 調和(N) (3問)
+      {
+        id: 14,
+        text: "知り合いが「私ってダメだな」と強く落ち込んでいる時、あなたの中で先に起こりやすいのは？",
+        options: [
+          { text: "「そう思ってしまう時あるよね…」", type: "N" },
+          { text: "「このままだと倒れちゃうんじゃ…」", type: "A" }
+        ]
+      },
+      {
+        id: 15,
+        text: "次の約束を決める時、あなたが自然に優先しやすいのは？",
+        options: [
+          { text: "「相手の都合がいい時がいいな」", type: "N" },
+          { text: "「相手が都合が悪い時はいやだな」", type: "A" }
+        ]
+      },
+      {
+        id: 16,
+        text: "「全然大丈夫だよ！」と笑顔で言う相手が、少し無理をしているように見える時、あなたの中で先に浮かびやすいのは？",
+        options: [
+          { text: "「本当はつらいんだよね…」", type: "N" },
+          { text: "「後で疲れが出ないかな…」", type: "A" }
+        ]
+      }
     ];
 
     const resultsData = {
@@ -161,32 +282,52 @@
         title: "発想型（ワンダー）",
         subTitle: "（自由・発見・挑戦）",
         detail: [
-          "あなたは、会話の中から「面白さ」や「新しい可能性」を見つける力が、自然に働きやすい傾向があるかもしれません。相手の話にインスピレーションを受け、ワクワクするようなアイデアを提案したり、場の空気を明るくしたりすることに長けている可能性があります。\n\n一方で、次々と新しい発想が浮かぶため、話があちこちに飛んだり、相手がまだ整理できていない段階で「解決策（アイデア）」を先走りして伝えてしまうことがあるかもしれません。\n\n思いついたアイデアをすぐに伝えるのではなく、「今、相手は解決策を求めているのか、ただ聞いてほしいのか？」と一度立ち止まることで、より相手のペースに合ったコミュニケーションになる可能性があります。相手の反応を見ながら、発想のアクセルを調整してみてはいかがでしょうか。"
+          "あなたは、会話の中から「面白さ」や「新しい可能性」を見つける力が、自然に働きやすい傾向があるかもしれません。相手の話にインスピレーションを受け、ワクワクするようなアイデアを提案したり、場の空気を明るくしたりすることに長けている可能性があります。",
+          "次々と新しい発想が浮かぶため、話があちこちに飛んだり、相手がまだ整理できていない段階で「解決策（アイデア）」を先走りして伝えてしまうことがあるかもしれません。\n\n思いついたアイデアをすぐに伝えるのではなく、「今、相手は解決策を求めているのか、ただ聞いてほしいのか？」と一度立ち止まることで、より相手のペースに合ったコミュニケーションになる可能性があります。相手の反応を見ながら、発想のアクセルを調整してみてはいかがでしょうか。"
         ],
+        supportStyle: {
+          strength: "停滞した状況に新しい視点をもたらし、前向きな可能性を示すことができるという傾向があります。",
+          habit: "「こうしたらもっとうまくいくのに！」というアイデアが頭に浮かんでしまい、相手のペースよりも解決や提案を急いでしまうかもしれません。"
+        },
         theme: { bg: "bg-amber-50", border: "border-amber-200", cardBg: "bg-amber-100/50", header: "from-amber-400 to-orange-500", text: "text-amber-900", textLight: "text-amber-700", btnBg: "bg-amber-100", btnHover: "hover:bg-amber-200" }
       },
       K: {
         title: "構造型（キーパー）",
         subTitle: "（論理・整理・信念）",
         detail: [
-          "あなたは、相手の話を論理的に整理し、状況を正確に把握する力が、自然に働きやすい傾向があるかもしれません。感情に流されず、「何が問題なのか」「どうすれば解決するのか」という道筋を立て、的確なアドバイスをする安定感があると言えそうです。\n\n一方で、物事を整理・解決しようとする力が強いため、相手がただ話を聞いてほしいだけの時に、「それはつまり〇〇だね」と正論をぶつけてしまい、相手に「冷たい」と誤解されてしまうことがあるかもしれません。\n\n「わかった」と感じたところから、すぐに結論を出すのではなく、もう一呼吸置いて「相手がどんな気持ちで話しているか」にフォーカスする時間を作ることで、関係性がより深まりやすくなる可能性があります。解決を急がず、まずは相手の思いを受け止めることを意識してみてはいかがでしょうか。"
+          "あなたは、相手の話を論理的に整理し、状況を正確に把握する力が、自然に働きやすい傾向があるかもしれません。感情に流されず、「何が問題なのか」「どうすれば解決するのか」という道筋を立て、的確なアドバイスをする安定感があると言えそうです。",
+          "物事を整理・解決しようとする力が強いため、相手がただ話を聞いてほしいだけの時に、「それはつまり〇〇だね」と正論をぶつけてしまい、相手に「冷たい」と誤解されてしまうことがあるかもしれません。\n\n「わかった」と感じたところから、すぐに結論を出すのではなく、もう一呼吸置いて「相手がどんな気持ちで話しているか」にフォーカスする時間を作ることで、関係性がより深まりやすくなる可能性があります。解決を急がず、まずは相手の思いを受け止めることを意識してみてはいかがでしょうか。"
         ],
+        supportStyle: {
+          strength: "相手の感情に巻き込まれずに、客観的かつ冷静にクライエント（相手）と接することができるという傾向があります。",
+          habit: "話を要約しがちになったり、原因を追究したくなったり、「こうすればいいのに」と自分の経験や正論を話したくなるかもしれません。"
+        },
         theme: { bg: "bg-blue-50", border: "border-blue-200", cardBg: "bg-blue-100/50", header: "from-blue-500 to-indigo-600", text: "text-blue-900", textLight: "text-blue-700", btnBg: "bg-blue-100", btnHover: "hover:bg-blue-200" }
       },
       N: {
-        title: "共感型（ナーチャー）",
+        title: "調和型（ナーチャー）",
         subTitle: "（受容・保護・調和）",
         detail: [
-          "あなたは、相手の気持ちをそのまま受け止め、安心できる居場所を作る力が、自然に働きやすい傾向があるかもしれません。相手の言葉の裏にある「辛さ」や「喜び」を自分のことのように感じ、温かい態度で接するため、周囲から「話しやすい」「優しい」と頼りにされることが多い可能性があります。\n\n一方で、相手の感情を受け入れる力が強い分、ネガティブな気分に引きずられて自分まで疲弊してしまったり、相手を傷つけたくないという思いから言いづらいこと（相手のためになる指摘）が言えなかったりすることがあるかもしれません。\n\n相手の気持ちを大切にしながらも、相手の問題と自分の感情の境界線を引くことを意識すると、コミュニケーションの負担が減りやすくなる可能性があります。「相手の気持ちを理解すること」と「自分まで同じように苦しむこと」は違う、という視点を持ってみてはいかがでしょうか。"
+          "あなたは、相手の気持ちをそのまま受け止め、安心できる居場所を作る力が、自然に働きやすい傾向があるかもしれません。相手の言葉の裏にある「辛さ」や「喜び」を自分のことのように感じ、温かい態度で接するため、周囲から「話しやすい」「優しい」と頼りにされることが多い可能性があります。",
+          "相手の感情を受け入れる力が強い分、ネガティブな気分に引きずられて自分まで疲弊してしまったり、相手を傷つけたくないという思いから言いづらいこと（相手のためになる指摘）が言えなかったりすることがあるかもしれません。\n\n相手の気持ちを大切にしながらも、相手の問題と自分の感情の境界線を引くことを意識すると、コミュニケーションの負担が減りやすくなる可能性があります。「相手の気持ちを理解すること」と「自分まで同じように苦しむこと」は違う、という視点を持ってみてはいかがでしょうか。"
         ],
+        supportStyle: {
+          strength: "相手の心に深く寄り添い、否定されない無条件の安心感と受容の場を作ることができるという傾向があります。",
+          habit: "相手の感情に巻き込まれがちになり、面談や対話の「構造の輪郭（本来の目的）」が失われがちになるかもしれません。"
+        },
         theme: { bg: "bg-pink-50", border: "border-pink-200", cardBg: "bg-pink-100/50", header: "from-pink-400 to-rose-500", text: "text-pink-900", textLight: "text-pink-700", btnBg: "bg-pink-100", btnHover: "hover:bg-pink-200" }
       },
       A: {
         title: "調整型（アダプター）",
         subTitle: "（洞察・適応・安全配慮）",
         detail: [
-          "あなたは、その場の空気を読み、相手の期待や周囲の状況（リスク）を察知する力が、自然に働きやすい傾向があるかもしれません。トラブルの火種を未然に防いだり、相手の負担にならないよう細やかな配慮をしたりする、縁の下の力持ちのような安定感があると言えそうです。\n\n一方で、周囲の空気を読んだりリスクを回避しようとする力が強い分、自分の本当の気持ちや意見を抑え込んでしまったり、慎重になりすぎてチャンスを逃してしまうことがあるかもしれません。\n\n安全配慮や気遣いはあなたの素晴らしい才能ですが、時には「自分はどうしたいか」という直感（ワンダー）の声にも耳を傾けることで、コミュニケーションの幅が広がる可能性があります。小さなことからでも、自己主張を試してみてはいかがでしょうか。"
+          "あなたは、その場の空気を読み、相手の期待や周囲の状況（リスク）を察知する力が、自然に働きやすい傾向があるかもしれません。トラブルの火種を未然に防いだり、相手の負担にならないよう細やかな配慮をしたりする、縁の下の力持ちのような安定感があると言えそうです。",
+          "周囲の空気を読んだりリスクを回避しようとする力が強い分、自分の本当の気持ちや意見を抑え込んでしまったり、慎重になりすぎてチャンスを逃してしまうことがあるかもしれません。\n\n安全配慮や気遣いはあなたの素晴らしい才能ですが、時には「自分はどうしたいか」という直感（ワンダー）の声にも耳を傾けることで、コミュニケーションの幅が広がる可能性があります。小さなことからでも、自己主張を試してみてはいかがでしょうか。"
         ],
+        supportStyle: {
+          strength: "相手のペースや安全を第一に考え、無理な負担やリスクを与えない丁寧な関わりができるという傾向があります。",
+          habit: "リスクが気になりすぎたり、クライエントの価値観や信念に「逆らわない」ようにと気を遣い、一歩引いて（遠慮して）しまいがちになるかもしれません。"
+        },
         theme: { bg: "bg-cyan-50", border: "border-cyan-200", cardBg: "bg-cyan-100/50", header: "from-cyan-400 to-teal-500", text: "text-cyan-900", textLight: "text-cyan-700", btnBg: "bg-cyan-100", btnHover: "hover:bg-cyan-200" }
       }
     };
@@ -195,18 +336,25 @@
     const secondAdditions = {
       W: "さらに、発想型（ワンダー）の「自由や楽しさを求める力」も同時に強く働いている可能性があるため、ただ枠に収まるだけでなく、会話の中に新しい発見やワクワク感を生み出せる、とても魅力的なバランスかもしれません。",
       K: "さらに、構造型（キーパー）の「論理的に整理・分析する力」も同時に強く働いている可能性があるため、感情や勢いだけでなく、しっかりと地に足のついた現実的な視点も持ち合わせている、非常に頼もしい状態かもしれません。",
-      N: "さらに、共感型（ナーチャー）の「他者への思いやりや受容の力」も同時に強く働いている可能性があるため、相手の心を温かく包み込み、深い信頼関係を築きながら対話を進めていける状態かもしれません。",
+      N: "さらに、調和型（ナーチャー）の「他者への思いやりや受容の力」も同時に強く働いている可能性があるため、相手の心を温かく包み込み、深い信頼関係を築きながら対話を進めていける状態かもしれません。",
       A: "さらに、調整型（アダプター）の「空気を読む力や慎重さ」も同時に強く働いている可能性があるため、相手の負担や周囲への影響にも細やかに気を配れる、とてもバランスの取れた大人のコミュニケーションができている状態かもしれません。"
     };
 
-    // --- ダブルフロント用テーマカラー（既存デザイン踏襲） ---
-    const doubleThemes = {
-      K_W: { bg: "bg-teal-50", border: "border-teal-200", cardBg: "bg-teal-100/50", header: "from-amber-400 to-blue-500", text: "text-teal-900", textLight: "text-teal-700", btnBg: "bg-teal-100", btnHover: "hover:bg-teal-200" },
-      N_W: { bg: "bg-orange-50", border: "border-orange-200", cardBg: "bg-orange-100/50", header: "from-amber-400 to-pink-400", text: "text-orange-900", textLight: "text-orange-700", btnBg: "bg-orange-100", btnHover: "hover:bg-orange-200" },
-      A_W: { bg: "bg-lime-50", border: "border-lime-200", cardBg: "bg-lime-100/50", header: "from-amber-400 to-cyan-400", text: "text-lime-900", textLight: "text-lime-700", btnBg: "bg-lime-100", btnHover: "hover:bg-lime-200" },
-      K_N: { bg: "bg-violet-50", border: "border-violet-200", cardBg: "bg-violet-100/50", header: "from-blue-500 to-pink-500", text: "text-violet-900", textLight: "text-violet-700", btnBg: "bg-violet-100", btnHover: "hover:bg-violet-200" },
-      A_K: { bg: "bg-sky-50", border: "border-sky-200", cardBg: "bg-sky-100/50", header: "from-blue-500 to-cyan-500", text: "text-sky-900", textLight: "text-sky-700", btnBg: "bg-sky-100", btnHover: "hover:bg-sky-200" },
-      A_N: { bg: "bg-fuchsia-50", border: "border-fuchsia-200", cardBg: "bg-fuchsia-100/50", header: "from-pink-400 to-cyan-400", text: "text-fuchsia-900", textLight: "text-fuchsia-700", btnBg: "bg-fuchsia-100", btnHover: "hover:bg-fuchsia-200" }
+    // --- ダブルフロント用テーマ ヘッダーグラデーション定義 ---
+    // (主タイプ_副タイプ) に応じて、主から副へのグラデーションを生成
+    const doubleHeaders = {
+      W_K: "from-amber-400 to-blue-500",
+      W_N: "from-amber-400 to-pink-400",
+      W_A: "from-amber-400 to-cyan-400",
+      K_W: "from-blue-500 to-amber-400",
+      K_N: "from-blue-500 to-pink-500",
+      K_A: "from-blue-500 to-cyan-500",
+      N_W: "from-pink-400 to-amber-400",
+      N_K: "from-pink-400 to-blue-500",
+      N_A: "from-pink-400 to-cyan-400",
+      A_W: "from-cyan-400 to-amber-400",
+      A_K: "from-cyan-400 to-blue-500",
+      A_N: "from-cyan-400 to-pink-400",
     };
 
     // グラデーション色定義 (RGB)
@@ -238,6 +386,8 @@
       const [tempSelectedChoiceIndex, setTempSelectedChoiceIndex] = useState(null);
       const [isPractice, setIsPractice] = useState(false);
       const [tutorialCompleted, setTutorialCompleted] = useState(false);
+      const [showCoconalaModal, setShowCoconalaModal] = useState(false);
+      const [colorMode, setColorMode] = useState('natural'); // カラーモード切替 (natural / colorful)
       
       // ホバーアニメーション用 (0〜100)
       const [hoverPos, setHoverPos] = useState(50);
@@ -304,6 +454,178 @@
         setTempSelectedChoiceIndex(null);
         setHoverPos(50);
       };
+
+      // 開発用ダミー結果セット（全16パターン対応）
+      const setDummyResult = (type) => {
+        let dummyScores = { W: 0, K: 0, N: 0, A: 0 };
+        let front = '';
+        let second = '';
+        let back = '';
+        let isDouble = false;
+        let frontKey = '';
+
+        switch (type) {
+          // 単独フロント (4パターン)
+          case 'W': dummyScores = { W: 40, K: 15, N: 10, A: 5 }; front = 'W'; second = 'K'; back = 'A'; break;
+          case 'K': dummyScores = { W: 15, K: 40, N: 10, A: 5 }; front = 'K'; second = 'W'; back = 'A'; break;
+          case 'N': dummyScores = { W: 15, K: 10, N: 40, A: 5 }; front = 'N'; second = 'W'; back = 'A'; break;
+          case 'A': dummyScores = { W: 15, K: 5, N: 10, A: 40 }; front = 'A'; second = 'W'; back = 'K'; break;
+          
+          // ダブルフロント (W主: 3パターン)
+          case 'W_K': dummyScores = { W: 40, K: 38, N: 10, A: 5 }; front = 'W'; second = 'K'; back = 'A'; isDouble = true; frontKey = 'W_K'; break;
+          case 'W_N': dummyScores = { W: 40, K: 10, N: 38, A: 5 }; front = 'W'; second = 'N'; back = 'A'; isDouble = true; frontKey = 'W_N'; break;
+          case 'W_A': dummyScores = { W: 40, K: 5, N: 10, A: 38 }; front = 'W'; second = 'A'; back = 'K'; isDouble = true; frontKey = 'W_A'; break;
+
+          // ダブルフロント (K主: 3パターン)
+          case 'K_W': dummyScores = { W: 38, K: 40, N: 10, A: 5 }; front = 'K'; second = 'W'; back = 'A'; isDouble = true; frontKey = 'K_W'; break;
+          case 'K_N': dummyScores = { W: 10, K: 40, N: 38, A: 5 }; front = 'K'; second = 'N'; back = 'A'; isDouble = true; frontKey = 'K_N'; break;
+          case 'K_A': dummyScores = { W: 10, K: 40, N: 5, A: 38 }; front = 'K'; second = 'A'; back = 'N'; isDouble = true; frontKey = 'K_A'; break;
+
+          // ダブルフロント (N主: 3パターン)
+          case 'N_W': dummyScores = { W: 38, K: 10, N: 40, A: 5 }; front = 'N'; second = 'W'; back = 'A'; isDouble = true; frontKey = 'N_W'; break;
+          case 'N_K': dummyScores = { W: 10, K: 38, N: 40, A: 5 }; front = 'N'; second = 'K'; back = 'A'; isDouble = true; frontKey = 'N_K'; break;
+          case 'N_A': dummyScores = { W: 10, K: 5, N: 40, A: 38 }; front = 'N'; second = 'A'; back = 'K'; isDouble = true; frontKey = 'N_A'; break;
+
+          // ダブルフロント (A主: 3パターン)
+          case 'A_W': dummyScores = { W: 38, K: 5, N: 10, A: 40 }; front = 'A'; second = 'W'; back = 'K'; isDouble = true; frontKey = 'A_W'; break;
+          case 'A_K': dummyScores = { W: 10, K: 38, N: 5, A: 40 }; front = 'A'; second = 'K'; back = 'N'; isDouble = true; frontKey = 'A_K'; break;
+          case 'A_N': dummyScores = { W: 10, K: 5, N: 38, A: 40 }; front = 'A'; second = 'N'; back = 'K'; isDouble = true; frontKey = 'A_N'; break;
+        }
+
+        setResultScores(dummyScores);
+        setResultType({ front, second, back, isDouble, frontKey, detailIndex: 0 });
+        setStarted(true);
+      };
+
+      // ▼ ココナラ ポップアップ（モーダル）共通コンポーネント ▼
+      const renderCoconalaModal = () => {
+        if (!showCoconalaModal) return null;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowCoconalaModal(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200" onClick={e => e.stopPropagation()}>
+              <div className="relative p-5 sm:p-6 text-center">
+                <button 
+                  onClick={() => setShowCoconalaModal(false)}
+                  className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                
+                <h3 className="font-bold text-[13px] sm:text-[14px] text-slate-800 mb-1 leading-snug pr-4">
+                  ｶｳﾝｾﾗｰ二名在籍のnininが贈る試験対策
+                </h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mb-5">
+                  （ｷｬﾘｱｺﾝｻﾙﾀﾝﾄ/産業ｶｳﾝｾﾗｰ受験 両方対応可）
+                </p>
+
+                <div className="space-y-3">
+                  <a href="https://coconala.com/services/4199883" target="_blank" rel="noopener noreferrer" className="block text-left border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="font-bold text-[13px] sm:text-sm text-emerald-900 mb-1.5 leading-tight group-hover:text-emerald-700">
+                          あなたの特性別の面談実技練習<br/>
+                          <span className="inline-block bg-white text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] mt-1">4,000円 / 50分</span>
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-relaxed">
+                          キャリコン面談の構造的理解｜第31回で支援した8名全員が合格した方法
+                        </p>
+                      </div>
+                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-200/50 rounded-lg flex-none flex items-center justify-center text-emerald-600 border border-emerald-300/50 overflow-hidden">
+                        <span className="text-[10px] font-bold">画像</span>
+                        {/* <img src="画像のURL" alt="面談実技練習" className="w-full h-full object-cover" /> */}
+                      </div>
+                    </div>
+                  </a>
+
+                  <a href="https://coconala.com/services/4199894" target="_blank" rel="noopener noreferrer" className="block text-left border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="font-bold text-[13px] sm:text-sm text-blue-900 mb-1.5 leading-tight group-hover:text-blue-700">
+                          超構造的ロープレで本番に備えた面談実技練習<br/>
+                          <span className="inline-block bg-white text-blue-800 border border-blue-200 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] mt-1">10,000円 / 90分</span>
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-blue-700 font-medium leading-relaxed">
+                          台本作成 ＋ 本番再現 ＋ 構造フィードバック
+                        </p>
+                      </div>
+                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-200/50 rounded-lg flex-none flex items-center justify-center text-blue-600 border border-blue-300/50 overflow-hidden">
+                        <span className="text-[10px] font-bold">画像</span>
+                        {/* <img src="画像のURL" alt="超構造的ロープレ" className="w-full h-full object-cover" /> */}
+                      </div>
+                    </div>
+                  </a>
+
+                  {/* ▼ 学科試験支援（心理学者マップ）ボタン ▼ */}
+                  <button className="w-full text-left border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group relative overflow-hidden mt-2">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-300"></div>
+                    <div className="flex items-center justify-between gap-3 pl-1">
+                      <div className="flex-1">
+                        <div className="text-[10px] sm:text-[11px] text-amber-700 font-bold mb-0.5 opacity-90">学科試験支援は</div>
+                        <div className="font-bold text-[13px] sm:text-sm text-amber-900 mb-1.5 leading-tight group-hover:text-amber-700">
+                          心理学者マップ！
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-amber-700 font-medium leading-relaxed">
+                          （クリアファイル）（PDFデータ）<br className="sm:hidden" />どちらもご用意あります。
+                        </p>
+                      </div>
+                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-amber-200/50 rounded-lg flex-none flex items-center justify-center text-amber-700 border border-amber-300/50 overflow-hidden">
+                        <span className="text-[10px] font-bold">画像</span>
+                        {/* <img src="画像のURL" alt="心理学者マップ" className="w-full h-full object-cover" /> */}
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // 開発用ダミー遷移ボタン群コンポーネント (ホバーで出現)
+      const renderDebugButtons = () => (
+        <div className="w-full flex flex-wrap justify-center gap-1.5 py-4 opacity-0 hover:opacity-80 transition-opacity duration-300">
+          <div className="w-full text-center text-[10px] text-slate-500 font-bold mb-1">【開発用デバッグメニュー（全16パターン）】</div>
+          
+          {/* 単独 */}
+          <div className="w-full flex justify-center gap-1.5 mb-1">
+            <button onClick={() => setDummyResult('W')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：ワンダー">W単</button>
+            <button onClick={() => setDummyResult('K')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：キーパー">K単</button>
+            <button onClick={() => setDummyResult('N')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：ナーチャー">N単</button>
+            <button onClick={() => setDummyResult('A')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：アダプター">A単</button>
+          </div>
+
+          {/* ダブル (W主) */}
+          <div className="w-full flex justify-center gap-1.5">
+            <button onClick={() => setDummyResult('W_K')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+K</button>
+            <button onClick={() => setDummyResult('W_N')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+N</button>
+            <button onClick={() => setDummyResult('W_A')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+A</button>
+          </div>
+
+          {/* ダブル (K主) */}
+          <div className="w-full flex justify-center gap-1.5">
+            <button onClick={() => setDummyResult('K_W')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+W</button>
+            <button onClick={() => setDummyResult('K_N')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+N</button>
+            <button onClick={() => setDummyResult('K_A')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+A</button>
+          </div>
+
+          {/* ダブル (N主) */}
+          <div className="w-full flex justify-center gap-1.5">
+            <button onClick={() => setDummyResult('N_W')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+W</button>
+            <button onClick={() => setDummyResult('N_K')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+K</button>
+            <button onClick={() => setDummyResult('N_A')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+A</button>
+          </div>
+
+          {/* ダブル (A主) */}
+          <div className="w-full flex justify-center gap-1.5">
+            <button onClick={() => setDummyResult('A_W')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">A+W</button>
+            <button onClick={() => setDummyResult('A_K')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">A+K</button>
+            <button onClick={() => setDummyResult('A_N')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">A+N</button>
+          </div>
+        </div>
+      );
 
       const handleAnswer = (scoreUpdates) => {
         const newAnswers = [...answers, scoreUpdates];
@@ -376,8 +698,8 @@
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
             isDouble = true;
-            // テーマ取得用にアルファベット順のキーを作っておく
-            frontKey = [maxType, secondType].sort().join('_');
+            // 主(front)と副(second)の順序を保持したキーを生成
+            frontKey = `${maxType}_${secondType}`;
           }
         }
 
@@ -392,93 +714,109 @@
         setTimeout(() => setToastMessage(''), 5000);
       };
 
+      // ▼ 画面タイトル直下のカラーモード切替ボタン共通コンポーネント ▼
+      const renderColorModeToggle = () => (
+        <div className="flex justify-center w-full mb-6">
+          <button 
+            onClick={() => setColorMode(colorMode === 'colorful' ? 'natural' : 'colorful')} 
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[11px] sm:text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97]"
+            title="カラーモード切替"
+          >
+            {colorMode === 'colorful' ? '🎨 カラフルモード' : '🌿 ナチュラルモード'}
+          </button>
+        </div>
+      );
+
       if (!started) {
         return (
-          <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 flex-col">
-            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-fade-in border border-slate-100">
-              <div className="mb-6 flex items-center justify-center gap-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-6">
-                  <span className="text-3xl sm:text-4xl">🌈</span>
-                </div>
-                <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">コミュニケーション・モードチェック</span></h1>
-              </div>
-              
-              {/* ▼ アコーディオンに変更した説明文 ▼ */}
-              <details open className="mb-8 group border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden text-left">
-                <summary className="cursor-pointer font-bold text-slate-700 p-4 bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
-                  <span className="flex items-center gap-2">アプリの説明と注意</span>
-                  <svg className="w-5 h-5 text-slate-400 transition-transform duration-300 group-open:-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-                <div className="p-4 text-slate-600 font-medium leading-relaxed text-[13px] sm:text-sm border-t border-slate-100 bg-white">
-                  これは、友人、同僚、家族など、日常のコミュニケーションにおいて、
-                  <div className="my-2.5 p-3 bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-md text-slate-800 font-bold leading-relaxed">
-                    あなたが無意識に入りやすい「心のモード」を知るための簡易チェックです。<br/>
-                    優劣や性格の良し悪しを測るものではありません。
+          <div className="min-h-screen flex flex-col p-4 bg-gray-50">
+            <div className="flex-grow flex items-center justify-center">
+              <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center animate-fade-in border border-slate-100 mt-4 sm:mt-0">
+                <div className="mb-5 flex items-center justify-center gap-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-6">
+                    <span className="text-3xl sm:text-4xl">🌈</span>
                   </div>
-                  あなたの会話の「クセ」や、意識しないと使いにくいモードを知るためのツールです。<br/>
-                  直感で、今の自分に近い方を選んでください。
+                  <h1 className="text-left text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">RIESM™ mini<br/><span className="text-lg sm:text-xl text-indigo-600">コミュニケーション・モードチェック</span></h1>
                 </div>
-              </details>
-              
-              <div className="space-y-4 mb-8">
-                <button onClick={startTutorial} className="w-full py-4 px-6 bg-white text-slate-800 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all shadow-md active:scale-[0.98] border border-slate-200">
-                  チュートリアル
-                </button>
-                <button onClick={startQuiz} className="w-full py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-lg hover:bg-slate-700 transition-all shadow-md active:scale-[0.98]">
-                  いまの自分を観る
-                </button>
-              </div>
 
-              {/* ▼ インフォメーション＆観測のヒントエリア ▼ */}
-              <div className="bg-blue-50 rounded-xl p-4 text-left border border-blue-100 mb-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="mt-0.5"><InfoIcon /></div>
-                  <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
-                    <span className="font-bold">コミュニケーションのモードは、相手や状況によって揺らぎます。</span><br/>
-                    このアプリは、変化するモードを観る「鏡」のようなものです。<br/>
-                    基礎体温を測るように、気になった時に何度でも試してみてください。<br/>
-                    逆に<span className="font-bold">「何度やっても変わらない部分（バックス）」</span>に気づくことも、自己理解の大きな一歩です。
-                  </p>
-                </div>
-                <div className="bg-white/60 rounded-lg p-2.5 text-[11px] sm:text-xs text-blue-900 font-medium flex items-center justify-center gap-1.5 shadow-sm border border-blue-100/50">
-                  <span className="text-sm">📱</span> ブラウザのメニュー（︙）から【ホーム画面に追加】すると便利です
-                </div>
-              </div>
-              {/* ▲ インフォメーションエリア ここまで ▲ */}
+                {/* ▼ カラーモード切替（タイトル直下・センター） ▼ */}
+                {renderColorModeToggle()}
+                
+                <div className="space-y-4 mb-6">
+                  <button 
+                    onClick={startTutorial} 
+                    className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all shadow-md active:scale-[0.98] ${
+                      colorMode === 'colorful'
+                        ? 'bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90'
+                        : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
+                    }`}
+                  >
+                    自分の支援モードを観てみる
+                  </button>
 
-              {/* ▼ 完全版への導線エリア ▼ */}
-              <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
-                <p className="text-[13px] text-slate-600 mb-3 leading-relaxed font-medium">
-                  さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
-                  <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm text-slate-800">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
-                </p>
-                <div className="space-y-2">
-                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
-                    <div>
-                      <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">仕事や人間関係で本格的に活かしたい方は</div>
-                      <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 完全版RIESM™へ</div>
+                  {/* ▼ TOP画面のココナラポップアップ呼び出しボタン ▼ */}
+                  <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-md active:scale-[0.98]">
+                    <span className="text-[11px] sm:text-xs mb-1 opacity-90">【ココナラ】診断結果をもとに</span>
+                    <span className="text-sm md:text-base flex items-center gap-1">実技ロープレ練習をしてみる？</span>
+                  </button>
+                </div>
+
+                {/* ▼ アコーディオンに変更した説明文 ▼ */}
+                <details className="mb-8 group border border-slate-200 rounded-xl bg-white shadow-sm overflow-hidden text-left">
+                  <summary className="cursor-pointer font-bold text-slate-700 p-4 bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
+                    <span className="flex items-center gap-2">アプリの説明と注意</span>
+                    <svg className="w-5 h-5 text-slate-400 transition-transform duration-300 group-open:-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div className="p-4 text-slate-600 font-medium leading-relaxed text-[13px] sm:text-sm border-t border-slate-100 bg-white">
+                    これは、友人、同僚、家族など、日常のコミュニケーションにおいて、
+                    <div className="my-2.5 p-3 bg-indigo-50/80 border-l-4 border-indigo-500 rounded-r-md text-slate-800 font-bold leading-relaxed">
+                      あなたが無意識に入りやすい「心のモード」を知るための簡易チェックです。<br/>
+                      優劣や性格の良し悪しを測るものではありません。
                     </div>
-                    <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
-                  </a>
-                </div>
-              </div>
-              {/* ▲ 導線エリア ここまで ▲ */}
+                    あなたの会話の「クセ」や、意識しないと使いにくいモードを知るためのツールです。<br/>
+                    直感で、今の自分に近い方を選んでください。
+                  </div>
+                </details>
 
-              <div className="mt-8 text-center">
-                <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
-                  🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
-                </a>
-                <div className="h-4"></div>
-                <div>
-                  <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
-                    © 2026 ninin consulting＆counseling
-                  </a>
+                {/* ▼ 完全版への導線エリア ▼ */}
+                <div className="rounded-xl p-4 sm:p-5 border border-slate-200 bg-white text-left shadow-sm">
+                  <p className="text-[13px] text-slate-600 mb-3 leading-relaxed font-medium">
+                    さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
+                    <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm text-slate-800">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
+                  </p>
+                  <div className="space-y-2">
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group">
+                      <div>
+                        <div className="text-[10px] sm:text-[11px] text-slate-500 font-bold mb-0.5">仕事や人間関係で本格的に活かしたい方は</div>
+                        <div className="text-[13px] sm:text-sm font-bold text-slate-800 group-hover:text-slate-600 transition-colors">🌈 完全版RIESM™へ</div>
+                      </div>
+                      <div className="text-slate-400 group-hover:text-slate-500"><ExternalLinkIcon /></div>
+                    </a>
+                  </div>
                 </div>
-                <div className="h-4"></div>
+                {/* ▲ 導線エリア ここまで ▲ */}
+
+                <div className="mt-8 text-center pb-4">
+                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
+                    🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
+                  </a>
+                  <div className="h-4"></div>
+                  <div>
+                    <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                      © 2026 ninin consulting＆counseling
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
+            
+            {/* ▼ 開発用ダミー遷移ボタン群 ▼ */}
+            {renderDebugButtons()}
+            
+            {/* モーダル表示 */}
+            {renderCoconalaModal()}
           </div>
         );
       }
@@ -491,14 +829,28 @@
           const secondData = resultsData[resultType.second];
           const themeKey = resultType.frontKey;
           
+          // フロントのテーマをベースに、ヘッダーのグラデーションを主から副へ動的に変更する
+          const dynamicTheme = {
+            ...frontData.theme,
+            header: doubleHeaders[themeKey] || frontData.theme.header
+          };
+          
           result = {
             title: `${frontData.title} ＆ ${secondData.title}`,
             subTitle: `（${frontData.subTitle.replace(/[（）]/g, '')} × ${secondData.subTitle.replace(/[（）]/g, '')}）`,
-            detail: [`${frontData.detail[0]}\n\n${secondAdditions[resultType.second]}`],
-            theme: doubleThemes[themeKey] || frontData.theme
+            detail: [
+              `${frontData.detail[0]}\n\n${secondAdditions[resultType.second]}`,
+              frontData.detail[1] // 一方で―― の中身
+            ],
+            supportStyle: frontData.supportStyle, // メインフロントの支援スタイル
+            secondSupportStyle: secondData.supportStyle, // セカンドフロントの支援スタイル
+            theme: dynamicTheme
           };
         } else {
-          result = resultsData[resultType.front];
+          result = {
+            ...resultsData[resultType.front],
+            secondSupportStyle: resultsData[resultType.second].supportStyle // 単独フロントでも2番目の要素を取得
+          };
         }
 
         const t = result.theme;
@@ -511,128 +863,208 @@
         const backResult = { desc: backsData[resultType.back] };
 
         return (
-          <div className={`min-h-screen flex items-center justify-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg}`}>
-            <div className="max-w-lg w-full animate-fade-in relative">
-              {toastMessage && (
-                <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold text-center whitespace-pre-line w-[90%] max-w-sm border border-slate-600">
-                  {toastMessage}
-                </div>
-              )}
-              
-              <div id="result-card" className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 ${t.border}`}>
+          <div className={`min-h-screen flex flex-col items-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg} relative`}>
+            {/* 結果画面ではカラーモード切替ボタンは非表示 */}
+            <div className="flex-grow flex items-center justify-center w-full mt-4 sm:mt-0">
+              <div className="max-w-lg w-full animate-fade-in relative">
+                {toastMessage && (
+                  <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold text-center whitespace-pre-line w-[90%] max-w-sm border border-slate-600">
+                    {toastMessage}
+                  </div>
+                )}
                 
-                <div className="bg-white">
-                  <div className={`p-6 sm:p-8 text-center relative overflow-hidden bg-gradient-to-r ${t.header} text-white`}>
-                    <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-                    <h2 className="text-xs sm:text-sm font-bold tracking-widest text-white/90 mb-3 relative z-10">
-                      あなたの【主モード】
-                    </h2>
-                    <div className="flex items-center justify-center gap-4 mb-2 relative z-10">
-                      <ModeIcon type={resultType.front} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
-                      {resultType.isDouble && (
-                        <>
-                          <span className="text-xl sm:text-2xl font-bold opacity-70">+</span>
-                          <ModeIcon type={resultType.second} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
-                        </>
-                      )}
-                    </div>
-                    <h1 className="text-xl sm:text-2xl font-extrabold relative z-10 drop-shadow-md">
-                      {result.title}
-                      {result.subTitle && (
-                        <>
-                          <br />
-                          <span className="text-sm sm:text-lg font-bold opacity-90">{result.subTitle}</span>
-                        </>
-                      )}
-                    </h1>
-                  </div>
+                <div id="result-card" className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border-2 ${t.border}`}>
                   
-                  <div className="p-4 sm:p-8 pb-1 sm:pb-2">
-                    <div className={`rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
-                      <h3 className={`font-bold text-xs sm:text-sm mb-4 sm:mb-5 tracking-wide text-center ${t.textLight}`}>今のあなたのモードバランス</h3>
-                      <div className="space-y-3 sm:space-y-4">
-                        {['W', 'K', 'N', 'A'].sort((a, b) => resultScores[b] - resultScores[a]).map(type => {
-                          const score = resultScores[type];
-                          const maxScore = Math.max(...Object.values(resultScores));
-                          const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
-                          const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
-                          const labels = { W: '発想型', K: '構造型', N: '共感型', A: '調整型' };
-                          return (
-                            <div key={type} className="flex items-center gap-2">
-                              <div className={`w-5 sm:w-6 flex justify-center`}>
-                                <ModeIcon type={type} className={`w-4 h-4 sm:w-5 sm:h-5 ${t.textLight}`} />
-                              </div>
-                              <div className={`w-14 sm:w-16 text-left sm:text-right text-[10px] sm:text-xs font-bold ${t.textLight}`}>{labels[type]}</div>
-                              <div className="flex-1 h-3 sm:h-4 bg-slate-200/50 rounded-full overflow-hidden">
-                                <div className={`h-full ${barColors[type]} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${percent}%` }}></div>
-                              </div>
-                              <div className={`w-8 sm:w-10 text-right text-xs font-bold ${t.text}`}>{percent}%</div>
-                            </div>
-                          );
-                        })}
+                  <div className="bg-white">
+                    <div className={`p-6 sm:p-8 text-center relative overflow-hidden bg-gradient-to-r ${t.header} text-white`}>
+                      <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                      <h2 className="text-xs sm:text-sm font-bold tracking-widest text-white/90 mb-3 relative z-10">
+                        あなたの【主モード】
+                      </h2>
+                      <div className="flex items-center justify-center gap-4 mb-2 relative z-10">
+                        <ModeIcon type={resultType.front} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                        {resultType.isDouble && (
+                          <>
+                            <span className="text-xl sm:text-2xl font-bold opacity-70">+</span>
+                            <ModeIcon type={resultType.second} className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-md" />
+                          </>
+                        )}
                       </div>
+                      <h1 className="text-xl sm:text-2xl font-extrabold relative z-10 drop-shadow-md">
+                        {result.title}
+                        {result.subTitle && (
+                          <>
+                            <br />
+                            <span className="text-sm sm:text-lg font-bold opacity-90">{result.subTitle}</span>
+                          </>
+                        )}
+                      </h1>
                     </div>
-                  </div>
-                </div>
 
-                <div className="px-4 sm:px-8 pb-0">
-                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
-                    <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[0]}</p>
-                  </div>
-                </div>
-
-                <div className="px-4 sm:px-8 pb-4 space-y-3 sm:space-y-4">
-                  <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
-                    <RefreshCwIcon /> もう一度観る
-                  </button>
-
-                  {/* ▼ 完全版への導線エリア ▼ */}
-                  <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
-                    <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
-                      さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
-                      <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
-                    </p>
-                    <div className="space-y-2">
-                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 rounded-lg shadow-sm hover:shadow transition-all group text-white bg-gradient-to-r ${t.header}`}>
-                        <div>
-                          <div className="text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-90">仕事や人間関係で本格的に活かしたい方は</div>
-                          <div className="text-[13px] sm:text-sm font-bold">🌈 完全版RIESM™へ</div>
+                    <div className="p-4 sm:p-8 pb-1 sm:pb-2 flex flex-col gap-3 sm:gap-4">
+                      {/* ▼ 相談・支援の場面で出やすい特徴（強みとクセ） ▼ */}
+                      <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
+                        <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ 相談・支援の場面で出やすい特徴</h4>
+                        
+                        <div className="mb-4">
+                          <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold mb-1 border ${t.border} ${t.text}`}>強み</span>
+                          <p className={`text-[13px] md:text-sm font-medium leading-relaxed ${t.text}`}>{result.supportStyle.strength}</p>
                         </div>
-                        <div className="opacity-80 group-hover:opacity-100"><ExternalLinkIcon /></div>
-                      </a>
-                    </div>
-                  </div>
-                  {/* ▲ 導線エリア ここまで ▲ */}
-                </div>
 
-                <div className="px-4 sm:px-8 pb-6 sm:pb-8">
-                  <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
-                    <div>
-                      <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ バックスについて</h4>
-                      <p className={`text-[13px] md:text-sm font-medium opacity-80 whitespace-pre-line leading-relaxed ${t.text}`}>{backResult.desc}</p>
+                        <div>
+                          <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold mb-1 border ${t.border} ${t.text}`}>強みが出過ぎた時のクセ</span>
+                          <p className={`text-[13px] md:text-sm font-medium leading-relaxed ${t.text}`}>{result.supportStyle.habit}</p>
+                        </div>
+                      </div>
+                      {/* ▲ 相談・支援の場面で出やすい特徴 ここまで ▲ */}
                       
-                      <div className={`mt-6 p-4 sm:p-5 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
-                         <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
-                           💡 バックスとは、意識しないと使いにくい、または後回しになりやすい心のモードです。欠点ではなく、今後鍛えることでコミュニケーションの幅が広がる可能性のある領域かもしれません。
-                         </p>
+                      <div className={`rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
+                        <h3 className={`font-bold text-xs sm:text-sm mb-4 sm:mb-5 tracking-wide text-center ${t.textLight}`}>今のあなたのモードバランス</h3>
+                        <div className="space-y-3 sm:space-y-4">
+                          {['W', 'K', 'N', 'A'].sort((a, b) => resultScores[b] - resultScores[a]).map(type => {
+                            const score = resultScores[type];
+                            const maxScore = Math.max(...Object.values(resultScores));
+                            const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
+                            const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
+                            const labels = { W: '発想型', K: '構造型', N: '調和型', A: '調整型' };
+                            return (
+                              <div key={type} className="flex items-center gap-2">
+                                <div className={`w-5 sm:w-6 flex justify-center`}>
+                                  <ModeIcon type={type} className={`w-4 h-4 sm:w-5 sm:h-5 ${t.textLight}`} />
+                                </div>
+                                <div className={`w-14 sm:w-16 text-left sm:text-right text-[10px] sm:text-xs font-bold ${t.textLight}`}>{labels[type]}</div>
+                                <div className="flex-1 h-3 sm:h-4 bg-slate-200/50 rounded-full overflow-hidden">
+                                  <div className={`h-full ${barColors[type]} rounded-full transition-all duration-1000 ease-out`} style={{ width: `${percent}%` }}></div>
+                                </div>
+                                <div className={`w-8 sm:w-10 text-right text-xs font-bold ${t.text}`}>{percent}%</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* セカンド要素のアコーディオン (一時非表示にしています) */}
+                        <details className={`hidden mt-6 mb-2 group border ${t.border} rounded-xl bg-white/40 shadow-sm overflow-hidden text-left`}>
+                          <summary className={`cursor-pointer font-bold ${t.text} p-3 bg-white/50 hover:bg-white/80 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden`}>
+                            <span className="flex items-center gap-2 text-[12px] sm:text-[13px]">▼ この特徴もあるかも？</span>
+                            <svg className={`w-4 h-4 opacity-70 transition-transform duration-300 group-open:-rotate-180`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </summary>
+                          <div className={`p-4 border-t ${t.border} bg-white/40 text-[12px] sm:text-[13px]`}>
+                            <div className="mb-3">
+                              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold mb-1 border ${t.border} ${t.text}`}>強み</span>
+                              <p className={`font-medium leading-relaxed ${t.text}`}>{result.secondSupportStyle.strength}</p>
+                            </div>
+                            <div>
+                              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold mb-1 border ${t.border} ${t.text}`}>強みが出過ぎた時のクセ</span>
+                              <p className={`font-medium leading-relaxed ${t.text}`}>{result.secondSupportStyle.habit}</p>
+                            </div>
+                          </div>
+                        </details>
+
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-center pt-2 sm:pt-3 space-y-2">
-                    <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
-                      🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
-                    </a>
-                    <div>
-                      <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
-                        © 2026 ninin consulting＆counseling
-                      </a>
+                  <div className="px-4 sm:px-8 pb-0">
+                    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
+                      <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[0]}</p>
+                      
+                      {/* ▼ 「一方で――」アコーディオン ▼ */}
+                      <details className="mt-4 group">
+                        <summary className={`cursor-pointer font-bold ${t.text} transition-colors flex items-center gap-1 list-none [&::-webkit-details-marker]:hidden`}>
+                          <span className="text-[13px] md:text-sm">一方で――</span>
+                          <svg className={`w-4 h-4 opacity-70 transition-transform duration-300 group-open:-rotate-180`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </summary>
+                        <div className="mt-3">
+                          <p className={`leading-relaxed text-[13px] md:text-sm font-medium whitespace-pre-line ${t.text}`}>
+                            {result.detail[1]}
+                          </p>
+                        </div>
+                      </details>
+                      {/* ▲ 「一方で――」アコーディオン ここまで ▲ */}
                     </div>
                   </div>
-                </div>
 
+                  <div className="px-4 sm:px-8 pb-4 space-y-3 sm:space-y-4">
+                    <div className={`p-3 sm:p-4 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
+                       <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
+                         💡 強みとクセは表裏一体です。支援の場では、自分の得意なモードが出過ぎて、無意識に相手を「自分の心地よい構造」に引っ張ろうとしていないか気づくことが大切です。
+                       </p>
+                    </div>
+
+                    <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
+                      <RefreshCwIcon /> もう一度観る
+                    </button>
+
+                    {/* ▼ ココナラへの導線ポップアップ呼び出しボタン ▼ */}
+                    <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-sm mt-2 active:scale-[0.98]">
+                      <span className="text-[11px] sm:text-xs mb-1 opacity-90">【ココナラ】診断結果をもとに</span>
+                      <span className="text-sm md:text-base flex items-center gap-1">実技ロープレ練習をしてみる？</span>
+                    </button>
+
+                    {/* ▼ 完全版への導線エリア ▼ */}
+                    <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
+                      <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
+                        さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
+                        <span className="font-bold bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 px-1 rounded-sm">「どんな役割で力を発揮しやすいか・どうしたら自然にラクにできるのか？」</span>まで深く整理できます。
+                      </p>
+                      <div className="space-y-2">
+                        <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition-all group text-white bg-gradient-to-r ${t.header}`}>
+                          <div>
+                            <div className="text-[10px] sm:text-[11px] font-bold mb-0.5 opacity-90">仕事や人間関係で本格的に活かしたい方は</div>
+                            <div className="text-[13px] sm:text-sm font-bold">🌈 完全版RIESM™へ</div>
+                          </div>
+                          <div className="opacity-80 group-hover:opacity-100"><ExternalLinkIcon /></div>
+                        </a>
+                      </div>
+                    </div>
+                    {/* ▲ 導線エリア ここまで ▲ */}
+                  </div>
+
+                  <div className="px-4 sm:px-8 pb-6 sm:pb-8">
+                    {/* ▼ バックスについて (一時非表示にしています) ▼ */}
+                    <div className={`hidden rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
+                      <div>
+                        <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ バックスについて</h4>
+                        <p className={`text-[13px] md:text-sm font-medium opacity-80 whitespace-pre-line leading-relaxed ${t.text}`}>{backResult.desc}</p>
+                        
+                        <div className={`mt-6 p-4 sm:p-5 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
+                           <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
+                             💡 バックスとは、使いにくい、または後回しになりやすい心のモードです。欠点ではなく、今後意識することでコミュニケーションの幅が広がる可能性のある領域かもしれません。
+                           </p>
+                        </div>
+                      </div>
+                    </div>
+                    {/* ▲ バックスについて ここまで ▲ */}
+
+                    <div className="text-center pt-2 sm:pt-3 space-y-2">
+                      <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
+                        🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
+                      </a>
+                      <div>
+                        <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
+                          © 2026 ninin consulting＆counseling
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
+
+            {/* ▼ 開発用ダミー遷移ボタン群 ▼ */}
+            <div className="w-full flex justify-center">
+              <div className="max-w-lg w-full">
+                {renderDebugButtons()}
+              </div>
+            </div>
+
+            {/* モーダル表示 */}
+            {renderCoconalaModal()}
           </div>
         );
       }
@@ -644,8 +1076,11 @@
 
       const topType = q.options[0].type;
       const bottomType = q.options[1].type;
-      const topColorRGB = bgColors[topType];
-      const bottomColorRGB = bgColors[bottomType];
+      
+      // カラーモードによる色の出し分け
+      const topColorRGB = colorMode === 'colorful' ? bgColors[topType] : '110, 231, 183'; // emerald-300 (白めの緑)
+      const bottomColorRGB = colorMode === 'colorful' ? bgColors[bottomType] : '190, 242, 100'; // lime-300 (黄色めの淡い緑)
+      
       const answerChoices = [
         {
           index: 0,
@@ -653,7 +1088,7 @@
           caption: 'かなりA',
           topSize: 'w-10 h-10 sm:w-12 sm:h-12',
           bottomSize: null,
-          scoreUpdates: [{ type: q.options[0].type, weight: 4 }],
+          scoreUpdates: [{ type: q.options[0].type, weight: 3 }],
           ariaLabel: `【${q.options[0].text}】${labelStrong}`
         },
         {
@@ -662,7 +1097,7 @@
           caption: 'A',
           topSize: 'w-8 h-8 sm:w-10 sm:h-10',
           bottomSize: null,
-          scoreUpdates: [{ type: q.options[0].type, weight: 3 }],
+          scoreUpdates: [{ type: q.options[0].type, weight: 2.5 }],
           ariaLabel: `【${q.options[0].text}】${labelMid}`
         },
         {
@@ -689,7 +1124,7 @@
           caption: 'B',
           topSize: null,
           bottomSize: 'w-8 h-8 sm:w-10 sm:h-10',
-          scoreUpdates: [{ type: q.options[1].type, weight: 3 }],
+          scoreUpdates: [{ type: q.options[1].type, weight: 2.5 }],
           ariaLabel: `【${q.options[1].text}】${labelMid}`
         },
         {
@@ -698,14 +1133,14 @@
           caption: 'かなりB',
           topSize: null,
           bottomSize: 'w-10 h-10 sm:w-12 sm:h-12',
-          scoreUpdates: [{ type: q.options[1].type, weight: 4 }],
+          scoreUpdates: [{ type: q.options[1].type, weight: 3 }],
           ariaLabel: `【${q.options[1].text}】${labelStrong}`
         }
       ];
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-50 transition-colors duration-1000">
-          <div className="max-w-md w-full bg-white/90 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-white/60 animate-fade-in relative backdrop-blur-2xl">
+        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-50 transition-colors duration-1000 relative">
+          <div className="max-w-md w-full bg-white/90 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-white/60 animate-fade-in relative backdrop-blur-2xl mt-4 sm:mt-0">
             
             {/* 背景グラデーション: 上 */}
             <div 
@@ -730,14 +1165,22 @@
             </div>
 
             <div className="relative z-10 p-3 sm:p-8 pb-2 sm:pb-6">
-              <div className="text-[11px] sm:text-sm font-bold text-slate-500 mb-2 sm:mb-4 tracking-wider flex justify-between drop-shadow-sm px-1">
+              <div className="text-[11px] sm:text-sm font-bold text-slate-500 mb-3 sm:mb-4 tracking-wider flex justify-between drop-shadow-sm px-1">
                 <span>{isPractice ? 'PRACTICE' : 'QUESTION'}</span>
                 <span>{isPractice ? '練習' : `${currentIndex + 1} / ${currentQuestions.length}`}</span>
               </div>
               
-              <h2 className="min-h-[5rem] sm:min-h-[7rem] flex items-center text-base sm:text-xl font-bold text-slate-800 mb-3 sm:mb-6 leading-relaxed bg-white p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-md border border-slate-200">
-                {q.text}
-              </h2>
+              {/* ▼ カラーモード切替（QUESTIONヘッダー直下・センター） ▼ */}
+              {renderColorModeToggle()}
+              
+              {/* ▼ ノート風背景を適用した設問エリア ▼ */}
+              <div className="notebook-bg min-h-[6rem] sm:min-h-[8rem] rounded-xl sm:rounded-2xl shadow-sm border border-slate-200/80 mb-4 sm:mb-6 w-full flex items-center">
+                <div className="px-6 sm:px-8 py-5 w-full">
+                  <p className="text-[15px] sm:text-[17px] font-bold text-slate-700 leading-[32px] tracking-wide relative z-10">
+                    {q.text}
+                  </p>
+                </div>
+              </div>
               
               <div className="space-y-3 sm:space-y-4 animate-fade-in relative z-10">
                 {/* Aの枠：左端を覆うスリムな帯状ラベルと完全中央配置のテキスト */}
@@ -833,18 +1276,26 @@
 
               {isPractice && tutorialCompleted && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/25 p-4 backdrop-blur-sm">
-                  <div role="dialog" aria-modal="true" className="w-full max-w-xs rounded-2xl border border-white/80 bg-white/95 p-5 text-center shadow-2xl animate-fade-in">
+                  <div role="dialog" aria-modal="true" className="w-full max-w-sm rounded-2xl border border-white/80 bg-white/95 p-6 text-center shadow-2xl animate-fade-in">
                     <p className="mb-3 text-base sm:text-lg font-extrabold leading-relaxed text-slate-900">
                       選択方法はわかりましたでしょうか？
                     </p>
-                    <p className="mb-5 text-sm sm:text-base font-bold leading-relaxed text-slate-700">
-                      このように自分の気持ちを素直に感じて選んで下さい。
+                    <p className="mb-6 text-[13px] sm:text-sm font-bold leading-relaxed text-slate-700">
+                      このように自分の気持ちを素直に感じて選んで下さい。<br/>
+                      <br/>
+                      ここからが支援モードの傾向確認設問です。<br/>
+                      全部で５分くらいです。<br/>
+                      リラックスしてお進みください。
                     </p>
                     <button
-                      onClick={returnToTop}
-                      className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm sm:text-base font-bold text-white shadow-sm transition-all hover:bg-slate-700 active:scale-[0.98]"
+                      onClick={startQuiz}
+                      className={`w-full rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold shadow-sm transition-all active:scale-[0.98] ${
+                        colorMode === 'colorful'
+                          ? 'bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90'
+                          : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
+                      }`}
                     >
-                      TOP画面にもどる
+                      準備はできたので開始する
                     </button>
                   </div>
                 </div>
