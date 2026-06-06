@@ -1259,35 +1259,6 @@
                       </button>
                     )}
                     <div className="order-1 md:order-2 flex flex-col items-center gap-5">
-                      {isWeaponMagicStep && (
-                        <button
-                          type="button"
-                          onClick={() => setInnMeaningOpen(true)}
-                          className="rpg-button orange-aura-pulse inline-flex w-60 items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-orange-100 hover:bg-orange-100 hover:text-black"
-                        >
-                          <i className="fa-solid fa-hat-wizard"></i>
-                          この宿屋の意味を聞く
-                        </button>
-                      )}
-                      {isWeaponMagicStep && (
-                        <div className="w-full max-w-xl text-center">
-                          <button
-                            type="button"
-                            onClick={() => setCanInnPreviewOpen(!canInnPreviewOpen)}
-                            className="rpg-button inline-flex w-60 items-center justify-center gap-2 border-yellow-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-yellow-100 hover:bg-yellow-100 hover:text-black"
-                            aria-expanded={canInnPreviewOpen}
-                          >
-                            <i className="fa-solid fa-house-chimney-window"></i>
-                            <i className={`fa-solid ${canInnPreviewOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                            この宿屋でできる事
-                          </button>
-                          {canInnPreviewOpen && (
-                            <div className="mt-4 animate-fade-in">
-                              {renderIntroPreviewCard()}
-                            </div>
-                          )}
-                        </div>
-                      )}
                       <button
                         onClick={() => {
                           setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
@@ -1295,7 +1266,7 @@
                           setCanAddOpen(true);
                           setIsInputPhase(true);
                         }}
-                        className={`rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 ${isWeaponMagicStep ? 'mt-4' : ''}`}
+                        className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2"
                       >
                         <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
                       </button>
@@ -1532,6 +1503,35 @@
                             <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{existingStepMemory.event}</p>
                           </div>
                         </WindowBox>
+                        {memoryStep === 0 && (
+                          <div className="mt-6 flex flex-col items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => setInnMeaningOpen(true)}
+                              className="rpg-button orange-aura-pulse inline-flex w-60 items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-orange-100 hover:bg-orange-100 hover:text-black"
+                            >
+                              <i className="fa-solid fa-hat-wizard"></i>
+                              この宿屋の意味を聞く
+                            </button>
+                            <div className="w-full max-w-xl text-center">
+                              <button
+                                type="button"
+                                onClick={() => setCanInnPreviewOpen(!canInnPreviewOpen)}
+                                className="rpg-button inline-flex w-60 items-center justify-center gap-2 border-yellow-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-yellow-100 hover:bg-yellow-100 hover:text-black"
+                                aria-expanded={canInnPreviewOpen}
+                              >
+                                <i className="fa-solid fa-house-chimney-window"></i>
+                                <i className={`fa-solid ${canInnPreviewOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                                この宿屋でできる事
+                              </button>
+                              {canInnPreviewOpen && (
+                                <div className="mt-4 animate-fade-in">
+                                  {renderIntroPreviewCard()}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                         <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
                           <button onClick={handleKeepMemory} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold">
                             このままでいい <i className="fa-solid fa-arrow-right ml-1"></i>
@@ -1560,7 +1560,7 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（旅路の記録）にまとめてみよう。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれた。これでお主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを旅路の記録（あなたの物語）にまとめてみようかの。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={goToIntro} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
