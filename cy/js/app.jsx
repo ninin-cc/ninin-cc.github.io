@@ -207,6 +207,7 @@
             if (!isInputPhase) return base;
             return `${base}-${canConfirming ? 'Confirm' : 'Input'}`;
           }
+          case 'interim': return '4-4';
           case 'will': return `5-${willStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'must':
             if (mustStep === 0) return mustRecollectionVisible ? '6-1-2' : '6-1-1';
@@ -246,6 +247,10 @@
           setMemoryEditId(null);
         }
         if (next === 'will') setWillStep(0);
+        if (next === 'interim') {
+          setCanReviewing(false);
+          setCanConfirming(false);
+        }
         if (next === 'must') {
           setMustStep(0);
           setMustWorkStep(0);
@@ -296,6 +301,15 @@
       const goToProgressScene = (target) => {
         if (target === 'intro') return goToIntro();
         if (target === 'can') return goToCanInput(0);
+        if (target === 'interim') {
+          scrollTop();
+          setShowRestPrompt(false);
+          setIsInputPhase(false);
+          setCanReviewing(false);
+          setCanConfirming(false);
+          setScene('interim');
+          return;
+        }
         if (target === 'will') return goToWillInput(0);
         if (target === 'must') return goToMustEdit();
 
@@ -360,6 +374,15 @@
           return;
         }
 
+        if (scene === 'interim') {
+          setScene('can');
+          setCanStep(1);
+          setCanReviewing(true);
+          setCanConfirming(false);
+          setIsInputPhase(false);
+          return;
+        }
+
         if (scene === 'memory') {
           if (isInputPhase) {
             setIsInputPhase(false);
@@ -397,10 +420,7 @@
             setWillStep(willStep - 1);
             return;
           }
-          setScene('can');
-          setCanStep(1);
-          setCanReviewing(true);
-          setCanConfirming(false);
+          setScene('interim');
           setIsInputPhase(false);
           return;
         }
@@ -486,7 +506,7 @@
 
       const handleProceedFromCanReview = () => {
         setCanReviewing(false);
-        nextScene('will');
+        nextScene('interim');
       };
 
       const handleEditCanFromReview = (step) => {
@@ -1157,7 +1177,7 @@
                   仲間・関係性を見直す
                 </button>
                 <button onClick={handleProceedFromCanReview} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
-                  OK、未来を語りに進む <i className="fa-solid fa-arrow-right"></i>
+                  OK、いったん自室で振り返る <i className="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
             </div>
@@ -1643,6 +1663,104 @@
         </div>
       );
 
+      const renderInterim = () => {
+        const skillCans = cans.filter(c => c.type === 'skill');
+        const magicCans = cans.filter(c => c.type === 'magic');
+        const allyCans = cans.filter(c => c.type === 'ally');
+
+        return (
+          <div className="space-y-6 max-w-5xl mx-auto w-full animate-fade-in">
+            <NarrationBox
+              iconName="fa-solid fa-bed"
+              text={"武器と魔法、そして仲間との関係性を語り終えたあなたは、\nいったん宿屋の自室へ戻り、ここまでの旅を静かに振り返る。\nまだ物語の途中だが、歩んできた道と、身につけてきた力が少しずつ見えてきた。"}
+            />
+
+            <WindowBox title="自室での途中振り返り" iconName="fa-solid fa-scroll">
+              <div className="rounded border-2 border-yellow-500 bg-gray-900 bg-opacity-85 p-4 text-center mb-5">
+                <p className="text-sm text-gray-400">冒険者</p>
+                <p className="text-3xl md:text-4xl font-bold">
+                  {player.name || '名もなき勇者'} <span className="text-yellow-400">Lv.{player.age || '?'}</span>
+                </p>
+                <p className="mt-2 text-xs text-gray-400">ここまでの入力を眺めるための途中経過です。未来とクエストは、このあと語っていきます。</p>
+              </div>
+
+              <div className="space-y-5">
+                <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
+                  <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-yellow-300">
+                    <i className="fa-solid fa-chart-line"></i> 歩んできた道
+                  </h3>
+                  <LifelineChart data={memories} />
+                  <div className="mt-4 rounded border border-gray-700 bg-gray-900 bg-opacity-70 p-3">
+                    <p className="mb-1 text-sm font-bold text-yellow-300">旅路の記録から見えた気づき</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{chartInsight || 'まだメモはありません。'}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded border border-blue-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-300">
+                      <i className={canTypeMeta.skill.icon}></i> 武器
+                    </h3>
+                    <CanList cans={skillCans} emptyText="まだ武器は記録されていません。" compact />
+                  </div>
+                  <div className="rounded border border-purple-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
+                      <i className={canTypeMeta.magic.icon}></i> 魔法
+                    </h3>
+                    <CanList cans={magicCans} emptyText="まだ魔法は記録されていません。" compact />
+                  </div>
+                  <div className="rounded border border-green-500 bg-gray-900 bg-opacity-80 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-green-300">
+                      <i className={canTypeMeta.ally.icon}></i> 仲間・関係性
+                    </h3>
+                    <CanList cans={allyCans} emptyText="まだ仲間との関係性は記録されていません。" compact />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
+                    <p className="mb-2 text-sm font-bold text-yellow-300">武器・魔法についての気づき</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{canInsight || 'まだメモはありません。'}</p>
+                  </div>
+                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
+                    <p className="mb-2 text-sm font-bold text-yellow-300">仲間・関係性についての気づき</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{allyInsight || 'まだメモはありません。'}</p>
+                  </div>
+                </div>
+              </div>
+            </WindowBox>
+
+            <DialogBox
+              speaker={`回想の${APP_CONFIG.char1NameShort}`}
+              type={APP_CONFIG.char1Type}
+              text={"「ここまでで、お主の歩んできた道と、身につけてきた力が少し見えてきたのう。\nでは次は、その力を持ってどこへ向かいたいか…未来の話をしてみようか。」"}
+            />
+
+            <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setScene('can');
+                  setCanStep(1);
+                  setCanReviewing(true);
+                  setCanConfirming(false);
+                  setIsInputPhase(false);
+                  scrollTop();
+                }}
+                className="rpg-button text-base px-6 py-3"
+              >
+                ステータスを見直す
+              </button>
+              <button
+                onClick={() => nextScene('will')}
+                className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2"
+              >
+                酒場へ戻り、未来を語る <i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        );
+      };
+
       const renderWill = () => {
         const pName = player.name || '〇〇';
         const canProceedFromTenYears = willStep !== 2 || willTenYears.length > 0 || newTenYearWish.trim().length > 0;
@@ -1674,8 +1792,8 @@
                     { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんのこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」` }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                      <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> あなたの物語に戻る
+                      <button onClick={() => nextScene('interim')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 自室の振り返りに戻る
                       </button>
                       <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
                         <i className="fa-regular fa-message"></i> 1年後の未来を語る
@@ -2636,7 +2754,7 @@
       };
 
       const renderUiFramePicker = () => {
-        const uiFrameOptions = ['default', 0, 1, 2];
+        const uiFrameOptions = ['default', 2, 1, 0];
 
         return (
           <div className="mt-4 flex justify-center">
@@ -2723,8 +2841,8 @@
       };
 
       const renderProgressBar = () => {
-        const SCENES = ['intro', 'memory', 'chart', 'can', 'will', 'must', 'summary'];
-        const SCENE_NAMES = ['宿屋', '記憶', 'あなたの物語', 'ステータス', '未来', 'クエスト', 'まとめ'];
+        const SCENES = ['intro', 'memory', 'chart', 'can', 'interim', 'will', 'must', 'summary'];
+        const SCENE_NAMES = ['宿屋', '記憶', 'あなたの物語', 'ステータス', '小休止', '未来', 'クエスト', 'まとめ'];
         const currentIndex = SCENES.indexOf(scene);
 
         return (
@@ -2757,13 +2875,13 @@
         journey: `url('${APP_CONFIG.backgroundImages.journey}')`
       };
       const isOpeningScene = scene === 'intro' && introStep <= 1 && !isInputPhase;
-      const backgroundImage = scene === 'must'
+      const backgroundImage = scene === 'must' || scene === 'interim'
         ? backgroundImages.room
         : isOpeningScene || scene === 'summary'
           ? backgroundImages.journey
           : backgroundImages.tavern;
       const themedBackgroundImage = backgroundImage;
-      const backgroundPosition = scene === 'must'
+      const backgroundPosition = scene === 'must' || scene === 'interim'
         ? 'center'
         : isOpeningScene || scene === 'summary'
           ? 'center bottom'
@@ -2793,7 +2911,7 @@
             }
           : null;
 
-      const locationName = scene === 'must'
+      const locationName = scene === 'must' || scene === 'interim'
         ? '宿屋の自室'
         : scene === 'summary'
           ? 'あなたの物語まとめ'
@@ -2860,6 +2978,7 @@
               {scene === 'can' && renderCan()}
               {scene === 'memory' && renderMemory()}
               {scene === 'chart' && renderChart()}
+              {scene === 'interim' && renderInterim()}
               {scene === 'will' && renderWill()}
               {scene === 'must' && renderMust()}
               {scene === 'summary' && renderSummary()}

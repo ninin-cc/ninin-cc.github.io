@@ -749,23 +749,27 @@
     .other-table-peek {
       position: relative;
       min-height: 8.75rem;
-      background: transparent;
-      color: #fff;
+      background: transparent !important;
+      background-color: transparent !important;
+      color: #fff !important;
       isolation: isolate;
     }
     .other-table-peek:hover:not(:disabled) {
-      background: transparent;
-      color: #fff;
-      border-color: #facc15;
+      background: transparent !important;
+      background-color: transparent !important;
+      color: #fff !important;
+      border-color: #facc15 !important;
     }
     .other-table-peek::before {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 0;
-      background-image: var(--other-table-image);
-      background-size: cover;
-      background-position: center top;
+      background-color: transparent;
+      background-image: var(--other-table-image) !important;
+      background-size: cover !important;
+      background-position: center top !important;
+      background-repeat: no-repeat !important;
       filter: brightness(0.88) saturate(1.06);
       transform: scale(1.01);
       transition: transform 0.35s ease, filter 0.35s ease;
@@ -785,6 +789,10 @@
     .other-table-peek > span {
       position: relative;
       z-index: 1;
+    }
+    .other-table-peek,
+    .other-table-peek * {
+      color: #fff !important;
     }
     .other-table-peek-label {
       text-shadow: 0 2px 4px #000, 0 0 8px #000, 0 0 12px #000;
