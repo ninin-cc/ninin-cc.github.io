@@ -2769,13 +2769,16 @@
           ? 'center bottom'
           : 'center';
       const isSummaryScene = scene === 'summary';
+      const isTavernScene = backgroundImage === backgroundImages.tavern;
       const backgroundOverlayOpacity = activeThemeKey === 'cafe'
-        ? (isSummaryScene ? 0.14 : 0.28)
+        ? (isSummaryScene ? 0.14 : isTavernScene ? 0 : 0.28)
         : isSummaryScene
           ? 0.18
           : isOpeningScene
             ? 0.42
-            : 0.5;
+            : isTavernScene
+              ? 0
+              : 0.5;
       const backgroundAtmosphereStyle = isOpeningScene
         ? {
             background: 'radial-gradient(circle at 82% 32%, rgba(255, 190, 92, 0.34), transparent 34%), linear-gradient(120deg, rgba(255, 122, 48, 0.18), rgba(255, 210, 120, 0.10) 48%, rgba(40, 80, 140, 0.08))',
