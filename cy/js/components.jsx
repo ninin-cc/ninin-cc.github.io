@@ -465,9 +465,16 @@
       );
     };
 
-    const LifelineChart = ({ data, editable = false, onPointChange }) => {
+    const LifelineChart = ({ data, editable = false, onPointChange, onLineAddRequest, canAddLineEvent = true }) => {
       const svgRef = useRef(null);
       const [draggingId, setDraggingId] = useState(null);
+      const [lineAddPrompt, setLineAddPrompt] = useState(null);
+      useEffect(() => {
+        if (!editable) {
+          setDraggingId(null);
+          setLineAddPrompt(null);
+        }
+      }, [editable]);
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
       const sortedData = [...data].sort((a, b) => a.age - b.age);
       const width = 1000; const height = 360; const paddingX = 70; const paddingY = 30;
@@ -506,22 +513,43 @@
 
       const pathData = generateSmoothPath(sortedData);
       const clampSatisfaction = (value) => Math.max(-50, Math.min(50, Math.round(value / 5) * 5));
-      const getSatisfactionFromPointer = (event) => {
+      const getSvgPointFromPointer = (event) => {
         const svg = svgRef.current;
-        if (!svg) return 0;
+        if (!svg) return null;
         const point = svg.createSVGPoint();
         point.x = event.clientX;
         point.y = event.clientY;
         const screenCtm = svg.getScreenCTM();
-        if (!screenCtm) return 0;
-        const svgPoint = point.matrixTransform(screenCtm.inverse());
-        const boundedY = Math.max(paddingY, Math.min(paddingY + chartHeight, svgPoint.y));
+        if (!screenCtm) return null;
+        return point.matrixTransform(screenCtm.inverse());
+      };
+      const getSatisfactionFromSvgY = (svgY) => {
+        const boundedY = Math.max(paddingY, Math.min(paddingY + chartHeight, svgY));
         const normalized = (paddingY + chartHeight - boundedY) / chartHeight;
         return clampSatisfaction(normalized * 100 - 50);
+      };
+      const getSatisfactionFromPointer = (event) => {
+        const svgPoint = getSvgPointFromPointer(event);
+        if (!svgPoint) return 0;
+        return getSatisfactionFromSvgY(svgPoint.y);
+      };
+      const getAgeFromSvgX = (svgX) => {
+        if (sortedData.length === 1) return Number(sortedData[0].age);
+        const firstX = getX(0);
+        const lastX = getX(sortedData.length - 1);
+        const boundedX = Math.max(firstX, Math.min(lastX, svgX));
+        const stepWidth = chartWidth / Math.max(1, totalPointCount - 1);
+        const rawIndex = (boundedX - paddingX) / stepWidth;
+        const segmentIndex = Math.max(0, Math.min(sortedData.length - 2, Math.floor(rawIndex)));
+        const ratio = Math.max(0, Math.min(1, rawIndex - segmentIndex));
+        const startAge = Number(sortedData[segmentIndex].age);
+        const endAge = Number(sortedData[segmentIndex + 1].age);
+        return Math.round(startAge + ((endAge - startAge) * ratio));
       };
       const updatePointFromPointer = (event, item) => {
         if (!editable || !onPointChange) return;
         event.preventDefault();
+        setLineAddPrompt(null);
         onPointChange(item.id, getSatisfactionFromPointer(event));
       };
       const startPointDrag = (event, item) => {
@@ -540,6 +568,22 @@
         event.currentTarget.releasePointerCapture?.(event.pointerId);
         setDraggingId(null);
       };
+      const handleLineAddPointerDown = (event) => {
+        if (!editable || !onLineAddRequest || !canAddLineEvent || sortedData.length < 2) return;
+        event.preventDefault();
+        const svgPoint = getSvgPointFromPointer(event);
+        if (!svgPoint) return;
+        const promptWidth = 220;
+        const promptHeight = 96;
+        setLineAddPrompt({
+          x: Math.max(8, Math.min(width - promptWidth - 8, svgPoint.x - (promptWidth / 2))),
+          y: Math.max(8, Math.min(height - promptHeight - 8, svgPoint.y - promptHeight - 10)),
+          age: getAgeFromSvgX(svgPoint.x),
+          satisfaction: getSatisfactionFromSvgY(svgPoint.y),
+          width: promptWidth,
+          height: promptHeight
+        });
+      };
 
       return (
         <div className={`w-full bg-gray-900 border-2 border-dashed p-2 rounded mt-4 lifeline-print print-avoid-break ${editable ? 'lifeline-editing border-yellow-400' : 'border-gray-600'}`}>
@@ -555,6 +599,18 @@
             <text x={paddingX - 10} y={paddingY + 10} fill="#60A5FA" fontSize="12" textAnchor="end">+50</text>
             <text x={paddingX - 10} y={height - paddingY} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
             <path d={pathData} fill="none" stroke="#FCD34D" strokeWidth="4" />
+            {editable && onLineAddRequest && canAddLineEvent && sortedData.length > 1 && (
+              <path
+                d={pathData}
+                fill="none"
+                stroke="transparent"
+                strokeWidth="28"
+                strokeLinecap="round"
+                pointerEvents="stroke"
+                style={{ cursor: 'copy' }}
+                onPointerDown={handleLineAddPointerDown}
+              />
+            )}
             <line
               x1={lastUserX}
               y1={lastUserY}
@@ -627,6 +683,40 @@
                 </div>
               </foreignObject>
             </g>
+            {editable && lineAddPrompt && (
+              <foreignObject x={lineAddPrompt.x} y={lineAddPrompt.y} width={lineAddPrompt.width} height={lineAddPrompt.height}>
+                <div xmlns="http://www.w3.org/1999/xhtml" className="lifeline-add-popover h-full rounded border-2 border-yellow-400 bg-black bg-opacity-90 p-2 text-center text-xs text-white shadow-xl">
+                  <p className="font-bold text-yellow-300">ここに出来事を追加しますか？</p>
+                  <p className="mt-1 text-gray-300">{lineAddPrompt.age}歳ごろ / {lineAddPrompt.satisfaction > 0 ? '+' : ''}{lineAddPrompt.satisfaction}</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      className="rounded border border-yellow-300 bg-yellow-300 px-2 py-1 font-bold text-black"
+                      onClick={event => {
+                        event.stopPropagation();
+                        onLineAddRequest({
+                          age: lineAddPrompt.age,
+                          satisfaction: lineAddPrompt.satisfaction
+                        });
+                        setLineAddPrompt(null);
+                      }}
+                    >
+                      YES
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded border border-gray-500 bg-gray-900 px-2 py-1 font-bold text-gray-200"
+                      onClick={event => {
+                        event.stopPropagation();
+                        setLineAddPrompt(null);
+                      }}
+                    >
+                      NO
+                    </button>
+                  </div>
+                </div>
+              </foreignObject>
+            )}
           </svg>
         </div>
       );

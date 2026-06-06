@@ -80,6 +80,7 @@
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
       const [isInterimPathEditing, setIsInterimPathEditing] = useState(false);
+      const [interimMemoryDraft, setInterimMemoryDraft] = useState(null);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -114,6 +115,7 @@
       useEffect(() => {
         if (scene !== 'interim') {
           setIsInterimPathEditing(false);
+          setInterimMemoryDraft(null);
         }
       }, [scene]);
 
@@ -587,6 +589,32 @@
           });
           return changed ? nextMemories : currentMemories;
         });
+      };
+
+      const getInterimAddedMemoryCount = () => memories.filter(memory => memory.addedFromInterim).length;
+
+      const handleRequestInterimMemoryAdd = ({ age, satisfaction }) => {
+        if (getInterimAddedMemoryCount() >= 3) return;
+        setInterimMemoryDraft({
+          age: Math.max(15, Math.min(80, Number(age) || APP_CONFIG.memoryStartAge)),
+          event: '',
+          satisfaction: Number(satisfaction) || 0
+        });
+      };
+
+      const handleSaveInterimMemory = () => {
+        if (!interimMemoryDraft || !interimMemoryDraft.event.trim() || getInterimAddedMemoryCount() >= 3) return;
+        setMemories(currentMemories => ([
+          ...currentMemories,
+          {
+            id: Date.now() + Math.random(),
+            age: Number(interimMemoryDraft.age),
+            event: interimMemoryDraft.event.trim(),
+            satisfaction: Number(interimMemoryDraft.satisfaction),
+            addedFromInterim: true
+          }
+        ]));
+        setInterimMemoryDraft(null);
       };
 
       const handleKeepMemory = () => {
@@ -1688,6 +1716,8 @@
         const skillCans = cans.filter(c => c.type === 'skill');
         const magicCans = cans.filter(c => c.type === 'magic');
         const allyCans = cans.filter(c => c.type === 'ally');
+        const interimAddedMemoryCount = getInterimAddedMemoryCount();
+        const canAddInterimMemory = interimAddedMemoryCount < 3;
 
         return (
           <div className="space-y-6 max-w-5xl mx-auto w-full animate-fade-in">
@@ -1714,13 +1744,17 @@
                       </h3>
                       <p className="mt-1 text-xs leading-relaxed text-gray-400">
                         {isInterimPathEditing
-                          ? '点をつかんで上下に動かすと、満足度の値を修正できます。'
+                          ? `点を上下に動かすと満足度を修正できます。線の上をクリックすると出来事を追加できます（追加 ${interimAddedMemoryCount}/3）。`
                           : '必要なら、ここで満足度の山と谷だけを軽く調整できます。'}
                       </p>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setIsInterimPathEditing(!isInterimPathEditing)}
+                      onClick={() => {
+                        const nextEditing = !isInterimPathEditing;
+                        setIsInterimPathEditing(nextEditing);
+                        if (!nextEditing) setInterimMemoryDraft(null);
+                      }}
                       className={`rpg-button text-sm px-4 py-2 ${isInterimPathEditing ? 'border-yellow-300 bg-yellow-300 text-black' : ''}`}
                     >
                       <i className={`fa-solid ${isInterimPathEditing ? 'fa-check' : 'fa-pen-to-square'} mr-2`}></i>
@@ -1731,7 +1765,79 @@
                     data={memories}
                     editable={isInterimPathEditing}
                     onPointChange={handleUpdateMemorySatisfaction}
+                    onLineAddRequest={handleRequestInterimMemoryAdd}
+                    canAddLineEvent={canAddInterimMemory}
                   />
+                  {isInterimPathEditing && !canAddInterimMemory && (
+                    <p className="mt-2 text-xs font-bold text-yellow-300">
+                      追加できる出来事は最大3つまでです。追加済みの出来事を整理したい場合は、旅路の記録の入力画面で見直してください。
+                    </p>
+                  )}
+                  {interimMemoryDraft && (
+                    <div className="mt-4 rounded border-2 border-yellow-500 bg-black bg-opacity-80 p-4 animate-fade-in">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <p className="font-bold text-yellow-300">
+                          <i className="fa-solid fa-plus mr-2"></i>出来事を追加する
+                        </p>
+                        <p className="text-xs text-gray-400">追加 {interimAddedMemoryCount}/3</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-[7rem_1fr_8rem] gap-3 items-end">
+                        <label className="block">
+                          <span className="mb-1 block text-xs text-gray-400">年齢</span>
+                          <WritableField value={String(interimMemoryDraft.age)}>
+                            <input
+                              type="number"
+                              min="15"
+                              max="80"
+                              className="rpg-input text-center"
+                              value={interimMemoryDraft.age}
+                              onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, age: e.target.value })}
+                            />
+                          </WritableField>
+                        </label>
+                        <label className="block">
+                          <span className="mb-1 block text-xs text-gray-400">出来事</span>
+                          <WritableField value={interimMemoryDraft.event}>
+                            <input
+                              type="text"
+                              className="rpg-input"
+                              placeholder="例：この頃、価値観が変わる出来事があった"
+                              value={interimMemoryDraft.event}
+                              onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, event: e.target.value })}
+                            />
+                          </WritableField>
+                        </label>
+                        <div>
+                          <span className="mb-1 block text-xs text-gray-400">満足度</span>
+                          <p className={`mb-1 text-center text-sm font-bold ${interimMemoryDraft.satisfaction > 0 ? 'text-blue-400' : interimMemoryDraft.satisfaction < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                            {interimMemoryDraft.satisfaction > 0 ? '+' : ''}{interimMemoryDraft.satisfaction}
+                          </p>
+                          <input
+                            type="range"
+                            min="-50"
+                            max="50"
+                            step="5"
+                            className="w-full accent-yellow-400"
+                            value={interimMemoryDraft.satisfaction}
+                            onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, satisfaction: Number(e.target.value) })}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4 flex flex-col md:flex-row justify-end gap-2">
+                        <button type="button" onClick={() => setInterimMemoryDraft(null)} className="rpg-button text-sm px-5 py-2">
+                          やめる
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSaveInterimMemory}
+                          disabled={!interimMemoryDraft.event.trim()}
+                          className={`rpg-button text-sm px-6 py-2 bg-white text-black font-bold ${!interimMemoryDraft.event.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          出来事を追加する
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <div className="mt-4 rounded border border-gray-700 bg-gray-900 bg-opacity-70 p-3">
                     <p className="mb-1 text-sm font-bold text-yellow-300">旅路の記録から見えた気づき</p>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{chartInsight || 'まだメモはありません。'}</p>
