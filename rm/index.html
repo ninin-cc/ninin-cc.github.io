@@ -379,7 +379,12 @@
       }, [answers, currentIndex, currentQuestions]);
 
       const handleBack = () => {
-        if (isPractice) return;
+        // チュートリアル中、または本番の1問目の場合はトップ画面に戻る
+        if (isPractice || currentIndex === 0) {
+          returnToTop();
+          return;
+        }
+        // 本番の2問目以降は、1つ前の質問に戻る
         if (currentIndex > 0) {
           setSelectedChoiceIndex(null);
           setTempSelectedChoiceIndex(null);
@@ -991,10 +996,10 @@
               <div className="mt-4 sm:mt-6 flex items-center justify-between pt-2 sm:pt-4 relative z-10 px-2">
                 <button 
                   onClick={handleBack} 
-                  disabled={isPractice || currentIndex === 0 || selectedChoiceIndex !== null} 
-                  className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-500 transition-all ${isPractice || currentIndex === 0 || selectedChoiceIndex !== null ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-100 hover:text-slate-800'}`}
+                  disabled={selectedChoiceIndex !== null} 
+                  className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-500 transition-all ${selectedChoiceIndex !== null ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-100 hover:text-slate-800'}`}
                 >
-                  <ArrowLeftIcon /> ひとつ前の質問にもどる
+                  <ArrowLeftIcon /> もどる
                 </button>
               </div>
             </div>
