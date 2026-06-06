@@ -173,7 +173,51 @@
       })
     };
 
+    const UI_FRAME_THEMES = {
+      default: {
+        id: "default",
+        label: "標準",
+        description: "いつもの黒いRPGウィンドウ",
+        windowClass: "",
+        titleClass: "",
+        swatchClass: "ui-swatch-default"
+      },
+      0: {
+        id: 0,
+        label: "羊皮紙",
+        description: "手書きの記録に近いあたたかい質感",
+        windowClass: "ui-frame-letter",
+        titleClass: "ui-frame-title-letter",
+        swatchClass: "ui-swatch-letter"
+      },
+      1: {
+        id: 1,
+        label: "透明",
+        description: "背景を活かした軽い見え方",
+        windowClass: "ui-frame-transparent",
+        titleClass: "ui-frame-title-transparent",
+        swatchClass: "ui-swatch-transparent"
+      },
+      2: {
+        id: 2,
+        label: "少し暗い",
+        description: "背景を少し透かす落ち着いた質感",
+        windowClass: "ui-frame-soft",
+        titleClass: "ui-frame-title-soft",
+        swatchClass: "ui-swatch-soft"
+      },
+      3: {
+        id: 3,
+        label: "黒",
+        description: "文字が一番読みやすい黒い質感",
+        windowClass: "ui-frame-black",
+        titleClass: "ui-frame-title-black",
+        swatchClass: "ui-swatch-black"
+      }
+    };
+
     let APP_CONFIG = THEMES.rpg;
+    let APP_UI_FRAME_THEME = UI_FRAME_THEMES.default;
 
     document.title = APP_CONFIG.documentTitle;
 

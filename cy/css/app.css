@@ -207,6 +207,94 @@
         box-shadow: 0 8px 18px -8px rgba(251, 146, 60, 0.95);
       }
     }
+    .ui-frame-transparent {
+      background: transparent !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    .ui-frame-soft {
+      background: rgba(0, 0, 0, 0.32) !important;
+      backdrop-filter: blur(1px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24) !important;
+    }
+    .ui-frame-letter {
+      background:
+        linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
+      color: #2d1b10 !important;
+      border-color: #8b5a2b !important;
+      box-shadow: inset 0 0 26px rgba(90, 48, 18, 0.18), 0 10px 24px rgba(0, 0, 0, 0.24) !important;
+    }
+    .ui-frame-black {
+      background: #050505 !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.30) !important;
+    }
+    .window-box-title {
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 999px;
+    }
+    .ui-frame-title-letter {
+      background: rgba(252, 230, 170, 0.96) !important;
+      border-color: rgba(139, 90, 43, 0.85) !important;
+      color: #2d1b10 !important;
+    }
+    .ui-frame-title-transparent,
+    .ui-frame-title-soft,
+    .ui-frame-title-black {
+      background: rgba(0, 0, 0, 0.76) !important;
+    }
+    .ui-frame-letter .window-box-content {
+      color: #2d1b10;
+    }
+    .ui-frame-letter .rpg-input:not(.parchment-input),
+    .ui-frame-letter .rpg-select {
+      background: rgba(255, 248, 223, 0.78) !important;
+      border-color: #8b5a2b !important;
+      color: #2d1b10 !important;
+      caret-color: #2d1b10;
+      box-shadow: inset 0 0 14px rgba(90, 48, 18, 0.13) !important;
+    }
+    .ui-frame-letter .rpg-input:not(.parchment-input)::placeholder {
+      color: #6f5b3b !important;
+      opacity: 0.9;
+    }
+    .ui-frame-transparent .rpg-input:not(.parchment-input),
+    .ui-frame-transparent .rpg-select {
+      background: rgba(0, 0, 0, 0.16) !important;
+    }
+    .ui-frame-soft .rpg-input:not(.parchment-input),
+    .ui-frame-soft .rpg-select {
+      background: rgba(0, 0, 0, 0.42) !important;
+    }
+    .ui-frame-black .rpg-input:not(.parchment-input),
+    .ui-frame-black .rpg-select {
+      background: #050505 !important;
+    }
+    .ui-frame-picker {
+      background: rgba(0, 0, 0, 0.68);
+      border: 1px solid rgba(250, 204, 21, 0.42);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    }
+    .ui-frame-picker-option {
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    }
+    .ui-frame-picker-option:hover {
+      transform: translateY(-1px);
+    }
+    .ui-swatch-default,
+    .ui-swatch-black {
+      background: #050505;
+    }
+    .ui-swatch-letter {
+      background: linear-gradient(135deg, #f8eac2, #ddb66f);
+    }
+    .ui-swatch-transparent {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.26), rgba(255,255,255,0.02)),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 6px, rgba(0,0,0,0.08) 6px 12px);
+    }
+    .ui-swatch-soft {
+      background: rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(1px);
+    }
     .satisfaction-wiggle {
       animation: satisfactionWiggle 1.5s ease-in-out 0.45s 1 both;
       transform-origin: center;
@@ -323,6 +411,32 @@
       background: #1e293b !important;
       color: #fff !important;
       border-color: #1e293b !important;
+    }
+    .theme-cafe .ui-frame-transparent {
+      background: transparent !important;
+    }
+    .theme-cafe .ui-frame-soft {
+      background: rgba(0, 0, 0, 0.32) !important;
+    }
+    .theme-cafe .ui-frame-letter {
+      background: linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
+      color: #2d1b10 !important;
+      border-color: #8b5a2b !important;
+    }
+    .theme-cafe .ui-frame-black {
+      background: #050505 !important;
+      color: #fdf6e3 !important;
+      border-color: #6b7280 !important;
+    }
+    .theme-cafe .ui-frame-title-letter {
+      background: rgba(252, 230, 170, 0.96) !important;
+      color: #2d1b10 !important;
+    }
+    .theme-cafe .ui-frame-title-transparent,
+    .theme-cafe .ui-frame-title-soft,
+    .theme-cafe .ui-frame-title-black {
+      background: rgba(0, 0, 0, 0.76) !important;
+      color: #fdf6e3 !important;
     }
     .orange-aura-pulse {
       animation: orangeAuraPulse 1.75s ease-in-out infinite;

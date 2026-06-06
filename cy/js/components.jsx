@@ -1,14 +1,19 @@
-    const WindowBox = ({ title, children, iconName, className = "" }) => (
-      <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative w-full ${className} animate-fade-in`}>
-        {title && (
-          <div className="absolute -top-4 left-4 bg-black px-2 flex items-center space-x-2">
-            {iconName && <i className={iconName}></i>}
-            <h2 className="text-xl font-bold tracking-widest">{title}</h2>
-          </div>
-        )}
-        <div className="mt-2 w-full">{children}</div>
-      </div>
-    );
+    const WindowBox = ({ title, children, iconName, className = "" }) => {
+      const shouldApplyUiFrame = !className.includes('print-friendly') && !className.includes('no-ui-frame');
+      const frameTheme = shouldApplyUiFrame ? APP_UI_FRAME_THEME : UI_FRAME_THEMES.default;
+
+      return (
+        <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative w-full ${frameTheme.windowClass} ${className} animate-fade-in`}>
+          {title && (
+            <div className={`window-box-title absolute -top-4 left-4 bg-black px-2 flex items-center space-x-2 ${frameTheme.titleClass}`}>
+              {iconName && <i className={iconName}></i>}
+              <h2 className="text-xl font-bold tracking-widest">{title}</h2>
+            </div>
+          )}
+          <div className="window-box-content mt-2 w-full">{children}</div>
+        </div>
+      );
+    };
 
     const renderTextLines = (value) => (
       value.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)

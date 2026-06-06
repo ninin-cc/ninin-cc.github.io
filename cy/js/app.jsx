@@ -4,6 +4,10 @@
       const [currentTheme, setCurrentTheme] = useLocalStorage('cq_theme', 'rpg');
       const activeThemeKey = THEMES[currentTheme] ? currentTheme : 'rpg';
       APP_CONFIG = THEMES[activeThemeKey];
+      const [uiFrameTone, setUiFrameTone] = useLocalStorage('cq_ui_frame_tone', 'default');
+      const [isUiFramePickerOpen, setIsUiFramePickerOpen] = useState(false);
+      const activeUiFrameTone = UI_FRAME_THEMES[uiFrameTone] ? uiFrameTone : 'default';
+      APP_UI_FRAME_THEME = UI_FRAME_THEMES[activeUiFrameTone];
 
       useEffect(() => {
         const loadingScreen = document.getElementById('cq-loading-screen');
@@ -2631,6 +2635,54 @@
         );
       };
 
+      const renderUiFramePicker = () => {
+        const uiFrameOptions = ['default', 0, 1, 2, 3];
+
+        return (
+          <div className="mt-4 flex justify-center">
+            <div className="ui-frame-picker w-full max-w-2xl rounded-lg px-3 py-2 text-left">
+              <button
+                type="button"
+                onClick={() => setIsUiFramePickerOpen(!isUiFramePickerOpen)}
+                className="flex w-full items-center justify-between gap-3 text-xs font-bold text-yellow-200 md:text-sm"
+                aria-expanded={isUiFramePickerOpen}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <i className="fa-solid fa-layer-group"></i>
+                  UIの質感を選ぶ
+                  <span className="rounded-full border border-yellow-500 px-2 py-0.5 text-[10px] text-yellow-100 md:text-xs">
+                    {APP_UI_FRAME_THEME.label}
+                  </span>
+                </span>
+                <i className={`fa-solid ${isUiFramePickerOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+              </button>
+
+              {isUiFramePickerOpen && (
+                <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5 animate-fade-in">
+                  {uiFrameOptions.map(optionKey => {
+                    const option = UI_FRAME_THEMES[optionKey];
+                    const selected = String(activeUiFrameTone) === String(optionKey);
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => setUiFrameTone(option.id)}
+                        className={`ui-frame-picker-option rounded border px-2 py-2 text-left ${selected ? 'border-yellow-300 bg-yellow-900 bg-opacity-70' : 'border-gray-600 bg-black bg-opacity-45 hover:border-yellow-500'}`}
+                      >
+                        <span className={`mb-2 block h-8 rounded border border-white border-opacity-30 ${option.swatchClass}`}></span>
+                        <span className="block text-sm font-bold text-white">{option.label}</span>
+                        <span className="mt-1 block text-[10px] leading-snug text-gray-300">{option.description}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
       const renderHeader = () => (
         <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
           <div className="mb-3 flex justify-center">
@@ -2651,6 +2703,7 @@
           <p className="app-tagline-text theme-shadow-text text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
             {APP_CONFIG.appTagline}
           </p>
+          {renderUiFramePicker()}
         </div>
       );
 
