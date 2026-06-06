@@ -331,6 +331,27 @@
     }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
+    .dialog-window-translucent.bg-amber-900 {
+      background-color: rgba(120, 53, 15, 0.76) !important;
+      backdrop-filter: blur(1px);
+    }
+    .dialog-window-translucent.bg-rose-900 {
+      background-color: rgba(136, 19, 55, 0.74) !important;
+      backdrop-filter: blur(1px);
+    }
+    .dialog-nameplate-translucent.bg-amber-900 {
+      background-color: rgba(120, 53, 15, 0.86) !important;
+    }
+    .dialog-nameplate-translucent.bg-rose-900 {
+      background-color: rgba(136, 19, 55, 0.86) !important;
+    }
+    .dialog-window-translucent.bg-\[\#fefce8\] {
+      background-color: rgba(254, 252, 232, 0.82) !important;
+      backdrop-filter: blur(1px);
+    }
+    .dialog-nameplate-translucent.bg-\[\#fefce8\] {
+      background-color: rgba(254, 252, 232, 0.90) !important;
+    }
     .theme-cafe {
       background-color: #fdf6e3 !important;
       color: #1e293b !important;

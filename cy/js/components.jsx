@@ -71,8 +71,8 @@
       const isImageRight = imageSide === 'right';
 
       return (
-        <div onClick={handleSkip} className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative animate-fade-in shadow-xl mt-6 md:mt-8 cursor-pointer`}>
-          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div onClick={handleSkip} className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative animate-fade-in shadow-xl mt-6 md:mt-8 cursor-pointer`}>
+          <div className={`dialog-nameplate-translucent absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
@@ -109,8 +109,8 @@
       const isImageRight = imageSide === 'right';
 
       return (
-        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 opacity-90`}>
-          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 opacity-90`}>
+          <div className={`dialog-nameplate-translucent absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
@@ -141,8 +141,8 @@
       const { color, imgBg, img } = config.reflem;
 
       return (
-        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 animate-memory-fade`}>
-          <div className={`absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 animate-memory-fade`}>
+          <div className={`dialog-nameplate-translucent absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className="flex items-start gap-4 md:gap-6 mt-1 md:mt-2">
@@ -164,8 +164,8 @@
       const img = APP_CONFIG.char2.img;
 
       return (
-        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
-          <div className="absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
+        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
+          <div className="dialog-nameplate-translucent absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
             {speaker}
           </div>
           <div className="flex flex-row-reverse items-start gap-4 md:gap-6 mt-1 md:mt-2">
