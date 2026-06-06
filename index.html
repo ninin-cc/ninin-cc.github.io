@@ -1,450 +1,1010 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>キャリコン過去問ドリル：キャリア理論編</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #64748b;
+      --line: #d9e2ec;
+      --paper: #f8fafc;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --teal-dark: #115e59;
+      --amber: #d97706;
+      --rose: #be123c;
+      --green: #15803d;
+      --shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+    }
 
-  gtag('config', 'G-Z1T35THNDV');
-</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合同会社ninin</title>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Yu Gothic", "Meiryo", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--line);
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    /* スマホ前提のメインコンテナ */
+    .app-shell {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0;
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ヘッダー */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--teal-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .icon-button {
+      background: transparent;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      padding: 6px 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: -8px;
+    }
+
+    .icon-button:active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    /* プログレスバー */
+    .progress-container {
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .progress-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--teal);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* クイズエリア */
+    .quiz-container {
+      padding: 20px 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    /* 切り替え用のユーティリティ */
+    .hidden {
+      display: none !important;
+    }
+
+    /* 問題ページエリア */
+    #questionArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .question-kicker {
+      color: var(--teal);
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: var(--ink);
+    }
+
+    /* 選択肢ボタン */
+    .choice-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .choice-button {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: left;
+      line-height: 1.4;
+      color: var(--ink);
+      transition: all 0.1s ease;
+    }
+
+    .choice-button:active {
+      transform: scale(0.98);
+      background: var(--paper);
+    }
+
+    /* フィードバック（解答ページ）エリア */
+    #feedbackArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .result-badge.correct {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .result-badge.wrong {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    .user-answer-text {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--rose);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* 画像と答えの2カラムレイアウト */
+    .feedback-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+      background: var(--paper);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .feedback-image {
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .feedback-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .feedback-answer {
+      flex-grow: 1;
+    }
+
+    .answer-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .answer-text {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .psychologist-name {
+      display: inline-block;
+      background: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    /* メタ情報（国旗・生没年） */
+    .psychologist-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* 解説エリア */
+    .feedback-body {
+      background: #fff;
+      border-left: 4px solid var(--teal);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .explanation-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      margin: 0 0 8px 0;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+    }
+
+    /* 主な著作・理論年表エリア */
+    .works-box {
+      background: #fdf4ff;
+      border: 1px solid #f0abfc;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .works-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #86198f;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .works-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .works-list li {
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .works-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .work-year {
+      font-weight: bold;
+      color: #a21caf;
+      flex-shrink: 0;
+      width: 3.5rem;
+    }
+
+    /* 過去問エリア */
+    .past-exam-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .past-exam-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #0369a1;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .past-exam-question {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.5;
+      margin: 0 0 12px 0;
+    }
+
+    .past-exam-options {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
     
-    <!-- ファビコン（ブラウザのタブ用アイコン）の設定 -->
-    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
-    <!-- スマホのホーム画面に追加した時などのアイコン設定 -->
-    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+    .past-exam-options li {
+      margin-bottom: 8px;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
 
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            /* 和紙のような温かみのあるベースカラー（生成り色） */
-            background-color: #fdfcf9;
-            /* SVGを用いた微細なノイズ（繊維感）で和紙のテクスチャを表現。ノイズを強めに調整 */
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
-        }
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    .past-exam-answer-box {
+      background: #e0f2fe;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #0c4a6e;
+      display: inline-block;
+    }
+
+    .primary-button {
+      width: 100%;
+      background: var(--teal);
+      color: #fff;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(15, 118, 110, 0.2);
+    }
+
+    .primary-button:active {
+      transform: scale(0.98);
+      background: var(--teal-dark);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
 </head>
-<body class="text-stone-800 min-h-screen flex flex-col items-center">
-
-    <!-- ヒーローセクション 兼 企業理念 -->
-    <header class="w-full max-w-4xl px-6 mb-8 mt-12 text-center fade-in">
-        <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-stone-100 shadow-sm relative flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-            <!-- バッジ -->
-            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-5 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
-                Philosophy
-            </div>
-            
-            <!-- 左側：ロゴ -->
-            <div class="flex-shrink-0">
-                <img 
-                    src="https://ninin-cc.github.io/img/ninin.png" 
-                    alt="ninin logo" 
-                    class="h-24 w-24 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
-                    onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-24 w-24 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
-                >
-            </div>
-
-            <!-- 右側：テキスト -->
-            <div class="flex flex-col justify-center items-center sm:items-stretch">
-                <p class="text-stone-700 font-medium leading-relaxed text-[15px] sm:text-base md:text-lg text-center">
-                    私たちは、自分らしく生きていける<br />
-                    社会 / 心理支援を<br />
-                    「日本のあたり前」にしてゆきます
-                </p>
-                <div class="text-right w-full mt-4 sm:mt-6 leading-none">
-                    <span class="text-[10px] md:text-xs text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
-                </div>
-            </div>
-        </div>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <!-- 全ページ共通の戻るボタン -->
+      <button class="icon-button" id="backButton">◀ 戻る</button>
+      <div class="brand">
+        <h1>過去問ドリル：キャリア理論</h1>
+      </div>
+      <!-- 中央揃えを維持するためのダミー要素 -->
+      <div style="width: 70px;"></div>
     </header>
 
-    <!-- メインリンク一覧 -->
-    <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+    <div class="progress-container">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">0 / 10問</div>
+    </div>
+
+    <section class="quiz-container">
+      <!-- 問題表示エリア（解答ページと切り替え） -->
+      <div id="questionArea">
+        <div class="question-kicker" id="questionKicker">第1問</div>
+        <div class="question-text" id="questionText"></div>
+        <div class="choice-grid" id="choices"></div>
+      </div>
+
+      <!-- 解答・解説・過去問表示エリア（次のページとして表示） -->
+      <div class="hidden" id="feedbackArea">
+        <div id="resultBadge" class="result-badge"></div>
+        <!-- ユーザーの誤答表示用 -->
+        <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
         
-        <!-- RIESM ロゴセクション (Philosophyと同じ幅) -->
-        <div class="w-full mb-6">
-            <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="bg-white py-2 rounded-[2rem] border border-stone-100 shadow-sm flex justify-center items-center group transition-all duration-300 hover:shadow-md active:scale-95 block">
-                <img 
-                    src="https://ninin-cc.github.io/img/riesm.png" 
-                    alt="RIESM logo" 
-                    class="w-full max-w-[100px] md:max-w-[120px] h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                >
-            </a>
+        <!-- 左に画像、右に答え -->
+        <div class="feedback-header">
+          <div class="feedback-image">
+            <img id="feedbackImage" src="" alt="画像">
+          </div>
+          <div class="feedback-answer">
+            <div class="answer-label">正答</div>
+            <div class="answer-text" id="answerText"></div>
+            <div><span class="psychologist-name" id="psychologistName"></span></div>
+            <!-- 新設：メタ情報 -->
+            <div class="psychologist-meta" id="psychologistMeta"></div>
+          </div>
         </div>
 
-        <!-- コンテンツカード群（PC時2カラム・Gridレイアウト・上詰め配置） -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            
-            <!-- メインサービス：あなたの心のコックピット -->
-            <div class="w-full">
-                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" 
-                   class="group block w-full bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center space-x-2">
-                                <h2 class="text-xl font-bold">🌈あなたの心のコックピット</h2>
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-stone-400 group-hover:text-stone-600"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        </div>
-                        <p class="text-sm text-stone-500 leading-relaxed mt-2">
-                            RIESM™は一人ひとりの個性（役割の分布）を可視化し【<span class="text-slate-600 font-medium">人生のパイロットとしてのあなた</span>】を<span class="text-slate-600 font-medium">ナビゲート</span>するためのアセスメントツールです。
-                        </p>
-                        
-                        <!-- 挿入画像 (高さ300px固定、幅80%、画像全体を表示・スライドショー化) -->
-                        <div class="mt-4 mb-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 w-4/5 mx-auto h-[300px] flex items-center justify-center">
-                            <img 
-                                id="riesm-slideshow"
-                                src="./img/m/2.jpg" 
-                                alt="RIESM イメージ画像" 
-                                class="w-full h-full object-contain transition-opacity duration-300"
-                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=Image';"
-                            >
-                        </div>
-
-                        <p class="text-sm text-stone-500 leading-relaxed">
-                            RIESM™では、お互いが心地よくコミュニケーションできる<span class="text-slate-600 font-medium">スキルも身につけられます。</span>国内大手企業での<span class="text-slate-600 font-medium">導入実績</span>もありますので、安心してご活用ください。
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <!-- ワークショップのご案内 (アコーディオン) -->
-            <div class="w-full">
-                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
-                    <button 
-                        onclick="toggleAccordion('workshop-content', 'workshop-icon')"
-                        class="w-full flex items-center justify-between p-5 text-left group transition-colors hover:bg-stone-50/50"
-                    >
-                        <div class="flex items-center space-x-4">
-                            <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                            </div>
-                            <h2 class="text-lg md:text-xl font-bold leading-tight">RIESM™ワークショップ<br class="sm:hidden"/>のご案内</h2>
-                        </div>
-                        <div id="workshop-icon" class="transition-transform duration-300 flex-shrink-0 ml-2 rotate-180">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
-                    </button>
-                    <div 
-                        id="workshop-content" 
-                        class="max-h-[1000px] opacity-100 overflow-hidden transition-all duration-300 ease-in-out"
-                    >
-                        <div class="p-5 pt-0 mt-2 border-t border-stone-100">
-                            <!-- 追加：ワークショップ画像 -->
-                            <div class="mt-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 relative group/img">
-                                <img src="./img/modenavi.png" alt="ワークショップ" class="w-full h-auto object-cover transition-transform duration-700 group-hover/img:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x300/fdfcf9/a8a29e?text=modenavi.png';">
-                            </div>
-                            <p class="text-sm text-stone-500 leading-relaxed mt-4">
-                                チームをより良く理解するための、ワークショップのテキストやスライド台本など、より深く学ぶための資料を格納しています。
-                            </p>
-                            <div class="mt-4 flex flex-wrap gap-2 justify-end">
-                                <a href="https://ninin-cc.github.io/touroku.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-stone-500 font-medium hover:text-stone-700 transition-colors bg-stone-50 border border-stone-200 px-4 py-2 rounded-full">
-                                    <span>登録者一覧を見る</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                                </a>
-                                <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors bg-amber-50 px-4 py-2 rounded-full">
-                                    <span>資料を見る</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- nininカウンセリングルーム -->
-            <div class="w-full">
-                <a href="https://note.com/ninin2024/n/nfb94f7b9fd88" target="_blank" rel="noopener noreferrer" 
-                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                    <div class="flex items-start space-x-4">
-                        <div class="p-3 rounded-xl text-white bg-pink-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>
-                        </div>
-                        <div class="flex-grow min-w-0">
-                            <div class="flex items-start justify-between gap-3">
-                                <h2 class="text-base md:text-lg font-bold leading-snug">
-                                    あなたのお話<br/>聞かせてくださいませんか？
-                                </h2>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 text-stone-300 group-hover:text-stone-500 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                            </div>
-                            <p class="text-xs sm:text-sm text-stone-500 mt-2 leading-relaxed">
-                                <span class="font-bold text-stone-600">➤nininカウンセリングルーム</span><br/>
-                                <span class="font-bold text-stone-600">➤nininキャリアルーム</span><br/>
-                                セラピー、ヒーリング、カウンセリング、コンサルティング、またご希望に応じて「悩みを解決（軽く）」するためのティーチングも行えます（男女2名のカウンセラー在籍）。
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- WEBアプリ セクション (アコーディオンボタン内にバナー配置) -->
-            <div class="w-full">
-                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
-                    <button 
-                        onclick="toggleAccordion('app-content', 'app-icon')"
-                        class="w-full block p-5 text-left group transition-colors hover:bg-stone-50/50"
-                    >
-                        <div class="flex items-center justify-between w-full">
-                            <div class="flex items-center space-x-4">
-                                <div class="p-3 rounded-xl text-white bg-indigo-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-                                </div>
-                                <h2 class="text-lg md:text-xl font-bold leading-tight">nininの<br/>遊べる深まるWEBアプリ</h2>
-                            </div>
-                            <div id="app-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
-                            </div>
-                        </div>
-                        
-                        <!-- WEBアプリ関連バナー (常に表示されるボタン領域に配置) -->
-                        <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-stone-100 bg-stone-50 relative group/img">
-                            <img src="./img/app.jpg" alt="WEBアプリバナー" class="w-full h-auto object-cover transition-transform duration-700 group-hover/img:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x200/eef2ff/4f46e5?text=app.jpg';">
-                        </div>
-                    </button>
-                    <div 
-                        id="app-content" 
-                        class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out"
-                    >
-                        <div class="p-5 pt-0 mt-2 border-t border-stone-100">
-                            <p class="text-sm text-stone-500 leading-relaxed mt-4 mb-4">
-                                RIESM™mini、RIESM™RoleTRADE™、メンテーリアタロットカードなどのアプリをご紹介するページです。
-                            </p>
-                            <div class="space-y-3">
-                                <a href="https://ninin-cc.github.io/ca/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
-                                    <div class="flex items-center justify-between gap-3 mb-1">
-                                        <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                                            <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">心の錨を観る魔法</span>
-                                            <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider flex-shrink-0">New</span>
-                                        </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                                    </div>
-                                    <p class="text-xs text-stone-500 leading-snug">あなたの大切なキャリアアンカーをみつめます(魔法世界版）</p>
-                                </a>
-
-                                <a href="https://ninin-cc.github.io/cr/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
-                                    <div class="flex items-center justify-between gap-3 mb-1">
-                                        <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                                            <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">心の錨を見つめる時間</span>
-                                            <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider flex-shrink-0">New</span>
-                                        </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                                    </div>
-                                    <p class="text-xs text-stone-500 leading-snug">あなたの大切なキャリアアンカーをみつめます(Cafe版）</p>
-                                </a>
-
-                                <a href="https://ninin-cc.github.io/rm/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">RIESM™mini</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                                    </div>
-                                    <p class="text-xs text-stone-500 leading-snug">心の基礎体温を毎日チェック💗</p>
-                                </a>
-                                
-                                <!-- RoleTRADE はリンクを外し、Coming Soonを明滅させる -->
-                                <div class="block p-3 rounded-lg border border-stone-100 bg-stone-50/50">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-400">RIESM™RoleTRADE™</span>
-                                        <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider">COMING SOON</span>
-                                    </div>
-                                </div>
-
-                                <a href="https://ninin-cc.github.io/tr/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">メンテーリアタロットカード</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                                    </div>
-                                    <p class="text-xs text-stone-500 leading-snug">伝統的なワンオラクル（1枚引き）。引いた1枚にあなたは何を感じるか。偶然から自己と対話する、タロット本来の体験を。</p>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 企業研修プログラム -->
-            <div class="w-full">
-                <a href="kougilp202511.html" target="_blank" rel="noopener noreferrer" 
-                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                    <div class="flex items-center space-x-4">
-                        <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-                        </div>
-                        <div class="flex-grow">
-                            <div class="flex items-center justify-between">
-                                <h2 class="text-xl font-bold">企業研修プログラム</h2>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                            </div>
-                            <p class="text-sm text-stone-400 mt-1 leading-snug">
-                                RIESM™活用コミュニケーション研修、「人生は伏線回収」、ハラスメント、1on1研修など多彩に対応。
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-        </div> <!-- コンテンツカード群ここまで -->
-
-        <!-- 導入メッセージ -->
-        <div class="w-full pt-8 pb-4 text-center px-2">
-            <p class="text-stone-500 leading-relaxed text-xs md:text-sm">
-                自己理解と他者理解・心地よいコミュニケーション、<br class="md:hidden" />
-                そして人生の「伏線回収」。<br />
-                わたしたちはあなたの物語のナビゲーター。
-                <span class="block mt-3 text-stone-600 font-medium tracking-widest">
-                    ― あなたの物語には、価値がある。 ―
-                </span>
-            </p>
+        <!-- その下に解説 -->
+        <div class="feedback-body">
+          <p class="explanation-title">解説・ポイント</p>
+          <p class="explanation-text" id="explanationText"></p>
         </div>
 
-        <!-- Media & SNS 区切り線 -->
-        <div class="flex items-center mt-2 mb-6">
-            <div class="flex-grow h-px bg-stone-200"></div>
-            <span class="px-4 text-xs font-bold text-stone-400 tracking-widest uppercase">Media ＆ SNS</span>
-            <div class="flex-grow h-px bg-stone-200"></div>
+        <!-- 主な著作・理論年表エリア -->
+        <div class="works-box" id="worksBox">
+          <p class="works-title">📚 主な理論・著作の変遷</p>
+          <ul class="works-list" id="worksList"></ul>
         </div>
 
-        <!-- SNSリンク（PC時2カラムGrid） -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- note -->
-            <a href="https://note.com/ninin2025" target="_blank" rel="noopener noreferrer" 
-               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-white border border-stone-200 text-stone-900 shadow-sm transition-transform group-hover:scale-110 flex items-center justify-center">
-                        <!-- 文字で note アイコンを表現（太字で大きく） -->
-                        <span class="text-[34px] leading-none pb-1" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900;">n</span>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-xl font-bold">note</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        </div>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">日々の気づきや🌈RIESMについて綴る場所</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- LinkedIn -->
-            <a href="https://www.linkedin.com/in/ninin2025/" target="_blank" rel="noopener noreferrer" 
-               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-blue-700 shadow-sm transition-transform group-hover:scale-110">
-                        <!-- LinkedIn SVG アイコン -->
-                        <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-xl font-bold">LinkedIn</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        </div>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">ビジネスプロフィール</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- X (Twitter) -->
-            <a href="https://x.com/ninin2025" target="_blank" rel="noopener noreferrer" 
-               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-black shadow-sm transition-transform group-hover:scale-110">
-                        <!-- X SVG アイコン -->
-                        <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-xl font-bold">X (Twitter)</h2>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        </div>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">リアルタイムな発信と対話の場</p>
-                    </div>
-                </div>
-            </a>
+        <!-- 過去問表示エリア -->
+        <div class="past-exam-box" id="pastExamBox">
+          <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
+          <p class="past-exam-question" id="pastExamQuestion"></p>
+          <ul class="past-exam-options" id="pastExamOptions"></ul>
+          <div class="past-exam-answer-box">正答： <span id="pastExamAnswer"></span></div>
         </div>
 
-        <!-- 公告リンク -->
-        <div class="mt-12 mb-20 text-center">
-            <a href="https://ninin-cc.github.io/koukoku.html" target="_blank" rel="noopener noreferrer" 
-               class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 border border-stone-200 rounded-full text-sm bg-white/50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-                <span>電子公告はこちら</span>
-            </a>
-        </div>
-    </main>
+        <button class="primary-button" id="nextButton">次の問題へ</button>
+      </div>
+    </section>
+  </main>
 
-    <!-- フッター -->
-    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
-        <div class="text-xs text-stone-400 space-y-1 mb-3">
-            <p>合同会社ninin consulting ＆ counseling</p>
-            <p>法人番号 9011503006532</p>
-            <p>※社名由来は「二人三脚」</p>
-        </div>
-        <p class="text-xs text-stone-400 tracking-widest uppercase">
-            © 2025 ninin LLC. All Rights Reserved.
-        </p>
-    </footer>
+  <script>
+    // Windows環境では国旗絵文字がフルカラー表示されないため、半角カタカナに切り替える判定
+    const isEmojiSupported = !navigator.userAgent.includes('Windows');
 
-    <script>
-        function toggleAccordion(contentId, iconId) {
-            const content = document.getElementById(contentId);
-            const icon = document.getElementById(iconId);
-            
-            if (content.classList.contains('max-h-0')) {
-                // 開く処理
-                content.classList.remove('max-h-0', 'opacity-0');
-                content.classList.add('max-h-[1000px]', 'opacity-100'); // 画像追加に伴い高さを拡張
-                icon.classList.add('rotate-180');
-            } else {
-                // 閉じる処理
-                content.classList.add('max-h-0', 'opacity-0');
-                content.classList.remove('max-h-[1000px]', 'opacity-100');
-                icon.classList.remove('rotate-180');
-            }
+    // 過去問ベースのキャリア理論問題データ ＋ 出題傾向に基づく過去問類題データ ＋ メタ情報
+    const QUESTIONS = [
+      {
+        text: "キャリアには人生における全ての役割が含まれるとし、愛（Love）、労働（Labor）、余暇（Leisure）と、もう1つの「L」の4つの活動が統合されるべきだと提唱した。もう1つのLはどれか。",
+        options: ["生活（Life）", "学習（Learning）", "自由（Liberty）", "指導（Leadership）"],
+        answer: 1, 
+        image: "s_hansen.png",
+        name: "L.S.ハンセン",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1931 - 2020",
+        explanation: "ハンセンの【統合的人生設計（ILP）】の概念です。人生のパッチワークとして「愛・労働・学習・余暇」の4つのLをバランスよく統合することが重要だと説きました。",
+        works: [
+          { year: 1997, title: "『統合的人生設計（Integrative Life Planning）』発表" },
+          { year: 2007, title: "NCDA（全米キャリア開発協会）エミネント・キャリア・アワード受賞" }
+        ],
+        pastExam: {
+          title: "第25回",
+          question: "L.S.ハンセン（Hansen, L. S.）の統合的人生設計（ILP）における、人生の4つの重要な役割（4L）の組み合わせとして、適切なものはどれか。",
+          options: [
+            "1. 愛、労働、学習、余暇",
+            "2. 愛、労働、生活、指導",
+            "3. 労働、学習、余暇、自由",
+            "4. 愛、生活、学習、自由"
+          ],
+          answer: "1"
         }
+      },
+      {
+        text: "個人の性格的特性と、その個人が満足感を得られる職業・労働環境などの間にどのような関係があるかを分析し、6つの性格コード（RIASEC）を提唱した理論家は誰か。",
+        options: ["ホランド", "スーパー", "シャイン", "パーソンズ"],
+        answer: 0,
+        image: "s_holand.png",
+        name: "J.L.ホランド",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1919 - 2008",
+        explanation: "ホランドは、個人のパーソナリティと職業環境の適合性が職業的満足や安定をもたらすとし、六角形モデル（VPI職業興味検査などの基礎）を提唱しました。",
+        works: [
+          { year: 1959, title: "「職業選択の理論」発表" },
+          { year: 1973, title: "『職業選択の心理学（Making Vocational Choices）』刊行" },
+          { year: 1985, title: "VPI職業興味検査（Vocational Preference Inventory）開発" }
+        ],
+        pastExam: {
+          title: "第30回",
+          question: "ホランド（Holland, J. L.）の職業選択理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. 職業選択は、個人が持つ自己概念と、職業の持つイメージとのマッチングである。",
+            "2. パーソナリティは、現実的、研究的、芸術的、社会的、企業的、慣習的の6つのタイプに分類できる。",
+            "3. 職業発達は、空想期、試行期、現実期の3つの段階を経て進む。",
+            "4. キャリアの意思決定は、予測システム、価値システム、決定システムの3つからなる。"
+          ],
+          answer: "2"
+        }
+      },
+      {
+        text: "職業指導の創始者と呼ばれ、「賢明な職業選択」には【自己理解】【職業理解】【合理的な推論】の3つのステップが必要であると提唱したのは誰か。",
+        options: ["クランボルツ", "ギンズバーグ", "パーソンズ", "ウィリアムソン"],
+        answer: 2,
+        image: "s_parsons.png",
+        name: "F.パーソンズ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1854 - 1908",
+        explanation: "パーソンズの【特性因子理論】です。個人が持つ特性（能力や興味）と、職業が要求する因子（条件）をマッチングさせることが重要であるとしました。",
+        works: [
+          { year: 1908, title: "ボストン職業局（Vocation Bureau of Boston）設立" },
+          { year: 1909, title: "死後に著書『職業の選択（Choosing a Vocation）』が刊行される" }
+        ],
+        pastExam: {
+          title: "第21回",
+          question: "パーソンズ（Parsons, F.）の特性因子理論において、賢明な職業選択のための3つのステップに含まれないものはどれか。",
+          options: [
+            "1. 自分自身の適性や能力の理解",
+            "2. さまざまな職業に関する知識の獲得",
+            "3. 人生における意味への意志の発見",
+            "4. 自分と職業についての合理的な推論（マッチング）"
+          ],
+          answer: "3"
+        }
+      },
+      {
+        text: "個人が自らのキャリアを選択する際に、どうしても犠牲にしたくない、その人にとって最も大切な価値観や欲求を「キャリア・アンカー」と呼び、8つに分類した理論家は誰か。",
+        options: ["スーパー", "シャイン", "レビンソン", "ブリッジス"],
+        answer: 1,
+        image: "s_shaine.png",
+        name: "E.H.シャイン",
+        birthCountry: "🇨🇭",
+        birthCountryText: "ｽｲｽ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2023",
+        explanation: "シャインは、キャリア・アンカー（船の錨）は自己概念の中核であり、一度形成されると簡単には変わらないとしました。また、「内的キャリア」と「外的キャリア」の概念も重要です。",
+        works: [
+          { year: 1978, title: "『キャリア・ダイナミクス』刊行（内的/外的キャリアの提唱）" },
+          { year: 1990, title: "『キャリア・アンカー』刊行（8つの分類を確立）" },
+          { year: 1999, title: "プロセス・コンサルテーションの概念を体系化" }
+        ],
+        pastExam: {
+          title: "オリジナル",
+          question: "E.H.シャイン（Schein, E. H.）のキャリア・アンカーに関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. キャリア・アンカーは、他者からの評価や期待によって形成される。",
+            "2. キャリア・アンカーは、人生の転機において容易に変化する。",
+            "3. キャリア・アンカーは、才能と能力、動機と欲求、意味と価値の3つの要素から構成される。",
+            "4. キャリア・アンカーは、環境との相互作用によって絶えず再構築される。"
+          ],
+          answer: "3"
+        }
+      },
+      {
+        text: "人生の転機（トランジション）を乗り越えるために、「状況（Situation）」「自己（Self）」「支援（Support）」「戦略（Strategies）」の4つのSの点検を提唱したのは誰か。",
+        options: ["シュロスバーグ", "サビカス", "ニコルソン", "ハヴィガースト"],
+        answer: 0,
+        image: "s_syuro.png",
+        name: "N.K.シュロスバーグ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1929 - ",
+        explanation: "シュロスバーグは、転機を「予測していたもの」「予測していなかったもの」「期待していたが起こらなかったもの（ノンイベント）」に分類し、【4Sモデル】でリソースを確認・対処することを説きました。",
+        works: [
+          { year: 1984, title: "『カウンセリング・アダルト・イン・トランジション』刊行" },
+          { year: 1989, title: "『過渡期のキャリア（Overwhelmed）』刊行" }
+        ],
+        pastExam: {
+          title: "第22回",
+          question: "シュロスバーグ（Schlossberg, N. K.）の転機の理論において、転機を乗り越えるための「4つのS」に含まれないものはどれか。",
+          options: [
+            "1. 状況（Situation）",
+            "2. 自己（Self）",
+            "3. 支援（Support）",
+            "4. スキル（Skill）"
+          ],
+          answer: "4 （正解は Strategies：戦略）"
+        }
+      },
+      {
+        text: "「個人のキャリアの8割は予期しない偶然の出来事によって形成される」とし、好奇心や柔軟性などのスキルで偶然を意図的に引き寄せる行動が重要だと説いた理論はどれか。",
+        options: ["キャリア構築理論", "計画的偶発性理論", "発達課題理論", "ライフ・キャリア・レインボー"],
+        answer: 1,
+        image: "s_cram1.png",
+        name: "J.D.クランボルツ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2019",
+        explanation: "クランボルツの【計画的偶発性理論（ハプンスタンス・ラーニング・セオリー）】です。偶然の出来事をチャンスに変えるための5つのスキル（好奇心、持続性、柔軟性、楽観性、冒険心）を提唱しました。",
+        works: [
+          { year: 1979, title: "「キャリア意思決定の社会的学習理論（SLTCDM）」発表" },
+          { year: 1999, title: "「計画的偶発性理論（Planned Happenstance Theory）」発表" }
+        ],
+        pastExam: {
+          title: "第24回",
+          question: "クランボルツ（Krumboltz, J. D.）の計画的偶発性理論において、偶然の出来事をチャンスに変えるために必要なスキルとして、不適切なものはどれか。",
+          options: [
+            "1. 好奇心（Curiosity）",
+            "2. 楽観性（Optimism）",
+            "3. 計画性（Planning）",
+            "4. 柔軟性（Flexibility）"
+          ],
+          answer: "3 （正しくは Persistence：持続性、 Risk-taking：冒険心 などが含まれる）"
+        }
+      },
+      {
+        text: "青年期から老年期までのライフステージを「成長期」「探索期」「確立期」「維持期」「解放期（下降期）」の5つに分け、自己概念の実現プロセスとしてキャリアを捉えたのは誰か。",
+        options: ["スーパー", "エリクソン", "サビカス", "アドラー"],
+        answer: 0,
+        image: "s_super.png",
+        name: "D.E.スーパー",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1910 - 1994",
+        explanation: "スーパーの理論です。人生の役割を虹に例えた【ライフ・キャリア・レインボー】や、発達段階を示す【マキシサイクル】などの概念は頻出です。",
+        works: [
+          { year: 1953, title: "「職業発達の理論（A Theory of Vocational Development）」発表" },
+          { year: 1957, title: "『キャリアの心理学』刊行" },
+          { year: 1980, title: "「ライフ・キャリア・レインボー」モデルを提唱" }
+        ],
+        pastExam: {
+          title: "第31回",
+          question: "スーパー（Super, D. E.）のキャリア発達理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. キャリアは、特定の年齢で固定される静的なものである。",
+            "2. キャリア発達のプロセスは、自己概念の発達と実現のプロセスである。",
+            "3. ライフ・キャリア・レインボーは、個人の性格特性と職業の適合を示すモデルである。",
+            "4. 人生の転機は、予測不可能な出来事によってのみ引き起こされる。"
+          ],
+          answer: "2"
+        }
+      },
+      {
+        text: "変化の激しい現代において、客観的な適合よりも個人の主観的意味づけを重視し、「キャリア・アダプタビリティ」の重要性を説いた【キャリア構築理論】の提唱者は誰か。",
+        options: ["ホランド", "サビカス", "バンデューラ", "ロー"],
+        answer: 1,
+        image: "2_1savikas.png",
+        name: "M.L.サビカス",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1947 - ",
+        explanation: "サビカスはスーパーの理論を発展させ、自らの人生物語の著者となる【ナラティブ・アプローチ】を重視しました。キャリア・アダプタビリティは「関心・統制・好奇心・自信」の4次元からなります。",
+        works: [
+          { year: 2005, title: "「キャリア構築理論」発表（スーパーの理論を21世紀向けに拡張）" },
+          { year: 2011, title: "『キャリア・カウンセリング（Career Counseling）』刊行" }
+        ],
+        pastExam: {
+          title: "オリジナル",
+          question: "サビカス（Savickas, M. L.）のキャリア構築理論における「キャリア・アダプタビリティ」の4つの次元（4C）に含まれないものはどれか。",
+          options: [
+            "1. 関心（Concern）",
+            "2. 統制（Control）",
+            "3. 妥協（Compromise）",
+            "4. 自信（Confidence）"
+          ],
+          answer: "3 （残りの1つは Curiosity：好奇心 である）"
+        }
+      },
+      {
+        text: "ある行動をうまく遂行できるかという自分の能力への確信を「自己効力感」と呼んだ。自己効力感を高める4つの情報源として間違っているものはどれか。",
+        options: ["言語的説得（励まし）", "代理的体験（モデリング）", "遂行行動の達成（成功体験）", "経済的報酬（金銭的インセンティブ）"],
+        answer: 3,
+        image: "a_ban0.png",
+        name: "A.バンデューラ",
+        birthCountry: "🇨🇦",
+        birthCountryText: "ｶﾅﾀﾞ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1925 - 2021",
+        explanation: "バンデューラは自己効力感の情報源として「①遂行行動の達成」「②代理的体験」「③言語的説得」「④情動的喚起（ドキドキするなどの生理的状態）」の4つを挙げました。経済的報酬は含まれません。",
+        works: [
+          { year: 1977, title: "「自己効力感の理論」発表" },
+          { year: 1977, title: "『社会的学習理論』刊行" },
+          { year: 1986, title: "『社会的認知理論』刊行" }
+        ],
+        pastExam: {
+          title: "第20回",
+          question: "バンデューラ（Bandura, A.）が提唱した「自己効力感」を高めるための情報源として、最も影響力が大きいとされるものはどれか。",
+          options: [
+            "1. 他者の成功体験の観察（代理的体験）",
+            "2. 他者からの励まし（言語的説得）",
+            "3. ドキドキするなどの生理的な状態（情動的喚起）",
+            "4. 自身の成功体験（遂行行動の達成）"
+          ],
+          answer: "4"
+        }
+      },
+      {
+        text: "当初、職業選択の過程は「空想期」「試行期」「現実期」という発達段階を経て進行し「非可逆的である（後戻りできない）」と提唱したが、後に「生涯にわたるプロセスである」と修正した理論家は誰か。",
+        options: ["ギンズバーグ", "レビン", "ティードマン", "エインズワース"],
+        answer: 0,
+        image: "3_2ginz.png",
+        name: "E.ギンズバーグ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1911 - 2002",
+        explanation: "ギンズバーグは初期理論で職業選択を「非可逆的プロセス」としましたが、のちに社会環境の変化等を受け「職業選択は生涯にわたる意思決定プロセスである」と理論を修正したことが特徴です。",
+        works: [
+          { year: 1951, title: "『職業選択（Occupational Choice）』刊行（初期理論）" },
+          { year: 1972, title: "「再定式化（職業選択は生涯にわたるプロセスである）」発表" }
+        ],
+        pastExam: {
+          title: "第18回",
+          question: "ギンズバーグ（Ginzberg, E.）の職業選択理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. 職業選択のプロセスは、青年期で終了する。",
+            "2. 職業選択は、空想期、試行期、現実期の3つの段階を経て発達する。",
+            "3. 職業選択は、常に可逆的であり、いつでも容易にやり直すことができると当初から主張した。",
+            "4. 職業選択は、個人の性格特性と職業環境の合致によって決定される。"
+          ],
+          answer: "2"
+        }
+      }
+    ];
 
-        // RIESM スライドショーのスクリプト
-        document.addEventListener('DOMContentLoaded', () => {
-            const images = [
-                './img/m/2.jpg',
-                './img/m/4.jpg',
-                './img/m/6.jpg',
-                './img/m/1.jpg'
-            ];
-            let currentIndex = 0;
-            const imgElement = document.getElementById('riesm-slideshow');
-            
-            if (imgElement) {
-                // 初期画像のセット（HTML側で既に2.jpgを指定していますが念のため）
-                imgElement.src = images[currentIndex];
-                
-                setInterval(() => {
-                    // ふわっと消える
-                    imgElement.classList.add('opacity-0');
-                    
-                    // 消えきったタイミング(300ms後)で画像を差し替えて、再び表示
-                    setTimeout(() => {
-                        currentIndex = (currentIndex + 1) % images.length;
-                        imgElement.src = images[currentIndex];
-                        imgElement.classList.remove('opacity-0');
-                    }, 300);
-                }, 5000); // 5秒ごとに実行
-            }
+    const state = {
+      currentQuestionIndex: 0,
+      score: 0,
+      isAnswered: false,
+      deck: []
+    };
+
+    const els = {
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      
+      questionArea: document.getElementById("questionArea"),
+      questionKicker: document.getElementById("questionKicker"),
+      questionText: document.getElementById("questionText"),
+      choices: document.getElementById("choices"),
+      
+      feedbackArea: document.getElementById("feedbackArea"),
+      resultBadge: document.getElementById("resultBadge"),
+      userAnswerText: document.getElementById("userAnswerText"),
+      feedbackImage: document.getElementById("feedbackImage"),
+      answerText: document.getElementById("answerText"),
+      psychologistName: document.getElementById("psychologistName"),
+      psychologistMeta: document.getElementById("psychologistMeta"),
+      explanationText: document.getElementById("explanationText"),
+      
+      worksBox: document.getElementById("worksBox"),
+      worksList: document.getElementById("worksList"),
+
+      pastExamBox: document.getElementById("pastExamBox"),
+      pastExamRef: document.getElementById("pastExamRef"),
+      pastExamQuestion: document.getElementById("pastExamQuestion"),
+      pastExamOptions: document.getElementById("pastExamOptions"),
+      pastExamAnswer: document.getElementById("pastExamAnswer"),
+
+      nextButton: document.getElementById("nextButton"),
+      backButton: document.getElementById("backButton")
+    };
+
+    // 配列のシャッフル関数
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    // 初期化
+    function initQuiz() {
+      state.score = 0;
+      state.currentQuestionIndex = 0;
+      state.deck = shuffleArray(QUESTIONS);
+      loadQuestion();
+    }
+
+    // 問題の読み込みと表示
+    function loadQuestion() {
+      state.isAnswered = false;
+      const q = state.deck[state.currentQuestionIndex];
+      
+      // 画面の切り替え（問題エリアを表示、解説エリアを非表示）
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+      
+      els.questionKicker.textContent = `第 ${state.currentQuestionIndex + 1} 問`;
+      els.questionText.textContent = q.text;
+      
+      // プログレス更新
+      els.progressText.textContent = `${state.currentQuestionIndex + 1} / ${state.deck.length}問`;
+      els.progressFill.style.width = `${((state.currentQuestionIndex) / state.deck.length) * 100}%`;
+
+      els.choices.innerHTML = "";
+      
+      // 選択肢の生成
+      q.options.forEach((optionText, index) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-button";
+        btn.textContent = optionText;
+        btn.addEventListener("click", () => handleAnswer(index));
+        els.choices.appendChild(btn);
+      });
+    }
+
+    // 回答時の処理（解説ページへの遷移）
+    function handleAnswer(selectedIndex) {
+      if (state.isAnswered) return;
+      state.isAnswered = true;
+
+      const q = state.deck[state.currentQuestionIndex];
+      const isCorrect = (selectedIndex === q.answer);
+
+      // 正誤の判定と表示のセット
+      if (isCorrect) {
+        state.score++;
+        els.resultBadge.textContent = "⭕ 正解！";
+        els.resultBadge.className = "result-badge correct";
+        els.userAnswerText.style.display = "none";
+      } else {
+        els.resultBadge.textContent = "❌ 不正解...";
+        els.resultBadge.className = "result-badge wrong";
+        // 何を選んで間違えたかを表示
+        els.userAnswerText.textContent = `あなたの解答：${q.options[selectedIndex]}`;
+        els.userAnswerText.style.display = "block";
+      }
+
+      // 1. フィードバックとメタ情報のセット
+      els.feedbackImage.src = `img/${q.image}`;
+      els.feedbackImage.alt = `画像: ${q.name} (※プレビュー版では表示されません)`;
+      els.answerText.textContent = q.options[q.answer];
+      els.psychologistName.textContent = q.name;
+      
+      // 絵文字対応判定による国名の出し分け
+      const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText;
+      const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
+      els.psychologistMeta.innerHTML = `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`;
+      
+      els.explanationText.textContent = q.explanation;
+
+      // 2. 主な著作・理論年表のセット
+      els.worksList.innerHTML = "";
+      if (q.works && q.works.length > 0) {
+        // 念のため発表年順にソート
+        const sortedWorks = [...q.works].sort((a, b) => a.year - b.year);
+        sortedWorks.forEach(work => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span class="work-year">${work.year}年</span><span>${work.title}</span>`;
+          els.worksList.appendChild(li);
         });
-    </script>
+        els.worksBox.style.display = "block";
+      } else {
+        els.worksBox.style.display = "none";
+      }
+
+      // 3. 過去問エリアのセット
+      if (q.pastExam) {
+        els.pastExamBox.style.display = "block";
+        let refText = q.pastExam.title.includes("オリジナル") 
+          ? `オリジナル予想問題` 
+          : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
+        els.pastExamRef.textContent = refText;
+        els.pastExamQuestion.textContent = q.pastExam.question;
+        els.pastExamOptions.innerHTML = "";
+        q.pastExam.options.forEach(opt => {
+          const li = document.createElement("li");
+          li.textContent = opt;
+          els.pastExamOptions.appendChild(li);
+        });
+        els.pastExamAnswer.textContent = q.pastExam.answer;
+      } else {
+        els.pastExamBox.style.display = "none";
+      }
+
+      // ボタンテキストの変更（最終問題かどうか）
+      if (state.currentQuestionIndex === state.deck.length - 1) {
+        els.nextButton.textContent = "結果を見る";
+      } else {
+        els.nextButton.textContent = "次の問題へ";
+      }
+
+      // 画面の切り替え（解説ページを次ページとして表示）
+      els.questionArea.classList.add("hidden");
+      els.feedbackArea.classList.remove("hidden");
+      
+      // ページ遷移風に一番上へ瞬時にスクロール
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // 最終結果画面
+    function showFinalResult() {
+      // 画面の切り替え
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+
+      els.questionKicker.textContent = "テスト完了！";
+      els.questionText.innerHTML = `おつかれさまでした。<br>あなたの正答率は <strong>${Math.round((state.score / state.deck.length) * 100)}％</strong> （${state.score}/${state.deck.length}問正解）です。`;
+      
+      els.choices.innerHTML = "";
+      
+      els.progressText.textContent = `完了`;
+      els.progressFill.style.width = `100%`;
+
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "primary-button";
+      retryBtn.textContent = "もう一度挑戦する";
+      retryBtn.style.marginTop = "24px";
+      retryBtn.addEventListener("click", () => {
+        initQuiz();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      els.choices.appendChild(retryBtn);
+    }
+
+    // イベントリスナー
+    els.nextButton.addEventListener("click", () => {
+      if (state.currentQuestionIndex < state.deck.length - 1) {
+        state.currentQuestionIndex++;
+        loadQuestion();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        showFinalResult();
+      }
+    });
+
+    els.backButton.addEventListener("click", () => {
+      if (confirm("テストを中断して最初の問題からやり直しますか？")) {
+        initQuiz();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // アプリ起動
+    initQuiz();
+
+  </script>
 </body>
 </html>
