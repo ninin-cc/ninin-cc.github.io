@@ -1098,7 +1098,7 @@
           ? [{
               speaker: APP_CONFIG.char1NameShort,
               type: APP_CONFIG.char1Type,
-              text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。」`
+              text: `「ふむ、Lv.${player.age}になるまでに、様々あったようじゃな。${nameReaction === 'よい面構えじゃ。' ? 'さすがの面構えじゃ。' : nameReaction}\n…では次に、ここまでの冒険で磨いてきたそなたの武器と魔法を見せてくれぬか？」`
             }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
