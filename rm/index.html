@@ -38,7 +38,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in {
-      animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
     @keyframes riesmOrbPulse {
       0% { transform: scale(1); filter: brightness(1); }
@@ -57,6 +57,13 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    /* ノート風背景のCSS */
+    .notebook-bg {
+      background-color: #fdfcf8;
+      background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(148, 163, 184, 0.3) 31px, rgba(148, 163, 184, 0.3) 32px);
+      background-position: 0 10px;
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-slate-800 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900">
@@ -134,7 +141,7 @@
     );
 
     // ==========================================
-    // データ定義
+    // データ定義 (全45問維持)
     // ==========================================
     const questionsPool = [
       { id: 1, group: 'A', text: "旅行の準備をする時、あなたは…", options: [ { text: "気分で決めたい", type: "W" }, { text: "事前にリストアップする", type: "K" }] },
@@ -282,9 +289,12 @@
       const [isSharing, setIsSharing] = useState(false);
       const [toastMessage, setToastMessage] = useState('');
       
+      // モード切替 (TOPページのみで変更)
+      const [colorMode, setColorMode] = useState('natural');
+      
       // 2度タップ用のステート
-      const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null); // 本決定
-      const [tempSelectedChoiceIndex, setTempSelectedChoiceIndex] = useState(null); // 仮決定 (1度目のタップ)
+      const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null);
+      const [tempSelectedChoiceIndex, setTempSelectedChoiceIndex] = useState(null);
 
       const [isPractice, setIsPractice] = useState(false);
       const [tutorialCompleted, setTutorialCompleted] = useState(false);
@@ -378,9 +388,9 @@
         }
       };
 
-      // --- 二度タップ選択の処理 ---
+      // --- 6択ボタン用 二度タップ選択の処理 ---
       const handleChoiceSelect = (choice) => {
-        if (selectedChoiceIndex !== null) return; // すでに本決定済みの場合は何もしない
+        if (selectedChoiceIndex !== null) return; 
 
         if (tempSelectedChoiceIndex !== choice.index) {
           // 1回目のタップ (仮選択)
@@ -416,7 +426,6 @@
         let isDouble = false;
         let frontKey = "";
 
-        // 85%以上でダブルフロントと判定する
         if (maxScore > 0) {
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
@@ -445,9 +454,7 @@
         }
         
         try {
-          // キャプチャ前の準備（アニメーション等を落ち着かせる）
           await new Promise(resolve => setTimeout(resolve, 300));
-          
           const canvas = await window.html2canvas(element, { 
             scale: 2, 
             useCORS: true, 
@@ -471,11 +478,9 @@
             try {
               await navigator.share({ text: shareText, files: [file] });
             } catch (shareError) {
-              // キャンセル時などはここに来る
               console.log('Share canceled or failed:', shareError);
             }
           } else {
-            // Web Share API非対応またはファイルシェア非対応のフォールバック
             fallbackShare(shareText, dataUrl);
           }
         } catch (error) {
@@ -488,7 +493,6 @@
 
       const fallbackShare = (text, dataUrl) => {
         try {
-          // テキストのコピー
           const textArea = document.createElement("textarea");
           textArea.value = text;
           textArea.style.position = "fixed";
@@ -498,7 +502,6 @@
           document.execCommand('copy');
           document.body.removeChild(textArea);
           
-          // 画像のダウンロード
           const link = document.createElement('a');
           link.download = 'riesm_mini_result.png';
           link.href = dataUrl;
@@ -523,11 +526,36 @@
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
               <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
-              <div className="relative z-10 mb-8 flex items-center justify-center gap-4">
+              {/* ▼ タイトルロゴ（画像の色・配置に統一） ▼ */}
+              <div className="relative z-10 mb-6 flex items-center justify-center gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-3 hover:rotate-0 transition-transform duration-300">
                   <span className="text-3xl sm:text-4xl">🌈</span>
                 </div>
-                <h1 className="text-left text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">RIESM™<br/><span className="text-2xl text-indigo-500">mini</span></h1>
+                <h1 className="text-left text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">RIESM™ mini</h1>
+              </div>
+
+              {/* ▼ ナチュラル/カラフル 切替エリア ▼ */}
+              <div className="flex justify-center gap-3 sm:gap-4 mb-8 relative z-10">
+                <button 
+                  onClick={() => setColorMode('natural')} 
+                  className={`flex items-center gap-1.5 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-[13px] sm:text-sm transition-all shadow-sm border border-slate-200 ${
+                    colorMode === 'natural' 
+                      ? 'bg-white text-slate-800 font-extrabold shadow-md' 
+                      : 'bg-white text-slate-500 font-bold hover:bg-slate-50'
+                  }`}
+                >
+                  🌿 ナチュラル
+                </button>
+                <button 
+                  onClick={() => setColorMode('colorful')} 
+                  className={`flex items-center gap-1.5 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-[13px] sm:text-sm transition-all shadow-sm border border-slate-200 ${
+                    colorMode === 'colorful' 
+                      ? 'bg-white text-slate-800 font-extrabold shadow-md' 
+                      : 'bg-white text-slate-500 font-bold hover:bg-slate-50'
+                  }`}
+                >
+                  🎨 カラフル
+                </button>
               </div>
               
               <p className="relative z-10 text-slate-600 mb-8 font-medium leading-relaxed text-sm sm:text-base">
@@ -539,7 +567,11 @@
                 <button onClick={startTutorial} className="w-full py-4 px-6 bg-white text-slate-700 rounded-xl font-bold text-base sm:text-lg hover:bg-slate-50 transition-all shadow-sm hover:shadow-md active:scale-[0.98] border-2 border-slate-200 flex justify-center items-center gap-2">
                   <span>チュートリアル</span>
                 </button>
-                <button onClick={startQuiz} className="w-full py-4 px-6 bg-slate-800 text-white rounded-xl font-bold text-base sm:text-lg hover:bg-slate-700 transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex justify-center items-center gap-2">
+                <button onClick={startQuiz} className={`w-full py-4 px-6 rounded-xl font-bold text-base sm:text-lg transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex justify-center items-center gap-2 ${
+                  colorMode === 'colorful'
+                    ? 'bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90'
+                    : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
+                }`}>
                   <span>いまの自分を観る</span>
                 </button>
               </div>
@@ -773,8 +805,10 @@
 
       const topType = q.options[0].type;
       const bottomType = q.options[1].type;
-      const topColorRGB = bgColors[topType];
-      const bottomColorRGB = bgColors[bottomType];
+      
+      // カラーモードによる色の出し分け
+      const topColorRGB = colorMode === 'colorful' ? bgColors[topType] : '110, 231, 183'; // emerald-300
+      const bottomColorRGB = colorMode === 'colorful' ? bgColors[bottomType] : '190, 242, 100'; // lime-300
       
       const answerChoices = [
         { index: 0, hoverPos: 15, caption: 'かなりA', topSize: 'w-10 h-10 sm:w-12 sm:h-12', bottomSize: null, scoreUpdates: [{ type: topType, weight: 4 }], ariaLabel: `【${q.options[0].text}】${labelStrong}` },
@@ -818,9 +852,14 @@
                 <span>{isPractice ? '練習' : `${currentIndex + 1} / ${currentQuestions.length}`}</span>
               </div>
               
-              <h2 className="min-h-[6rem] sm:min-h-[7rem] flex items-center justify-center text-base sm:text-lg font-bold text-slate-800 mb-5 sm:mb-8 leading-relaxed bg-white/80 p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 backdrop-blur-sm">
-                {q.text}
-              </h2>
+              {/* ▼ ノート風背景を適用した設問エリア ▼ */}
+              <div className="notebook-bg min-h-[6rem] sm:min-h-[8rem] rounded-xl sm:rounded-2xl shadow-sm border border-slate-200/80 mb-4 sm:mb-6 w-full flex items-center relative z-10">
+                <div className="px-6 sm:px-8 py-5 w-full">
+                  <p className="text-[15px] sm:text-[17px] font-bold text-slate-700 leading-[32px] tracking-wide relative z-10 text-center">
+                    {q.text}
+                  </p>
+                </div>
+              </div>
               
               <div className="space-y-4 sm:space-y-5 animate-fade-in relative z-10">
                 {/* 選択肢 A (付箋風デザイン) */}
@@ -831,6 +870,7 @@
                   >
                     A
                   </div>
+                  {/* px-10 sm:px-12 と relative z-20 でラベルを無視して枠のセンターに配置 */}
                   <div className="w-full py-4 sm:py-5 flex items-center justify-center px-10 sm:px-12">
                     <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center relative z-20">
                       {q.options[0].text}
@@ -903,6 +943,7 @@
 
                 {/* 選択肢 B (付箋風デザイン) */}
                 <div className="relative h-full w-full rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex items-center min-h-[4.5rem] overflow-hidden mt-2">
+                  {/* px-10 sm:px-12 と relative z-20 でラベルを無視して枠のセンターに配置 */}
                   <div className="w-full py-4 sm:py-5 flex items-center justify-center px-10 sm:px-12">
                     <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center relative z-20">
                       {q.options[1].text}
@@ -927,14 +968,21 @@
                     <p className="mb-3 text-lg sm:text-xl font-extrabold leading-relaxed text-slate-800">
                       操作方法はバッチリです！
                     </p>
-                    <p className="mb-6 text-sm sm:text-base font-medium leading-relaxed text-slate-600">
-                      本番もこのように、自分の気持ちを素直に感じて選んでみてくださいね。
+                    <p className="mb-6 text-[13px] sm:text-sm font-bold leading-relaxed text-slate-700">
+                      このように自分の気持ちを素直に感じて選んで下さい。<br/>
+                      <br/>
+                      ここからが傾向確認設問です。<br/>
+                      リラックスしてお進みください。
                     </p>
                     <button
-                      onClick={returnToTop}
-                      className="w-full rounded-xl bg-slate-800 px-6 py-4 text-base font-bold text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg active:scale-[0.98]"
+                      onClick={startQuiz}
+                      className={`w-full rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold shadow-sm transition-all active:scale-[0.98] ${
+                        colorMode === 'colorful'
+                          ? 'bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90'
+                          : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
+                      }`}
                     >
-                      TOP画面にもどる
+                      準備はできたので開始する
                     </button>
                   </div>
                 </div>
