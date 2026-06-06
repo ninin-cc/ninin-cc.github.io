@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>キャリコン過去問ドリル：分野別テスト</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #64748b;
+      --line: #d9e2ec;
+      --paper: #f8fafc;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --teal-dark: #115e59;
+      --amber: #d97706;
+      --rose: #be123c;
+      --green: #15803d;
+      --shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Yu Gothic", "Meiryo", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--line);
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    /* スマホ前提のメインコンテナ */
+    .app-shell {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0;
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative; /* モーダル用 */
+    }
+
+    /* ヘッダー */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--teal-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .icon-button {
+      background: transparent;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      padding: 6px 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: -8px;
+    }
+
+    .icon-button:active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    /* 切り替え用のユーティリティ */
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================
+       TOPページ（カテゴリ選択）のスタイル
+       ========================================= */
+    #topPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .category-container {
+      padding: 16px;
+      flex-grow: 1;
+    }
+
+    /* スマホ向けにコンパクトなグリッド */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .category-button {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      transition: transform 0.1s ease;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .category-button:active {
+      transform: scale(0.96);
+      background: var(--paper);
+    }
+
+    .category-button.active-cat {
+      border-color: var(--teal);
+      border-width: 2px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      padding: 9px 7px; /* ボーダーが太くなる分の調整 */
+    }
+
+    .cat-icon {
+      font-size: 1.2rem;
+    }
+
+    /* 控えめなnote導線 */
+    .note-link-area {
+      padding: 16px 16px 32px;
+      text-align: center;
+    }
+
+    .note-link {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      padding: 10px 16px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .note-link:hover, .note-link:active {
+      background: #fff;
+      color: var(--teal-dark);
+      border-color: var(--teal);
+    }
+
+    /* =========================================
+       ダミーページのスタイル
+       ========================================= */
+    #dummyPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: #fff;
+    }
+
+    .dummy-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .dummy-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    /* =========================================
+       クイズページのスタイル
+       ========================================= */
+    #quizPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .progress-container {
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .progress-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--teal);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .quiz-container {
+      padding: 20px 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    #questionArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .question-kicker {
+      color: var(--teal);
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: var(--ink);
+    }
+
+    .choice-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .choice-button {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: left;
+      line-height: 1.4;
+      color: var(--ink);
+      transition: all 0.1s ease;
+    }
+
+    .choice-button:active {
+      transform: scale(0.98);
+      background: var(--paper);
+    }
+
+    #feedbackArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .result-badge.correct {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .result-badge.wrong {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    .user-answer-text {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--rose);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .feedback-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+      background: var(--paper);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .feedback-image {
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .feedback-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .feedback-answer {
+      flex-grow: 1;
+    }
+
+    .answer-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .answer-text {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .psychologist-name {
+      display: inline-block;
+      background: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    .psychologist-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .feedback-body {
+      background: #fff;
+      border-left: 4px solid var(--teal);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .explanation-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      margin: 0 0 8px 0;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+    }
+
+    .works-box {
+      background: #fdf4ff;
+      border: 1px solid #f0abfc;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .works-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #86198f;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .works-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .works-list li {
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .works-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .work-year {
+      font-weight: bold;
+      color: #a21caf;
+      flex-shrink: 0;
+      width: 3.5rem;
+    }
+
+    /* 過去問エリア（アコーディオン対応） */
+    .past-exam-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .past-exam-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: #e0f2fe; 
+      transition: background 0.2s;
+    }
+    
+    .past-exam-header:active {
+        background: #bae6fd;
+    }
+
+    .past-exam-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #0369a1;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .past-exam-toggle-icon {
+        color: #0369a1;
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .past-exam-box.open .past-exam-toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .past-exam-content {
+        padding: 0 16px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .past-exam-box.open .past-exam-content {
+        padding: 16px;
+        max-height: 1000px; /* 十分な高さを確保 */
+        opacity: 1;
+    }
+
+    .past-exam-question {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.5;
+      margin: 0 0 12px 0;
+    }
+
+    /* 過去問選択肢（直接タップで正答確認） */
+    .past-exam-options {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    
+    .past-exam-options li {
+      margin-bottom: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      transition: all 0.2s ease;
+    }
+
+    .past-exam-options:not(.revealed) li:active {
+      background: var(--paper);
+      transform: scale(0.98);
+    }
+
+    .past-exam-options li.correct-choice {
+      border-color: var(--green);
+      background: #ecfdf5;
+      color: #14532d;
+      font-weight: bold;
+    }
+
+    .past-exam-options li.wrong-choice {
+      border-color: var(--rose);
+      background: #fff1f2;
+      color: #881337;
+    }
+
+    .past-exam-options li.unselected-choice {
+      opacity: 0.5;
+    }
+
+    .primary-button {
+      width: 100%;
+      background: var(--teal);
+      color: #fff;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(15, 118, 110, 0.2);
+    }
+
+    .primary-button:active {
+      transform: scale(0.98);
+      background: var(--teal-dark);
+    }
+
+    /* =========================================
+       結果画面の正誤リストとモーダル
+       ========================================= */
+    .result-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-item:active {
+      background: var(--paper);
+    }
+
+    .result-item.correct {
+      border-left: 5px solid var(--green);
+    }
+
+    .result-item.wrong {
+      border-left: 5px solid var(--rose);
+      background: #fff1f2;
+    }
+
+    .result-item-name {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .result-item-name span {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-right: 8px;
+    }
+
+    .result-item-mark {
+      font-size: 1.1rem;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px 20px 20px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #f1f5f9;
+      color: var(--muted);
+      border: none;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .modal-close:active {
+      background: #e2e8f0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+
+    <!-- =========================================
+         TOPページ（カテゴリ選択画面）
+         ========================================= -->
+    <section id="topPage">
+      <header class="topbar">
+        <div class="brand">
+          <h1>キャリコン過去問ドリル</h1>
+        </div>
+      </header>
+
+      <div class="category-container">
+        <div class="category-grid" id="categoryGrid">
+          <!-- JSで動的に生成されます -->
+        </div>
+      </div>
+
+      <div class="note-link-area">
+        <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="note-link">
+          理論家同士のつながりを一枚で見たい方へ<br>
+          <b>心理学者マップはこちら</b>
+        </a>
+      </div>
+    </section>
+
+    <!-- =========================================
+         ダミーページ（準備中画面）
+         ========================================= -->
+    <section id="dummyPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="dummyHeaderTitle">カテゴリ名</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+      
+      <div class="dummy-content">
+        <div class="dummy-icon">🚧</div>
+        <h2>問題作成中</h2>
+        <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
+        <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
+      </div>
+    </section>
+
+    <!-- =========================================
+         クイズページ（キャリア理論等）
+         ========================================= -->
+    <section id="quizPage" class="hidden">
+      <header class="topbar">
+        <!-- クイズ中の戻るボタンは確認ダイアログを出す -->
+        <button class="icon-button" onclick="confirmBackToTop()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="quizHeaderTitle">キャリア理論</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 10問</div>
+      </div>
+
+      <div class="quiz-container">
+        <!-- 問題表示エリア -->
+        <div id="questionArea">
+          <div class="question-kicker" id="questionKicker">第1問</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choice-grid" id="choices"></div>
+        </div>
+
+        <!-- 解答・解説エリア -->
+        <div class="hidden" id="feedbackArea">
+          <div id="resultBadge" class="result-badge"></div>
+          <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
+          
+          <div class="feedback-header">
+            <div class="feedback-image">
+              <img id="feedbackImage" src="" alt="画像">
+            </div>
+            <div class="feedback-answer">
+              <div class="answer-label">正答</div>
+              <div class="answer-text" id="answerText"></div>
+              <div><span class="psychologist-name" id="psychologistName"></span></div>
+              <div class="psychologist-meta" id="psychologistMeta"></div>
+            </div>
+          </div>
+
+          <div class="feedback-body">
+            <p class="explanation-title">解説・ポイント</p>
+            <p class="explanation-text" id="explanationText"></p>
+          </div>
+
+          <div class="works-box" id="worksBox">
+            <p class="works-title">📚 主な理論・著作の変遷</p>
+            <ul class="works-list" id="worksList"></ul>
+          </div>
+
+          <!-- 過去問エリア（アコーディオン） -->
+          <div class="past-exam-box" id="pastExamBox">
+            <div class="past-exam-header" onclick="togglePastExam('quizPastExam')">
+                <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content">
+                <p class="past-exam-question" id="pastExamQuestion"></p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="pastExamOptions"></ul>
+            </div>
+          </div>
+
+          <button class="primary-button" id="nextButton">次の問題へ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- モーダル（ポップアップ） -->
+    <div id="resultModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const isEmojiSupported = !navigator.userAgent.includes('Windows');
+
+    // ==========================================
+    // カテゴリ定義
+    // ==========================================
+    const CATEGORIES = [
+      { id: "career", title: "キャリア理論", icon: "🛤️", isActive: true },
+      { id: "cbt", title: "認知行動療法", icon: "🧠", isActive: false },
+      { id: "counseling", title: "カウンセリング理論", icon: "🗣️", isActive: false },
+      { id: "development", title: "発達心理学", icon: "🌱", isActive: false },
+      { id: "psychoanalysis", title: "精神分析の祖", icon: "🛋️", isActive: false },
+      { id: "social", title: "社会活動に活かす心理学の祖", icon: "🤝", isActive: false },
+      { id: "motivation", title: "動機付け/モチベーション", icon: "🔥", isActive: false },
+      { id: "choice", title: "職業選択", icon: "💼", isActive: false },
+      { id: "transition", title: "転機理論", icon: "🔄", isActive: false },
+      { id: "decision", title: "意思決定", icon: "⚖️", isActive: false },
+      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", isActive: false },
+      { id: "positive", title: "ポジティブ心理学", icon: "✨", isActive: false },
+      { id: "trait", title: "特性論/タイプ論", icon: "🧩", isActive: false },
+      { id: "other", title: "その他", icon: "📦", isActive: false }
+    ];
+
+    // ==========================================
+    // 問題データ（キャリア理論）
+    // ==========================================
+    const QUESTIONS_CAREER = [
+      {
+        text: "キャリアには人生における全ての役割が含まれるとし、愛（Love）、労働（Labor）、余暇（Leisure）と、もう1つの「L」の4つの活動が統合されるべきだと提唱した。もう1つのLはどれか。",
+        options: ["生活（Life）", "学習（Learning）", "自由（Liberty）", "指導（Leadership）"],
+        answer: 1, 
+        image: "s_hansen.png",
+        name: "L.S.ハンセン",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1931 - 2020",
+        explanation: "ハンセンの【統合的人生設計（ILP）】の概念です。人生のパッチワークとして「愛・労働・学習・余暇」の4つのLをバランスよく統合することが重要だと説きました。",
+        works: [
+          { year: 1997, title: "『統合的人生設計（Integrative Life Planning）』発表" },
+          { year: 2007, title: "NCDA（全米キャリア開発協会）エミネント・キャリア・アワード受賞" }
+        ],
+        pastExam: {
+          title: "第25回",
+          question: "L.S.ハンセン（Hansen, L. S.）の統合的人生設計（ILP）における、人生の4つの重要な役割（4L）の組み合わせとして、適切なものはどれか。",
+          options: [
+            "1. 愛、労働、学習、余暇",
+            "2. 愛、労働、生活、指導",
+            "3. 労働、学習、余暇、自由",
+            "4. 愛、生活、学習、自由"
+          ],
+          answer: "1"
+        }
+      },
+      {
+        text: "個人の性格的特性と、その個人が満足感を得られる職業・労働環境などの間にどのような関係があるかを分析し、6つの性格コード（RIASEC）を提唱した理論家は誰か。",
+        options: ["ホランド", "スーパー", "シャイン", "パーソンズ"],
+        answer: 0,
+        image: "s_holand.png",
+        name: "J.L.ホランド",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1919 - 2008",
+        explanation: "ホランドは、個人のパーソナリティと職業環境の適合性が職業的満足や安定をもたらすとし、六角形モデル（VPI職業興味検査などの基礎）を提唱しました。",
+        works: [
+          { year: 1959, title: "「職業選択の理論」発表" },
+          { year: 1973, title: "『職業選択の心理学（Making Vocational Choices）』刊行" },
+          { year: 1985, title: "VPI職業興味検査（Vocational Preference Inventory）開発" }
+        ],
+        pastExam: {
+          title: "第30回",
+          question: "ホランド（Holland, J. L.）の職業選択理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. 職業選択は、個人が持つ自己概念と、職業の持つイメージとのマッチングである。",
+            "2. パーソナリティは、現実的、研究的、芸術的、社会的、企業的、慣習的の6つのタイプに分類できる。",
+            "3. 職業発達は、空想期、試行期、現実期の3つの段階を経て進む。",
+            "4. キャリアの意思決定は、予測システム、価値システム、決定システムの3つからなる。"
+          ],
+          answer: "2"
+        }
+      },
+      {
+        text: "職業指導の創始者と呼ばれ、「賢明な職業選択」には【自己理解】【職業理解】【合理的な推論】の3つのステップが必要であると提唱したのは誰か。",
+        options: ["クランボルツ", "ギンズバーグ", "パーソンズ", "ウィリアムソン"],
+        answer: 2,
+        image: "s_parsons.png",
+        name: "F.パーソンズ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1854 - 1908",
+        explanation: "パーソンズの【特性因子理論】です。個人が持つ特性（能力や興味）と、職業が要求する因子（条件）をマッチングさせることが重要であるとしました。",
+        works: [
+          { year: 1908, title: "ボストン職業局（Vocation Bureau of Boston）設立" },
+          { year: 1909, title: "死後に著書『職業の選択（Choosing a Vocation）』が刊行される" }
+        ],
+        pastExam: {
+          title: "第21回",
+          question: "パーソンズ（Parsons, F.）の特性因子理論において、賢明な職業選択のための3つのステップに含まれないものはどれか。",
+          options: [
+            "1. 自分自身の適性や能力の理解",
+            "2. さまざまな職業に関する知識の獲得",
+            "3. 人生における意味への意志の発見",
+            "4. 自分と職業についての合理的な推論（マッチング）"
+          ],
+          answer: "3"
+        }
+      },
+      {
+        text: "個人が自らのキャリアを選択する際に、どうしても犠牲にしたくない、その人にとって最も大切な価値観や欲求を「キャリア・アンカー」と呼び、8つに分類した理論家は誰か。",
+        options: ["スーパー", "シャイン", "レビンソン", "ブリッジス"],
+        answer: 1,
+        image: "s_shaine.png",
+        name: "E.H.シャイン",
+        birthCountry: "🇨🇭",
+        birthCountryText: "ｽｲｽ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2023",
+        explanation: "シャインは、キャリア・アンカー（船の錨）は自己概念の中核であり、一度形成されると簡単には変わらないとしました。また、「内的キャリア」と「外的キャリア」の概念も重要です。",
+        works: [
+          { year: 1978, title: "『キャリア・ダイナミクス』刊行（内的/外的キャリアの提唱）" },
+          { year: 1990, title: "『キャリア・アンカー』刊行（8つの分類を確立）" },
+          { year: 1999, title: "プロセス・コンサルテーションの概念を体系化" }
+        ],
+        pastExam: {
+          title: "オリジナル",
+          question: "E.H.シャイン（Schein, E. H.）のキャリア・アンカーに関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. キャリア・アンカーは、他者からの評価や期待によって形成される。",
+            "2. キャリア・アンカーは、人生の転機において容易に変化する。",
+            "3. キャリア・アンカーは、才能と能力、動機と欲求、意味と価値の3つの要素から構成される。",
+            "4. キャリア・アンカーは、環境との相互作用によって絶えず再構築される。"
+          ],
+          answer: "3"
+        }
+      },
+      {
+        text: "人生の転機（トランジション）を乗り越えるために、「状況（Situation）」「自己（Self）」「支援（Support）」「戦略（Strategies）」の4つのSの点検を提唱したのは誰か。",
+        options: ["シュロスバーグ", "サビカス", "ニコルソン", "ハヴィガースト"],
+        answer: 0,
+        image: "s_syuro.png",
+        name: "N.K.シュロスバーグ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1929 - ",
+        explanation: "シュロスバーグは、転機を「予測していたもの」「予測していなかったもの」「期待していたが起こらなかったもの（ノンイベント）」に分類し、【4Sモデル】でリソースを確認・対処することを説きました。",
+        works: [
+          { year: 1984, title: "『カウンセリング・アダルト・イン・トランジション』刊行" },
+          { year: 1989, title: "『過渡期のキャリア（Overwhelmed）』刊行" }
+        ],
+        pastExam: {
+          title: "第22回",
+          question: "シュロスバーグ（Schlossberg, N. K.）の転機の理論において、転機を乗り越えるための「4つのS」に含まれないものはどれか。",
+          options: [
+            "1. 状況（Situation）",
+            "2. 自己（Self）",
+            "3. 支援（Support）",
+            "4. スキル（Skill）"
+          ],
+          answer: "4 （正解は Strategies：戦略）"
+        }
+      },
+      {
+        text: "「個人のキャリアの8割は予期しない偶然の出来事によって形成される」とし、好奇心や柔軟性などのスキルで偶然を意図的に引き寄せる行動が重要だと説いた理論はどれか。",
+        options: ["キャリア構築理論", "計画的偶発性理論", "発達課題理論", "ライフ・キャリア・レインボー"],
+        answer: 1,
+        image: "s_cram1.png",
+        name: "J.D.クランボルツ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2019",
+        explanation: "クランボルツの【計画的偶発性理論（ハプンスタンス・ラーニング・セオリー）】です。偶然の出来事をチャンスに変えるための5つのスキル（好奇心、持続性、柔軟性、楽観性、冒険心）を提唱しました。",
+        works: [
+          { year: 1979, title: "「キャリア意思決定の社会的学習理論（SLTCDM）」発表" },
+          { year: 1999, title: "「計画的偶発性理論（Planned Happenstance Theory）」発表" }
+        ],
+        pastExam: {
+          title: "第24回",
+          question: "クランボルツ（Krumboltz, J. D.）の計画的偶発性理論において、偶然の出来事をチャンスに変えるために必要なスキルとして、不適切なものはどれか。",
+          options: [
+            "1. 好奇心（Curiosity）",
+            "2. 楽観性（Optimism）",
+            "3. 計画性（Planning）",
+            "4. 柔軟性（Flexibility）"
+          ],
+          answer: "3 （正しくは Persistence：持続性、 Risk-taking：冒険心 などが含まれる）"
+        }
+      },
+      {
+        text: "青年期から老年期までのライフステージを「成長期」「探索期」「確立期」「維持期」「解放期（下降期）」の5つに分け、自己概念の実現プロセスとしてキャリアを捉えたのは誰か。",
+        options: ["スーパー", "エリクソン", "サビカス", "アドラー"],
+        answer: 0,
+        image: "s_super.png",
+        name: "D.E.スーパー",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1910 - 1994",
+        explanation: "スーパーの理論です。人生の役割を虹に例えた【ライフ・キャリア・レインボー】や、発達段階を示す【マキシサイクル】などの概念は頻出です。",
+        works: [
+          { year: 1953, title: "「職業発達の理論（A Theory of Vocational Development）」発表" },
+          { year: 1957, title: "『キャリアの心理学』刊行" },
+          { year: 1980, title: "「ライフ・キャリア・レインボー」モデルを提唱" }
+        ],
+        pastExam: {
+          title: "第31回",
+          question: "スーパー（Super, D. E.）のキャリア発達理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. キャリアは、特定の年齢で固定される静的なものである。",
+            "2. キャリア発達のプロセスは、自己概念の発達と実現のプロセスである。",
+            "3. ライフ・キャリア・レインボーは、個人の性格特性と職業の適合を示すモデルである。",
+            "4. 人生の転機は、予測不可能な出来事によってのみ引き起こされる。"
+          ],
+          answer: "2"
+        }
+      },
+      {
+        text: "変化の激しい現代において、客観的な適合よりも個人の主観的意味づけを重視し、「キャリア・アダプタビリティ」の重要性を説いた【キャリア構築理論】の提唱者は誰か。",
+        options: ["ホランド", "サビカス", "バンデューラ", "ロー"],
+        answer: 1,
+        image: "2_1savikas.png",
+        name: "M.L.サビカス",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1947 - ",
+        explanation: "サビカスはスーパーの理論を発展させ、自らの人生物語の著者となる【ナラティブ・アプローチ】を重視しました。キャリア・アダプタビリティは「関心・統制・好奇心・自信」の4次元からなります。",
+        works: [
+          { year: 2005, title: "「キャリア構築理論」発表（スーパーの理論を21世紀向けに拡張）" },
+          { year: 2011, title: "『キャリア・カウンセリング（Career Counseling）』刊行" }
+        ],
+        pastExam: {
+          title: "オリジナル",
+          question: "サビカス（Savickas, M. L.）のキャリア構築理論における「キャリア・アダプタビリティ」の4つの次元（4C）に含まれないものはどれか。",
+          options: [
+            "1. 関心（Concern）",
+            "2. 統制（Control）",
+            "3. 妥協（Compromise）",
+            "4. 自信（Confidence）"
+          ],
+          answer: "3 （残りの1つは Curiosity：好奇心 である）"
+        }
+      },
+      {
+        text: "ある行動をうまく遂行できるかという自分の能力への確信を「自己効力感」と呼んだ。自己効力感を高める4つの情報源として間違っているものはどれか。",
+        options: ["言語的説得（励まし）", "代理的体験（モデリング）", "遂行行動の達成（成功体験）", "経済的報酬（金銭的インセンティブ）"],
+        answer: 3,
+        image: "a_ban0.png",
+        name: "A.バンデューラ",
+        birthCountry: "🇨🇦",
+        birthCountryText: "ｶﾅﾀﾞ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1925 - 2021",
+        explanation: "バンデューラは自己効力感の情報源として「①遂行行動の達成」「②代理的体験」「③言語的説得」「④情動的喚起（ドキドキするなどの生理的状態）」の4つを挙げました。経済的報酬は含まれません。",
+        works: [
+          { year: 1977, title: "「自己効力感の理論」発表" },
+          { year: 1977, title: "『社会的学習理論』刊行" },
+          { year: 1986, title: "『社会的認知理論』刊行" }
+        ],
+        pastExam: {
+          title: "第20回",
+          question: "バンデューラ（Bandura, A.）が提唱した「自己効力感」を高めるための情報源として、最も影響力が大きいとされるものはどれか。",
+          options: [
+            "1. 他者の成功体験の観察（代理的体験）",
+            "2. 他者からの励まし（言語的説得）",
+            "3. ドキドキするなどの生理的な状態（情動的喚起）",
+            "4. 自身の成功体験（遂行行動の達成）"
+          ],
+          answer: "4"
+        }
+      },
+      {
+        text: "当初、職業選択の過程は「空想期」「試行期」「現実期」という発達段階を経て進行し「非可逆的である（後戻りできない）」と提唱したが、後に「生涯にわたるプロセスである」と修正した理論家は誰か。",
+        options: ["ギンズバーグ", "レビン", "ティードマン", "エインズワース"],
+        answer: 0,
+        image: "3_2ginz.png",
+        name: "E.ギンズバーグ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1911 - 2002",
+        explanation: "ギンズバーグは初期理論で職業選択を「非可逆的プロセス」としましたが、のちに社会環境の変化等を受け「職業選択は生涯にわたる意思決定プロセスである」と理論を修正したことが特徴です。",
+        works: [
+          { year: 1951, title: "『職業選択（Occupational Choice）』刊行（初期理論）" },
+          { year: 1972, title: "「再定式化（職業選択は生涯にわたるプロセスである）」発表" }
+        ],
+        pastExam: {
+          title: "第18回",
+          question: "ギンズバーグ（Ginzberg, E.）の職業選択理論に関する次の記述のうち、最も適切なものはどれか。",
+          options: [
+            "1. 職業選択のプロセスは、青年期で終了する。",
+            "2. 職業選択は、空想期、試行期、現実期の3つの段階を経て発達する。",
+            "3. 職業選択は、常に可逆的であり、いつでも容易にやり直すことができると当初から主張した。",
+            "4. 職業選択は、個人の性格特性と職業環境の合致によって決定される。"
+          ],
+          answer: "2"
+        }
+      }
+    ];
+
+    const state = {
+      currentQuestionIndex: 0,
+      score: 0,
+      isAnswered: false,
+      deck: [],
+      history: [], // ユーザーの解答履歴を保存
+      currentCategory: null,
+      currentPastExamAnswer: null // アコーディオン内で表示する正解を保持
+    };
+
+    const els = {
+      topPage: document.getElementById("topPage"),
+      dummyPage: document.getElementById("dummyPage"),
+      quizPage: document.getElementById("quizPage"),
+      
+      categoryGrid: document.getElementById("categoryGrid"),
+      dummyHeaderTitle: document.getElementById("dummyHeaderTitle"),
+      quizHeaderTitle: document.getElementById("quizHeaderTitle"),
+
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      
+      questionArea: document.getElementById("questionArea"),
+      questionKicker: document.getElementById("questionKicker"),
+      questionText: document.getElementById("questionText"),
+      choices: document.getElementById("choices"),
+      
+      feedbackArea: document.getElementById("feedbackArea"),
+      resultBadge: document.getElementById("resultBadge"),
+      userAnswerText: document.getElementById("userAnswerText"),
+      feedbackImage: document.getElementById("feedbackImage"),
+      answerText: document.getElementById("answerText"),
+      psychologistName: document.getElementById("psychologistName"),
+      psychologistMeta: document.getElementById("psychologistMeta"),
+      explanationText: document.getElementById("explanationText"),
+      
+      worksBox: document.getElementById("worksBox"),
+      worksList: document.getElementById("worksList"),
+
+      pastExamBox: document.getElementById("pastExamBox"),
+      pastExamRef: document.getElementById("pastExamRef"),
+      pastExamQuestion: document.getElementById("pastExamQuestion"),
+      pastExamOptions: document.getElementById("pastExamOptions"),
+
+      nextButton: document.getElementById("nextButton")
+    };
+
+    // ==========================================
+    // 画面遷移ロジック
+    // ==========================================
+    function showTopPage() {
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.topPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function showDummyPage(title) {
+      els.dummyHeaderTitle.textContent = title;
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function confirmBackToTop() {
+      if (confirm("テストを中断してTOPに戻りますか？")) {
+        showTopPage();
+      }
+    }
+
+    // ==========================================
+    // 過去問アコーディオン制御と正解表示
+    // ==========================================
+    function togglePastExam(targetId) {
+        // modal内かquiz内か判定して要素を取得
+        let box = targetId === 'quizPastExam' ? els.pastExamBox : document.getElementById(targetId);
+        if(box) {
+            box.classList.toggle('open');
+        }
+    }
+
+    // 選択肢がタップされた時に正解・不正解を判定し、リストの左側に✅や❌をつける
+    function revealAnswer(targetId, answerText, clickedLi) {
+        let optionsUl = targetId === 'quizPastExam' ? els.pastExamOptions : document.getElementById(targetId + 'Options');
+        
+        // すでに答え合わせ済みの場合は何もしない
+        if(optionsUl && !optionsUl.classList.contains('revealed')) {
+            optionsUl.classList.add('revealed');
+
+            Array.from(optionsUl.children).forEach(li => {
+                // 初回のみ元のテキストを保持
+                const originalText = li.getAttribute('data-original-text') || li.textContent;
+                if (!li.hasAttribute('data-original-text')) {
+                    li.setAttribute('data-original-text', originalText);
+                }
+
+                // 正解の判定（"1. "などの数字と一致するか）
+                const isCorrect = originalText.startsWith(answerText + ".") || originalText.startsWith(answerText + " ");
+                
+                if(isCorrect) {
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">✅</span><span>${originalText}</span>`;
+                    li.classList.add('correct-choice');
+                } else if (li === clickedLi) {
+                    // タップしたのが不正解の選択肢だった場合
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">❌</span><span>${originalText}</span>`;
+                    li.classList.add('wrong-choice');
+                } else {
+                    // その他の選択肢
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; width:1.1rem; display:inline-block;"></span><span>${originalText}</span>`;
+                    li.classList.add('unselected-choice');
+                }
+            });
+        }
+    }
+
+    // ==========================================
+    // モーダル（ポップアップ）制御
+    // ==========================================
+    function openModal(historyItem, index) {
+      const q = historyItem.question;
+      const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText;
+      const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
+      
+      let html = `
+        <div style="margin-bottom:12px;">
+          <span class="result-badge ${historyItem.isCorrect ? 'correct' : 'wrong'}" style="margin-bottom:0; font-size:1rem;">
+            ${historyItem.isCorrect ? '⭕ 正解' : '❌ 不正解'}
+          </span>
+        </div>
+        <div class="question-kicker" style="font-size:0.85rem;">第${index + 1}問</div>
+        <div class="question-text" style="font-size:1rem; margin-bottom:16px;">${q.text}</div>
+      `;
+
+      if (!historyItem.isCorrect) {
+        html += `<div class="user-answer-text" style="display:block; margin-bottom:16px; font-size:0.85rem;">あなたの解答：${q.options[historyItem.selectedIndex]}</div>`;
+      }
+
+      html += `
+        <div class="feedback-header" style="margin-bottom:16px; padding:12px;">
+          <div class="feedback-image" style="width:70px; height:70px;">
+            <img src="img/${q.image}" alt="${q.name}">
+          </div>
+          <div class="feedback-answer">
+            <div class="answer-label" style="font-size:0.75rem;">正答</div>
+            <div class="answer-text" style="font-size:1rem;">${q.options[q.answer]}</div>
+            <div><span class="psychologist-name" style="font-size:0.85rem;">${q.name}</span></div>
+            <div class="psychologist-meta" style="font-size:0.7rem; margin-top:4px;">出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}</div>
+          </div>
+        </div>
+        <div class="feedback-body" style="padding:12px; margin-bottom:16px;">
+          <p class="explanation-title" style="font-size:0.85rem;">解説・ポイント</p>
+          <p class="explanation-text" style="font-size:0.9rem;">${q.explanation}</p>
+        </div>
+      `;
+
+      if (q.pastExam) {
+         let refText = q.pastExam.title.includes("オリジナル") ? "オリジナル予想問題" : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
+         let modalPastExamId = `modalPastExam_${index}`;
+         
+         let optionsHtml = q.pastExam.options.map(opt => `
+            <li onclick="revealAnswer('${modalPastExamId}', '${q.pastExam.answer}', this)" data-original-text="${opt}">${opt}</li>
+         `).join('');
+
+         html += `
+         <div class="past-exam-box" id="${modalPastExamId}" style="margin-bottom:0;">
+            <div class="past-exam-header" style="padding:12px;" onclick="togglePastExam('${modalPastExamId}')">
+                <p class="past-exam-title" style="font-size:0.85rem;">📘 ${refText}</p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content" style="padding:0 12px;">
+                <p class="past-exam-question" style="font-size:0.85rem; margin-top:12px; margin-bottom:8px;">${q.pastExam.question}</p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="${modalPastExamId}Options" style="font-size:0.85rem;">
+                    ${optionsHtml}
+                </ul>
+            </div>
+         </div>
+         `;
+      }
+
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('resultModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('resultModal').classList.remove('active');
+    }
+
+    // ==========================================
+    // クイズロジック
+    // ==========================================
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function startQuiz(categoryId) {
+      const cat = CATEGORIES.find(c => c.id === categoryId);
+      els.quizHeaderTitle.textContent = cat.title;
+      state.currentCategory = cat;
+      
+      state.score = 0;
+      state.currentQuestionIndex = 0;
+      state.history = []; // 履歴リセット
+      // 現在はキャリア理論のみデータを用意、10問で固定
+      state.deck = shuffleArray(QUESTIONS_CAREER).slice(0, 10);
+      
+      els.topPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.quizPage.classList.remove("hidden");
+      
+      loadQuestion();
+      window.scrollTo(0, 0);
+    }
+
+    function loadQuestion() {
+      state.isAnswered = false;
+      const q = state.deck[state.currentQuestionIndex];
+      
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+      
+      els.questionKicker.textContent = `第 ${state.currentQuestionIndex + 1} 問`;
+      els.questionText.textContent = q.text;
+      
+      els.progressText.textContent = `${state.currentQuestionIndex + 1} / ${state.deck.length}問`;
+      els.progressFill.style.width = `${((state.currentQuestionIndex) / state.deck.length) * 100}%`;
+
+      els.choices.innerHTML = "";
+      
+      q.options.forEach((optionText, index) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-button";
+        btn.textContent = optionText;
+        btn.addEventListener("click", () => handleAnswer(index));
+        els.choices.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (state.isAnswered) return;
+      state.isAnswered = true;
+
+      const q = state.deck[state.currentQuestionIndex];
+      const isCorrect = (selectedIndex === q.answer);
+
+      // 履歴の保存
+      state.history.push({
+        question: q,
+        selectedIndex: selectedIndex,
+        isCorrect: isCorrect
+      });
+
+      if (isCorrect) {
+        state.score++;
+        els.resultBadge.textContent = "⭕ 正解！";
+        els.resultBadge.className = "result-badge correct";
+        els.userAnswerText.style.display = "none";
+      } else {
+        els.resultBadge.textContent = "❌ 不正解...";
+        els.resultBadge.className = "result-badge wrong";
+        els.userAnswerText.textContent = `あなたの解答：${q.options[selectedIndex]}`;
+        els.userAnswerText.style.display = "block";
+      }
+
+      els.feedbackImage.src = `img/${q.image}`;
+      els.feedbackImage.alt = `画像: ${q.name} (※プレビュー版では表示されません)`;
+      els.answerText.textContent = q.options[q.answer];
+      els.psychologistName.textContent = q.name;
+      
+      const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText;
+      const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
+      els.psychologistMeta.innerHTML = `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`;
+      
+      els.explanationText.textContent = q.explanation;
+
+      els.worksList.innerHTML = "";
+      if (q.works && q.works.length > 0) {
+        const sortedWorks = [...q.works].sort((a, b) => a.year - b.year);
+        sortedWorks.forEach(work => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span class="work-year">${work.year}年</span><span>${work.title}</span>`;
+          els.worksList.appendChild(li);
+        });
+        els.worksBox.style.display = "block";
+      } else {
+        els.worksBox.style.display = "none";
+      }
+
+      // 過去問エリアのセットアップ（アコーディオン）
+      if (q.pastExam) {
+        els.pastExamBox.style.display = "block";
+        // アコーディオンの状態をリセット
+        els.pastExamBox.classList.remove('open');
+        els.pastExamOptions.classList.remove('revealed');
+        
+        state.currentPastExamAnswer = q.pastExam.answer; // 正解を保持
+        
+        let refText = q.pastExam.title.includes("オリジナル") 
+          ? `オリジナル予想問題` 
+          : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
+        els.pastExamRef.textContent = refText;
+        els.pastExamQuestion.textContent = q.pastExam.question;
+        els.pastExamOptions.innerHTML = "";
+        
+        q.pastExam.options.forEach(opt => {
+          const li = document.createElement("li");
+          li.textContent = opt;
+          li.setAttribute('data-original-text', opt);
+          // 選択肢自体をタップして正解を表示
+          li.onclick = function() {
+              revealAnswer('quizPastExam', state.currentPastExamAnswer, this);
+          };
+          els.pastExamOptions.appendChild(li);
+        });
+      } else {
+        els.pastExamBox.style.display = "none";
+      }
+
+      if (state.currentQuestionIndex === state.deck.length - 1) {
+        els.nextButton.textContent = "結果を見る";
+      } else {
+        els.nextButton.textContent = "次の問題へ";
+      }
+
+      els.questionArea.classList.add("hidden");
+      els.feedbackArea.classList.remove("hidden");
+      
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function showFinalResult() {
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+
+      els.questionKicker.textContent = "テスト完了！";
+      els.questionText.innerHTML = `おつかれさまでした。<br>あなたの正答率は <b>${Math.round((state.score / state.deck.length) * 100)}％</b> （${state.score}/${state.deck.length}問正解）です。`;
+      
+      els.choices.innerHTML = "";
+      
+      // 正誤リストの生成
+      const ul = document.createElement("ul");
+      ul.className = "result-list";
+      state.history.forEach((h, index) => {
+        const li = document.createElement("li");
+        li.className = `result-item ${h.isCorrect ? 'correct' : 'wrong'}`;
+        li.innerHTML = `
+          <div class="result-item-name"><span>第${index + 1}問</span>${h.question.name}</div>
+          <div class="result-item-mark">${h.isCorrect ? '⭕' : '❌'}</div>
+        `;
+        // タップでポップアップ表示
+        li.addEventListener("click", () => openModal(h, index));
+        ul.appendChild(li);
+      });
+      els.choices.appendChild(ul);
+      
+      els.progressText.textContent = `完了`;
+      els.progressFill.style.width = `100%`;
+
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "primary-button";
+      retryBtn.textContent = "もう一度挑戦する";
+      retryBtn.style.marginBottom = "12px";
+      retryBtn.addEventListener("click", () => {
+        startQuiz(state.currentCategory.id);
+      });
+      els.choices.appendChild(retryBtn);
+
+      const topBtn = document.createElement("button");
+      topBtn.className = "choice-button";
+      topBtn.textContent = "TOPに戻る";
+      topBtn.style.textAlign = "center";
+      topBtn.addEventListener("click", showTopPage);
+      els.choices.appendChild(topBtn);
+    }
+
+    els.nextButton.addEventListener("click", () => {
+      if (state.currentQuestionIndex < state.deck.length - 1) {
+        state.currentQuestionIndex++;
+        loadQuestion();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        showFinalResult();
+      }
+    });
+
+    // ==========================================
+    // 初期化：カテゴリ一覧の生成
+    // ==========================================
+    function initApp() {
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "category-button";
+        if (cat.isActive) {
+          btn.classList.add("active-cat");
+        }
+        
+        btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}</span>`;
+        
+        btn.addEventListener("click", () => {
+          if (cat.isActive) {
+            startQuiz(cat.id);
+          } else {
+            showDummyPage(cat.title);
+          }
+        });
+        
+        els.categoryGrid.appendChild(btn);
+      });
+      
+      // 初期表示はTOPページ
+      showTopPage();
+    }
+
+    initApp();
+
+  </script>
+</body>
+</html>
