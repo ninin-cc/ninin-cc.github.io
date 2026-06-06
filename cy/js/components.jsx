@@ -477,8 +477,15 @@
       }, [editable]);
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
       const sortedData = [...data].sort((a, b) => a.age - b.age);
-      const width = 1000; const height = 360; const paddingX = 70; const paddingY = 30;
-      const chartWidth = width - paddingX * 2; const chartHeight = height - paddingY * 2;
+      const width = 1000; const height = 450; const paddingX = 70; const paddingY = 30;
+      const labelAreaHeight = 120;
+      const chartWidth = width - paddingX * 2; const chartHeight = height - paddingY - labelAreaHeight;
+      const chartBottom = paddingY + chartHeight;
+      const axisY = paddingY + chartHeight / 2;
+      const ageTextY = chartBottom + 24;
+      const eventLabelTop = ageTextY + 12;
+      const eventLabelHeight = 38;
+      const eventLabelGap = 8;
       const futureIndex = sortedData.length;
       const totalPointCount = sortedData.length + 1;
       const lastUserMemory = sortedData[sortedData.length - 1];
@@ -505,10 +512,9 @@
       const lastUserY = getY(lastUserMemory.satisfaction);
       const futureX = agePositioning ? width - paddingX : getX(futureIndex);
       const futureY = Math.max(10, lastUserY - 55);
-      const labelWidth = 180;
-      const labelHeight = 60;
-      const labelGap = 30;
-      const clampLabelY = (y) => Math.max(8, Math.min(height - labelHeight - 18, y));
+      const labelWidth = 170;
+      const getEventLabelY = (index) => eventLabelTop + ((index % 2) * (eventLabelHeight + eventLabelGap));
+      const getEventLabelX = (x, widthValue = labelWidth) => Math.max(0, Math.min(width - widthValue, x - widthValue / 2));
 
       const generateSmoothPath = (items) => {
         if (items.length === 0) return '';
@@ -537,7 +543,7 @@
         return point.matrixTransform(screenCtm.inverse());
       };
       const getSatisfactionFromSvgY = (svgY) => {
-        const boundedY = Math.max(paddingY, Math.min(paddingY + chartHeight, svgY));
+        const boundedY = Math.max(paddingY, Math.min(chartBottom, svgY));
         const normalized = (paddingY + chartHeight - boundedY) / chartHeight;
         return clampSatisfaction(normalized * 100 - 50);
       };
@@ -623,10 +629,10 @@
             preserveAspectRatio="xMidYMid meet"
             style={{ touchAction: editable ? 'none' : 'auto' }}
           >
-            <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
-            <text x={paddingX - 10} y={height / 2 + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
+            <line x1={paddingX} y1={axisY} x2={width - paddingX} y2={axisY} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
+            <text x={paddingX - 10} y={axisY + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
             <text x={paddingX - 10} y={paddingY + 10} fill="#60A5FA" fontSize="12" textAnchor="end">+50</text>
-            <text x={paddingX - 10} y={height - paddingY} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
+            <text x={paddingX - 10} y={chartBottom} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
             <path d={pathData} fill="none" stroke="#FCD34D" strokeWidth="4" />
             {editable && onLineAddRequest && canAddLineEvent && sortedData.length > 1 && (
               <path
@@ -652,7 +658,6 @@
             />
             {sortedData.map((d, i) => {
               const cx = getX(i, d); const cy = getY(d.satisfaction);
-              const labelY = clampLabelY(Number(d.satisfaction) >= 0 ? cy + labelGap : cy - labelHeight - labelGap);
               const isDragging = draggingId === d.id;
               return (
                 <g key={d.id}>
@@ -681,9 +686,9 @@
                       )}
                     </>
                   )}
-                  <text x={cx} y={height - 5} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
-                  <foreignObject x={Math.max(0, Math.min(width - labelWidth, cx - labelWidth / 2))} y={labelY} width={labelWidth} height={labelHeight}>
-                    <div xmlns="http://www.w3.org/1999/xhtml" className="h-full overflow-hidden text-xs text-center text-gray-100 leading-snug bg-black bg-opacity-60 rounded border border-gray-700 px-2 py-1">
+                  <text x={cx} y={ageTextY} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
+                  <foreignObject x={getEventLabelX(cx)} y={getEventLabelY(i)} width={labelWidth} height={eventLabelHeight}>
+                    <div xmlns="http://www.w3.org/1999/xhtml" className="h-full overflow-hidden text-[11px] text-center text-gray-100 leading-tight bg-black bg-opacity-60 rounded border border-gray-700 px-2 py-1">
                       {d.event}
                     </div>
                   </foreignObject>
@@ -705,8 +710,8 @@
             />
             <g key="system-future">
               <circle cx={futureX} cy={futureY} r="7" fill="#0B1220" stroke="#93C5FD" strokeWidth="3" strokeDasharray="4 3" />
-              <text x={futureX} y={height - 5} fill="#93C5FD" fontSize="14" textAnchor="middle">未来</text>
-              <foreignObject x={futureX - 72} y={clampLabelY(futureY + 16)} width="144" height="44">
+              <text x={futureX} y={ageTextY} fill="#93C5FD" fontSize="14" textAnchor="middle">未来</text>
+              <foreignObject x={getEventLabelX(futureX, 144)} y={getEventLabelY(futureIndex)} width="144" height={eventLabelHeight}>
                 <div xmlns="http://www.w3.org/1999/xhtml" className="h-full text-xs text-center text-blue-100 leading-tight bg-black bg-opacity-70 rounded px-1 py-1 border border-blue-300">
                   未定の未来
                 </div>
