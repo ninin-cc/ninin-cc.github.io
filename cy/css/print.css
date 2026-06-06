@@ -142,13 +142,13 @@
       .lifeline-print {
         background: #fff !important;
         border-color: #333 !important;
-        max-height: 84mm;
-        overflow: hidden;
+        max-height: none !important;
+        overflow: visible !important;
       }
 
       .lifeline-print svg {
         width: 100% !important;
-        max-height: 80mm !important;
+        max-height: 110mm !important;
         height: auto !important;
       }
 
