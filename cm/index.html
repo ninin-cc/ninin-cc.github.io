@@ -49,11 +49,15 @@
       display: flex; justify-content: center; align-items: center; 
       height: 100vh; font-family: sans-serif; color: #4b5563; 
     }
-    /* ノート風背景のCSS */
+    /* ノート風背景のCSS (Safari対策で overflow: hidden などを追加) */
     .notebook-bg {
       background-color: #fdfcf8;
       background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(148, 163, 184, 0.3) 31px, rgba(148, 163, 184, 0.3) 32px);
       background-position: 0 10px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -121,9 +125,6 @@
     );
     const RefreshCwIcon = () => (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-    );
-    const InfoIcon = () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-500"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
     );
     const ArrowLeftIcon = () => (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -341,7 +342,6 @@
     };
 
     // --- ダブルフロント用テーマ ヘッダーグラデーション定義 ---
-    // (主タイプ_副タイプ) に応じて、主から副へのグラデーションを生成
     const doubleHeaders = {
       W_K: "from-amber-400 to-blue-500",
       W_N: "from-amber-400 to-pink-400",
@@ -389,10 +389,8 @@
       const [showCoconalaModal, setShowCoconalaModal] = useState(false);
       const [colorMode, setColorMode] = useState('natural'); // カラーモード切替 (natural / colorful)
       
-      // ホバーアニメーション用 (0〜100)
       const [hoverPos, setHoverPos] = useState(50);
 
-      // 質問が変わるたびにホバー位置をリセット
       useEffect(() => {
         if (started && !resultType) {
           setHoverPos(50);
@@ -411,7 +409,6 @@
       }
 
       const generateTodayQuestions = () => {
-        // 厳選された16問すべてをランダムにシャッフルして出題
         return shuffleArray(questionsPool).map(q => ({
           ...q,
           options: shuffleArray(q.options)
@@ -465,28 +462,19 @@
         let frontKey = '';
 
         switch (type) {
-          // 単独フロント (4パターン)
           case 'W': dummyScores = { W: 40, K: 15, N: 10, A: 5 }; front = 'W'; second = 'K'; back = 'A'; break;
           case 'K': dummyScores = { W: 15, K: 40, N: 10, A: 5 }; front = 'K'; second = 'W'; back = 'A'; break;
           case 'N': dummyScores = { W: 15, K: 10, N: 40, A: 5 }; front = 'N'; second = 'W'; back = 'A'; break;
           case 'A': dummyScores = { W: 15, K: 5, N: 10, A: 40 }; front = 'A'; second = 'W'; back = 'K'; break;
-          
-          // ダブルフロント (W主: 3パターン)
           case 'W_K': dummyScores = { W: 40, K: 38, N: 10, A: 5 }; front = 'W'; second = 'K'; back = 'A'; isDouble = true; frontKey = 'W_K'; break;
           case 'W_N': dummyScores = { W: 40, K: 10, N: 38, A: 5 }; front = 'W'; second = 'N'; back = 'A'; isDouble = true; frontKey = 'W_N'; break;
           case 'W_A': dummyScores = { W: 40, K: 5, N: 10, A: 38 }; front = 'W'; second = 'A'; back = 'K'; isDouble = true; frontKey = 'W_A'; break;
-
-          // ダブルフロント (K主: 3パターン)
           case 'K_W': dummyScores = { W: 38, K: 40, N: 10, A: 5 }; front = 'K'; second = 'W'; back = 'A'; isDouble = true; frontKey = 'K_W'; break;
           case 'K_N': dummyScores = { W: 10, K: 40, N: 38, A: 5 }; front = 'K'; second = 'N'; back = 'A'; isDouble = true; frontKey = 'K_N'; break;
           case 'K_A': dummyScores = { W: 10, K: 40, N: 5, A: 38 }; front = 'K'; second = 'A'; back = 'N'; isDouble = true; frontKey = 'K_A'; break;
-
-          // ダブルフロント (N主: 3パターン)
           case 'N_W': dummyScores = { W: 38, K: 10, N: 40, A: 5 }; front = 'N'; second = 'W'; back = 'A'; isDouble = true; frontKey = 'N_W'; break;
           case 'N_K': dummyScores = { W: 10, K: 38, N: 40, A: 5 }; front = 'N'; second = 'K'; back = 'A'; isDouble = true; frontKey = 'N_K'; break;
           case 'N_A': dummyScores = { W: 10, K: 5, N: 40, A: 38 }; front = 'N'; second = 'A'; back = 'K'; isDouble = true; frontKey = 'N_A'; break;
-
-          // ダブルフロント (A主: 3パターン)
           case 'A_W': dummyScores = { W: 38, K: 5, N: 10, A: 40 }; front = 'A'; second = 'W'; back = 'K'; isDouble = true; frontKey = 'A_W'; break;
           case 'A_K': dummyScores = { W: 10, K: 38, N: 5, A: 40 }; front = 'A'; second = 'K'; back = 'N'; isDouble = true; frontKey = 'A_K'; break;
           case 'A_N': dummyScores = { W: 10, K: 5, N: 38, A: 40 }; front = 'A'; second = 'N'; back = 'K'; isDouble = true; frontKey = 'A_N'; break;
@@ -497,7 +485,6 @@
         setStarted(true);
       };
 
-      // ▼ ココナラ ポップアップ（モーダル）共通コンポーネント ▼
       const renderCoconalaModal = () => {
         if (!showCoconalaModal) return null;
         return (
@@ -530,10 +517,8 @@
                           キャリコン面談の構造的理解｜第31回で支援した8名全員が合格した方法
                         </p>
                       </div>
-                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
                       <div className="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-200/50 rounded-lg flex-none flex items-center justify-center text-emerald-600 border border-emerald-300/50 overflow-hidden">
                         <span className="text-[10px] font-bold">画像</span>
-                        {/* <img src="画像のURL" alt="面談実技練習" className="w-full h-full object-cover" /> */}
                       </div>
                     </div>
                   </a>
@@ -549,15 +534,12 @@
                           台本作成 ＋ 本番再現 ＋ 構造フィードバック
                         </p>
                       </div>
-                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
                       <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-200/50 rounded-lg flex-none flex items-center justify-center text-blue-600 border border-blue-300/50 overflow-hidden">
                         <span className="text-[10px] font-bold">画像</span>
-                        {/* <img src="画像のURL" alt="超構造的ロープレ" className="w-full h-full object-cover" /> */}
                       </div>
                     </div>
                   </a>
 
-                  {/* ▼ 学科試験支援（心理学者マップ）ボタン ▼ */}
                   <button className="w-full text-left border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group relative overflow-hidden mt-2">
                     <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-300"></div>
                     <div className="flex items-center justify-between gap-3 pl-1">
@@ -570,10 +552,8 @@
                           （クリアファイル）（PDFデータ）<br className="sm:hidden" />どちらもご用意あります。
                         </p>
                       </div>
-                      {/* ダミー画像枠：将来 imgタグ に差し替える */}
                       <div className="w-14 h-14 sm:w-16 sm:h-16 bg-amber-200/50 rounded-lg flex-none flex items-center justify-center text-amber-700 border border-amber-300/50 overflow-hidden">
                         <span className="text-[10px] font-bold">画像</span>
-                        {/* <img src="画像のURL" alt="心理学者マップ" className="w-full h-full object-cover" /> */}
                       </div>
                     </div>
                   </button>
@@ -584,41 +564,30 @@
         );
       };
 
-      // 開発用ダミー遷移ボタン群コンポーネント (ホバーで出現)
       const renderDebugButtons = () => (
         <div className="w-full flex flex-wrap justify-center gap-1.5 py-4 opacity-0 hover:opacity-80 transition-opacity duration-300">
           <div className="w-full text-center text-[10px] text-slate-500 font-bold mb-1">【開発用デバッグメニュー（全16パターン）】</div>
-          
-          {/* 単独 */}
           <div className="w-full flex justify-center gap-1.5 mb-1">
             <button onClick={() => setDummyResult('W')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：ワンダー">W単</button>
             <button onClick={() => setDummyResult('K')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：キーパー">K単</button>
             <button onClick={() => setDummyResult('N')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：ナーチャー">N単</button>
             <button onClick={() => setDummyResult('A')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform" title="単独：アダプター">A単</button>
           </div>
-
-          {/* ダブル (W主) */}
           <div className="w-full flex justify-center gap-1.5">
             <button onClick={() => setDummyResult('W_K')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+K</button>
             <button onClick={() => setDummyResult('W_N')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+N</button>
             <button onClick={() => setDummyResult('W_A')} className="px-2 py-1 bg-amber-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">W+A</button>
           </div>
-
-          {/* ダブル (K主) */}
           <div className="w-full flex justify-center gap-1.5">
             <button onClick={() => setDummyResult('K_W')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+W</button>
             <button onClick={() => setDummyResult('K_N')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+N</button>
             <button onClick={() => setDummyResult('K_A')} className="px-2 py-1 bg-blue-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">K+A</button>
           </div>
-
-          {/* ダブル (N主) */}
           <div className="w-full flex justify-center gap-1.5">
             <button onClick={() => setDummyResult('N_W')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+W</button>
             <button onClick={() => setDummyResult('N_K')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+K</button>
             <button onClick={() => setDummyResult('N_A')} className="px-2 py-1 bg-pink-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">N+A</button>
           </div>
-
-          {/* ダブル (A主) */}
           <div className="w-full flex justify-center gap-1.5">
             <button onClick={() => setDummyResult('A_W')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">A+W</button>
             <button onClick={() => setDummyResult('A_K')} className="px-2 py-1 bg-cyan-500 text-white text-[10px] font-bold rounded shadow-sm hover:scale-105 active:scale-95 transition-transform">A+K</button>
@@ -638,7 +607,6 @@
       };
 
       const handleBack = () => {
-        // 仮選択中の場合は仮選択をキャンセル
         if (tempSelectedChoiceIndex !== null) {
           setTempSelectedChoiceIndex(null);
           setHoverPos(50);
@@ -646,13 +614,11 @@
         }
 
         if (currentIndex > 0) {
-          // 2問目以降の場合は前の問題に戻る
           setSelectedChoiceIndex(null);
           setTempSelectedChoiceIndex(null);
           setCurrentIndex(currentIndex - 1);
           setAnswers(answers.slice(0, -1));
         } else if (currentIndex === 0) {
-          // 1問目、またはプラクティス画面の場合はTOP画面に戻る
           returnToTop();
         }
       };
@@ -660,12 +626,10 @@
       const handleChoiceSelect = (choice) => {
         if (selectedChoiceIndex !== null) return;
         
-        // 1回目のタップ（仮選択）
         if (tempSelectedChoiceIndex !== choice.index) {
           setTempSelectedChoiceIndex(choice.index);
           setHoverPos(choice.hoverPos);
         } else {
-          // 2回目のタップ（決定）
           setSelectedChoiceIndex(choice.index);
           setTempSelectedChoiceIndex(null);
           setHoverPos(choice.hoverPos);
@@ -696,20 +660,16 @@
         let isDouble = false;
         let frontKey = "";
 
-        // 85%以上でダブルフロントと判定する
         if (maxScore > 0) {
           const ratio = secondScore / maxScore;
           if (ratio >= 0.85) {
             isDouble = true;
-            // 主(front)と副(second)の順序を保持したキーを生成
             frontKey = `${maxType}_${secondType}`;
           }
         }
 
         setResultScores(scores);
-        // 詳細は3パターンのうちどれか1つをランダムに選ぶ（現状は1パターンで固定）
-        const detailIndex = 0;
-        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
+        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: 0 });
       };
 
       const showToast = (message) => {
@@ -799,7 +759,6 @@
                     </a>
                   </div>
                 </div>
-                {/* ▲ 導線エリア ここまで ▲ */}
 
                 <div className="mt-8 text-center pb-4">
                   <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
@@ -815,24 +774,19 @@
               </div>
             </div>
             
-            {/* ▼ 開発用ダミー遷移ボタン群 ▼ */}
             {renderDebugButtons()}
-            
-            {/* モーダル表示 */}
             {renderCoconalaModal()}
           </div>
         );
       }
 
       if (resultType) {
-        // ダブルフロント時の情報を動的生成
         let result;
         if (resultType.isDouble) {
           const frontData = resultsData[resultType.front];
           const secondData = resultsData[resultType.second];
           const themeKey = resultType.frontKey;
           
-          // フロントのテーマをベースに、ヘッダーのグラデーションを主から副へ動的に変更する
           const dynamicTheme = {
             ...frontData.theme,
             header: doubleHeaders[themeKey] || frontData.theme.header
@@ -843,16 +797,16 @@
             subTitle: `（${frontData.subTitle.replace(/[（）]/g, '')} × ${secondData.subTitle.replace(/[（）]/g, '')}）`,
             detail: [
               `${frontData.detail[0]}\n\n${secondAdditions[resultType.second]}`,
-              frontData.detail[1] // 一方で―― の中身
+              frontData.detail[1]
             ],
-            supportStyle: frontData.supportStyle, // メインフロントの支援スタイル
-            secondSupportStyle: secondData.supportStyle, // セカンドフロントの支援スタイル
+            supportStyle: frontData.supportStyle,
+            secondSupportStyle: secondData.supportStyle,
             theme: dynamicTheme
           };
         } else {
           result = {
             ...resultsData[resultType.front],
-            secondSupportStyle: resultsData[resultType.second].supportStyle // 単独フロントでも2番目の要素を取得
+            secondSupportStyle: resultsData[resultType.second].supportStyle
           };
         }
 
@@ -867,7 +821,6 @@
 
         return (
           <div className={`min-h-screen flex flex-col items-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg} relative`}>
-            {/* 結果画面ではカラーモード切替ボタンは非表示 */}
             <div className="flex-grow flex items-center justify-center w-full mt-4 sm:mt-0">
               <div className="max-w-lg w-full animate-fade-in relative">
                 {toastMessage && (
@@ -905,7 +858,6 @@
                     </div>
 
                     <div className="p-4 sm:p-8 pb-1 sm:pb-2 flex flex-col gap-3 sm:gap-4">
-                      {/* ▼ 相談・支援の場面で出やすい特徴（強みとクセ） ▼ */}
                       <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
                         <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ 相談・支援の場面で出やすい特徴</h4>
                         
@@ -919,7 +871,6 @@
                           <p className={`text-[13px] md:text-sm font-medium leading-relaxed ${t.text}`}>{result.supportStyle.habit}</p>
                         </div>
                       </div>
-                      {/* ▲ 相談・支援の場面で出やすい特徴 ここまで ▲ */}
                       
                       <div className={`rounded-2xl p-4 sm:p-6 border border-white/50 shadow-inner bg-white/60`}>
                         <h3 className={`font-bold text-xs sm:text-sm mb-4 sm:mb-5 tracking-wide text-center ${t.textLight}`}>今のあなたのモードバランス</h3>
@@ -929,7 +880,7 @@
                             const maxScore = Math.max(...Object.values(resultScores));
                             const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
                             const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
-                            const labels = { W: '発想型', K: '構造型', N: '調和型', A: '調整型' };
+                            const labels = { W: '発想型', K: '構造型', N: '調 মোহ和型', A: '調整型' };
                             return (
                               <div key={type} className="flex items-center gap-2">
                                 <div className={`w-5 sm:w-6 flex justify-center`}>
@@ -945,7 +896,6 @@
                           })}
                         </div>
 
-                        {/* セカンド要素のアコーディオン (一時非表示にしています) */}
                         <details className={`hidden mt-6 mb-2 group border ${t.border} rounded-xl bg-white/40 shadow-sm overflow-hidden text-left`}>
                           <summary className={`cursor-pointer font-bold ${t.text} p-3 bg-white/50 hover:bg-white/80 transition-colors flex justify-between items-center list-none [&::-webkit-details-marker]:hidden`}>
                             <span className="flex items-center gap-2 text-[12px] sm:text-[13px]">▼ この特徴もあるかも？</span>
@@ -973,7 +923,6 @@
                     <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
                       <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[0]}</p>
                       
-                      {/* ▼ 「一方で――」アコーディオン ▼ */}
                       <details className="mt-4 group">
                         <summary className={`cursor-pointer font-bold ${t.text} transition-colors flex items-center gap-1 list-none [&::-webkit-details-marker]:hidden`}>
                           <span className="text-[13px] md:text-sm">一方で――</span>
@@ -987,7 +936,6 @@
                           </p>
                         </div>
                       </details>
-                      {/* ▲ 「一方で――」アコーディオン ここまで ▲ */}
                     </div>
                   </div>
 
@@ -1002,13 +950,11 @@
                       <RefreshCwIcon /> もう一度観る
                     </button>
 
-                    {/* ▼ ココナラへの導線ポップアップ呼び出しボタン ▼ */}
                     <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-sm mt-2 active:scale-[0.98]">
                       <span className="text-[11px] sm:text-xs mb-1 opacity-90">【ココナラ】診断結果をもとに</span>
                       <span className="text-sm md:text-base flex items-center gap-1">実技ロープレ練習をしてみる？</span>
                     </button>
 
-                    {/* ▼ 完全版への導線エリア ▼ */}
                     <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
                       <p className={`text-[13px] md:text-sm font-medium mb-3 leading-relaxed ${t.text}`}>
                         さらに詳しく知りたい方は完全版RIESM™へ<br className="hidden sm:block"/>
@@ -1024,11 +970,9 @@
                         </a>
                       </div>
                     </div>
-                    {/* ▲ 導線エリア ここまで ▲ */}
                   </div>
 
                   <div className="px-4 sm:px-8 pb-6 sm:pb-8">
-                    {/* ▼ バックスについて (一時非表示にしています) ▼ */}
                     <div className={`hidden rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
                       <div>
                         <h4 className={`font-bold text-[13px] md:text-sm mb-4 opacity-90 ${t.text}`}>▼ バックスについて</h4>
@@ -1041,7 +985,6 @@
                         </div>
                       </div>
                     </div>
-                    {/* ▲ バックスについて ここまで ▲ */}
 
                     <div className="text-center pt-2 sm:pt-3 space-y-2">
                       <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
@@ -1059,14 +1002,7 @@
               </div>
             </div>
 
-            {/* ▼ 開発用ダミー遷移ボタン群 ▼ */}
-            <div className="w-full flex justify-center">
-              <div className="max-w-lg w-full">
-                {renderDebugButtons()}
-              </div>
-            </div>
-
-            {/* モーダル表示 */}
+            {renderDebugButtons()}
             {renderCoconalaModal()}
           </div>
         );
@@ -1080,87 +1016,30 @@
       const topType = q.options[0].type;
       const bottomType = q.options[1].type;
       
-      // カラーモードによる色の出し分け
-      const topColorRGB = colorMode === 'colorful' ? bgColors[topType] : '110, 231, 183'; // emerald-300 (白めの緑)
-      const bottomColorRGB = colorMode === 'colorful' ? bgColors[bottomType] : '190, 242, 100'; // lime-300 (黄色めの淡い緑)
+      const topColorRGB = colorMode === 'colorful' ? bgColors[topType] : '110, 231, 183';
+      const bottomColorRGB = colorMode === 'colorful' ? bgColors[bottomType] : '190, 242, 100';
       
       const answerChoices = [
-        {
-          index: 0,
-          hoverPos: 15,
-          caption: 'かなりA',
-          topSize: 'w-10 h-10 sm:w-12 sm:h-12',
-          bottomSize: null,
-          scoreUpdates: [{ type: q.options[0].type, weight: 3 }],
-          ariaLabel: `【${q.options[0].text}】${labelStrong}`
-        },
-        {
-          index: 1,
-          hoverPos: 30,
-          caption: 'A',
-          topSize: 'w-8 h-8 sm:w-10 sm:h-10',
-          bottomSize: null,
-          scoreUpdates: [{ type: q.options[0].type, weight: 2.5 }],
-          ariaLabel: `【${q.options[0].text}】${labelMid}`
-        },
-        {
-          index: 2,
-          hoverPos: 45,
-          caption: 'ややA',
-          topSize: 'w-7 h-7 sm:w-8 sm:h-8',
-          bottomSize: 'w-4 h-4 sm:w-5 sm:h-5',
-          scoreUpdates: [{ type: q.options[0].type, weight: 2 }, { type: q.options[1].type, weight: 1 }],
-          ariaLabel: `どちらかといえば【${q.options[0].text}】だが、【${q.options[1].text}】もある`
-        },
-        {
-          index: 3,
-          hoverPos: 55,
-          caption: 'ややB',
-          topSize: 'w-4 h-4 sm:w-5 sm:h-5',
-          bottomSize: 'w-7 h-7 sm:w-8 sm:h-8',
-          scoreUpdates: [{ type: q.options[1].type, weight: 2 }, { type: q.options[0].type, weight: 1 }],
-          ariaLabel: `どちらかといえば【${q.options[1].text}】だが、【${q.options[0].text}】もある`
-        },
-        {
-          index: 4,
-          hoverPos: 70,
-          caption: 'B',
-          topSize: null,
-          bottomSize: 'w-8 h-8 sm:w-10 sm:h-10',
-          scoreUpdates: [{ type: q.options[1].type, weight: 2.5 }],
-          ariaLabel: `【${q.options[1].text}】${labelMid}`
-        },
-        {
-          index: 5,
-          hoverPos: 85,
-          caption: 'かなりB',
-          topSize: null,
-          bottomSize: 'w-10 h-10 sm:w-12 sm:h-12',
-          scoreUpdates: [{ type: q.options[1].type, weight: 3 }],
-          ariaLabel: `【${q.options[1].text}】${labelStrong}`
-        }
+        { index: 0, hoverPos: 15, caption: 'かなりA', topSize: 'w-10 h-10 sm:w-12 sm:h-12', bottomSize: null, scoreUpdates: [{ type: q.options[0].type, weight: 3 }], ariaLabel: `【${q.options[0].text}】${labelStrong}` },
+        { index: 1, hoverPos: 30, caption: 'A', topSize: 'w-8 h-8 sm:w-10 sm:h-10', bottomSize: null, scoreUpdates: [{ type: q.options[0].type, weight: 2.5 }], ariaLabel: `【${q.options[0].text}】${labelMid}` },
+        { index: 2, hoverPos: 45, caption: 'ややA', topSize: 'w-7 h-7 sm:w-8 sm:h-8', bottomSize: 'w-4 h-4 sm:w-5 sm:h-5', scoreUpdates: [{ type: q.options[0].type, weight: 2 }, { type: q.options[1].type, weight: 1 }], ariaLabel: `どちらかといえば【${q.options[0].text}】だが、【${q.options[1].text}】もある` },
+        { index: 3, hoverPos: 55, caption: 'ややB', topSize: 'w-4 h-4 sm:w-5 sm:h-5', bottomSize: 'w-7 h-7 sm:w-8 sm:h-8', scoreUpdates: [{ type: q.options[1].type, weight: 2 }, { type: q.options[0].type, weight: 1 }], ariaLabel: `どちらかといえば【${q.options[1].text}】だが、【${q.options[0].text}】もある` },
+        { index: 4, hoverPos: 70, caption: 'B', topSize: null, bottomSize: 'w-8 h-8 sm:w-10 sm:h-10', scoreUpdates: [{ type: q.options[1].type, weight: 2.5 }], ariaLabel: `【${q.options[1].text}】${labelMid}` },
+        { index: 5, hoverPos: 85, caption: 'かなりB', topSize: null, bottomSize: 'w-10 h-10 sm:w-12 sm:h-12', scoreUpdates: [{ type: q.options[1].type, weight: 3 }], ariaLabel: `【${q.options[1].text}】${labelStrong}` }
       ];
 
       return (
         <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-slate-50 transition-colors duration-1000 relative">
           <div className="max-w-md w-full bg-white/90 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-white/60 animate-fade-in relative backdrop-blur-2xl mt-4 sm:mt-0">
             
-            {/* 背景グラデーション: 上 */}
             <div 
               className="absolute top-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
-              style={{ 
-                height: `${100 - hoverPos + 10}%`, 
-                background: `linear-gradient(to bottom, rgba(${topColorRGB}, 0.35) 0%, rgba(${topColorRGB}, 0) 100%)`,
-              }}
+              style={{ height: `${100 - hoverPos + 10}%`, background: `linear-gradient(to bottom, rgba(${topColorRGB}, 0.35) 0%, rgba(${topColorRGB}, 0) 100%)` }}
             ></div>
 
-            {/* 背景グラデーション: 下 */}
             <div 
               className="absolute bottom-0 left-0 w-full transition-all duration-500 ease-out pointer-events-none"
-              style={{ 
-                height: `${hoverPos + 10}%`, 
-                background: `linear-gradient(to top, rgba(${bottomColorRGB}, 0.35) 0%, rgba(${bottomColorRGB}, 0) 100%)`,
-              }}
+              style={{ height: `${hoverPos + 10}%`, background: `linear-gradient(to top, rgba(${bottomColorRGB}, 0.35) 0%, rgba(${bottomColorRGB}, 0) 100%)` }}
             ></div>
 
             <div className="relative z-20 h-1.5 bg-slate-100/50 w-full">
@@ -1173,35 +1052,32 @@
                 <span>{isPractice ? '練習' : `${currentIndex + 1} / ${currentQuestions.length}`}</span>
               </div>
               
-              {/* ▼ ノート風背景を適用した設問エリア ▼ */}
-              <div className="notebook-bg min-h-[6rem] sm:min-h-[8rem] rounded-xl sm:rounded-2xl shadow-sm border border-slate-200/80 mb-4 sm:mb-6 w-full flex items-center">
-                <div className="px-6 sm:px-8 py-5 w-full">
-                  <p className="text-[15px] sm:text-[17px] font-bold text-slate-700 leading-[32px] tracking-wide relative z-10">
+              <div className="notebook-bg min-h-[6rem] sm:min-h-[8rem] rounded-xl sm:rounded-2xl shadow-sm border border-slate-200/80 mb-4 sm:mb-6 w-full flex items-center transform-gpu">
+                <div className="px-6 sm:px-8 py-5 w-full flex items-center justify-center">
+                  <p className="text-[15px] sm:text-[17px] font-bold text-slate-700 leading-[32px] tracking-wide break-words text-center relative z-10">
                     {q.text}
                   </p>
                 </div>
               </div>
               
-              <div className="space-y-3 sm:space-y-4 animate-fade-in relative z-10">
-                {/* Aの枠：左端を覆うスリムな帯状ラベルと完全中央配置のテキスト */}
-                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex items-center min-h-[4.5rem] overflow-hidden">
+              {/* ▼ Safariでの描画崩れ・残像対策: keyを追加してDOMを再構築 ▼ */}
+              <div key={currentIndex} className="space-y-3 sm:space-y-4 animate-fade-in relative z-10 transform-gpu">
+                
+                {/* Aの枠：テキストを全体の中央に配置するためバッジを絶対配置化 */}
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex min-h-[4.5rem] overflow-hidden transform-gpu">
                   <div
                     className="absolute top-0 left-0 h-full w-6 sm:w-7 flex items-center justify-center text-[10px] sm:text-xs font-black text-white shadow-md z-10"
                     style={{ backgroundColor: `rgb(${topColorRGB})` }}
                   >
                     A
                   </div>
-                  {/* absolute inset-0 を使って枠全体を基準にテキストを中央配置 */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8">
-                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center w-full">{q.options[0].text}</p>
-                  </div>
-                  {/* 高さを確保するための透明なダミー要素（テキストと同じ内容） */}
-                  <div className="w-full py-4 sm:py-5 px-8 opacity-0">
-                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-center">{q.options[0].text}</p>
+                  <div className="w-full flex items-center justify-center px-10 py-4 sm:px-12 sm:py-5 relative z-10">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center break-words">{q.options[0].text}</p>
                   </div>
                 </div>
 
-                <div className="relative rounded-2xl border border-white/70 bg-white/55 p-2 sm:p-3 shadow-inner backdrop-blur-md">
+                {/* 6択ボタン群：Safari対策のため、absoluteを減らしてFlexboxでレイアウト構築 */}
+                <div className="relative rounded-2xl border border-white/70 bg-white/55 p-2 sm:p-3 shadow-inner backdrop-blur-md transform-gpu">
                   <div className="grid grid-cols-6 items-start gap-0.5 sm:gap-1">
                     {answerChoices.map(choice => {
                       const isSelected = selectedChoiceIndex === choice.index;
@@ -1220,34 +1096,45 @@
                           onMouseEnter={() => setHoverPos(choice.hoverPos)}
                           onMouseLeave={() => selectedChoiceIndex === null && tempSelectedChoiceIndex === null && setHoverPos(50)}
                           onClick={() => handleChoiceSelect(choice)}
-                          className={`relative group flex min-w-0 flex-col items-center rounded-xl border py-1 sm:py-2 transition-all duration-300 active:scale-[0.97] disabled:cursor-wait ${(isSelected || isTempSelected) ? 'border-white bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.95)]' : 'border-transparent hover:bg-white/70 hover:shadow-sm'} ${isDimmed ? 'opacity-45' : ''}`}
+                          className={`relative group w-full flex flex-col items-center rounded-xl border transition-all duration-300 active:scale-[0.97] disabled:cursor-wait ${(isSelected || isTempSelected) ? 'border-white bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.95)]' : 'border-transparent hover:bg-white/70 hover:shadow-sm'} ${isDimmed ? 'opacity-45' : ''} transform-gpu`}
                         >
-                          {isTempSelected && isPractice && (
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-orange-400/95 text-white text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-40 animate-fade-in pointer-events-none tracking-wide">
-                              2タップで決定
+                          <div className="w-full flex flex-col items-center py-1 sm:py-2 relative">
+                            {isTempSelected && isPractice && (
+                              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-orange-400/95 text-white text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md z-40 animate-fade-in pointer-events-none tracking-wide transform-gpu">
+                                2タップで決定
+                              </div>
+                            )}
+                            <div className="relative h-20 sm:h-24 w-full flex flex-col justify-center items-center">
+                              {/* 横線 */}
+                              <div className={`absolute top-1/2 h-px -translate-y-1/2 bg-slate-300/80 ${choice.index === 0 ? 'left-1/2 right-0' : choice.index === answerChoices.length - 1 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
+                              
+                              {/* 上の丸 */}
+                              <div className="flex-1 w-full flex flex-col justify-end items-center relative z-0">
+                                {choice.topSize && (
+                                  <div
+                                    className={`rounded-full transition-all duration-300 ${choice.topSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                    style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: topShadow }}
+                                  ></div>
+                                )}
+                              </div>
+                              
+                              {/* 中央のキャプション (絶対配置に変更して押し出しを防止) */}
+                              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center pointer-events-none">
+                                <span className={`whitespace-nowrap rounded-full bg-white/75 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-black leading-none shadow-sm backdrop-blur-sm transition-colors ${(isSelected || isTempSelected) ? 'text-slate-900 ring-1 ring-white bg-white/95' : 'text-slate-500/90 group-hover:text-slate-800'}`}>
+                                  {choice.caption}
+                                </span>
+                              </div>
+                              
+                              {/* 下の丸 */}
+                              <div className="flex-1 w-full flex flex-col justify-start items-center relative z-0">
+                                {choice.bottomSize && (
+                                  <div
+                                    className={`rounded-full transition-all duration-300 ${choice.bottomSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
+                                    style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: bottomShadow }}
+                                  ></div>
+                                )}
+                              </div>
                             </div>
-                          )}
-                          <div className="relative h-20 sm:h-24 w-full">
-                            <div className={`absolute top-1/2 h-px -translate-y-1/2 bg-slate-300/80 ${choice.index === 0 ? 'left-1/2 right-0' : choice.index === answerChoices.length - 1 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
-                            <span className={`absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/85 px-1 py-0.5 text-[10px] sm:text-[11px] font-black leading-none shadow-sm transition-colors ${(isSelected || isTempSelected) ? 'text-slate-900 ring-1 ring-white' : 'text-slate-500 group-hover:text-slate-800'}`}>
-                              {choice.caption}
-                            </span>
-                            {choice.topSize && (
-                              <div className="absolute bottom-1/2 left-0 right-0 flex justify-center pb-1">
-                                <div
-                                  className={`rounded-full transition-all duration-300 ${choice.topSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
-                                  style={{ backgroundColor: `rgb(${topColorRGB})`, boxShadow: topShadow }}
-                                ></div>
-                              </div>
-                            )}
-                            {choice.bottomSize && (
-                              <div className="absolute top-1/2 left-0 right-0 flex justify-center pt-1">
-                                <div
-                                  className={`rounded-full transition-all duration-300 ${choice.bottomSize} ${(isSelected || isTempSelected) ? 'riesm-orb-selected ring-2 ring-white' : 'group-hover:scale-110'}`}
-                                  style={{ backgroundColor: `rgb(${bottomColorRGB})`, boxShadow: bottomShadow }}
-                                ></div>
-                              </div>
-                            )}
                           </div>
                         </button>
                       );
@@ -1255,21 +1142,16 @@
                   </div>
                 </div>
 
-                {/* Bの枠：右端を覆うスリムな帯状ラベルと完全中央配置のテキスト */}
-                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex items-center min-h-[4.5rem] overflow-hidden">
+                {/* Bの枠：テキストを全体の中央に配置するためバッジを絶対配置化 */}
+                <div className="relative rounded-xl sm:rounded-2xl border border-white/70 bg-white/70 shadow-sm backdrop-blur-md flex min-h-[4.5rem] overflow-hidden transform-gpu">
+                  <div className="w-full flex items-center justify-center px-10 py-4 sm:px-12 sm:py-5 relative z-10">
+                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center break-words">{q.options[1].text}</p>
+                  </div>
                   <div
                     className="absolute top-0 right-0 h-full w-6 sm:w-7 flex items-center justify-center text-[10px] sm:text-xs font-black text-white shadow-md z-10"
                     style={{ backgroundColor: `rgb(${bottomColorRGB})` }}
                   >
                     B
-                  </div>
-                  {/* absolute inset-0 を使って枠全体を基準にテキストを中央配置 */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8">
-                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-slate-900 text-center w-full">{q.options[1].text}</p>
-                  </div>
-                  {/* 高さを確保するための透明なダミー要素（テキストと同じ内容） */}
-                  <div className="w-full py-4 sm:py-5 px-8 opacity-0">
-                    <p className="text-[13px] sm:text-base font-bold leading-relaxed text-center">{q.options[1].text}</p>
                   </div>
                 </div>
               </div>
