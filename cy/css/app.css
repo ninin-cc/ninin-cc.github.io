@@ -207,114 +207,6 @@
         box-shadow: 0 8px 18px -8px rgba(251, 146, 60, 0.95);
       }
     }
-    .ui-frame-transparent {
-      background: transparent !important;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
-    }
-    .ui-frame-soft {
-      background: rgba(0, 0, 0, 0.32) !important;
-      backdrop-filter: blur(1px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24) !important;
-    }
-    .ui-frame-letter {
-      background:
-        linear-gradient(135deg, rgba(255, 246, 214, 0.66), rgba(232, 198, 132, 0.58)),
-        url('../img/youhishi.jpg') center / cover no-repeat,
-        linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
-      color: #2d1b10 !important;
-      border-color: #7c3f12 !important;
-      box-shadow: inset 0 0 26px rgba(90, 48, 18, 0.18), 0 10px 24px rgba(0, 0, 0, 0.24) !important;
-    }
-    .window-box-title {
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      border-radius: 999px;
-    }
-    .ui-frame-title-letter {
-      background: rgba(255, 214, 75, 0.96) !important;
-      border-color: rgba(124, 63, 18, 0.92) !important;
-      color: #1f1308 !important;
-    }
-    .ui-frame-title-transparent,
-    .ui-frame-title-soft {
-      background: rgba(0, 0, 0, 0.76) !important;
-    }
-    .ui-frame-letter .window-box-content {
-      color: #1f1308;
-    }
-    .ui-frame-letter .window-box-content *:not(.rpg-button):not(i) {
-      color: #1f1308 !important;
-      text-shadow: none !important;
-    }
-    .ui-frame-letter .text-gray-400,
-    .ui-frame-letter .text-gray-300,
-    .ui-frame-letter .text-gray-200 {
-      color: #4b2a12 !important;
-    }
-    .ui-frame-letter .text-yellow-300,
-    .ui-frame-letter .text-yellow-400,
-    .ui-frame-letter .text-yellow-200 {
-      color: #7c2d12 !important;
-    }
-    .ui-frame-letter .border-gray-700,
-    .ui-frame-letter .border-gray-600,
-    .ui-frame-letter .border-yellow-600,
-    .ui-frame-letter .border-yellow-700 {
-      border-color: rgba(124, 63, 18, 0.82) !important;
-    }
-    .ui-frame-letter .bg-black,
-    .ui-frame-letter .bg-gray-900,
-    .ui-frame-letter .bg-gray-800 {
-      background-color: rgba(255, 247, 219, 0.72) !important;
-    }
-    .ui-frame-letter .rpg-input:not(.parchment-input),
-    .ui-frame-letter .rpg-select {
-      background: rgba(255, 250, 232, 0.92) !important;
-      border-color: #9a4d14 !important;
-      border-bottom-color: #9a4d14 !important;
-      color: #1f1308 !important;
-      caret-color: #1f1308;
-      box-shadow: inset 0 0 12px rgba(90, 48, 18, 0.10), 0 0 0 1px rgba(124, 63, 18, 0.18) !important;
-    }
-    .ui-frame-letter .rpg-input:not(.parchment-input)::placeholder {
-      color: #6f4a26 !important;
-      opacity: 1;
-    }
-    .ui-frame-transparent .rpg-input:not(.parchment-input),
-    .ui-frame-transparent .rpg-select {
-      background: rgba(0, 0, 0, 0.16) !important;
-    }
-    .ui-frame-soft .rpg-input:not(.parchment-input),
-    .ui-frame-soft .rpg-select {
-      background: rgba(0, 0, 0, 0.42) !important;
-    }
-    .ui-frame-picker {
-      background: rgba(0, 0, 0, 0.68);
-      border: 1px solid rgba(250, 204, 21, 0.42);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
-    }
-    .ui-frame-picker-option {
-      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-    }
-    .ui-frame-picker-option:hover {
-      transform: translateY(-1px);
-    }
-    .ui-swatch-default {
-      background: #050505;
-    }
-    .ui-swatch-letter {
-      background:
-        url('../img/youhishi.jpg') center / cover no-repeat,
-        linear-gradient(135deg, #f8eac2, #ddb66f);
-    }
-    .ui-swatch-transparent {
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.26), rgba(255,255,255,0.02)),
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 6px, rgba(0,0,0,0.08) 6px 12px);
-    }
-    .ui-swatch-soft {
-      background: rgba(0, 0, 0, 0.36);
-      backdrop-filter: blur(1px);
-    }
     .satisfaction-wiggle {
       animation: satisfactionWiggle 1.5s ease-in-out 0.45s 1 both;
       transform-origin: center;
@@ -340,27 +232,6 @@
     }
     .rpg-button { border: 2px solid white; padding: 6px 16px; border-radius: 4px; transition: all 0.2s; background: black; color: white; cursor: pointer; text-align: center; }
     .rpg-button:hover:not(:disabled) { background: white; color: black; }
-    .dialog-window-translucent.bg-amber-900 {
-      background-color: rgba(120, 53, 15, 0.76) !important;
-      backdrop-filter: blur(1px);
-    }
-    .dialog-window-translucent.bg-rose-900 {
-      background-color: rgba(136, 19, 55, 0.74) !important;
-      backdrop-filter: blur(1px);
-    }
-    .dialog-nameplate-translucent.bg-amber-900 {
-      background-color: rgba(120, 53, 15, 0.86) !important;
-    }
-    .dialog-nameplate-translucent.bg-rose-900 {
-      background-color: rgba(136, 19, 55, 0.86) !important;
-    }
-    .dialog-window-translucent.bg-\[\#fefce8\] {
-      background-color: rgba(254, 252, 232, 0.82) !important;
-      backdrop-filter: blur(1px);
-    }
-    .dialog-nameplate-translucent.bg-\[\#fefce8\] {
-      background-color: rgba(254, 252, 232, 0.90) !important;
-    }
     .theme-cafe {
       background-color: #fdf6e3 !important;
       color: #1e293b !important;
@@ -452,29 +323,6 @@
       background: #1e293b !important;
       color: #fff !important;
       border-color: #1e293b !important;
-    }
-    .theme-cafe .ui-frame-transparent {
-      background: transparent !important;
-    }
-    .theme-cafe .ui-frame-soft {
-      background: rgba(0, 0, 0, 0.32) !important;
-    }
-    .theme-cafe .ui-frame-letter {
-      background:
-        linear-gradient(135deg, rgba(255, 246, 214, 0.66), rgba(232, 198, 132, 0.58)),
-        url('../img/youhishi.jpg') center / cover no-repeat,
-        linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
-      color: #1f1308 !important;
-      border-color: #7c3f12 !important;
-    }
-    .theme-cafe .ui-frame-title-letter {
-      background: rgba(255, 214, 75, 0.96) !important;
-      color: #1f1308 !important;
-    }
-    .theme-cafe .ui-frame-title-transparent,
-    .theme-cafe .ui-frame-title-soft {
-      background: rgba(0, 0, 0, 0.76) !important;
-      color: #fdf6e3 !important;
     }
     .orange-aura-pulse {
       animation: orangeAuraPulse 1.75s ease-in-out infinite;
@@ -749,27 +597,23 @@
     .other-table-peek {
       position: relative;
       min-height: 8.75rem;
-      background: transparent !important;
-      background-color: transparent !important;
-      color: #fff !important;
+      background: transparent;
+      color: #fff;
       isolation: isolate;
     }
     .other-table-peek:hover:not(:disabled) {
-      background: transparent !important;
-      background-color: transparent !important;
-      color: #fff !important;
-      border-color: #facc15 !important;
+      background: transparent;
+      color: #fff;
+      border-color: #facc15;
     }
     .other-table-peek::before {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 0;
-      background-color: transparent;
-      background-image: var(--other-table-image) !important;
-      background-size: cover !important;
-      background-position: center top !important;
-      background-repeat: no-repeat !important;
+      background-image: var(--other-table-image);
+      background-size: cover;
+      background-position: center top;
       filter: brightness(0.88) saturate(1.06);
       transform: scale(1.01);
       transition: transform 0.35s ease, filter 0.35s ease;
@@ -789,10 +633,6 @@
     .other-table-peek > span {
       position: relative;
       z-index: 1;
-    }
-    .other-table-peek,
-    .other-table-peek * {
-      color: #fff !important;
     }
     .other-table-peek-label {
       text-shadow: 0 2px 4px #000, 0 0 8px #000, 0 0 12px #000;
@@ -820,40 +660,7 @@
       transition: background 0.35s ease;
     }
 
-    .lifeline-editing {
-      box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.18), 0 0 22px rgba(250, 204, 21, 0.28);
-    }
-    .lifeline-editing svg {
-      user-select: none;
-    }
-
     .app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
-
-    .summary-accordion-toggle {
-      transition: color 0.2s ease;
-    }
-    .summary-accordion-toggle:hover {
-      color: #fff7ad;
-    }
-    .summary-accordion-body.is-closed {
-      display: none;
-    }
-    .summary-accordion-body.is-open {
-      display: block;
-    }
-    @media print {
-      .summary-accordion-body.is-closed {
-        display: block !important;
-        margin-top: 0.75rem !important;
-      }
-      .summary-accordion-toggle {
-        pointer-events: none !important;
-      }
-      .summary-accordion-toggle .fa-chevron-down,
-      .summary-accordion-toggle .fa-chevron-up {
-        display: none !important;
-      }
-    }
 
 
   
