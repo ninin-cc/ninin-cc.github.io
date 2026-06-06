@@ -820,6 +820,13 @@
       transition: background 0.35s ease;
     }
 
+    .lifeline-editing {
+      box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.18), 0 0 22px rgba(250, 204, 21, 0.28);
+    }
+    .lifeline-editing svg {
+      user-select: none;
+    }
+
     .app-footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
     .summary-accordion-toggle {

@@ -465,7 +465,9 @@
       );
     };
 
-    const LifelineChart = ({ data }) => {
+    const LifelineChart = ({ data, editable = false, onPointChange }) => {
+      const svgRef = useRef(null);
+      const [draggingId, setDraggingId] = useState(null);
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
       const sortedData = [...data].sort((a, b) => a.age - b.age);
       const width = 1000; const height = 360; const paddingX = 70; const paddingY = 30;
@@ -503,10 +505,51 @@
       };
 
       const pathData = generateSmoothPath(sortedData);
+      const clampSatisfaction = (value) => Math.max(-50, Math.min(50, Math.round(value / 5) * 5));
+      const getSatisfactionFromPointer = (event) => {
+        const svg = svgRef.current;
+        if (!svg) return 0;
+        const point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        const screenCtm = svg.getScreenCTM();
+        if (!screenCtm) return 0;
+        const svgPoint = point.matrixTransform(screenCtm.inverse());
+        const boundedY = Math.max(paddingY, Math.min(paddingY + chartHeight, svgPoint.y));
+        const normalized = (paddingY + chartHeight - boundedY) / chartHeight;
+        return clampSatisfaction(normalized * 100 - 50);
+      };
+      const updatePointFromPointer = (event, item) => {
+        if (!editable || !onPointChange) return;
+        event.preventDefault();
+        onPointChange(item.id, getSatisfactionFromPointer(event));
+      };
+      const startPointDrag = (event, item) => {
+        if (!editable || !onPointChange) return;
+        event.preventDefault();
+        setDraggingId(item.id);
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+        updatePointFromPointer(event, item);
+      };
+      const continuePointDrag = (event, item) => {
+        if (draggingId !== item.id) return;
+        updatePointFromPointer(event, item);
+      };
+      const endPointDrag = (event) => {
+        if (!editable) return;
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+        setDraggingId(null);
+      };
 
       return (
-        <div className="w-full bg-gray-900 border-2 border-dashed border-gray-600 p-2 rounded mt-4 lifeline-print print-avoid-break">
-          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto text-white" preserveAspectRatio="xMidYMid meet">
+        <div className={`w-full bg-gray-900 border-2 border-dashed p-2 rounded mt-4 lifeline-print print-avoid-break ${editable ? 'lifeline-editing border-yellow-400' : 'border-gray-600'}`}>
+          <svg
+            ref={svgRef}
+            viewBox={`0 0 ${width} ${height}`}
+            className="w-full h-auto text-white"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ touchAction: editable ? 'none' : 'auto' }}
+          >
             <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
             <text x={paddingX - 10} y={height / 2 + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
             <text x={paddingX - 10} y={paddingY + 10} fill="#60A5FA" fontSize="12" textAnchor="end">+50</text>
@@ -525,9 +568,34 @@
             {sortedData.map((d, i) => {
               const cx = getX(i); const cy = getY(d.satisfaction);
               const labelY = clampLabelY(Number(d.satisfaction) >= 0 ? cy + labelGap : cy - labelHeight - labelGap);
+              const isDragging = draggingId === d.id;
               return (
                 <g key={d.id}>
-                  <circle cx={cx} cy={cy} r="6" fill="#000" stroke="#FCD34D" strokeWidth="3" />
+                  <circle cx={cx} cy={cy} r={editable ? 8 : 6} fill="#000" stroke="#FCD34D" strokeWidth={editable ? 4 : 3} />
+                  {editable && (
+                    <>
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={24}
+                        fill="transparent"
+                        stroke="transparent"
+                        pointerEvents="all"
+                        style={{ cursor: 'ns-resize' }}
+                        onPointerDown={event => startPointDrag(event, d)}
+                        onPointerMove={event => continuePointDrag(event, d)}
+                        onPointerUp={endPointDrag}
+                        onPointerCancel={endPointDrag}
+                        onLostPointerCapture={() => setDraggingId(null)}
+                      />
+                      <text x={cx} y={Math.max(18, cy - 14)} fill="#FCD34D" fontSize="14" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                        {Number(d.satisfaction) > 0 ? '+' : ''}{d.satisfaction}
+                      </text>
+                      {isDragging && (
+                        <circle cx={cx} cy={cy} r="17" fill="none" stroke="#FDE68A" strokeWidth="2" strokeDasharray="4 4" pointerEvents="none" />
+                      )}
+                    </>
+                  )}
                   <text x={cx} y={height - 5} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
                   <foreignObject x={Math.max(0, Math.min(width - labelWidth, cx - labelWidth / 2))} y={labelY} width={labelWidth} height={labelHeight}>
                     <div xmlns="http://www.w3.org/1999/xhtml" className="h-full overflow-hidden text-xs text-center text-gray-100 leading-snug bg-black bg-opacity-60 rounded border border-gray-700 px-2 py-1">

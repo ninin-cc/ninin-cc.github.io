@@ -79,6 +79,7 @@
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
+      const [isInterimPathEditing, setIsInterimPathEditing] = useState(false);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -109,6 +110,12 @@
           setPlayer(current => ({ ...current, age: String(APP_CONFIG.defaultAge) }));
         }
       }, []);
+
+      useEffect(() => {
+        if (scene !== 'interim') {
+          setIsInterimPathEditing(false);
+        }
+      }, [scene]);
 
       useEffect(() => {
         const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
@@ -566,6 +573,20 @@
       const handleRemoveMemory = (id) => {
         setMemories(memories.filter(m => m.id !== id));
         if (memoryEditId === id) setMemoryEditId(null);
+      };
+
+      const handleUpdateMemorySatisfaction = (id, satisfaction) => {
+        setMemories(currentMemories => {
+          let changed = false;
+          const nextMemories = currentMemories.map(memory => {
+            if (String(memory.id) !== String(id)) return memory;
+            const nextSatisfaction = Number(satisfaction);
+            if (Number(memory.satisfaction) === nextSatisfaction) return memory;
+            changed = true;
+            return { ...memory, satisfaction: nextSatisfaction };
+          });
+          return changed ? nextMemories : currentMemories;
+        });
       };
 
       const handleKeepMemory = () => {
@@ -1686,10 +1707,31 @@
 
               <div className="space-y-5">
                 <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-yellow-300">
-                    <i className="fa-solid fa-chart-line"></i> 歩んできた道
-                  </h3>
-                  <LifelineChart data={memories} />
+                  <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <h3 className="flex items-center gap-2 text-lg font-bold text-yellow-300">
+                        <i className="fa-solid fa-chart-line"></i> 歩んできた道
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-gray-400">
+                        {isInterimPathEditing
+                          ? '点をつかんで上下に動かすと、満足度の値を修正できます。'
+                          : '必要なら、ここで満足度の山と谷だけを軽く調整できます。'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsInterimPathEditing(!isInterimPathEditing)}
+                      className={`rpg-button text-sm px-4 py-2 ${isInterimPathEditing ? 'border-yellow-300 bg-yellow-300 text-black' : ''}`}
+                    >
+                      <i className={`fa-solid ${isInterimPathEditing ? 'fa-check' : 'fa-pen-to-square'} mr-2`}></i>
+                      {isInterimPathEditing ? '修正を終える' : '歩んできた道を修正する'}
+                    </button>
+                  </div>
+                  <LifelineChart
+                    data={memories}
+                    editable={isInterimPathEditing}
+                    onPointChange={handleUpdateMemorySatisfaction}
+                  />
                   <div className="mt-4 rounded border border-gray-700 bg-gray-900 bg-opacity-70 p-3">
                     <p className="mb-1 text-sm font-bold text-yellow-300">旅路の記録から見えた気づき</p>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{chartInsight || 'まだメモはありません。'}</p>
