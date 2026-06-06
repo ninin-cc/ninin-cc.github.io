@@ -577,15 +577,25 @@
         if (memoryEditId === id) setMemoryEditId(null);
       };
 
-      const handleUpdateMemorySatisfaction = (id, satisfaction) => {
+      const handleUpdateMemorySatisfaction = (id, update) => {
         setMemories(currentMemories => {
           let changed = false;
           const nextMemories = currentMemories.map(memory => {
             if (String(memory.id) !== String(id)) return memory;
-            const nextSatisfaction = Number(satisfaction);
-            if (Number(memory.satisfaction) === nextSatisfaction) return memory;
+            const updatePayload = typeof update === 'object' && update !== null
+              ? update
+              : { satisfaction: update };
+            const nextSatisfaction = Number(updatePayload.satisfaction);
+            const nextAge = updatePayload.age === undefined ? Number(memory.age) : Number(updatePayload.age);
+            const shouldUpdateSatisfaction = Number(memory.satisfaction) !== nextSatisfaction;
+            const shouldUpdateAge = Number(memory.age) !== nextAge;
+            if (!shouldUpdateSatisfaction && !shouldUpdateAge) return memory;
             changed = true;
-            return { ...memory, satisfaction: nextSatisfaction };
+            return {
+              ...memory,
+              age: shouldUpdateAge ? nextAge : memory.age,
+              satisfaction: shouldUpdateSatisfaction ? nextSatisfaction : memory.satisfaction
+            };
           });
           return changed ? nextMemories : currentMemories;
         });
@@ -1744,7 +1754,7 @@
                       </h3>
                       <p className="mt-1 text-xs leading-relaxed text-gray-400">
                         {isInterimPathEditing
-                          ? `点を上下に動かすと満足度を修正できます。線の上をクリックすると出来事を追加できます（追加 ${interimAddedMemoryCount}/3）。`
+                          ? `点を上下左右に動かすと、年齢と満足度を修正できます。線の上をクリックすると出来事を追加できます（追加 ${interimAddedMemoryCount}/3）。`
                           : '必要なら、ここで満足度の山と谷だけを軽く調整できます。'}
                       </p>
                     </div>
@@ -1767,6 +1777,7 @@
                     onPointChange={handleUpdateMemorySatisfaction}
                     onLineAddRequest={handleRequestInterimMemoryAdd}
                     canAddLineEvent={canAddInterimMemory}
+                    agePositioning
                   />
                   {isInterimPathEditing && !canAddInterimMemory && (
                     <p className="mt-2 text-xs font-bold text-yellow-300">

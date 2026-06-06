@@ -465,7 +465,7 @@
       );
     };
 
-    const LifelineChart = ({ data, editable = false, onPointChange, onLineAddRequest, canAddLineEvent = true }) => {
+    const LifelineChart = ({ data, editable = false, onPointChange, onLineAddRequest, canAddLineEvent = true, agePositioning = false }) => {
       const svgRef = useRef(null);
       const [draggingId, setDraggingId] = useState(null);
       const [lineAddPrompt, setLineAddPrompt] = useState(null);
@@ -482,15 +482,28 @@
       const futureIndex = sortedData.length;
       const totalPointCount = sortedData.length + 1;
       const lastUserMemory = sortedData[sortedData.length - 1];
+      const memoryAges = sortedData.map(item => Number(item.age) || 0);
+      const minMemoryAge = Math.min(...memoryAges);
+      const maxMemoryAge = Math.max(...memoryAges);
+      const agePadding = Math.max(2, Math.round((maxMemoryAge - minMemoryAge) * 0.08));
+      const maxAxisAge = Math.max(80, maxMemoryAge);
+      const chartMinAge = agePositioning ? Math.max(15, minMemoryAge - agePadding) : minMemoryAge;
+      const chartMaxAge = agePositioning ? Math.min(maxAxisAge, Math.max(maxMemoryAge + agePadding, minMemoryAge + 5)) : maxMemoryAge;
+      const ageToX = (age) => {
+        const range = Math.max(1, chartMaxAge - chartMinAge);
+        const normalized = (Number(age) - chartMinAge) / range;
+        return paddingX + (Math.max(0, Math.min(1, normalized)) * chartWidth);
+      };
+      const indexToX = (index) => paddingX + (index * (chartWidth / Math.max(1, totalPointCount - 1)));
+      const getX = (index, item = sortedData[index]) => agePositioning && item ? ageToX(item.age) : indexToX(index);
 
-      const getX = (index) => paddingX + (index * (chartWidth / Math.max(1, totalPointCount - 1)));
       const getY = (satisfaction) => {
         const normalized = (satisfaction + 50) / 100;
         return paddingY + chartHeight - (normalized * chartHeight);
       };
-      const lastUserX = getX(sortedData.length - 1);
+      const lastUserX = getX(sortedData.length - 1, lastUserMemory);
       const lastUserY = getY(lastUserMemory.satisfaction);
-      const futureX = getX(futureIndex);
+      const futureX = agePositioning ? width - paddingX : getX(futureIndex);
       const futureY = Math.max(10, lastUserY - 55);
       const labelWidth = 180;
       const labelHeight = 60;
@@ -499,11 +512,11 @@
 
       const generateSmoothPath = (items) => {
         if (items.length === 0) return '';
-        if (items.length === 1) return `M ${getX(0)},${getY(items[0].satisfaction)}`;
-        let path = `M ${getX(0)},${getY(items[0].satisfaction)}`;
+        if (items.length === 1) return `M ${getX(0, items[0])},${getY(items[0].satisfaction)}`;
+        let path = `M ${getX(0, items[0])},${getY(items[0].satisfaction)}`;
         for (let i = 0; i < items.length - 1; i++) {
-          const x0 = getX(i); const y0 = getY(items[i].satisfaction);
-          const x1 = getX(i + 1); const y1 = getY(items[i + 1].satisfaction);
+          const x0 = getX(i, items[i]); const y0 = getY(items[i].satisfaction);
+          const x1 = getX(i + 1, items[i + 1]); const y1 = getY(items[i + 1].satisfaction);
           const cx0 = x0 + (x1 - x0) * 0.4; const cy0 = y0;
           const cx1 = x1 - (x1 - x0) * 0.4; const cy1 = y1;
           path += ` C ${cx0},${cy0} ${cx1},${cy1} ${x1},${y1}`;
@@ -534,6 +547,11 @@
         return getSatisfactionFromSvgY(svgPoint.y);
       };
       const getAgeFromSvgX = (svgX) => {
+        if (agePositioning) {
+          const boundedX = Math.max(paddingX, Math.min(paddingX + chartWidth, svgX));
+          const normalized = (boundedX - paddingX) / chartWidth;
+          return Math.round(chartMinAge + ((chartMaxAge - chartMinAge) * normalized));
+        }
         if (sortedData.length === 1) return Number(sortedData[0].age);
         const firstX = getX(0);
         const lastX = getX(sortedData.length - 1);
@@ -546,11 +564,22 @@
         const endAge = Number(sortedData[segmentIndex + 1].age);
         return Math.round(startAge + ((endAge - startAge) * ratio));
       };
+      const clampPointAge = (item, age) => {
+        const itemIndex = sortedData.findIndex(d => String(d.id) === String(item.id));
+        const prevAge = itemIndex > 0 ? Number(sortedData[itemIndex - 1].age) : 15;
+        const nextAge = itemIndex >= 0 && itemIndex < sortedData.length - 1 ? Number(sortedData[itemIndex + 1].age) : maxAxisAge;
+        return Math.max(prevAge, Math.min(nextAge, Number(age) || Number(item.age)));
+      };
       const updatePointFromPointer = (event, item) => {
         if (!editable || !onPointChange) return;
         event.preventDefault();
         setLineAddPrompt(null);
-        onPointChange(item.id, getSatisfactionFromPointer(event));
+        const svgPoint = getSvgPointFromPointer(event);
+        if (!svgPoint) return;
+        onPointChange(item.id, {
+          satisfaction: getSatisfactionFromSvgY(svgPoint.y),
+          age: clampPointAge(item, getAgeFromSvgX(svgPoint.x))
+        });
       };
       const startPointDrag = (event, item) => {
         if (!editable || !onPointChange) return;
@@ -622,7 +651,7 @@
               strokeLinecap="round"
             />
             {sortedData.map((d, i) => {
-              const cx = getX(i); const cy = getY(d.satisfaction);
+              const cx = getX(i, d); const cy = getY(d.satisfaction);
               const labelY = clampLabelY(Number(d.satisfaction) >= 0 ? cy + labelGap : cy - labelHeight - labelGap);
               const isDragging = draggingId === d.id;
               return (
@@ -637,15 +666,15 @@
                         fill="transparent"
                         stroke="transparent"
                         pointerEvents="all"
-                        style={{ cursor: 'ns-resize' }}
+                        style={{ cursor: 'move' }}
                         onPointerDown={event => startPointDrag(event, d)}
                         onPointerMove={event => continuePointDrag(event, d)}
                         onPointerUp={endPointDrag}
                         onPointerCancel={endPointDrag}
                         onLostPointerCapture={() => setDraggingId(null)}
                       />
-                      <text x={cx} y={Math.max(18, cy - 14)} fill="#FCD34D" fontSize="14" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                        {Number(d.satisfaction) > 0 ? '+' : ''}{d.satisfaction}
+                      <text x={cx} y={Math.max(18, cy - 14)} fill="#FCD34D" fontSize="13" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                        {d.age}歳 / {Number(d.satisfaction) > 0 ? '+' : ''}{d.satisfaction}
                       </text>
                       {isDragging && (
                         <circle cx={cx} cy={cy} r="17" fill="none" stroke="#FDE68A" strokeWidth="2" strokeDasharray="4 4" pointerEvents="none" />
