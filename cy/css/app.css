@@ -218,14 +218,19 @@
     }
     .ui-frame-letter {
       background:
+        linear-gradient(135deg, rgba(248, 234, 194, 0.22), rgba(224, 190, 123, 0.18)),
+        url('../img/youhishi.jpg') center / cover no-repeat,
         linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
       color: #2d1b10 !important;
       border-color: #8b5a2b !important;
       box-shadow: inset 0 0 26px rgba(90, 48, 18, 0.18), 0 10px 24px rgba(0, 0, 0, 0.24) !important;
     }
-    .ui-frame-black {
-      background: #050505 !important;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.30) !important;
+    .ui-frame-blue {
+      background:
+        linear-gradient(180deg, rgba(34, 77, 156, 0.96), rgba(9, 28, 84, 0.98)) !important;
+      border-color: #dbeafe !important;
+      color: #f8fbff !important;
+      box-shadow: inset 0 0 28px rgba(147, 197, 253, 0.18), 0 10px 24px rgba(0, 0, 0, 0.30) !important;
     }
     .window-box-title {
       border: 1px solid rgba(255, 255, 255, 0.55);
@@ -238,7 +243,7 @@
     }
     .ui-frame-title-transparent,
     .ui-frame-title-soft,
-    .ui-frame-title-black {
+    .ui-frame-title-blue {
       background: rgba(0, 0, 0, 0.76) !important;
     }
     .ui-frame-letter .window-box-content {
@@ -264,9 +269,11 @@
     .ui-frame-soft .rpg-select {
       background: rgba(0, 0, 0, 0.42) !important;
     }
-    .ui-frame-black .rpg-input:not(.parchment-input),
-    .ui-frame-black .rpg-select {
-      background: #050505 !important;
+    .ui-frame-blue .rpg-input:not(.parchment-input),
+    .ui-frame-blue .rpg-select {
+      background: rgba(4, 18, 58, 0.82) !important;
+      border-color: #bfdbfe !important;
+      color: #f8fbff !important;
     }
     .ui-frame-picker {
       background: rgba(0, 0, 0, 0.68);
@@ -279,12 +286,16 @@
     .ui-frame-picker-option:hover {
       transform: translateY(-1px);
     }
-    .ui-swatch-default,
-    .ui-swatch-black {
+    .ui-swatch-default {
       background: #050505;
     }
     .ui-swatch-letter {
-      background: linear-gradient(135deg, #f8eac2, #ddb66f);
+      background:
+        url('../img/youhishi.jpg') center / cover no-repeat,
+        linear-gradient(135deg, #f8eac2, #ddb66f);
+    }
+    .ui-swatch-blue {
+      background: linear-gradient(180deg, #224d9c, #091c54);
     }
     .ui-swatch-transparent {
       background:
@@ -419,14 +430,17 @@
       background: rgba(0, 0, 0, 0.32) !important;
     }
     .theme-cafe .ui-frame-letter {
-      background: linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
+      background:
+        linear-gradient(135deg, rgba(248, 234, 194, 0.22), rgba(224, 190, 123, 0.18)),
+        url('../img/youhishi.jpg') center / cover no-repeat,
+        linear-gradient(135deg, rgba(248, 234, 194, 0.96), rgba(224, 190, 123, 0.94)) !important;
       color: #2d1b10 !important;
       border-color: #8b5a2b !important;
     }
-    .theme-cafe .ui-frame-black {
-      background: #050505 !important;
+    .theme-cafe .ui-frame-blue {
+      background: linear-gradient(180deg, rgba(34, 77, 156, 0.96), rgba(9, 28, 84, 0.98)) !important;
       color: #fdf6e3 !important;
-      border-color: #6b7280 !important;
+      border-color: #dbeafe !important;
     }
     .theme-cafe .ui-frame-title-letter {
       background: rgba(252, 230, 170, 0.96) !important;
@@ -434,7 +448,7 @@
     }
     .theme-cafe .ui-frame-title-transparent,
     .theme-cafe .ui-frame-title-soft,
-    .theme-cafe .ui-frame-title-black {
+    .theme-cafe .ui-frame-title-blue {
       background: rgba(0, 0, 0, 0.76) !important;
       color: #fdf6e3 !important;
     }

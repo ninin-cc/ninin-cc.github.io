@@ -208,11 +208,11 @@
       },
       3: {
         id: 3,
-        label: "黒",
-        description: "文字が一番読みやすい黒い質感",
-        windowClass: "ui-frame-black",
-        titleClass: "ui-frame-title-black",
-        swatchClass: "ui-swatch-black"
+        label: "青",
+        description: "FFのウィンドウのような深い青",
+        windowClass: "ui-frame-blue",
+        titleClass: "ui-frame-title-blue",
+        swatchClass: "ui-swatch-blue"
       }
     };
 
