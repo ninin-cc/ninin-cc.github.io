@@ -32,6 +32,7 @@
       const [canConfirming, setCanConfirming] = useState(false);
       const [canAddOpen, setCanAddOpen] = useState(true);
       const [canReviewing, setCanReviewing] = useState(false);
+      const [journeyPromptMode, setJourneyPromptMode] = useState(false);
       const canTypeGuideRef = useRef('');
 
       const [memories, setMemories] = useLocalStorage('cq_memories', []);
@@ -217,6 +218,7 @@
           setCanConfirming(false);
           setCanAddOpen(true);
           setCanReviewing(false);
+          setJourneyPromptMode(false);
         }
         if (next === 'memory') {
           setMemoryStep(0);
@@ -355,6 +357,7 @@
           }
           setScene('can');
           setCanStep(0);
+          setJourneyPromptMode(true);
           setIsInputPhase(false);
           return;
         }
@@ -421,6 +424,24 @@
         setCanAddOpen(true);
         setCanReviewing(false);
         nextScene('can');
+        setJourneyPromptMode(true);
+      };
+
+      const startMemoryInputFromJourneyPrompt = () => {
+        scrollTop();
+        setShowRestPrompt(false);
+        setMemoryStep(0);
+        const suggestedAges = getSuggestedAges();
+        setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
+        setMemoryEditId(null);
+        setIsInputPhase(true);
+        setScene('memory');
+        setJourneyPromptMode(false);
+      };
+
+      const returnToJourneyPrompt = () => {
+        nextScene('can');
+        setJourneyPromptMode(true);
       };
 
       const handleAddCan = () => {
@@ -1069,7 +1090,7 @@
       const renderCan = () => {
         const pName = player.name || '冒険者';
         const isWeaponMagicStep = canStep === 0;
-        const isJourneyPromptBeforeCan = isWeaponMagicStep && memories.length === 0 && memoryStep === 0 && !canReviewing;
+        const isJourneyPromptBeforeCan = isWeaponMagicStep && journeyPromptMode && !canReviewing;
         const allowedTypes = isWeaponMagicStep ? ['skill', 'magic'] : ['ally'];
         const activeType = allowedTypes.includes(newCan.type) ? newCan.type : allowedTypes[0];
         const visibleCans = cans.filter(c => allowedTypes.includes(c.type));
@@ -1204,7 +1225,7 @@
                       <button
                         onClick={() => {
                           if (isJourneyPromptBeforeCan) {
-                            nextScene('memory');
+                            startMemoryInputFromJourneyPrompt();
                             return;
                           }
                           setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
@@ -1457,7 +1478,7 @@
                     ) : (
                       <>
                         <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                          <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                          <button onClick={returnToJourneyPrompt} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                             <i className="fa-solid fa-arrow-right rotate-180"></i> リフレムの問いに戻る
                           </button>
                           <button onClick={() => { setMemoryEditId(null); setIsInputPhase(true); }} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
@@ -1476,7 +1497,7 @@
                     { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（旅路の記録）にまとめてみよう。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                      <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                      <button onClick={returnToJourneyPrompt} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
                         <i className="fa-solid fa-arrow-right rotate-180"></i> リフレムの問いに戻る
                       </button>
                       <button onClick={() => nextScene('chart')} className="rpg-button text-xl px-8 py-4 animate-pulse flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
