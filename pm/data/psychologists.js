@@ -384,5 +384,453 @@ const PSYCHOLOGIST_BANK = [
       "careerConsultant",
       "industrialCounselor"
     ]
+  },
+  {
+    "id": "adler",
+    "sortKana": "あどらー",
+    "name": "アドラー",
+    "displayName": "A.アドラー",
+    "en": "Alfred Adler",
+    "images": [
+      "2_1adra.png"
+    ],
+    "topic": "個人心理学・共同体感覚",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "annafreud",
+    "sortKana": "あんなふろいと",
+    "name": "アンナ・フロイト",
+    "displayName": "アンナ・フロイト",
+    "en": "Anna Freud",
+    "images": [
+      "2_1anna.png"
+    ],
+    "topic": "防衛機制・児童精神分析",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "beck",
+    "sortKana": "べっく",
+    "name": "ベック",
+    "displayName": "A.T.ベック",
+    "en": "Aaron T. Beck",
+    "images": [
+      "2_2bek.png"
+    ],
+    "topic": "認知療法・自動思考",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "pavlov",
+    "sortKana": "ぱぶろふ",
+    "name": "パブロフ",
+    "displayName": "I.P.パブロフ",
+    "en": "Ivan Pavlov",
+    "images": [
+      "2_2pablov.png"
+    ],
+    "topic": "古典的条件づけ",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "wolpe",
+    "sortKana": "うぉるぴ",
+    "name": "ウォルピ",
+    "displayName": "J.ウォルピ",
+    "en": "Joseph Wolpe",
+    "images": [
+      "2_2wolpi.png"
+    ],
+    "topic": "系統的脱感作・逆制止法",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "jung",
+    "sortKana": "ゆんぐ",
+    "name": "ユング",
+    "displayName": "C.G.ユング",
+    "en": "Carl Gustav Jung",
+    "images": [
+      "2_2yung.png"
+    ],
+    "topic": "分析心理学・集合的無意識",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "skinner",
+    "sortKana": "すきなー",
+    "name": "スキナー",
+    "displayName": "B.F.スキナー",
+    "en": "B. F. Skinner",
+    "images": [
+      "2_3skina.png"
+    ],
+    "topic": "オペラント条件づけ",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "schultz",
+    "sortKana": "しゅるつ",
+    "name": "シュルツ",
+    "displayName": "J.H.シュルツ",
+    "en": "Johannes Heinrich Schultz",
+    "images": [
+      "2_3syuru.png"
+    ],
+    "topic": "自律訓練法",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "wundt",
+    "sortKana": "ゔんと",
+    "name": "ヴント",
+    "displayName": "W.ヴント",
+    "en": "Wilhelm Wundt",
+    "images": [
+      "2_3vunt.png"
+    ],
+    "topic": "実験心理学・近代心理学の父",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "williamson",
+    "sortKana": "うぃりあむそん",
+    "name": "ウィリアムソン",
+    "displayName": "E.G.ウィリアムソン",
+    "en": "E. G. Williamson",
+    "images": [
+      "2_3will.png"
+    ],
+    "topic": "特性因子論・指示的カウンセリング",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "berne",
+    "sortKana": "ばーん",
+    "name": "バーン",
+    "displayName": "E.バーン",
+    "en": "Eric Berne",
+    "images": [
+      "3_1barn.png"
+    ],
+    "topic": "交流分析・ゲーム分析",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "mcgregor",
+    "sortKana": "まぐれがー",
+    "name": "マグレガー",
+    "displayName": "D.マグレガー",
+    "en": "Douglas McGregor",
+    "images": [
+      "3_1macrega-.png"
+    ],
+    "topic": "X理論・Y理論",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "mcclelland",
+    "sortKana": "まくれらんど",
+    "name": "マクレランド",
+    "displayName": "D.C.マクレランド",
+    "en": "David McClelland",
+    "images": [
+      "3_1macrerand.png"
+    ],
+    "topic": "達成動機理論",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "nicholson",
+    "sortKana": "にこるそん",
+    "name": "ニコルソン",
+    "displayName": "N.ニコルソン",
+    "en": "Nigel Nicholson",
+    "images": [
+      "3_1nikolson.png"
+    ],
+    "topic": "トランジションサイクル",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "hilton",
+    "sortKana": "ひるとん",
+    "name": "ヒルトン",
+    "displayName": "T.L.ヒルトン",
+    "en": "T. L. Hilton",
+    "images": [
+      "3_2hilton.png"
+    ],
+    "topic": "意思決定・認知的不協和",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "lewin",
+    "sortKana": "れびん",
+    "name": "レビン",
+    "displayName": "K.レビン",
+    "en": "Kurt Lewin",
+    "images": [
+      "3_2rebin.png"
+    ],
+    "topic": "場の理論・グループダイナミクス",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "levinson",
+    "sortKana": "れびんそん",
+    "name": "レビンソン",
+    "displayName": "D.J.レビンソン",
+    "en": "Daniel J. Levinson",
+    "images": [
+      "3_2rebinson.png"
+    ],
+    "topic": "成人発達・人生の四季",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "tiedeman",
+    "sortKana": "てぃーどまん",
+    "name": "ティードマン＆オハラ",
+    "displayName": "ティードマン＆オハラ",
+    "en": "David V. Tiedeman / Robert P. O'Hara",
+    "images": [
+      "3_2tidman.png"
+    ],
+    "topic": "キャリア意思決定",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "ivey",
+    "sortKana": "あいびい",
+    "name": "アイビィ",
+    "displayName": "A.E.アイビィ",
+    "en": "Allen E. Ivey",
+    "images": [
+      "3_3aivi.png"
+    ],
+    "topic": "マイクロカウンセリング",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "bronfenbrenner",
+    "sortKana": "ぶろんふぇんぶれんなー",
+    "name": "ブロンフェンブレンナー",
+    "displayName": "U.ブロンフェンブレンナー",
+    "en": "Urie Bronfenbrenner",
+    "images": [
+      "3_3bronf.png"
+    ],
+    "topic": "生態学的システム理論",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "havighurst",
+    "sortKana": "はゔぃがーすと",
+    "name": "ハヴィガースト",
+    "displayName": "R.J.ハヴィガースト",
+    "en": "Robert J. Havighurst",
+    "images": [
+      "3_3habi.png"
+    ],
+    "topic": "発達課題",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "mayo_roethlisberger",
+    "sortKana": "めいよーれすりすばーがー",
+    "name": "メイヨー＆レスリスバーガー",
+    "displayName": "メイヨー＆レスリスバーガー",
+    "en": "Elton Mayo / Fritz Roethlisberger",
+    "images": [
+      "3_3hoson.png"
+    ],
+    "topic": "ホーソン研究・人間関係論",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "cochran",
+    "sortKana": "こくらん",
+    "name": "コクラン",
+    "displayName": "L.コクラン",
+    "en": "Larry Cochran",
+    "images": [
+      "4_1kokran.png"
+    ],
+    "topic": "ナラティブ・キャリアカウンセリング",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "csikszentmihalyi",
+    "sortKana": "ちくせんとみはい",
+    "name": "チクセントミハイ",
+    "displayName": "M.チクセントミハイ",
+    "en": "Mihaly Csikszentmihalyi",
+    "images": [
+      "4_1mihai.png"
+    ],
+    "topic": "フロー理論",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "moreno",
+    "sortKana": "もれの",
+    "name": "モレノ",
+    "displayName": "J.L.モレノ",
+    "en": "Jacob L. Moreno",
+    "images": [
+      "4_1moreno.png"
+    ],
+    "topic": "サイコドラマ・ソシオメトリー",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "white",
+    "sortKana": "ほわいと",
+    "name": "ホワイト",
+    "displayName": "M.ホワイト",
+    "en": "Michael White",
+    "images": [
+      "4_1white.png"
+    ],
+    "topic": "ナラティブセラピー",
+    "examTags": [
+      "careerConsultant"
+    ]
+  },
+  {
+    "id": "morita",
+    "sortKana": "もりたしょうま",
+    "name": "森田正馬",
+    "displayName": "森田正馬",
+    "en": "Shoma Morita",
+    "images": [
+      "4_2morita.png"
+    ],
+    "topic": "森田療法",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "thorndike",
+    "sortKana": "そーんだいく",
+    "name": "ソーンダイク",
+    "displayName": "E.L.ソーンダイク",
+    "en": "Edward L. Thorndike",
+    "images": [
+      "4_2sondai.png"
+    ],
+    "topic": "教育測定・試行錯誤学習",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "yoshimoto",
+    "sortKana": "よしもといしん",
+    "name": "吉本伊信",
+    "displayName": "吉本伊信",
+    "en": "Ishin Yoshimoto",
+    "images": [
+      "4_2yoshimoto.png"
+    ],
+    "topic": "内観療法",
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "beers",
+    "sortKana": "びあーず",
+    "name": "ビアーズ",
+    "displayName": "C.W.ビアーズ",
+    "en": "Clifford W. Beers",
+    "images": [
+      "4_3beer.png"
+    ],
+    "topic": "精神衛生運動",
+    "examTags": [
+      "industrialCounselor"
+    ]
+  },
+  {
+    "id": "roe",
+    "sortKana": "ろー",
+    "name": "アン・ロー",
+    "displayName": "A.ロー",
+    "en": "Anne Roe",
+    "images": [
+      "4_3row.png"
+    ],
+    "topic": "早期決定論・親の影響",
+    "examTags": [
+      "careerConsultant"
+    ]
   }
 ];

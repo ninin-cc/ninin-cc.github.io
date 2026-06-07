@@ -1980,5 +1980,1603 @@ const QUESTIONS_CAREER = [
       "answer": "2",
       "explanation": "昇進できると思っていたのにできなかった、など、期待していた出来事が起きなかった転機を「ノンイベント」と呼びます。"
     }
+  },
+  {
+    "id": "counseling-adler-basic",
+    "psychologistId": "adler",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "アドラーが提唱した個人心理学の基本的な考え方として、最も適切なものはどれか。",
+    "options": [
+      "人間の行動は無意識の葛藤によって決定される",
+      "人間の行動には目的があり、全体として統一体である",
+      "環境からの刺激とそれに対する反応の結びつきで説明する",
+      "人間の欲求は5つの階層から構成されていると考える"
+    ],
+    "answer": 1,
+    "image": "2_1adra.png",
+    "name": "A.アドラー",
+    "birthCountry": "🇦🇹",
+    "birthCountryText": "ｵｰｽﾄﾘｱ",
+    "activeCountry": "🇦🇹",
+    "activeCountryText": "ｵｰｽﾄﾘｱ",
+    "lifespan": "1870 - 1937",
+    "explanation": "アドラーの個人心理学は、人間の行動は過去の要因（原因論）ではなく未来の目標（目的論）に向かっているとし、人間を分割できない統一体と捉えます。劣等感と補償、共同体感覚、勇気づけなども重要なキーワードです。",
+    "works": [
+      {
+        "year": 1911,
+        "title": "個人心理学を提唱"
+      },
+      {
+        "year": 1927,
+        "title": "『人間知の心理学』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "アドラー心理学において、個人が社会や他者と結びついているという感覚や、他者に貢献しようとする態度を指す重要な概念はどれか。",
+      "options": [
+        "1. 集合的無意識",
+        "2. 共同体感覚",
+        "3. 自己一致",
+        "4. 自我同一性"
+      ],
+      "answer": "2",
+      "explanation": "アドラーは「共同体感覚」を精神的な健康の指標とし、他者への関心や貢献感を重視しました。"
+    }
+  },
+  {
+    "id": "psychoanalysis-annafreud-defense",
+    "psychologistId": "annafreud",
+    "categoryIds": [
+      "psychoanalysis"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "自我が不安から身を守るために無意識的に用いる心理的メカニズムである「防衛機制」を体系化した人物は誰か。",
+    "options": [
+      "アンナ・フロイト",
+      "メラニー・クライン",
+      "カレン・ホーナイ",
+      "マーガレット・マーラー"
+    ],
+    "answer": 0,
+    "image": "2_1anna.png",
+    "name": "アンナ・フロイト",
+    "birthCountry": "🇦🇹",
+    "birthCountryText": "ｵｰｽﾄﾘｱ",
+    "activeCountry": "🇬🇧",
+    "activeCountryText": "ｲｷﾞﾘｽ",
+    "lifespan": "1895 - 1982",
+    "explanation": "アンナ・フロイトはジークムント・フロイトの娘であり、父が提唱した「防衛機制」の概念を整理・体系化しました。防衛機制には、抑圧、投影、合理化、反動形成、昇華などがあります。",
+    "works": [
+      {
+        "year": 1936,
+        "title": "『自我と防衛機制』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "防衛機制のうち、自分の受け入れがたい感情や欲求を、他者が持っているかのように感じる働きを何と呼ぶか。",
+      "options": [
+        "1. 抑圧",
+        "2. 投影",
+        "3. 昇華",
+        "4. 退行"
+      ],
+      "answer": "2",
+      "explanation": "自分が相手を嫌っているのに「相手が自分を嫌っている」と感じるようなメカニズムを「投影」と呼びます。"
+    }
+  },
+  {
+    "id": "psychoanalysis-freud-structure",
+    "psychologistId": "freud",
+    "categoryIds": [
+      "psychoanalysis"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "フロイトが提唱した心の構造論において、現実原則に従い、本能的欲求と道徳的規範の間を調整する働きを持つものはどれか。",
+    "options": [
+      "イド（エス）",
+      "超自我（スーパーエゴ）",
+      "自我（エゴ）",
+      "無意識"
+    ],
+    "answer": 2,
+    "image": "s_froit.png",
+    "name": "フロイト",
+    "birthCountry": "🇨🇿",
+    "birthCountryText": "ﾁｪｺ",
+    "activeCountry": "🇦🇹",
+    "activeCountryText": "ｵｰｽﾄﾘｱ",
+    "lifespan": "1856 - 1939",
+    "explanation": "フロイトは心を機能的に3つに分類しました。イドは快楽原則に従う本能的欲求、超自我は道徳的・良心的な規範であり、自我（エゴ）は現実原則に従いこれらを調整する役割を持ちます。",
+    "works": [
+      {
+        "year": 1900,
+        "title": "『夢判断』刊行"
+      },
+      {
+        "year": 1923,
+        "title": "『自我とエス』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "フロイトが開発した、クライエントに思い浮かんだことを検閲せずにすべて話してもらい、無意識の内容を意識化することを目指す治療技法はどれか。",
+      "options": [
+        "1. エンプティ・チェア技法",
+        "2. 自由連想法",
+        "3. 系統的脱感作法",
+        "4. 論駁（ディスピューティング）"
+      ],
+      "answer": "2",
+      "explanation": "無意識を探求し、抑圧された葛藤を意識化するための代表的な精神分析の技法が「自由連想法」です。"
+    }
+  },
+  {
+    "id": "decision-gelatt-process",
+    "psychologistId": "gelatt",
+    "categoryIds": [
+      "career",
+      "decision"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ジェラットの意思決定理論において、意思決定を行うプロセスとして提唱された3段階のシステムとして、正しいものはどれか。",
+    "options": [
+      "予期システム、実行システム、修正システム",
+      "予測システム、評価システム、決定システム",
+      "探索システム、確立システム、維持システム",
+      "状況システム、自己システム、支援システム"
+    ],
+    "answer": 1,
+    "image": "2_1jerat.png",
+    "name": "H.B.ジェラット",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1926 - 2021",
+    "explanation": "ジェラットは前期理論の連続的意思決定プロセスにおいて、「予測システム（結果を予測する）」、「評価システム（価値を整理する）」、「決定システム（基準を決める）」の3段階を踏むとしました。",
+    "works": [
+      {
+        "year": 1962,
+        "title": "意思決定の連続的プロセスを提唱"
+      },
+      {
+        "year": 1989,
+        "title": "「積極的不確実性」発表"
+      },
+      {
+        "year": 2003,
+        "title": "『Creative Decision Making: Using Positive Uncertainty』改訂版"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ジェラットが後期に提唱した、不確実な未来に対しても肯定的に認知し、客観的で合理的な戦略と主観的で直感的な戦略を統合して意思決定を行う概念はどれか。",
+      "options": [
+        "1. 積極的不確実性",
+        "2. 計画された偶発性",
+        "3. 認知的不協和の解消",
+        "4. キャリア・アダプタビリティ"
+      ],
+      "answer": "1",
+      "explanation": "社会の不確実さを受け入れ、右脳と左脳の両方を活用する全脳型アプローチを「積極的不確実性」と呼びます。"
+    }
+  },
+  {
+    "id": "career-savickas-adaptability-added",
+    "psychologistId": "savickas",
+    "categoryIds": [
+      "career",
+      "narrative"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "サビカスのキャリア構築理論における「キャリア・アダプタビリティ」を構成する4つの次元（4C）として、正しい組み合わせはどれか。",
+    "options": [
+      "好奇心、持続性、柔軟性、楽観性",
+      "関心、統制、好奇心、自信",
+      "予測、評価、決定、修正",
+      "状況、自己、支援、戦略"
+    ],
+    "answer": 1,
+    "image": "2_1savikas.png",
+    "name": "M.L.サビカス",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1947 - ",
+    "explanation": "サビカスは、変化する環境に適応する力である「キャリア・アダプタビリティ」を、関心（Concern）、統制（Control）、好奇心（Curiosity）、自信（Confidence）の4つのCで構成されるとしました。",
+    "works": [
+      {
+        "year": 2005,
+        "title": "「キャリア構築理論」発表（スーパーの理論を21世紀向けに拡張）"
+      },
+      {
+        "year": 2011,
+        "title": "『キャリア・カウンセリング（Career Counseling）』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "サビカスのキャリア構築理論において、クライエント自身に「人生物語の著者」となってもらうためのナラティヴ・アプローチの技法はどれか。",
+      "options": [
+        "1. キャリア構築インタビュー",
+        "2. エンプティ・チェア技法",
+        "3. 構成的グループ・エンカウンター",
+        "4. フォーカシング"
+      ],
+      "answer": "1",
+      "explanation": "キャリア構築インタビューでは、「ロールモデル」「よく見た雑誌」「お気に入りのストーリー」などを質問し、クライエントのライフテーマを特定する支援を行います。"
+    }
+  },
+  {
+    "id": "cbt-beck-automatic-thoughts",
+    "psychologistId": "beck",
+    "categoryIds": [
+      "cbt",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ベックが創始した認知療法において、特定の状況で瞬間的・無意識的に頭に浮かぶネガティブな思考を何と呼ぶか。",
+    "options": [
+      "イラショナル・ビリーフ",
+      "防衛機制",
+      "自動思考",
+      "認知的不協和"
+    ],
+    "answer": 2,
+    "image": "2_2bek.png",
+    "name": "A.T.ベック",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1921 - 2021",
+    "explanation": "ベックの認知療法は、感情や行動に影響を与える「自動思考（特定の状況で瞬間的に浮かぶ思考）」に焦点を当て、その認知の歪みを客観的に検証し修正していく治療法です。",
+    "works": [
+      {
+        "year": 1967,
+        "title": "『Depression: Clinical, Experimental, and Theoretical Aspects』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "アーロン・ベックの認知療法とアルバート・エリスの論理療法（REBT）は、広義の治療アプローチとしてどちらに分類されるか。",
+      "options": [
+        "1. 精神分析療法",
+        "2. 人間性心理学（来談者中心療法など）",
+        "3. 認知行動療法（CBT）",
+        "4. ゲシュタルト療法"
+      ],
+      "answer": "3",
+      "explanation": "どちらも思考や認知の変容に焦点を当てるアプローチであり、行動療法と統合されて形成された「認知行動療法（CBT）」の枠組みに含まれます。"
+    }
+  },
+  {
+    "id": "cbt-pavlov-conditioning",
+    "psychologistId": "pavlov",
+    "categoryIds": [
+      "cbt"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "パブロフが犬の唾液分泌の実験から見出した、中性刺激と無条件刺激を対提示することで条件反応が形成される学習メカニズムを何と呼ぶか。",
+    "options": [
+      "オペラント条件づけ",
+      "古典的条件づけ（レスポンデント条件づけ）",
+      "社会的学習理論",
+      "観察学習（モデリング）"
+    ],
+    "answer": 1,
+    "image": "2_2pablov.png",
+    "name": "I.P.パブロフ",
+    "birthCountry": "🇷🇺",
+    "birthCountryText": "ﾛｼｱ",
+    "activeCountry": "🇷🇺",
+    "activeCountryText": "ﾛｼｱ",
+    "lifespan": "1849 - 1936",
+    "explanation": "パブロフは、ベルの音（中性刺激）と餌（無条件刺激）を結びつけることで、音だけで唾液が出るようになる「古典的条件づけ（レスポンデント条件づけ）」を提唱しました。これは行動療法の基礎理論の1つです。",
+    "works": [
+      {
+        "year": 1904,
+        "title": "ノーベル生理学・医学賞受賞"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "パブロフの古典的条件づけを基礎理論として応用し、不安や恐怖を段階的に軽減する「系統的脱感作法」を考案した人物は誰か。",
+      "options": [
+        "1. ウォルピ",
+        "2. スキナー",
+        "3. バンデューラ",
+        "4. ベック"
+      ],
+      "answer": "1",
+      "explanation": "ウォルピは古典的条件づけの「逆条件づけ」の原理を応用し、リラクセーションと不安を対提示する系統的脱感作法を開発しました。"
+    }
+  },
+  {
+    "id": "cbt-wolpe-desensitization",
+    "psychologistId": "wolpe",
+    "categoryIds": [
+      "cbt",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ウォルピが考案した行動療法の代表的技法であり、リラクセーション訓練と不安階層表を用いて、不安や恐怖を段階的に軽減していく方法はどれか。",
+    "options": [
+      "トークンエコノミー法",
+      "系統的脱感作法",
+      "エンプティ・チェア技法",
+      "自由連想法"
+    ],
+    "answer": 1,
+    "image": "2_2wolpi.png",
+    "name": "J.ウォルピ",
+    "birthCountry": "🇿🇦",
+    "birthCountryText": "南ｱﾌﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1915 - 1997",
+    "explanation": "ウォルピの系統的脱感作法は、パブロフの古典的条件づけ（逆制止）を応用し、不安を感じる場面を弱い順にイメージさせながらリラックス状態を保たせることで、不安を段階的に解消する技法です。",
+    "works": [
+      {
+        "year": 1958,
+        "title": "『Psychotherapy by Reciprocal Inhibition』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ウォルピの系統的脱感作法の基盤となっている、心理学の学習理論の原理として最も適切なものはどれか。",
+      "options": [
+        "1. 古典的条件づけ",
+        "2. オペラント条件づけ",
+        "3. 社会的学習理論",
+        "4. 洞察学習"
+      ],
+      "answer": "1",
+      "explanation": "系統的脱感作法は、刺激と反応の結びつきである「古典的条件づけ（レスポンデント条件づけ）」の逆条件づけの原理を用いています。"
+    }
+  },
+  {
+    "id": "psychoanalysis-jung-unconscious",
+    "psychologistId": "jung",
+    "categoryIds": [
+      "psychoanalysis"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ユングの分析心理学において、人類の歴史を通じて形成された普遍的で先天的な無意識の領域であり、「元型」が存在する層を何と呼ぶか。",
+    "options": [
+      "前意識",
+      "個人的無意識",
+      "集合的無意識",
+      "超自我"
+    ],
+    "answer": 2,
+    "image": "2_2yung.png",
+    "name": "C.G.ユング",
+    "birthCountry": "🇨🇭",
+    "birthCountryText": "ｽｲｽ",
+    "activeCountry": "🇨🇭",
+    "activeCountryText": "ｽｲｽ",
+    "lifespan": "1875 - 1961",
+    "explanation": "ユングは無意識を、個人の経験に基づく「個人的無意識」と、人類が共有する普遍的な「集合的無意識」に分けました。集合的無意識にはペルソナやシャドウなどの元型（アーキタイプ）が存在します。",
+    "works": [
+      {
+        "year": 1921,
+        "title": "『心理学的類型』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ユングが提唱した、一生を1日の太陽の運行になぞらえ、人生の転換期として位置づけた「人生の正午」に該当する年代は概ねどれか。",
+      "options": [
+        "1. 20歳",
+        "2. 40歳",
+        "3. 60歳",
+        "4. 80歳"
+      ],
+      "answer": "2",
+      "explanation": "ユングは40歳頃を「人生の正午」と呼び、価値観の転換や自己の再統合（個性化のプロセス）が求められる重要な時期であるとしました。"
+    }
+  },
+  {
+    "id": "cbt-skinner-operant",
+    "psychologistId": "skinner",
+    "categoryIds": [
+      "cbt"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "スキナーが提唱した、行動の結果（報酬や罰）によって、その後の自発的な行動の頻度が変化するという学習の原理を何と呼ぶか。",
+    "options": [
+      "オペラント条件づけ",
+      "古典的条件づけ",
+      "観察学習",
+      "認知的不協和"
+    ],
+    "answer": 0,
+    "image": "2_3skina.png",
+    "name": "B.F.スキナー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1904 - 1990",
+    "explanation": "スキナーは、望ましい行動には報酬を与え（正の強化）、望ましくない行動には報酬を与えない（消去）ことで行動を形成していく「オペラント条件づけ」を提唱しました。行動療法の重要な基礎理論です。",
+    "works": [
+      {
+        "year": 1938,
+        "title": "『The Behavior of Organisms』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "オペラント条件づけの原理を応用し、望ましい行動をとった際に代用貨幣を与え、それが一定数貯まると実際の報酬と交換できる行動療法の技法はどれか。",
+      "options": [
+        "1. 系統的脱感作法",
+        "2. モデリング",
+        "3. トークンエコノミー法",
+        "4. アサーション・トレーニング"
+      ],
+      "answer": "3",
+      "explanation": "トークンエコノミー法は、オペラント条件づけの「正の強化」を利用して、集団場面などで望ましい行動を定着させるのに適した技法です。"
+    }
+  },
+  {
+    "id": "counseling-schultz-autogenic",
+    "psychologistId": "schultz",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "シュルツが提唱した、自己暗示を用いて心身の緊張を解きほぐし、ストレス緩和や心身症の治療に効果があるとされるリラクセーション法はどれか。",
+    "options": [
+      "漸進的筋弛緩法",
+      "自律訓練法",
+      "系統的脱感作法",
+      "フォーカシング"
+    ],
+    "answer": 1,
+    "image": "2_3syuru.png",
+    "name": "J.H.シュルツ",
+    "birthCountry": "🇩🇪",
+    "birthCountryText": "ﾄﾞｲﾂ",
+    "activeCountry": "🇩🇪",
+    "activeCountryText": "ﾄﾞｲﾂ",
+    "lifespan": "1884 - 1970",
+    "explanation": "シュルツの自律訓練法は、「気持ちが落ち着いている」「手足が重い・温かい」などの公式を用いた自己暗示（自己催眠法）により、自律神経のバランスを整え、心身のリラックスを図る技法です。",
+    "works": [
+      {
+        "year": 1932,
+        "title": "自律訓練法を体系化"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "シュルツが提唱した自律訓練法のベースとなっている考え方として最も適切なものはどれか。",
+      "options": [
+        "1. 自己催眠法",
+        "2. 筋肉の緊張と弛緩の繰り返し",
+        "3. 言葉にならない身体感覚への気づき",
+        "4. 無意識の葛藤の意識化"
+      ],
+      "answer": "1",
+      "explanation": "自律訓練法は自己催眠状態を意図的に作り出すことでリラクセーション効果を得る方法です。筋肉の緊張・弛緩はジェイコブソンの漸進的筋弛緩法です。"
+    }
+  },
+  {
+    "id": "other-wundt-experimental",
+    "psychologistId": "wundt",
+    "categoryIds": [
+      "other"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "1879年にライプツィヒ大学に世界初の心理学実験室を設立し、「実験心理学の父」と呼ばれ、意識の構造を内観法を用いて研究した人物は誰か。",
+    "options": [
+      "ヴント",
+      "ワトソン",
+      "ジェームズ",
+      "エビングハウス"
+    ],
+    "answer": 0,
+    "image": "2_3vunt.png",
+    "name": "W.ヴント",
+    "birthCountry": "🇩🇪",
+    "birthCountryText": "ﾄﾞｲﾂ",
+    "activeCountry": "🇩🇪",
+    "activeCountryText": "ﾄﾞｲﾂ",
+    "lifespan": "1832 - 1920",
+    "explanation": "ヴントは心理学を哲学から独立させ、科学的・実験的な学問として確立した近代心理学の創始者です。被験者が自身の意識的経験を報告する「内観法（自己観察法）」を用い、意識を要素に分解して研究しました。",
+    "works": [
+      {
+        "year": 1879,
+        "title": "ライプチヒ大学に心理学実験室を設立"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ヴントがライプツィヒ大学に心理学実験室を設立したことで確立された、心理学の分野はどれか。",
+      "options": [
+        "1. 発達心理学",
+        "2. 実験心理学",
+        "3. 社会心理学",
+        "4. 人間性心理学"
+      ],
+      "answer": "2",
+      "explanation": "ヴントの実験室設立により、心理学は実証的・科学的な「実験心理学」として独立した学問分野となりました。"
+    }
+  },
+  {
+    "id": "trait-williamson-6steps",
+    "psychologistId": "williamson",
+    "categoryIds": [
+      "trait",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "パーソンズの特性因子理論を発展させ、学生相談の基本概念として「分析・総合・診断・予後・カウンセリング・追指導」の6段階のプロセスを提唱した人物は誰か。",
+    "options": [
+      "ホランド",
+      "プレディガー",
+      "ウィリアムソン",
+      "スーパー"
+    ],
+    "answer": 2,
+    "image": "2_3will.png",
+    "name": "E.G.ウィリアムソン",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1900 - 1979",
+    "explanation": "ウィリアムソンは、ミネソタ大学での学生相談の経験から特性因子カウンセリングを体系化し、カウンセラー主導の指示的・診断的アプローチである6段階の支援プロセスを確立しました。",
+    "works": [
+      {
+        "year": 1939,
+        "title": "ミネソタ・アプローチを発展"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ウィリアムソンの特性因子カウンセリングにおいて、職業選択の際に生じる課題（不確かな選択、興味と適性のズレなど）を特定するプロセスはどれか。",
+      "options": [
+        "1. 分析",
+        "2. 総合",
+        "3. 診断",
+        "4. 予後"
+      ],
+      "answer": "3",
+      "explanation": "「診断」の段階で、カウンセラーは収集した情報を基に問題の性質や原因（賢明でない選択など）を専門家として特定します。"
+    }
+  },
+  {
+    "id": "counseling-berne-ego-state",
+    "psychologistId": "berne",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "エリック・バーンが創始した交流分析において、人間の自我状態を3つに分類したモデルとして、正しいものはどれか。",
+    "options": [
+      "イド、自我、超自我",
+      "P（親）、A（成人）、C（子ども）",
+      "現実的、研究的、社会的",
+      "内向型、外向型、両向型"
+    ],
+    "answer": 1,
+    "image": "3_1barn.png",
+    "name": "E.バーン",
+    "birthCountry": "🇨🇦",
+    "birthCountryText": "ｶﾅﾀﾞ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1910 - 1970",
+    "explanation": "バーンの交流分析では、自我状態をParent（親の自我状態）、Adult（成人の自我状態）、Child（子どもの自我状態）の3つ（P・A・C）に分類し、人間関係のコミュニケーション構造を分析します。",
+    "works": [
+      {
+        "year": 1964,
+        "title": "『Games People Play』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "交流分析において、表面的には普通のやり取りに見えるが、最終的に双方が不快な感情を抱く結果で終わる繰り返されるコミュニケーションパターンを何と呼ぶか。",
+      "options": [
+        "1. ストローク",
+        "2. ゲーム",
+        "3. ライフスクリプト（人生脚本）",
+        "4. エゴグラム"
+      ],
+      "answer": "2",
+      "explanation": "「はい、でも…」など、不快な感情（ラケット感情）で終わるこじれたやり取りのパターンを「ゲーム」と呼びます。"
+    }
+  },
+  {
+    "id": "motivation-mcgregor-xy",
+    "psychologistId": "mcgregor",
+    "categoryIds": [
+      "motivation"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "マクレガーが提唱した、人間は怠惰で強制されないと働かないとする「X理論」と、条件次第で自ら進んで働き責任を引き受けるとする「Y理論」の対数概念を何と呼ぶか。",
+    "options": [
+      "X理論・Y理論",
+      "二要因理論",
+      "達成動機理論",
+      "ERG理論"
+    ],
+    "answer": 0,
+    "image": "3_1macrega-.png",
+    "name": "D.マグレガー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1906 - 1964",
+    "explanation": "マクレガーは、伝統的な管理手法の前提である「X理論（人間は生来怠け者）」に対し、自己実現欲求に基づく「Y理論（人間は条件次第で進んで働く）」を提唱し、自律的な動機づけの重要性を説きました。",
+    "works": [
+      {
+        "year": 1960,
+        "title": "『The Human Side of Enterprise』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "マクレガーのX理論・Y理論において、Y理論に基づいた従業員のマネジメント手法として最も適切なものはどれか。",
+      "options": [
+        "1. アメとムチによる信賞必罰",
+        "2. 厳格な規則と監視による統制",
+        "3. 権限委譲と目標管理による自己統制",
+        "4. 細かいマニュアルによる作業の標準化"
+      ],
+      "answer": "3",
+      "explanation": "Y理論では、従業員の自主性や自己実現の欲求を信頼し、権限を委譲して目標を与え、自律的に取り組ませるマネジメントが有効とされます。"
+    }
+  },
+  {
+    "id": "motivation-mcclelland-achievement",
+    "psychologistId": "mcclelland",
+    "categoryIds": [
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "マクレランドが提唱した動機づけ理論において、職場における主要な社会的欲求として挙げられた3つの動機（後に回避欲求を追加）に含まれないものはどれか。",
+    "options": [
+      "達成動機（欲求）",
+      "権力動機（欲求）",
+      "親和動機（欲求）",
+      "承認動機（欲求）"
+    ],
+    "answer": 3,
+    "image": "3_1macrerand.png",
+    "name": "D.C.マクレランド",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1917 - 1998",
+    "explanation": "マクレランドは、達成動機理論において人間の動機を「達成欲求」「権力欲求」「親和欲求」の3つに分類しました（のちに「回避欲求」を追加）。強すぎる達成動機は自己実現を阻害することもあると指摘しました。",
+    "works": [
+      {
+        "year": 1961,
+        "title": "『The Achieving Society』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "マクレランドの達成動機理論において、他者との友好的で親密な関係を結び、他者から好かれたいと願う欲求はどれか。",
+      "options": [
+        "1. 達成欲求",
+        "2. 権力欲求",
+        "3. 親和欲求",
+        "4. 回避欲求"
+      ],
+      "answer": "3",
+      "explanation": "親和欲求（親和動機）は、他者との良好な人間関係を維持したいという欲求です。権力欲求は他者をコントロールしたい欲求、達成欲求は困難な課題を成し遂げたい欲求です。"
+    }
+  },
+  {
+    "id": "transition-nicholson-cycle",
+    "psychologistId": "nicholson",
+    "categoryIds": [
+      "transition",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ニコルソンが提唱した、キャリアのトランジション（転機）のプロセスを円環的に捉えた「トランジション・サイクル」の4つの段階として、正しい順序はどれか。",
+    "options": [
+      "準備 → 遭遇 → 適応 → 安定化",
+      "予測 → 評価 → 決定 → 実行",
+      "終焉 → ニュートラル・ゾーン → 開始",
+      "成長 → 探索 → 確立 → 維持"
+    ],
+    "answer": 0,
+    "image": "3_1nikolson.png",
+    "name": "N.ニコルソン",
+    "birthCountry": "🇬🇧",
+    "birthCountryText": "ｲｷﾞﾘｽ",
+    "activeCountry": "🇬🇧",
+    "activeCountryText": "ｲｷﾞﾘｽ",
+    "lifespan": "生没年未確認",
+    "explanation": "ニコルソンは、転機を「準備（Preparation）」「遭遇（Encounter）」「適応（Adjustment）」「安定化（Stabilization）」の4つの段階が螺旋的に上昇していくサイクルモデルとして提唱しました。",
+    "works": [
+      {
+        "year": 1984,
+        "title": "トランジションサイクルを提示"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ニコルソンのトランジション・サイクルにおいて、新しい役割や環境に対して実際に意味づけを行い、変化を受け入れていく段階はどれか。",
+      "options": [
+        "1. 準備",
+        "2. 遭遇",
+        "3. 適応",
+        "4. 安定化"
+      ],
+      "answer": "3",
+      "explanation": "「適応」の段階では、新しい環境において自分自身を変化させたり、環境に働きかけたりして折り合いをつけていきます。"
+    }
+  },
+  {
+    "id": "career-ginzberg-stages",
+    "psychologistId": "ginzberg",
+    "categoryIds": [
+      "career",
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ギンズバーグが提唱した職業選択発達理論において、職業選択のプロセスを構成する3つの発達段階の順序として正しいものはどれか。",
+    "options": [
+      "成長期 → 探索期 → 確立期",
+      "空想期 → 試行期 → 現実期",
+      "準備期 → 遭遇期 → 適応期",
+      "分析 → 総合 → 診断"
+    ],
+    "answer": 1,
+    "image": "3_2ginz.png",
+    "name": "E.ギンズバーグ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1911 - 2002",
+    "explanation": "ギンズバーグは職業選択を長期的発達プロセスとし、「空想期（〜11歳）」「試行期（11〜17歳）」「現実期（17歳〜）」の3段階を提唱しました。初期は「不可逆的で妥協を伴う」としましたが、後に「絶対的に不可逆ではない（最適化のプロセス）」と理論を修正しました。",
+    "works": [
+      {
+        "year": 1951,
+        "title": "『職業選択（Occupational Choice）』刊行（初期理論）"
+      },
+      {
+        "year": 1972,
+        "title": "「再定式化（職業選択は生涯にわたるプロセスである）」発表"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ギンズバーグが理論を修正した際、職業選択のプロセスについて「妥協」という言葉から置き換えた表現はどれか。",
+      "options": [
+        "1. 同一化",
+        "2. 適応",
+        "3. 最適化",
+        "4. 統合"
+      ],
+      "answer": "3",
+      "explanation": "ギンズバーグは、個人の欲求と現実との間での「妥協」で終結するとしていた考えを、後年に自己の希望と現実との間の「最適化（最適の適合を模索するプロセス）」へと修正しました。"
+    }
+  },
+  {
+    "id": "decision-hilton-dissonance",
+    "psychologistId": "hilton",
+    "categoryIds": [
+      "career",
+      "decision"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "個人の自己概念などの「前提」と「外界からの情報」との間に生じた不一致を解消するプロセスが意思決定であると考え、フェスティンガーの認知的不協和理論を応用した理論家は誰か。",
+    "options": [
+      "ジェラット",
+      "ティードマン",
+      "ヒルトン",
+      "クランボルツ"
+    ],
+    "answer": 2,
+    "image": "3_2hilton.png",
+    "name": "T.L.ヒルトン",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "生没年未確認",
+    "explanation": "ヒルトンは、キャリアの意思決定を機械的な回路に例え、自分の中の前提（自己概念や希望）と外界からの情報が食い違う「認知的不協和」が生じた際に、それを解消しようとする過程が意思決定であるとしました。",
+    "works": [
+      {
+        "year": 1962,
+        "title": "認知的不協和を用いた意思決定モデルを提示"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ヒルトンの意思決定モデルにおいて、不協和の解消を説明するために応用された、社会心理学の基礎理論の提唱者は誰か。",
+      "options": [
+        "1. バンデューラ",
+        "2. フェスティンガー",
+        "3. レビン",
+        "4. モレノ"
+      ],
+      "answer": "2",
+      "explanation": "ヒルトンは、L.フェスティンガーが提唱した「認知的不協和理論」をキャリアの意思決定プロセスに応用しました。"
+    }
+  },
+  {
+    "id": "social-lewin-marginal",
+    "psychologistId": "lewin",
+    "categoryIds": [
+      "social",
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "青年期を「子ども」と「大人」のどちらの集団にも完全には属さない不安定な中間的存在として捉え、「周辺人（マージナルマン・境界人）」と呼んだ理論家は誰か。",
+    "options": [
+      "ハヴィガースト",
+      "エリクソン",
+      "レビン",
+      "ブロンフェンブレンナー"
+    ],
+    "answer": 2,
+    "image": "3_2rebin.png",
+    "name": "K.レビン",
+    "birthCountry": "🇩🇪",
+    "birthCountryText": "ﾄﾞｲﾂ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1890 - 1947",
+    "explanation": "クルト・レビンは、児童期と成人期の間でどちらの集団にも完全には属せず、心理的・社会的に不安定な状態にある青年を「周辺人（マージナルマン）」と名付けました。またTグループの提唱者でもあります。",
+    "works": [
+      {
+        "year": 1935,
+        "title": "『A Dynamic Theory of Personality』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "レビンが提唱した、参加者相互の自由なコミュニケーションを通じて自己理解や人間的成長を目指す小集団体験学習の名称はどれか。",
+      "options": [
+        "1. サイコドラマ",
+        "2. Tグループ",
+        "3. エンカウンター・グループ",
+        "4. フォーカシング"
+      ],
+      "answer": "2",
+      "explanation": "レビンはグループ・ダイナミックス（集団力学）の研究から、感受性訓練である「Tグループ」を提唱しました。"
+    }
+  },
+  {
+    "id": "development-levinson-seasons",
+    "psychologistId": "levinson",
+    "categoryIds": [
+      "development",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "成人の発達を「安定期」と「過渡期（移行期）」が交互に現れるプロセスとして捉え、特に40歳から45歳頃に訪れる「人生半ばの過渡期」の重要性を指摘した理論家は誰か。",
+    "options": [
+      "エリクソン",
+      "レビンソン",
+      "スーパー",
+      "シャイン"
+    ],
+    "answer": 1,
+    "image": "3_2rebinson.png",
+    "name": "D.J.レビンソン",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1920 - 1994",
+    "explanation": "レビンソンは「人生の四季理論」を提唱し、生活構造の安定期と各段階の境目にある過渡期を繰り返すとしました。40代前半の「人生半ばの過渡期（ミッドライフ・クライシス）」は自己のキャリアを再評価する重要な時期です。",
+    "works": [
+      {
+        "year": 1978,
+        "title": "『The Seasons of a Man's Life』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "レビンソンが「人生半ばの過渡期」において、解決すべき主要な課題とした『4つの両極性』に含まれないものはどれか。",
+      "options": [
+        "1. 若さと老い",
+        "2. 破壊と創造",
+        "3. 男らしさと女らしさ",
+        "4. 自律と依存"
+      ],
+      "answer": "4",
+      "explanation": "レビンソンは人生半ばの過渡期の課題として「若さと老い」「破壊と創造」「男らしさと女らしさ」「愛着と分離」の4つの両極性の統合を挙げました。自律と依存は含まれません。"
+    }
+  },
+  {
+    "id": "decision-tiedeman-anticipation",
+    "psychologistId": "tiedeman",
+    "categoryIds": [
+      "career",
+      "decision"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ティードマンが提唱したキャリアの意思決定プロセスにおいて、意思決定の過程を大きく2つに分けた場合の正しい組み合わせはどれか。",
+    "options": [
+      "予測と決定",
+      "予期と実行",
+      "準備と適応",
+      "空想と現実"
+    ],
+    "answer": 1,
+    "image": "3_2tidman.png",
+    "name": "ティードマン＆オハラ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "生没年未確認",
+    "explanation": "ティードマン（とオハラ）は、意思決定のプロセスを将来を思い描く「予期の4段階（探索、結晶化、選択、明確化）」と、実際の行動に移す「実行の3段階（導入、改革、統合）」に分けました。",
+    "works": [
+      {
+        "year": 1963,
+        "title": "キャリア意思決定のプロセスを提示"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ティードマンの意思決定プロセスにおいて、「実行」の段階に含まれる3つのステップとして正しいものはどれか。",
+      "options": [
+        "1. 探索、結晶化、選択",
+        "2. 予測、評価、決定",
+        "3. 導入、改革、統合",
+        "4. 状況、自己、支援"
+      ],
+      "answer": "3",
+      "explanation": "実行の段階は、新しい集団に入る「導入」、自己主張する「改革」、集団と自己が妥協する「統合」の3ステップです。探索・結晶化は「予期」の段階です。"
+    }
+  },
+  {
+    "id": "counseling-ivey-microcounseling",
+    "psychologistId": "ivey",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "アイビイが開発した、カウンセリングの技法を細分化し、階層的に整理してトレーニングを行いやすくした手法（モデル）を何と呼ぶか。",
+    "options": [
+      "マイクロカウンセリング",
+      "ヘルピング・モデル",
+      "システマティック・アプローチ",
+      "コーヒーカップ・モデル"
+    ],
+    "answer": 0,
+    "image": "3_3aivi.png",
+    "name": "A.E.アイビィ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1933 - ",
+    "explanation": "アイビイはカウンセリングの基本的な技法を抽出し、それを「かかわり行動」「かかわり技法」「積極技法」といった階層的な三角形のモデル（技法階層表）で示したマイクロカウンセリングを提唱しました。",
+    "works": [
+      {
+        "year": 1968,
+        "title": "マイクロカウンセリングを開発"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "アイビイのマイクロカウンセリングにおいて、全てのカウンセリング技法の基盤となる最も土台のスキルを何と呼ぶか。",
+      "options": [
+        "1. かかわり行動",
+        "2. 感情の反映",
+        "3. 意味の反映",
+        "4. 積極技法"
+      ],
+      "answer": "1",
+      "explanation": "階層表の最下層（土台）には、視線、身体言語、声の調子、言語的追跡といった非言語的・基礎的スキルである「かかわり行動」が位置しています。"
+    }
+  },
+  {
+    "id": "social-bronfenbrenner-ecology",
+    "psychologistId": "bronfenbrenner",
+    "categoryIds": [
+      "social",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "個人の発達に影響を及ぼす環境を「ミクロシステム」「メゾシステム」「エクソシステム」「マクロシステム」の4つの次元（多重構造）に分類した「相互連結の原則」の提唱者は誰か。",
+    "options": [
+      "ハンセン",
+      "ブロンフェンブレンナー",
+      "クランボルツ",
+      "サビカス"
+    ],
+    "answer": 1,
+    "image": "3_3bronf.png",
+    "name": "U.ブロンフェンブレンナー",
+    "birthCountry": "🇷🇺",
+    "birthCountryText": "ﾛｼｱ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1917 - 2005",
+    "explanation": "ブロンフェンブレンナーは社会生態学的システム理論において、個人の発達は家族や地域、文化といった多重構造の環境との相互作用（相互連結の原則）によって形成されるとしました。",
+    "works": [
+      {
+        "year": 1979,
+        "title": "『The Ecology of Human Development』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ブロンフェンブレンナーの理論において、直接の相互作用を持たないが、個人の発達に間接的に影響を与える環境（例：親の職場など）を指すシステムはどれか。",
+      "options": [
+        "1. ミクロシステム",
+        "2. メゾシステム",
+        "3. エクソシステム",
+        "4. マクロシステム"
+      ],
+      "answer": "3",
+      "explanation": "親の職場や地域の教育委員会など、本人が直接属していないが影響を及ぼす環境を「エクソシステム」と呼びます。"
+    }
+  },
+  {
+    "id": "development-havighurst-tasks",
+    "psychologistId": "havighurst",
+    "categoryIds": [
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "人間が健全で幸福な発達を遂げるためには、各発達段階において達成しておくべき社会的な期待や課題があるとし、「発達課題」という概念を体系化した理論家は誰か。",
+    "options": [
+      "ハヴィガースト",
+      "エリクソン",
+      "レビンソン",
+      "スーパー"
+    ],
+    "answer": 0,
+    "image": "3_3habi.png",
+    "name": "R.J.ハヴィガースト",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1900 - 1991",
+    "explanation": "ハヴィガーストは、発達段階を乳幼児期、児童期、青年期、壮年期、中年期、老年期の6段階に分け、それぞれの時期に達成が求められる「発達課題」を提示しました。",
+    "works": [
+      {
+        "year": 1948,
+        "title": "『Developmental Tasks and Education』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ハヴィガーストの理論において、経済的独立の必要性の理解や、職業の選択・準備を行うことが発達課題とされている段階はどれか。",
+      "options": [
+        "1. 児童期",
+        "2. 青年期",
+        "3. 壮年期（初期成人期）",
+        "4. 中年期"
+      ],
+      "answer": "2",
+      "explanation": "「経済的独立に関する自信の確立」や「職業の選択と準備」は、青年期の発達課題として挙げられています。"
+    }
+  },
+  {
+    "id": "social-mayo-hawthorne",
+    "psychologistId": "mayo_roethlisberger",
+    "categoryIds": [
+      "social"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "メイヨーやレスリスバーガーらがホーソン工場で行った実験により、労働者の生産性に最も影響を与える要因として見出されたものはどれか。",
+    "options": [
+      "作業環境の照明の明るさ",
+      "賃金や労働時間などの労働条件",
+      "職場内で自然発生したインフォーマルな人間関係",
+      "明確に規定された作業手順とマニュアル"
+    ],
+    "answer": 2,
+    "image": "3_3hoson.png",
+    "name": "メイヨー＆レスリスバーガー",
+    "birthCountry": "🇦🇺",
+    "birthCountryText": "ｵｰｽﾄﾗﾘｱ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "生没年未確認",
+    "explanation": "ホーソン実験の結果、労働者の生産性は物理的な作業環境（照明など）や労働条件よりも、職場内の自然発生的な人間関係（インフォーマル・グループ）や労働者の感情・モラールに強く影響されることが分かりました。",
+    "works": [
+      {
+        "year": 1933,
+        "title": "ホーソン研究に基づく人間関係論を発展"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ホーソン実験の結論から発展した、組織における人間的な感情や社会的な結びつきを重視する管理論の名称はどれか。",
+      "options": [
+        "1. 科学的管理法",
+        "2. 人間関係論",
+        "3. 目標管理制度",
+        "4. 特性因子論"
+      ],
+      "answer": "2",
+      "explanation": "ホーソン実験は、テイラーの科学的管理法に対する批判的知見を提供し、「人間関係論」の基礎を築きました。"
+    }
+  },
+  {
+    "id": "narrative-cochran-meaning",
+    "psychologistId": "cochran",
+    "categoryIds": [
+      "narrative",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "1990年代にキャリア分野にナラティヴ・アプローチを導入した先駆者の一人とされ、語り手自身が紡ぐ物語（ストーリー）による人生の意味づけを重視した理論家は誰か。",
+    "options": [
+      "サビカス",
+      "コクラン",
+      "ハンセン",
+      "ホール"
+    ],
+    "answer": 1,
+    "image": "4_1kokran.png",
+    "name": "L.コクラン",
+    "birthCountry": "🇨🇦",
+    "birthCountryText": "ｶﾅﾀﾞ",
+    "activeCountry": "🇨🇦",
+    "activeCountryText": "ｶﾅﾀﾞ",
+    "lifespan": "生没年未確認",
+    "explanation": "ラリー・コクランは、客観的データに基づくマッチングではなく、クライエント自身が語る物語を通じてキャリアの意味を構成していくナラティヴ・アプローチをキャリアカウンセリングにいち早く導入しました。",
+    "works": [
+      {
+        "year": 1997,
+        "title": "『Career Counseling: A Narrative Approach』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "コクランのナラティヴ・アプローチにおいて、物語（ストーリー）を構成する要素として重視されたものはどれか。",
+      "options": [
+        "1. 知能・適性・興味",
+        "2. 予測・評価・決定",
+        "3. 動力・機会・意味・場所・出来事",
+        "4. 本能・自我・超自我"
+      ],
+      "answer": "3",
+      "explanation": "コクランは、語り手自身が紡いでいく物語が「動力、機会、意味、場所、出来事」といった要素を統合する手段になるとしました。"
+    }
+  },
+  {
+    "id": "positive-csikszentmihalyi-flow",
+    "psychologistId": "csikszentmihalyi",
+    "categoryIds": [
+      "positive",
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "チクセントミハイが提唱した、人がある活動に完全に没頭し、時間感覚が消え去るような高度に集中して充実した精神状態（最適経験）を指す概念はどれか。",
+    "options": [
+      "自己効力感",
+      "フロー",
+      "レジリエンス",
+      "ワーク・エンゲイジメント"
+    ],
+    "answer": 1,
+    "image": "4_1mihai.png",
+    "name": "M.チクセントミハイ",
+    "birthCountry": "🇭🇺",
+    "birthCountryText": "ﾊﾝｶﾞﾘｰ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1934 - 2021",
+    "explanation": "チクセントミハイは、個人の能力水準と課題の難易度が釣り合っている際に生じる、活動への完全な没入状態を「フロー（フロー体験）」と呼びました。",
+    "works": [
+      {
+        "year": 1990,
+        "title": "『Flow』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "チクセントミハイのフロー理論において、フロー状態が生じやすい条件として適切なものはどれか。",
+      "options": [
+        "1. 課題の難易度が個人のスキルを大きく上回っている",
+        "2. 課題の難易度が個人のスキルを大きく下回っている",
+        "3. 個人のスキルと課題の難易度が高いレベルで均衡している",
+        "4. 外的な報酬（金銭など）が明確に約束されている"
+      ],
+      "answer": "3",
+      "explanation": "スキルと難易度が高いレベルで均衡している時にフローが生じやすく、難しすぎると「不安」、簡単すぎると「退屈」を感じるとされます。"
+    }
+  },
+  {
+    "id": "counseling-moreno-psychodrama",
+    "psychologistId": "moreno",
+    "categoryIds": [
+      "counseling",
+      "social"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "モレノが創案した、集団の中で即興劇（ロールプレイ）などのアクションを媒体にして自己理解や自己洞察をもたらすグループ心理療法を何と呼ぶか。",
+    "options": [
+      "エンカウンター・グループ",
+      "Tグループ",
+      "サイコドラマ（心理劇）",
+      "フォーカシング"
+    ],
+    "answer": 2,
+    "image": "4_1moreno.png",
+    "name": "J.L.モレノ",
+    "birthCountry": "🇷🇴",
+    "birthCountryText": "ﾙｰﾏﾆｱ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1889 - 1974",
+    "explanation": "モレノは、非言語的なアクションや演劇の手法を用いて、クライエントの自発性や創造性を引き出しカタルシス（浄化）をもたらす「サイコドラマ（心理劇）」を創始しました。またソシオメトリーの提唱者でもあります。",
+    "works": [
+      {
+        "year": 1934,
+        "title": "『Who Shall Survive?』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "モレノが提唱した、小集団内のメンバー間の好悪の感情や結びつきを客観的に測定・図示する手法はどれか。",
+      "options": [
+        "1. ソシオメトリー",
+        "2. エゴグラム",
+        "3. 職業カードソート",
+        "4. インバスケット法"
+      ],
+      "answer": "1",
+      "explanation": "集団内の人間関係の構造を測定する手法を「ソシオメトリー（ソシオグラム）」と呼びます。"
+    }
+  },
+  {
+    "id": "counseling-white-narrative",
+    "psychologistId": "white",
+    "categoryIds": [
+      "narrative",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ホワイト（およびエプストン）が創始したナラティヴ・セラピーにおいて、問題は人の中にあるのではなく人と問題は別であると考え、問題を客観視する代表的な技法を何と呼ぶか。",
+    "options": [
+      "外在化",
+      "脱感作",
+      "論駁",
+      "エンプティ・チェア"
+    ],
+    "answer": 0,
+    "image": "4_1white.png",
+    "name": "M.ホワイト",
+    "birthCountry": "🇦🇺",
+    "birthCountryText": "ｵｰｽﾄﾗﾘｱ",
+    "activeCountry": "🇦🇺",
+    "activeCountryText": "ｵｰｽﾄﾗﾘｱ",
+    "lifespan": "1948 - 2008",
+    "explanation": "ホワイトらが提唱したナラティヴ・セラピーでは、問題を個人の内面の欠陥とみなすのではなく、問題そのものを切り離して名付ける「外在化」の技法を用い、新たな物語（再著述）を紡ぐことを支援します。",
+    "works": [
+      {
+        "year": 1990,
+        "title": "『Narrative Means to Therapeutic Ends』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ナラティヴ・セラピーにおいて、クライエントを支配しているネガティブなドミナント・ストーリーから抜け出すために、問題の影響が及んでいなかった例外的な出来事を探す質問を何と呼ぶか。",
+      "options": [
+        "1. ミラクル・クエスチョン",
+        "2. スケーリング・クエスチョン",
+        "3. ユニークな結果（例外）の探求",
+        "4. 開かれた質問"
+      ],
+      "answer": "3",
+      "explanation": "ドミナント・ストーリーに反する「ユニークな結果（例外）」に焦点を当てることで、オルタナティブ・ストーリー（新たな物語）の構築を促します。"
+    }
+  },
+  {
+    "id": "counseling-morita-therapy",
+    "psychologistId": "morita",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "森田正馬が創始した日本独自の心理療法（森田療法）において、不安や恐怖を排除しようとするのではなく、自然なものとしてそのまま受け入れる態度を表すキーワードはどれか。",
+    "options": [
+      "自己一致",
+      "あるがまま",
+      "積極的不確実性",
+      "今、ここ"
+    ],
+    "answer": 1,
+    "image": "4_2morita.png",
+    "name": "森田正馬",
+    "birthCountry": "🇯🇵",
+    "birthCountryText": "日本",
+    "activeCountry": "🇯🇵",
+    "activeCountryText": "日本",
+    "lifespan": "1874 - 1938",
+    "explanation": "森田療法は、不安や「とらわれ」を排除しようとせず「あるがまま」に受け入れながら、本来持っている「生の欲望」に目を向けて目的本位に行動していくことを目指す日本発祥の心理療法です。",
+    "works": [
+      {
+        "year": 1920,
+        "title": "森田療法を創始"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "森田療法の入院治療プロセスにおいて、第一期に行われる、外部との接触を絶って布団に横たわり続ける段階を何と呼ぶか。",
+      "options": [
+        "1. 箱庭療法",
+        "2. 絶対臥辱（ぜったいがじょく）",
+        "3. 系統的脱感作",
+        "4. 身調べ"
+      ],
+      "answer": "2",
+      "explanation": "外界からの刺激を遮断し、不安が自然に変化していくのを体験させる期間を「絶対臥辱」と呼びます。"
+    }
+  },
+  {
+    "id": "other-thorndike-measurement",
+    "psychologistId": "thorndike",
+    "categoryIds": [
+      "other",
+      "career"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "産業カウンセリングの3つの源流の一つとされる「教育測定運動」を推進し、個人の能力や適性を客観的・科学的に測定することに貢献した人物は誰か。",
+    "options": [
+      "パーソンズ",
+      "ビアーズ",
+      "ソーンダイク",
+      "クレッチマー"
+    ],
+    "answer": 2,
+    "image": "4_2sondai.png",
+    "name": "E.L.ソーンダイク",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1874 - 1949",
+    "explanation": "ソーンダイクらの教育測定運動は、パーソンズの職業指導運動、ビアーズの精神衛生運動と並び、産業カウンセリングの3つの源流の1つとされています。心理アセスメントの発展に寄与しました。",
+    "works": [
+      {
+        "year": 1910,
+        "title": "教育測定運動に貢献"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "産業カウンセリングの3つの源流として正しい組み合わせはどれか。",
+      "options": [
+        "1. 職業指導運動、教育測定運動、精神衛生運動",
+        "2. 特性因子論、精神分析、行動療法",
+        "3. ホーソン実験、Tグループ、人間関係論",
+        "4. 科学的管理法、動機づけ理論、欲求階層説"
+      ],
+      "answer": "1",
+      "explanation": "産業カウンセリングの発展の歴史的背景として、パーソンズ（職業指導）、ソーンダイク（教育測定）、ビアーズ（精神衛生）の3つの運動が源流とされます。"
+    }
+  },
+  {
+    "id": "counseling-yoshimoto-naikan",
+    "psychologistId": "yoshimoto",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "吉本伊信が浄土真宗の「身調べ」をもとに考案した、特定の他者に対して「してもらったこと」「して返したこと」「迷惑をかけたこと」の3項目を調べる日本独自の心理療法はどれか。",
+    "options": [
+      "森田療法",
+      "内観療法",
+      "現実療法",
+      "箱庭療法"
+    ],
+    "answer": 1,
+    "image": "4_2yoshimoto.png",
+    "name": "吉本伊信",
+    "birthCountry": "🇯🇵",
+    "birthCountryText": "日本",
+    "activeCountry": "🇯🇵",
+    "activeCountryText": "日本",
+    "lifespan": "1916 - 1988",
+    "explanation": "内観療法は、吉本伊信が創始しました。身近な他者（主に母親）に対する自分の行動を、3つの質問（内観三項目）に沿って静かに振り返り、自己中心的な捉え方から他者への感謝や反省へと気づきを促す療法です。",
+    "works": [
+      {
+        "year": 1950,
+        "title": "内観法を体系化"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "内観療法で用いられる3つの質問（内観三項目）に含まれないものはどれか。",
+      "options": [
+        "1. してもらったこと",
+        "2. して返したこと",
+        "3. 迷惑をかけたこと",
+        "4. 許せなかったこと"
+      ],
+      "answer": "4",
+      "explanation": "内観三項目は「してもらったこと」「して返したこと」「迷惑をかけたこと」であり、他者の過ちを追及するような項目（許せなかったこと）は含まれません。"
+    }
+  },
+  {
+    "id": "other-beers-mental-hygiene",
+    "psychologistId": "beers",
+    "categoryIds": [
+      "other",
+      "career"
+    ],
+    "examTags": [
+      "industrialCounselor"
+    ],
+    "text": "自身の精神科病院での入院体験を記した著書『わが魂に出会うまで』を出版し、産業カウンセリングの源流の一つである「精神衛生運動」の契機を作った人物は誰か。",
+    "options": [
+      "パーソンズ",
+      "ソーンダイク",
+      "ビアーズ",
+      "ウィリアムソン"
+    ],
+    "answer": 2,
+    "image": "4_3beer.png",
+    "name": "C.W.ビアーズ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1876 - 1943",
+    "explanation": "クリフォード・ビアーズは、劣悪な精神科病院の実態と自身の回復体験を世に問い、精神障害者の処遇改善やメンタルヘルス予防の重要性を訴える「精神衛生運動」を起こしました。",
+    "works": [
+      {
+        "year": 1908,
+        "title": "『わが魂にあうまで』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ビアーズが提唱した運動を発端とし、現在では職場のメンタルヘルス対策（三次予防）などにも通じる、産業カウンセリングの源流の一つはどれか。",
+      "options": [
+        "1. 精神分析運動",
+        "2. 精神衛生運動",
+        "3. 職業指導運動",
+        "4. 労働組合運動"
+      ],
+      "answer": "2",
+      "explanation": "ビアーズの活動は精神衛生（メンタルハイジーン）運動として広まり、今日のメンタルヘルスケアの基礎となりました。"
+    }
+  },
+  {
+    "id": "career-roe-early-determinism",
+    "psychologistId": "roe",
+    "categoryIds": [
+      "career",
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "アン・ローの早期決定論において、将来の職業選択を方向づける最も重要な要因として提唱されたものはどれか。",
+    "options": [
+      "幼児期の家庭環境と親の養育態度",
+      "思春期における友人関係",
+      "遺伝的なパーソナリティ特性",
+      "予期せぬ偶然の出来事"
+    ],
+    "answer": 0,
+    "image": "4_3row.png",
+    "name": "A.ロー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1904 - 1991",
+    "explanation": "アン・ローの早期決定論は、幼児期の親の養育態度（情緒過多、拒否、受容）がパーソナリティの形成に影響し、それが後の職業選択の方向性を決定づける（人間指向か非人間指向か）と主張しました。マズローの欲求階層説の影響を受けています。",
+    "works": [
+      {
+        "year": 1956,
+        "title": "『The Psychology of Occupations』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "アン・ローの早期決定論が理論的背景として大きな影響を受けた、心理学の理論はどれか。",
+      "options": [
+        "1. マズローの欲求階層説",
+        "2. フロイトの精神分析",
+        "3. スキナーのオペラント条件づけ",
+        "4. ロジャーズの来談者中心療法"
+      ],
+      "answer": "1",
+      "explanation": "アン・ローはマズローの理論に基づき、幼児期に満たされなかった欲求を満たそうとする無意識的な動機が職業選択につながると考えました。"
+    }
   }
 ];
