@@ -1948,7 +1948,7 @@
               <div className="animate-fade-in text-center">
                 {willStep === 0 ? (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんのこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」` }
+                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「おかえりなさい♪\n${pName}さんのこれからのこと、もっと教えてください…！\n…直近の目標として、1年後はどんな風になっていたいですか？」` }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                       <button onClick={() => nextScene('interim')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -3087,7 +3087,7 @@
 
       return (
         <div
-          className={`theme-${activeThemeKey} min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell`}
+          className={`theme-${activeThemeKey} ui-tone-${activeUiFrameTone} min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell`}
           style={{ backgroundImage: themedBackgroundImage, backgroundColor: APP_CONFIG.colors.pageBg, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed', color: APP_CONFIG.colors.baseText }}
         >
           <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
