@@ -277,6 +277,26 @@
       opacity: 0.66;
     }
 
+    .top-footer {
+      padding: 0 16px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.6;
+    }
+
+    .top-footer a {
+      color: var(--teal-dark);
+      font-weight: bold;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(15, 118, 110, 0.28);
+    }
+
+    .top-footer a:active,
+    .top-footer a:hover {
+      border-bottom-color: var(--teal-dark);
+    }
+
     /* =========================================
        ダミーページのスタイル
        ========================================= */
@@ -940,6 +960,11 @@
         </a>
         <p class="note-link-caption">理論家同士のつながりを一枚で見たい方へ</p>
       </div>
+
+      <footer class="top-footer">
+        <div>©2026 ninin consulting＆counseling</div>
+        <a href="../index.html">トップへ</a>
+      </footer>
     </section>
 
     <!-- =========================================
@@ -1075,10 +1100,10 @@
     // カテゴリ定義
     // ==========================================
     const CATEGORIES = [
+      { id: "careerFrequent", title: "キャリコン頻出問題", icon: "🎓", type: "quiz", examTag: "careerConsultant", questionLimit: 10, topGroup: "primary", isActive: true },
+      { id: "industrialFrequent", title: "産業カウンセラー頻出問題", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: false },
       { id: "directoryAiueo", title: "心理学者一覧（aiueo）", icon: "🔎", type: "directory", directoryMode: "aiueo", topGroup: "primary", isActive: true },
       { id: "directoryTheoryTimeline", title: "心理学者一覧（理論別、年代順）", icon: "🗂️", type: "directory", directoryMode: "theoryTimeline", topGroup: "primary", isActive: true },
-      { id: "careerFrequent", title: "キャリコン頻出", icon: "🎓", type: "quiz", examTag: "careerConsultant", questionLimit: 10, topGroup: "primary", isActive: true },
-      { id: "industrialFrequent", title: "産業カウンセラー頻出", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: false },
       { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
       { id: "cbt", title: "認知行動療法", icon: "🧠", type: "quiz", questionBankId: "cbt", topGroup: "accordion", isActive: false },
       { id: "counseling", title: "カウンセリング理論", icon: "🗣️", type: "quiz", questionBankId: "counseling", topGroup: "accordion", isActive: false },
