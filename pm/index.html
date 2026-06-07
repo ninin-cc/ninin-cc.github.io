@@ -661,6 +661,44 @@
       color: var(--ink);
     }
 
+    .question-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .question-action-button {
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .question-action-button:active {
+      transform: scale(0.98);
+      background: var(--paper);
+    }
+
+    .question-action-button.danger {
+      border-color: #fecdd3;
+      color: var(--rose);
+      background: #fff7f8;
+    }
+
+    .question-action-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      background: #f8fafc;
+      color: var(--muted);
+    }
+
     .choice-grid {
       display: flex;
       flex-direction: column;
@@ -1275,6 +1313,10 @@
         <div id="questionArea">
           <div class="question-kicker" id="questionKicker">第1問</div>
           <div class="question-text" id="questionText"></div>
+          <div class="question-action-row">
+            <button type="button" class="question-action-button danger" id="interruptQuizButton">中断して戻る</button>
+            <button type="button" class="question-action-button" id="prevQuestionButton">1問前に戻る</button>
+          </div>
           <div class="choice-grid" id="choices"></div>
         </div>
 
@@ -1360,10 +1402,10 @@
       { id: "choice", title: "職業選択", icon: "💼", type: "quiz", questionBankId: "choice", topGroup: "accordion", isActive: true },
       { id: "transition", title: "転機理論", icon: "🔄", type: "quiz", questionBankId: "transition", topGroup: "accordion", isActive: true },
       { id: "decision", title: "意思決定", icon: "⚖️", type: "quiz", questionBankId: "decision", topGroup: "accordion", isActive: true },
-      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", type: "quiz", questionBankId: "narrative", topGroup: "accordion", isActive: false },
-      { id: "positive", title: "ポジティブ心理学", icon: "✨", type: "quiz", questionBankId: "positive", topGroup: "accordion", isActive: false },
+      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", type: "quiz", questionBankId: "narrative", topGroup: "accordion", isActive: true },
+      { id: "positive", title: "ポジティブ心理学", icon: "✨", type: "quiz", questionBankId: "positive", topGroup: "accordion", isActive: true },
       { id: "trait", title: "特性論/タイプ論", icon: "🧩", type: "quiz", questionBankId: "trait", topGroup: "accordion", isActive: true },
-      { id: "other", title: "その他", icon: "📦", type: "quiz", questionBankId: "other", topGroup: "accordion", isActive: false }
+      { id: "other", title: "その他", icon: "📦", type: "quiz", questionBankId: "other", topGroup: "accordion", isActive: true }
     ];
 
     const EXAM_TAG_LABELS = {
@@ -1443,6 +1485,8 @@
       questionArea: document.getElementById("questionArea"),
       questionKicker: document.getElementById("questionKicker"),
       questionText: document.getElementById("questionText"),
+      interruptQuizButton: document.getElementById("interruptQuizButton"),
+      prevQuestionButton: document.getElementById("prevQuestionButton"),
       choices: document.getElementById("choices"),
       
       feedbackArea: document.getElementById("feedbackArea"),
@@ -1493,6 +1537,18 @@
       if (confirm("テストを中断してTOPに戻りますか？")) {
         showTopPage();
       }
+    }
+
+    function goToPreviousQuestion() {
+      if (state.currentQuestionIndex <= 0 || state.isAnswered) return;
+
+      const previousIndex = state.currentQuestionIndex - 1;
+      state.history = state.history.slice(0, previousIndex);
+      state.score = state.history.filter(item => item.isCorrect).length;
+      state.currentQuestionIndex = previousIndex;
+      saveCurrentReviewLog();
+      loadQuestion();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     // ==========================================
@@ -2163,6 +2219,7 @@
       
       els.questionKicker.textContent = `第 ${state.currentQuestionIndex + 1} 問`;
       els.questionText.textContent = q.text;
+      els.prevQuestionButton.disabled = state.currentQuestionIndex === 0;
       
       els.progressText.textContent = `${state.currentQuestionIndex + 1} / ${state.deck.length}問`;
       els.progressFill.style.width = `${((state.currentQuestionIndex) / state.deck.length) * 100}%`;
@@ -2329,6 +2386,8 @@
 
     els.directorySearch.addEventListener("input", renderDirectory);
     els.directoryFilter.addEventListener("change", renderDirectory);
+    els.interruptQuizButton.addEventListener("click", confirmBackToTop);
+    els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
 
     // ==========================================
     // 初期化：カテゴリ一覧の生成
