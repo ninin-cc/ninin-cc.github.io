@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
@@ -489,7 +489,7 @@
         if (!showCoconalaModal) return null;
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowCoconalaModal(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[92vh] overflow-y-auto border border-slate-200" onClick={e => e.stopPropagation()}>
               <div className="relative p-5 sm:p-6 text-center">
                 <button 
                   onClick={() => setShowCoconalaModal(false)}
@@ -499,13 +499,38 @@
                 </button>
                 
                 <h3 className="font-bold text-[13px] sm:text-[14px] text-slate-800 mb-1 leading-snug pr-4">
-                  ｶｳﾝｾﾗｰ二名在籍のnininが贈る試験対策
+                  ｶｳﾝｾﾗｰ２名在籍のnininが贈る試験対策
                 </h3>
                 <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mb-5">
                   （ｷｬﾘｱｺﾝｻﾙﾀﾝﾄ/産業ｶｳﾝｾﾗｰ受験 両方対応可）
                 </p>
 
                 <div className="space-y-3">
+                  <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" rel="noopener noreferrer" className="block w-full text-left border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group relative overflow-hidden mt-2">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-300"></div>
+                    <div className="flex items-center justify-between gap-3 pl-1">
+                      <div className="flex-1">
+                        <div className="text-[10px] sm:text-[11px] text-amber-700 font-bold mb-0.5 opacity-90">学科試験支援は</div>
+                        <div className="font-bold text-[13px] sm:text-sm text-amber-900 mb-1.5 leading-tight group-hover:text-amber-700">
+                          顔で覚える心理学者マップ
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] text-amber-700 font-medium leading-relaxed">
+                          （クリアファイル）（PDFデータ）<br className="sm:hidden" />どちらもご用意あります。
+                        </p>
+                      </div>
+                      <div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-amber-200/50 rounded-lg flex-none border border-amber-300/50 overflow-hidden shadow-sm"><img src="./img/map.jpg" alt="顔で覚える心理学者マップ" className="w-full h-full object-cover" loading="lazy" /></div>
+                    </div>
+                  </a>
+
+                  <div className="mb-4 rounded-xl border border-sky-200 bg-sky-50/80 p-3 text-left shadow-sm overflow-hidden">
+                  <img src="../pm/img/s_syuro2.png" alt="シュロスバーグの4S" className="float-left mr-3 mb-2 h-24 w-24 sm:h-28 sm:w-28 rounded-lg border border-sky-200 bg-white object-cover shadow-sm" loading="lazy" />
+                  <div className="mb-1 text-[10px] sm:text-[11px] font-black tracking-wide text-sky-700">豆情報：シュロスバーグの4S</div>
+                  <p className="text-[11px] sm:text-[12px] font-bold leading-relaxed text-slate-700">
+                    ロープレでも本当の面談でも、まず「状況（Situation）」を丁寧に聞くことが大切。それがラポールの形成につながります。そして仕事・環境・出来事の語りから、その人の経験や大切にしている価値観「自己（Self）」をキャッチし、受容と伝え返しで場を耕すと面談が深まっていきます。supportやstrategyは15分の面談ではたどり着かなくて大丈夫。
+                  </p>
+                  <div className="clear-both"></div>
+                </div>
+
                   <a href="https://coconala.com/services/4199883" target="_blank" rel="noopener noreferrer" className="block text-left border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex-1">
@@ -517,9 +542,7 @@
                           キャリコン面談の構造的理解｜第31回で支援した8名全員が合格した方法
                         </p>
                       </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-200/50 rounded-lg flex-none flex items-center justify-center text-emerald-600 border border-emerald-300/50 overflow-hidden">
-                        <span className="text-[10px] font-bold">画像</span>
-                      </div>
+                      <div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-emerald-200/50 rounded-lg flex-none border border-emerald-300/50 overflow-hidden shadow-sm"><img src="./img/mode.jpg" alt="あなたの特性別の面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div>
                     </div>
                   </a>
 
@@ -531,32 +554,12 @@
                           <span className="inline-block bg-white text-blue-800 border border-blue-200 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] mt-1">10,000円 / 90分</span>
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-blue-700 font-medium leading-relaxed">
-                          台本作成 ＋ 本番再現 ＋ 構造フィードバック
+                          台本個別作成＋台本お渡し＋本番再現＋構造、理論に基づいたフィードバック
                         </p>
                       </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-200/50 rounded-lg flex-none flex items-center justify-center text-blue-600 border border-blue-300/50 overflow-hidden">
-                        <span className="text-[10px] font-bold">画像</span>
-                      </div>
+                      <div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-blue-200/50 rounded-lg flex-none border border-blue-300/50 overflow-hidden shadow-sm"><img src="./img/daihon.jpg" alt="超構造的ロープレで本番に備えた面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div>
                     </div>
                   </a>
-
-                  <button className="w-full text-left border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group relative overflow-hidden mt-2">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-300"></div>
-                    <div className="flex items-center justify-between gap-3 pl-1">
-                      <div className="flex-1">
-                        <div className="text-[10px] sm:text-[11px] text-amber-700 font-bold mb-0.5 opacity-90">学科試験支援は</div>
-                        <div className="font-bold text-[13px] sm:text-sm text-amber-900 mb-1.5 leading-tight group-hover:text-amber-700">
-                          心理学者マップ！
-                        </div>
-                        <p className="text-[10px] sm:text-[11px] text-amber-700 font-medium leading-relaxed">
-                          （クリアファイル）（PDFデータ）<br className="sm:hidden" />どちらもご用意あります。
-                        </p>
-                      </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-amber-200/50 rounded-lg flex-none flex items-center justify-center text-amber-700 border border-amber-300/50 overflow-hidden">
-                        <span className="text-[10px] font-bold">画像</span>
-                      </div>
-                    </div>
-                  </button>
                 </div>
               </div>
             </div>
@@ -719,8 +722,7 @@
 
                   {/* ▼ TOP画面のココナラポップアップ呼び出しボタン ▼ */}
                   <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-md active:scale-[0.98]">
-                    <span className="text-[11px] sm:text-xs mb-1 opacity-90">【ココナラ】診断結果をもとに</span>
-                    <span className="text-sm md:text-base flex items-center gap-1">実技ロープレ練習をしてみる？</span>
+                    <span className="text-sm md:text-base flex items-center gap-1">支援モード別の実技練習は、こちらも。</span>
                   </button>
                 </div>
 
@@ -761,9 +763,7 @@
                 </div>
 
                 <div className="mt-8 text-center pb-4">
-                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors inline-flex items-center gap-1">
-                    🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
-                  </a>
+                  <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className="text-[11px] sm:text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-2 py-1 shadow-sm"><span>🌈RIESM™について詳しく知る(note)</span> <ExternalLinkIcon /></a>
                   <div className="h-4"></div>
                   <div>
                     <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
@@ -987,9 +987,7 @@
                     </div>
 
                     <div className="text-center pt-2 sm:pt-3 space-y-2">
-                      <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-1 ${t.text}`}>
-                        🌈RIESM™について詳しく知る(note) <ExternalLinkIcon />
-                      </a>
+                      <a href="https://note.com/ninin2025/n/n236a6f29ad63" target="_blank" rel="noopener noreferrer" className={`text-[11px] sm:text-xs font-bold opacity-70 hover:opacity-100 transition-opacity inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-2 py-1 shadow-sm ${t.text}`}><span>🌈RIESM™について詳しく知る(note)</span> <ExternalLinkIcon /></a>
                       <div>
                         <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" className="text-[10px] sm:text-xs text-slate-400 font-medium hover:text-slate-600 transition-colors">
                           © 2026 ninin consulting＆counseling
