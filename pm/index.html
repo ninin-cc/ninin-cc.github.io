@@ -118,6 +118,46 @@
       gap: 8px;
     }
 
+    .category-accordion {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .category-accordion summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      color: var(--teal-dark);
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .category-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .category-accordion summary::after {
+      content: "▼";
+      color: var(--muted);
+      font-size: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .category-accordion[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .category-accordion .category-grid {
+      padding: 0 12px 12px;
+    }
+
     .category-button {
       background: #fff;
       border: 1px solid var(--line);
@@ -148,33 +188,93 @@
       padding: 9px 7px; /* ボーダーが太くなる分の調整 */
     }
 
+    .category-button.disabled-cat {
+      opacity: 0.55;
+      background: #f8fafc;
+      color: var(--muted);
+    }
+
     .cat-icon {
       font-size: 1.2rem;
     }
 
     /* 控えめなnote導線 */
     .note-link-area {
-      padding: 16px 16px 32px;
+      padding: 10px 16px 28px;
       text-align: center;
     }
 
     .note-link {
-      display: inline-block;
+      display: flex;
+      position: relative;
+      width: min(40%, 176px);
+      min-width: 150px;
+      aspect-ratio: 302 / 226;
+      min-height: 0;
+      margin: 0 auto;
+      overflow: hidden;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      color: var(--muted);
-      font-size: 0.8rem;
-      line-height: 1.5;
-      padding: 10px 16px;
-      border: 1px dashed var(--line);
+      color: #0f172a;
+      font-size: 0.72rem;
+      font-weight: bold;
+      line-height: 1.28;
+      padding: 7px 5px;
+      border: 1px solid rgba(15, 118, 110, 0.22);
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.5);
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
       transition: all 0.2s ease;
     }
 
+    .note-link::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("img/map.jpg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.58;
+    }
+
+    .note-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.34);
+    }
+
+    .note-link b {
+      position: relative;
+      z-index: 1;
+      display: block;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95);
+    }
+
+    .note-link b {
+      color: var(--teal-dark);
+      font-size: 0.86rem;
+      line-height: 1.2;
+    }
+
+    .note-link-caption {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
     .note-link:hover, .note-link:active {
-      background: #fff;
       color: var(--teal-dark);
       border-color: var(--teal);
+    }
+
+    .note-link:hover::before,
+    .note-link:active::before {
+      opacity: 0.66;
     }
 
     /* =========================================
@@ -202,6 +302,114 @@
       font-size: 3rem;
       margin-bottom: 16px;
       opacity: 0.5;
+    }
+
+    /* =========================================
+       心理学者一覧ページのスタイル
+       ========================================= */
+    #directoryPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: #fff;
+    }
+
+    .directory-toolbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .directory-toolbar input,
+    .directory-toolbar select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .directory-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .directory-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .person-card {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .person-card img {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .person-info {
+      min-width: 0;
+    }
+
+    .person-name {
+      margin: 0 0 3px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .person-meta,
+    .person-topic {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .person-topic {
+      margin-top: 5px;
+      color: var(--ink);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      border: 1px solid #ccfbf1;
+      font-size: 0.7rem;
+      font-weight: bold;
     }
 
     /* =========================================
@@ -718,13 +926,19 @@
         <div class="category-grid" id="categoryGrid">
           <!-- JSで動的に生成されます -->
         </div>
+        <details class="category-accordion">
+          <summary>その他の分野</summary>
+          <div class="category-grid" id="categoryAccordionGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </details>
       </div>
 
       <div class="note-link-area">
         <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="note-link">
-          理論家同士のつながりを一枚で見たい方へ<br>
-          <b>心理学者マップはこちら</b>
+          <b>心理学者マップ</b>
         </a>
+        <p class="note-link-caption">理論家同士のつながりを一枚で見たい方へ</p>
       </div>
     </section>
 
@@ -746,6 +960,31 @@
         <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
         <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
       </div>
+    </section>
+
+    <!-- =========================================
+         心理学者一覧ページ（五十音順・タグ絞り込み）
+         ========================================= -->
+    <section id="directoryPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="directoryHeaderTitle">心理学者一覧</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="directory-toolbar">
+        <input id="directorySearch" type="search" placeholder="人物名・理論・画像名で検索">
+        <select id="directoryFilter">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリアコンサルタント受験に頻発</option>
+          <option value="industrialCounselor">産業カウンセラー受験に頻発</option>
+        </select>
+        <div class="directory-count" id="directoryCount"></div>
+      </div>
+
+      <div class="directory-list" id="directoryList"></div>
     </section>
 
     <!-- =========================================
@@ -836,27 +1075,42 @@
     // カテゴリ定義
     // ==========================================
     const CATEGORIES = [
-      { id: "career", title: "キャリア理論", icon: "🛤️", isActive: true },
-      { id: "cbt", title: "認知行動療法", icon: "🧠", isActive: false },
-      { id: "counseling", title: "カウンセリング理論", icon: "🗣️", isActive: false },
-      { id: "development", title: "発達心理学", icon: "🌱", isActive: false },
-      { id: "psychoanalysis", title: "精神分析の祖", icon: "🛋️", isActive: false },
-      { id: "social", title: "社会活動に活かす心理学の祖", icon: "🤝", isActive: false },
-      { id: "motivation", title: "動機付け/モチベーション", icon: "🔥", isActive: false },
-      { id: "choice", title: "職業選択", icon: "💼", isActive: false },
-      { id: "transition", title: "転機理論", icon: "🔄", isActive: false },
-      { id: "decision", title: "意思決定", icon: "⚖️", isActive: false },
-      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", isActive: false },
-      { id: "positive", title: "ポジティブ心理学", icon: "✨", isActive: false },
-      { id: "trait", title: "特性論/タイプ論", icon: "🧩", isActive: false },
-      { id: "other", title: "その他", icon: "📦", isActive: false }
+      { id: "directoryAiueo", title: "心理学者一覧（aiueo）", icon: "🔎", type: "directory", directoryMode: "aiueo", topGroup: "primary", isActive: true },
+      { id: "directoryTheoryTimeline", title: "心理学者一覧（理論別、年代順）", icon: "🗂️", type: "directory", directoryMode: "theoryTimeline", topGroup: "primary", isActive: true },
+      { id: "careerFrequent", title: "キャリコン頻出", icon: "🎓", type: "quiz", examTag: "careerConsultant", questionLimit: 10, topGroup: "primary", isActive: true },
+      { id: "industrialFrequent", title: "産業カウンセラー頻出", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: false },
+      { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
+      { id: "cbt", title: "認知行動療法", icon: "🧠", type: "quiz", questionBankId: "cbt", topGroup: "accordion", isActive: false },
+      { id: "counseling", title: "カウンセリング理論", icon: "🗣️", type: "quiz", questionBankId: "counseling", topGroup: "accordion", isActive: false },
+      { id: "development", title: "発達心理学", icon: "🌱", type: "quiz", questionBankId: "development", topGroup: "accordion", isActive: false },
+      { id: "psychoanalysis", title: "精神分析の祖", icon: "🛋️", type: "quiz", questionBankId: "psychoanalysis", topGroup: "accordion", isActive: false },
+      { id: "social", title: "社会活動に活かす心理学の祖", icon: "🤝", type: "quiz", questionBankId: "social", topGroup: "accordion", isActive: false },
+      { id: "motivation", title: "動機付け/モチベーション", icon: "🔥", type: "quiz", questionBankId: "motivation", topGroup: "accordion", isActive: false },
+      { id: "choice", title: "職業選択", icon: "💼", type: "quiz", questionBankId: "choice", topGroup: "accordion", isActive: false },
+      { id: "transition", title: "転機理論", icon: "🔄", type: "quiz", questionBankId: "transition", topGroup: "accordion", isActive: false },
+      { id: "decision", title: "意思決定", icon: "⚖️", type: "quiz", questionBankId: "decision", topGroup: "accordion", isActive: false },
+      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", type: "quiz", questionBankId: "narrative", topGroup: "accordion", isActive: false },
+      { id: "positive", title: "ポジティブ心理学", icon: "✨", type: "quiz", questionBankId: "positive", topGroup: "accordion", isActive: false },
+      { id: "trait", title: "特性論/タイプ論", icon: "🧩", type: "quiz", questionBankId: "trait", topGroup: "accordion", isActive: false },
+      { id: "other", title: "その他", icon: "📦", type: "quiz", questionBankId: "other", topGroup: "accordion", isActive: false }
     ];
+
+    const EXAM_TAG_LABELS = {
+      careerConsultant: "キャリアコンサルタント受験に頻発",
+      industrialCounselor: "産業カウンセラー受験に頻発"
+    };
+
+    const ROOT_IMAGE_FILES = new Set([]);
 
     // ==========================================
     // 問題データ（キャリア理論）
     // ==========================================
     const QUESTIONS_CAREER = [
       {
+        id: "career-hansen-4l",
+        psychologistId: "hansen",
+        categoryIds: ["career"],
+        examTags: ["careerConsultant"],
         text: "キャリアには人生における全ての役割が含まれるとし、愛（Love）、労働（Labor）、余暇（Leisure）と、もう1つの「L」の4つの活動が統合されるべきだと提唱した。もう1つのLはどれか。",
         options: ["生活（Life）", "学習（Learning）", "自由（Liberty）", "指導（Leadership）"],
         answer: 1, 
@@ -885,6 +1139,10 @@
         }
       },
       {
+        id: "career-holland-riasec",
+        psychologistId: "holland",
+        categoryIds: ["career"],
+        examTags: ["careerConsultant"],
         text: "個人の性格的特性と、その個人が満足感を得られる職業・労働環境などの間にどのような関係があるかを分析し、6つの性格コード（RIASEC）を提唱した理論家は誰か。",
         options: ["ホランド", "スーパー", "シャイン", "パーソンズ"],
         answer: 0,
@@ -914,6 +1172,10 @@
         }
       },
       {
+        id: "career-parsons-trait-factor",
+        psychologistId: "parsons",
+        categoryIds: ["career"],
+        examTags: ["careerConsultant"],
         text: "職業指導の創始者と呼ばれ、「賢明な職業選択」には【自己理解】【職業理解】【合理的な推論】の3つのステップが必要であると提唱したのは誰か。",
         options: ["クランボルツ", "ギンズバーグ", "パーソンズ", "ウィリアムソン"],
         answer: 2,
@@ -942,6 +1204,10 @@
         }
       },
       {
+        id: "career-schein-anchor",
+        psychologistId: "schein",
+        categoryIds: ["career"],
+        examTags: ["careerConsultant"],
         text: "個人が自らのキャリアを選択する際に、どうしても犠牲にしたくない、その人にとって最も大切な価値観や欲求を「キャリア・アンカー」と呼び、8つに分類した理論家は誰か。",
         options: ["スーパー", "シャイン", "レビンソン", "ブリッジス"],
         answer: 1,
@@ -971,6 +1237,10 @@
         }
       },
       {
+        id: "career-schlossberg-4s",
+        psychologistId: "schlossberg",
+        categoryIds: ["career", "transition"],
+        examTags: ["careerConsultant"],
         text: "人生の転機（トランジション）を乗り越えるために、「状況（Situation）」「自己（Self）」「支援（Support）」「戦略（Strategies）」の4つのSの点検を提唱したのは誰か。",
         options: ["シュロスバーグ", "サビカス", "ニコルソン", "ハヴィガースト"],
         answer: 0,
@@ -999,6 +1269,10 @@
         }
       },
       {
+        id: "career-krumboltz-happenstance",
+        psychologistId: "krumboltz",
+        categoryIds: ["career"],
+        examTags: ["careerConsultant"],
         text: "「個人のキャリアの8割は予期しない偶然の出来事によって形成される」とし、好奇心や柔軟性などのスキルで偶然を意図的に引き寄せる行動が重要だと説いた理論はどれか。",
         options: ["キャリア構築理論", "計画的偶発性理論", "発達課題理論", "ライフ・キャリア・レインボー"],
         answer: 1,
@@ -1027,6 +1301,10 @@
         }
       },
       {
+        id: "career-super-self-concept",
+        psychologistId: "super",
+        categoryIds: ["career", "development"],
+        examTags: ["careerConsultant"],
         text: "青年期から老年期までのライフステージを「成長期」「探索期」「確立期」「維持期」「解放期（下降期）」の5つに分け、自己概念の実現プロセスとしてキャリアを捉えたのは誰か。",
         options: ["スーパー", "エリクソン", "サビカス", "アドラー"],
         answer: 0,
@@ -1056,6 +1334,10 @@
         }
       },
       {
+        id: "career-savickas-adaptability",
+        psychologistId: "savickas",
+        categoryIds: ["career", "narrative"],
+        examTags: ["careerConsultant"],
         text: "変化の激しい現代において、客観的な適合よりも個人の主観的意味づけを重視し、「キャリア・アダプタビリティ」の重要性を説いた【キャリア構築理論】の提唱者は誰か。",
         options: ["ホランド", "サビカス", "バンデューラ", "ロー"],
         answer: 1,
@@ -1084,6 +1366,10 @@
         }
       },
       {
+        id: "career-bandura-self-efficacy",
+        psychologistId: "bandura",
+        categoryIds: ["career", "social"],
+        examTags: ["careerConsultant"],
         text: "ある行動をうまく遂行できるかという自分の能力への確信を「自己効力感」と呼んだ。自己効力感を高める4つの情報源として間違っているものはどれか。",
         options: ["言語的説得（励まし）", "代理的体験（モデリング）", "遂行行動の達成（成功体験）", "経済的報酬（金銭的インセンティブ）"],
         answer: 3,
@@ -1113,6 +1399,10 @@
         }
       },
       {
+        id: "career-ginzberg-development",
+        psychologistId: "ginzberg",
+        categoryIds: ["career", "choice"],
+        examTags: ["careerConsultant"],
         text: "当初、職業選択の過程は「空想期」「試行期」「現実期」という発達段階を経て進行し「非可逆的である（後戻りできない）」と提唱したが、後に「生涯にわたるプロセスである」と修正した理論家は誰か。",
         options: ["ギンズバーグ", "レビン", "ティードマン", "エインズワース"],
         answer: 0,
@@ -1142,6 +1432,119 @@
       }
     ];
 
+    // ==========================================
+    // 心理学者バンク
+    // 今後、画像一覧・五十音順表示・受験別頻出リストはここを拡張します。
+    // 追加の基本形:
+    // { id, sortKana, name, displayName, en, images, topic, examTags }
+    // ==========================================
+    const PSYCHOLOGIST_BANK = [
+      {
+        id: "bandura",
+        sortKana: "はんでゅーら",
+        name: "バンデューラ",
+        displayName: "A.バンデューラ",
+        en: "Albert Bandura",
+        images: ["a_ban0.png", "a_ban1.png", "a_ban2.png", "a_ban3.png", "a_ban4.png"],
+        topic: "自己効力感・社会的学習理論",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "ginzberg",
+        sortKana: "ぎんずばーぐ",
+        name: "ギンズバーグ",
+        displayName: "E.ギンズバーグ",
+        en: "Eli Ginzberg",
+        images: ["3_2ginz.png"],
+        topic: "職業選択の発達理論",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "krumboltz",
+        sortKana: "くらんぼるつ",
+        name: "クランボルツ",
+        displayName: "J.D.クランボルツ",
+        en: "John D. Krumboltz",
+        images: ["s_cram1.png", "s_cram2.png"],
+        topic: "計画的偶発性理論",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "savickas",
+        sortKana: "さびかす",
+        name: "サビカス",
+        displayName: "M.L.サビカス",
+        en: "Mark L. Savickas",
+        images: ["2_1savikas.png"],
+        topic: "キャリア構築理論・ナラティブアプローチ",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "schein",
+        sortKana: "しゃいん",
+        name: "シャイン",
+        displayName: "E.H.シャイン",
+        en: "Edgar H. Schein",
+        images: ["s_shaine.png"],
+        topic: "キャリア・アンカー",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "schlossberg",
+        sortKana: "しゅろすばーぐ",
+        name: "シュロスバーグ",
+        displayName: "N.K.シュロスバーグ",
+        en: "Nancy K. Schlossberg",
+        images: ["s_syuro.png", "s_syuro2.png"],
+        topic: "トランジション理論・4S",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "super",
+        sortKana: "すーぱー",
+        name: "スーパー",
+        displayName: "D.E.スーパー",
+        en: "Donald E. Super",
+        images: ["s_super.png"],
+        topic: "キャリア発達理論・ライフキャリアレインボー",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "hansen",
+        sortKana: "はんせん",
+        name: "ハンセン",
+        displayName: "L.S.ハンセン",
+        en: "L. Sunny Hansen",
+        images: ["s_hansen.png"],
+        topic: "統合的人生設計（ILP）",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "parsons",
+        sortKana: "ぱーそんず",
+        name: "パーソンズ",
+        displayName: "F.パーソンズ",
+        en: "Frank Parsons",
+        images: ["s_parsons.png"],
+        topic: "特性因子理論・職業指導",
+        examTags: ["careerConsultant"]
+      },
+      {
+        id: "holland",
+        sortKana: "ほらんど",
+        name: "ホランド",
+        displayName: "J.L.ホランド",
+        en: "John L. Holland",
+        images: ["s_holand.png"],
+        topic: "RIASEC・職業興味",
+        examTags: ["careerConsultant"]
+      }
+    ];
+
+    const QUESTION_BANKS = {
+      career: QUESTIONS_CAREER
+    };
+
     const state = {
       currentQuestionIndex: 0,
       score: 0,
@@ -1149,16 +1552,24 @@
       deck: [],
       history: [], // ユーザーの解答履歴を保存
       currentCategory: null,
+      directoryMode: "aiueo",
       currentPastExamAnswer: null // アコーディオン内で表示する正解を保持
     };
 
     const els = {
       topPage: document.getElementById("topPage"),
       dummyPage: document.getElementById("dummyPage"),
+      directoryPage: document.getElementById("directoryPage"),
       quizPage: document.getElementById("quizPage"),
       
       categoryGrid: document.getElementById("categoryGrid"),
+      categoryAccordionGrid: document.getElementById("categoryAccordionGrid"),
       dummyHeaderTitle: document.getElementById("dummyHeaderTitle"),
+      directoryHeaderTitle: document.getElementById("directoryHeaderTitle"),
+      directorySearch: document.getElementById("directorySearch"),
+      directoryFilter: document.getElementById("directoryFilter"),
+      directoryCount: document.getElementById("directoryCount"),
+      directoryList: document.getElementById("directoryList"),
       quizHeaderTitle: document.getElementById("quizHeaderTitle"),
 
       progressFill: document.getElementById("progressFill"),
@@ -1195,6 +1606,7 @@
     function showTopPage() {
       els.quizPage.classList.add("hidden");
       els.dummyPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
       els.topPage.classList.remove("hidden");
       window.scrollTo(0, 0);
     }
@@ -1203,6 +1615,7 @@
       els.dummyHeaderTitle.textContent = title;
       els.topPage.classList.add("hidden");
       els.quizPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
       els.dummyPage.classList.remove("hidden");
       window.scrollTo(0, 0);
     }
@@ -1283,7 +1696,7 @@
       html += `
         <div class="feedback-header" style="margin-bottom:16px; padding:12px;">
           <div class="feedback-image" style="width:70px; height:70px;">
-            <img src="img/${q.image}" alt="${q.name}">
+            <img src="${getImageSrc(q.image)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(q.image)}'" alt="${q.name}">
           </div>
           <div class="feedback-answer">
             <div class="answer-label" style="font-size:0.75rem;">正答</div>
@@ -1343,19 +1756,160 @@
       return newArray;
     }
 
+    function getImageSrc(file) {
+      return ROOT_IMAGE_FILES.has(file) ? file : `img/${file}`;
+    }
+
+    function getFallbackImageSrc(file) {
+      return ROOT_IMAGE_FILES.has(file) ? `img/${file}` : file;
+    }
+
+    function setImageWithFallback(img, file, altText) {
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = getFallbackImageSrc(file);
+      };
+      img.src = getImageSrc(file);
+      img.alt = altText;
+    }
+
+    function getAllQuestions() {
+      return Object.values(QUESTION_BANKS).flat();
+    }
+
+    function getQuestionsForCategory(cat) {
+      if (!cat || cat.type !== "quiz") return [];
+
+      let questions = [];
+      if (cat.examTag) {
+        questions = getAllQuestions().filter(q => (q.examTags || []).includes(cat.examTag));
+      } else if (cat.questionBankId) {
+        questions = QUESTION_BANKS[cat.questionBankId] || [];
+      } else if (cat.questionBankIds) {
+        questions = cat.questionBankIds.flatMap(bankId => QUESTION_BANKS[bankId] || []);
+      }
+
+      if (cat.categoryFilter) {
+        questions = questions.filter(q => (q.categoryIds || []).includes(cat.categoryFilter));
+      }
+
+      return questions;
+    }
+
+    function isCategoryActive(cat) {
+      if (cat.isActive === false) return false;
+      if (cat.type === "directory") return true;
+      return getQuestionsForCategory(cat).length > 0;
+    }
+
+    function getPersonSortYear(person) {
+      const years = getAllQuestions()
+        .filter(q => q.psychologistId === person.id)
+        .flatMap(q => (q.works || []).map(work => work.year))
+        .filter(year => Number.isFinite(year));
+      return years.length ? Math.min(...years) : 9999;
+    }
+
+    function getDirectoryModeLabel(mode) {
+      return mode === "theoryTimeline" ? "心理学者一覧（理論別、年代順）" : "心理学者一覧（aiueo）";
+    }
+
+    function showDirectoryPage(filterTag = "all", mode = "aiueo") {
+      state.directoryMode = mode;
+      els.directoryHeaderTitle.textContent = getDirectoryModeLabel(mode);
+      els.directoryFilter.value = filterTag;
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.directoryPage.classList.remove("hidden");
+      renderDirectory();
+      window.scrollTo(0, 0);
+    }
+
+    function renderDirectory() {
+      const query = els.directorySearch.value.trim().toLowerCase();
+      const filterTag = els.directoryFilter.value;
+
+      let people = [...PSYCHOLOGIST_BANK].sort((a, b) => {
+        if (state.directoryMode === "theoryTimeline") {
+          const yearDiff = getPersonSortYear(a) - getPersonSortYear(b);
+          if (yearDiff !== 0) return yearDiff;
+        }
+        return a.sortKana.localeCompare(b.sortKana, "ja");
+      });
+
+      if (filterTag !== "all") {
+        people = people.filter(person => (person.examTags || []).includes(filterTag));
+      }
+
+      if (query) {
+        people = people.filter(person => {
+          const haystack = [
+            person.name,
+            person.displayName,
+            person.en,
+            person.topic,
+            ...(person.images || [])
+          ].join(" ").toLowerCase();
+          return haystack.includes(query);
+        });
+      }
+
+      els.directoryCount.textContent = `${people.length}件表示`;
+      els.directoryList.innerHTML = "";
+
+      if (!people.length) {
+        const empty = document.createElement("div");
+        empty.className = "dummy-content";
+        empty.innerHTML = "<p>該当する心理学者はまだ登録されていません。</p>";
+        els.directoryList.appendChild(empty);
+        return;
+      }
+
+      people.forEach(person => {
+        const tags = (person.examTags || []).map(tag => EXAM_TAG_LABELS[tag]).filter(Boolean);
+        const sortYear = getPersonSortYear(person);
+        const timelineText = state.directoryMode === "theoryTimeline" && sortYear !== 9999
+          ? ` / 主な年: ${sortYear}年`
+          : "";
+        const card = document.createElement("article");
+        card.className = "person-card";
+        card.innerHTML = `
+          <img src="${getImageSrc(person.images[0])}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(person.images[0])}'" alt="${person.displayName || person.name}">
+          <div class="person-info">
+            <p class="person-name">${person.displayName || person.name}</p>
+            <p class="person-meta">${person.en || ""}${timelineText}</p>
+            <p class="person-topic">${person.topic || ""}</p>
+            <div class="tag-row">
+              ${tags.map(label => `<span class="mini-tag">${label}</span>`).join("")}
+            </div>
+          </div>
+        `;
+        els.directoryList.appendChild(card);
+      });
+    }
+
     function startQuiz(categoryId) {
       const cat = CATEGORIES.find(c => c.id === categoryId);
+      const questions = getQuestionsForCategory(cat);
+      const questionLimit = cat.questionLimit || questions.length;
+
+      if (!questions.length) {
+        showDummyPage(cat ? cat.title : "問題");
+        return;
+      }
+
       els.quizHeaderTitle.textContent = cat.title;
       state.currentCategory = cat;
       
       state.score = 0;
       state.currentQuestionIndex = 0;
       state.history = []; // 履歴リセット
-      // 現在はキャリア理論のみデータを用意、10問で固定
-      state.deck = shuffleArray(QUESTIONS_CAREER).slice(0, 10);
+      state.deck = shuffleArray(questions).slice(0, questionLimit);
       
       els.topPage.classList.add("hidden");
       els.dummyPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
       els.quizPage.classList.remove("hidden");
       
       loadQuestion();
@@ -1412,8 +1966,7 @@
         els.userAnswerText.style.display = "block";
       }
 
-      els.feedbackImage.src = `img/${q.image}`;
-      els.feedbackImage.alt = `画像: ${q.name} (※プレビュー版では表示されません)`;
+      setImageWithFallback(els.feedbackImage, q.image, `画像: ${q.name}`);
       els.answerText.textContent = q.options[q.answer];
       els.psychologistName.textContent = q.name;
       
@@ -1533,28 +2086,41 @@
       }
     });
 
+    els.directorySearch.addEventListener("input", renderDirectory);
+    els.directoryFilter.addEventListener("change", renderDirectory);
+
     // ==========================================
     // 初期化：カテゴリ一覧の生成
     // ==========================================
+    function createCategoryButton(cat) {
+      const active = isCategoryActive(cat);
+      const btn = document.createElement("button");
+      btn.className = "category-button";
+      if (active) {
+        btn.classList.add("active-cat");
+      } else {
+        btn.classList.add("disabled-cat");
+      }
+
+      btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}</span>`;
+
+      btn.addEventListener("click", () => {
+        if (cat.type === "directory" && active) {
+          showDirectoryPage("all", cat.directoryMode || "aiueo");
+        } else if (active) {
+          startQuiz(cat.id);
+        } else {
+          showDummyPage(cat.title);
+        }
+      });
+
+      return btn;
+    }
+
     function initApp() {
       CATEGORIES.forEach(cat => {
-        const btn = document.createElement("button");
-        btn.className = "category-button";
-        if (cat.isActive) {
-          btn.classList.add("active-cat");
-        }
-        
-        btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}</span>`;
-        
-        btn.addEventListener("click", () => {
-          if (cat.isActive) {
-            startQuiz(cat.id);
-          } else {
-            showDummyPage(cat.title);
-          }
-        });
-        
-        els.categoryGrid.appendChild(btn);
+        const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : els.categoryGrid;
+        target.appendChild(createCategoryButton(cat));
       });
       
       // 初期表示はTOPページ
