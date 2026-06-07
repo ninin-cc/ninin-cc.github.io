@@ -111,6 +111,72 @@
       flex-grow: 1;
     }
 
+    .top-character-talk {
+      padding: 14px 16px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .talk-row {
+      display: grid;
+      align-items: end;
+      gap: 8px;
+    }
+
+    .talk-row.left {
+      grid-template-columns: 64px 1fr;
+    }
+
+    .talk-row.right {
+      grid-template-columns: 1fr 70px;
+    }
+
+    .talk-character {
+      width: 100%;
+      max-height: 88px;
+      object-fit: contain;
+      align-self: end;
+    }
+
+    .talk-bubble {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      font-weight: bold;
+    }
+
+    .talk-name {
+      display: block;
+      color: var(--teal-dark);
+      font-size: 0.78rem;
+      margin-bottom: 2px;
+    }
+
+    .talk-row.left .talk-bubble::before,
+    .talk-row.right .talk-bubble::before {
+      content: "";
+      position: absolute;
+      bottom: 16px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+    }
+
+    .talk-row.left .talk-bubble::before {
+      left: -8px;
+      border-right: 8px solid #fff;
+    }
+
+    .talk-row.right .talk-bubble::before {
+      right: -8px;
+      border-left: 8px solid #fff;
+    }
+
     /* スマホ向けにコンパクトなグリッド */
     .category-grid {
       display: grid;
@@ -1108,6 +1174,25 @@
       font-size: 1.1rem;
     }
 
+    .result-character-stage {
+      margin: 0 0 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .result-character-stage img {
+      width: clamp(58px, 20vw, 92px);
+      max-height: 104px;
+      object-fit: contain;
+    }
+
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -1177,6 +1262,23 @@
           <h1>キャリコン過去問ドリル</h1>
         </div>
       </header>
+
+      <div class="top-character-talk" aria-label="キャラクターからのメッセージ">
+        <div class="talk-row left">
+          <img class="talk-character" src="cimg/k2.png" alt="けー。">
+          <div class="talk-bubble">
+            <span class="talk-name">けー。</span>
+            楽しく心理学者や理論を学んでいきましょう♪
+          </div>
+        </div>
+        <div class="talk-row right">
+          <div class="talk-bubble">
+            <span class="talk-name">サポさん。</span>
+            学科試験対策になるし、理論を知ることは相談者さんの支援のためになるさぽー✨
+          </div>
+          <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
+        </div>
+      </div>
 
       <div class="category-container">
         <div class="category-grid" id="categoryGrid">
@@ -2329,12 +2431,36 @@
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
+    function getResultCharacterImages() {
+      const ratio = state.deck.length ? state.score / state.deck.length : 0;
+      const images = [
+        { src: "cimg/k5.png", alt: "お疲れ様でした" }
+      ];
+      if (ratio >= 0.7) {
+        images.push(
+          { src: "cimg/k1.png", alt: "けー。" },
+          { src: "cimg/s1.png", alt: "サポさん。" }
+        );
+      }
+      if (ratio === 1) {
+        images.push({ src: "cimg/k3.png", alt: "満点おめでとう" });
+      }
+      return images;
+    }
+
     function showFinalResult() {
       els.feedbackArea.classList.add("hidden");
       els.questionArea.classList.remove("hidden");
 
       els.questionKicker.textContent = "テスト完了！";
-      els.questionText.innerHTML = `おつかれさまでした。<br>あなたの正答率は <b>${Math.round((state.score / state.deck.length) * 100)}％</b> （${state.score}/${state.deck.length}問正解）です。`;
+      const resultCharacters = getResultCharacterImages()
+        .map(image => `<img src="${image.src}" alt="${image.alt}">`)
+        .join("");
+      els.questionText.innerHTML = `
+        <div class="result-character-stage">${resultCharacters}</div>
+        お疲れ様でした！<br>
+        あなたの正答率は <b>${Math.round((state.score / state.deck.length) * 100)}％</b> （${state.score}/${state.deck.length}問正解）です。
+      `;
       
       els.choices.innerHTML = "";
       
