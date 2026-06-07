@@ -800,6 +800,38 @@
       opacity: 0.5;
     }
 
+    .past-exam-feedback {
+      margin: -4px 0 16px 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .past-exam-feedback.correct {
+      border-color: #86efac;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+
+    .past-exam-feedback.wrong {
+      border-color: #fecdd3;
+      background: #fff7f8;
+      color: #881337;
+    }
+
+    .past-exam-feedback-title {
+      margin: 0 0 4px 0;
+      font-weight: bold;
+    }
+
+    .past-exam-feedback-text {
+      margin: 0;
+      color: inherit;
+    }
+
     .primary-button {
       width: 100%;
       background: var(--teal);
@@ -1101,7 +1133,7 @@
     // ==========================================
     const CATEGORIES = [
       { id: "careerFrequent", title: "キャリコン頻出問題", icon: "🎓", type: "quiz", examTag: "careerConsultant", questionLimit: 10, topGroup: "primary", isActive: true },
-      { id: "industrialFrequent", title: "産業カウンセラー頻出問題", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: false },
+      { id: "industrialFrequent", title: "産業カウンセラー頻出問題", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: true },
       { id: "directoryAiueo", title: "心理学者一覧（aiueo）", icon: "🔎", type: "directory", directoryMode: "aiueo", topGroup: "primary", isActive: true },
       { id: "directoryTheoryTimeline", title: "心理学者一覧（理論別、年代順）", icon: "🗂️", type: "directory", directoryMode: "theoryTimeline", topGroup: "primary", isActive: true },
       { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
@@ -1454,6 +1486,271 @@
           ],
           answer: "2"
         }
+      },
+      {
+        id: "decision-gelatt-positive-uncertainty",
+        psychologistId: "gelatt",
+        categoryIds: ["career", "decision"],
+        examTags: ["careerConsultant"],
+        text: "ジェラットが後期の意思決定理論で提唱した、社会の不確実さを前向きに受け入れ、客観的で合理的な戦略と主観的で直感的な戦略を統合して柔軟に意思決定を行うという概念として、最も適切なものはどれか。",
+        options: ["積極的不確実性", "計画された偶発性", "認知的不協和の解消", "自己概念の実現過程"],
+        answer: 0,
+        image: "2_1jerat.png",
+        name: "H.B.ジェラット",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1926 - 2021",
+        explanation: "ジェラットは、初期の合理的な連続的意思決定プロセスから理論を発展させ、後期には変化の激しい社会において不確実性を肯定的に受け入れる「積極的不確実性（Positive Uncertainty）」を提唱しました。",
+        works: [
+          { year: 1962, title: "意思決定の連続的プロセスを提唱" },
+          { year: 1989, title: "「積極的不確実性」発表" },
+          { year: 2003, title: "『Creative Decision Making: Using Positive Uncertainty』改訂版" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "不合理性や不確実さを受け入れ、右脳と左脳の両方を活用する全脳型アプローチによる意思決定を提唱した理論家は誰か。",
+          options: [
+            "1. ジェラット",
+            "2. クランボルツ",
+            "3. ヒルトン",
+            "4. ティードマン"
+          ],
+          answer: "1",
+          explanation: "ジェラットは後期理論で、客観的な左脳的戦略と主観的な右脳的戦略を統合する積極的不確実性を提唱しました。"
+        }
+      },
+      {
+        id: "decision-gelatt-3systems",
+        psychologistId: "gelatt",
+        categoryIds: ["career", "decision"],
+        examTags: ["careerConsultant"],
+        text: "ジェラットが初期の意思決定モデルにおいて、意思決定を行うプロセスとして分類した3段階のシステムとして、正しい組み合わせはどれか。",
+        options: ["予測、評価、決定システム", "予期、実行、修正システム", "状況、自己、支援システム", "探索、確立、維持システム"],
+        answer: 0,
+        image: "2_1jerat.png",
+        name: "H.B.ジェラット",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1926 - 2021",
+        explanation: "ジェラットは連続的意思決定プロセスにおいて、「予測システム」「評価（価値）システム」「決定（基準）システム」の3段階のステップを踏むとしました。予期・実行はティードマン、状況等はシュロスバーグの理論です。",
+        works: [
+          { year: 1962, title: "意思決定の連続的プロセスを提唱" },
+          { year: 1989, title: "「積極的不確実性」発表" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "ジェラットの連続的意思決定プロセスにおいて、選択肢の結果を予測し、その価値を整理した上で決定基準を設けるプロセスの最後のステップは何か。",
+          options: [
+            "1. 予測システム",
+            "2. 評価システム",
+            "3. 決定システム",
+            "4. 修正システム"
+          ],
+          answer: "3",
+          explanation: "プロセスは「予測システム」→「評価システム」→「決定システム」の順に進みます。"
+        }
+      },
+      {
+        id: "career-krumboltz-5skills",
+        psychologistId: "krumboltz",
+        categoryIds: ["career", "choice", "decision"],
+        examTags: ["careerConsultant"],
+        text: "クランボルツの「プランド・ハプンスタンス理論（計画された偶発性理論）」において、偶然の出来事を自らのキャリアに活かすために必要とされる「5つのスキル」に含まれないものはどれか。",
+        options: ["計画性", "好奇心", "柔軟性", "冒険心"],
+        answer: 0,
+        image: "s_cram2.png",
+        name: "J.D.クランボルツ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2019",
+        explanation: "クランボルツは、偶然をチャンスに変える5つのスキルとして「好奇心」「持続性」「柔軟性」「楽観性」「冒険心」を挙げました。計画性はこれらに含まれないため、誤答選択肢として頻出します。",
+        works: [
+          { year: 1979, title: "「キャリア意思決定の社会的学習理論（SLTCDM）」発表" },
+          { year: 1999, title: "「計画的偶発性理論（Planned Happenstance Theory）」発表" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "クランボルツのプランド・ハプンスタンス理論で提唱された5つのスキルのうち、不確実な結果であっても行動を起こす勇気を指すものはどれか。",
+          options: [
+            "1. 持続性",
+            "2. 楽観性",
+            "3. 柔軟性",
+            "4. 冒険心"
+          ],
+          answer: "4",
+          explanation: "不確実な結果に対する行動力は「冒険心（Risk Taking）」に該当します。"
+        }
+      },
+      {
+        id: "career-krumboltz-4factors",
+        psychologistId: "krumboltz",
+        categoryIds: ["career", "choice", "decision"],
+        examTags: ["careerConsultant"],
+        text: "クランボルツが提唱した社会的学習理論において、個人の職業選択や意思決定に影響を与えるとした「4つの要因」に該当しないものはどれか。",
+        options: ["キャリア・アンカー", "先天的な資質と能力", "環境条件や出来事", "課題への接近スキル"],
+        answer: 0,
+        image: "s_cram1.png",
+        name: "J.D.クランボルツ",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2019",
+        explanation: "クランボルツは意思決定に影響を与える要因として、①先天的な資質、②環境条件や出来事、③学習経験、④課題へのアプローチ・スキル（接近スキル）の4つを挙げました。キャリア・アンカーはシャインの概念です。",
+        works: [
+          { year: 1979, title: "「キャリア意思決定の社会的学習理論（SLTCDM）」発表" },
+          { year: 1999, title: "「計画的偶発性理論（Planned Happenstance Theory）」発表" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "クランボルツの理論において、過去の成功体験や失敗体験が職業選択に影響を与えるとする要因はどれか。",
+          options: [
+            "1. 遺伝的要因",
+            "2. 学習経験",
+            "3. 環境的要因",
+            "4. 課題への接近スキル"
+          ],
+          answer: "2",
+          explanation: "過去の成功や失敗からの学びは「学習経験」に分類されます。"
+        }
+      },
+      {
+        id: "career-super-rainbow",
+        psychologistId: "super",
+        categoryIds: ["career", "development"],
+        examTags: ["careerConsultant"],
+        text: "キャリアを時間的な広がりである「ライフ・スパン」と、空間的な役割の広がりである「ライフ・スペース」の2つの次元から捉え、「ライフキャリアレインボー」を提唱した理論家は誰か。",
+        options: ["サビカス", "スーパー", "シャイン", "ハンセン"],
+        answer: 1,
+        image: "s_super.png",
+        name: "D.E.スーパー",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1910 - 1994",
+        explanation: "スーパーは、人生における様々な役割（子ども、学生、余暇人、市民、労働者など）の組み合わせであるライフ・スペースと、生涯にわたる時間的発達であるライフ・スパンを統合したライフキャリアレインボーを提唱しました。",
+        works: [
+          { year: 1953, title: "「職業発達の理論（A Theory of Vocational Development）」発表" },
+          { year: 1980, title: "「ライフ・キャリア・レインボー」モデルを提唱" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "個人は職業選択を通じて自身の「職業的自己概念」を実現しようとすると考えた、職業的発達理論の代表的な人物は誰か。",
+          options: [
+            "1. スーパー",
+            "2. ホランド",
+            "3. パーソンズ",
+            "4. クランボルツ"
+          ],
+          answer: "1",
+          explanation: "スーパーは「自己概念の実現プロセス」こそがキャリア発達であると考え、自己概念理論と特性因子理論を包括的に統合しました。"
+        }
+      },
+      {
+        id: "career-super-maxicycle",
+        psychologistId: "super",
+        categoryIds: ["career", "development"],
+        examTags: ["careerConsultant"],
+        text: "スーパーが提唱した、マキシサイクルと呼ばれる生涯の職業的発達段階を構成する5つのステージの順序として、最も適切なものはどれか。",
+        options: ["成長期、探索期、確立期、維持期、解放期", "空想期、試行期、現実期、確立期、維持期", "準備期、遭遇期、適応期、安定期、維持期", "探索期、成長期、維持期、確立期、解放期"],
+        answer: 0,
+        image: "s_super.png",
+        name: "D.E.スーパー",
+        birthCountry: "🇺🇸",
+        birthCountryText: "ｱﾒﾘｶ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1910 - 1994",
+        explanation: "スーパーのライフステージ（マキシサイクル）は、成長期、探索期、確立期、維持期、離脱期（解放期・下降期）の5段階で構成されます。空想・試行・現実期はギンズバーグの理論における分類です。",
+        works: [
+          { year: 1953, title: "「職業発達の理論（A Theory of Vocational Development）」発表" },
+          { year: 1980, title: "「ライフ・キャリア・レインボー」モデルを提唱" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "スーパーの職業的発達段階において、自己の希望を形作り、職業的選択の準備と試行を行う「探索期」に該当する年代は概ねどれか。",
+          options: [
+            "1. 0〜14歳",
+            "2. 15〜24歳",
+            "3. 25〜44歳",
+            "4. 45〜64歳"
+          ],
+          answer: "2",
+          explanation: "探索期は概ね15歳〜24歳とされ、自らの興味や能力を探求し職業への方向付けを行う時期です。"
+        }
+      },
+      {
+        id: "career-schein-anchor-core",
+        psychologistId: "schein",
+        categoryIds: ["career", "motivation"],
+        examTags: ["careerConsultant", "industrialCounselor"],
+        text: "個人がキャリアを選択・形成する際に、どうしても犠牲にしたくない最も大切な価値観や欲求を指し、自らの拠り所となる「キャリア・アンカー」を提唱した理論家は誰か。",
+        options: ["シャイン", "スーパー", "サビカス", "ホール"],
+        answer: 0,
+        image: "s_shaine.png",
+        name: "E.H.シャイン",
+        birthCountry: "🇨🇭",
+        birthCountryText: "ｽｲｽ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2023",
+        explanation: "シャインは、個人の内的キャリアにおける自己概念の核であり、職業生活の基軸となる価値観や動機を「キャリア・アンカー」と呼びました。専門・職能、全般管理など8つのアンカーに分類されます。",
+        works: [
+          { year: 1978, title: "『キャリア・ダイナミクス』刊行（内的/外的キャリアの提唱）" },
+          { year: 1990, title: "『キャリア・アンカー』刊行（8つの分類を確立）" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "シャインの提唱したキャリア・アンカーを構成する3つの要素に含まれないものはどれか。",
+          options: [
+            "1. コンピタンス（才能・能力）",
+            "2. モチベーション（動機・欲求）",
+            "3. バリュー（意味・価値観）",
+            "4. アダプタビリティ（適応力）"
+          ],
+          answer: "4",
+          explanation: "キャリア・アンカーは、自覚された「才能・能力」「動機・欲求」「意味・価値観」の3要素で構成されます。アダプタビリティはサビカスやホールの理論のキーワードです。"
+        }
+      },
+      {
+        id: "career-schein-cone",
+        psychologistId: "schein",
+        categoryIds: ["career", "development"],
+        examTags: ["careerConsultant", "industrialCounselor"],
+        text: "シャインが提唱した、組織の構造と個人のキャリア移動を「機能」「階層」「中心性（部内者化）」の3次元モデルで立体的に表した概念はどれか。",
+        options: ["キャリア・コーン", "キャリア・サバイバル", "キャリア・サイクル", "プロティアン・キャリア"],
+        answer: 0,
+        image: "s_shaine.png",
+        name: "E.H.シャイン",
+        birthCountry: "🇨🇭",
+        birthCountryText: "ｽｲｽ",
+        activeCountry: "🇺🇸",
+        activeCountryText: "ｱﾒﾘｶ",
+        lifespan: "1928 - 2023",
+        explanation: "シャインは組織内における個人の移動を、職能的移動（機能）、階層的移動（階層）、部内的移動（中心性）の3つの次元で捉え、これを円錐形の「キャリア・コーン」としてモデル化しました。",
+        works: [
+          { year: 1978, title: "『キャリア・ダイナミクス』刊行（組織内キャリア発達を論じる）" },
+          { year: 1990, title: "『キャリア・アンカー』刊行" }
+        ],
+        pastExam: {
+          title: "オリジナル確認問題",
+          question: "シャインの理論において、キャリアの本質は時の経過に伴う何と何の相互作用にあると定義されているか。",
+          options: [
+            "1. 遺伝と環境",
+            "2. 組織と個人",
+            "3. 主観と客観",
+            "4. 予期と実行"
+          ],
+          answer: "2",
+          explanation: "シャインは組織心理学の観点から、キャリアを「組織」と「個人」の両視点から捉え、その相互作用のプロセスとして理論を展開しました。"
+        }
       }
     ];
 
@@ -1485,6 +1782,16 @@
         examTags: ["careerConsultant"]
       },
       {
+        id: "gelatt",
+        sortKana: "じぇらっと",
+        name: "ジェラット",
+        displayName: "H.B.ジェラット",
+        en: "Harry B. Gelatt",
+        images: ["2_1jerat.png"],
+        topic: "積極的不確実性・意思決定",
+        examTags: ["careerConsultant"]
+      },
+      {
         id: "krumboltz",
         sortKana: "くらんぼるつ",
         name: "クランボルツ",
@@ -1512,7 +1819,7 @@
         en: "Edgar H. Schein",
         images: ["s_shaine.png"],
         topic: "キャリア・アンカー",
-        examTags: ["careerConsultant"]
+        examTags: ["careerConsultant", "industrialCounselor"]
       },
       {
         id: "schlossberg",
@@ -1662,6 +1969,70 @@
         }
     }
 
+    function getPastExamAnswerNumber(answerText) {
+      const match = String(answerText || "").match(/\d/);
+      return match ? match[0] : String(answerText || "").trim();
+    }
+
+    function isPastExamCorrectOption(originalText, answerText) {
+      const answerNumber = getPastExamAnswerNumber(answerText);
+      const normalizedText = String(originalText || "").trim();
+      return normalizedText.startsWith(answerNumber + ".") || normalizedText.startsWith(answerNumber + " ");
+    }
+
+    function getPastExamShortExplanation(q) {
+      const raw = (q && q.pastExam && q.pastExam.explanation) ? q.pastExam.explanation : (q && q.explanation ? q.explanation : "");
+      const compact = String(raw || "").replace(/\s+/g, " ").trim();
+      if (!compact) {
+        return "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
+      }
+      if (compact.length <= 105) return compact;
+
+      const sliced = compact.slice(0, 105);
+      const breakAt = Math.max(sliced.lastIndexOf("。"), sliced.lastIndexOf("、"));
+      return `${breakAt > 45 ? sliced.slice(0, breakAt + 1) : sliced}…`;
+    }
+
+    function getPastExamCorrectOptionText(optionsUl, answerText) {
+      const correctLi = Array.from(optionsUl.children).find(li => {
+        const originalText = li.getAttribute('data-original-text') || li.textContent;
+        return isPastExamCorrectOption(originalText, answerText);
+      });
+      const originalText = correctLi ? (correctLi.getAttribute('data-original-text') || correctLi.textContent) : "";
+      return originalText.replace(/^\s*\d+\.\s*/, "");
+    }
+
+    function clearPastExamFeedback(optionsUl) {
+      if (!optionsUl) return;
+      const existing = optionsUl.nextElementSibling;
+      if (existing && existing.classList.contains('past-exam-feedback')) {
+        existing.remove();
+      }
+    }
+
+    function renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText) {
+      clearPastExamFeedback(optionsUl);
+
+      const answerNumber = getPastExamAnswerNumber(answerText);
+      const correctOptionText = getPastExamCorrectOptionText(optionsUl, answerNumber);
+      const feedback = document.createElement("div");
+      feedback.className = `past-exam-feedback ${clickedIsCorrect ? 'correct' : 'wrong'}`;
+
+      const title = document.createElement("p");
+      title.className = "past-exam-feedback-title";
+      title.textContent = clickedIsCorrect
+        ? "✅ 正解です"
+        : `✅ 正解は ${answerNumber}. ${correctOptionText} です`;
+
+      const text = document.createElement("p");
+      text.className = "past-exam-feedback-text";
+      text.textContent = optionsUl.dataset.explanation || "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
+
+      feedback.appendChild(title);
+      feedback.appendChild(text);
+      optionsUl.insertAdjacentElement("afterend", feedback);
+    }
+
     // 選択肢がタップされた時に正解・不正解を判定し、リストの左側に✅や❌をつける
     function revealAnswer(targetId, answerText, clickedLi) {
         let optionsUl = targetId === 'quizPastExam' ? els.pastExamOptions : document.getElementById(targetId + 'Options');
@@ -1669,6 +2040,8 @@
         // すでに答え合わせ済みの場合は何もしない
         if(optionsUl && !optionsUl.classList.contains('revealed')) {
             optionsUl.classList.add('revealed');
+            clearPastExamFeedback(optionsUl);
+            let clickedIsCorrect = false;
 
             Array.from(optionsUl.children).forEach(li => {
                 // 初回のみ元のテキストを保持
@@ -1678,7 +2051,10 @@
                 }
 
                 // 正解の判定（"1. "などの数字と一致するか）
-                const isCorrect = originalText.startsWith(answerText + ".") || originalText.startsWith(answerText + " ");
+                const isCorrect = isPastExamCorrectOption(originalText, answerText);
+                if (li === clickedLi) {
+                    clickedIsCorrect = isCorrect;
+                }
                 
                 if(isCorrect) {
                     li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">✅</span><span>${originalText}</span>`;
@@ -1693,6 +2069,8 @@
                     li.classList.add('unselected-choice');
                 }
             });
+
+            renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText);
         }
     }
 
@@ -1762,6 +2140,12 @@
       }
 
       document.getElementById('modalBody').innerHTML = html;
+      if (q.pastExam) {
+        const modalOptions = document.getElementById(`modalPastExam_${index}Options`);
+        if (modalOptions) {
+          modalOptions.dataset.explanation = getPastExamShortExplanation(q);
+        }
+      }
       document.getElementById('resultModal').classList.add('active');
     }
 
@@ -2020,6 +2404,7 @@
         // アコーディオンの状態をリセット
         els.pastExamBox.classList.remove('open');
         els.pastExamOptions.classList.remove('revealed');
+        clearPastExamFeedback(els.pastExamOptions);
         
         state.currentPastExamAnswer = q.pastExam.answer; // 正解を保持
         
@@ -2028,6 +2413,7 @@
           : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
         els.pastExamRef.textContent = refText;
         els.pastExamQuestion.textContent = q.pastExam.question;
+        els.pastExamOptions.dataset.explanation = getPastExamShortExplanation(q);
         els.pastExamOptions.innerHTML = "";
         
         q.pastExam.options.forEach(opt => {
