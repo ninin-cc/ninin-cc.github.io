@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
@@ -58,6 +58,233 @@
       display: flex;
       align-items: center;
       flex-shrink: 0;
+    }
+
+    .print-report { display: none; }
+    @media print {
+      @page { size: A4 portrait; margin: 8mm; }
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body * { visibility: visible !important; }
+      #root > div { min-height: 0 !important; padding: 0 !important; background: #fff !important; display: block !important; }
+      #root > div > *:not(.print-report) { display: none !important; }
+      .print-report, .print-report * { visibility: visible !important; }
+      .print-report {
+        display: block !important;
+        position: static;
+        left: auto;
+        top: auto;
+        width: 100%;
+      }
+      .print-report-page {
+        box-sizing: border-box;
+        width: 194mm;
+        min-height: 281mm;
+        margin: 0 auto;
+        height: 281mm;
+        padding: 6mm;
+        color: #0f172a;
+        background: #fff;
+        font-family: Arial, "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        font-size: 8px;
+        line-height: 1.36;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .print-report-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 8mm;
+        align-items: flex-start;
+        border-bottom: 1.5px solid #cbd5e1;
+        padding-bottom: 3mm;
+        margin-bottom: 3mm;
+      }
+      .print-kicker {
+        color: #64748b;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .04em;
+      }
+      .print-title {
+        margin: 1mm 0 0;
+        color: #111827;
+        font-size: 17px;
+        line-height: 1.2;
+        font-weight: 900;
+      }
+      .print-subtitle {
+        color: #475569;
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .print-brand {
+        min-width: 45mm;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 3mm;
+        text-align: right;
+        color: #334155;
+        font-size: 9px;
+        font-weight: 900;
+      }
+      .print-main {
+        display: grid;
+        grid-template-columns: 1.15fr .85fr;
+        gap: 4mm;
+        flex: 0 0 auto;
+      }
+      .print-box {
+        border: 1px solid #dbe4ee;
+        border-radius: 8px;
+        padding: 2.4mm;
+        margin-bottom: 2.2mm;
+        background: #f8fafc;
+        break-inside: avoid;
+      }
+      .print-box.soft { background: #ffffff; }
+      .print-knowledge {
+        padding: 1.8mm 2mm;
+      }
+      .print-knowledge .print-section-title {
+        margin-bottom: .9mm;
+        font-size: 7.4px;
+      }
+      .print-knowledge p {
+        color: #334155;
+        font-size: 7.05px;
+        line-height: 1.28;
+      }
+      .print-section-title {
+        margin-bottom: 1.5mm;
+        color: #475569;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .03em;
+      }
+      .print-section-title.large {
+        font-size: 10px;
+      }
+      .print-focus p {
+        font-size: 10px;
+        line-height: 1.34;
+      }
+      .print-focus .print-label {
+        font-size: 9.5px;
+      }
+      .print-box h3 {
+        margin: 0 0 1mm;
+        color: #111827;
+        font-size: 11px;
+        line-height: 1.25;
+        font-weight: 900;
+      }
+      .print-box p { margin: 0; }
+      .print-label {
+        display: inline-block;
+        margin: 0 0 1mm;
+        padding: .6mm 1.4mm;
+        border-radius: 4px;
+        background: #e2e8f0;
+        color: #334155;
+        font-size: 7.5px;
+        font-weight: 900;
+      }
+      .print-balance-row {
+        display: grid;
+        grid-template-columns: 18mm 1fr 11mm;
+        align-items: center;
+        gap: 2mm;
+        margin-bottom: 1.8mm;
+        font-weight: 800;
+      }
+      .print-bar {
+        height: 4mm;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e2e8f0;
+      }
+      .print-bar span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+      }
+      .print-service {
+        display: block;
+        padding: 1.5mm;
+        margin-bottom: 1.4mm;
+        border: 1px solid #dbe4ee;
+        border-radius: 7px;
+        color: #0f172a;
+        text-decoration: none;
+        background: #fff;
+      }
+      .print-service strong {
+        display: block;
+        font-size: 9px;
+        color: #111827;
+      }
+      .print-service span {
+        display: block;
+        margin-top: .6mm;
+        color: #475569;
+        font-size: 7.8px;
+      }
+      .print-service em {
+        display: block;
+        margin-top: .7mm;
+        color: #0369a1;
+        font-size: 7px;
+        font-style: normal;
+        word-break: break-all;
+      }
+      .print-memo-box {
+        flex: 1 1 auto;
+        min-height: 16mm;
+        margin-top: 2.4mm;
+        padding: 2mm 2.6mm;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background:
+          linear-gradient(#fff, #fff) padding-box,
+          repeating-linear-gradient(to bottom, transparent 0, transparent 5.4mm, #dbe4ee 5.4mm, #dbe4ee calc(5.4mm + 1px));
+        color: #64748b;
+        break-inside: avoid;
+      }
+      .print-memo-title {
+        display: inline-block;
+        padding-right: 2mm;
+        background: #fff;
+        color: #475569;
+        font-size: 7.4px;
+        font-weight: 900;
+        letter-spacing: .03em;
+      }
+      .print-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 6mm;
+        margin-top: 2.4mm;
+        padding-top: 2.2mm;
+        border-top: 1px solid #cbd5e1;
+        color: #475569;
+        font-size: 7.6px;
+        flex: 0 0 auto;
+      }
+      .print-footer-brand {
+        color: #111827;
+        font-weight: 900;
+        text-decoration: none;
+        flex: 0 0 auto;
+      }
+      .print-footer span { flex: 1 1 auto; }
     }
   </style>
 </head>
@@ -129,6 +356,16 @@
     const ArrowLeftIcon = () => (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
     );
+    const PdfIcon = () => (
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-red-200 bg-red-50 shadow-sm" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" role="img">
+          <path d="M6 2h8l4 4v16H6z" fill="#fee2e2" stroke="#dc2626" strokeWidth="1.4" strokeLinejoin="round" />
+          <path d="M14 2v5h4" fill="#fecaca" stroke="#dc2626" strokeWidth="1.4" strokeLinejoin="round" />
+          <rect x="4.2" y="11" width="15.6" height="7.2" rx="1.4" fill="#dc2626" />
+          <text x="12" y="15.95" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="4.7" fontWeight="900" fill="#fff">PDF</text>
+        </svg>
+      </span>
+    );
 
     // ==========================================
     // 厳選16問プール
@@ -192,7 +429,7 @@
       // 3. 発想(W) vs 調和(N) (2問)
       {
         id: 7,
-        text: "雑谈をしている時、あなたの意識が「向きやすい」のは？",
+        text: "雑談をしている時、あなたの意識が「向きやすい」のは？",
         options: [
           { text: "「たのしい話にしたいな」", type: "W" },
           { text: "「いい雰囲気が続いてほしいな」", type: "N" }
@@ -387,6 +624,8 @@
       const [isPractice, setIsPractice] = useState(false);
       const [tutorialCompleted, setTutorialCompleted] = useState(false);
       const [showCoconalaModal, setShowCoconalaModal] = useState(false);
+      const [showResultDetailInModal, setShowResultDetailInModal] = useState(false);
+      const [showAppInfoModal, setShowAppInfoModal] = useState(false);
       const [colorMode, setColorMode] = useState('natural'); // カラーモード切替 (natural / colorful)
       
       const [hoverPos, setHoverPos] = useState(50);
@@ -485,14 +724,82 @@
         setStarted(true);
       };
 
+      const openCoconalaModal = (fromResult = false) => {
+        setShowResultDetailInModal(fromResult);
+        setShowCoconalaModal(true);
+      };
+
+      const closeCoconalaModal = () => {
+        setShowCoconalaModal(false);
+        setShowResultDetailInModal(false);
+      };
+
+      const getModalResult = () => {
+        if (!resultType) return null;
+        if (resultType.isDouble) {
+          const frontData = resultsData[resultType.front];
+          const secondData = resultsData[resultType.second];
+          const themeKey = resultType.frontKey;
+          const dynamicTheme = {
+            ...frontData.theme,
+            header: doubleHeaders[themeKey] || frontData.theme.header
+          };
+
+          return {
+            title: `${frontData.title} ＆ ${secondData.title}`,
+            subTitle: `（${frontData.subTitle.replace(/[（）]/g, '')} × ${secondData.subTitle.replace(/[（）]/g, '')}）`,
+            detail: [
+              `${frontData.detail[0]}\n\n${secondAdditions[resultType.second]}`,
+              frontData.detail[1]
+            ],
+            supportStyle: frontData.supportStyle,
+            secondSupportStyle: secondData.supportStyle,
+            theme: dynamicTheme
+          };
+        }
+
+        return {
+          ...resultsData[resultType.front],
+          secondSupportStyle: resultsData[resultType.second].supportStyle
+        };
+      };
+
+      const renderAppInfoModal = () => {
+        if (!showAppInfoModal) return null;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowAppInfoModal(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto border border-slate-200" onClick={e => e.stopPropagation()}>
+              <div className="relative p-5 sm:p-6 text-center">
+                <button
+                  onClick={() => setShowAppInfoModal(false)}
+                  className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-colors"
+                  aria-label="閉じる"
+                >
+                  ×
+                </button>
+                <div className="mb-2 text-[11px] sm:text-xs font-black tracking-wide text-slate-500">このアプリでできる事</div>
+                <p className="mb-4 text-[13px] sm:text-sm font-bold leading-relaxed text-slate-700">
+                  ご自身の支援モードを振り返るためのレポートをPDFで得られます。
+                </p>
+                <div className="mx-auto max-w-[18rem] overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm">
+                  <img src="./img/report.jpg" alt="PDFレポートのイメージ" className="w-full max-h-[42vh] object-contain" loading="lazy" onError={e => { if (!e.currentTarget.dataset.fallback) { e.currentTarget.dataset.fallback = "true"; e.currentTarget.src = "./img/report.png"; } }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
       const renderCoconalaModal = () => {
         if (!showCoconalaModal) return null;
+        const modalResult = showResultDetailInModal ? getModalResult() : null;
+        const modalTheme = modalResult ? modalResult.theme : null;
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowCoconalaModal(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[92vh] overflow-y-auto border border-slate-200" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={closeCoconalaModal}>
+            <div className={`bg-white rounded-2xl shadow-2xl w-full ${modalResult ? 'max-w-3xl' : 'max-w-sm'} max-h-[92vh] overflow-y-auto border border-slate-200`} onClick={e => e.stopPropagation()}>
               <div className="relative p-5 sm:p-6 text-center">
                 <button 
-                  onClick={() => setShowCoconalaModal(false)}
+                  onClick={closeCoconalaModal}
                   className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition-colors"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -505,7 +812,27 @@
                   （ｷｬﾘｱｺﾝｻﾙﾀﾝﾄ/産業ｶｳﾝｾﾗｰ受験 両方対応可）
                 </p>
 
-                <div className="space-y-3">
+                {modalResult && (
+                  <div className={`mb-4 rounded-xl border ${modalTheme.border} ${modalTheme.cardBg} p-3 text-left shadow-sm`}>
+                    <div className={`mb-2 text-[10px] sm:text-[11px] font-black tracking-wide ${modalTheme.textLight}`}>あなたの結果から</div>
+                    <p className={`text-[12px] sm:text-[13px] font-bold leading-relaxed whitespace-pre-line ${modalTheme.text}`}>
+                      {modalResult.detail[0]}
+                    </p>
+                    <details className="mt-3 group">
+                      <summary className={`cursor-pointer font-bold ${modalTheme.text} transition-colors flex items-center gap-1 list-none [&::-webkit-details-marker]:hidden`}>
+                        <span className="text-[12px] sm:text-[13px]">一方で――</span>
+                        <svg className="w-4 h-4 opacity-70 transition-transform duration-300 group-open:-rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </summary>
+                      <p className={`mt-2 text-[11px] sm:text-[12px] font-medium leading-relaxed whitespace-pre-line ${modalTheme.text}`}>
+                        {modalResult.detail[1]}
+                      </p>
+                    </details>
+                  </div>
+                )}
+
+<div className="space-y-3">
                   <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" rel="noopener noreferrer" className="block w-full text-left border border-amber-200 bg-amber-50 hover:bg-amber-100 rounded-xl p-3 sm:p-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm group relative overflow-hidden mt-2">
                     <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-300"></div>
                     <div className="flex items-center justify-between gap-3 pl-1">
@@ -535,14 +862,13 @@
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex-1">
                         <div className="font-bold text-[13px] sm:text-sm text-emerald-900 mb-1.5 leading-tight group-hover:text-emerald-700">
-                          あなたの特性別の面談実技練習<br/>
-                          <span className="inline-block bg-white text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] mt-1">4,000円 / 50分</span>
+                          あなたの特性別の面談実技練習
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-relaxed">
                           キャリコン面談の構造的理解｜第31回で支援した8名全員が合格した方法
                         </p>
                       </div>
-                      <div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-emerald-200/50 rounded-lg flex-none border border-emerald-300/50 overflow-hidden shadow-sm"><img src="./img/mode.jpg" alt="あなたの特性別の面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div>
+                      <div className="flex flex-none flex-col items-center gap-1"><div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-emerald-200/50 rounded-lg border border-emerald-300/50 overflow-hidden shadow-sm"><img src="./img/mode.jpg" alt="あなたの特性別の面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div><span className="rounded bg-white px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold leading-none text-emerald-800 border border-emerald-200 whitespace-nowrap">4,000円/50分</span></div>
                     </div>
                   </a>
 
@@ -550,16 +876,25 @@
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex-1">
                         <div className="font-bold text-[13px] sm:text-sm text-blue-900 mb-1.5 leading-tight group-hover:text-blue-700">
-                          超構造的ロープレで本番に備えた面談実技練習<br/>
-                          <span className="inline-block bg-white text-blue-800 border border-blue-200 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] mt-1">10,000円 / 90分</span>
+                          超構造的ロープレで本番に備えた面談実技練習
                         </div>
                         <p className="text-[10px] sm:text-[11px] text-blue-700 font-medium leading-relaxed">
                           台本個別作成＋台本お渡し＋本番再現＋構造、理論に基づいたフィードバック
                         </p>
                       </div>
-                      <div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-blue-200/50 rounded-lg flex-none border border-blue-300/50 overflow-hidden shadow-sm"><img src="./img/daihon.jpg" alt="超構造的ロープレで本番に備えた面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div>
+                      <div className="flex flex-none flex-col items-center gap-1"><div className="w-[3.875rem] h-[3.875rem] sm:w-[4.5rem] sm:h-[4.5rem] bg-blue-200/50 rounded-lg border border-blue-300/50 overflow-hidden shadow-sm"><img src="./img/daihon.jpg" alt="超構造的ロープレで本番に備えた面談実技練習" className="w-full h-full object-cover" loading="lazy" /></div><span className="rounded bg-white px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold leading-none text-blue-800 border border-blue-200 whitespace-nowrap">10,000円/90分</span></div>
                     </div>
                   </a>
+                  {modalResult && (
+                    <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-3 text-left shadow-sm overflow-hidden">
+                      <img src="../pm/img/r_2.png" alt="ロジャーズ" className="float-left mr-3 mb-2 h-24 w-24 sm:h-28 sm:w-28 rounded-lg border border-rose-200 bg-white object-cover shadow-sm" loading="lazy" />
+                      <div className="mb-1 text-[10px] sm:text-[11px] font-black tracking-wide text-rose-700">豆知識：伝え返しの本質</div>
+                      <p className="text-[11px] sm:text-[12px] font-bold leading-relaxed text-slate-700">
+                        伝え返しは「ラポール」を形成するための技法とも言えます。構造型がフロントにある支援者は、いわゆる【共感】が苦手と感じている方が多くいらっしゃいます。でも、心配する事はありません。心理学者、理論家たちはほぼすべて【構造型】がフロントであったと言えるでしょう。構造型の支援者が共感的に理解するために積み上げてきた技法。それが【伝え返し】なのです。受け取ったボールをそのまま返す。それの連続で、ちゃんと聞いてもらえるという信頼（ラポール）が築かれていくのです。
+                      </p>
+                      <div className="clear-both"></div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -719,9 +1054,18 @@
                   >
                     自分の支援モードを観てみる
                   </button>
+                  <button
+                    onClick={() => setShowAppInfoModal(true)}
+                    className="mx-auto inline-flex items-center justify-center gap-1.5 px-4 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[11px] sm:text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97]"
+                  >
+                    このアプリでできる事
+                  </button>
 
+                  <div className="mx-auto w-4/5 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    <img src="./img/room.jpg" alt="面談室での支援場面" className="w-full aspect-[16/8.2] object-cover opacity-90" loading="lazy" />
+                  </div>
                   {/* ▼ TOP画面のココナラポップアップ呼び出しボタン ▼ */}
-                  <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-md active:scale-[0.98]">
+                  <button onClick={() => openCoconalaModal(false)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-md active:scale-[0.98]">
                     <span className="text-sm md:text-base flex items-center gap-1">支援モード別の実技練習は、こちらも。</span>
                   </button>
                 </div>
@@ -775,6 +1119,7 @@
             </div>
             
             {renderDebugButtons()}
+            {renderAppInfoModal()}
             {renderCoconalaModal()}
           </div>
         );
@@ -818,6 +1163,41 @@
           A: "あなたは、相手の可能性を信じて背中を押したり、気持ちを深く受け止めたりする力が自然に働きやすい傾向がある一方で、周囲の空気を読んで慎重に行動したり、考えられるリスクを事前に指摘してブレーキを踏んだりするモードは、意識しないと後回しになりやすいかもしれません。\n恐れずに自分や相手の想いを優先して一歩を踏み出すことを大切にする傾向がありそうです。"
         };
         const backResult = { desc: backsData[resultType.back] };
+        const modeLabels = { W: '発想型', K: '構造型', N: '調和型', A: '調整型' };
+        const sortedScoreTypes = ['W', 'K', 'N', 'A'].sort((a, b) => resultScores[b] - resultScores[a]);
+        const printDate = new Date().toLocaleDateString('ja-JP');
+        const printServices = [
+          {
+            title: '支援モード別の面談実技練習',
+            desc: '診断結果をもとに、自分の支援モードの強みとクセをロープレで確認するサービス。',
+            url: 'https://coconala.com/services/4199883'
+          },
+          {
+            title: '超構造的ロープレで本番に備えた面談実技練習',
+            desc: '台本個別作成、台本お渡し、本番再現、構造・理論に基づいたフィードバック。',
+            url: 'https://coconala.com/services/4199894'
+          },
+          {
+            title: '顔で覚える心理学者マップ',
+            desc: 'キャリアコンサルタント・産業カウンセラー試験の学科支援教材。',
+            url: 'https://note.com/ninin2025/n/ncd395d79b182'
+          },
+          {
+            title: '沈黙を味方にする実務・面接実技',
+            desc: '支援者の実践に活かせる「沈黙」の本質',
+            url: 'https://note.com/ninin2025/n/n8cc24a8861a3'
+          },
+          {
+            title: '完全版RIESM™',
+            desc: 'どんな役割で力を発揮しやすいか、どうしたら自然にラクにできるのかまで整理。',
+            url: 'https://ninin-cc.github.io/riesm.html'
+          },
+          {
+            title: 'RIESM™について詳しく知る(note)',
+            desc: 'RIESMの背景や考え方を読むためのnote記事。',
+            url: 'https://note.com/ninin2025/n/n236a6f29ad63'
+          }
+        ];
 
         return (
           <div className={`min-h-screen flex flex-col items-center p-2 sm:p-4 py-8 sm:py-12 transition-colors duration-1000 ${t.bg} relative`}>
@@ -880,7 +1260,7 @@
                             const maxScore = Math.max(...Object.values(resultScores));
                             const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
                             const barColors = { W: 'bg-amber-400', K: 'bg-blue-500', N: 'bg-pink-400', A: 'bg-cyan-400' };
-                            const labels = { W: '発想型', K: '構造型', N: '調 মোহ和型', A: '調整型' };
+                            const labels = { W: '発想型', K: '構造型', N: '調和型', A: '調整型' };
                             return (
                               <div key={type} className="flex items-center gap-2">
                                 <div className={`w-5 sm:w-6 flex justify-center`}>
@@ -919,40 +1299,22 @@
                     </div>
                   </div>
 
-                  <div className="px-4 sm:px-8 pb-0">
-                    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 border border-white/50 shadow-inner ${t.cardBg}`}>
-                      <p className={`leading-relaxed text-sm md:text-base font-medium whitespace-pre-line ${t.text}`}>{result.detail[0]}</p>
-                      
-                      <details className="mt-4 group">
-                        <summary className={`cursor-pointer font-bold ${t.text} transition-colors flex items-center gap-1 list-none [&::-webkit-details-marker]:hidden`}>
-                          <span className="text-[13px] md:text-sm">一方で――</span>
-                          <svg className={`w-4 h-4 opacity-70 transition-transform duration-300 group-open:-rotate-180`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </summary>
-                        <div className="mt-3">
-                          <p className={`leading-relaxed text-[13px] md:text-sm font-medium whitespace-pre-line ${t.text}`}>
-                            {result.detail[1]}
-                          </p>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-
                   <div className="px-4 sm:px-8 pb-4 space-y-3 sm:space-y-4">
                     <div className={`p-3 sm:p-4 rounded-xl bg-white/40 border border-white/50 shadow-sm`}>
                        <p className={`text-[11px] sm:text-xs font-bold opacity-90 leading-relaxed ${t.text}`}>
                          💡 強みとクセは表裏一体です。支援の場では、自分の得意なモードが出過ぎて、無意識に相手を「自分の心地よい構造」に引っ張ろうとしていないか気づくことが大切です。
                        </p>
                     </div>
+                    <button onClick={() => openCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-sm mt-2 active:scale-[0.98]">
+                      <span className="text-sm md:text-base flex items-center gap-1">支援モード別、詳細はこちら。</span>
+                    </button>
+
+                    <button onClick={() => window.print()} className="flex items-center justify-center gap-2.5 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-black transition-all text-sm md:text-base bg-red-50/90 text-red-700 hover:bg-red-100 border border-red-200 shadow-sm active:scale-[0.98]">
+                      <PdfIcon /> 結果をPDFで保存する
+                    </button>
 
                     <button onClick={startQuiz} className={`flex items-center justify-center gap-2 w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all text-sm md:text-base ${t.btnBg} ${t.text} ${t.btnHover}`}>
                       <RefreshCwIcon /> もう一度観る
-                    </button>
-
-                    <button onClick={() => setShowCoconalaModal(true)} className="flex flex-col items-center justify-center w-full py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold transition-all bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-sm mt-2 active:scale-[0.98]">
-                      <span className="text-[11px] sm:text-xs mb-1 opacity-90">【ココナラ】診断結果をもとに</span>
-                      <span className="text-sm md:text-base flex items-center gap-1">実技ロープレ練習をしてみる？</span>
                     </button>
 
                     <div className={`mt-6 p-4 sm:p-5 rounded-xl border-2 ${t.border} bg-white/80 text-left shadow-sm`}>
@@ -998,8 +1360,96 @@
 
                 </div>
               </div>
-            </div>
+            </div>
+            <div className="print-report" aria-hidden="true">
+              <section className="print-report-page">
+                <header className="print-report-header">
+                  <div>
+                    <div className="print-kicker">RIESM™ mini コミュニケーション・モードチェック / 結果レポート</div>
+                    <h1 className="print-title">{result.title}</h1>
+                    {result.subTitle && <div className="print-subtitle">{result.subTitle}</div>}
+                    <div className="print-subtitle">保存日：{printDate}</div>
+                  </div>
+                  <div className="print-brand">
+                    合同会社<br />ninin consulting＆counseling<br />Service Report
+                  </div>
+                </header>
 
+                <main className="print-main">
+                  <div>
+                    <div className="print-box soft print-focus">
+                      <div className="print-section-title large">相談・支援の場面で出やすい特徴</div>
+                      <span className="print-label">強み</span>
+                      <p>{result.supportStyle.strength}</p>
+                      <div style={{ height: '2mm' }}></div>
+                      <span className="print-label">強みが出過ぎた時のクセ</span>
+                      <p>{result.supportStyle.habit}</p>
+                    </div>
+
+                    <div className="print-box print-focus">
+                      <div className="print-section-title large">あなたの結果から</div>
+                      <p>{result.detail[0]}</p>
+                      <div style={{ height: '2mm' }}></div>
+                      <span className="print-label">一方で</span>
+                      <p>{result.detail[1]}</p>
+                    </div>
+
+                    <div className="print-box soft print-knowledge">
+                      <div className="print-section-title">豆情報：シュロスバーグの4S</div>
+                      <p>ロープレでも本当の面談でも、まず「状況（Situation）」を丁寧に聞くことが大切。それがラポールの形成につながります。そして仕事・環境・出来事の語りから、その人の経験や大切にしている価値観「自己（Self）」をキャッチし、受容と伝え返しで場を耕すと面談が深まっていきます。supportやstrategyは15分の面談ではたどり着かなくて大丈夫。</p>
+                    </div>
+
+                    <div className="print-box soft print-knowledge">
+                      <div className="print-section-title">豆知識：伝え返しの本質</div>
+                      <p>伝え返しは「ラポール」を形成するための技法とも言えます。構造型がフロントにある支援者は、いわゆる【共感】が苦手と感じている方が多くいらっしゃいます。でも、心配する事はありません。心理学者、理論家たちはほぼすべて【構造型】がフロントであったと言えるでしょう。構造型の支援者が共感的に理解するために積み上げてきた技法。それが【伝え返し】なのです。受け取ったボールをそのまま返す。それの連続で、ちゃんと聞いてもらえるという信頼（ラポール）が築かれていくのです。</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="print-box soft">
+                      <div className="print-section-title">今のモードバランス</div>
+                      {sortedScoreTypes.map(type => {
+                        const score = resultScores[type];
+                        const maxScore = Math.max(...Object.values(resultScores));
+                        const percent = maxScore > 0 ? Math.round(30 + (score / maxScore) * 70) : 30;
+                        return (
+                          <div key={`print-${type}`} className="print-balance-row">
+                            <span>{modeLabels[type]}</span>
+                            <div className="print-bar"><span style={{ width: `${percent}%`, backgroundColor: `rgb(${bgColors[type]})` }}></span></div>
+                            <span>{percent}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="print-box">
+                      <div className="print-section-title">振り返りポイント</div>
+                      <p>強みとクセは表裏一体です。支援の場では、自分の得意なモードが出過ぎて、無意識に相手を「自分の心地よい構造」に引っ張ろうとしていないか気づくことが大切です。</p>
+                    </div>
+
+                    <div className="print-box soft">
+                      <div className="print-section-title">ninin のラインナップ</div>
+                      {printServices.map(service => (
+                        <a key={service.url} href={service.url} className="print-service">
+                          <strong>{service.title}</strong>
+                          <span>{service.desc}</span>
+                          <em>{service.url}</em>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </main>
+
+                <div className="print-memo-box" aria-label="メモ欄">
+                  <div className="print-memo-title">メモ</div>
+                </div>
+
+                <footer className="print-footer">
+                  <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" className="print-footer-brand">合同会社 ninin consulting＆counseling</a>
+                  <span>このPDFは、ご自身の支援モードを振り返るためのレポートです。ときおり見返していただくことで、今のご自身の状態を確認する手がかりになります。また、モードバランスは環境やストレスの状況によって変化します。時間を置いて、再度診断してみるのもよいでしょう。</span>
+                </footer>
+              </section>
+            </div>
             {renderDebugButtons()}
             {renderCoconalaModal()}
           </div>
