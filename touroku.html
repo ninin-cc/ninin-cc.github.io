@@ -69,10 +69,10 @@
     </section>
 
     <!-- メインコンテンツ -->
-    <main class="w-full max-w-md px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+    <main class="w-full max-w-md md:max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
         
         <!-- 手続き・名簿セクション -->
-        <div class="space-y-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <!-- アンバサダー登録用リンク -->
             <a href="https://forms.gle/e8TDeesYQK6vs99s6" target="_blank" rel="noopener noreferrer" 
                class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
@@ -127,9 +127,9 @@
             </div>
 
             <!-- 登録者名簿 (アコーディオン) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden md:col-span-2">
                 <button 
-                  onclick="toggleAccordion('meibo-content', 'meibo-icon')"
+                  onclick="toggleAccordion('meibo-content', 'meibo-icon', true)"
                   class="w-full flex items-center justify-between p-5 text-left group transition-colors hover:bg-stone-50/50"
                 >
                     <div class="flex items-center space-x-4">
@@ -137,31 +137,68 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         </div>
                         <div class="flex-grow">
-                            <h2 class="text-lg font-bold">登録者名簿</h2>
+                            <h2 class="text-lg font-bold">登録者名簿(2026/6月現在）</h2>
                             <p class="text-sm text-stone-400 mt-1 leading-snug">
                                 全国で活躍するRIESM™認定者の一覧をご確認いただけます
                             </p>
                         </div>
                     </div>
-                    <div id="meibo-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
+                    <div id="meibo-icon" class="transition-transform duration-300 flex-shrink-0 ml-2 rotate-180">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
                     </div>
                 </button>
                 <div 
                   id="meibo-content"
-                  class="transition-all duration-300 ease-in-out max-h-0 opacity-0 overflow-hidden"
+                  class="transition-all duration-300 ease-in-out max-h-[1200px] opacity-100 overflow-hidden"
                 >
                     <div class="p-5 pt-0 mt-2 border-t border-stone-100">
-                        <p class="text-sm text-stone-500 leading-relaxed mt-4 text-center py-4">
-                            ※現在、登録者名簿は準備中です。
-                        </p>
+                        <div class="mt-4 mb-3 flex items-center gap-2 text-sm">
+                            <span class="font-bold text-stone-500">種類：</span>
+                            <span class="font-bold text-emerald-600">RIESM™アンバサダー</span>
+                        </div>
+                        <div class="mt-4 overflow-x-auto rounded-xl border border-stone-100">
+                            <table class="w-full min-w-[760px] text-left text-xs md:text-sm">
+                                <thead class="bg-stone-50 text-stone-500">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">番号</th>
+                                        <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">name</th>
+                                        <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">活動場所</th>
+                                        <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">実施回数</th>
+                                        <th scope="col" class="px-4 py-3 font-bold">コメント</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-100 bg-white text-stone-600">
+                                    <tr>
+                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-001</td>
+                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">けー。</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">オンライン中心</td>
+                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
+                                        <td class="px-4 py-3 leading-relaxed">楽しく、わかりやすい事を心がけてます。</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-002</td>
+                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">れい</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">オンライン中心</td>
+                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
+                                        <td class="px-4 py-3 leading-relaxed">これからの活動も楽しみにしています。</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-003</td>
+                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">りんこ</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">広島県</td>
+                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
+                                        <td class="px-4 py-3 leading-relaxed">安心して自分らしく働ける文化を作っていきたい。</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 資格一覧セクション（現在はリンクなし） -->
-        <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             <!-- RIESM™アンバサダー（無償） -->
             <div class="block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
@@ -251,7 +288,7 @@
             const icon = document.getElementById(iconId);
             
             // max-h の値をコンテンツ量によって切り替え
-            const heightClass = isLargeContent ? 'max-h-[500px]' : 'max-h-96';
+            const heightClass = isLargeContent ? 'max-h-[1200px]' : 'max-h-96';
             
             if (content.classList.contains('max-h-0')) {
                 // 開く処理
