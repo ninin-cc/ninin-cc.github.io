@@ -219,79 +219,79 @@
         name: '静かにがんばる人',
         role: '「まだ大丈夫」と自分に言い聞かせる役割',
         icon: 'fa-solid fa-battery-quarter',
-        color: 'text-blue-400',
+        color: 'text-[#5c3620]',
         category: 'energy'
       },
       burden: {
         name: '背負いすぎる人',
         role: '人の期待に応えようとする役割',
         icon: 'fa-solid fa-weight-hanging',
-        color: 'text-orange-400',
+        color: 'text-[#5c3620]',
         category: 'relation'
       },
       conform: {
         name: '合わせすぎる人',
         role: '自分の気持ちを後回しにして周囲に合わせる役割',
         icon: 'fa-solid fa-masks-theater',
-        color: 'text-emerald-400',
+        color: 'text-[#5c3620]',
         category: 'relation'
       },
       overthink: {
         name: '考えすぎる人',
         role: '先の不安をすべて一人で抱え込む役割',
         icon: 'fa-solid fa-head-side-virus',
-        color: 'text-purple-400',
+        color: 'text-[#5c3620]',
         category: 'thought'
       },
       suppress: {
         name: '怒りを飲み込む人',
         role: '波風を立てないよう感情をため込む役割',
         icon: 'fa-solid fa-volcano',
-        color: 'text-red-400',
+        color: 'text-[#5c3620]',
         category: 'relation'
       },
       blame: {
         name: '自分を責める人',
         role: '「自分が悪い」とすべての責任を負う役割',
         icon: 'fa-solid fa-hand-point-left',
-        color: 'text-teal-400',
+        color: 'text-[#5c3620]',
         category: 'thought'
       },
       restless: {
         name: '休めない人',
         role: '常に動き続けなければと焦りを背負う役割',
         icon: 'fa-solid fa-person-running',
-        color: 'text-amber-400',
+        color: 'text-[#5c3620]',
         category: 'thought'
       },
       unclear: {
         name: '気持ちが見えにくい人',
         role: '自分の本当のSOSを見失ってまで平気を装う役割',
         icon: 'fa-solid fa-cloud',
-        color: 'text-gray-400',
+        color: 'text-[#5c3620]',
         category: 'energy'
       },
       loss: {
         name: '失ったものを抱える人',
         role: 'もう戻らない時間や関係を一人で守り続ける役割',
         icon: 'fa-solid fa-clock-rotate-left',
-        color: 'text-rose-400',
+        color: 'text-[#5c3620]',
         category: 'energy'
       },
       endure: {
         name: 'ひとりで耐える人',
         role: '「どうせわかってもらえない」と一人で耐える役割',
         icon: 'fa-solid fa-person-shelter',
-        color: 'text-indigo-400',
+        color: 'text-[#5c3620]',
         category: 'energy'
       }
     };
 
-    // カテゴリの定義
+    // カテゴリの定義 (こげ茶とネイビーのバランス)
     const CATEGORIES = {
-      relation: { name: '人との関わりで背負う荷物', max: 9, color: 'bg-emerald-600' },
-      thought: { name: '思考と自責で重くなる荷物', max: 9, color: 'bg-purple-600' },
-      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 12, color: 'bg-blue-600' }
+      relation: { name: '人との関わりで背負う荷物', max: 9, color: 'bg-[#4a2e1b]' }, // 深いこげ茶
+      thought: { name: '思考と自責で重くなる荷物', max: 9, color: 'bg-[#2c3e50]' }, // ネイビー（スレートグレー）
+      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 12, color: 'bg-[#8b6b45]' } // キャメル（明るいこげ茶）
     };
 
     // --- 設問データ (Q1 - Q10) ---
@@ -695,37 +695,37 @@
 
       const renderResult = () => {
         if (!results) return null;
-        const { top3, totalScore, categoryScores } = results;
+        const { top3, totalScore, finalScores } = results;
 
         let weatherText = "";
         let weatherIcon = "";
         if (totalScore >= 22) {
           weatherText = "雨（激しく降っているかもしれません）";
-          weatherIcon = "fa-cloud-showers-heavy text-blue-400";
+          weatherIcon = "fa-cloud-showers-heavy text-[#5c3620]";
         } else if (totalScore >= 15) {
           weatherText = "雨まじりのくもり";
-          weatherIcon = "fa-cloud-rain text-gray-400";
+          weatherIcon = "fa-cloud-rain text-[#5c3620]";
         } else if (totalScore >= 8) {
           weatherText = "くもり";
-          weatherIcon = "fa-cloud text-gray-300";
+          weatherIcon = "fa-cloud text-[#5c3620]";
         } else {
           weatherText = "晴れ（時々くもり）";
-          weatherIcon = "fa-sun text-yellow-400";
+          weatherIcon = "fa-sun text-[#5c3620]";
         }
 
         let alertMessage = null;
         if (totalScore >= 25) {
           alertMessage = (
-            <div className="bg-red-950 bg-opacity-40 border border-red-500/50 text-red-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
+            <div className="bg-[#4a1c1c] border border-red-500 text-red-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
-              <p className="drop-shadow-md">複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
+              <p>複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
             </div>
           );
         } else if (totalScore <= 5) {
           alertMessage = (
-            <div className="bg-blue-950 bg-opacity-40 border border-blue-500/50 text-blue-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
+            <div className="bg-[#1c2a4a] border border-blue-500 text-blue-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様です</p>
-              <p className="drop-shadow-md">心の天気が安定しているようです。当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。</p>
+              <p>心の天気が安定しているようです。当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。</p>
             </div>
           );
         }
@@ -747,7 +747,7 @@
                     {/* 左：近い物語 */}
                     <div className="flex-1 min-w-0 flex flex-col">
                       <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                        <i className="fa-solid fa-book-open-reader text-amber-800"></i> 近い物語
+                        <i className="fa-solid fa-book-open-reader text-[#5c3620]"></i> 近い物語
                       </h4>
                       <div className="space-y-2 h-full flex flex-col justify-center">
                         {top3.map((key, idx) => {
@@ -771,7 +771,7 @@
                     {/* 右：心の天気 */}
                     <div className="flex-1 min-w-0 flex flex-col">
                       <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                        <i className="fa-solid fa-cloud-sun text-amber-800"></i> 心の天気
+                        <i className="fa-solid fa-cloud-sun text-[#5c3620]"></i> 心の天気
                       </h4>
                       <div className="flex flex-col items-center justify-center p-3 md:p-4 flex-1">
                         <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3 drop-shadow-sm`}></i>
@@ -787,45 +787,89 @@
                     </div>
                   )}
 
+                  {/* こころの荷物のバランス（イコライザー） */}
+                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                    <h4 className="font-bold text-[#5c3620] mb-4 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-sliders text-[#5c3620]"></i> 心の波長（バランス）
+                    </h4>
+                    <div className="w-full px-1 md:px-2">
+                      {/* イコライザー本体 */}
+                      <div className="flex flex-row justify-between items-end w-full h-24 md:h-32 mb-2 border-b border-[#5c3620]/30 pb-2">
+                        {QUESTIONS.map((q, index) => {
+                          const key = q.type;
+                          const score = finalScores[key] || 0;
+                          const data = WEATHER_DATA[key];
+                          const catColor = CATEGORIES[data.category].color;
+                          
+                          return (
+                            <div key={`eq-${key}`} className="flex flex-col items-center justify-end h-full w-[8%] group relative cursor-pointer">
+                              <div className="flex flex-col gap-1 md:gap-1.5 w-full items-center justify-end h-full">
+                                {[3, 2, 1].map(level => (
+                                  <div 
+                                    key={level} 
+                                    className={`w-full max-w-[16px] md:max-w-[24px] h-4 md:h-6 rounded-sm transition-all duration-1000 ease-out ${score >= level ? catColor + ' opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]' : 'bg-[#5c3620] bg-opacity-10'}`}
+                                  ></div>
+                                ))}
+                              </div>
+                              <div className="mt-1 md:mt-2 flex flex-col items-center">
+                                <span className="text-[#5c3620] font-bold text-[9px] md:text-[11px] leading-none mb-0.5">{index + 1}</span>
+                                <i className={`${data.icon} text-[#5c3620] text-xs md:text-lg opacity-80 group-hover:opacity-100 transition-opacity`}></i>
+                              </div>
+                              
+                              {/* ツールチップ */}
+                              <div className="absolute -top-10 md:-top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-[#2d1b10] text-[#fff8df] text-[10px] md:text-xs px-2 py-1.5 rounded shadow-lg pointer-events-none z-20">
+                                {data.name}
+                                {/* 吹き出しの三角 */}
+                                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#2d1b10] rotate-45"></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* 凡例（印刷・詳細確認用） */}
+                      <div className="mt-4 pt-3 border-t border-amber-800/20">
+                        {/* 色の凡例 */}
+                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4 text-[9px] md:text-[11px] font-bold text-[#5c3620]">
+                          {Object.keys(CATEGORIES).map(catKey => {
+                            const cat = CATEGORIES[catKey];
+                            return (
+                              <div key={`legend-${catKey}`} className="flex items-center gap-1.5">
+                                <div className={`w-3 h-3 md:w-4 md:h-4 rounded-sm ${cat.color} opacity-90 shadow-sm`}></div>
+                                <span>{cat.name}</span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* 項目の凡例 */}
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-2 gap-y-1.5 text-[9px] md:text-[10px] text-[#2d1b10] font-medium bg-[#5c3620] bg-opacity-5 p-2 md:p-3 rounded-lg border border-[#5c3620]/10">
+                          {QUESTIONS.map((q, index) => {
+                            const data = WEATHER_DATA[q.type];
+                            return (
+                              <div key={`legend-item-${q.type}`} className="flex items-center gap-1">
+                                <span className="font-bold text-[#5c3620] w-3 md:w-4 text-right shrink-0">{index + 1}.</span>
+                                <span className="truncate" title={data.name}>{data.name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* 重くなっている役割 */}
                   <div className="pt-4 border-t border-amber-800/20 mb-5">
                     <h4 className="font-bold text-[#5c3620] mb-3 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-suitcase text-amber-800"></i> 今、重くなっているかもしれない役割
+                      <i className="fa-solid fa-suitcase text-[#5c3620]"></i> 今、重くなっているかもしれない役割
                     </h4>
                     <div className="space-y-3 pl-1 md:pl-2">
                       {top3.map((key) => {
                         const data = WEATHER_DATA[key];
                         return (
                           <div key={`role-${key}`} className="flex items-start gap-2">
-                            <i className="fa-solid fa-check text-amber-700 mt-1"></i>
+                            <i className="fa-solid fa-check text-[#5c3620] mt-1"></i>
                             <p className="text-sm md:text-base text-[#2d1b10] font-bold leading-relaxed">{data.role}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* こころの荷物のバランス（バーチャート） */}
-                  <div className="pt-4 border-t border-amber-800/20 mb-5">
-                    <h4 className="font-bold text-[#5c3620] mb-3 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-chart-bar text-amber-800"></i> 荷物のバランス
-                    </h4>
-                    <div className="space-y-3 pl-1 md:pl-2">
-                      {Object.keys(CATEGORIES).map(catKey => {
-                        const cat = CATEGORIES[catKey];
-                        const score = categoryScores[catKey];
-                        const percentage = (score / cat.max) * 100;
-                        return (
-                          <div key={catKey} className="w-full">
-                            <div className="flex justify-between text-[11px] md:text-sm text-[#2d1b10] font-bold mb-1 pl-1">
-                              <span>{cat.name}</span>
-                              <span className="opacity-70 text-[10px] md:text-xs">
-                                傾向度 {Math.round(percentage)}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-[#5c3620] bg-opacity-20 rounded-full h-2.5 md:h-3 border border-[#5c3620]/30 overflow-hidden shadow-inner">
-                              <div className={`h-full ${cat.color} bg-opacity-80 transition-all duration-1000 ease-out`} style={{ width: `${percentage}%` }}></div>
-                            </div>
                           </div>
                         );
                       })}
@@ -835,7 +879,7 @@
                   {/* 小さな問い */}
                   <div className="pt-4 border-t border-amber-800/20 mb-5">
                     <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-seedling text-emerald-700"></i> 小さな問い
+                      <i className="fa-solid fa-seedling text-emerald-600"></i> 小さな問い
                     </h4>
                     <div className="pl-2 md:pl-4 space-y-1.5 border-l-4 border-emerald-600/50 ml-1 py-1">
                       <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">その役割は、いつから少し重くなっていたのでしょうか。</p>
@@ -846,7 +890,7 @@
                   {/* 相談への道しるべ */}
                   <div className="pt-4 border-t border-amber-800/20">
                     <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-door-open text-amber-800"></i> 相談への道しるべ
+                      <i className="fa-solid fa-door-open text-[#5c3620]"></i> 相談への道しるべ
                     </h4>
                     <div className="pl-2 md:pl-4 space-y-1.5 border-l-4 border-amber-600/50 ml-1 py-1">
                       <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">
