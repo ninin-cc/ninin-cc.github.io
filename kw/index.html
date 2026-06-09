@@ -121,7 +121,7 @@
       background:
         radial-gradient(circle at 12% 18%, rgba(113, 70, 34, 0.12), transparent 18%),
         radial-gradient(circle at 85% 70%, rgba(113, 70, 34, 0.10), transparent 20%);
-      mix-blend-mode: multiply;
+      opacity: 0.7;
     }
     .dialog-note > * {
       position: relative;
@@ -169,21 +169,6 @@
 
     .progress-bar-fill {
       transition: width 0.3s ease-out;
-    }
-
-    /* 結果カードのスタイル（透過度を上げてノートの罫線を見せる） */
-    .result-card-gold {
-      background: linear-gradient(135deg, rgba(40,30,0,0.3), rgba(10,5,0,0.4));
-      border: 1px solid rgba(250, 204, 21, 0.5);
-      box-shadow: inset 0 0 10px rgba(250, 204, 21, 0.1);
-    }
-    .result-card-silver {
-      background: linear-gradient(135deg, rgba(20,30,40,0.3), rgba(5,10,15,0.4));
-      border: 1px solid rgba(148, 163, 184, 0.5);
-    }
-    .result-card-bronze {
-      background: linear-gradient(135deg, rgba(40,15,5,0.3), rgba(15,5,0,0.4));
-      border: 1px solid rgba(180, 83, 9, 0.5);
     }
   </style>
 </head>
@@ -288,40 +273,55 @@
     };
 
     // カテゴリの定義 (こげ茶とネイビーのバランス)
+    // 最大値が1問につき6点になるため、調整
     const CATEGORIES = {
-      relation: { name: '人との関わりで背負う荷物', max: 9, color: 'bg-[#4a2e1b]' }, // 深いこげ茶
-      thought: { name: '思考と自責で重くなる荷物', max: 9, color: 'bg-[#2c3e50]' }, // ネイビー（スレートグレー）
-      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 12, color: 'bg-[#8b6b45]' } // キャメル（明るいこげ茶）
+      relation: { name: '人との関わりで背負う荷物', max: 18, color: 'bg-[#4a2e1b]' }, // 深いこげ茶
+      thought: { name: '思考と自責で重くなる荷物', max: 18, color: 'bg-[#2c3e50]' }, // ネイビー（スレートグレー）
+      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 24, color: 'bg-[#8b6b45]' } // キャメル（明るいこげ茶）
     };
 
     // --- 設問データ (Q1 - Q10) ---
     const QUESTIONS = [
-      { id: 1, type: 'silent', text: 'いつも通りにしているけれど、少し疲れている。\n朝起きるのが重い。\nひとりになると、急に力が入らない。' },
-      { id: 2, type: 'burden', text: '頼まれると、つい引き受けてしまう。\n周りを困らせたくなくて、自分のことを後回しにする。\n気づくと、自分だけが抱えている気がする。' },
-      { id: 3, type: 'conform', text: '本当は違うと思っても、言わないことが多い。\n空気を悪くしたくなくて、笑って合わせる。\nあとから、自分の気持ちが分からなくなる。' },
-      { id: 4, type: 'overthink', text: '先のことを考えると、不安が大きくなる。\n失敗したらどうしよう、と何度も考える。\n考えすぎて、動けなくなることがある。' },
-      { id: 5, type: 'suppress', text: '本当は納得していない。\nでも、面倒になると思って言葉を飲み込む。\n怒りたくても怒れない。\n心にモヤモヤが残る。' },
-      { id: 6, type: 'blame', text: '何かあると、自分が悪かったのではと考える。\nもっと上手くできたはずだ、と何度も思い返す。\n人には優しく、自分には厳しくしてしまう。' },
-      { id: 7, type: 'restless', text: '休んでいても、頭では次のことを考えている。\n何もしない時間が、少し落ち着かない。\n止まったら取り残される気がする。' },
-      { id: 8, type: 'unclear', text: 'つらいのか、疲れているのか、自分でも分からない。\n大きな問題はないけれど、心がぼんやりしている。\n「どうしたいの？」と聞かれても、すぐ答えられない。' },
-      { id: 9, type: 'loss', text: 'もう戻らない時間や関係を、ふと思い出す。\n前を向こうとしているけれど、まだ心に残っている。\n人にはあまり話さないけれど、忘れられないものがある。' },
-      { id: 10, type: 'endure', text: '人と話したり、笑ったりすることはある。\nでも、本当にしんどいことは誰にも話していない。\n分かってもらえない気がして、ひとりで抱えてしまう。' }
+      { id: 1, type: 'silent', text: 'いつも通りにしているけれど、少し疲れているんだ。朝起きるのが重くて。ひとりになると、急に力が入らなくなるんだよね…。\n\nあなたはどう…？' },
+      { id: 2, type: 'burden', text: '頼まれると、つい引き受けてしまうんだ。周りを困らせたくなくて、自分のことを後回しにして。気づくと、自分だけが抱えている気がする…。\n\nあなたは…？' },
+      { id: 3, type: 'conform', text: '本当は違うと思っても、言わないことが多いんだ。空気を悪くしたくなくて、笑って合わせて。あとから、自分の気持ちが分からなくなる…。\n\nきみはどう…？' },
+      { id: 4, type: 'overthink', text: '先のことを考えると、不安が大きくなるんだ。失敗したらどうしよう、と何度も考えてしまって。考えすぎて、動けなくなることがある…。\n\nあなたもそう…？' },
+      { id: 5, type: 'suppress', text: '本当は納得していないんだ。でも、面倒になると思って言葉を飲み込んで。怒りたくても怒れなくて、心にモヤモヤが残るんだ…。\n\nきみはどう…？' },
+      { id: 6, type: 'blame', text: '何かあると、自分が悪かったのではと考えるんだ。もっと上手くできたはずだ、と何度も思い返して。人には優しく、自分には厳しくしてしまう…。\n\nあなたはどう…？' },
+      { id: 7, type: 'restless', text: '休んでいても、頭では次のことを考えているんだ。何もしない時間が、少し落ち着かなくて。止まったら取り残される気がするんだよね…。\n\nあなたもそう…？' },
+      { id: 8, type: 'unclear', text: 'つらいのか、疲れているのか、自分でも分からないんだ。大きな問題はないけれど、心がぼんやりしていて。「どうしたいの？」と聞かれても、すぐ答えられないんだ…。\n\nあなたは…？' },
+      { id: 9, type: 'loss', text: 'もう戻らない時間や関係を、ふと思い出すんだ。前を向こうとしているけれど、まだ心に残っていて。人にはあまり話さないけれど、忘れられないものがある…。\n\nきみはどう…？' },
+      { id: 10, type: 'endure', text: '人と話したり、笑ったりすることはあるんだ。でも、本当にしんどいことは誰にも話していなくて。分かってもらえない気がして、ひとりで抱えてしまうんだ…。\n\nあなたはどう…？' }
     ];
 
-    // --- 共通UIコンポーネント ---
-    const WindowBox = ({ title, children, iconName, className = "" }) => (
-      <div className={`bg-black text-white border-2 md:border-4 border-gray-400 px-3 pb-3 pt-10 md:px-5 md:pb-5 md:pt-14 rounded-lg shadow-xl relative w-full mt-8 ${className}`}>
-        {title && (
-          <div className="absolute left-2 md:left-4 top-0 -translate-y-1/2 bg-black px-2 py-1 md:px-3 md:py-2 flex items-center space-x-1.5 border-2 border-gray-400 rounded max-w-[95%]">
-            {iconName && <i className={`${iconName} text-yellow-300 shrink-0 text-[10px] md:text-base`}></i>}
-            <h2 className="text-[11px] md:text-base font-bold tracking-widest text-yellow-100 leading-snug truncate">{title}</h2>
-          </div>
-        )}
-        <div className="w-full h-full flex flex-col">{children}</div>
-      </div>
-    );
+    // 配列シャッフル関数
+    const shuffleArray = (array) => {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    };
 
-    // キャラクターのセリフボックス
+    // --- 共通UIコンポーネント ---
+    const WindowBox = ({ title, children, iconName, className = "" }) => {
+      const hasBg = className.includes('bg-');
+      const defaultBg = hasBg ? '' : 'bg-black ';
+      
+      return (
+        <div className={`${defaultBg}text-white border-2 md:border-4 border-gray-400 px-3 pb-3 pt-10 md:px-5 md:pb-5 md:pt-14 rounded-lg shadow-xl relative w-full mt-8 ${className}`}>
+          {title && (
+            <div className={`absolute left-2 md:left-4 top-0 -translate-y-1/2 ${hasBg ? 'bg-gray-900 bg-opacity-80' : 'bg-black'} px-2 py-1 md:px-3 md:py-2 flex items-center space-x-1.5 border-2 border-gray-400 rounded max-w-[95%]`}>
+              {iconName && <i className={`${iconName} text-yellow-300 shrink-0 text-[10px] md:text-base`}></i>}
+              <h2 className="text-[11px] md:text-base font-bold tracking-widest text-yellow-100 leading-snug truncate">{title}</h2>
+            </div>
+          )}
+          <div className="w-full h-full flex flex-col">{children}</div>
+        </div>
+      );
+    };
+
     const DialogBox = ({ charConfig, text, imageSide = 'left' }) => {
       const { name, img, dialogColor, imgBg } = charConfig;
       const isImageRight = imageSide === 'right';
@@ -359,48 +359,37 @@
       );
     };
 
-    const AnswerCircle = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
-      const textMap = ["ぜんぜん\n当てはまらない", "あまり\n当てはまらない", "やや\n当てはまる", "すごく\n当てはまる"];
-      
-      const sizes = [
-        'w-6 h-6 md:w-8 md:h-8',
-        'w-10 h-10 md:w-12 md:h-12',
-        'w-14 h-14 md:w-16 md:h-16',
-        'w-16 h-16 md:w-20 md:h-20'
-      ];
-      const bgColors = [
-        'bg-[#5c4a30] bg-opacity-40',
-        'bg-[#8b6b45] bg-opacity-60',
-        'bg-[#b58b53] bg-opacity-80',
-        'bg-[#e6c280] bg-opacity-100'
-      ];
-
+    // --- 7分割の画像ボタンコンポーネント ---
+    const AnswerImageButton = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
       const isSelected = selectedVal === val;
+      
+      // 画像を7等分して背景位置を計算 (0% から 100% まで)
+      // valは 0 〜 6
+      const bgPos = `${(val / 6) * 100}% 0`;
 
       return (
         <button 
           onClick={() => onSelect(val)} 
-          className="flex-1 flex flex-col items-center group relative z-10 hover:bg-gray-800 hover:bg-opacity-60 rounded-lg transition-all py-2"
+          className={`flex-1 relative rounded overflow-hidden transition-all duration-300 ${isSelected ? 'ring-2 ring-yellow-400 scale-110 shadow-[0_0_15px_rgba(250,204,21,0.6)] z-20' : 'ring-1 ring-gray-600 hover:scale-105 z-10 opacity-70 hover:opacity-100'}`}
         >
-          <div className="h-20 md:h-24 w-full relative flex items-center justify-center">
-            {/* 中央の基準線 */}
-            <div className={`absolute top-1/2 h-px bg-slate-500 -translate-y-1/2 z-0 ${val === 0 ? 'left-1/2 right-0' : val === 3 ? 'left-0 right-1/2' : 'left-0 right-0'}`}></div>
-            
-            {isSelected && showDoubleTapMessage && (
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none w-max">
-                <span className="bg-black bg-opacity-90 px-3 py-1.5 rounded-full text-[10px] md:text-xs text-yellow-300 font-bold animate-pulse border border-yellow-500 shadow-[0_0_10px_rgba(250,204,21,0.5)]">
-                  もう一度押して決定
-                </span>
-              </div>
-            )}
-
-            <div className={`rounded-full ${bgColors[val]} transform transition-all duration-300 ${sizes[val]} ${isSelected ? 'aura-effect-a scale-110 border-2 border-white z-10' : 'border border-gray-400 group-hover:scale-110 shadow-[0_0_10px_rgba(230,194,128,0.2)] z-10'}`}></div>
-          </div>
-          <div className="h-10 mt-1 flex items-center justify-center w-full relative">
-            <span className={`text-[10px] md:text-xs text-center leading-tight whitespace-pre-wrap font-bold transition-colors ${isSelected ? 'text-yellow-300' : 'text-gray-400 group-hover:text-yellow-200'}`}>
-              {textMap[val]}
-            </span>
-          </div>
+          {/* 背景画像として7分割の一部を表示 */}
+          <div 
+            className="absolute inset-0 w-full h-full"
+            style={{
+              backgroundImage: "url('./img/tenki.jpg')",
+              backgroundSize: "700% 100%",
+              backgroundPosition: bgPos
+            }}
+          ></div>
+          
+          {/* 選択時の2回タップ案内 */}
+          {isSelected && showDoubleTapMessage && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none w-[120%] text-center">
+              <span className="bg-black bg-opacity-90 px-1 py-1 rounded text-[8px] md:text-[10px] text-yellow-300 font-bold animate-pulse shadow-md block leading-tight">
+                もう一度<br/>タップ
+              </span>
+            </div>
+          )}
         </button>
       );
     };
@@ -411,6 +400,7 @@
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ silent: 0, burden: 0, conform: 0, overthink: 0, suppress: 0, blame: 0, restless: 0, unclear: 0, loss: 0, endure: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); 
+      const [shuffledQuestions, setShuffledQuestions] = useState(() => shuffleArray(QUESTIONS));
       
       const [results, setResults] = useState(null);
       const [popupType, setPopupType] = useState('none');
@@ -424,17 +414,17 @@
           return;
         }
 
-        const q = QUESTIONS[qIndex];
+        const q = shuffledQuestions[qIndex];
         setScoreHistory([...scoreHistory, { ...scores }]);
 
         const newScores = { ...scores };
-        newScores[q.type] = val; 
+        newScores[q.type] = val; // 7択なのでスコアは 0〜6 (最大60点)
 
         setScores(newScores);
         setTempSelectedVal(null); 
         setAnimationKey(prev => prev + 1);
 
-        if (qIndex < QUESTIONS.length - 1) {
+        if (qIndex < shuffledQuestions.length - 1) {
           setQIndex(qIndex + 1);
           window.scrollTo(0, 0);
         } else {
@@ -449,11 +439,8 @@
         }
 
         setTempSelectedVal(null); 
-        if (val >= 2) {
-          setPopupType('start');
-        } else {
-          setPopupType('notYet');
-        }
+        // 練習は何を選んでも先に進む
+        setPopupType('start');
       };
 
       const handleBack = () => {
@@ -493,12 +480,12 @@
         const top3 = [];
         // 1位は必ず表示
         top3.push(sorted[0][0]);
-        // 2位はスコアが2点（やや当てはまる）以上の場合のみ表示
-        if (sorted[1][1] >= 2) {
+        // 2位はスコアが3点（真ん中の曇り以上）の場合のみ表示
+        if (sorted[1][1] >= 3) {
           top3.push(sorted[1][0]);
         }
-        // 3位はスコアが2点（やや当てはまる）以上の場合のみ表示
-        if (sorted[2][1] >= 2) {
+        // 3位はスコアが3点（真ん中の曇り以上）の場合のみ表示
+        if (sorted[2][1] >= 3) {
           top3.push(sorted[2][0]);
         }
         
@@ -527,6 +514,7 @@
           setResults(null);
           setPopupType('none');
           setTempSelectedVal(null);
+          setShuffledQuestions(shuffleArray(QUESTIONS));
           window.scrollTo(0, 0);
         }
       };
@@ -541,9 +529,10 @@
 
         setTimeout(() => {
           html2canvas(element, { 
-            backgroundColor: '#0a0a0a', 
+            backgroundColor: '#f8eac2', // 明るいクラフトノートの色
             scale: 2, 
-            useCORS: true
+            useCORS: true,
+            logging: false
           }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'kokoro_weather_result.png';
@@ -575,7 +564,7 @@
           <DialogBox 
             charConfig={CONFIG.char2} 
             imageSide="right"
-            text={`全部で10個の『物語』を読みます。\n3分くらいで終わると思います。\n\n今の自分にどれくらい当てはまるか、4段階の◯から選んでくださいね。`} 
+            text={`全部で10問です。\n3分くらいで終わると思います。\n\n今の自分にどれくらい当てはまるか、7つの空の景色から選んでくださいね。`} 
           />
 
           <div className="flex flex-col gap-4 w-full items-center mb-8 mt-4">
@@ -601,24 +590,24 @@
 
       const renderPractice = () => (
         <div className="w-full flex flex-col items-center">
-          <WindowBox title="練習" iconName="fa-solid fa-gamepad" className="bg-opacity-90 mb-8 animate-fade-in">
+          <WindowBox title="練習" iconName="fa-solid fa-gamepad" className="!bg-transparent mb-8 animate-fade-in">
             <p className="text-sm md:text-base text-gray-300 text-center mb-4 font-bold border-b border-gray-600 pb-3">
               まずは練習です。<br />
-              今のあなたにどれくらい当てはまるか、<br className="md:hidden" />感覚で選んでみてください。<br />
-              一度押すと選択され、もう一度押すと決定されます。
+              一度押すと選択され、もう一度押すと決定されます。<br />
+              直感に近い感覚で選んでみてください。
             </p>
             <div className="flex flex-col w-full py-1">
               
-              <div className="bg-[#4b3e2c] bg-opacity-60 border border-[#e6c280] rounded-lg p-4 md:p-5 text-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-4">
-                <p className="text-sm md:text-lg font-bold text-[#fdf6e3] leading-relaxed">
-                  いま、温かい飲み物を飲んで、<br className="md:hidden" />ほっと一息つきたい気分だ。
+              <div className="bg-[#4b3e2c] bg-opacity-60 border border-[#e6c280] rounded-lg p-4 md:p-5 flex justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-4">
+                <p className="text-sm md:text-lg font-bold text-[#fdf6e3] leading-relaxed text-center max-w-[20em]">
+                  今日の天気はどんな感じですか？
                 </p>
               </div>
 
               <div className="relative my-2 bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                <div className="flex justify-between items-start relative z-10 w-full gap-2">
-                  {[0, 1, 2, 3].map(val => (
-                    <AnswerCircle 
+                <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-28 md:h-36">
+                  {[0, 1, 2, 3, 4, 5, 6].map(val => (
+                    <AnswerImageButton 
                       key={val} 
                       val={val} 
                       selectedVal={tempSelectedVal}
@@ -641,25 +630,23 @@
       );
 
       const renderQuestion = () => {
-        const q = QUESTIONS[qIndex];
+        const q = shuffledQuestions[qIndex];
         
         return (
           <div className="w-full">
-            <WindowBox title={`物語 ${qIndex + 1}`} iconName="fa-solid fa-book-open" className="bg-opacity-90">
+            <WindowBox title={`誰かの言葉 ${qIndex + 1}`} iconName="fa-solid fa-book-open" className="!bg-transparent">
               <div className="flex flex-col w-full py-1">
                 
-                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 md:p-6 text-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-6">
-                  <p className="text-sm md:text-base font-bold text-[#fdf6e3] leading-loose whitespace-pre-wrap">
+                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 md:p-6 flex justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-6">
+                  <p className="text-sm md:text-base font-bold text-[#fdf6e3] leading-loose text-left max-w-[20em] whitespace-pre-wrap">
                     {q.text}
                   </p>
                 </div>
 
-                <p className="text-center text-gray-400 text-xs md:text-sm font-bold mb-2">今のあなたに、どれくらい当てはまりますか？</p>
-
                 <div className="relative bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                  <div className="flex justify-between items-start relative z-10 w-full gap-2">
-                    {[0, 1, 2, 3].map(val => (
-                      <AnswerCircle 
+                  <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-28 md:h-36">
+                    {[0, 1, 2, 3, 4, 5, 6].map(val => (
+                      <AnswerImageButton 
                         key={val} 
                         val={val} 
                         selectedVal={tempSelectedVal}
@@ -674,7 +661,7 @@
             </WindowBox>
 
             <div className="mt-4">
-              <ProgressBar current={qIndex + 1} total={QUESTIONS.length} label="物語の進捗" />
+              <ProgressBar current={qIndex + 1} total={shuffledQuestions.length} label="進捗" />
             </div>
 
             <div className="flex justify-center mt-2">
@@ -699,83 +686,110 @@
 
         let weatherText = "";
         let weatherIcon = "";
-        if (totalScore >= 22) {
-          weatherText = "雨（激しく降っているかもしれません）";
-          weatherIcon = "fa-cloud-showers-heavy text-[#5c3620]";
-        } else if (totalScore >= 15) {
+        let weatherImageUrl = "";
+        
+        // 7択(最大60点)のスコアに応じた天気と背景画像の判定（8段階）
+        if (totalScore >= 52) {
+          weatherText = "激しい雨（嵐のようかもしれません）";
+          weatherIcon = "fa-cloud-bolt"; // 雷雨
+          weatherImageUrl = "https://images.unsplash.com/photo-1428592953211-077101b2021b?q=80&w=800&auto=format&fit=crop"; // 嵐・雷
+        } else if (totalScore >= 45) {
+          weatherText = "雨（本降りです）";
+          weatherIcon = "fa-cloud-showers-heavy"; // 強い雨
+          weatherImageUrl = "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=800&auto=format&fit=crop"; // 本降りの雨
+        } else if (totalScore >= 38) {
           weatherText = "雨まじりのくもり";
-          weatherIcon = "fa-cloud-rain text-[#5c3620]";
-        } else if (totalScore >= 8) {
+          weatherIcon = "fa-cloud-showers-water"; // 雨
+          weatherImageUrl = "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?q=80&w=800&auto=format&fit=crop"; // 雨の窓滴
+        } else if (totalScore >= 30) {
+          weatherText = "くもり（一時 雨）";
+          weatherIcon = "fa-cloud-rain"; // パラつく雨
+          weatherImageUrl = "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?q=80&w=800&auto=format&fit=crop"; // 雨が降りそうな曇り
+        } else if (totalScore >= 22) {
           weatherText = "くもり";
-          weatherIcon = "fa-cloud text-[#5c3620]";
+          weatherIcon = "fa-cloud"; // 曇り
+          weatherImageUrl = "https://images.unsplash.com/photo-1499956827185-0d63ee78a910?q=80&w=800&auto=format&fit=crop"; // 厚い雲
+        } else if (totalScore >= 14) {
+          weatherText = "くもり（ときどき 晴れ）";
+          weatherIcon = "fa-cloud-sun"; // 雲と太陽
+          weatherImageUrl = "https://images.unsplash.com/photo-1534088568595-a066f410cbda?q=80&w=800&auto=format&fit=crop"; // 雲間からの光
+        } else if (totalScore >= 7) {
+          weatherText = "晴れ（ときどき くもり）";
+          weatherIcon = "fa-cloud-sun"; // 雲と太陽
+          weatherImageUrl = "https://images.unsplash.com/photo-1601297183305-6df142704ea2?q=80&w=800&auto=format&fit=crop"; // 晴れの中に少し雲
         } else {
-          weatherText = "晴れ（時々くもり）";
-          weatherIcon = "fa-sun text-[#5c3620]";
+          weatherText = "快晴（穏やかな空です）";
+          weatherIcon = "fa-sun"; // 太陽
+          weatherImageUrl = "https://images.unsplash.com/photo-1529153549247-9ea822f6d0a7?q=80&w=800&auto=format&fit=crop"; // 雲ひとつない青空
         }
 
         let alertMessage = null;
-        if (totalScore >= 25) {
+        if (totalScore >= 45) { // 60点中45点以上（全体の75%以上）でアラート
           alertMessage = (
             <div className="bg-[#4a1c1c] border border-red-500 text-red-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
-              <p>複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
+              <p className="drop-shadow-md">複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
             </div>
           );
-        } else if (totalScore <= 5) {
+        } else if (totalScore <= 13) { // 60点中13点以下（全体の約20%以下）でアラート
           alertMessage = (
             <div className="bg-[#1c2a4a] border border-blue-500 text-blue-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
-              <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様です</p>
-              <p>心の天気が安定しているようです。当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。</p>
+              <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様のようです</p>
+              <p className="drop-shadow-md">
+                今の心の天気が安定していることは、とても素敵なことですね。<br />
+                それでも、もし心の奥のほうに言葉にならない「小さな引っかかり」を感じているとしたら、どうか無理に晴れを装わなくても大丈夫ですからね。<br />
+                当てはまらなかった物語の中にも、これからの自分をそっと守るヒントがあるかもしれません。
+              </p>
             </div>
           );
         }
 
+        // カテゴリ順にソートした質問配列を作成（イコライザー表示用）
+        const categoryOrder = ['relation', 'thought', 'energy'];
+        const sortedQuestions = [...QUESTIONS].sort((a, b) => {
+          const catA = WEATHER_DATA[a.type].category;
+          const catB = WEATHER_DATA[b.type].category;
+          if (catA !== catB) {
+            return categoryOrder.indexOf(catA) - categoryOrder.indexOf(catB);
+          }
+          return a.id - b.id; // 同じカテゴリ内では元の設問順
+        });
+
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
-            <div id="result-capture-area" className="w-full pt-4 pb-4 px-2">
+            
+            {/* マスターのセリフ (キャプチャから除外) */}
+            <div className="w-full pt-4 px-2">
               <DialogBox 
                 charConfig={CONFIG.char1} 
                 text={`お疲れ様でした。\nここに出た結果は、あなたを決めつけるものではありません。\n\n今、心がどんな天気なのか、どんな役割を背負っているのか。\nそれを少しだけ言葉にして、外に出してみるためのものです。`} 
               />
+            </div>
 
-              {/* 1枚のノートに全てをまとめる */}
-              <div className="w-full dialog-note border-2 border-amber-600 mt-6 shadow-xl animate-fade-in relative">
+            {/* ====== ここから下が画像保存エリア ====== */}
+            <div id="result-capture-area" className="w-full flex flex-col gap-6 py-6 px-2 md:px-4 rounded-xl">
+              
+              {/* 1枚のノート（天気と荷物の重さ） */}
+              <div className="w-full dialog-note border-2 border-amber-600 shadow-xl animate-fade-in relative m-0">
                 <div className="relative z-10 flex flex-col h-full">
 
-                  {/* 上部：近い物語 と 心の天気 の横並び */}
-                  <div className="flex flex-row gap-2 md:gap-4 items-stretch w-full mb-5">
-                    {/* 左：近い物語 */}
-                    <div className="flex-1 min-w-0 flex flex-col">
-                      <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                        <i className="fa-solid fa-book-open-reader text-[#5c3620]"></i> 近い物語
-                      </h4>
-                      <div className="space-y-2 h-full flex flex-col justify-center">
-                        {top3.map((key, idx) => {
-                          const data = WEATHER_DATA[key];
-                          
-                          return (
-                            <div key={key} className="p-1.5 md:p-3 flex flex-row items-center">
-                              <div className="font-bold text-sm md:text-xl mr-2 md:mr-4 text-[#5c3620] w-4 md:w-8 text-center shrink-0">
-                                {idx + 1}
-                              </div>
-                              <div className="flex flex-col md:flex-row items-start md:items-center gap-0.5 md:gap-3">
-                                <i className={`${data.icon} text-lg md:text-2xl ${data.color} drop-shadow-sm`}></i>
-                                <h3 className="text-xs md:text-base font-bold text-[#2d1b10] leading-tight text-left">{data.name}</h3>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 右：心の天気 */}
-                    <div className="flex-1 min-w-0 flex flex-col">
-                      <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                        <i className="fa-solid fa-cloud-sun text-[#5c3620]"></i> 心の天気
-                      </h4>
-                      <div className="flex flex-col items-center justify-center p-3 md:p-4 flex-1">
-                        <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3 drop-shadow-sm`}></i>
-                        <p className="text-xs md:text-base font-bold text-[#2d1b10] tracking-widest text-center">{weatherText}</p>
+                  {/* 心の天気（空の写真背景 ＋ 白抜き文字） */}
+                  <div className="w-full mb-6">
+                    <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-cloud-sun text-[#5c3620]"></i> 心の天気
+                    </h4>
+                    <div className="relative flex flex-col items-center justify-center p-6 md:p-10 rounded-xl shadow-md border border-[#5c3620]/10 overflow-hidden min-h-[140px] md:min-h-[180px]">
+                      {/* 背景画像 */}
+                      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${weatherImageUrl})` }}></div>
+                      {/* 画像を落ち着かせ、文字を読みやすくするための暗めのオーバーレイ */}
+                      <div className="absolute inset-0 bg-[#2d1b10] bg-opacity-30"></div>
+                      
+                      {/* アイコンと文字が重ならないように高さを固定し、マージン（mb-3）で直接距離をあける */}
+                      <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                        <div className="h-14 md:h-16 flex items-center justify-center mb-3 md:mb-4">
+                          <i className={`fa-solid ${weatherIcon} text-5xl md:text-6xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] block`}></i>
+                        </div>
+                        <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">{weatherText}</p>
                       </div>
                     </div>
                   </div>
@@ -788,26 +802,27 @@
                   )}
 
                   {/* こころの荷物のバランス（イコライザー） */}
-                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                  <div className="pt-4 border-t border-amber-800/20 mb-2">
                     <h4 className="font-bold text-[#5c3620] mb-4 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-sliders text-[#5c3620]"></i> 心の波長（バランス）
+                      <i className="fa-solid fa-sliders text-[#5c3620]"></i> 荷物の重さ
                     </h4>
                     <div className="w-full px-1 md:px-2">
                       {/* イコライザー本体 */}
                       <div className="flex flex-row justify-between items-end w-full h-24 md:h-32 mb-2 border-b border-[#5c3620]/30 pb-2">
-                        {QUESTIONS.map((q, index) => {
+                        {sortedQuestions.map((q, index) => {
                           const key = q.type;
-                          const score = finalScores[key] || 0;
+                          const score = finalScores[key] || 0; // スコアは0〜6
                           const data = WEATHER_DATA[key];
                           const catColor = CATEGORIES[data.category].color;
                           
                           return (
                             <div key={`eq-${key}`} className="flex flex-col items-center justify-end h-full w-[8%] group relative cursor-pointer">
-                              <div className="flex flex-col gap-1 md:gap-1.5 w-full items-center justify-end h-full">
-                                {[3, 2, 1].map(level => (
+                              {/* 7段階(最大6つ)のブロックを積み上げる */}
+                              <div className="flex flex-col w-full items-center justify-end h-full">
+                                {[6, 5, 4, 3, 2, 1].map(level => (
                                   <div 
                                     key={level} 
-                                    className={`w-full max-w-[16px] md:max-w-[24px] h-4 md:h-6 rounded-sm transition-all duration-1000 ease-out ${score >= level ? catColor + ' opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]' : 'bg-[#5c3620] bg-opacity-10'}`}
+                                    className={`w-full max-w-[16px] md:max-w-[24px] h-2 md:h-3 rounded-sm transition-all duration-1000 ease-out mb-0.5 md:mb-1 ${score >= level ? catColor + ' opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]' : 'bg-[#5c3620] bg-opacity-10'}`}
                                   ></div>
                                 ))}
                               </div>
@@ -844,7 +859,7 @@
                         
                         {/* 項目の凡例 */}
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-x-2 gap-y-1.5 text-[9px] md:text-[10px] text-[#2d1b10] font-medium bg-[#5c3620] bg-opacity-5 p-2 md:p-3 rounded-lg border border-[#5c3620]/10">
-                          {QUESTIONS.map((q, index) => {
+                          {sortedQuestions.map((q, index) => {
                             const data = WEATHER_DATA[q.type];
                             return (
                               <div key={`legend-item-${q.type}`} className="flex items-center gap-1">
@@ -858,8 +873,31 @@
                     </div>
                   </div>
 
+                </div>
+              </div>
+
+              {/* アクションボタン群（キャプチャ保存時には ignore される） */}
+              <div data-html2canvas-ignore="true" className="text-center py-2 md:py-4 flex flex-col md:flex-row items-center justify-center gap-4 relative z-20">
+                <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                  <i className="fa-solid fa-camera"></i> あとで見返す
+                </button>
+
+                <a 
+                  href="https://ninin-cc.github.io/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]"
+                >
+                  <i className="fa-solid fa-comments"></i> ひとに話してみる
+                </a>
+              </div>
+
+              {/* 2枚目のノート（重くなっている役割・小さな問い） */}
+              <div className="w-full dialog-note border-2 border-amber-600 shadow-xl animate-fade-in relative m-0">
+                <div className="relative z-10 flex flex-col h-full">
+
                   {/* 重くなっている役割 */}
-                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                  <div className="mb-5">
                     <h4 className="font-bold text-[#5c3620] mb-3 flex items-center gap-1.5 text-sm md:text-base">
                       <i className="fa-solid fa-suitcase text-[#5c3620]"></i> 今、重くなっているかもしれない役割
                     </h4>
@@ -877,7 +915,7 @@
                   </div>
 
                   {/* 小さな問い */}
-                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                  <div className="pt-4 border-t border-amber-800/20">
                     <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
                       <i className="fa-solid fa-seedling text-emerald-600"></i> 小さな問い
                     </h4>
@@ -887,44 +925,37 @@
                     </div>
                   </div>
 
-                  {/* 相談への道しるべ */}
-                  <div className="pt-4 border-t border-amber-800/20">
-                    <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                      <i className="fa-solid fa-door-open text-[#5c3620]"></i> 相談への道しるべ
-                    </h4>
-                    <div className="pl-2 md:pl-4 space-y-1.5 border-l-4 border-amber-600/50 ml-1 py-1">
-                      <p className="text-sm md:text-base text-[#2d1b10] font-medium leading-relaxed">
-                        うまく話せなくても大丈夫です。<br />
-                        重すぎる役割はつらい荷物にもなりがちです。<br />
-                        この結果を見ながら、整理し、持っている荷物を軽くすることもできるかもしれません。
-                      </p>
-                      <p className="pt-2 text-emerald-800 text-[11px] md:text-xs font-bold">
-                        ※相談をご希望の方は、下の「ひとに話してみる」ボタンからお進みください。
-                      </p>
-                    </div>
-                  </div>
-
                 </div>
               </div>
+              
+            </div>
+            {/* ====== ここまでが画像保存エリア ====== */}
 
+            {/* 理澄からのメッセージ (キャプチャから除外) */}
+            <div className="w-full px-2 pb-4">
+              <DialogBox 
+                charConfig={CONFIG.char2} 
+                imageSide="right"
+                text={
+                  <span>
+                    お疲れ様でした！ここまで見つめてみて、いかがでしたか？<br />
+                    うまく言葉にならなくても、ぜんぜん大丈夫ですよ。<br />
+                    背負いすぎた役割って、知らず知らずのうちに重い荷物になっちゃうものですから…。<br />
+                    <br />
+                    もしよかったら、このノートを見ながら、一緒に少しだけ荷物整理してみませんか？<br />
+                    マスターも私も、いつでもここでお待ちしてますね！<br />
+                    <br />
+                    <span className="text-emerald-800 text-[11px] md:text-xs font-bold">
+                      ※相談をご希望の方は、上の「ひとに話してみる」ボタンからお進みください。
+                    </span>
+                  </span>
+                }
+              />
             </div>
 
             {/* アクションボタン群 */}
-            <div className="text-center pt-4 flex flex-col items-center gap-4">
-              <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                <i className="fa-solid fa-camera"></i> あとで見返す
-              </button>
-
-              <a 
-                href="https://ninin-cc.github.io/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]"
-              >
-                <i className="fa-solid fa-comments"></i> ひとに話してみる
-              </a>
-
-              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-4">
+            <div className="text-center pt-2 flex flex-col items-center gap-4">
+              <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-2">
                 もう一度最初から見つめる
               </button>
             </div>
@@ -1051,7 +1082,7 @@
       };
 
       return (
-        <div className="flex flex-col flex-1 w-full justify-between">
+        <div className="flex flex-col flex-1 w-full justify-between relative pb-16">
           <div className="w-full">
             <div key={animationKey} className={animationKey > 0 ? "animate-page-turn w-full" : "w-full"}>
               {step === 'intro' && renderIntro()}
@@ -1092,6 +1123,22 @@
           {animationKey > 0 && step !== 'calculating' && step !== 'result' && (
             <div key={`page-turn-${animationKey}`} className="page-flip-overlay"></div>
           )}
+
+          {/* 開発用：結果スキップの透明ボタン */}
+          <div 
+            onClick={() => {
+              // 開発用ボタンを押すたびにランダムなスコアを生成して様々な天気を確認できるようにする
+              const randomScore = () => Math.floor(Math.random() * 7); // 7択（0〜6）に対応
+              const dummyScores = { 
+                silent: randomScore(), burden: randomScore(), conform: randomScore(), 
+                overthink: randomScore(), suppress: randomScore(), blame: randomScore(), 
+                restless: randomScore(), unclear: randomScore(), loss: randomScore(), endure: randomScore() 
+              };
+              calculateResult(dummyScores);
+            }}
+            className="w-full h-16 absolute bottom-0 left-0 cursor-pointer opacity-0 z-50"
+            title="結果画面へスキップ（開発用・ランダムスコア）"
+          ></div>
         </div>
       );
     };
