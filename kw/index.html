@@ -39,11 +39,8 @@
   <!-- html2canvas (画像保存用) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- jsPDF (PDF保存用) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Yomogi&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
     body { margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; }
     html, body { -webkit-touch-callout: none; }
     img { -webkit-user-drag: none; user-select: none; }
@@ -88,47 +85,6 @@
         inset 0 1px 0 rgba(255, 232, 176, 0.25),
         inset 0 -2px 0 rgba(45, 22, 8, 0.55),
         0 2px 0 #3a1d0c !important;
-    }
-
-    .transparent-save-button {
-      background: transparent !important;
-      border-color: transparent !important;
-      box-shadow: none !important;
-      color: #fff8df !important;
-    }
-    .transparent-save-button:hover:not(:disabled) {
-      background: rgba(255, 248, 223, 0.08) !important;
-      border-color: rgba(255, 248, 223, 0.18) !important;
-      color: #fff8df !important;
-      box-shadow: none !important;
-    }
-
-    .letter-note {
-      font-family: 'Yomogi', 'Noto Sans JP', sans-serif;
-      background-color: #fffffd;
-      background-image:
-        linear-gradient(90deg, transparent 0, transparent 34px, rgba(170, 70, 65, 0.12) 35px, transparent 36px),
-        repeating-linear-gradient(178deg, transparent 0, transparent 27px, rgba(92, 72, 48, 0.16) 28px, transparent 29px);
-      box-shadow:
-        inset 0 0 18px rgba(120, 90, 60, 0.10),
-        0 6px 14px rgba(0, 0, 0, 0.18);
-    }
-
-    .translucent-popup-overlay {
-      background: rgba(0, 0, 0, 0.42) !important;
-      backdrop-filter: blur(2px);
-    }
-    .translucent-popup-window {
-      background-color: rgba(18, 12, 8, 0.34) !important;
-      backdrop-filter: blur(3px);
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42) !important;
-    }
-    .translucent-popup-window > div.absolute {
-      background-color: rgba(18, 12, 8, 0.48) !important;
-      backdrop-filter: blur(2px);
-    }
-    .translucent-popup-window .letter-note {
-      background-color: rgba(255, 255, 253, 0.95);
     }
 
     .dialog-note {
@@ -263,62 +219,79 @@
         name: '静かにがんばる人',
         role: '「まだ大丈夫」と自分に言い聞かせる役割',
         icon: 'fa-solid fa-battery-quarter',
-        color: 'text-blue-400'
+        color: 'text-blue-400',
+        category: 'energy'
       },
       burden: {
         name: '背負いすぎる人',
         role: '人の期待に応えようとする役割',
         icon: 'fa-solid fa-weight-hanging',
-        color: 'text-orange-400'
+        color: 'text-orange-400',
+        category: 'relation'
       },
       conform: {
         name: '合わせすぎる人',
         role: '自分の気持ちを後回しにして周囲に合わせる役割',
         icon: 'fa-solid fa-masks-theater',
-        color: 'text-emerald-400'
+        color: 'text-emerald-400',
+        category: 'relation'
       },
       overthink: {
         name: '考えすぎる人',
         role: '先の不安をすべて一人で抱え込む役割',
         icon: 'fa-solid fa-head-side-virus',
-        color: 'text-purple-400'
+        color: 'text-purple-400',
+        category: 'thought'
       },
       suppress: {
         name: '怒りを飲み込む人',
         role: '波風を立てないよう感情をため込む役割',
         icon: 'fa-solid fa-volcano',
-        color: 'text-red-400'
+        color: 'text-red-400',
+        category: 'relation'
       },
       blame: {
         name: '自分を責める人',
         role: '「自分が悪い」とすべての責任を負う役割',
         icon: 'fa-solid fa-hand-point-left',
-        color: 'text-teal-400'
+        color: 'text-teal-400',
+        category: 'thought'
       },
       restless: {
         name: '休めない人',
         role: '常に動き続けなければと焦りを背負う役割',
         icon: 'fa-solid fa-person-running',
-        color: 'text-amber-400'
+        color: 'text-amber-400',
+        category: 'thought'
       },
       unclear: {
         name: '気持ちが見えにくい人',
         role: '自分の本当のSOSを見失ってまで平気を装う役割',
         icon: 'fa-solid fa-cloud',
-        color: 'text-gray-400'
+        color: 'text-gray-400',
+        category: 'energy'
       },
       loss: {
         name: '失ったものを抱える人',
         role: 'もう戻らない時間や関係を一人で守り続ける役割',
         icon: 'fa-solid fa-clock-rotate-left',
-        color: 'text-rose-400'
+        color: 'text-rose-400',
+        category: 'energy'
       },
       endure: {
         name: 'ひとりで耐える人',
         role: '「どうせわかってもらえない」と一人で耐える役割',
         icon: 'fa-solid fa-person-shelter',
-        color: 'text-indigo-400'
+        color: 'text-indigo-400',
+        category: 'energy'
       }
+    };
+
+    // カテゴリの定義
+    const CATEGORIES = {
+      relation: { name: '人との関わりで背負う荷物', max: 9, color: 'bg-emerald-600' },
+      thought: { name: '思考と自責で重くなる荷物', max: 9, color: 'bg-purple-600' },
+      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 12, color: 'bg-blue-600' }
     };
 
     // --- 設問データ (Q1 - Q10) ---
@@ -335,36 +308,14 @@
       { id: 10, type: 'endure', text: '人と話したり、笑ったりすることはある。\nでも、本当にしんどいことは誰にも話していない。\n分かってもらえない気がして、ひとりで抱えてしまう。' }
     ];
 
-    // --- 相談導線設定 ---
-    // 別サービスとして展開するときは、主にこのブロックを手で変更してください。
-    const CONTACT_CONFIG = {
-      consultationName: 'nininキャリアルーム',
-      consultationUrl: 'https://ninin-cc.github.io/',
-      consultationDescription: '副業、独立、セカンドキャリアについてのご相談を得意とする男性カウンセラーと、レジリエンスや一次予防を専門とする女性カウンセラーが在籍。どちらも相談者さまを尊重するスタイルです。\nまた、自分が自然にできる役割、疲れる役割を知り、今後のキャリアに活かすアセスメント【RIESM™】も好評です。',
-      profileText: '',
-      profileUrl: 'https://note.com/ninin2025/n/n236a6f29ad63',
-      profileLinkLabel: '自己紹介ページ'
-    };
-    const NININ_HOME_URL = 'https://ninin-cc.github.io/';
-
     // --- 共通UIコンポーネント ---
-    const WindowBox = ({ title, children, iconName, className = "", onClose = null }) => (
+    const WindowBox = ({ title, children, iconName, className = "" }) => (
       <div className={`bg-black text-white border-2 md:border-4 border-gray-400 px-3 pb-3 pt-10 md:px-5 md:pb-5 md:pt-14 rounded-lg shadow-xl relative w-full mt-8 ${className}`}>
         {title && (
           <div className="absolute left-2 md:left-4 top-0 -translate-y-1/2 bg-black px-2 py-1 md:px-3 md:py-2 flex items-center space-x-1.5 border-2 border-gray-400 rounded max-w-[95%]">
             {iconName && <i className={`${iconName} text-yellow-300 shrink-0 text-[10px] md:text-base`}></i>}
             <h2 className="text-[11px] md:text-base font-bold tracking-widest text-yellow-100 leading-snug truncate">{title}</h2>
           </div>
-        )}
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="閉じる"
-            className="absolute right-3 top-3 z-30 flex h-8 w-8 items-center justify-center rounded-full border border-amber-200/70 bg-stone-900/80 text-amber-100 shadow-md transition-colors hover:bg-amber-100 hover:text-stone-900"
-          >
-            ✖
-          </button>
         )}
         <div className="w-full h-full flex flex-col">{children}</div>
       </div>
@@ -452,16 +403,6 @@
           </div>
         </button>
       );
-    };
-
-    // --- ファイル名用の日時取得関数 ---
-    const getFormattedDateStr = () => {
-      const now = new Date();
-      const yy = String(now.getFullYear()).slice(-2);
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const hh = String(now.getHours()).padStart(2, '0');
-      return `CA_${yy}${mm}${dd}_${hh}`;
     };
 
     // --- メインアプリケーション ---
@@ -563,8 +504,15 @@
         
         const totalScore = Object.values(finalScores).reduce((sum, val) => sum + val, 0);
 
+        // カテゴリ別スコアの計算
+        const categoryScores = { relation: 0, thought: 0, energy: 0 };
+        Object.entries(finalScores).forEach(([key, score]) => {
+          const cat = WEATHER_DATA[key].category;
+          categoryScores[cat] += score;
+        });
+
         setTimeout(() => {
-          setResults({ top3, totalScore, finalScores });
+          setResults({ top3, totalScore, finalScores, categoryScores });
           setStep('result');
           window.scrollTo(0, 0);
         }, 1500);
@@ -586,115 +534,28 @@
       const openPopup = (type) => setPopupType(type);
       const closePopup = () => setPopupType('none');
 
-      const captureResultPages = () => {
-        const pageElements = Array.from(document.querySelectorAll('.result-export-page'));
-        if (pageElements.length === 0) return Promise.reject(new Error('保存対象が見つかりません。'));
-
+      const handleSaveImage = () => {
+        const element = document.getElementById('result-capture-area');
+        if (!element) return;
         window.scrollTo(0, 0);
 
-        return new Promise((resolve, reject) => {
-          setTimeout(async () => {
-            try {
-              const captureScale = 2;
-              const pages = await Promise.all(pageElements.map(async (element) => {
-                const pageRect = element.getBoundingClientRect();
-                let canvas = await html2canvas(element, {
-                  backgroundColor: '#fffaf0',
-                  scale: captureScale,
-                  useCORS: true
-                });
-
-                const expectedWidth = Math.round(pageRect.width * captureScale);
-                const expectedHeight = Math.round(pageRect.height * captureScale);
-                if (canvas.width !== expectedWidth || canvas.height !== expectedHeight) {
-                  const croppedCanvas = document.createElement('canvas');
-                  croppedCanvas.width = expectedWidth;
-                  croppedCanvas.height = expectedHeight;
-                  croppedCanvas
-                    .getContext('2d')
-                    .drawImage(canvas, 0, 0, expectedWidth, expectedHeight, 0, 0, expectedWidth, expectedHeight);
-                  canvas = croppedCanvas;
-                }
-
-                const linkElements = Array.from(element.querySelectorAll('[data-pdf-link-url]'));
-                const linkRects = linkElements.map(linkElement => {
-                  const rect = linkElement.getBoundingClientRect();
-                  return {
-                    url: linkElement.getAttribute('data-pdf-link-url'),
-                    x: rect.left - pageRect.left,
-                    y: rect.top - pageRect.top,
-                    width: rect.width,
-                    height: rect.height,
-                    pageWidth: pageRect.width,
-                    pageHeight: pageRect.height
-                  };
-                });
-
-                return { canvas, linkRects };
-              }));
-              resolve(pages);
-            } catch (err) {
-              reject(err);
-            }
-          }, 300);
-        });
-      };
-
-      const handleSaveImage = () => {
-        captureResultPages()
-          .then(pages => {
-            const dateStr = getFormattedDateStr();
-            pages.forEach(({ canvas }, index) => {
-              const link = document.createElement('a');
-              link.download = `${dateStr}_${index + 1}of${pages.length}.png`;
-              link.href = canvas.toDataURL('image/png');
-              link.click();
-            });
-          })
-          .catch(err => {
+        setTimeout(() => {
+          html2canvas(element, { 
+            backgroundColor: '#0a0a0a', 
+            scale: 2, 
+            useCORS: true
+          }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'kokoro_weather_result.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            closePopup();
+          }).catch(err => {
             console.error('画像保存エラー', err);
             alert('画像の保存に失敗しました。');
+            closePopup();
           });
-      };
-
-      const handleSavePdf = () => {
-        captureResultPages()
-          .then(pages => {
-            if (!window.jspdf || !window.jspdf.jsPDF) {
-              throw new Error('jsPDFが読み込まれていません。');
-            }
-
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const margin = 0;
-
-            pages.forEach(({ canvas, linkRects }, index) => {
-              if (index > 0) pdf.addPage();
-
-              const imgData = canvas.toDataURL('image/png');
-              pdf.addImage(imgData, 'PNG', margin, margin, pageWidth, pageHeight);
-
-              linkRects.forEach(linkRect => {
-                const scale = pageWidth / linkRect.pageWidth;
-                pdf.link(
-                  margin + linkRect.x * scale,
-                  margin + linkRect.y * scale,
-                  linkRect.width * scale,
-                  linkRect.height * scale,
-                  { url: linkRect.url }
-                );
-              });
-            });
-
-            const dateStr = getFormattedDateStr();
-            pdf.save(`${dateStr}.pdf`);
-          })
-          .catch(err => {
-            console.error('PDF保存エラー', err);
-            alert('PDFの保存に失敗しました。');
-          });
+        }, 300);
       };
 
       // --- 各画面のレンダリング ---
@@ -834,7 +695,7 @@
 
       const renderResult = () => {
         if (!results) return null;
-        const { top3, totalScore } = results;
+        const { top3, totalScore, categoryScores } = results;
 
         let weatherText = "";
         let weatherIcon = "";
@@ -853,12 +714,7 @@
         }
 
         let alertMessage = null;
-        let alertSummary = null;
         if (totalScore >= 25) {
-          alertSummary = {
-            title: '抱え込んでいませんか？',
-            text: '複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。'
-          };
           alertMessage = (
             <div className="bg-red-950 bg-opacity-40 border border-red-500/50 text-red-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
@@ -866,10 +722,6 @@
             </div>
           );
         } else if (totalScore <= 5) {
-          alertSummary = {
-            title: '穏やかな空模様です',
-            text: '心の天気が安定しているようです。当てはまらなかった物語の中にも、これからの自分を守るヒントがあるかもしれません。'
-          };
           alertMessage = (
             <div className="bg-blue-950 bg-opacity-40 border border-blue-500/50 text-blue-100 p-2 md:p-3 rounded-lg shadow-inner text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様です</p>
@@ -877,20 +729,6 @@
             </div>
           );
         }
-        const reportContactTextLength = [
-          CONTACT_CONFIG.profileText,
-          CONTACT_CONFIG.consultationDescription
-        ].filter(Boolean).join('').length;
-        const isLongReportContactText = reportContactTextLength > 120;
-        const isVeryLongReportContactText = reportContactTextLength > 220;
-        const reportContactParagraphStyle = {
-          margin: '0 0 6px',
-          fontSize: isVeryLongReportContactText ? '9.6px' : isLongReportContactText ? '10.5px' : '11.5px',
-          lineHeight: isVeryLongReportContactText ? 1.34 : isLongReportContactText ? 1.42 : 1.52,
-          color: '#5f3a20',
-          overflowWrap: 'break-word',
-          wordBreak: 'normal'
-        };
 
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
@@ -904,26 +742,25 @@
               <div className="w-full dialog-note border-2 border-amber-600 mt-6 shadow-xl animate-fade-in relative">
                 <div className="relative z-10 flex flex-col h-full">
 
-                  {/* 上部：あなたに近い物語 と 心の天気 の横並び */}
+                  {/* 上部：近い物語 と 心の天気 の横並び */}
                   <div className="flex flex-row gap-2 md:gap-4 items-stretch w-full mb-5">
-                    {/* 左：あなたに近い物語 */}
+                    {/* 左：近い物語 */}
                     <div className="flex-1 min-w-0 flex flex-col">
                       <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
-                        <i className="fa-solid fa-book-open-reader text-amber-800"></i> あなたに近い物語
+                        <i className="fa-solid fa-book-open-reader text-amber-800"></i> 近い物語
                       </h4>
                       <div className="space-y-2 h-full flex flex-col justify-center">
                         {top3.map((key, idx) => {
                           const data = WEATHER_DATA[key];
-                          const cardClass = idx === 0 ? 'result-card-gold' : idx === 1 ? 'result-card-silver' : 'result-card-bronze';
                           
                           return (
-                            <div key={key} className={`${cardClass} p-1.5 md:p-3 rounded-lg relative overflow-hidden flex flex-row items-center shadow-sm`}>
-                              <div className="font-bold text-[10px] md:text-lg mr-2 md:mr-4 text-amber-100/60 w-4 md:w-8 text-center shrink-0">
+                            <div key={key} className="p-1.5 md:p-3 flex flex-row items-center">
+                              <div className="font-bold text-sm md:text-xl mr-2 md:mr-4 text-[#5c3620] w-4 md:w-8 text-center shrink-0">
                                 {idx + 1}
                               </div>
                               <div className="flex flex-col md:flex-row items-start md:items-center gap-0.5 md:gap-3">
-                                <i className={`${data.icon} text-sm md:text-2xl ${data.color} drop-shadow-md`}></i>
-                                <h3 className={`text-[10px] md:text-base font-bold text-white leading-tight text-left drop-shadow-md`}>{data.name}</h3>
+                                <i className={`${data.icon} text-lg md:text-2xl ${data.color} drop-shadow-sm`}></i>
+                                <h3 className="text-xs md:text-base font-bold text-[#2d1b10] leading-tight text-left">{data.name}</h3>
                               </div>
                             </div>
                           );
@@ -936,9 +773,9 @@
                       <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
                         <i className="fa-solid fa-cloud-sun text-amber-800"></i> 心の天気
                       </h4>
-                      <div className="flex flex-col items-center justify-center p-3 md:p-4 bg-[rgba(20,10,5,0.3)] rounded-lg border border-amber-800/30 flex-1 shadow-inner">
-                        <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3 drop-shadow-md`}></i>
-                        <p className="text-[10px] md:text-lg font-bold text-[#fff8df] tracking-widest text-center drop-shadow-md">{weatherText}</p>
+                      <div className="flex flex-col items-center justify-center p-3 md:p-4 flex-1">
+                        <i className={`fa-solid ${weatherIcon} text-4xl md:text-5xl mb-2 md:mb-3 drop-shadow-sm`}></i>
+                        <p className="text-xs md:text-base font-bold text-[#2d1b10] tracking-widest text-center">{weatherText}</p>
                       </div>
                     </div>
                   </div>
@@ -962,6 +799,33 @@
                           <div key={`role-${key}`} className="flex items-start gap-2">
                             <i className="fa-solid fa-check text-amber-700 mt-1"></i>
                             <p className="text-sm md:text-base text-[#2d1b10] font-bold leading-relaxed">{data.role}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* こころの荷物のバランス（バーチャート） */}
+                  <div className="pt-4 border-t border-amber-800/20 mb-5">
+                    <h4 className="font-bold text-[#5c3620] mb-3 flex items-center gap-1.5 text-sm md:text-base">
+                      <i className="fa-solid fa-chart-bar text-amber-800"></i> 荷物のバランス
+                    </h4>
+                    <div className="space-y-3 pl-1 md:pl-2">
+                      {Object.keys(CATEGORIES).map(catKey => {
+                        const cat = CATEGORIES[catKey];
+                        const score = categoryScores[catKey];
+                        const percentage = (score / cat.max) * 100;
+                        return (
+                          <div key={catKey} className="w-full">
+                            <div className="flex justify-between text-[11px] md:text-sm text-[#2d1b10] font-bold mb-1 pl-1">
+                              <span>{cat.name}</span>
+                              <span className="opacity-70 text-[10px] md:text-xs">
+                                傾向度 {Math.round(percentage)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-[#5c3620] bg-opacity-20 rounded-full h-2.5 md:h-3 border border-[#5c3620]/30 overflow-hidden shadow-inner">
+                              <div className={`h-full ${cat.color} bg-opacity-80 transition-all duration-1000 ease-out`} style={{ width: `${percentage}%` }}></div>
+                            </div>
                           </div>
                         );
                       })}
@@ -1001,173 +865,20 @@
 
             </div>
 
-            <div
-              id="result-export-area"
-              style={{
-                position: 'absolute',
-                left: '-9999px',
-                top: 0,
-                width: '900px',
-                color: '#2d1b10',
-                fontFamily: "'Noto Sans JP', sans-serif",
-                boxSizing: 'border-box'
-              }}
-            >
-              <div className="result-export-page" style={{ width: '900px', height: '1272px', overflow: 'hidden', padding: '44px', background: '#fffaf0', boxSizing: 'border-box' }}>
-                <div style={{ height: '1184px', border: '3px solid #8b5a2b', borderRadius: '12px', padding: '32px', background: '#fff8e8', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-                  <div style={{ borderBottom: '2px solid #d6a85e', paddingBottom: '18px', marginBottom: '24px' }}>
-                    <p style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#8b5a2b' }}>{CONFIG.appTitlePre}</p>
-                    <h1 style={{ margin: '6px 0 8px', fontSize: '34px', lineHeight: 1.35, color: '#2d1b10' }}>
-                      こころの天気と役割 結果レポート
-                    </h1>
-                    <p style={{ margin: 0, fontSize: '16px', color: '#5f3a20' }}>{CONFIG.appTitleMain}</p>
-                  </div>
-
-                  <section style={{ marginBottom: '22px' }}>
-                    <h2 style={{ margin: '0 0 14px', fontSize: '24px', color: '#6b3f1d' }}>今の心の天気</h2>
-                    <div style={{ border: '1px solid #d6a85e', borderRadius: '12px', padding: '18px', background: '#fffdf5', display: 'flex', alignItems: 'center', gap: '18px' }}>
-                      <div style={{ width: '92px', height: '92px', borderRadius: '50%', background: '#f7e4b4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px', color: '#8b5a2b' }}>
-                        <i className={`fa-solid ${weatherIcon}`}></i>
-                      </div>
-                      <div>
-                        <p style={{ margin: '0 0 8px', fontSize: '14px', fontWeight: 700, color: '#9a5e30' }}>心の天気</p>
-                        <h3 style={{ margin: 0, fontSize: '28px', lineHeight: 1.35, color: '#2d1b10' }}>{weatherText}</h3>
-                        <p style={{ margin: '8px 0 0', fontSize: '13px', lineHeight: 1.65, color: '#5f3a20' }}>
-                          この結果は、あなたを決めつけるものではありません。今の心の空模様を少し言葉にして、外に出してみるためのものです。
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section>
-                    <h2 style={{ margin: '0 0 14px', fontSize: '24px', color: '#6b3f1d' }}>あなたに近い物語</h2>
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      {top3.map((key, idx) => {
-                        const data = WEATHER_DATA[key];
-                        return (
-                          <div key={`export-page1-${key}`} style={{ border: '1px solid #d6a85e', borderRadius: '10px', padding: '16px', background: '#fffdf5' }}>
-                            <p style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: 700, color: '#9a5e30' }}>{idx + 1}</p>
-                            <h3 style={{ margin: 0, fontSize: '22px', color: '#2d1b10' }}>{data.name}</h3>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  {alertSummary && (
-                    <section style={{ marginTop: '16px' }}>
-                      <div style={{ border: '1px solid #d6a85e', borderRadius: '10px', padding: '14px', background: '#fff8e1' }}>
-                        <p style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 700, color: '#7f1d1d' }}>{alertSummary.title}</p>
-                        <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.65 }}>{alertSummary.text}</p>
-                      </div>
-                    </section>
-                  )}
-
-                  <div style={{ marginTop: 'auto', paddingTop: '18px', position: 'relative', textAlign: 'center', fontSize: '12px', color: '#5f3a20' }}>
-                    <a
-                      href={NININ_HOME_URL}
-                      data-pdf-link-url={NININ_HOME_URL}
-                      style={{ margin: 0, color: '#5f3a20', textDecoration: 'none', display: 'inline-block' }}
-                    >
-                      © ninin consulting & counseling LLC. All rights reserved.
-                    </a>
-                    <p style={{ position: 'absolute', right: 0, bottom: 0, margin: 0, fontWeight: 700 }}>1/2</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="result-export-page" style={{ width: '900px', height: '1272px', overflow: 'hidden', padding: '44px', background: '#fffaf0', boxSizing: 'border-box' }}>
-                <div style={{ height: '1184px', border: '3px solid #8b5a2b', borderRadius: '12px', padding: '32px', background: '#fff8e8', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-                  <section style={{ marginBottom: '20px' }}>
-                    <h2 style={{ margin: '0 0 14px', fontSize: '24px', color: '#6b3f1d' }}>今、重くなっているかもしれない役割</h2>
-                    <div style={{ display: 'grid', gap: '10px' }}>
-                      {top3.map((key) => {
-                        const data = WEATHER_DATA[key];
-                        return (
-                          <div key={`export-role-${key}`} style={{ border: '1px solid #d6a85e', borderRadius: '10px', padding: '13px 14px', background: '#fffdf5' }}>
-                            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.62, fontWeight: 700 }}>{data.role}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  <section style={{ marginBottom: '18px' }}>
-                    <h2 style={{ margin: '0 0 12px', fontSize: '24px', color: '#6b3f1d' }}>小さな問い</h2>
-                    <div style={{ border: '1px solid #86a66a', borderRadius: '10px', padding: '14px', background: '#f5fff1' }}>
-                      <p style={{ margin: '0 0 8px', fontSize: '13px', lineHeight: 1.65 }}>その役割は、いつから少し重くなっていたのでしょうか。</p>
-                      <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.65 }}>もし一つだけ軽くできるとしたら、何を少し手放したいでしょうか。</p>
-                    </div>
-                  </section>
-
-                  <section style={{ marginBottom: '16px' }}>
-                    <h2 style={{ margin: '0 0 12px', fontSize: '24px', color: '#6b3f1d' }}>相談への道しるべ</h2>
-                    <div style={{ border: '1px solid #d6a85e', borderRadius: '10px', padding: '14px', background: '#fff8e1' }}>
-                      <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.62 }}>
-                        うまく話せなくても大丈夫です。重すぎる役割はつらい荷物にもなりがちです。この結果を見ながら、整理し、持っている荷物を軽くすることもできるかもしれません。
-                      </p>
-                    </div>
-                  </section>
-
-                  <section style={{ marginTop: 'auto', borderTop: '2px solid #d6a85e', paddingTop: '12px' }}>
-                    <div style={{ marginBottom: '8px', textAlign: 'left', width: '70%', maxWidth: '70%', border: '1px solid rgba(139,90,43,0.28)', borderRadius: '10px', background: 'rgba(255,253,245,0.72)', padding: '8px 12px', boxSizing: 'border-box' }}>
-                      <p style={{ margin: '0 0 6px', fontSize: '11.8px', lineHeight: 1.45, color: '#5f3a20', overflowWrap: 'break-word' }}>
-                        <span style={{ fontWeight: 700 }}>{CONTACT_CONFIG.consultationName}</span>
-                        <span>：</span>
-                        <a
-                          href={CONTACT_CONFIG.consultationUrl}
-                          data-pdf-link-url={CONTACT_CONFIG.consultationUrl}
-                          style={{ color: '#1d4ed8', textDecoration: 'underline', wordBreak: 'break-all', overflowWrap: 'anywhere' }}
-                        >
-                          {CONTACT_CONFIG.consultationUrl}
-                        </a>
-                      </p>
-                      {CONTACT_CONFIG.profileText && (
-                        <p style={reportContactParagraphStyle}>{CONTACT_CONFIG.profileText}</p>
-                      )}
-                      {CONTACT_CONFIG.consultationDescription && (
-                        <p style={reportContactParagraphStyle}>
-                          {CONTACT_CONFIG.consultationDescription}
-                        </p>
-                      )}
-                    </div>
-                    {CONTACT_CONFIG.profileUrl && (
-                      <p style={{ margin: '0 0 10px', textAlign: 'left', width: '100%', maxWidth: '100%', fontSize: '10.5px', lineHeight: 1.35, color: '#6f5238', overflowWrap: 'anywhere', wordBreak: 'break-all' }}>
-                        <span style={{ fontWeight: 700 }}>{CONTACT_CONFIG.profileLinkLabel || '自己紹介ページ'}</span>
-                        <span>：</span>
-                        <a
-                          href={CONTACT_CONFIG.profileUrl}
-                          data-pdf-link-url={CONTACT_CONFIG.profileUrl}
-                          style={{ color: '#1d4ed8', textDecoration: 'underline', wordBreak: 'break-all', overflowWrap: 'anywhere' }}
-                        >
-                          {CONTACT_CONFIG.profileUrl}
-                        </a>
-                      </p>
-                    )}
-                    <div style={{ position: 'relative', textAlign: 'center', fontSize: '12px', color: '#5f3a20' }}>
-                      <a
-                        href={NININ_HOME_URL}
-                        data-pdf-link-url={NININ_HOME_URL}
-                        style={{ margin: 0, color: '#5f3a20', textDecoration: 'none', display: 'inline-block' }}
-                      >
-                        © ninin consulting & counseling LLC. All rights reserved.
-                      </a>
-                      <p style={{ position: 'absolute', right: 0, bottom: 0, margin: 0, fontWeight: 700 }}>2/2</p>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </div>
-
             {/* アクションボタン群 */}
             <div className="text-center pt-4 flex flex-col items-center gap-4">
               <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                <i className="fa-solid fa-camera"></i> あとで見返す（結果保存）
+                <i className="fa-solid fa-camera"></i> あとで見返す
               </button>
 
-              <button onClick={() => openPopup('talk')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+              <a 
+                href="https://ninin-cc.github.io/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]"
+              >
                 <i className="fa-solid fa-comments"></i> ひとに話してみる
-              </button>
+              </a>
 
               <button onClick={resetApp} className="text-gray-400 hover:text-white underline underline-offset-4 text-sm mt-4">
                 もう一度最初から見つめる
@@ -1184,7 +895,7 @@
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
               <div className="w-full max-w-lg">
-                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="bg-opacity-100 border-yellow-500 shadow-2xl" onClose={closePopup}>
+                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="bg-opacity-100 border-yellow-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
@@ -1213,7 +924,7 @@
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
               <div className="w-full max-w-lg">
-                <WindowBox title="ゆっくりで大丈夫" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-blue-500 shadow-2xl" onClose={closePopup}>
+                <WindowBox title="ゆっくりで大丈夫" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-blue-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
@@ -1235,66 +946,27 @@
 
         if (popupType === 'talk') {
           return (
-            <div className="translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in">
-              <div className="min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6">
-                <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="translucent-popup-window border-yellow-500 shadow-2xl" onClose={closePopup}>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
+              <div className="w-full max-w-lg">
+                <WindowBox title="カフェの片隅で" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-yellow-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char1} 
-                    text={
-                      <>
-                        {'いかがでしたか。\n自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。言葉にして、誰かに話してみることで、「'}
-                        <strong className="font-bold">ああ、自分はこんなに背負っていたんだ</strong>
-                        {'」と気づくこともあります。\n\n…そうですね。\nどうでしょう？私が知っている【 '}
-                        <strong className="font-bold">{CONTACT_CONFIG.consultationName}</strong>
-                        {' 】で、よかったらゆっくりお話ししてみては――'}
-                      </>
-                    } 
+                    text={`自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。\n\n言葉にして、誰かに話してみることで、\n「ああ、自分はこんなに背負っていたんだ」と気づくこともあります。\n\nもしよければ、nininキャリアルームで、あなたの話をゆっくり聞かせてください。`} 
                   />
-                  <div className="flex flex-col gap-3 mt-4">
+                  <div className="flex flex-col gap-3 mt-6">
                     <a 
-                      href={CONTACT_CONFIG.consultationUrl}
+                      href="https://ninin-cc.github.io/" 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
                     >
-                      <i className="fa-solid fa-door-open"></i> {CONTACT_CONFIG.consultationName}へ
+                      <i className="fa-solid fa-door-open"></i> nininキャリアルームへ
                     </a>
-                  </div>
-                  <div
-                    className="letter-note relative mt-5 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]"
-                  >
-                    <div className="absolute left-3 top-1 text-[11px] font-bold text-stone-600">
-                      📝紹介状
-                    </div>
-                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
-                      {CONTACT_CONFIG.consultationDescription}
-                    </p>
-                    {CONTACT_CONFIG.profileUrl && (
-                      <p className="mt-2 text-[10px] md:text-xs leading-relaxed text-stone-600 break-all">
-                        <span>{CONTACT_CONFIG.profileLinkLabel || '自己紹介ページ'}：</span>
-                        <a
-                          href={CONTACT_CONFIG.profileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline underline-offset-2 hover:text-blue-700"
-                        >
-                          {CONTACT_CONFIG.profileUrl}
-                        </a>
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-3 mt-6">
                     <button 
                       onClick={closePopup}
                       className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
                     >
                       今は閉じる
-                    </button>
-                    <button 
-                      onClick={() => setPopupType('save')}
-                      className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
-                    >
-                      <i className="fa-solid fa-camera"></i> あとで見返す（結果保存）
                     </button>
                   </div>
                 </WindowBox>
@@ -1305,32 +977,26 @@
 
         if (popupType === 'save') {
           return (
-            <div className="translucent-popup-overlay fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
               <div className="w-full max-w-lg">
-                <WindowBox title="保存" iconName="fa-solid fa-camera" className="translucent-popup-window border-blue-500 shadow-2xl" onClose={closePopup}>
+                <WindowBox title="こころの記録" iconName="fa-solid fa-camera" className="bg-opacity-100 border-blue-500 shadow-2xl">
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={<span>いいですね！<br />ご自身の『こころの天気と役割』の結果レポートを保存しましょうか？</span>} 
+                    text={<span>いいですね！<br />ご自身の『こころの天気と役割』を画像で保存しましょうか？<br />あとでゆっくり見返して、自分と対話するヒントにしてくださいね！</span>} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
-                      onClick={handleSavePdf}
-                      className="rpg-button bg-amber-900 border-amber-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
-                    >
-                      <i className="fa-solid fa-file-pdf"></i> PDFで保存
-                    </button>
-                    <button 
-                      onClick={() => setPopupType('talk')}
-                      className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
-                    >
-                      <i className="fa-solid fa-comments"></i> ひとに話してみる
-                    </button>
-                    <button 
                       onClick={handleSaveImage}
-                      className="rpg-button transparent-save-button flex items-center justify-center gap-2"
+                      className="rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
                     >
-                      <i className="fa-solid fa-image"></i> 画像として保存
+                      <i className="fa-solid fa-download"></i> 画像として保存する
+                    </button>
+                    <button 
+                      onClick={closePopup}
+                      className="rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400"
+                    >
+                      今はやめておく
                     </button>
                   </div>
                 </WindowBox>
