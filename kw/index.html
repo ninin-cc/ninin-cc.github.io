@@ -837,23 +837,56 @@
           weatherImageUrl = "https://images.unsplash.com/photo-1529153549247-9ea822f6d0a7?q=80&w=800&auto=format&fit=crop"; // 雲ひとつない青空
         }
 
-        let alertMessage = null;
+        // 局地的な天気の追加と気遣いメッセージの生成
+        const maxSingleScore = Math.max(...Object.values(finalScores));
+        let localAlertText = null;
+        let localAlertIcon = "";
+        let localAlertColor = "";
+
+        if (maxSingleScore === 6) { // 7段目(赤)が1つでもある場合
+          weatherText += "\nところにより『嵐』";
+          localAlertText = "心のどこか一箇所で、嵐のように吹き荒れている部分があるようです。\nその役割において、あなたは誰にも言えない痛みを抱え続けてきたのかもしれません。どうか、その痛みを一人で抱え込みすぎないでくださいね。";
+          localAlertIcon = "fa-cloud-bolt";
+          localAlertColor = "text-red-400";
+        } else if (maxSingleScore === 5) { // 6段目(オレンジ)が1つでもある場合
+          weatherText += "\nところにより『大雨』";
+          localAlertText = "一部分だけ、大雨のように負担が集中している役割があるようです。\nそこだけは、少し無理をしてしまっていませんか？ 全体が晴れていると見過ごしがちですが、雨宿りをする時間も大切ですよ。";
+          localAlertIcon = "fa-cloud-showers-heavy";
+          localAlertColor = "text-orange-400";
+        } else if (maxSingleScore === 4) { // 5段目(黄色)が1つでもある場合
+          weatherText += "\nところにより『雨』";
+          localAlertText = "一部の役割で、少し雨が降り始めているようです。\nまだ大きな負担ではないかもしれませんが、その小さな無理が積もると心が冷えてしまいます。少しだけ傘をさして、休んでみてもいいのですよ。";
+          localAlertIcon = "fa-cloud-rain";
+          localAlertColor = "text-yellow-400";
+        }
+
+        let globalAlert = null;
         if (totalScore >= 45) {
-          alertMessage = (
-            <div className="bg-[#4a1c1c] border border-red-500 text-red-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
+          globalAlert = (
+            <div className="bg-[#4a1c1c] border border-red-500 text-red-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed mb-3">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
               <p className="drop-shadow-md">複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
             </div>
           );
         } else if (totalScore <= 13) {
-          alertMessage = (
-            <div className="bg-[#1c2a4a] border border-blue-500 text-blue-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
+          globalAlert = (
+            <div className="bg-[#1c2a4a] border border-blue-500 text-blue-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed mb-3">
               <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様のようです</p>
               <p className="drop-shadow-md">
                 今の心の天気が安定していることは、とても素敵なことですね。<br />
                 それでも、もし心の奥のほうに言葉にならない「小さな引っかかり」を感じているとしたら、どうか無理に晴れを装わなくても大丈夫ですからね。<br />
                 当てはまらなかった物語の中にも、これからの自分をそっと守るヒントがあるかもしれません。
               </p>
+            </div>
+          );
+        }
+
+        let localAlert = null;
+        if (localAlertText) {
+          localAlert = (
+            <div className="bg-[#2d241b] border border-amber-600/50 text-[#fdf6e3] p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed mb-3">
+              <p className={`font-bold ${localAlertColor} mb-1`}><i className={`fa-solid ${localAlertIcon}`}></i> 局地的な空模様について</p>
+              <p className="drop-shadow-md whitespace-pre-wrap">{localAlertText}</p>
             </div>
           );
         }
@@ -903,15 +936,16 @@
                       
                       <div className="relative z-10 flex flex-col items-center justify-center h-full gap-4 md:gap-6 py-2">
                         <i className={`fa-solid ${weatherIcon} text-5xl md:text-6xl text-white text-shadow-strong block`}></i>
-                        <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center text-shadow-strong leading-tight">{weatherText}</p>
+                        <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center text-shadow-strong leading-tight whitespace-pre-wrap">{weatherText}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* アラートメッセージ */}
-                  {alertMessage && (
+                  {(globalAlert || localAlert) && (
                     <div className="mb-5">
-                      {alertMessage}
+                      {globalAlert}
+                      {localAlert}
                     </div>
                   )}
 
