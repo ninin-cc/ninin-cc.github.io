@@ -139,7 +139,7 @@
     .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ページ切り替えのフェードイン */
+    /* ページ切り替え of fade-in */
     .animate-page-turn { 
       position: relative;
       animation: fadeIn 0.3s ease-out forwards;
@@ -295,8 +295,6 @@
     };
 
     // --- 設問データ (Q1 - Q10) ---
-    // 強弱（フォントサイズ・コントラスト）表示を可能にするため、
-    // 前半の独白（story）と後半の問いかけ（question）に構造を分割
     const QUESTIONS = [
       { 
         id: 1, 
@@ -426,25 +424,29 @@
     };
 
     // --- 7分割の画像ボタンコンポーネント ---
-    const AnswerImageButton = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
+    const AnswerImageButton = ({ val, selectedVal, onSelect, showDoubleTapMessage = false, showLabels = true }) => {
       const isSelected = selectedVal === val;
       
-      // ガイドとなるラベルテキストを設定（両端と中央のみ）
+      // ガイドとなるラベルテキストを設定（両端と中央のみ、showLabelsがtrueのときのみ）
       let labelText = null;
-      if (val === 0) labelText = "わたしは\n大丈夫";
-      if (val === 3) labelText = "なんとも\nいえない";
-      if (val === 6) labelText = "かなり\nひどい";
+      if (showLabels) {
+        if (val === 0) labelText = "わたしは\n大丈夫";
+        if (val === 3) labelText = "なんとも\nいえない";
+        if (val === 6) labelText = "かなり\nひどい";
+      }
 
       return (
         <div className="flex-1 flex flex-col items-center h-full relative group">
           {/* ガイドテキスト領域 */}
-          <div className="h-8 md:h-10 flex items-end justify-center pb-1.5 md:pb-2 w-full">
-            {labelText && (
-              <span className={`text-[9px] md:text-xs font-bold text-center leading-tight whitespace-pre-wrap transition-colors drop-shadow-md ${isSelected ? 'text-yellow-300' : 'text-gray-300 group-hover:text-yellow-100'}`}>
-                {labelText}
-              </span>
-            )}
-          </div>
+          {showLabels ? (
+            <div className="h-8 md:h-10 flex items-end justify-center pb-1.5 md:pb-2 w-full">
+              {labelText && (
+                <span className={`text-[9px] md:text-xs font-bold text-center leading-tight whitespace-pre-wrap transition-colors drop-shadow-md ${isSelected ? 'text-yellow-300' : 'text-gray-300 group-hover:text-yellow-100'}`}>
+                  {labelText}
+                </span>
+              )}
+            </div>
+          ) : null}
 
           <button 
             onClick={() => onSelect(val)} 
@@ -535,7 +537,7 @@
         }
 
         setTempSelectedVal(null); 
-        // 練習は何を選んでも先に進む
+        // 練習は何を選んでも説明ポップアップを開く
         setPopupType('start');
       };
 
@@ -699,15 +701,14 @@
             <div className="flex flex-col w-full py-1">
               
               <div className="bg-[#4b3e2c] bg-opacity-60 border border-[#e6c280] rounded-lg p-4 md:p-5 flex justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-4">
-                {/* 練習問題の文は「従来通りのフォントサイズ」と「従来の色(fdf6e3)」で表示 */}
                 <p className="text-sm md:text-lg font-bold text-[#fdf6e3] leading-relaxed text-center max-w-[20em]">
                   今日の天気はどんな感じですか？
                 </p>
               </div>
 
               <div className="relative my-2 bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                {/* テキストが入る分、全体の高さを確保 */}
-                <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
+                {/* 練習用はラベルテキストを非表示にするため、高さもh-28 md:h-36に調整 */}
+                <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-28 md:h-36">
                   {[0, 1, 2, 3, 4, 5, 6].map(val => (
                     <AnswerImageButton 
                       key={val} 
@@ -715,6 +716,7 @@
                       selectedVal={tempSelectedVal}
                       onSelect={handleExampleAnswer}
                       showDoubleTapMessage={true} 
+                      showLabels={false}
                     />
                   ))}
                 </div>
@@ -754,7 +756,7 @@
                 </div>
 
                 <div className="relative bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                  {/* テキストが入る分、全体の高さを確保 */}
+                  {/* 本番はラベルテキストが入るため、全体の高さを確保 (h-36 md:h-44) */}
                   <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
                     {[0, 1, 2, 3, 4, 5, 6].map(val => (
                       <AnswerImageButton 
@@ -763,6 +765,7 @@
                         selectedVal={tempSelectedVal}
                         onSelect={handleAnswer}
                         showDoubleTapMessage={false} 
+                        showLabels={true}
                       />
                     ))}
                   </div>
@@ -1074,15 +1077,17 @@
       const renderPopup = () => {
         if (popupType === 'none') return null;
 
+        // 本番の10問に移る直前の、説明用クッション（構造化）ポップアップ
         if (popupType === 'start') {
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm">
               <div className="w-full max-w-lg">
-                <WindowBox title="準備完了！" iconName="fa-solid fa-flag-checkered" className="bg-opacity-100 border-yellow-500 shadow-2xl">
+                <WindowBox title="こころの準備" iconName="fa-solid fa-mug-hot" className="bg-opacity-100 border-yellow-500 shadow-2xl">
+                  {/* 理澄のセリフ：改行とダッシュによる「間」を持たせた美しい言葉遣いへ修正 */}
                   <DialogBox 
                     charConfig={CONFIG.char2} 
                     imageSide="right"
-                    text={`迷ったときは、“どちらが少し近いかな”くらいで大丈夫です。`} 
+                    text={`このあと、10人の「誰かの言葉」が聞こえてきます。\n\nその言葉を聞いて――\n\n「自分の心の天気はどうなのかな……？」とゆっくり感じてみてください。\n\nでは、準備ができたら、下のボタンをおしてくださいね。`} 
                   />
                   <div className="flex flex-col gap-3 mt-6">
                     <button 
@@ -1094,7 +1099,7 @@
                       }}
                       className="rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2"
                     >
-                      物語へ進む
+                      すすむ
                     </button>
                   </div>
                 </WindowBox>
