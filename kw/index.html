@@ -839,25 +839,39 @@
 
         // 局地的な天気の追加と気遣いメッセージの生成
         const maxSingleScore = Math.max(...Object.values(finalScores));
+        const isRainingOverall = totalScore >= 30; // 全体が「くもり（一時 雨）」以上の雨模様かどうか
+        
         let localAlertText = null;
         let localAlertIcon = "";
         let localAlertColor = "";
 
         if (maxSingleScore === 6) { // 7段目(赤)が1つでもある場合
           weatherText += "\nところにより『嵐』";
-          localAlertText = "心のどこか一箇所で、嵐のように吹き荒れている部分があるようです。\nその役割において、あなたは誰にも言えない痛みを抱え続けてきたのかもしれません。どうか、その痛みを一人で抱え込みすぎないでくださいね。";
           localAlertIcon = "fa-cloud-bolt";
           localAlertColor = "text-red-400";
+          if (isRainingOverall) {
+            localAlertText = "全体的にも雨模様ですが、とくに一箇所、嵐のように激しく吹き荒れている役割があるようです。\nいろんな荷物が重なって、あなたは誰にも言えない痛みを抱え続けてきたのかもしれません。どうか、その痛みを一人で抱え込みすぎないでくださいね。";
+          } else {
+            localAlertText = "心のどこか一箇所で、嵐のように吹き荒れている部分があるようです。\n周りからは穏やかに見えても、その役割においてあなたは誰にも言えない痛みを抱え続けてきたのかもしれません。どうか、その痛みを一人で抱え込みすぎないでくださいね。";
+          }
         } else if (maxSingleScore === 5) { // 6段目(オレンジ)が1つでもある場合
           weatherText += "\nところにより『大雨』";
-          localAlertText = "一部分だけ、大雨のように負担が集中している役割があるようです。\nそこだけは、少し無理をしてしまっていませんか？ 全体が晴れていると見過ごしがちですが、雨宿りをする時間も大切ですよ。";
           localAlertIcon = "fa-cloud-showers-heavy";
           localAlertColor = "text-orange-400";
+          if (isRainingOverall) {
+            localAlertText = "いろんな役割が重なる中で、一部分だけ、さらに大雨のように負担が集中している役割があるようです。\nそこだけは、少し限界を超えて無理をしてしまっていませんか？ まずはその一番重い荷物から、そっと下ろして雨宿りをする時間も大切ですよ。";
+          } else {
+            localAlertText = "一部分だけ、大雨のように負担が集中している役割があるようです。\nそこだけは、少し無理をしてしまっていませんか？ 全体が穏やかだと自分でも見過ごしがちですが、雨宿りをする時間も大切ですよ。";
+          }
         } else if (maxSingleScore === 4) { // 5段目(黄色)が1つでもある場合
           weatherText += "\nところにより『雨』";
-          localAlertText = "一部の役割で、少し雨が降り始めているようです。\nまだ大きな負担ではないかもしれませんが、その小さな無理が積もると心が冷えてしまいます。少しだけ傘をさして、休んでみてもいいのですよ。";
           localAlertIcon = "fa-cloud-rain";
           localAlertColor = "text-yellow-400";
+          if (isRainingOverall) {
+             localAlertText = "一部の役割で、少し雨脚が強くなっているようです。\n全体的な雨やくもり空に隠れて見えにくいですが、その小さな無理が積もると心が冷えてしまいます。少しだけ傘をさして、休んでみてもいいのですよ。";
+          } else {
+             localAlertText = "一部の役割で、少し雨が降り始めているようです。\n他の空が晴れているからと、まだ大丈夫と思っているかもしれませんが、その小さな無理が積もると心が冷えてしまいます。少しだけ傘をさして、休んでみてもいいのですよ。";
+          }
         }
 
         let globalAlert = null;
