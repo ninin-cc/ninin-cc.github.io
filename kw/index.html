@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>～心の天気予報～ -喫茶-RIESM-での語らい-</title>
+  <title>～心の天気™～ -喫茶-RIESM-での語らい-</title>
 
   <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
   <script>
@@ -41,7 +41,12 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
-    body { margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; }
+    body { 
+      margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
     html, body { -webkit-touch-callout: none; }
     img { -webkit-user-drag: none; user-select: none; }
     .rpg-font { font-family: 'Noto Sans JP', sans-serif; letter-spacing: 0; }
@@ -170,6 +175,16 @@
     .progress-bar-fill {
       transition: width 0.3s ease-out;
     }
+
+    /* html2canvasでも絶対にぼやけない、クッキリした黒い縁取り */
+    .text-shadow-strong {
+      text-shadow: 
+        1px 1px 0 #000, 
+        -1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px -1px 0 #000,
+        0 3px 5px rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body class="rpg-font min-h-screen relative" style="background-image: url('./img/cafeei.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
@@ -182,7 +197,7 @@
 
     // --- 設定データ ---
     const CONFIG = {
-      appTitlePre: "～心の天気予報～",
+      appTitlePre: "～心の天気™～",
       appTitleMain: "-喫茶-RIESM-での語らい-",
       char1: {
         name: "マスター",
@@ -201,70 +216,70 @@
     // --- 10の物語と役割の定義 ---
     const WEATHER_DATA = {
       silent: {
-        name: '静かにがんばる人',
+        name: '静かにがんばる',
         role: '「まだ大丈夫」と自分に言い聞かせる役割',
         icon: 'fa-solid fa-battery-quarter',
         color: 'text-[#5c3620]',
         category: 'energy'
       },
       burden: {
-        name: '背負いすぎる人',
+        name: '背負いすぎる',
         role: '人の期待に応えようとする役割',
         icon: 'fa-solid fa-weight-hanging',
         color: 'text-[#5c3620]',
         category: 'relation'
       },
       conform: {
-        name: '合わせすぎる人',
+        name: '合わせすぎる',
         role: '自分の気持ちを後回しにして周囲に合わせる役割',
         icon: 'fa-solid fa-masks-theater',
         color: 'text-[#5c3620]',
         category: 'relation'
       },
       overthink: {
-        name: '考えすぎる人',
+        name: '考えすぎる',
         role: '先の不安をすべて一人で抱え込む役割',
         icon: 'fa-solid fa-head-side-virus',
         color: 'text-[#5c3620]',
         category: 'thought'
       },
       suppress: {
-        name: '怒りを飲み込む人',
+        name: '怒りを飲み込む',
         role: '波風を立てないよう感情をため込む役割',
         icon: 'fa-solid fa-volcano',
         color: 'text-[#5c3620]',
         category: 'relation'
       },
       blame: {
-        name: '自分を責める人',
+        name: '自分を責める',
         role: '「自分が悪い」とすべての責任を負う役割',
         icon: 'fa-solid fa-hand-point-left',
         color: 'text-[#5c3620]',
         category: 'thought'
       },
       restless: {
-        name: '休めない人',
+        name: '休めない',
         role: '常に動き続けなければと焦りを背負う役割',
         icon: 'fa-solid fa-person-running',
         color: 'text-[#5c3620]',
         category: 'thought'
       },
       unclear: {
-        name: '気持ちが見えにくい人',
+        name: '自分の気持ちが分からない',
         role: '自分の本当のSOSを見失ってまで平気を装う役割',
         icon: 'fa-solid fa-cloud',
         color: 'text-[#5c3620]',
         category: 'energy'
       },
       loss: {
-        name: '失ったものを抱える人',
+        name: '失ったものを抱える',
         role: 'もう戻らない時間や関係を一人で守り続ける役割',
         icon: 'fa-solid fa-clock-rotate-left',
         color: 'text-[#5c3620]',
         category: 'energy'
       },
       endure: {
-        name: 'ひとりで耐える人',
+        name: 'ひとりで耐える',
         role: '「どうせわかってもらえない」と一人で耐える役割',
         icon: 'fa-solid fa-person-shelter',
         color: 'text-[#5c3620]',
@@ -282,8 +297,8 @@
 
     // --- 設問データ (Q1 - Q10) ---
     const QUESTIONS = [
-      { id: 1, type: 'silent', text: 'いつも通りにしているけれど、少し疲れているんだ。朝起きるのが重くて。ひとりになると、急に力が入らなくなるんだよね…。\n\nあなたはどう…？' },
-      { id: 2, type: 'burden', text: '頼まれると、つい引き受けてしまうんだ。周りを困らせたくなくて、自分のことを後回しにして。気づくと、自分だけが抱えている気がする…。\n\nあなたは…？' },
+      { id: 1, type: 'silent', text: 'いつも通りにしているけれど、少し疲れているんだ。朝起きるのが重くて。ひとりになると、急に力が入らなくなるんだよね…。\n\n私の心の天気は、雨っぽいな…。\n\nあなたはどう…？' },
+      { id: 2, type: 'burden', text: '頼まれると、つい引き受けてしまうんだ。周りを困らせたくなくて、自分のことを後回しにして。気づくと、自分だけが抱えている気がする…。\n\n私の心の天気は、少し雨が降ってるかな…。\n\nあなたは…？' },
       { id: 3, type: 'conform', text: '本当は違うと思っても、言わないことが多いんだ。空気を悪くしたくなくて、笑って合わせて。あとから、自分の気持ちが分からなくなる…。\n\nきみはどう…？' },
       { id: 4, type: 'overthink', text: '先のことを考えると、不安が大きくなるんだ。失敗したらどうしよう、と何度も考えてしまって。考えすぎて、動けなくなることがある…。\n\nあなたもそう…？' },
       { id: 5, type: 'suppress', text: '本当は納得していないんだ。でも、面倒になると思って言葉を飲み込んで。怒りたくても怒れなくて、心にモヤモヤが残るんだ…。\n\nきみはどう…？' },
@@ -400,7 +415,22 @@
       const [qIndex, setQIndex] = useState(0);
       const [scores, setScores] = useState({ silent: 0, burden: 0, conform: 0, overthink: 0, suppress: 0, blame: 0, restless: 0, unclear: 0, loss: 0, endure: 0 });
       const [scoreHistory, setScoreHistory] = useState([]); 
-      const [shuffledQuestions, setShuffledQuestions] = useState(() => shuffleArray(QUESTIONS));
+      
+      // 質問配列を生成する関数（1,2問目と9,10問目を固定、中間6問をシャッフル）
+      const generateQuestions = () => {
+        const qSilent = QUESTIONS.find(q => q.type === 'silent'); // 1問目固定
+        const qBurden = QUESTIONS.find(q => q.type === 'burden'); // 2問目固定
+        const qLoss = QUESTIONS.find(q => q.type === 'loss');     // 9問目固定
+        const qEndure = QUESTIONS.find(q => q.type === 'endure'); // 10問目固定
+        
+        const middleQ = QUESTIONS.filter(q => 
+          !['silent', 'burden', 'loss', 'endure'].includes(q.type)
+        );
+        
+        return [qSilent, qBurden, ...shuffleArray(middleQ), qLoss, qEndure];
+      };
+
+      const [shuffledQuestions, setShuffledQuestions] = useState(generateQuestions);
       
       const [results, setResults] = useState(null);
       const [popupType, setPopupType] = useState('none');
@@ -514,7 +544,10 @@
           setResults(null);
           setPopupType('none');
           setTempSelectedVal(null);
-          setShuffledQuestions(shuffleArray(QUESTIONS));
+          
+          // リセット時も構成ルールに従って再生成
+          setShuffledQuestions(generateQuestions());
+          
           window.scrollTo(0, 0);
         }
       };
@@ -530,8 +563,9 @@
         setTimeout(() => {
           html2canvas(element, { 
             backgroundColor: '#f8eac2', // 明るいクラフトノートの色
-            scale: 2, 
+            scale: 3, // 解像度を上げてさらに高画質・鮮明に
             useCORS: true,
+            allowTaint: true,
             logging: false
           }).then(canvas => {
             const link = document.createElement('a');
@@ -779,17 +813,21 @@
                       <i className="fa-solid fa-cloud-sun text-[#5c3620]"></i> 心の天気
                     </h4>
                     <div className="relative flex flex-col items-center justify-center p-6 md:p-10 rounded-xl shadow-md border border-[#5c3620]/10 overflow-hidden min-h-[140px] md:min-h-[180px]">
-                      {/* 背景画像 */}
-                      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${weatherImageUrl})` }}></div>
+                      {/* html2canvas対策: background-imageではなくimgタグを使うと非常に鮮明に出力される */}
+                      <img 
+                        src={weatherImageUrl} 
+                        crossOrigin="anonymous" 
+                        alt="心の天気" 
+                        className="absolute inset-0 w-full h-full object-cover" 
+                      />
                       {/* 画像を落ち着かせ、文字を読みやすくするための暗めのオーバーレイ */}
-                      <div className="absolute inset-0 bg-[#2d1b10] bg-opacity-30"></div>
+                      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
                       
-                      {/* アイコンと文字が重ならないように高さを固定し、マージン（mb-3）で直接距離をあける */}
-                      <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                        <div className="h-14 md:h-16 flex items-center justify-center mb-3 md:mb-4">
-                          <i className={`fa-solid ${weatherIcon} text-5xl md:text-6xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] block`}></i>
-                        </div>
-                        <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">{weatherText}</p>
+                      {/* アイコンと文字が重ならないように gap で確実に距離をあける */}
+                      <div className="relative z-10 flex flex-col items-center justify-center h-full gap-4 md:gap-6 py-2">
+                        {/* ぼかしゼロのクッキリした縁取り(text-shadow-strong)を適用 */}
+                        <i className={`fa-solid ${weatherIcon} text-5xl md:text-6xl text-white text-shadow-strong block`}></i>
+                        <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center text-shadow-strong leading-tight">{weatherText}</p>
                       </div>
                     </div>
                   </div>
@@ -803,30 +841,47 @@
 
                   {/* こころの荷物のバランス（イコライザー） */}
                   <div className="pt-4 border-t border-amber-800/20 mb-2">
-                    <h4 className="font-bold text-[#5c3620] mb-4 flex items-center gap-1.5 text-sm md:text-base">
+                    {/* 見出し下の余白を mb-4 から mb-8 に広げ、文字一つ分上に離す */}
+                    <h4 className="font-bold text-[#5c3620] mb-8 flex items-center gap-1.5 text-sm md:text-base">
                       <i className="fa-solid fa-sliders text-[#5c3620]"></i> 荷物の重さ
                     </h4>
                     <div className="w-full px-1 md:px-2">
-                      {/* イコライザー本体 */}
-                      <div className="flex flex-row justify-between items-end w-full h-24 md:h-32 mb-2 border-b border-[#5c3620]/30 pb-2">
+                      {/* イコライザー本体（全体の高さを少し広げて窮屈さを解消: h-28 md:h-36） */}
+                      <div className="flex flex-row justify-between items-end w-full h-28 md:h-36 mb-2 border-b border-[#5c3620]/30 pb-2">
                         {sortedQuestions.map((q, index) => {
                           const key = q.type;
                           const score = finalScores[key] || 0; // スコアは0〜6
                           const data = WEATHER_DATA[key];
-                          const catColor = CATEGORIES[data.category].color;
                           
                           return (
                             <div key={`eq-${key}`} className="flex flex-col items-center justify-end h-full w-[8%] group relative cursor-pointer">
-                              {/* 7段階(最大6つ)のブロックを積み上げる */}
-                              <div className="flex flex-col w-full items-center justify-end h-full">
-                                {[6, 5, 4, 3, 2, 1].map(level => (
-                                  <div 
-                                    key={level} 
-                                    className={`w-full max-w-[16px] md:max-w-[24px] h-2 md:h-3 rounded-sm transition-all duration-1000 ease-out mb-0.5 md:mb-1 ${score >= level ? catColor + ' opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]' : 'bg-[#5c3620] bg-opacity-10'}`}
-                                  ></div>
-                                ))}
+                              {/* flex-1 を追加して、数字エリアとの被りを防ぐ */}
+                              <div className="flex flex-col w-full items-center justify-end flex-1">
+                                {[7, 6, 5, 4, 3, 2, 1].map(level => {
+                                  let blockColor = 'bg-[#5c3620] bg-opacity-10'; // デフォルト（非点灯）
+                                  
+                                  // score 0 で1段点灯、score 6 で7段すべて点灯
+                                  // 緑から赤へのグラデーション
+                                  if (score >= level - 1) { 
+                                    if (level === 1) blockColor = 'bg-emerald-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]'; 
+                                    else if (level === 2) blockColor = 'bg-green-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                    else if (level === 3) blockColor = 'bg-lime-400 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                    else if (level === 4) blockColor = 'bg-yellow-400 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                    else if (level === 5) blockColor = 'bg-amber-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                    else if (level === 6) blockColor = 'bg-orange-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                    else blockColor = 'bg-red-600 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
+                                  }
+                                  
+                                  return (
+                                    <div 
+                                      key={level} 
+                                      className={`w-full max-w-[16px] md:max-w-[24px] h-2 md:h-3 rounded-sm transition-all duration-1000 ease-out mb-0.5 md:mb-1 ${blockColor}`}
+                                    ></div>
+                                  );
+                                })}
                               </div>
-                              <div className="mt-1 md:mt-2 flex flex-col items-center">
+                              {/* マージンを適切に設定して密着させすぎない */}
+                              <div className="mt-1 md:mt-1.5 flex flex-col items-center">
                                 <span className="text-[#5c3620] font-bold text-[9px] md:text-[11px] leading-none mb-0.5">{index + 1}</span>
                                 <i className={`${data.icon} text-[#5c3620] text-xs md:text-lg opacity-80 group-hover:opacity-100 transition-opacity`}></i>
                               </div>
@@ -844,27 +899,15 @@
                       
                       {/* 凡例（印刷・詳細確認用） */}
                       <div className="mt-4 pt-3 border-t border-amber-800/20">
-                        {/* 色の凡例 */}
-                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4 text-[9px] md:text-[11px] font-bold text-[#5c3620]">
-                          {Object.keys(CATEGORIES).map(catKey => {
-                            const cat = CATEGORIES[catKey];
-                            return (
-                              <div key={`legend-${catKey}`} className="flex items-center gap-1.5">
-                                <div className={`w-3 h-3 md:w-4 md:h-4 rounded-sm ${cat.color} opacity-90 shadow-sm`}></div>
-                                <span>{cat.name}</span>
-                              </div>
-                            )
-                          })}
-                        </div>
-                        
                         {/* 項目の凡例 */}
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-2 gap-y-1.5 text-[9px] md:text-[10px] text-[#2d1b10] font-medium bg-[#5c3620] bg-opacity-5 p-2 md:p-3 rounded-lg border border-[#5c3620]/10">
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-2 gap-y-2 text-[9px] md:text-[10px] text-[#2d1b10] font-medium bg-[#5c3620] bg-opacity-5 p-2 md:p-3 rounded-lg border border-[#5c3620]/10">
                           {sortedQuestions.map((q, index) => {
                             const data = WEATHER_DATA[q.type];
                             return (
                               <div key={`legend-item-${q.type}`} className="flex items-center gap-1">
                                 <span className="font-bold text-[#5c3620] w-3 md:w-4 text-right shrink-0">{index + 1}.</span>
-                                <span className="truncate" title={data.name}>{data.name}</span>
+                                {/* 画像保存時の文字欠けを完全に防ぐために上下にしっかりパディング(py-1)を取り、行間(leading-relaxed)も広げる */}
+                                <span className="truncate py-1 leading-relaxed" title={data.name}>{data.name}</span>
                               </div>
                             );
                           })}
