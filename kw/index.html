@@ -287,26 +287,77 @@
       }
     };
 
-    // カテゴリの定義 (こげ茶とネイビーのバランス)
-    // 最大値が1問につき6点になるため、調整
+    // カテゴリの定義
     const CATEGORIES = {
-      relation: { name: '人との関わりで背負う荷物', max: 18, color: 'bg-[#4a2e1b]' }, // 深いこげ茶
-      thought: { name: '思考と自責で重くなる荷物', max: 18, color: 'bg-[#2c3e50]' }, // ネイビー（スレートグレー）
-      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 24, color: 'bg-[#8b6b45]' } // キャメル（明るいこげ茶）
+      relation: { name: '人との関わりで背負う荷物', max: 18, color: 'bg-[#4a2e1b]' },
+      thought: { name: '思考と自責で重くなる荷物', max: 18, color: 'bg-[#2c3e50]' },
+      energy: { name: 'エネルギー枯渇と孤独の荷物', max: 24, color: 'bg-[#8b6b45]' }
     };
 
     // --- 設問データ (Q1 - Q10) ---
+    // 強弱（フォントサイズ・コントラスト）表示を可能にするため、
+    // 前半の独白（story）と後半の問いかけ（question）に構造を分割
     const QUESTIONS = [
-      { id: 1, type: 'silent', text: 'いつも通りにしているけれど、少し疲れているんだ。朝起きるのが重くて。ひとりになると、急に力が入らなくなるんだよね…。\n\n私の心の天気は、雨っぽいな…。\n\nあなたはどう…？' },
-      { id: 2, type: 'burden', text: '頼まれると、つい引き受けてしまうんだ。周りを困らせたくなくて、自分のことを後回しにして。気づくと、自分だけが抱えている気がする…。\n\n私の心の天気は、少し雨が降ってるかな…。\n\nあなたは…？' },
-      { id: 3, type: 'conform', text: '本当は違うと思っても、言わないことが多いんだ。空気を悪くしたくなくて、笑って合わせて。あとから、自分の気持ちが分からなくなる…。\n\nきみはどう…？' },
-      { id: 4, type: 'overthink', text: '先のことを考えると、不安が大きくなるんだ。失敗したらどうしよう、と何度も考えてしまって。考えすぎて、動けなくなることがある…。\n\nあなたもそう…？' },
-      { id: 5, type: 'suppress', text: '本当は納得していないんだ。でも、面倒になると思って言葉を飲み込んで。怒りたくても怒れなくて、心にモヤモヤが残るんだ…。\n\nきみはどう…？' },
-      { id: 6, type: 'blame', text: '何かあると、自分が悪かったのではと考えるんだ。もっと上手くできたはずだ、と何度も思い返して。人には優しく、自分には厳しくしてしまう…。\n\nあなたはどう…？' },
-      { id: 7, type: 'restless', text: '休んでいても、頭では次のことを考えているんだ。何もしない時間が、少し落ち着かなくて。止まったら取り残される気がするんだよね…。\n\nあなたもそう…？' },
-      { id: 8, type: 'unclear', text: 'つらいのか、疲れているのか、自分でも分からないんだ。大きな問題はないけれど、心がぼんやりしていて。「どうしたいの？」と聞かれても、すぐ答えられないんだ…。\n\nあなたは…？' },
-      { id: 9, type: 'loss', text: 'もう戻らない時間や関係を、ふと思い出すんだ。前を向こうとしているけれど、まだ心に残っていて。人にはあまり話さないけれど、忘れられないものがある…。\n\nきみはどう…？' },
-      { id: 10, type: 'endure', text: '人と話したり、笑ったりすることはあるんだ。でも、本当にしんどいことは誰にも話していなくて。分かってもらえない気がして、ひとりで抱えてしまうんだ…。\n\nあなたはどう…？' }
+      { 
+        id: 1, 
+        type: 'silent', 
+        story: 'いつも通りにしているけれど、少し疲れているんだ。朝起きるのが重くて。ひとりになると、急に力が入らなくなるんだよね…。',
+        question: '私の心の天気は、雨っぽいな…。\n\nあなたはどう…？' 
+      },
+      { 
+        id: 2, 
+        type: 'burden', 
+        story: '頼まれると、つい引き受けてしまうんだ。周りを困らせたくなくて、自分のことを後回しにして。気づくと、自分だけが抱えている気がする…。',
+        question: '私の心の天気は、少し雨が降ってるかな…。\n\nあなたは…？' 
+      },
+      { 
+        id: 3, 
+        type: 'conform', 
+        story: '本当は違うと思っても、言わないことが多いんだ。空気を悪くしたくなくて、笑って合わせて。あとから、自分の気持ちが分からなくなる…。',
+        question: 'きみはどう…？' 
+      },
+      { 
+        id: 4, 
+        type: 'overthink', 
+        story: '先のことを考えると、不安が大きくなるんだ。失敗したらどうしよう、と何度も考えてしまって。考えすぎて、動けなくなることがある…。',
+        question: 'あなたもそう…？' 
+      },
+      { 
+        id: 5, 
+        type: 'suppress', 
+        story: '本当は納得していないんだ。でも、面倒になると思って言葉を飲み込んで。怒りたくても怒れなくて、心にモヤモヤが残るんだ…。',
+        question: 'きみはどう…？' 
+      },
+      { 
+        id: 6, 
+        type: 'blame', 
+        story: '何かあると、自分が悪かったのではと考えるんだ。もっと上手くできたはずだ、と何度も思い返して。人には優しく、自分には厳しくしてしまう…。',
+        question: 'あなたはどう…？' 
+      },
+      { 
+        id: 7, 
+        type: 'restless', 
+        story: '休んでいても、頭では次のことを考えているんだ。何もしない時間が、少し落ち着かなくて。止まったら取り残される気がするんだよね…。',
+        question: 'あなたもそう…？' 
+      },
+      { 
+        id: 8, 
+        type: 'unclear', 
+        story: 'つらいのか、疲れているのか、自分でも分からないんだ。大きな問題はないけれど、心がぼんやりしていて。「どうしたいの？」と聞かれても、すぐ答えられないんだ…。',
+        question: 'あなたは…？' 
+      },
+      { 
+        id: 9, 
+        type: 'loss', 
+        story: 'もう戻らない時間や関係を、ふと思い出すんだ。前を向こうとしているけれど、まだ心に残っていて。人にはあまり話さないけれど、忘れられないものがある…。',
+        question: 'きみはどう…？' 
+      },
+      { 
+        id: 10, 
+        type: 'endure', 
+        story: '人と話したり、笑ったりすることはあるんだ。でも、本当にしんどいことは誰にも話していなくて。分かってもらえない気がして、ひとりで抱えてしまうんだ…。',
+        question: 'あなたはどう…？' 
+      }
     ];
 
     // 配列シャッフル関数
@@ -386,7 +437,7 @@
 
       return (
         <div className="flex-1 flex flex-col items-center h-full relative group">
-          {/* ガイドテキスト領域 (テキストが無い場所も高さを確保してレイアウトを維持) */}
+          {/* ガイドテキスト領域 */}
           <div className="h-8 md:h-10 flex items-end justify-center pb-1.5 md:pb-2 w-full">
             {labelText && (
               <span className={`text-[9px] md:text-xs font-bold text-center leading-tight whitespace-pre-wrap transition-colors drop-shadow-md ${isSelected ? 'text-yellow-300' : 'text-gray-300 group-hover:text-yellow-100'}`}>
@@ -399,7 +450,7 @@
             onClick={() => onSelect(val)} 
             className={`w-full flex-1 relative rounded overflow-hidden transition-all duration-300 ${isSelected ? 'ring-2 ring-yellow-400 scale-110 shadow-[0_0_15px_rgba(250,204,21,0.6)] z-20' : 'ring-1 ring-gray-600 hover:scale-105 z-10'}`}
           >
-            {/* 歪まないように画像を配置：幅を7倍にして、objectFit: coverでアスペクト比を維持しつつ切り取る */}
+            {/* 歪まないように画像を配置 */}
             <img 
               src="./img/tenki.jpg" 
               alt="心の天気"
@@ -648,13 +699,14 @@
             <div className="flex flex-col w-full py-1">
               
               <div className="bg-[#4b3e2c] bg-opacity-60 border border-[#e6c280] rounded-lg p-4 md:p-5 flex justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-4">
+                {/* 練習問題の文は「従来通りのフォントサイズ」と「従来の色(fdf6e3)」で表示 */}
                 <p className="text-sm md:text-lg font-bold text-[#fdf6e3] leading-relaxed text-center max-w-[20em]">
                   今日の天気はどんな感じですか？
                 </p>
               </div>
 
               <div className="relative my-2 bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                {/* テキストが入る分、全体の高さを確保 (h-36 md:h-44に変更) */}
+                {/* テキストが入る分、全体の高さを確保 */}
                 <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
                   {[0, 1, 2, 3, 4, 5, 6].map(val => (
                     <AnswerImageButton 
@@ -687,14 +739,22 @@
             <WindowBox title={`誰かの言葉 ${qIndex + 1}`} iconName="fa-solid fa-book-open" className="!bg-transparent">
               <div className="flex flex-col w-full py-1">
                 
-                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 md:p-6 flex justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-6">
-                  <p className="text-sm md:text-base font-bold text-[#fdf6e3] leading-loose text-left max-w-[20em] whitespace-pre-wrap">
-                    {q.text}
+                <div className="bg-[#5c4a30] bg-opacity-40 border border-[#e6c280] rounded-lg p-5 md:p-6 flex flex-col justify-center relative overflow-hidden shadow-[inset_0_0_20px_rgba(230,194,128,0.1)] mb-6">
+                  {/* 前半の語り（story）部分：2pt大きく、明るい純白（text-stone-50）にする */}
+                  <p className="text-base md:text-lg font-bold text-stone-50 leading-loose text-left max-w-[20em] whitespace-pre-wrap">
+                    {q.story}
                   </p>
+
+                  {/* 後半の問いかけ（question）部分：従来サイズ（text-sm md:text-base）と従来の穏やかな色（text-[#fdf6e3]/85）で描画 */}
+                  {q.question && (
+                    <p className="text-sm md:text-base font-bold text-[#fdf6e3]/85 leading-loose text-left max-w-[20em] whitespace-pre-wrap mt-4 border-t border-[#e6c280]/20 pt-4">
+                      {q.question}
+                    </p>
+                  )}
                 </div>
 
                 <div className="relative bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                  {/* テキストが入る分、全体の高さを確保 (h-36 md:h-44に変更) */}
+                  {/* テキストが入る分、全体の高さを確保 */}
                   <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
                     {[0, 1, 2, 3, 4, 5, 6].map(val => (
                       <AnswerImageButton 
@@ -775,14 +835,14 @@
         }
 
         let alertMessage = null;
-        if (totalScore >= 45) { // 60点中45点以上（全体の75%以上）でアラート
+        if (totalScore >= 45) {
           alertMessage = (
             <div className="bg-[#4a1c1c] border border-red-500 text-red-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-red-300 mb-1"><i className="fa-solid fa-triangle-exclamation"></i> 抱え込んでいませんか？</p>
               <p className="drop-shadow-md">複数の役割を同時に背負っている状態かもしれません。ひとりで整理しようとせず、専門家と一緒に見つめることも選択肢です。</p>
             </div>
           );
-        } else if (totalScore <= 13) { // 60点中13点以下（全体の約20%以下）でアラート
+        } else if (totalScore <= 13) {
           alertMessage = (
             <div className="bg-[#1c2a4a] border border-blue-500 text-blue-100 p-2 md:p-3 rounded-lg shadow-md text-[10px] md:text-sm leading-relaxed">
               <p className="font-bold text-blue-300 mb-1"><i className="fa-solid fa-sun"></i> 穏やかな空模様のようです</p>
@@ -795,7 +855,7 @@
           );
         }
 
-        // カテゴリ順にソートした質問配列を作成（イコライザー表示用）
+        // カテゴリ順にソートした質問配列を作成
         const categoryOrder = ['relation', 'thought', 'energy'];
         const sortedQuestions = [...QUESTIONS].sort((a, b) => {
           const catA = WEATHER_DATA[a.type].category;
@@ -803,13 +863,13 @@
           if (catA !== catB) {
             return categoryOrder.indexOf(catA) - categoryOrder.indexOf(catB);
           }
-          return a.id - b.id; // 同じカテゴリ内では元の設問順
+          return a.id - b.id;
         });
 
         return (
           <div className="animate-fade-in w-full space-y-6 pb-12">
             
-            {/* マスターのセリフ (キャプチャから除外) */}
+            {/* マスターのセリフ */}
             <div className="w-full pt-4 px-2">
               <DialogBox 
                 charConfig={CONFIG.char1} 
@@ -820,29 +880,25 @@
             {/* ====== ここから下が画像保存エリア ====== */}
             <div id="result-capture-area" className="w-full flex flex-col gap-6 py-6 px-2 md:px-4 rounded-xl">
               
-              {/* 1枚のノート（天気と荷物の重さ） */}
+              {/* 1枚のノート */}
               <div className="w-full dialog-note border-2 border-amber-600 shadow-xl animate-fade-in relative m-0">
                 <div className="relative z-10 flex flex-col h-full">
 
-                  {/* 心の天気（空の写真背景 ＋ 白抜き文字） */}
+                  {/* 心の天気 */}
                   <div className="w-full mb-6">
                     <h4 className="font-bold text-[#5c3620] mb-2 flex items-center gap-1.5 text-sm md:text-base">
                       <i className="fa-solid fa-cloud-sun text-[#5c3620]"></i> 心の天気
                     </h4>
                     <div className="relative flex flex-col items-center justify-center p-6 md:p-10 rounded-xl shadow-md border border-[#5c3620]/10 overflow-hidden min-h-[140px] md:min-h-[180px]">
-                      {/* html2canvas対策: background-imageではなくimgタグを使うと非常に鮮明に出力される */}
                       <img 
                         src={weatherImageUrl} 
                         crossOrigin="anonymous" 
                         alt="心の天気" 
                         className="absolute inset-0 w-full h-full object-cover" 
                       />
-                      {/* 画像を落ち着かせ、文字を読みやすくするための暗めのオーバーレイ */}
                       <div className="absolute inset-0 bg-black bg-opacity-30"></div>
                       
-                      {/* アイコンと文字が重ならないように gap で確実に距離をあける */}
                       <div className="relative z-10 flex flex-col items-center justify-center h-full gap-4 md:gap-6 py-2">
-                        {/* ぼかしゼロのクッキリした縁取り(text-shadow-strong)を適用 */}
                         <i className={`fa-solid ${weatherIcon} text-5xl md:text-6xl text-white text-shadow-strong block`}></i>
                         <p className="text-sm md:text-lg font-bold text-white tracking-widest text-center text-shadow-strong leading-tight">{weatherText}</p>
                       </div>
@@ -858,27 +914,23 @@
 
                   {/* こころの荷物のバランス（イコライザー） */}
                   <div className="pt-4 border-t border-amber-800/20 mb-2">
-                    {/* 見出し下の余白を mb-4 から mb-8 に広げ、文字一つ分上に離す */}
                     <h4 className="font-bold text-[#5c3620] mb-8 flex items-center gap-1.5 text-sm md:text-base">
                       <i className="fa-solid fa-sliders text-[#5c3620]"></i> 荷物の重さ
                     </h4>
                     <div className="w-full px-1 md:px-2">
-                      {/* イコライザー本体（全体の高さを少し広げて窮屈さを解消: h-28 md:h-36） */}
+                      {/* イコライザー本体 */}
                       <div className="flex flex-row justify-between items-end w-full h-28 md:h-36 mb-2 border-b border-[#5c3620]/30 pb-2">
                         {sortedQuestions.map((q, index) => {
                           const key = q.type;
-                          const score = finalScores[key] || 0; // スコアは0〜6
+                          const score = finalScores[key] || 0;
                           const data = WEATHER_DATA[key];
                           
                           return (
                             <div key={`eq-${key}`} className="flex flex-col items-center justify-end h-full w-[8%] group relative cursor-pointer">
-                              {/* flex-1 を追加して、数字エリアとの被りを防ぐ */}
                               <div className="flex flex-col w-full items-center justify-end flex-1">
                                 {[7, 6, 5, 4, 3, 2, 1].map(level => {
-                                  let blockColor = 'bg-[#5c3620] bg-opacity-10'; // デフォルト（非点灯）
+                                  let blockColor = 'bg-[#5c3620] bg-opacity-10';
                                   
-                                  // score 0 で1段点灯、score 6 で7段すべて点灯
-                                  // 緑から赤へのグラデーション
                                   if (score >= level - 1) { 
                                     if (level === 1) blockColor = 'bg-emerald-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]'; 
                                     else if (level === 2) blockColor = 'bg-green-500 opacity-90 shadow-[0_2px_4px_rgba(0,0,0,0.3)]';
@@ -897,7 +949,6 @@
                                   );
                                 })}
                               </div>
-                              {/* マージンを適切に設定して密着させすぎない */}
                               <div className="mt-1 md:mt-1.5 flex flex-col items-center">
                                 <span className="text-[#5c3620] font-bold text-[9px] md:text-[11px] leading-none mb-0.5">{index + 1}</span>
                                 <i className={`${data.icon} text-[#5c3620] text-xs md:text-lg opacity-80 group-hover:opacity-100 transition-opacity`}></i>
@@ -906,7 +957,6 @@
                               {/* ツールチップ */}
                               <div className="absolute -top-10 md:-top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-[#2d1b10] text-[#fff8df] text-[10px] md:text-xs px-2 py-1.5 rounded shadow-lg pointer-events-none z-20">
                                 {data.name}
-                                {/* 吹き出しの三角 */}
                                 <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#2d1b10] rotate-45"></div>
                               </div>
                             </div>
@@ -914,16 +964,14 @@
                         })}
                       </div>
                       
-                      {/* 凡例（印刷・詳細確認用） */}
+                      {/* 凡例 */}
                       <div className="mt-4 pt-3 border-t border-amber-800/20">
-                        {/* 項目の凡例 */}
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-x-2 gap-y-2 text-[9px] md:text-[10px] text-[#2d1b10] font-medium bg-[#5c3620] bg-opacity-5 p-2 md:p-3 rounded-lg border border-[#5c3620]/10">
                           {sortedQuestions.map((q, index) => {
                             const data = WEATHER_DATA[q.type];
                             return (
                               <div key={`legend-item-${q.type}`} className="flex items-center gap-1">
                                 <span className="font-bold text-[#5c3620] w-3 md:w-4 text-right shrink-0">{index + 1}.</span>
-                                {/* 画像保存時の文字欠けを完全に防ぐために上下にしっかりパディング(py-1)を取り、行間(leading-relaxed)も広げる */}
                                 <span className="truncate py-1 leading-relaxed" title={data.name}>{data.name}</span>
                               </div>
                             );
@@ -936,7 +984,7 @@
                 </div>
               </div>
 
-              {/* アクションボタン群（キャプチャ保存時には ignore される） */}
+              {/* アクションボタン群 */}
               <div data-html2canvas-ignore="true" className="text-center py-2 md:py-4 flex flex-col md:flex-row items-center justify-center gap-4 relative z-20">
                 <button onClick={() => openPopup('save')} className="rpg-button w-full md:w-auto px-8 py-3 text-base bg-blue-900 border-blue-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                   <i className="fa-solid fa-camera"></i> あとで見返す
@@ -952,7 +1000,7 @@
                 </a>
               </div>
 
-              {/* 2枚目のノート（重くなっている役割・小さな問い） */}
+              {/* 2枚目のノート */}
               <div className="w-full dialog-note border-2 border-amber-600 shadow-xl animate-fade-in relative m-0">
                 <div className="relative z-10 flex flex-col h-full">
 
@@ -991,7 +1039,7 @@
             </div>
             {/* ====== ここまでが画像保存エリア ====== */}
 
-            {/* 理澄からのメッセージ (キャプチャから除外) */}
+            {/* 理澄からのメッセージ */}
             <div className="w-full px-2 pb-4">
               <DialogBox 
                 charConfig={CONFIG.char2} 
@@ -1162,7 +1210,7 @@
                   ご自身の「重くなっている役割」に気づき、これからの働き方や生き方を考えるための「自己理解のきっかけ」としてご活用ください。
                 </p>
                 <div className="border-t border-gray-600/50 pt-2">
-                  <p className="mb-1 leading-relaxed text-gray-400">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作られています。</p>
+                  <p className="mb-1 leading-relaxed text-gray-400">本アプリは、交流分析・RIASEC・役割理論・キャリア理論などの知見をもとに、現代の働き方や人間関係に合わせて設計された RIESM™ / RoleTRADE™ の考え方に基づいて作されています。</p>
                   <p className="text-gray-400">© ninin consulting & counseling LLC. All rights reserved.</p>
                 </div>
               </div>
