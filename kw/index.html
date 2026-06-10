@@ -378,34 +378,49 @@
     const AnswerImageButton = ({ val, selectedVal, onSelect, showDoubleTapMessage = false }) => {
       const isSelected = selectedVal === val;
       
-      // 画像を7等分して背景位置を計算 (0% から 100% まで)
-      // valは 0 〜 6
-      const bgPos = `${(val / 6) * 100}% 0`;
+      // ガイドとなるラベルテキストを設定（両端と中央のみ）
+      let labelText = null;
+      if (val === 0) labelText = "わたしは\n大丈夫";
+      if (val === 3) labelText = "なんとも\nいえない";
+      if (val === 6) labelText = "かなり\nひどい";
 
       return (
-        <button 
-          onClick={() => onSelect(val)} 
-          className={`flex-1 relative rounded overflow-hidden transition-all duration-300 ${isSelected ? 'ring-2 ring-yellow-400 scale-110 shadow-[0_0_15px_rgba(250,204,21,0.6)] z-20' : 'ring-1 ring-gray-600 hover:scale-105 z-10 opacity-70 hover:opacity-100'}`}
-        >
-          {/* 背景画像として7分割の一部を表示 */}
-          <div 
-            className="absolute inset-0 w-full h-full"
-            style={{
-              backgroundImage: "url('./img/tenki.jpg')",
-              backgroundSize: "700% 100%",
-              backgroundPosition: bgPos
-            }}
-          ></div>
-          
-          {/* 選択時の2回タップ案内 */}
-          {isSelected && showDoubleTapMessage && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none w-[120%] text-center">
-              <span className="bg-black bg-opacity-90 px-1 py-1 rounded text-[8px] md:text-[10px] text-yellow-300 font-bold animate-pulse shadow-md block leading-tight">
-                もう一度<br/>タップ
+        <div className="flex-1 flex flex-col items-center h-full relative group">
+          {/* ガイドテキスト領域 (テキストが無い場所も高さを確保してレイアウトを維持) */}
+          <div className="h-8 md:h-10 flex items-end justify-center pb-1.5 md:pb-2 w-full">
+            {labelText && (
+              <span className={`text-[9px] md:text-xs font-bold text-center leading-tight whitespace-pre-wrap transition-colors drop-shadow-md ${isSelected ? 'text-yellow-300' : 'text-gray-300 group-hover:text-yellow-100'}`}>
+                {labelText}
               </span>
-            </div>
-          )}
-        </button>
+            )}
+          </div>
+
+          <button 
+            onClick={() => onSelect(val)} 
+            className={`w-full flex-1 relative rounded overflow-hidden transition-all duration-300 ${isSelected ? 'ring-2 ring-yellow-400 scale-110 shadow-[0_0_15px_rgba(250,204,21,0.6)] z-20' : 'ring-1 ring-gray-600 hover:scale-105 z-10'}`}
+          >
+            {/* 歪まないように画像を配置：幅を7倍にして、objectFit: coverでアスペクト比を維持しつつ切り取る */}
+            <img 
+              src="./img/tenki.jpg" 
+              alt="心の天気"
+              className="absolute top-0 h-full max-w-none"
+              style={{
+                width: '700%',
+                left: `-${val * 100}%`,
+                objectFit: 'cover'
+              }}
+            />
+            
+            {/* 選択時の2回タップ案内 */}
+            {isSelected && showDoubleTapMessage && (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none w-[120%] text-center">
+                <span className="bg-black bg-opacity-90 px-1 py-1 rounded text-[8px] md:text-[10px] text-yellow-300 font-bold animate-pulse shadow-md block leading-tight">
+                  もう一度<br/>タップ
+                </span>
+              </div>
+            )}
+          </button>
+        </div>
       );
     };
 
@@ -639,7 +654,8 @@
               </div>
 
               <div className="relative my-2 bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-28 md:h-36">
+                {/* テキストが入る分、全体の高さを確保 (h-36 md:h-44に変更) */}
+                <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
                   {[0, 1, 2, 3, 4, 5, 6].map(val => (
                     <AnswerImageButton 
                       key={val} 
@@ -678,7 +694,8 @@
                 </div>
 
                 <div className="relative bg-black bg-opacity-40 rounded-xl p-2 border border-gray-700 shadow-inner">
-                  <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-28 md:h-36">
+                  {/* テキストが入る分、全体の高さを確保 (h-36 md:h-44に変更) */}
+                  <div className="flex justify-between items-stretch relative z-10 w-full gap-1 md:gap-2 h-36 md:h-44">
                     {[0, 1, 2, 3, 4, 5, 6].map(val => (
                       <AnswerImageButton 
                         key={val} 
