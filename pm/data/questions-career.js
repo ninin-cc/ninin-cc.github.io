@@ -3578,5 +3578,1122 @@ const QUESTIONS_CAREER = [
       "answer": "1",
       "explanation": "アン・ローはマズローの理論に基づき、幼児期に満たされなかった欲求を満たそうとする無意識的な動機が職業選択につながると考えました。"
     }
+  },
+  {
+    "id": "social-bandura-self-efficacy-sources",
+    "psychologistId": "bandura",
+    "categoryIds": [
+      "career",
+      "social"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "バンデューラが提唱した社会学習理論において、自己効力感を高める4つの情報源として正しい組み合わせはどれか。",
+    "options": [
+      "遂行行動の達成、代理的経験、言語的説得、情動的喚起",
+      "自己理解、職業理解、啓発的経験、方策の実行",
+      "関心、統制、好奇心、自信",
+      "予測、評価、決定、修正"
+    ],
+    "answer": 0,
+    "image": "a_ban0.png",
+    "name": "A.バンデューラ",
+    "birthCountry": "🇨🇦",
+    "birthCountryText": "ｶﾅﾀﾞ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1925 - 2021",
+    "explanation": "バンデューラは自己効力感を高める情報源として、自身が成功した経験（遂行行動の達成）、他者の成功を見る経験（代理的経験）、他者からの励まし（言語的説得）、生理的な反応（情動的喚起）の4つを挙げました。",
+    "works": [
+      {
+        "year": 1977,
+        "title": "「自己効力感の理論」発表"
+      },
+      {
+        "year": 1977,
+        "title": "『社会的学習理論』刊行"
+      },
+      {
+        "year": 1986,
+        "title": "『社会的認知理論』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "バンデューラが提唱した、人が特定の課題を成功裏に遂行できるという自分自身の能力に対する確信を指す用語はどれか。",
+      "options": [
+        "1. 自己効力感",
+        "2. 自己肯定感",
+        "3. 自己実現",
+        "4. 自己一致"
+      ],
+      "answer": "1",
+      "explanation": "課題を成し遂げられるという自分の能力への確信を「自己効力感（セルフ・エフィカシー）」と呼びます。"
+    }
+  },
+  {
+    "id": "motivation-deci-ryan",
+    "psychologistId": "deci",
+    "categoryIds": [
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "デシ（とライアン）が提唱した「自己決定理論」において、内発的動機づけを高める3つの基本的な心理的欲求として正しい組み合わせはどれか。",
+    "options": [
+      "自律性の欲求、有能感の欲求、関係性の欲求",
+      "存在欲求、関係欲求、成長欲求",
+      "達成欲求、権力欲求、親和欲求",
+      "生理的欲求、安全の欲求、所属と愛の欲求"
+    ],
+    "answer": 0,
+    "image": "desi_raian.png",
+    "name": "E.L.デシ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1942 - ",
+    "explanation": "デシとライアンの自己決定理論では、人間が生まれながらに持つ基本的な心理的欲求として、自ら選択したいという「自律性」、能力を発揮したいという「有能感」、他者と結びつきたいという「関係性」の3つを挙げています。",
+    "works": [
+      {
+        "year": 1985,
+        "title": "『Intrinsic Motivation and Self-Determination in Human Behavior』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "デシの自己決定理論において、自らの行動を自分自身で選択し、決定したいと願う心理的欲求を何と呼ぶか。",
+      "options": [
+        "1. 自律性の欲求",
+        "2. 有能感の欲求",
+        "3. 関係性の欲求",
+        "4. 自己実現の欲求"
+      ],
+      "answer": "1",
+      "explanation": "自律性が満たされることで内発的動機づけが高まるとされています。"
+    }
+  },
+  {
+    "id": "counseling-frankl-will-to-meaning",
+    "psychologistId": "frankl",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "フランクルの実存分析（ロゴセラピー）において、人間が生きる意味を求める根源的な動機づけを指す用語はどれか。",
+    "options": [
+      "意味への意志",
+      "自己実現の欲求",
+      "実現傾向",
+      "権力への意志"
+    ],
+    "answer": 0,
+    "image": "frankl.png",
+    "name": "V.E.フランクル",
+    "birthCountry": "🇦🇹",
+    "birthCountryText": "ｵｰｽﾄﾘｱ",
+    "activeCountry": "🇦🇹",
+    "activeCountryText": "ｵｰｽﾄﾘｱ",
+    "lifespan": "1905 - 1997",
+    "explanation": "フランクルは、人間が人生の困難な状況においても意味を見出そうとする「意味への意志」を最も根源的な動機づけと考えました。",
+    "works": [
+      {
+        "year": 1946,
+        "title": "『夜と霧』刊行"
+      },
+      {
+        "year": 1969,
+        "title": "『The Will to Meaning』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "困難な状況下にあっても自らの人生に意味を見出すことを支援する心理療法（ロゴセラピー）を創始した人物は誰か。",
+      "options": [
+        "1. フランクル",
+        "2. ジェンドリン",
+        "3. パールズ",
+        "4. エリス"
+      ],
+      "answer": "1",
+      "explanation": "ウイーンの精神科医であるフランクルは、自らの強制収容所体験からロゴセラピーを創始しました。"
+    }
+  },
+  {
+    "id": "counseling-rogers-active-listening",
+    "psychologistId": "rogers",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ロジャーズの来談者中心療法において、カウンセラーがクライエントの内的世界をあたかも自分自身のものであるかのように感じ取り、理解する態度を何と呼ぶか。",
+    "options": [
+      "共感的理解",
+      "無条件の肯定的配慮",
+      "自己一致",
+      "積極的傾聴"
+    ],
+    "answer": 0,
+    "image": "r_0.png",
+    "name": "C.R.ロジャーズ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1902 - 1987",
+    "explanation": "ロジャーズの3つの中核条件のうち、共感的理解は、クライエントの私的な世界を「あたかも自分のものであるかのように」感じ取り、その意味を理解しようとする態度です。",
+    "works": [
+      {
+        "year": 1951,
+        "title": "『Client-Centered Therapy』刊行"
+      },
+      {
+        "year": 1957,
+        "title": "治療的人格変化の必要十分条件を発表"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ロジャーズが提唱した、カウンセラーが自分自身の感情や体験に正直であり、純粋で真実な存在であることを指す条件はどれか。",
+      "options": [
+        "1. 自己一致",
+        "2. 無条件の肯定的配慮",
+        "3. 共感的理解",
+        "4. 問題解決志向"
+      ],
+      "answer": "1",
+      "explanation": "カウンセラーがありのままである状態を「自己一致（純粋性）」と呼びます。"
+    }
+  },
+  {
+    "id": "motivation-alderfer-erg-levels",
+    "psychologistId": "alderfer",
+    "categoryIds": [
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "アルダファーのERG理論は、マズローの欲求階層説を修正し、人間の欲求を3つの次元に集約した。この3つの次元として正しい組み合わせはどれか。",
+    "options": [
+      "存在、関係、成長",
+      "生存、安全、所属",
+      "達成、権力、親和",
+      "自律、有能、関係"
+    ],
+    "answer": 0,
+    "image": "s_ardafa.png",
+    "name": "C.P.アルダファー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1940 - 2015",
+    "explanation": "アルダファーは人間の欲求を Existence（存在）、Relatedness（関係）、Growth（成長）の3つの次元にまとめました。",
+    "works": [
+      {
+        "year": 1969,
+        "title": "ERG理論を提唱"
+      },
+      {
+        "year": 1972,
+        "title": "『Existence, Relatedness, and Growth』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "マズローの欲求5段階説を実証的に見直し、上位の欲求が満たされない場合に下位の欲求へ後退することも認めた理論はどれか。",
+      "options": [
+        "1. ERG理論",
+        "2. 達成動機理論",
+        "3. 二要因理論",
+        "4. X理論・Y理論"
+      ],
+      "answer": "1",
+      "explanation": "アルダファーのERG理論は、欲求の階層の行き来（挫折・退行）を認めている点が特徴です。"
+    }
+  },
+  {
+    "id": "transition-bridges-neutral-zone",
+    "psychologistId": "bridges",
+    "categoryIds": [
+      "career",
+      "transition"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ブリッジスのトランジション理論において、古い状況が終わって新しい状況が始まるまでの間に経験する、どっちつかずの過渡期のプロセスを何と呼ぶか。",
+    "options": [
+      "ニュートラル・ゾーン",
+      "モラトリアム",
+      "適応期",
+      "試行期"
+    ],
+    "answer": 0,
+    "image": "s_bridges.png",
+    "name": "W.ブリッジス",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1933 - 2013",
+    "explanation": "ブリッジスは、トランジションのプロセスを「終焉」「ニュートラル・ゾーン（中立圏）」「開始」の3段階で示し、中間の混乱期をじっくり味わうことの重要性を指摘しました。",
+    "works": [
+      {
+        "year": 1980,
+        "title": "『Transitions』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ブリッジスの理論において、トランジション（転機）のプロセスは何から始まるとされているか。",
+      "options": [
+        "1. 終焉（終わり）",
+        "2. 開始（始まり）",
+        "3. 準備",
+        "4. 遭遇"
+      ],
+      "answer": "1",
+      "explanation": "ブリッジスは「転機は何かが終わることから始まる」と提唱しました。"
+    }
+  },
+  {
+    "id": "career-krumboltz-planned-happenstance",
+    "psychologistId": "krumboltz",
+    "categoryIds": [
+      "career",
+      "choice",
+      "decision"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "クランボルツが提唱した、変化が激しく不確実性の高まる時代において、偶然の出来事を自らの主体性や努力によってキャリアの機会に変えていく考え方を何と呼ぶか。",
+    "options": [
+      "プランド・ハプンスタンス理論",
+      "プロティアン・キャリア",
+      "積極的不確実性",
+      "トランジション・サイクル"
+    ],
+    "answer": 0,
+    "image": "s_cram1.png",
+    "name": "J.D.クランボルツ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1928 - 2019",
+    "explanation": "クランボルツのプランド・ハプンスタンス理論（計画された偶発性）は、予期せぬ出来事を避けず、積極的に活用してキャリアを構築するよう促します。",
+    "works": [
+      {
+        "year": 1979,
+        "title": "「キャリア意思決定の社会的学習理論（SLTCDM）」発表"
+      },
+      {
+        "year": 1999,
+        "title": "「計画的偶発性理論（Planned Happenstance Theory）」発表"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "クランボルツが、偶然をキャリアのチャンスに変えるために必要とした「5つのスキル」に含まれないものはどれか。",
+      "options": [
+        "1. 好奇心",
+        "2. 柔軟性",
+        "3. 計画性",
+        "4. 冒険心"
+      ],
+      "answer": "3",
+      "explanation": "5つのスキルは、好奇心、持続性、柔軟性、楽観性、冒険心です。計画性は含まれません。"
+    }
+  },
+  {
+    "id": "development-erikson-moratorium",
+    "psychologistId": "erikson",
+    "categoryIds": [
+      "development",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "エリクソンの心理社会的発達理論において、青年期に特有の、アイデンティティの確立に向けた葛藤を処理するための猶予期間を何と呼ぶか。",
+    "options": [
+      "心理社会的モラトリアム",
+      "ニュートラル・ゾーン",
+      "アイデンティティ拡散",
+      "人生半ばの過渡期"
+    ],
+    "answer": 0,
+    "image": "s_ericsson.png",
+    "name": "E.H.エリクソン",
+    "birthCountry": "🇩🇪",
+    "birthCountryText": "ﾄﾞｲﾂ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1902 - 1994",
+    "explanation": "エリクソンは、青年期において大人の社会的責任が一時的に猶予され、自己探求を行う期間を「心理社会的モラトリアム」と呼びました。",
+    "works": [
+      {
+        "year": 1950,
+        "title": "『Childhood and Society』刊行"
+      },
+      {
+        "year": 1968,
+        "title": "『Identity: Youth and Crisis』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "エリクソンが提唱した、青年期の主要な発達課題として正しいものはどれか。",
+      "options": [
+        "1. 自我同一性（アイデンティティ）の確立",
+        "2. 勤勉性の獲得",
+        "3. 親密性の形成",
+        "4. 統合性の獲得"
+      ],
+      "answer": "1",
+      "explanation": "エリクソンは生涯を8段階に分け、青年期の課題をアイデンティティの確立としました。"
+    }
+  },
+  {
+    "id": "cbt-ellis-irrational-belief",
+    "psychologistId": "ellis",
+    "categoryIds": [
+      "cbt",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "エリスの論理療法（REBT）において、「〜すべきである」「〜ねばならない」といった現実に即していない極端で硬直的な信念を何と呼ぶか。",
+    "options": [
+      "イラショナル・ビリーフ",
+      "自動思考",
+      "認知の歪み",
+      "スキーマ"
+    ],
+    "answer": 0,
+    "image": "s_eris.png",
+    "name": "A.エリス",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1913 - 2007",
+    "explanation": "エリスは、出来事（A）に対する不合理な信念である「イラショナル・ビリーフ（B）」が、不適切な感情や行動（C）を引き起こすと考え、これを論駁（D）することを目指しました。",
+    "works": [
+      {
+        "year": 1955,
+        "title": "論理療法を創始"
+      },
+      {
+        "year": 1962,
+        "title": "『Reason and Emotion in Psychotherapy』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "出来事そのものではなく、出来事に対する信念が結果としての感情や行動を引き起こすとする、エリスの理論モデルはどれか。",
+      "options": [
+        "1. ABC理論",
+        "2. 4Sモデル",
+        "3. コーヒーカップ・モデル",
+        "4. RIASECモデル"
+      ],
+      "answer": "1",
+      "explanation": "ABC理論は認知行動療法の中核的な理論の一つです。"
+    }
+  },
+  {
+    "id": "psychoanalysis-freud-libido",
+    "psychologistId": "freud",
+    "categoryIds": [
+      "psychoanalysis",
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "フロイトの精神分析理論において、人間の無意識の行動や心の原動力となる、根源的な性的エネルギーを何と呼ぶか。",
+    "options": [
+      "リビドー",
+      "イド",
+      "エス",
+      "元型"
+    ],
+    "answer": 0,
+    "image": "s_froit.png",
+    "name": "S.フロイト",
+    "birthCountry": "🇨🇿",
+    "birthCountryText": "ﾁｪｺ",
+    "activeCountry": "🇦🇹",
+    "activeCountryText": "ｵｰｽﾄﾘｱ",
+    "lifespan": "1856 - 1939",
+    "explanation": "フロイトは、人間の発達や行動の根底には「リビドー」と呼ばれる本能的・性的なエネルギーが存在するとし、そのエネルギーの発達段階を理論化しました。",
+    "works": [
+      {
+        "year": 1900,
+        "title": "『夢判断』刊行"
+      },
+      {
+        "year": 1923,
+        "title": "『自我とエス』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "フロイトの防衛機制において、受け入れがたい欲求や記憶を無意識に押し込める、最も基本的な防衛機制はどれか。",
+      "options": [
+        "1. 抑圧",
+        "2. 投影",
+        "3. 合理化",
+        "4. 昇華"
+      ],
+      "answer": "1",
+      "explanation": "抑圧は、苦痛な感情や記憶を無意識下に押し込める働きを指します。"
+    }
+  },
+  {
+    "id": "career-hansen-life-planning",
+    "psychologistId": "hansen",
+    "categoryIds": [
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ハンセンが提唱した、労働・愛（子育て）・学習・余暇の4つの役割を組み合わせ、自分にも社会にも役立つ仕事へという価値観のシフトを推奨した概念はどれか。",
+    "options": [
+      "統合的人生設計（ILP）",
+      "プロティアン・キャリア",
+      "ライフキャリアレインボー",
+      "キャリア・アンカー"
+    ],
+    "answer": 0,
+    "image": "s_hansen.png",
+    "name": "L.S.ハンセン",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1931 - 2020",
+    "explanation": "ハンセンの統合的人生設計（ILP：Integrative Life Planning）は、人生をパッチワーク・キルトに例え、4つのL（Labor, Love, Learning, Leisure）を統合してキャリアを設計することを説きました。",
+    "works": [
+      {
+        "year": 1997,
+        "title": "『統合的人生設計（Integrative Life Planning）』発表"
+      },
+      {
+        "year": 2007,
+        "title": "NCDA（全米キャリア開発協会）エミネント・キャリア・アワード受賞"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ハンセンの理論において、人生の多様な役割を縫い合わせるプロセスを象徴する比喩表現はどれか。",
+      "options": [
+        "1. レインボー",
+        "2. コーン",
+        "3. キルト",
+        "4. サイクル"
+      ],
+      "answer": "3",
+      "explanation": "人生をパッチワークのように統合するプロセスを「キルト」に例えました。"
+    }
+  },
+  {
+    "id": "motivation-herzberg-hygiene",
+    "psychologistId": "herzberg",
+    "categoryIds": [
+      "career",
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ハーズバーグの動機づけ・衛生理論において、給与や労働条件など、満たされても不満を予防するだけで積極的な満足にはつながらない要因を何というか。",
+    "options": [
+      "衛生要因",
+      "動機づけ要因",
+      "環境要因",
+      "存在欲求"
+    ],
+    "answer": 0,
+    "image": "s_hasebarg.png",
+    "name": "F.ハーズバーグ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1923 - 2000",
+    "explanation": "ハーズバーグは、職務満足をもたらす「動機づけ要因（達成や承認など）」と、不満を防ぐ「衛生要因（給与や環境など）」は別のものであると提唱しました。",
+    "works": [
+      {
+        "year": 1959,
+        "title": "『The Motivation to Work』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ハーズバーグの二要因理論において、職務満足をもたらし、労働意欲を高める「動機づけ要因」に分類されるものはどれか。",
+      "options": [
+        "1. 会社の政策と管理",
+        "2. 達成や承認",
+        "3. 職場の対人関係",
+        "4. 労働環境"
+      ],
+      "answer": "2",
+      "explanation": "達成、承認、仕事そのもの、責任、昇進などが動機づけ要因に該当します。"
+    }
+  },
+  {
+    "id": "career-holland-vpi",
+    "psychologistId": "holland",
+    "categoryIds": [
+      "career",
+      "choice"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ホランドの職業選択理論（六角形モデル）を基盤として開発され、6つの興味領域と5つの傾向尺度から個人の職業興味を測定するアセスメントツールはどれか。",
+    "options": [
+      "VPI職業興味検査",
+      "GATB一般職業適性検査",
+      "VRT職業レディネス・テスト",
+      "キャリア・インサイト"
+    ],
+    "answer": 0,
+    "image": "s_holand.png",
+    "name": "J.L.ホランド",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1919 - 2008",
+    "explanation": "VPI職業興味検査は、160個の具体的な職業名への興味の有無から、ホランドのRIASEC（6つのパーソナリティタイプ）と傾向尺度を測定する検査です。",
+    "works": [
+      {
+        "year": 1959,
+        "title": "「職業選択の理論」発表"
+      },
+      {
+        "year": 1973,
+        "title": "『職業選択の心理学（Making Vocational Choices）』刊行"
+      },
+      {
+        "year": 1985,
+        "title": "VPI職業興味検査（Vocational Preference Inventory）開発"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ホランドのRIASECモデルにおいて、「R」が表すパーソナリティのタイプはどれか。",
+      "options": [
+        "1. 現実的",
+        "2. 研究的",
+        "3. 社会的",
+        "4. 企業的"
+      ],
+      "answer": "1",
+      "explanation": "Rは現実的（Realistic）、Iは研究的（Investigative）を表します。"
+    }
+  },
+  {
+    "id": "career-hall-psychological-success",
+    "psychologistId": "hall",
+    "categoryIds": [
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "ホールの提唱した「プロティアン・キャリア」において、組織における昇進などの客観的成功よりも重視される、個人の価値観に基づく充実感や成功を何と呼ぶか。",
+    "options": [
+      "心理的成功",
+      "自己実現",
+      "アイデンティティ",
+      "アダプタビリティ"
+    ],
+    "answer": 0,
+    "image": "s_hole.png",
+    "name": "D.T.ホール",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "生没年未確認",
+    "explanation": "ホールは、環境の変化に柔軟に適応する変幻自在なキャリアをプロティアン・キャリアと呼び、他者の基準ではなく自分自身の基準で満たされる「心理的成功」を重視しました。",
+    "works": [
+      {
+        "year": 1976,
+        "title": "『Careers in Organizations』刊行"
+      },
+      {
+        "year": 2004,
+        "title": "プロティアン・キャリアのレビュー論文を発表"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ホールのプロティアン・キャリアにおいて、変化を生き抜くために必要とされるメタ・コンピテンシーを構成する要素は、アイデンティティともう一つは何か。",
+      "options": [
+        "1. アダプタビリティ（適応力）",
+        "2. モチベーション（動機）",
+        "3. レジリエンス（回復力）",
+        "4. キャリア・アンカー"
+      ],
+      "answer": "1",
+      "explanation": "プロティアン・キャリアには、自覚的なアイデンティティと変化へのアダプタビリティが必要です。"
+    }
+  },
+  {
+    "id": "counseling-gendlin-felt-sense",
+    "psychologistId": "gendlin",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "ジェンドリンのフォーカシングにおいて、身体の奥で感じられる、まだ言葉になっていない漠然とした感覚を何と呼ぶか。",
+    "options": [
+      "フェルトセンス",
+      "自動思考",
+      "気づき",
+      "無意識"
+    ],
+    "answer": 0,
+    "image": "s_jendrin.png",
+    "name": "E.T.ジェンドリン",
+    "birthCountry": "🇦🇹",
+    "birthCountryText": "ｵｰｽﾄﾘｱ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1926 - 2017",
+    "explanation": "ジェンドリンは、クライエントが抱く「まだ言葉にならない意味を含んだ身体感覚」をフェルトセンスと呼び、そこに焦点を当てることで心理的な変容を促しました。",
+    "works": [
+      {
+        "year": 1978,
+        "title": "『Focusing』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "ジェンドリンが創始した、言葉にならない漠然とした身体感覚に注意を向け、そこから意味を引き出していく心理療法はどれか。",
+      "options": [
+        "1. フォーカシング",
+        "2. ゲシュタルト療法",
+        "3. 論理療法",
+        "4. 内観療法"
+      ],
+      "answer": "1",
+      "explanation": "フォーカシングは、フェルトセンスと対話するアプローチです。"
+    }
+  },
+  {
+    "id": "counseling-carkhuff-model",
+    "psychologistId": "carkhuff",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "カーカフが提唱した、カウンセリングを援助的対人関係のプロセスとして捉え、段階的なスキル訓練として体系化したモデルの名称はどれか。",
+    "options": [
+      "ヘルピング",
+      "マイクロカウンセリング",
+      "システマティック・アプローチ",
+      "コーヒーカップ・モデル"
+    ],
+    "answer": 0,
+    "image": "s_kakaf.png",
+    "name": "R.R.カーカフ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "生没年未確認",
+    "explanation": "カーカフはロジャーズの理論を発展させ、「かかわり」「応答」「意識化」「手ほどき」などの段階からなる「ヘルピング・モデル」を提唱しました。",
+    "works": [
+      {
+        "year": 1969,
+        "title": "『Helping and Human Relations』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "アイビイの「マイクロカウンセリング」を基盤の一つとし、援助的対人関係のプロセスを体系化した人物は誰か。",
+      "options": [
+        "1. ロジャーズ",
+        "2. カーカフ",
+        "3. 國分康孝",
+        "4. ピービィ"
+      ],
+      "answer": "2",
+      "explanation": "カーカフはヘルピング・モデルを体系化し、実践的なスキル訓練として普及させました。"
+    }
+  },
+  {
+    "id": "counseling-kokubu-sge",
+    "psychologistId": "kokubu",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "國分康孝が提唱した、リーダーが設定した課題（エクササイズ）に沿ってメンバー同士がふれあい、自己理解や他者理解を深めるグループ・アプローチの名称はどれか。",
+    "options": [
+      "構成的グループ・エンカウンター",
+      "ベーシック・エンカウンター・グループ",
+      "Tグループ",
+      "サイコドラマ"
+    ],
+    "answer": 0,
+    "image": "s_kokubu.png",
+    "name": "國分康孝",
+    "birthCountry": "🇯🇵",
+    "birthCountryText": "日本",
+    "activeCountry": "🇯🇵",
+    "activeCountryText": "日本",
+    "lifespan": "1930 - 2018",
+    "explanation": "國分康孝は、ルールや課題が設定された上でグループワークを行う「構成的グループ・エンカウンター（SGE）」を開発・普及させました。",
+    "works": [
+      {
+        "year": 1979,
+        "title": "『カウンセリングの技法』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "國分康孝が提唱した、カウンセリングのプロセス（リレーションづくり、問題の把握、処置）をある形状に例えたモデルはどれか。",
+      "options": [
+        "1. コーヒーカップ・モデル",
+        "2. アーチ・モデル",
+        "3. 三角形モデル",
+        "4. 六角形モデル"
+      ],
+      "answer": "1",
+      "explanation": "表面から深層へ降り、再び上昇して解決へ向かう過程をコーヒーカップの断面図で示しました。"
+    }
+  },
+  {
+    "id": "motivation-maslow-self-actualization",
+    "psychologistId": "maslow",
+    "categoryIds": [
+      "motivation"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "マズローの欲求階層説において、他者から認められたいという「承認の欲求」が満たされた後に現れる、自己の潜在能力を最大限に発揮しようとする最も高次な欲求はどれか。",
+    "options": [
+      "自己実現の欲求",
+      "親和欲求",
+      "成長欲求",
+      "安全の欲求"
+    ],
+    "answer": 0,
+    "image": "s_masro.png",
+    "name": "A.H.マズロー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1908 - 1970",
+    "explanation": "マズローは人間の欲求を5段階に分類し、生理的、安全、所属と愛、承認の各欲求が満たされた後に、最高次の「自己実現の欲求」が現れるとしました。",
+    "works": [
+      {
+        "year": 1943,
+        "title": "「A Theory of Human Motivation」発表"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "マズローの理論において、生命維持に必要な食事や睡眠などの欲求を指す階層はどれか。",
+      "options": [
+        "1. 生理的欲求",
+        "2. 安全の欲求",
+        "3. 所属と愛の欲求",
+        "4. 承認の欲求"
+      ],
+      "answer": "1",
+      "explanation": "欲求階層の最も低次に位置する欠乏欲求が「生理的欲求」です。"
+    }
+  },
+  {
+    "id": "counseling-perls-empty-chair",
+    "psychologistId": "perls",
+    "categoryIds": [
+      "counseling"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "パールズが創始したゲシュタルト療法において、クライエントの前に誰も座っていない椅子を置き、そこに対話したい相手がいると想定して対話を行う代表的な技法はどれか。",
+    "options": [
+      "エンプティ・チェア技法",
+      "自由連想法",
+      "系統的脱感作法",
+      "ロールプレイ"
+    ],
+    "answer": 0,
+    "image": "s_palse.png",
+    "name": "F.パールズ",
+    "birthCountry": "🇩🇪",
+    "birthCountryText": "ﾄﾞｲﾂ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1893 - 1970",
+    "explanation": "エンプティ・チェア（空の椅子）技法は、自分の中の葛藤や、他者への未解決な感情（未完の体験）に直面し、気づきを得るためにゲシュタルト療法でよく用いられます。",
+    "works": [
+      {
+        "year": 1951,
+        "title": "『Gestalt Therapy』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "パールズのゲシュタルト療法が、過去の分析よりも重視するクライエントの状態を表すキーワードはどれか。",
+      "options": [
+        "1. 今、ここ",
+        "2. 無意識",
+        "3. イラショナル・ビリーフ",
+        "4. 自己概念"
+      ],
+      "answer": "1",
+      "explanation": "「今、ここ（here and now）」での気づき（awareness）を重視し、全体性を回復することを目指します。"
+    }
+  },
+  {
+    "id": "trait-parsons-true-reasoning",
+    "psychologistId": "parsons",
+    "categoryIds": [
+      "trait",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "パーソンズが提唱した「特性因子理論」における職業選択の3ステップのうち、自己理解と職業理解を統合し、最も適合する職業を選択する段階を何というか。",
+    "options": [
+      "合理的な推論（マッチング）",
+      "予期と実行",
+      "予測と評価",
+      "結晶化と選択"
+    ],
+    "answer": 0,
+    "image": "s_parsons.png",
+    "name": "F.パーソンズ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1854 - 1908",
+    "explanation": "パーソンズは、自分自身の理解、職業の理解、そしてそれらを合理的に推論して合致（マッチング）させることが賢明な職業選択であるとしました。",
+    "works": [
+      {
+        "year": 1908,
+        "title": "ボストン職業局（Vocation Bureau of Boston）設立"
+      },
+      {
+        "year": 1909,
+        "title": "死後に著書『職業の選択（Choosing a Vocation）』が刊行される"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "パーソンズの特性因子理論を発展させ、学生相談の領域で「分析・総合・診断・予後・カウンセリング・追指導」の6段階プロセスを提唱した人物は誰か。",
+      "options": [
+        "1. スーパー",
+        "2. ホランド",
+        "3. ウィリアムソン",
+        "4. プレディガー"
+      ],
+      "answer": "3",
+      "explanation": "ウィリアムソンは、カウンセラー主導の指示的・診断的なアプローチを体系化しました。"
+    }
+  },
+  {
+    "id": "career-schein-career-cone",
+    "psychologistId": "schein",
+    "categoryIds": [
+      "career",
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant",
+      "industrialCounselor"
+    ],
+    "text": "シャインが提唱した、組織における個人のキャリアの移動を「機能的」「階層的」「部内的（中心性）」の3つの次元で立体的に表したモデルはどれか。",
+    "options": [
+      "キャリア・コーン",
+      "キャリア・アンカー",
+      "ライフキャリアレインボー",
+      "キャリア・サバイバル"
+    ],
+    "answer": 0,
+    "image": "s_shaine.png",
+    "name": "E.H.シャイン",
+    "birthCountry": "🇨🇭",
+    "birthCountryText": "ｽｲｽ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1928 - 2023",
+    "explanation": "シャインは組織内キャリア発達理論において、組織構造と個人の移動を円錐形で示した「キャリア・コーン（3次元モデル）」を提唱しました。",
+    "works": [
+      {
+        "year": 1978,
+        "title": "『キャリア・ダイナミクス』刊行（内的/外的キャリアの提唱）"
+      },
+      {
+        "year": 1990,
+        "title": "『キャリア・アンカー』刊行（8つの分類を確立）"
+      },
+      {
+        "year": 1999,
+        "title": "プロセス・コンサルテーションの概念を体系化"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "シャインが提唱した、個人がキャリアを選択する際に、どうしても犠牲にしたくない中心的な価値観や欲求を指す概念はどれか。",
+      "options": [
+        "1. キャリア・アンカー",
+        "2. キャリア・サバイバル",
+        "3. ライフ・テーマ",
+        "4. プロティアン・キャリア"
+      ],
+      "answer": "1",
+      "explanation": "キャリア・アンカーは、個人の能力、動機、価値観から形成され、職業生活の拠り所となります。"
+    }
+  },
+  {
+    "id": "career-super-exploration",
+    "psychologistId": "super",
+    "categoryIds": [
+      "career",
+      "development"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "スーパーが提唱したキャリア発達のライフステージ（マキシサイクル）において、15歳〜24歳頃に該当し、自らの興味や能力を探求し職業的選択の準備を行う段階はどれか。",
+    "options": [
+      "探索期",
+      "成長期",
+      "確立期",
+      "維持期"
+    ],
+    "answer": 0,
+    "image": "s_super.png",
+    "name": "D.E.スーパー",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1910 - 1994",
+    "explanation": "スーパーのライフステージは成長期、探索期、確立期、維持期、解放期の5段階からなり、職業的選択を模索する時期は「探索期」に該当します。",
+    "works": [
+      {
+        "year": 1953,
+        "title": "「職業発達の理論（A Theory of Vocational Development）」発表"
+      },
+      {
+        "year": 1957,
+        "title": "『キャリアの心理学』刊行"
+      },
+      {
+        "year": 1980,
+        "title": "「ライフ・キャリア・レインボー」モデルを提唱"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "スーパーが提唱した、キャリアを「ライフ・スパン（時間的広がり）」と「ライフ・スペース（空間的広がり）」の2次元から捉えたモデルはどれか。",
+      "options": [
+        "1. ライフキャリアレインボー",
+        "2. アーチモデル",
+        "3. トランジション・サイクル",
+        "4. キャリア・コーン"
+      ],
+      "answer": "1",
+      "explanation": "人生における様々な役割（子ども、学生、労働者など）の組み合わせを虹の形に例えました。"
+    }
+  },
+  {
+    "id": "transition-schlossberg-nonevent",
+    "psychologistId": "schlossberg",
+    "categoryIds": [
+      "transition",
+      "career"
+    ],
+    "examTags": [
+      "careerConsultant"
+    ],
+    "text": "シュロスバーグのトランジション（転機）理論において、「昇進できると思っていたのにできなかった」など、期待していた出来事が起こらなかった場合の転機を何と呼ぶか。",
+    "options": [
+      "ノンイベント",
+      "イベント",
+      "クライシス",
+      "モラトリアム"
+    ],
+    "answer": 0,
+    "image": "s_syuro.png",
+    "name": "N.K.シュロスバーグ",
+    "birthCountry": "🇺🇸",
+    "birthCountryText": "ｱﾒﾘｶ",
+    "activeCountry": "🇺🇸",
+    "activeCountryText": "ｱﾒﾘｶ",
+    "lifespan": "1929 - ",
+    "explanation": "シュロスバーグは転機を、予期していた出来事（イベント）、予期していなかった出来事（イベント）、期待していたが起こらなかった出来事（ノンイベント）に分類しました。",
+    "works": [
+      {
+        "year": 1984,
+        "title": "『カウンセリング・アダルト・イン・トランジション』刊行"
+      },
+      {
+        "year": 1989,
+        "title": "『過渡期のキャリア（Overwhelmed）』刊行"
+      }
+    ],
+    "pastExam": {
+      "title": "オリジナル確認問題",
+      "question": "シュロスバーグの理論において、転機を乗り越えるために点検・活用すべきとされる4つの資源（4S）は、状況、自己、支援と、あと一つは何か。",
+      "options": [
+        "1. 戦略（Strategies）",
+        "2. 成功（Success）",
+        "3. 社会（Society）",
+        "4. スキル（Skills）"
+      ],
+      "answer": "1",
+      "explanation": "4Sは Situation（状況）、Self（自己）、Support（支援）、Strategies（戦略）を指します。"
+    }
   }
 ];

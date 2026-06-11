@@ -2,6 +2,7 @@
 // 分野別の問題ファイルを増やしたら、このオブジェクトへ追加します。
 const QUESTION_BANKS = {
   career: QUESTIONS_CAREER,
+  originalAcademic: QUESTIONS_ORIGINAL_EXAM,
   cbt: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("cbt")),
   counseling: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("counseling")),
   development: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("development")),

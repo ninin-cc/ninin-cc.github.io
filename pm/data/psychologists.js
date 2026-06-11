@@ -16,7 +16,8 @@ const PSYCHOLOGIST_BANK = [
     ],
     "topic": "自己効力感・社会的学習理論",
     "examTags": [
-      "careerConsultant"
+      "careerConsultant",
+      "industrialCounselor"
     ]
   },
   {
@@ -145,7 +146,8 @@ const PSYCHOLOGIST_BANK = [
     ],
     "topic": "特性因子理論・職業指導",
     "examTags": [
-      "careerConsultant"
+      "careerConsultant",
+      "industrialCounselor"
     ]
   },
   {
