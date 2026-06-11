@@ -1,0 +1,3352 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ninin監修　2026心理学者マップ関連アプリ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #64748b;
+      --line: #d9e2ec;
+      --paper: #f8fafc;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --teal-dark: #115e59;
+      --amber: #d97706;
+      --rose: #be123c;
+      --green: #15803d;
+      --shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Yu Gothic", "Meiryo", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--line);
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    /* スマホ前提のメインコンテナ */
+    .app-shell {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0;
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative; /* モーダル用 */
+    }
+
+    /* ヘッダー */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--teal-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .icon-button {
+      background: transparent;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      padding: 6px 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: -8px;
+    }
+
+    .icon-button:active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    /* 切り替え用のユーティリティ */
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================
+       TOPページ（カテゴリ選択）のスタイル
+       ========================================= */
+    #topPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .category-container {
+      padding: 16px;
+      flex-grow: 1;
+    }
+
+    .top-character-talk {
+      padding: 14px 16px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .talk-row {
+      display: grid;
+      align-items: end;
+      gap: 8px;
+    }
+
+    .talk-row.left {
+      grid-template-columns: 64px 1fr;
+    }
+
+    .talk-row.right {
+      grid-template-columns: 1fr 70px;
+    }
+
+    .talk-character-wrap {
+      display: grid;
+      gap: 3px;
+      justify-items: center;
+      align-self: end;
+    }
+
+    .talk-character {
+      width: 100%;
+      max-height: 88px;
+      object-fit: contain;
+    }
+
+    .talk-character-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: var(--teal-dark);
+      font-size: 0.72rem;
+      line-height: 1.15;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .talk-bubble {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      font-weight: bold;
+    }
+
+    .talk-message {
+      margin: 0;
+    }
+
+    .talk-row.left .talk-bubble::before,
+    .talk-row.right .talk-bubble::before {
+      content: "";
+      position: absolute;
+      bottom: 16px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+    }
+
+    .talk-row.left .talk-bubble::before {
+      left: -8px;
+      border-right: 8px solid #fff;
+    }
+
+    .talk-row.right .talk-bubble::before {
+      right: -8px;
+      border-left: 8px solid #fff;
+    }
+
+    /* スマホ向けにコンパクトなグリッド */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .category-accordion {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .category-accordion summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      color: var(--teal-dark);
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .category-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .category-accordion summary::after {
+      content: "▼";
+      color: var(--muted);
+      font-size: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .category-accordion[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .category-accordion .category-grid {
+      padding: 0 12px 12px;
+    }
+
+    .category-button {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      transition: transform 0.1s ease;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .category-button:active {
+      transform: scale(0.96);
+      background: var(--paper);
+    }
+
+    .category-button.active-cat {
+      border-color: var(--teal);
+      border-width: 2px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      padding: 9px 7px; /* ボーダーが太くなる分の調整 */
+    }
+
+    .category-button.original-cat {
+      border-color: #c2410c;
+      background: #fff7ed;
+      color: #7c2d12;
+    }
+
+    .category-button.original-cat.active-cat {
+      border-color: #ea580c;
+      background: #ffedd5;
+      color: #7c2d12;
+    }
+
+    .category-button.disabled-cat {
+      opacity: 0.55;
+      background: #f8fafc;
+      color: var(--muted);
+    }
+
+    .cat-icon {
+      font-size: 1.2rem;
+    }
+
+    /* =========================================
+       10問セット選択ページ
+       ========================================= */
+    #setSelectPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: var(--paper);
+    }
+
+    .set-select-content {
+      padding: 16px;
+    }
+
+    .set-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .set-button {
+      min-height: 64px;
+      padding: 12px 14px;
+      border: 1px solid var(--teal);
+      border-radius: 8px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .set-button:active {
+      transform: scale(0.98);
+      background: #ccfbf1;
+    }
+
+    .set-title {
+      font-size: 0.98rem;
+    }
+
+    .set-meta {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: bold;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* =========================================
+       振返りページ
+       ========================================= */
+    #reviewPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: var(--paper);
+    }
+
+    .review-content {
+      padding: 16px;
+    }
+
+    .review-set-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .review-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .review-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-left-width: 5px;
+      border-radius: 8px;
+      background: #fff;
+      text-align: left;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .review-item.correct {
+      border-left-color: var(--green);
+    }
+
+    .review-item.wrong {
+      border-left-color: var(--rose);
+      background: #fff7f8;
+    }
+
+    .review-question-text {
+      display: block;
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      font-weight: bold;
+    }
+
+    .review-question-meta {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    .review-mark {
+      font-size: 1.15rem;
+    }
+
+    .review-empty {
+      padding: 18px 14px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .review-detail-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 430px) {
+      .review-detail-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 控えめなnote導線 */
+    .note-link-area {
+      padding: 10px 16px 28px;
+      text-align: center;
+    }
+
+    .note-link {
+      display: flex;
+      position: relative;
+      width: min(40%, 176px);
+      min-width: 150px;
+      aspect-ratio: 302 / 226;
+      min-height: 0;
+      margin: 0 auto;
+      overflow: hidden;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 0.72rem;
+      font-weight: bold;
+      line-height: 1.28;
+      padding: 7px 5px;
+      border: 1px solid rgba(15, 118, 110, 0.22);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
+      transition: all 0.2s ease;
+    }
+
+    .note-link::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("img/map.jpg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.58;
+    }
+
+    .note-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.34);
+    }
+
+    .note-link b {
+      position: relative;
+      z-index: 1;
+      display: block;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95);
+    }
+
+    .note-link b {
+      color: var(--teal-dark);
+      font-size: 0.86rem;
+      line-height: 1.2;
+    }
+
+    .note-link-caption {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .note-link:hover, .note-link:active {
+      color: var(--teal-dark);
+      border-color: var(--teal);
+    }
+
+    .note-link:hover::before,
+    .note-link:active::before {
+      opacity: 0.66;
+    }
+
+    .top-footer {
+      padding: 0 16px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.6;
+    }
+
+    .top-footer a {
+      color: var(--teal-dark);
+      font-weight: bold;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(15, 118, 110, 0.28);
+    }
+
+    .top-footer a:active,
+    .top-footer a:hover {
+      border-bottom-color: var(--teal-dark);
+    }
+
+    /* =========================================
+       ダミーページのスタイル
+       ========================================= */
+    #dummyPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: #fff;
+    }
+
+    .dummy-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .dummy-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    /* =========================================
+       心理学者一覧ページのスタイル
+       ========================================= */
+    #directoryPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      background: #fff;
+    }
+
+    .directory-toolbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .directory-toolbar input,
+    .directory-toolbar select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .directory-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .directory-filter-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+
+    .filter-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      min-height: 34px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .filter-chip.active {
+      border-color: var(--teal);
+      background: #f0fdfa;
+      color: var(--teal-dark);
+    }
+
+    .directory-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .person-card {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .person-card:hover,
+    .person-card:focus-visible {
+      border-color: var(--teal);
+      box-shadow: 0 8px 20px rgba(15, 118, 110, 0.12);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .person-card img {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .person-info {
+      min-width: 0;
+    }
+
+    .person-name {
+      margin: 0 0 3px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .person-meta,
+    .person-topic {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .person-topic {
+      margin-top: 5px;
+      color: var(--ink);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      border: 1px solid #ccfbf1;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .person-detail-action {
+      margin-top: 12px;
+    }
+
+    .person-detail-button {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #99f6e4;
+      border-radius: 8px;
+      background: #f0fdfa;
+      color: var(--teal-dark);
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .person-detail-button:active {
+      transform: scale(0.99);
+    }
+
+    .person-detail-profile {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .person-detail-profile img {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .person-detail-name {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .person-detail-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .person-detail-topic {
+      margin: 6px 0 0;
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-weight: bold;
+    }
+
+    .person-detail-count {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .person-detail-question {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: normal;
+      line-height: 1.45;
+    }
+
+    /* =========================================
+       クイズページのスタイル
+       ========================================= */
+    #quizPage {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .progress-container {
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .progress-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--teal);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .quiz-container {
+      padding: 20px 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    #questionArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .question-kicker {
+      color: var(--teal);
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: var(--ink);
+    }
+
+    .question-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .question-action-button {
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .question-action-button:active {
+      transform: scale(0.98);
+      background: var(--paper);
+    }
+
+    .question-action-button.danger {
+      border-color: #fecdd3;
+      color: var(--rose);
+      background: #fff7f8;
+    }
+
+    .question-action-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      background: #f8fafc;
+      color: var(--muted);
+    }
+
+    .choice-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .choice-button {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: left;
+      line-height: 1.4;
+      color: var(--ink);
+      transition: all 0.1s ease;
+    }
+
+    .choice-button:active {
+      transform: scale(0.98);
+      background: var(--paper);
+    }
+
+    #feedbackArea {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .result-badge.correct {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .result-badge.wrong {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    .top-next-button {
+      margin: 10px 0 14px;
+    }
+
+    .user-answer-text {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--rose);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .feedback-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+      background: var(--paper);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .feedback-image {
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .feedback-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .feedback-answer {
+      flex-grow: 1;
+    }
+
+    .answer-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .answer-text {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .psychologist-name {
+      display: inline-block;
+      background: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    .psychologist-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .feedback-body {
+      background: #fff;
+      border-left: 4px solid var(--teal);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .explanation-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      margin: 0 0 8px 0;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+    }
+
+    .extended-explanation-box {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    .extended-explanation-box summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      color: var(--teal-dark);
+      font-size: 0.88rem;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .extended-explanation-text {
+      padding: 0 12px 12px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .question-memo-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      background: #f8fbff;
+    }
+
+    .question-memo-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .question-memo-label {
+      color: #1d4ed8;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .question-memo-count {
+      color: var(--muted);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .question-memo-input {
+      width: 100%;
+      min-height: 74px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .question-memo-input:focus {
+      outline: 2px solid rgba(20, 184, 166, 0.28);
+      border-color: var(--teal);
+    }
+
+    .question-memo-status {
+      min-height: 17px;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-align: right;
+    }
+
+    .works-box {
+      background: #fdf4ff;
+      border: 1px solid #f0abfc;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .works-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #86198f;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .works-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .works-list li {
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .works-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .work-year {
+      font-weight: bold;
+      color: #a21caf;
+      flex-shrink: 0;
+      width: 3.5rem;
+    }
+
+    /* 過去問エリア（アコーディオン対応） */
+    .past-exam-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .past-exam-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: #e0f2fe; 
+      transition: background 0.2s;
+    }
+    
+    .past-exam-header:active {
+        background: #bae6fd;
+    }
+
+    .past-exam-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #0369a1;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .past-exam-toggle-icon {
+        color: #0369a1;
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .past-exam-box.open .past-exam-toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .past-exam-content {
+        padding: 0 16px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .past-exam-box.open .past-exam-content {
+        padding: 16px;
+        max-height: 1000px; /* 十分な高さを確保 */
+        opacity: 1;
+    }
+
+    .past-exam-question {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--ink);
+      line-height: 1.5;
+      margin: 0 0 12px 0;
+    }
+
+    /* 過去問選択肢（直接タップで正答確認） */
+    .past-exam-options {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    
+    .past-exam-options li {
+      margin-bottom: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      transition: all 0.2s ease;
+    }
+
+    .past-exam-options:not(.revealed) li:active {
+      background: var(--paper);
+      transform: scale(0.98);
+    }
+
+    .past-exam-options li.correct-choice {
+      border-color: var(--green);
+      background: #ecfdf5;
+      color: #14532d;
+      font-weight: bold;
+    }
+
+    .past-exam-options li.wrong-choice {
+      border-color: var(--rose);
+      background: #fff1f2;
+      color: #881337;
+    }
+
+    .past-exam-options li.unselected-choice {
+      opacity: 0.5;
+    }
+
+    .past-exam-feedback {
+      margin: -4px 0 16px 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .past-exam-feedback.correct {
+      border-color: #86efac;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+
+    .past-exam-feedback.wrong {
+      border-color: #fecdd3;
+      background: #fff7f8;
+      color: #881337;
+    }
+
+    .past-exam-feedback-title {
+      margin: 0 0 4px 0;
+      font-weight: bold;
+    }
+
+    .past-exam-feedback-text {
+      margin: 0;
+      color: inherit;
+    }
+
+    .primary-button {
+      width: 100%;
+      background: var(--teal);
+      color: #fff;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(15, 118, 110, 0.2);
+    }
+
+    .primary-button:active {
+      transform: scale(0.98);
+      background: var(--teal-dark);
+    }
+
+    /* =========================================
+       結果画面の正誤リストとモーダル
+       ========================================= */
+    .result-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-item:active {
+      background: var(--paper);
+    }
+
+    .result-item.correct {
+      border-left: 5px solid var(--green);
+    }
+
+    .result-item.wrong {
+      border-left: 5px solid var(--rose);
+      background: #fff1f2;
+    }
+
+    .result-item-name {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .result-item-name span {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-right: 8px;
+    }
+
+    .result-item-mark {
+      font-size: 1.1rem;
+    }
+
+    .result-character-stage {
+      margin: 0 0 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .result-character-stage img {
+      width: clamp(58px, 20vw, 92px);
+      max-height: 104px;
+      object-fit: contain;
+    }
+
+    .pdf-export-button {
+      margin-bottom: 12px;
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .print-report {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .app-shell,
+      .modal-overlay {
+        display: none !important;
+      }
+
+      .print-report {
+        display: block;
+        color: #111827;
+        font-family: "Yu Gothic", "Meiryo", sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.55;
+      }
+
+      .print-report-header {
+        border-bottom: 2px solid #0f766e;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+      }
+
+      .print-report-title {
+        margin: 0 0 4px;
+        font-size: 17pt;
+        color: #0f766e;
+      }
+
+      .print-report-meta {
+        margin: 0;
+        color: #475569;
+        font-size: 9pt;
+      }
+
+      .print-report-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin: 10px 0 12px;
+      }
+
+      .print-summary-box {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 6px 8px;
+        background: #f8fafc;
+      }
+
+      .print-summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 8pt;
+      }
+
+      .print-summary-value {
+        display: block;
+        margin-top: 2px;
+        color: #0f172a;
+        font-size: 13pt;
+        font-weight: bold;
+      }
+
+      .print-question-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 1px solid #cbd5e1;
+        border-left: 5px solid #0f766e;
+        border-radius: 6px;
+        padding: 8px 10px;
+        margin: 0 0 8px;
+      }
+
+      .print-question-card.wrong {
+        border-left-color: #e11d48;
+      }
+
+      .print-question-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-weight: bold;
+      }
+
+      .print-question-result {
+        white-space: nowrap;
+      }
+
+      .print-question-text {
+        margin: 0 0 6px;
+        font-weight: bold;
+      }
+
+      .print-answer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      .print-answer-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        padding: 5px 6px;
+      }
+
+      .print-answer-label,
+      .print-section-label {
+        display: block;
+        margin-bottom: 2px;
+        color: #64748b;
+        font-size: 8pt;
+        font-weight: bold;
+      }
+
+      .print-answer-text {
+        font-weight: bold;
+      }
+
+      .print-explanation,
+      .print-memo {
+        margin-top: 5px;
+      }
+
+      .print-memo {
+        padding: 6px;
+        border-radius: 5px;
+        background: #f8fafc;
+        white-space: pre-wrap;
+      }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px 20px 20px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #f1f5f9;
+      color: var(--muted);
+      border: none;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .modal-close:active {
+      background: #e2e8f0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+
+    <!-- =========================================
+         TOPページ（カテゴリ選択画面）
+         ========================================= -->
+    <section id="topPage">
+      <header class="topbar">
+        <div class="brand">
+          <h1>ninin監修　2026心理学者マップ関連アプリ</h1>
+        </div>
+      </header>
+
+      <div class="top-character-talk" aria-label="キャラクターからのメッセージ">
+        <div class="talk-row left">
+          <div class="talk-character-wrap">
+            <img class="talk-character" src="cimg/k2.png" alt="けー。">
+            <span class="talk-character-label">けー。</span>
+          </div>
+          <div class="talk-bubble">
+            <p class="talk-message">楽しく心理学者や理論を学んでいきましょう♪</p>
+          </div>
+        </div>
+        <div class="talk-row right">
+          <div class="talk-bubble">
+            <p class="talk-message">学科試験対策になるし、理論を知ることは相談者さんの支援のためになるさぽー✨</p>
+          </div>
+          <div class="talk-character-wrap">
+            <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
+            <span class="talk-character-label">サポさん</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-container">
+        <div class="category-grid" id="categoryGrid">
+          <!-- JSで動的に生成されます -->
+        </div>
+        <details class="category-accordion">
+          <summary>その他の分野</summary>
+          <div class="category-grid" id="categoryAccordionGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </details>
+      </div>
+
+      <div class="note-link-area">
+        <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="note-link">
+          <b>心理学者マップ</b>
+        </a>
+        <p class="note-link-caption">理論家同士のつながりを一枚で見たい方へ</p>
+      </div>
+
+      <footer class="top-footer">
+        <div>©2026 ninin consulting＆counseling</div>
+        <a href="../index.html">トップへ</a>
+      </footer>
+    </section>
+
+    <!-- =========================================
+         ダミーページ（準備中画面）
+         ========================================= -->
+    <section id="dummyPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="dummyHeaderTitle">カテゴリ名</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+      
+      <div class="dummy-content">
+        <div class="dummy-icon">🚧</div>
+        <h2>問題作成中</h2>
+        <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
+        <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
+      </div>
+    </section>
+
+    <!-- =========================================
+         10問セット選択ページ
+         ========================================= -->
+    <section id="setSelectPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="setSelectHeaderTitle">問題セット選択</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="set-select-content">
+        <div class="set-list" id="quizSetList"></div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         頻出問題の振返りページ
+         ========================================= -->
+    <section id="reviewPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="reviewHeaderTitle">振返り</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="review-content">
+        <div id="reviewSetView">
+          <div id="reviewSetGuide" class="review-empty">確認したいセットを選んでください。</div>
+          <div class="review-set-list" id="reviewSetList"></div>
+        </div>
+        <div id="reviewDetailView" class="hidden">
+          <div class="review-detail-actions">
+            <button type="button" class="question-action-button" id="reviewBackToSetsButton">セット一覧へ戻る</button>
+            <button type="button" class="question-action-button pdf-export-button" id="reviewPdfButton">PDFで振り返り出力</button>
+          </div>
+          <div id="reviewSummary" class="directory-count"></div>
+          <ul class="review-list" id="reviewList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         心理学者一覧ページ（五十音順・タグ絞り込み）
+         ========================================= -->
+    <section id="directoryPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="directoryHeaderTitle">心理学者一覧</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="directory-toolbar">
+        <input id="directorySearch" type="search" placeholder="人物名・理論・画像名で検索">
+        <select id="directoryFilter">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリアコンサルタント受験に頻発</option>
+          <option value="industrialCounselor">産業カウンセラー受験に頻発</option>
+        </select>
+        <div class="directory-filter-panel" id="directoryKanaPanel">
+          <div class="filter-chip-row" id="directoryKanaFilters"></div>
+        </div>
+        <div class="directory-filter-panel" id="directoryTheoryPanel">
+          <div class="filter-chip-row" id="directoryTheoryFilters"></div>
+        </div>
+        <div class="directory-count" id="directoryCount"></div>
+      </div>
+
+      <div class="directory-list" id="directoryList"></div>
+    </section>
+
+    <!-- =========================================
+         クイズページ（キャリア理論等）
+         ========================================= -->
+    <section id="quizPage" class="hidden">
+      <header class="topbar">
+        <!-- クイズ中の戻るボタンは確認ダイアログを出す -->
+        <button class="icon-button" onclick="confirmBackToTop()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="quizHeaderTitle">キャリア理論</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 10問</div>
+      </div>
+
+      <div class="quiz-container">
+        <!-- 問題表示エリア -->
+        <div id="questionArea">
+          <div class="question-kicker" id="questionKicker">第1問</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="question-action-row">
+            <button type="button" class="question-action-button danger" id="interruptQuizButton">中断して戻る</button>
+            <button type="button" class="question-action-button" id="prevQuestionButton">1問前に戻る</button>
+          </div>
+          <div class="choice-grid" id="choices"></div>
+        </div>
+
+        <!-- 解答・解説エリア -->
+        <div class="hidden" id="feedbackArea">
+          <div id="resultBadge" class="result-badge"></div>
+          <button class="primary-button top-next-button" id="nextButtonTop">次の問題へ</button>
+          <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
+          
+          <div class="feedback-header">
+            <div class="feedback-image">
+              <img id="feedbackImage" src="" alt="画像">
+            </div>
+            <div class="feedback-answer">
+              <div class="answer-label">正答</div>
+              <div class="answer-text" id="answerText"></div>
+              <div><span class="psychologist-name" id="psychologistName"></span></div>
+              <div class="psychologist-meta" id="psychologistMeta"></div>
+            </div>
+          </div>
+
+          <div class="feedback-body">
+            <p class="explanation-title">解説・ポイント</p>
+            <p class="explanation-text" id="explanationText"></p>
+            <details class="extended-explanation-box" id="extendedExplanationBox">
+              <summary id="extendedExplanationTitle">詳しい解説を読む</summary>
+              <div class="extended-explanation-text" id="extendedExplanationText"></div>
+            </details>
+            <div class="question-memo-box" id="questionMemoBox">
+              <div class="question-memo-header">
+                <label class="question-memo-label" for="questionMemoInput">この問題のメモ</label>
+                <span class="question-memo-count" id="questionMemoCount">0 / 255</span>
+              </div>
+              <textarea class="question-memo-input" id="questionMemoInput" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea>
+              <div class="question-memo-status" id="questionMemoStatus"></div>
+            </div>
+            <div class="person-detail-action" id="psychologistDetailAction"></div>
+          </div>
+
+          <div class="works-box" id="worksBox">
+            <p class="works-title">📚 主な理論・著作の変遷</p>
+            <ul class="works-list" id="worksList"></ul>
+          </div>
+
+          <!-- 過去問エリア（アコーディオン） -->
+          <div class="past-exam-box" id="pastExamBox">
+            <div class="past-exam-header" onclick="togglePastExam('quizPastExam')">
+                <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content">
+                <p class="past-exam-question" id="pastExamQuestion"></p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="pastExamOptions"></ul>
+            </div>
+          </div>
+
+          <button class="primary-button" id="nextButton">次の問題へ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- モーダル（ポップアップ） -->
+    <div id="resultModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+
+  </main>
+  <section class="print-report" id="printReport" aria-hidden="true"></section>
+
+  <script src="data/psychologists.js"></script>
+  <script src="data/questions-career.js"></script>
+  <script src="data/questions-original-exam.js"></script>
+  <script src="data/question-banks.js"></script>
+
+  <script>
+    const isEmojiSupported = !navigator.userAgent.includes('Windows');
+
+    // ==========================================
+    // カテゴリ定義
+    // ==========================================
+    const CATEGORIES = [
+      { id: "careerFrequent", title: "キャリコン頻出問題", icon: "🎓", type: "quiz", examTag: "careerConsultant", questionLimit: 10, topGroup: "primary", isActive: true },
+      { id: "industrialFrequent", title: "産業カウンセラー頻出問題", icon: "🏢", type: "quiz", examTag: "industrialCounselor", questionLimit: 10, topGroup: "primary", isActive: true },
+      { id: "careerFrequentReview", title: "キャリコン頻出問題振返り", icon: "↩", type: "review", reviewForCategoryId: "careerFrequent", topGroup: "primary", isActive: true },
+      { id: "industrialFrequentReview", title: "産業カウンセラー頻出問題振返り", icon: "↩", type: "review", reviewForCategoryId: "industrialFrequent", topGroup: "primary", isActive: true },
+      { id: "directoryAiueo", title: "心理学者一覧（aiueo）", icon: "🔎", type: "directory", directoryMode: "aiueo", topGroup: "primary", isActive: true },
+      { id: "directoryTheoryTimeline", title: "心理学者一覧（理論別、年代順）", icon: "🗂️", type: "directory", directoryMode: "theoryTimeline", topGroup: "primary", isActive: true },
+      { id: "originalAcademic", title: "オリジナル学科予想問題", icon: "📝", type: "quiz", questionBankId: "originalAcademic", questionLimit: 10, topGroup: "primary", isActive: true, reviewable: true, accent: "original" },
+      { id: "originalAcademicReview", title: "オリジナル学科予想問題振返り", icon: "↩", type: "review", reviewForCategoryId: "originalAcademic", topGroup: "primary", isActive: true, accent: "original" },
+      { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
+      { id: "cbt", title: "認知行動療法", icon: "🧠", type: "quiz", questionBankId: "cbt", topGroup: "accordion", isActive: true },
+      { id: "counseling", title: "カウンセリング理論", icon: "🗣️", type: "quiz", questionBankId: "counseling", topGroup: "accordion", isActive: true },
+      { id: "development", title: "発達心理学", icon: "🌱", type: "quiz", questionBankId: "development", topGroup: "accordion", isActive: true },
+      { id: "psychoanalysis", title: "精神分析の祖", icon: "🛋️", type: "quiz", questionBankId: "psychoanalysis", topGroup: "accordion", isActive: true },
+      { id: "social", title: "社会活動に活かす心理学の祖", icon: "🤝", type: "quiz", questionBankId: "social", topGroup: "accordion", isActive: true },
+      { id: "motivation", title: "動機付け/モチベーション", icon: "🔥", type: "quiz", questionBankId: "motivation", topGroup: "accordion", isActive: true },
+      { id: "choice", title: "職業選択", icon: "💼", type: "quiz", questionBankId: "choice", topGroup: "accordion", isActive: true },
+      { id: "transition", title: "転機理論", icon: "🔄", type: "quiz", questionBankId: "transition", topGroup: "accordion", isActive: true },
+      { id: "decision", title: "意思決定", icon: "⚖️", type: "quiz", questionBankId: "decision", topGroup: "accordion", isActive: true },
+      { id: "narrative", title: "ナラティブアプローチ", icon: "📖", type: "quiz", questionBankId: "narrative", topGroup: "accordion", isActive: true },
+      { id: "positive", title: "ポジティブ心理学", icon: "✨", type: "quiz", questionBankId: "positive", topGroup: "accordion", isActive: true },
+      { id: "trait", title: "特性論/タイプ論", icon: "🧩", type: "quiz", questionBankId: "trait", topGroup: "accordion", isActive: true },
+      { id: "other", title: "その他", icon: "📦", type: "quiz", questionBankId: "other", topGroup: "accordion", isActive: true }
+    ];
+
+    const EXAM_TAG_LABELS = {
+      careerConsultant: "キャリアコンサルタント受験に頻発",
+      industrialCounselor: "産業カウンセラー受験に頻発"
+    };
+
+    const ROOT_IMAGE_FILES = new Set([]);
+
+    const KANA_GROUPS = [
+      { id: "all", label: "すべて", chars: [] },
+      { id: "a", label: "あ", chars: ["あ", "い", "う", "え", "お"] },
+      { id: "ka", label: "か", chars: ["か", "き", "く", "け", "こ"] },
+      { id: "sa", label: "さ", chars: ["さ", "し", "す", "せ", "そ"] },
+      { id: "ta", label: "た", chars: ["た", "ち", "つ", "て", "と"] },
+      { id: "na", label: "な", chars: ["な", "に", "ぬ", "ね", "の"] },
+      { id: "ha", label: "は", chars: ["は", "ひ", "ふ", "へ", "ほ"] },
+      { id: "ma", label: "ま", chars: ["ま", "み", "む", "め", "も"] },
+      { id: "ya", label: "や", chars: ["や", "ゆ", "よ"] },
+      { id: "ra", label: "ら", chars: ["ら", "り", "る", "れ", "ろ"] },
+      { id: "wa", label: "わ", chars: ["わ", "を", "ん"] }
+    ];
+
+    // ==========================================
+    // データ定義
+    // 問題データ・心理学者バンクは data/*.js で管理します。
+    // ==========================================
+
+
+    const state = {
+      currentQuestionIndex: 0,
+      score: 0,
+      isAnswered: false,
+      deck: [],
+      history: [], // ユーザーの解答履歴を保存
+      currentCategory: null,
+      currentSetIndex: null,
+      currentSetStart: null,
+      currentSetEnd: null,
+      currentReviewCategoryId: null,
+      currentReviewSetIndex: null,
+      currentReviewLog: null,
+      currentReviewHistory: [],
+      directoryMode: "aiueo",
+      directoryKanaGroup: "all",
+      directoryTheoryCategory: "all",
+      currentPastExamAnswer: null // アコーディオン内で表示する正解を保持
+    };
+
+    const els = {
+      topPage: document.getElementById("topPage"),
+      dummyPage: document.getElementById("dummyPage"),
+      setSelectPage: document.getElementById("setSelectPage"),
+      setSelectHeaderTitle: document.getElementById("setSelectHeaderTitle"),
+      quizSetList: document.getElementById("quizSetList"),
+      reviewPage: document.getElementById("reviewPage"),
+      reviewHeaderTitle: document.getElementById("reviewHeaderTitle"),
+      reviewSetView: document.getElementById("reviewSetView"),
+      reviewDetailView: document.getElementById("reviewDetailView"),
+      reviewSetList: document.getElementById("reviewSetList"),
+      reviewBackToSetsButton: document.getElementById("reviewBackToSetsButton"),
+      reviewPdfButton: document.getElementById("reviewPdfButton"),
+      reviewSummary: document.getElementById("reviewSummary"),
+      reviewList: document.getElementById("reviewList"),
+      directoryPage: document.getElementById("directoryPage"),
+      quizPage: document.getElementById("quizPage"),
+      
+      categoryGrid: document.getElementById("categoryGrid"),
+      categoryAccordionGrid: document.getElementById("categoryAccordionGrid"),
+      dummyHeaderTitle: document.getElementById("dummyHeaderTitle"),
+      directoryHeaderTitle: document.getElementById("directoryHeaderTitle"),
+      directorySearch: document.getElementById("directorySearch"),
+      directoryFilter: document.getElementById("directoryFilter"),
+      directoryKanaPanel: document.getElementById("directoryKanaPanel"),
+      directoryKanaFilters: document.getElementById("directoryKanaFilters"),
+      directoryTheoryPanel: document.getElementById("directoryTheoryPanel"),
+      directoryTheoryFilters: document.getElementById("directoryTheoryFilters"),
+      directoryCount: document.getElementById("directoryCount"),
+      directoryList: document.getElementById("directoryList"),
+      quizHeaderTitle: document.getElementById("quizHeaderTitle"),
+
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      
+      questionArea: document.getElementById("questionArea"),
+      questionKicker: document.getElementById("questionKicker"),
+      questionText: document.getElementById("questionText"),
+      interruptQuizButton: document.getElementById("interruptQuizButton"),
+      prevQuestionButton: document.getElementById("prevQuestionButton"),
+      choices: document.getElementById("choices"),
+      
+      feedbackArea: document.getElementById("feedbackArea"),
+      resultBadge: document.getElementById("resultBadge"),
+      userAnswerText: document.getElementById("userAnswerText"),
+      feedbackImage: document.getElementById("feedbackImage"),
+      answerText: document.getElementById("answerText"),
+      psychologistName: document.getElementById("psychologistName"),
+      psychologistMeta: document.getElementById("psychologistMeta"),
+      explanationText: document.getElementById("explanationText"),
+      extendedExplanationBox: document.getElementById("extendedExplanationBox"),
+      extendedExplanationTitle: document.getElementById("extendedExplanationTitle"),
+      extendedExplanationText: document.getElementById("extendedExplanationText"),
+      questionMemoBox: document.getElementById("questionMemoBox"),
+      questionMemoInput: document.getElementById("questionMemoInput"),
+      questionMemoCount: document.getElementById("questionMemoCount"),
+      questionMemoStatus: document.getElementById("questionMemoStatus"),
+      psychologistDetailAction: document.getElementById("psychologistDetailAction"),
+      
+      worksBox: document.getElementById("worksBox"),
+      worksList: document.getElementById("worksList"),
+
+      pastExamBox: document.getElementById("pastExamBox"),
+      pastExamRef: document.getElementById("pastExamRef"),
+      pastExamQuestion: document.getElementById("pastExamQuestion"),
+      pastExamOptions: document.getElementById("pastExamOptions"),
+
+      nextButton: document.getElementById("nextButton"),
+      nextButtonTop: document.getElementById("nextButtonTop")
+    };
+
+    // ==========================================
+    // 画面遷移ロジック
+    // ==========================================
+    function showTopPage() {
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.setSelectPage.classList.add("hidden");
+      els.reviewPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
+      els.topPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function showDummyPage(title) {
+      els.dummyHeaderTitle.textContent = title;
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.setSelectPage.classList.add("hidden");
+      els.reviewPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
+      els.dummyPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function confirmBackToTop() {
+      if (confirm("テストを中断してTOPに戻りますか？")) {
+        showTopPage();
+      }
+    }
+
+    function goToPreviousQuestion() {
+      if (state.currentQuestionIndex <= 0 || state.isAnswered) return;
+
+      const previousIndex = state.currentQuestionIndex - 1;
+      state.history = state.history.slice(0, previousIndex);
+      state.score = state.history.filter(item => item.isCorrect).length;
+      state.currentQuestionIndex = previousIndex;
+      saveCurrentReviewLog();
+      loadQuestion();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // ==========================================
+    // 過去問アコーディオン制御と正解表示
+    // ==========================================
+    function togglePastExam(targetId) {
+        // modal内かquiz内か判定して要素を取得
+        let box = targetId === 'quizPastExam' ? els.pastExamBox : document.getElementById(targetId);
+        if(box) {
+            box.classList.toggle('open');
+        }
+    }
+
+    function getPastExamAnswerNumber(answerText) {
+      const match = String(answerText || "").match(/\d/);
+      return match ? match[0] : String(answerText || "").trim();
+    }
+
+    function isPastExamCorrectOption(originalText, answerText) {
+      const answerNumber = getPastExamAnswerNumber(answerText);
+      const normalizedText = String(originalText || "").trim();
+      return normalizedText.startsWith(answerNumber + ".") || normalizedText.startsWith(answerNumber + " ");
+    }
+
+    function getPastExamShortExplanation(q) {
+      const raw = (q && q.pastExam && q.pastExam.explanation) ? q.pastExam.explanation : (q && q.explanation ? q.explanation : "");
+      const compact = String(raw || "").replace(/\s+/g, " ").trim();
+      if (!compact) {
+        return "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
+      }
+      if (compact.length <= 105) return compact;
+
+      const sliced = compact.slice(0, 105);
+      const breakAt = Math.max(sliced.lastIndexOf("。"), sliced.lastIndexOf("、"));
+      return `${breakAt > 45 ? sliced.slice(0, breakAt + 1) : sliced}…`;
+    }
+
+    function getPastExamCorrectOptionText(optionsUl, answerText) {
+      const correctLi = Array.from(optionsUl.children).find(li => {
+        const originalText = li.getAttribute('data-original-text') || li.textContent;
+        return isPastExamCorrectOption(originalText, answerText);
+      });
+      const originalText = correctLi ? (correctLi.getAttribute('data-original-text') || correctLi.textContent) : "";
+      return originalText.replace(/^\s*\d+\.\s*/, "");
+    }
+
+    function clearPastExamFeedback(optionsUl) {
+      if (!optionsUl) return;
+      const existing = optionsUl.nextElementSibling;
+      if (existing && existing.classList.contains('past-exam-feedback')) {
+        existing.remove();
+      }
+    }
+
+    function renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText) {
+      clearPastExamFeedback(optionsUl);
+
+      const answerNumber = getPastExamAnswerNumber(answerText);
+      const correctOptionText = getPastExamCorrectOptionText(optionsUl, answerNumber);
+      const feedback = document.createElement("div");
+      feedback.className = `past-exam-feedback ${clickedIsCorrect ? 'correct' : 'wrong'}`;
+
+      const title = document.createElement("p");
+      title.className = "past-exam-feedback-title";
+      title.textContent = clickedIsCorrect
+        ? "✅ 正解です"
+        : `✅ 正解は ${answerNumber}. ${correctOptionText} です`;
+
+      const text = document.createElement("p");
+      text.className = "past-exam-feedback-text";
+      text.textContent = optionsUl.dataset.explanation || "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
+
+      feedback.appendChild(title);
+      feedback.appendChild(text);
+      optionsUl.insertAdjacentElement("afterend", feedback);
+    }
+
+    // 選択肢がタップされた時に正解・不正解を判定し、リストの左側に✅や❌をつける
+    function revealAnswer(targetId, answerText, clickedLi) {
+        let optionsUl = targetId === 'quizPastExam' ? els.pastExamOptions : document.getElementById(targetId + 'Options');
+        
+        // すでに答え合わせ済みの場合は何もしない
+        if(optionsUl && !optionsUl.classList.contains('revealed')) {
+            optionsUl.classList.add('revealed');
+            clearPastExamFeedback(optionsUl);
+            let clickedIsCorrect = false;
+
+            Array.from(optionsUl.children).forEach(li => {
+                // 初回のみ元のテキストを保持
+                const originalText = li.getAttribute('data-original-text') || li.textContent;
+                if (!li.hasAttribute('data-original-text')) {
+                    li.setAttribute('data-original-text', originalText);
+                }
+
+                // 正解の判定（"1. "などの数字と一致するか）
+                const isCorrect = isPastExamCorrectOption(originalText, answerText);
+                if (li === clickedLi) {
+                    clickedIsCorrect = isCorrect;
+                }
+                
+                if(isCorrect) {
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">✅</span><span>${originalText}</span>`;
+                    li.classList.add('correct-choice');
+                } else if (li === clickedLi) {
+                    // タップしたのが不正解の選択肢だった場合
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">❌</span><span>${originalText}</span>`;
+                    li.classList.add('wrong-choice');
+                } else {
+                    // その他の選択肢
+                    li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; width:1.1rem; display:inline-block;"></span><span>${originalText}</span>`;
+                    li.classList.add('unselected-choice');
+                }
+            });
+
+            renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText);
+        }
+    }
+
+    // ==========================================
+    // モーダル（ポップアップ）制御
+    // ==========================================
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderExtendedExplanationHtml(q) {
+      if (!q.extendedExplanation) return "";
+      const title = q.extendedExplanationTitle ? `詳しい解説：${q.extendedExplanationTitle}` : "詳しい解説を読む";
+      return `
+        <details class="extended-explanation-box">
+          <summary>${escapeHtml(title)}</summary>
+          <div class="extended-explanation-text">${escapeHtml(q.extendedExplanation)}</div>
+        </details>
+      `;
+    }
+
+    function getQuestionMemoKey(questionId) {
+      return `pmQuestionMemo:v1:${questionId}`;
+    }
+
+    function loadQuestionMemo(questionId) {
+      if (!questionId) return "";
+      try {
+        return localStorage.getItem(getQuestionMemoKey(questionId)) || "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function saveQuestionMemo(questionId, value) {
+      if (!questionId) return false;
+      try {
+        const memo = String(value || "").slice(0, 255);
+        const key = getQuestionMemoKey(questionId);
+        if (memo) {
+          localStorage.setItem(key, memo);
+        } else {
+          localStorage.removeItem(key);
+        }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function updateMemoCount(textarea, countEl) {
+      if (!textarea || !countEl) return;
+      countEl.textContent = `${textarea.value.length} / 255`;
+    }
+
+    function bindQuestionMemo(textarea, countEl, statusEl, questionId) {
+      if (!textarea || !countEl) return;
+      if (!questionId) {
+        textarea.value = "";
+        textarea.oninput = null;
+        updateMemoCount(textarea, countEl);
+        if (statusEl) statusEl.textContent = "";
+        return;
+      }
+      textarea.value = loadQuestionMemo(questionId).slice(0, 255);
+      updateMemoCount(textarea, countEl);
+      if (statusEl) statusEl.textContent = textarea.value ? "保存済み" : "";
+
+      textarea.oninput = () => {
+        if (textarea.value.length > 255) textarea.value = textarea.value.slice(0, 255);
+        updateMemoCount(textarea, countEl);
+        const saved = saveQuestionMemo(questionId, textarea.value);
+        if (statusEl) statusEl.textContent = saved ? "保存済み" : "保存できませんでした";
+      };
+    }
+
+    function renderQuestionMemoHtml(q, idPrefix = "modalQuestionMemo") {
+      const safeId = String(q.id || "question").replace(/[^a-zA-Z0-9_-]/g, "-");
+      const textareaId = `${idPrefix}_${safeId}`;
+      const countId = `${textareaId}_count`;
+      const statusId = `${textareaId}_status`;
+      return `
+        <div class="question-memo-box" data-question-memo-id="${escapeHtml(q.id)}">
+          <div class="question-memo-header">
+            <label class="question-memo-label" for="${escapeHtml(textareaId)}">この問題のメモ</label>
+            <span class="question-memo-count" id="${escapeHtml(countId)}">0 / 255</span>
+          </div>
+          <textarea class="question-memo-input" id="${escapeHtml(textareaId)}" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea>
+          <div class="question-memo-status" id="${escapeHtml(statusId)}"></div>
+        </div>
+      `;
+    }
+
+    function bindQuestionMemos(root = document) {
+      root.querySelectorAll(".question-memo-box[data-question-memo-id]").forEach(box => {
+        const textarea = box.querySelector(".question-memo-input");
+        const countEl = box.querySelector(".question-memo-count");
+        const statusEl = box.querySelector(".question-memo-status");
+        bindQuestionMemo(textarea, countEl, statusEl, box.dataset.questionMemoId);
+      });
+    }
+
+    function getPersonById(personId) {
+      if (!personId) return null;
+      return PSYCHOLOGIST_BANK.find(person => person.id === personId) || null;
+    }
+
+    function getQuestionCategoryText(q) {
+      const labels = (q.categoryIds || [])
+        .map(categoryId => CATEGORIES.find(cat => cat.id === categoryId)?.title)
+        .filter(Boolean);
+      return labels.length ? labels.join(" / ") : "関連問題";
+    }
+
+    function getPersonRelatedQuestions(personId) {
+      const seen = new Set();
+      return getAllQuestions()
+        .filter(q => q.psychologistId === personId && q.explanation)
+        .filter(q => {
+          if (seen.has(q.id)) return false;
+          seen.add(q.id);
+          return true;
+        });
+    }
+
+    function renderWorksHtml(works) {
+      if (!works || !works.length) return "";
+      const sortedWorks = [...works].sort((a, b) => a.year - b.year);
+      return `
+        <div class="works-box" style="display:block; margin-top:10px;">
+          <p class="works-title">関連年表</p>
+          <ul class="works-list">
+            ${sortedWorks.map(work => `<li><span class="work-year">${escapeHtml(work.year)}年</span><span>${escapeHtml(work.title)}</span></li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function renderPersonQuestionDetail(q, isOpen = false) {
+      return `
+        <details class="extended-explanation-box" ${isOpen ? "open" : ""}>
+          <summary>
+            ${escapeHtml(getQuestionCategoryText(q))}
+            <span class="person-detail-question">${escapeHtml(q.text)}</span>
+          </summary>
+          <div class="extended-explanation-text">
+            ${escapeHtml(q.explanation)}
+            ${q.extendedExplanation ? `\n\n${escapeHtml(q.extendedExplanation)}` : ""}
+          </div>
+          ${renderQuestionMemoHtml(q, "personQuestionMemo")}
+          ${renderWorksHtml(q.works)}
+        </details>
+      `;
+    }
+
+    function openPsychologistDetailModal(personOrId, sourceQuestion = null) {
+      const person = typeof personOrId === "string" ? getPersonById(personOrId) : personOrId;
+      if (!person) return;
+
+      const relatedQuestions = getPersonRelatedQuestions(person.id);
+      if (sourceQuestion) {
+        relatedQuestions.sort((a, b) => {
+          if (a.id === sourceQuestion.id) return -1;
+          if (b.id === sourceQuestion.id) return 1;
+          return 0;
+        });
+      }
+
+      const tags = (person.examTags || []).map(tag => EXAM_TAG_LABELS[tag]).filter(Boolean);
+      const mainImage = person.images && person.images.length ? person.images[0] : "";
+      const html = `
+        <div class="person-detail-profile">
+          <img src="${getImageSrc(mainImage)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(mainImage)}'" alt="${escapeHtml(person.displayName || person.name)}">
+          <div>
+            <p class="person-detail-name">${escapeHtml(person.displayName || person.name)}</p>
+            <p class="person-detail-meta">${escapeHtml(person.en || "")}</p>
+            <p class="person-detail-topic">${escapeHtml(person.topic || "")}</p>
+            <div class="tag-row">
+              ${tags.map(label => `<span class="mini-tag">${escapeHtml(label)}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+        <p class="person-detail-count">登録済みの解説 ${relatedQuestions.length}件</p>
+        ${relatedQuestions.length
+          ? relatedQuestions.map(q => renderPersonQuestionDetail(q, sourceQuestion && q.id === sourceQuestion.id)).join("")
+          : `<div class="dummy-content"><p>この心理学者の解説は、問題データ追加後に表示されます。</p></div>`}
+      `;
+
+      document.getElementById("modalBody").innerHTML = html;
+      bindQuestionMemos(document.getElementById("modalBody"));
+      document.getElementById("resultModal").classList.add("active");
+    }
+
+    function renderPsychologistDetailAction(q) {
+      const person = getPersonById(q.psychologistId);
+      els.psychologistDetailAction.innerHTML = "";
+      if (!person) {
+        els.psychologistDetailAction.style.display = "none";
+        return;
+      }
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "person-detail-button";
+      button.textContent = "この心理学者の解説を見る";
+      button.addEventListener("click", () => openPsychologistDetailModal(person, q));
+      els.psychologistDetailAction.appendChild(button);
+      els.psychologistDetailAction.style.display = "block";
+    }
+
+    function openModal(historyItem, index) {
+      const q = historyItem.question;
+      const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText;
+      const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
+      
+      let html = `
+        <div style="margin-bottom:12px;">
+          <span class="result-badge ${historyItem.isCorrect ? 'correct' : 'wrong'}" style="margin-bottom:0; font-size:1rem;">
+            ${historyItem.isCorrect ? '⭕ 正解' : '❌ 不正解'}
+          </span>
+        </div>
+        <div class="question-kicker" style="font-size:0.85rem;">第${index + 1}問</div>
+        <div class="question-text" style="font-size:1rem; margin-bottom:16px;">${q.text}</div>
+      `;
+
+      if (!historyItem.isCorrect) {
+        html += `<div class="user-answer-text" style="display:block; margin-bottom:16px; font-size:0.85rem;">あなたの解答：${q.options[historyItem.selectedIndex]}</div>`;
+      }
+
+      html += `
+        <div class="feedback-header" style="margin-bottom:16px; padding:12px;">
+          <div class="feedback-image" style="width:70px; height:70px;">
+            <img src="${getImageSrc(q.image)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(q.image)}'" alt="${q.name}">
+          </div>
+          <div class="feedback-answer">
+            <div class="answer-label" style="font-size:0.75rem;">正答</div>
+            <div class="answer-text" style="font-size:1rem;">${q.options[q.answer]}</div>
+            <div><span class="psychologist-name" style="font-size:0.85rem;">${q.name}</span></div>
+            <div class="psychologist-meta" style="font-size:0.7rem; margin-top:4px;">${q.metaText || `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`}</div>
+          </div>
+        </div>
+        <div class="feedback-body" style="padding:12px; margin-bottom:16px;">
+          <p class="explanation-title" style="font-size:0.85rem;">解説・ポイント</p>
+          <p class="explanation-text" style="font-size:0.9rem;">${q.explanation}</p>
+          ${renderExtendedExplanationHtml(q)}
+          ${renderQuestionMemoHtml(q)}
+        </div>
+      `;
+
+      if (q.pastExam) {
+         let refText = q.pastExam.title.includes("オリジナル") ? "オリジナル予想問題" : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
+         let modalPastExamId = `modalPastExam_${index}`;
+         
+         let optionsHtml = q.pastExam.options.map(opt => `
+            <li onclick="revealAnswer('${modalPastExamId}', '${q.pastExam.answer}', this)" data-original-text="${opt}">${opt}</li>
+         `).join('');
+
+         html += `
+         <div class="past-exam-box" id="${modalPastExamId}" style="margin-bottom:0;">
+            <div class="past-exam-header" style="padding:12px;" onclick="togglePastExam('${modalPastExamId}')">
+                <p class="past-exam-title" style="font-size:0.85rem;">📘 ${refText}</p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content" style="padding:0 12px;">
+                <p class="past-exam-question" style="font-size:0.85rem; margin-top:12px; margin-bottom:8px;">${q.pastExam.question}</p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="${modalPastExamId}Options" style="font-size:0.85rem;">
+                    ${optionsHtml}
+                </ul>
+            </div>
+         </div>
+         `;
+      }
+
+      document.getElementById('modalBody').innerHTML = html;
+      bindQuestionMemos(document.getElementById("modalBody"));
+      if (q.pastExam) {
+        const modalOptions = document.getElementById(`modalPastExam_${index}Options`);
+        if (modalOptions) {
+          modalOptions.dataset.explanation = getPastExamShortExplanation(q);
+        }
+      }
+      document.getElementById('resultModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('resultModal').classList.remove('active');
+    }
+
+    // ==========================================
+    // クイズロジック
+    // ==========================================
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function getImageSrc(file) {
+      return ROOT_IMAGE_FILES.has(file) || file.includes("/") ? file : `img/${file}`;
+    }
+
+    function getFallbackImageSrc(file) {
+      return ROOT_IMAGE_FILES.has(file) && !file.includes("/") ? `img/${file}` : file;
+    }
+
+    function setImageWithFallback(img, file, altText) {
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = getFallbackImageSrc(file);
+      };
+      img.src = getImageSrc(file);
+      img.alt = altText;
+    }
+
+    function getAllQuestions() {
+      const seen = new Set();
+      return Object.values(QUESTION_BANKS).flat().filter(q => {
+        if (!q || seen.has(q.id)) return false;
+        seen.add(q.id);
+        return true;
+      });
+    }
+
+    function getQuestionsForCategory(cat) {
+      if (!cat || cat.type !== "quiz") return [];
+
+      let questions = [];
+      if (cat.examTag) {
+        questions = getAllQuestions().filter(q => (q.examTags || []).includes(cat.examTag));
+      } else if (cat.questionBankId) {
+        questions = QUESTION_BANKS[cat.questionBankId] || [];
+      } else if (cat.questionBankIds) {
+        questions = cat.questionBankIds.flatMap(bankId => QUESTION_BANKS[bankId] || []);
+      }
+
+      if (cat.categoryFilter) {
+        questions = questions.filter(q => (q.categoryIds || []).includes(cat.categoryFilter));
+      }
+
+      return questions;
+    }
+
+    function isCategoryActive(cat) {
+      if (cat.isActive === false) return false;
+      if (cat.type === "directory") return true;
+      if (cat.type === "review") {
+        const targetCat = CATEGORIES.find(c => c.id === cat.reviewForCategoryId);
+        return getQuestionSetsForCategory(targetCat).length > 0;
+      }
+      return getQuestionsForCategory(cat).length > 0;
+    }
+
+    function getQuestionSetsForCategory(cat) {
+      const questions = getQuestionsForCategory(cat);
+      const setSize = cat && cat.questionLimit ? cat.questionLimit : questions.length;
+      if (!questions.length || !setSize) return [];
+
+      const sets = [];
+      for (let start = 0; start < questions.length; start += setSize) {
+        sets.push({
+          index: sets.length,
+          start,
+          end: Math.min(start + setSize, questions.length),
+          questions: questions.slice(start, start + setSize)
+        });
+      }
+      return sets;
+    }
+
+    function showQuizSetPage(categoryId) {
+      const cat = CATEGORIES.find(c => c.id === categoryId);
+      const sets = getQuestionSetsForCategory(cat);
+
+      if (!sets.length) {
+        showDummyPage(cat ? cat.title : "問題");
+        return;
+      }
+
+      els.setSelectHeaderTitle.textContent = cat.title;
+      els.quizSetList.innerHTML = "";
+
+      sets.forEach(set => {
+        const btn = document.createElement("button");
+        btn.className = "set-button";
+        btn.innerHTML = `
+          <span class="set-title">第${set.index + 1}セット</span>
+          <span class="set-meta">${set.questions.length}問 / ${set.start + 1}-${set.end}</span>
+        `;
+        btn.addEventListener("click", () => startQuiz(categoryId, set.index));
+        els.quizSetList.appendChild(btn);
+      });
+
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.reviewPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
+      els.setSelectPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function getReviewStorageKey(categoryId, setIndex) {
+      return `pmQuizReview:v1:${categoryId}:set${setIndex}`;
+    }
+
+    function getQuestionById(questionId) {
+      return getAllQuestions().find(q => q.id === questionId) || null;
+    }
+
+    function saveCurrentReviewLog() {
+      if (!state.currentCategory || (!state.currentCategory.examTag && !state.currentCategory.reviewable) || state.currentSetIndex === null) return;
+
+      const payload = {
+        categoryId: state.currentCategory.id,
+        categoryTitle: state.currentCategory.title,
+        setIndex: state.currentSetIndex,
+        setStart: state.currentSetStart,
+        setEnd: state.currentSetEnd,
+        score: state.score,
+        total: state.deck.length,
+        completed: state.history.length === state.deck.length,
+        updatedAt: new Date().toISOString(),
+        items: state.history.map(item => ({
+          questionId: item.question.id,
+          selectedIndex: item.selectedIndex,
+          isCorrect: item.isCorrect
+        }))
+      };
+
+      try {
+        localStorage.setItem(getReviewStorageKey(payload.categoryId, payload.setIndex), JSON.stringify(payload));
+      } catch (error) {
+        console.warn("振返りログを保存できませんでした", error);
+      }
+    }
+
+    function loadReviewLog(categoryId, setIndex) {
+      try {
+        const raw = localStorage.getItem(getReviewStorageKey(categoryId, setIndex));
+        return raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        console.warn("振返りログを読み込めませんでした", error);
+        return null;
+      }
+    }
+
+    function getReviewHistoryFromLog(log) {
+      if (!log || !Array.isArray(log.items)) return [];
+      return log.items
+        .map(item => {
+          const question = getQuestionById(item.questionId);
+          if (!question) return null;
+          return {
+            question,
+            selectedIndex: item.selectedIndex,
+            isCorrect: item.isCorrect
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function formatReviewDate(isoText) {
+      if (!isoText) return "";
+      const date = new Date(isoText);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function showReviewPage(categoryId) {
+      const cat = CATEGORIES.find(c => c.id === categoryId);
+      const sets = getQuestionSetsForCategory(cat);
+
+      if (!cat || !sets.length) {
+        showDummyPage(cat ? `${cat.title}振返り` : "振返り");
+        return;
+      }
+
+      els.reviewHeaderTitle.textContent = `${cat.title}振返り`;
+      state.currentReviewCategoryId = categoryId;
+      state.currentReviewSetIndex = null;
+      state.currentReviewLog = null;
+      state.currentReviewHistory = [];
+      els.reviewSetView.classList.remove("hidden");
+      els.reviewDetailView.classList.add("hidden");
+      els.reviewSetList.innerHTML = "";
+      els.reviewSummary.textContent = "";
+      els.reviewList.innerHTML = "";
+
+      sets.forEach(set => {
+        const log = loadReviewLog(categoryId, set.index);
+        const btn = document.createElement("button");
+        btn.className = "set-button";
+        btn.innerHTML = `
+          <span class="set-title">第${set.index + 1}セット</span>
+          <span class="set-meta">${log ? `${log.items.length}/${log.total}問` : "未実施"}</span>
+        `;
+        btn.addEventListener("click", () => renderReviewLog(categoryId, set.index));
+        els.reviewSetList.appendChild(btn);
+      });
+
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.setSelectPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
+      els.reviewPage.classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function showReviewSetList() {
+      state.currentReviewSetIndex = null;
+      state.currentReviewLog = null;
+      state.currentReviewHistory = [];
+      els.reviewDetailView.classList.add("hidden");
+      els.reviewSetView.classList.remove("hidden");
+      els.reviewSummary.textContent = "";
+      els.reviewList.innerHTML = "";
+      window.scrollTo(0, 0);
+    }
+
+    function renderReviewLog(categoryId, setIndex) {
+      const log = loadReviewLog(categoryId, setIndex);
+      const history = getReviewHistoryFromLog(log);
+
+      state.currentReviewCategoryId = categoryId;
+      state.currentReviewSetIndex = setIndex;
+      state.currentReviewLog = log;
+      state.currentReviewHistory = history;
+      els.reviewSetView.classList.add("hidden");
+      els.reviewDetailView.classList.remove("hidden");
+      els.reviewList.innerHTML = "";
+
+      if (!log || !history.length) {
+        els.reviewSummary.textContent = `第${setIndex + 1}セットの履歴はまだありません。`;
+        const empty = document.createElement("li");
+        empty.className = "review-empty";
+        empty.textContent = "このセットを一度解くと、ここに正誤つきで表示されます。";
+        els.reviewList.appendChild(empty);
+        els.reviewPdfButton.disabled = true;
+        return;
+      }
+
+      els.reviewPdfButton.disabled = false;
+      const answeredCount = history.length;
+      const correctCount = history.filter(item => item.isCorrect).length;
+      const dateText = formatReviewDate(log.updatedAt);
+      els.reviewSummary.textContent = `第${setIndex + 1}セット / ${correctCount}/${answeredCount}問正解${dateText ? ` / ${dateText}` : ""}`;
+
+      history.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.className = `review-item ${item.isCorrect ? "correct" : "wrong"}`;
+        li.innerHTML = `
+          <span>
+            <span class="review-question-text">第${index + 1}問 ${item.question.text}</span>
+            <span class="review-question-meta">${item.question.name}</span>
+          </span>
+          <span class="review-mark">${item.isCorrect ? "✅" : "×"}</span>
+        `;
+        li.addEventListener("click", () => openModal(item, index));
+        els.reviewList.appendChild(li);
+      });
+    }
+
+    function getPersonSortYear(person) {
+      const years = getAllQuestions()
+        .filter(q => q.psychologistId === person.id)
+        .flatMap(q => (q.works || []).map(work => work.year))
+        .filter(year => Number.isFinite(year));
+      return years.length ? Math.min(...years) : 9999;
+    }
+
+    function getDirectoryModeLabel(mode) {
+      return mode === "theoryTimeline" ? "心理学者一覧（理論別、年代順）" : "心理学者一覧（aiueo）";
+    }
+
+    function getNormalizedKanaFirstChar(sortKana) {
+      return String(sortKana || "")
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u3099\u309A]/g, "")
+        .charAt(0);
+    }
+
+    function getKanaGroupId(sortKana) {
+      const firstChar = getNormalizedKanaFirstChar(sortKana);
+      const group = KANA_GROUPS.find(item => item.chars.includes(firstChar));
+      return group ? group.id : "all";
+    }
+
+    function getUsedTheoryCategories() {
+      const usedCategoryIds = new Set(
+        getAllQuestions().flatMap(q => q.categoryIds || [])
+      );
+      return CATEGORIES
+        .filter(cat => cat.type === "quiz" && usedCategoryIds.has(cat.id))
+        .map(cat => ({ id: cat.id, label: cat.title }));
+    }
+
+    function renderFilterChips(container, options, activeValue, onSelect) {
+      container.innerHTML = "";
+      options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `filter-chip ${option.id === activeValue ? "active" : ""}`;
+        btn.textContent = option.label;
+        btn.addEventListener("click", () => onSelect(option.id));
+        container.appendChild(btn);
+      });
+    }
+
+    function renderDirectoryModeFilters() {
+      const isAiueo = state.directoryMode === "aiueo";
+      els.directoryKanaPanel.style.display = isAiueo ? "grid" : "none";
+      els.directoryTheoryPanel.style.display = isAiueo ? "none" : "grid";
+
+      renderFilterChips(
+        els.directoryKanaFilters,
+        KANA_GROUPS,
+        state.directoryKanaGroup,
+        value => {
+          state.directoryKanaGroup = value;
+          renderDirectory();
+        }
+      );
+
+      renderFilterChips(
+        els.directoryTheoryFilters,
+        [{ id: "all", label: "すべて" }, ...getUsedTheoryCategories()],
+        state.directoryTheoryCategory,
+        value => {
+          state.directoryTheoryCategory = value;
+          renderDirectory();
+        }
+      );
+    }
+
+    function showDirectoryPage(filterTag = "all", mode = "aiueo") {
+      state.directoryMode = mode;
+      state.directoryKanaGroup = "all";
+      state.directoryTheoryCategory = "all";
+      els.directoryHeaderTitle.textContent = getDirectoryModeLabel(mode);
+      els.directoryFilter.value = filterTag;
+      els.topPage.classList.add("hidden");
+      els.quizPage.classList.add("hidden");
+      els.setSelectPage.classList.add("hidden");
+      els.reviewPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.directoryPage.classList.remove("hidden");
+      renderDirectory();
+      window.scrollTo(0, 0);
+    }
+
+    function renderDirectory() {
+      const query = els.directorySearch.value.trim().toLowerCase();
+      const filterTag = els.directoryFilter.value;
+      renderDirectoryModeFilters();
+
+      let people = [...PSYCHOLOGIST_BANK].sort((a, b) => {
+        if (state.directoryMode === "theoryTimeline") {
+          const yearDiff = getPersonSortYear(a) - getPersonSortYear(b);
+          if (yearDiff !== 0) return yearDiff;
+        }
+        return a.sortKana.localeCompare(b.sortKana, "ja");
+      });
+
+      if (filterTag !== "all") {
+        people = people.filter(person => (person.examTags || []).includes(filterTag));
+      }
+
+      if (state.directoryMode === "aiueo" && state.directoryKanaGroup !== "all") {
+        people = people.filter(person => getKanaGroupId(person.sortKana) === state.directoryKanaGroup);
+      }
+
+      if (state.directoryMode === "theoryTimeline" && state.directoryTheoryCategory !== "all") {
+        const targetPersonIds = new Set(
+          getAllQuestions()
+            .filter(q => (q.categoryIds || []).includes(state.directoryTheoryCategory))
+            .map(q => q.psychologistId)
+        );
+        people = people.filter(person => targetPersonIds.has(person.id));
+      }
+
+      if (query) {
+        people = people.filter(person => {
+          const haystack = [
+            person.name,
+            person.displayName,
+            person.en,
+            person.topic,
+            ...(person.images || [])
+          ].join(" ").toLowerCase();
+          return haystack.includes(query);
+        });
+      }
+
+      els.directoryCount.textContent = `${people.length}件表示`;
+      els.directoryList.innerHTML = "";
+
+      if (!people.length) {
+        const empty = document.createElement("div");
+        empty.className = "dummy-content";
+        empty.innerHTML = "<p>該当する心理学者はまだ登録されていません。</p>";
+        els.directoryList.appendChild(empty);
+        return;
+      }
+
+      people.forEach(person => {
+        const tags = (person.examTags || []).map(tag => EXAM_TAG_LABELS[tag]).filter(Boolean);
+        const sortYear = getPersonSortYear(person);
+        const timelineText = state.directoryMode === "theoryTimeline" && sortYear !== 9999
+          ? ` / 主な年: ${sortYear}年`
+          : "";
+        const card = document.createElement("article");
+        card.className = "person-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `${person.displayName || person.name}の解説を開く`);
+        card.innerHTML = `
+          <img src="${getImageSrc(person.images[0])}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(person.images[0])}'" alt="${person.displayName || person.name}">
+          <div class="person-info">
+            <p class="person-name">${person.displayName || person.name}</p>
+            <p class="person-meta">${person.en || ""}${timelineText}</p>
+            <p class="person-topic">${person.topic || ""}</p>
+            <div class="tag-row">
+              ${tags.map(label => `<span class="mini-tag">${label}</span>`).join("")}
+            </div>
+          </div>
+        `;
+        card.addEventListener("click", () => openPsychologistDetailModal(person));
+        card.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openPsychologistDetailModal(person);
+          }
+        });
+        els.directoryList.appendChild(card);
+      });
+    }
+
+    function startQuiz(categoryId, setIndex = null) {
+      const cat = CATEGORIES.find(c => c.id === categoryId);
+      const questions = getQuestionsForCategory(cat);
+      const questionSets = setIndex !== null ? getQuestionSetsForCategory(cat) : [];
+      const selectedSet = setIndex !== null ? questionSets[setIndex] : null;
+      const questionLimit = cat.questionLimit || questions.length;
+
+      if (!questions.length) {
+        showDummyPage(cat ? cat.title : "問題");
+        return;
+      }
+
+      const selectedQuestions = selectedSet ? selectedSet.questions : questions;
+      const headerTitle = selectedSet ? `${cat.title} 第${selectedSet.index + 1}セット` : cat.title;
+
+      els.quizHeaderTitle.textContent = headerTitle;
+      state.currentCategory = cat;
+      
+      state.score = 0;
+      state.currentQuestionIndex = 0;
+      state.history = []; // 履歴リセット
+      state.currentSetIndex = selectedSet ? selectedSet.index : null;
+      state.currentSetStart = selectedSet ? selectedSet.start : null;
+      state.currentSetEnd = selectedSet ? selectedSet.end : null;
+      state.deck = selectedSet
+        ? shuffleArray(selectedQuestions)
+        : shuffleArray(selectedQuestions).slice(0, questionLimit);
+      
+      els.topPage.classList.add("hidden");
+      els.dummyPage.classList.add("hidden");
+      els.setSelectPage.classList.add("hidden");
+      els.reviewPage.classList.add("hidden");
+      els.directoryPage.classList.add("hidden");
+      els.quizPage.classList.remove("hidden");
+      
+      loadQuestion();
+      window.scrollTo(0, 0);
+    }
+
+    function loadQuestion() {
+      state.isAnswered = false;
+      const q = state.deck[state.currentQuestionIndex];
+      
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+      bindQuestionMemo(els.questionMemoInput, els.questionMemoCount, els.questionMemoStatus, "");
+      els.psychologistDetailAction.innerHTML = "";
+      els.psychologistDetailAction.style.display = "none";
+      
+      els.questionKicker.textContent = `第 ${state.currentQuestionIndex + 1} 問`;
+      els.questionText.textContent = q.text;
+      els.prevQuestionButton.disabled = state.currentQuestionIndex === 0;
+      
+      els.progressText.textContent = `${state.currentQuestionIndex + 1} / ${state.deck.length}問`;
+      els.progressFill.style.width = `${((state.currentQuestionIndex) / state.deck.length) * 100}%`;
+
+      els.choices.innerHTML = "";
+      
+      q.options.forEach((optionText, index) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-button";
+        btn.textContent = optionText;
+        btn.addEventListener("click", () => handleAnswer(index));
+        els.choices.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (state.isAnswered) return;
+      state.isAnswered = true;
+
+      const q = state.deck[state.currentQuestionIndex];
+      const isCorrect = (selectedIndex === q.answer);
+
+      // 履歴の保存
+      state.history.push({
+        question: q,
+        selectedIndex: selectedIndex,
+        isCorrect: isCorrect
+      });
+      saveCurrentReviewLog();
+
+      if (isCorrect) {
+        state.score++;
+        els.resultBadge.textContent = "⭕ 正解！";
+        els.resultBadge.className = "result-badge correct";
+        els.userAnswerText.style.display = "none";
+      } else {
+        els.resultBadge.textContent = "❌ 不正解...";
+        els.resultBadge.className = "result-badge wrong";
+        els.userAnswerText.textContent = `あなたの解答：${q.options[selectedIndex]}`;
+        els.userAnswerText.style.display = "block";
+      }
+
+      const feedbackImageSrc = (!isCorrect && (q.categoryIds || []).includes("originalAcademic"))
+        ? "cimg/s2.png"
+        : q.image;
+      setImageWithFallback(els.feedbackImage, feedbackImageSrc, `画像: ${q.name}`);
+      els.answerText.textContent = q.options[q.answer];
+      els.psychologistName.textContent = q.name;
+      
+      const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText;
+      const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
+      els.psychologistMeta.innerHTML = q.metaText || `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`;
+      
+      els.explanationText.textContent = q.explanation;
+      if (q.extendedExplanation) {
+        els.extendedExplanationBox.style.display = "block";
+        els.extendedExplanationBox.open = false;
+        els.extendedExplanationTitle.textContent = q.extendedExplanationTitle ? `詳しい解説：${q.extendedExplanationTitle}` : "詳しい解説を読む";
+        els.extendedExplanationText.textContent = q.extendedExplanation;
+      } else {
+        els.extendedExplanationBox.style.display = "none";
+        els.extendedExplanationBox.open = false;
+        els.extendedExplanationText.textContent = "";
+      }
+      bindQuestionMemo(els.questionMemoInput, els.questionMemoCount, els.questionMemoStatus, q.id);
+      renderPsychologistDetailAction(q);
+
+      els.worksList.innerHTML = "";
+      if (q.works && q.works.length > 0) {
+        const sortedWorks = [...q.works].sort((a, b) => a.year - b.year);
+        sortedWorks.forEach(work => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span class="work-year">${work.year}年</span><span>${work.title}</span>`;
+          els.worksList.appendChild(li);
+        });
+        els.worksBox.style.display = "block";
+      } else {
+        els.worksBox.style.display = "none";
+      }
+
+      // 過去問エリアのセットアップ（アコーディオン）
+      if (q.pastExam) {
+        els.pastExamBox.style.display = "block";
+        // アコーディオンの状態をリセット
+        els.pastExamBox.classList.remove('open');
+        els.pastExamOptions.classList.remove('revealed');
+        clearPastExamFeedback(els.pastExamOptions);
+        
+        state.currentPastExamAnswer = q.pastExam.answer; // 正解を保持
+        
+        let refText = q.pastExam.title.includes("オリジナル") 
+          ? `オリジナル予想問題` 
+          : `実際の過去問ではこう出る！（${q.pastExam.title}）`;
+        els.pastExamRef.textContent = refText;
+        els.pastExamQuestion.textContent = q.pastExam.question;
+        els.pastExamOptions.dataset.explanation = getPastExamShortExplanation(q);
+        els.pastExamOptions.innerHTML = "";
+        
+        q.pastExam.options.forEach(opt => {
+          const li = document.createElement("li");
+          li.textContent = opt;
+          li.setAttribute('data-original-text', opt);
+          // 選択肢自体をタップして正解を表示
+          li.onclick = function() {
+              revealAnswer('quizPastExam', state.currentPastExamAnswer, this);
+          };
+          els.pastExamOptions.appendChild(li);
+        });
+      } else {
+        els.pastExamBox.style.display = "none";
+      }
+
+      if (state.currentQuestionIndex === state.deck.length - 1) {
+        els.nextButton.textContent = "結果を見る";
+        els.nextButtonTop.textContent = "結果を見る";
+      } else {
+        els.nextButton.textContent = "次の問題へ";
+        els.nextButtonTop.textContent = "次の問題へ";
+      }
+
+      els.questionArea.classList.add("hidden");
+      els.feedbackArea.classList.remove("hidden");
+      
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function getResultCharacterImages() {
+      const ratio = state.deck.length ? state.score / state.deck.length : 0;
+      const images = [
+        { src: "cimg/k5.png", alt: "お疲れ様でした" }
+      ];
+      if (ratio >= 0.7) {
+        images.push(
+          { src: "cimg/k1.png", alt: "けー。" },
+          { src: "cimg/s1.png", alt: "サポさん。" }
+        );
+      }
+      if (ratio === 1) {
+        images.push({ src: "cimg/k3.png", alt: "満点おめでとう" });
+      }
+      return images;
+    }
+
+    function getResultTitle(category, setIndex) {
+      const categoryTitle = category ? category.title : "過去問ドリル";
+      const setLabel = setIndex !== null && setIndex !== undefined ? ` 第${setIndex + 1}セット` : "";
+      return `${categoryTitle}${setLabel}`;
+    }
+
+    function getSimpleExplanation(q) {
+      return q.explanation || q.pastExam?.explanation || "解説は登録されていません。";
+    }
+
+    function buildPrintReportHtml(history = state.history, title = getResultTitle(state.currentCategory, state.currentSetIndex), updatedAt = null) {
+      const total = history.length;
+      const correct = history.filter(item => item.isCorrect).length;
+      const rate = total ? Math.round((correct / total) * 100) : 0;
+      const dateSource = updatedAt ? new Date(updatedAt) : new Date();
+      const dateText = dateSource.toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const rows = history.map((item, index) => {
+        const q = item.question;
+        const userAnswer = q.options[item.selectedIndex] || "未回答";
+        const correctAnswer = q.options[q.answer] || "";
+        const memo = loadQuestionMemo(q.id) || "メモなし";
+        return `
+          <article class="print-question-card ${item.isCorrect ? "correct" : "wrong"}">
+            <div class="print-question-heading">
+              <span>第${index + 1}問 ${escapeHtml(q.name || "")}</span>
+              <span class="print-question-result">${item.isCorrect ? "正解" : "不正解"}</span>
+            </div>
+            <p class="print-question-text">${escapeHtml(q.text)}</p>
+            <div class="print-answer-grid">
+              <div class="print-answer-box">
+                <span class="print-answer-label">自分の回答</span>
+                <span class="print-answer-text">${escapeHtml(userAnswer)}</span>
+              </div>
+              <div class="print-answer-box">
+                <span class="print-answer-label">正答</span>
+                <span class="print-answer-text">${escapeHtml(correctAnswer)}</span>
+              </div>
+            </div>
+            <div class="print-explanation">
+              <span class="print-section-label">シンプルな解説</span>
+              ${escapeHtml(getSimpleExplanation(q))}
+            </div>
+            <div class="print-memo">
+              <span class="print-section-label">自分のメモ</span>
+              ${escapeHtml(memo)}
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      return `
+        <header class="print-report-header">
+          <h1 class="print-report-title">学習振り返りレポート</h1>
+          <p class="print-report-meta">${escapeHtml(title)} / 出力日時：${escapeHtml(dateText)}</p>
+        </header>
+        <section class="print-report-summary">
+          <div class="print-summary-box">
+            <span class="print-summary-label">正答率</span>
+            <span class="print-summary-value">${rate}%</span>
+          </div>
+          <div class="print-summary-box">
+            <span class="print-summary-label">正解数</span>
+            <span class="print-summary-value">${correct} / ${total}</span>
+          </div>
+          <div class="print-summary-box">
+            <span class="print-summary-label">不正解</span>
+            <span class="print-summary-value">${total - correct}</span>
+          </div>
+        </section>
+        <section>${rows}</section>
+      `;
+    }
+
+    function exportCurrentResultPdf() {
+      if (!state.history.length) return;
+      const report = document.getElementById("printReport");
+      report.innerHTML = buildPrintReportHtml();
+      window.print();
+    }
+
+    function exportReviewPdf() {
+      if (!state.currentReviewHistory.length) return;
+      const category = CATEGORIES.find(cat => cat.id === state.currentReviewCategoryId);
+      const title = getResultTitle(category, state.currentReviewSetIndex);
+      const report = document.getElementById("printReport");
+      report.innerHTML = buildPrintReportHtml(state.currentReviewHistory, `${title} 振返り`, state.currentReviewLog?.updatedAt || null);
+      window.print();
+    }
+
+    function showFinalResult() {
+      els.feedbackArea.classList.add("hidden");
+      els.questionArea.classList.remove("hidden");
+
+      els.questionKicker.textContent = "テスト完了！";
+      const resultCharacters = getResultCharacterImages()
+        .map(image => `<img src="${image.src}" alt="${image.alt}">`)
+        .join("");
+      els.questionText.innerHTML = `
+        <div class="result-character-stage">${resultCharacters}</div>
+        お疲れ様でした！<br>
+        あなたの正答率は <b>${Math.round((state.score / state.deck.length) * 100)}％</b> （${state.score}/${state.deck.length}問正解）です。
+      `;
+      
+      els.choices.innerHTML = "";
+      
+      // 正誤リストの生成
+      const ul = document.createElement("ul");
+      ul.className = "result-list";
+      state.history.forEach((h, index) => {
+        const li = document.createElement("li");
+        li.className = `result-item ${h.isCorrect ? 'correct' : 'wrong'}`;
+        li.innerHTML = `
+          <div class="result-item-name"><span>第${index + 1}問</span>${h.question.name}</div>
+          <div class="result-item-mark">${h.isCorrect ? '⭕' : '❌'}</div>
+        `;
+        // タップでポップアップ表示
+        li.addEventListener("click", () => openModal(h, index));
+        ul.appendChild(li);
+      });
+      els.choices.appendChild(ul);
+      
+      els.progressText.textContent = `完了`;
+      els.progressFill.style.width = `100%`;
+
+      const pdfBtn = document.createElement("button");
+      pdfBtn.className = "choice-button pdf-export-button";
+      pdfBtn.textContent = "PDFで振り返り出力";
+      pdfBtn.style.textAlign = "center";
+      pdfBtn.addEventListener("click", exportCurrentResultPdf);
+      els.choices.appendChild(pdfBtn);
+
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "primary-button";
+      retryBtn.textContent = "もう一度挑戦する";
+      retryBtn.style.marginBottom = "12px";
+      retryBtn.addEventListener("click", () => {
+        startQuiz(state.currentCategory.id, state.currentSetIndex);
+      });
+      els.choices.appendChild(retryBtn);
+
+      const topBtn = document.createElement("button");
+      topBtn.className = "choice-button";
+      topBtn.textContent = "TOPに戻る";
+      topBtn.style.textAlign = "center";
+      topBtn.addEventListener("click", showTopPage);
+      els.choices.appendChild(topBtn);
+    }
+
+    function goToNextQuestionOrResult() {
+      if (state.currentQuestionIndex < state.deck.length - 1) {
+        state.currentQuestionIndex++;
+        loadQuestion();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        showFinalResult();
+      }
+    }
+
+    els.nextButton.addEventListener("click", goToNextQuestionOrResult);
+    els.nextButtonTop.addEventListener("click", goToNextQuestionOrResult);
+    els.reviewBackToSetsButton.addEventListener("click", showReviewSetList);
+    els.reviewPdfButton.addEventListener("click", exportReviewPdf);
+
+    els.directorySearch.addEventListener("input", renderDirectory);
+    els.directoryFilter.addEventListener("change", renderDirectory);
+    els.interruptQuizButton.addEventListener("click", confirmBackToTop);
+    els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
+
+    // ==========================================
+    // 初期化：カテゴリ一覧の生成
+    // ==========================================
+    function createCategoryButton(cat) {
+      const active = isCategoryActive(cat);
+      const btn = document.createElement("button");
+      btn.className = "category-button";
+      if (active) {
+        btn.classList.add("active-cat");
+      } else {
+        btn.classList.add("disabled-cat");
+      }
+      if (cat.accent) {
+        btn.classList.add(`${cat.accent}-cat`);
+      }
+
+      btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}</span>`;
+
+      btn.addEventListener("click", () => {
+        if (cat.type === "directory" && active) {
+          showDirectoryPage("all", cat.directoryMode || "aiueo");
+        } else if (cat.type === "review" && active) {
+          showReviewPage(cat.reviewForCategoryId);
+        } else if (active && cat.questionLimit && (cat.examTag || cat.questionBankId || cat.questionBankIds)) {
+          showQuizSetPage(cat.id);
+        } else if (active) {
+          startQuiz(cat.id);
+        } else {
+          showDummyPage(cat.title);
+        }
+      });
+
+      return btn;
+    }
+
+    function initApp() {
+      CATEGORIES.forEach(cat => {
+        const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : els.categoryGrid;
+        target.appendChild(createCategoryButton(cat));
+      });
+      
+      // 初期表示はTOPページ
+      showTopPage();
+    }
+
+    initApp();
+
+  </script>
+</body>
+</html>
