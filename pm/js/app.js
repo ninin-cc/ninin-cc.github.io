@@ -36,6 +36,33 @@ const EXAM_TAG_LABELS = {
 
 const ROOT_IMAGE_FILES = new Set([]);
 
+// ==========================================
+// パスワードロック設定
+// ==========================================
+// テツオさんへ：毎月ここのパスワードを変更してください！
+const CURRENT_MONTH_PASSWORD = "ninin"; 
+
+const LOCKED_CATEGORY_IDS = [
+  "industrialFrequent",
+  "careerFrequentReview",
+  "industrialFrequentReview",
+  "directoryTheoryTimeline",
+  "timeline",
+  "originalAcademic",
+  "originalAcademicReview"
+];
+
+// 現在の年月を取得する関数（例： "2026-06"）
+function getCurrentMonthString() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// 今月のパスワードが認証済みかチェックする関数
+function isUnlocked() {
+  return localStorage.getItem("pm_unlocked_month") === getCurrentMonthString();
+}
+
 const KANA_GROUPS = [
   { id: "all", label: "すべて", chars: [] },
   { id: "a", label: "あ", chars: ["あ", "い", "う", "え", "お"] },
@@ -92,8 +119,53 @@ const els = {
   worksBox: document.getElementById("worksBox"), worksList: document.getElementById("worksList"),
   pastExamBox: document.getElementById("pastExamBox"), pastExamRef: document.getElementById("pastExamRef"),
   pastExamQuestion: document.getElementById("pastExamQuestion"), pastExamOptions: document.getElementById("pastExamOptions"),
-  nextButton: document.getElementById("nextButton"), nextButtonTop: document.getElementById("nextButtonTop")
+  nextButton: document.getElementById("nextButton"), nextButtonTop: document.getElementById("nextButtonTop"),
+  
+  // パスワードモーダル用の要素を追加
+  passwordModal: document.getElementById("passwordModal"),
+  closePasswordModalBtn: document.getElementById("closePasswordModalBtn"),
+  membershipPassword: document.getElementById("membershipPassword"),
+  verifyPasswordButton: document.getElementById("verifyPasswordButton"),
+  passwordError: document.getElementById("passwordError")
 };
+
+let pendingAction = null;
+
+// パスワードモーダルを閉じる
+function closePasswordModal() {
+  if (els.passwordModal) {
+    els.passwordModal.classList.remove("active");
+  }
+  if (els.membershipPassword) els.membershipPassword.value = "";
+  if (els.passwordError) els.passwordError.style.display = "none";
+  pendingAction = null;
+}
+
+// モーダルイベントの設定
+if (els.closePasswordModalBtn) {
+  els.closePasswordModalBtn.addEventListener("click", closePasswordModal);
+}
+if (els.verifyPasswordButton) {
+  els.verifyPasswordButton.addEventListener("click", () => {
+    if (els.membershipPassword.value.trim() === CURRENT_MONTH_PASSWORD) {
+      // 正解なら現在の「年月」を保存し、その月は再入力不要にする
+      localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
+      els.passwordModal.classList.remove("active");
+      els.membershipPassword.value = "";
+      els.passwordError.style.display = "none";
+      
+      // ボタン群を再描画してグレーアウトを解除する
+      renderCategoryButtons();
+
+      if (pendingAction) {
+        pendingAction();
+        pendingAction = null;
+      }
+    } else {
+      els.passwordError.style.display = "block";
+    }
+  });
+}
 
 function showTopPage() {
   els.quizPage.classList.add("hidden"); els.dummyPage.classList.add("hidden");
@@ -733,29 +805,101 @@ els.timelineSortOrder.addEventListener("change", renderTimeline);
 els.interruptQuizButton.addEventListener("click", confirmBackToTop);
 els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
 
-function createCategoryButton(cat) {
-  const active = isCategoryActive(cat);
-  const btn = document.createElement("button");
-  btn.className = "category-button";
-  if (active) btn.classList.add("active-cat"); else btn.classList.add("disabled-cat");
-  if (cat.accent) btn.classList.add(`${cat.accent}-cat`);
-  btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}</span>`;
-  btn.addEventListener("click", () => {
-    if (cat.type === "directory" && active) showDirectoryPage("all", cat.directoryMode || "aiueo");
-    else if (cat.type === "timeline" && active) showTimelinePage();
-    else if (cat.type === "review" && active) showReviewPage(cat.reviewForCategoryId);
-    else if (active && cat.questionLimit && (cat.examTag || cat.questionBankId || cat.questionBankIds)) showQuizSetPage(cat.id);
-    else if (active) startQuiz(cat.id);
-    else showDummyPage(cat.title);
-  });
-  return btn;
-}
+// 各カテゴリを所属グリッドに描画する関数
+function renderCategoryButtons() {
+  // 古いボタンをクリア
+  els.categoryAccordionGrid.innerHTML = "";
+  els.mapStudyCategoryGrid.innerHTML = "";
+  els.directoryCategoryGrid.innerHTML = "";
+  els.examPrepCategoryGrid.innerHTML = "";
 
-function initApp() {
   CATEGORIES.forEach(cat => {
     const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
     target.appendChild(createCategoryButton(cat));
   });
+}
+
+function createCategoryButton(cat) {
+  const active = isCategoryActive(cat);
+  const isLocked = LOCKED_CATEGORY_IDS.includes(cat.id);
+  const needsUnlock = isLocked && !isUnlocked(); // ロック対象かつ未解除ならtrue
+
+  const btn = document.createElement("button");
+  btn.className = "category-button";
+  
+  // アクティブかつパスワード解除済み（またはロック対象外）なら通常表示。それ以外はグレーアウト
+  if (active && !needsUnlock) {
+    btn.classList.add("active-cat");
+  } else {
+    btn.classList.add("disabled-cat");
+  }
+  
+  if (cat.accent) btn.classList.add(`${cat.accent}-cat`);
+  
+  // ロック対象ならタイトルに鍵マークを追加（解除済みの場合は開いた鍵アイコン）
+  let lockIcon = "";
+  if (isLocked) {
+    lockIcon = needsUnlock 
+      ? `<span style="font-size: 0.8rem; margin-left: 4px;">🔒</span>` 
+      : `<span style="font-size: 0.8rem; margin-left: 4px; opacity: 0.5;">🔓</span>`;
+  }
+  
+  btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}${lockIcon}</span>`;
+
+  btn.addEventListener("click", () => {
+    const action = () => {
+      if (cat.type === "directory" && active) showDirectoryPage("all", cat.directoryMode || "aiueo");
+      else if (cat.type === "timeline" && active) showTimelinePage();
+      else if (cat.type === "review" && active) showReviewPage(cat.reviewForCategoryId);
+      else if (active && cat.questionLimit && (cat.examTag || cat.questionBankId || cat.questionBankIds)) showQuizSetPage(cat.id);
+      else if (active) startQuiz(cat.id);
+      else showDummyPage(cat.title);
+    };
+
+    // ロック対象かつ未認証なら、アクションを保留してモーダルを開く
+    if (needsUnlock) {
+      pendingAction = action;
+      els.passwordModal.classList.add("active");
+    } else {
+      action();
+    }
+  });
+
+  return btn;
+}
+
+// 開発用の隠しトグルボタン（画面右下に透明で配置）
+function createDevToggleButton() {
+  const btn = document.createElement("button");
+  btn.style.position = "fixed";
+  btn.style.bottom = "0";
+  btn.style.right = "0";
+  btn.style.width = "60px";
+  btn.style.height = "60px";
+  btn.style.opacity = "0"; // 完全に透明にして隠す
+  btn.style.zIndex = "9999";
+  btn.style.border = "none";
+  btn.style.background = "transparent";
+  btn.style.cursor = "default"; // パソコンで触れても指マークにならないようにする
+  
+  btn.addEventListener("click", () => {
+    if (isUnlocked()) {
+      // 解除済みならロック状態に戻す
+      localStorage.removeItem("pm_unlocked_month");
+    } else {
+      // ロック状態なら解除状態にする
+      localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
+    }
+    // 画面のボタン群を再描画して、グレーアウトや鍵アイコンの表示を更新
+    renderCategoryButtons(); 
+  });
+  
+  document.body.appendChild(btn);
+}
+
+function initApp() {
+  renderCategoryButtons();
+  createDevToggleButton(); // アプリ初期化時に隠しボタンを追加
   showTopPage();
 }
 
