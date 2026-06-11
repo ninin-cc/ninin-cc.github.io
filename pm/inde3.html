@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ninin監修 2026心理学者マップ関連アプリ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section id="topPage">
+      <header class="topbar">
+        <div class="brand">
+          <h1>ninin監修 2026心理学者マップ関連アプリ</h1>
+        </div>
+      </header>
+
+      <div class="top-character-talk" aria-label="キャラクターからのメッセージ">
+        <div class="talk-row left">
+          <div class="talk-character-wrap">
+            <img class="talk-character" src="cimg/k2.png" alt="けー。">
+            <span class="talk-character-label">けー。</span>
+          </div>
+          <div class="talk-bubble">
+            <p class="talk-message">楽しく心理学者や理論を学んでいきましょう♪</p>
+          </div>
+        </div>
+        <div class="talk-row right">
+          <div class="talk-bubble">
+            <p class="talk-message">学科試験対策になるし、理論を知ることは相談者さんの支援のためになるさぽー✨</p>
+          </div>
+          <div class="talk-character-wrap">
+            <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
+            <span class="talk-character-label">サポさん</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-container">
+        <section class="top-category-section map-study-section" aria-label="マップ理解補助問題">
+          <p class="top-category-title"><span>🧭</span>マップ理解補助問題</p>
+          <div class="category-grid" id="mapStudyCategoryGrid"></div>
+          <div class="note-link-area">
+            <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="note-link">
+              <b>心理学者マップ</b>
+            </a>
+            <p class="note-link-caption">理論家同士のつながりを一枚で見たい方へ</p>
+          </div>
+        </section>
+
+        <section class="top-category-section directory-section" aria-label="心理学者一覧">
+          <p class="top-category-title"><span>🔎</span>心理学者一覧</p>
+          <div class="category-grid" id="directoryCategoryGrid"></div>
+        </section>
+
+        <section class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
+          <p class="top-category-title"><span>📝</span>キャリコン学科試験対策</p>
+          <div class="category-grid" id="examPrepCategoryGrid"></div>
+        </section>
+        <details class="category-accordion hidden">
+          <summary>その他の分野</summary>
+          <div class="category-grid" id="categoryAccordionGrid"></div>
+        </details>
+      </div>
+
+      <footer class="top-footer">
+        <div>©2026 ninin consulting＆counseling</div>
+        <a href="../index.html">トップへ</a>
+      </footer>
+    </section>
+
+    <section id="dummyPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand"><h1 id="dummyHeaderTitle">カテゴリ名</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="dummy-content">
+        <div class="dummy-icon">🚧</div>
+        <h2>問題作成中</h2>
+        <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
+        <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
+      </div>
+    </section>
+
+    <section id="setSelectPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand"><h1 id="setSelectHeaderTitle">問題セット選択</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="set-select-content">
+        <div class="set-list" id="quizSetList"></div>
+      </div>
+    </section>
+
+    <section id="reviewPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand"><h1 id="reviewHeaderTitle">振返り</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="review-content">
+        <div id="reviewSetView">
+          <div id="reviewSetGuide" class="review-empty">確認したいセットを選んでください。</div>
+          <div class="review-set-list" id="reviewSetList"></div>
+        </div>
+        <div id="reviewDetailView" class="hidden">
+          <div class="review-detail-actions">
+            <button type="button" class="question-action-button" id="reviewBackToSetsButton">セット一覧へ戻る</button>
+            <button type="button" class="question-action-button pdf-export-button" id="reviewPdfButton">PDFで振り返り出力</button>
+          </div>
+          <div id="reviewSummary" class="directory-count"></div>
+          <ul class="review-list" id="reviewList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="directoryPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand"><h1 id="directoryHeaderTitle">心理学者一覧</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="directory-toolbar">
+        <input id="directorySearch" type="search" placeholder="人物名・理論・画像名で検索">
+        <select id="directoryFilter">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリア関連頻出</option>
+          <option value="industrialCounselor">産業保健領域頻出</option>
+        </select>
+        <div class="directory-filter-panel" id="directoryKanaPanel">
+          <div class="filter-chip-row" id="directoryKanaFilters"></div>
+        </div>
+        <div class="directory-filter-panel" id="directoryTheoryPanel">
+          <div class="filter-chip-row" id="directoryTheoryFilters"></div>
+        </div>
+        <div class="directory-count" id="directoryCount"></div>
+      </div>
+      <div class="directory-list" id="directoryList"></div>
+    </section>
+
+    <section id="timelinePage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand"><h1>心理学者タイムライン</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="timeline-toolbar">
+        <select id="timelineExamFilter" aria-label="受験頻出フィルター">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリア関連頻出</option>
+          <option value="industrialCounselor">産業保健領域頻出</option>
+        </select>
+        <select id="timelineSortOrder" aria-label="並び順">
+          <option value="theory">理論発表年順</option>
+          <option value="birth">生年順</option>
+          <option value="theme">理論カテゴリ順</option>
+        </select>
+      </div>
+      <div class="timeline-count" id="timelineCount"></div>
+      <div class="timeline-list" id="timelineList"></div>
+    </section>
+
+    <section id="quizPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="confirmBackToTop()">◀ 戻る</button>
+        <div class="brand"><h1 id="quizHeaderTitle">キャリア理論</h1></div>
+        <div style="width: 70px;"></div>
+      </header>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 10問</div>
+      </div>
+      <div class="quiz-container">
+        <div id="questionArea">
+          <div class="question-kicker" id="questionKicker">第1問</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="question-action-row">
+            <button type="button" class="question-action-button danger" id="interruptQuizButton">中断して戻る</button>
+            <button type="button" class="question-action-button" id="prevQuestionButton">1問前に戻る</button>
+          </div>
+          <div class="choice-grid" id="choices"></div>
+        </div>
+        <div class="hidden" id="feedbackArea">
+          <div id="resultBadge" class="result-badge"></div>
+          <button class="primary-button top-next-button" id="nextButtonTop">次の問題へ</button>
+          <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
+          
+          <div class="feedback-header">
+            <div class="feedback-image"><img id="feedbackImage" src="" alt="画像"></div>
+            <div class="feedback-answer">
+              <div class="answer-label">正答</div>
+              <div class="answer-text" id="answerText"></div>
+              <div><span class="psychologist-name" id="psychologistName"></span></div>
+              <div class="psychologist-meta" id="psychologistMeta"></div>
+            </div>
+          </div>
+
+          <div class="feedback-body">
+            <p class="explanation-title">解説・ポイント</p>
+            <p class="explanation-text" id="explanationText"></p>
+            <details class="extended-explanation-box" id="extendedExplanationBox">
+              <summary id="extendedExplanationTitle">詳しい解説を読む</summary>
+              <div class="extended-explanation-text" id="extendedExplanationText"></div>
+            </details>
+            <div class="question-memo-box" id="questionMemoBox">
+              <div class="question-memo-header">
+                <label class="question-memo-label" for="questionMemoInput">この問題のメモ</label>
+                <span class="question-memo-count" id="questionMemoCount">0 / 255</span>
+              </div>
+              <textarea class="question-memo-input" id="questionMemoInput" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea>
+              <div class="question-memo-status" id="questionMemoStatus"></div>
+            </div>
+            <div class="person-detail-action" id="psychologistDetailAction"></div>
+          </div>
+
+          <div class="works-box" id="worksBox">
+            <p class="works-title">📚 主な理論・著作の変遷</p>
+            <ul class="works-list" id="worksList"></ul>
+          </div>
+
+          <div class="past-exam-box" id="pastExamBox">
+            <div class="past-exam-header" onclick="togglePastExam('quizPastExam')">
+                <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content">
+                <p class="past-exam-question" id="pastExamQuestion"></p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="pastExamOptions"></ul>
+            </div>
+          </div>
+
+          <button class="primary-button" id="nextButton">次の問題へ</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="resultModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </main>
+  
+  <section class="print-report" id="printReport" aria-hidden="true"></section>
+
+  <script src="data/psychologists.js"></script>
+  <script src="data/questions-career.js"></script>
+  <script src="data/questions-original-exam.js"></script>
+  <script src="data/question-banks.js"></script>
+  
+  <script src="data/timeline.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
