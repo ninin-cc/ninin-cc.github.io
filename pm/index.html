@@ -4,6 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ninin監修　2026心理学 学習支援サイト</title>
+  <script>
+    window.__cqLoadStartedAt = Date.now();
+  </script>
+
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z1T35THNDV');
+  </script>
   <style>
     /* =========================================
        心理学者マップのプロモーション用スタイル
@@ -601,5 +621,29 @@
   <script src="data/timeline.js"></script>
   <script src="data/episodes.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    (function () {
+      document.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+      });
+      document.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+      });
+      document.addEventListener('keydown', function (event) {
+        const key = String(event.key || '').toLowerCase();
+        const isCommand = event.ctrlKey || event.metaKey;
+        const blocksCommand = isCommand && (
+          key === 'u' ||
+          key === 's' ||
+          (event.shiftKey && (key === 'i' || key === 'j' || key === 'c'))
+        );
+        const blocksDevtool = event.key === 'F12';
+        if (blocksCommand || blocksDevtool) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    })();
+  </script>
 </body>
 </html>
