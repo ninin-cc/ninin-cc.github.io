@@ -331,6 +331,16 @@ button {
 #dailyEpisodeBox {
   overflow: hidden;
 }
+#dailyEpisodeBox[open] #dailyEpisodeName,
+#dailyEpisodeBox[open] #dailyEpisodeTitle,
+#dailyEpisodeBox[open] #dailyEpisodeText {
+  cursor: pointer;
+}
+#dailyEpisodeBox.is-paused #dailyEpisodeName,
+#dailyEpisodeBox.is-paused #dailyEpisodeTitle,
+#dailyEpisodeBox.is-paused #dailyEpisodeText {
+  opacity: 0.82;
+}
 #dailyEpisodeBox summary,
 #dailyEpisodeBox > div {
   will-change: transform, opacity;
