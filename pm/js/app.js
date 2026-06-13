@@ -354,6 +354,9 @@ function getPersonById(personId) { if (!personId) return null; return PSYCHOLOGI
 
 let dailyEpisodeTimer = null;
 let dailyEpisodeIndex = -1;
+let dailyEpisodePaused = false;
+let dailyEpisodeIsAnimating = false;
+let dailyEpisodeControlsBound = false;
 
 function pickDailyEpisodeIndex() {
   if (typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return -1;
@@ -377,8 +380,26 @@ function setDailyEpisode(index) {
   els.dailyEpisodeText.textContent = episode.text;
 }
 
+function clearDailyEpisodeTimer() {
+  if (!dailyEpisodeTimer) return;
+  window.clearTimeout(dailyEpisodeTimer);
+  dailyEpisodeTimer = null;
+}
+
+function scheduleDailyEpisodeSlide() {
+  clearDailyEpisodeTimer();
+  if (!els.dailyEpisodeBox || dailyEpisodePaused) return;
+  const delay = els.dailyEpisodeBox.open ? 15000 : 5000;
+  dailyEpisodeTimer = window.setTimeout(() => {
+    slideToNextDailyEpisode();
+    scheduleDailyEpisodeSlide();
+  }, delay);
+}
+
 function slideToNextDailyEpisode() {
   if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || EPISODES.length < 2) return;
+  if (dailyEpisodeIsAnimating) return;
+  dailyEpisodeIsAnimating = true;
   const nextIndex = pickDailyEpisodeIndex();
   els.dailyEpisodeBox.classList.remove("is-sliding-in");
   els.dailyEpisodeBox.classList.add("is-sliding-out");
@@ -386,15 +407,47 @@ function slideToNextDailyEpisode() {
     setDailyEpisode(nextIndex);
     els.dailyEpisodeBox.classList.remove("is-sliding-out");
     els.dailyEpisodeBox.classList.add("is-sliding-in");
-    window.setTimeout(() => els.dailyEpisodeBox.classList.remove("is-sliding-in"), 380);
+    window.setTimeout(() => {
+      els.dailyEpisodeBox.classList.remove("is-sliding-in");
+      dailyEpisodeIsAnimating = false;
+    }, 380);
   }, 260);
+}
+
+function handleDailyEpisodeTextClick(event) {
+  if (!els.dailyEpisodeBox || !els.dailyEpisodeBox.open) return;
+  event.preventDefault();
+  event.stopPropagation();
+  if (!dailyEpisodePaused) {
+    dailyEpisodePaused = true;
+    els.dailyEpisodeBox.classList.add("is-paused");
+    clearDailyEpisodeTimer();
+    return;
+  }
+  dailyEpisodePaused = false;
+  els.dailyEpisodeBox.classList.remove("is-paused");
+  slideToNextDailyEpisode();
+  scheduleDailyEpisodeSlide();
+}
+
+function bindDailyEpisodeControls() {
+  if (dailyEpisodeControlsBound || !els.dailyEpisodeBox) return;
+  dailyEpisodeControlsBound = true;
+  [els.dailyEpisodeName, els.dailyEpisodeTitle, els.dailyEpisodeText].forEach(el => {
+    if (el) el.addEventListener("click", handleDailyEpisodeTextClick);
+  });
+  els.dailyEpisodeBox.addEventListener("toggle", () => {
+    dailyEpisodePaused = false;
+    els.dailyEpisodeBox.classList.remove("is-paused");
+    scheduleDailyEpisodeSlide();
+  });
 }
 
 function renderDailyEpisode() {
   if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return;
+  bindDailyEpisodeControls();
   setDailyEpisode(pickDailyEpisodeIndex());
-  if (dailyEpisodeTimer) window.clearInterval(dailyEpisodeTimer);
-  dailyEpisodeTimer = window.setInterval(slideToNextDailyEpisode, 5000);
+  scheduleDailyEpisodeSlide();
 }
 
 function shouldUseAnswerReviewLayout() {
