@@ -138,13 +138,15 @@ const els = {
   passwordModal: document.getElementById("passwordModal"), closePasswordModalBtn: document.getElementById("closePasswordModalBtn"),
   membershipPassword: document.getElementById("membershipPassword"), verifyPasswordButton: document.getElementById("verifyPasswordButton"), passwordError: document.getElementById("passwordError"),
 
-  // 学習記録・カレンダー用
+  // 学習記録・カレンダー・セーブ用
   learningRecordPanel: document.getElementById("learningRecordPanel"), streakCountText: document.getElementById("streakCountText"),
+  totalCountText: document.getElementById("totalCountText"),
   examCountdownText: document.getElementById("examCountdownText"),
   welcomeBackModal: document.getElementById("welcomeBackModal"), closeWelcomeBackBtn: document.getElementById("closeWelcomeBackBtn"),
   thisMonthLabel: document.getElementById("thisMonthLabel"), thisMonthGrid: document.getElementById("thisMonthGrid"),
   nextMonthLabel: document.getElementById("nextMonthLabel"), nextMonthGrid: document.getElementById("nextMonthGrid"),
-  topExamDateInput: document.getElementById("topExamDateInput"), saveTopExamDateBtn: document.getElementById("saveTopExamDateBtn")
+  topExamDateInput: document.getElementById("topExamDateInput"), saveTopExamDateBtn: document.getElementById("saveTopExamDateBtn"),
+  saveLoadBtn: document.getElementById("saveLoadBtn"), saveLoadLockIcon: document.getElementById("saveLoadLockIcon")
 };
 
 let pendingAction = null;
@@ -185,6 +187,9 @@ function renderLearningRecord() {
   let streak = parseInt(localStorage.getItem("pm_login_streak") || "1", 10);
   if(els.streakCountText) els.streakCountText.textContent = streak;
 
+  let history = JSON.parse(localStorage.getItem("pm_login_history") || "[]");
+  if(els.totalCountText) els.totalCountText.textContent = Math.max(history.length, 1);
+
   let examDateStr = localStorage.getItem("pm_exam_date");
   if (els.topExamDateInput) els.topExamDateInput.value = examDateStr || "";
   
@@ -194,11 +199,11 @@ function renderLearningRecord() {
     const diffTime = examDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays > 0) els.examCountdownText.innerHTML = `🎯 試験まで あと<b>${diffDays}</b>日`;
-    else if (diffDays === 0) els.examCountdownText.innerHTML = `🎯 <b>試験日当日です！</b>`;
-    else els.examCountdownText.innerHTML = `🎯 試験は終了しました`;
+    if (diffDays > 0) els.examCountdownText.innerHTML = `🎯 あと<b>${diffDays}</b>日`;
+    else if (diffDays === 0) els.examCountdownText.innerHTML = `🎯 <b>本日です！</b>`;
+    else els.examCountdownText.innerHTML = `🎯 終了しました`;
   } else if (els.examCountdownText) {
-    els.examCountdownText.innerHTML = `<span style="font-size:0.8rem; color:var(--muted); font-weight:normal;">下で試験日を設定</span>`;
+    els.examCountdownText.innerHTML = `<span style="font-size:0.7rem; color:var(--muted); font-weight:normal;">設定なし</span>`;
   }
 }
 
@@ -280,6 +285,30 @@ if (els.verifyPasswordButton) {
       renderCategoryButtons();
       if (pendingAction) { pendingAction(); pendingAction = null; }
     } else els.passwordError.style.display = "block";
+  });
+}
+
+// セーブ＆ロードボタンのロック状態表示を更新
+function updateSaveLoadBtnState() {
+  if (!els.saveLoadBtn || !els.saveLoadLockIcon) return;
+  if (!isUnlocked()) {
+    els.saveLoadBtn.classList.remove("active-cat");
+    els.saveLoadBtn.classList.add("disabled-cat");
+    els.saveLoadLockIcon.textContent = "🔒";
+    els.saveLoadLockIcon.style.opacity = "1";
+  } else {
+    els.saveLoadBtn.classList.remove("disabled-cat");
+    els.saveLoadBtn.classList.add("active-cat");
+    els.saveLoadLockIcon.textContent = "🔓";
+    els.saveLoadLockIcon.style.opacity = "0.5";
+  }
+}
+
+// セーブ＆ロードボタンのイベント登録
+if (els.saveLoadBtn) {
+  els.saveLoadBtn.addEventListener("click", () => {
+    const action = () => { window.location.href = "save.html"; };
+    if (!isUnlocked()) { requestUnlockThen(action); } else { action(); }
   });
 }
 
@@ -884,6 +913,7 @@ function renderCategoryButtons() {
     const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
     target.appendChild(createCategoryButton(cat));
   });
+  updateSaveLoadBtnState();
 }
 
 function createCategoryButton(cat) {
@@ -966,11 +996,41 @@ function createDevToggleButton() {
   document.body.appendChild(btn);
 }
 
+// セーブ＆ロードボタンの状態を更新する関数
+function updateSaveLoadBtnState() {
+  if (!els.saveLoadBtn || !els.saveLoadLockIcon) return;
+  if (!isUnlocked()) {
+    els.saveLoadBtn.classList.remove("active-cat");
+    els.saveLoadBtn.classList.add("disabled-cat");
+    els.saveLoadLockIcon.textContent = "🔒";
+    els.saveLoadLockIcon.style.opacity = "1";
+  } else {
+    els.saveLoadBtn.classList.remove("disabled-cat");
+    els.saveLoadBtn.classList.add("active-cat");
+    els.saveLoadLockIcon.textContent = "🔓";
+    els.saveLoadLockIcon.style.opacity = "0.5";
+  }
+}
+
+// セーブ＆ロードボタンのクリックイベント
+if (els.saveLoadBtn) {
+  els.saveLoadBtn.addEventListener("click", () => {
+    const action = () => {
+      window.location.href = "save.html";
+    };
+    if (!isUnlocked()) {
+      requestUnlockThen(action);
+    } else {
+      action();
+    }
+  });
+}
+
 function initApp() {
   renderDailyEpisode();
   renderCategoryButtons();
   createDevToggleButton();
-  checkLoginStatus(); // ログイン判定
+  checkLoginStatus(); // ログイン判定・スタンプ描画
   renderCalendar();   // 極小2ヶ月カレンダー描画
   showTopPage();
 }
