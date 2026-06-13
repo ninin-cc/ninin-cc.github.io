@@ -226,6 +226,14 @@
         </section>
         <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
 
+        <!-- 社会情勢・法制関連問題 -->
+        <section class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
+          <p class="top-category-title"><span>⚖️</span>社会情勢・法制関連問題</p>
+          <div class="category-grid" id="socialLegalCategoryGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </section>
+
         <!-- マップ理解補助問題 -->
         <section class="top-category-section map-study-section" aria-label="マップ理解補助問題">
           <p class="top-category-title"><span>🧭</span>マップ理解補助問題</p>
@@ -509,9 +517,20 @@
         </div>
 
         <div class="hidden" id="feedbackArea">
-          <div id="resultBadge" class="result-badge"></div>
+          <div class="feedback-question-card" id="feedbackQuestionBlock" style="display: none;">
+            <p class="feedback-question-label">問題文</p>
+            <p class="feedback-question-text" id="feedbackQuestionText"></p>
+          </div>
+          <div class="feedback-result-row">
+            <div class="feedback-status-block">
+              <div class="feedback-result-icon" id="feedbackResultIcon" style="display: none;">
+                <img id="feedbackResultIconImage" src="" alt="">
+              </div>
+              <div id="resultBadge" class="result-badge"></div>
+            </div>
+            <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
+          </div>
           <button class="primary-button top-next-button" id="nextButtonTop">次の問題へ</button>
-          <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
           
           <div class="feedback-header">
             <div class="feedback-image">
@@ -616,6 +635,7 @@
   <script src="data/psychologists.js"></script>
   <script src="data/questions-career.js"></script>
   <script src="data/questions-original-exam.js"></script>
+  <script src="data/syakai.js"></script>
   <script src="data/question-banks.js"></script>
   
   <script src="data/timeline.js"></script>
