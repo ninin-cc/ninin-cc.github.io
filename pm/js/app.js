@@ -1,4 +1,4 @@
-const isEmojiSupported = !navigator.userAgent.includes('Windows');
+﻿const isEmojiSupported = !navigator.userAgent.includes('Windows');
 
 // ==========================================
 // カテゴリ定義
@@ -14,6 +14,8 @@ const CATEGORIES = [
   { id: "episodeDirectory", title: "心理学者エピソード一覧", icon: "📚", type: "episodeDirectory", topGroup: "directory", isActive: true },
   { id: "originalAcademic", title: "オリジナル学科問題", icon: "📝", type: "quiz", questionBankId: "originalAcademic", questionLimit: 10, topGroup: "examPrep", isActive: true, reviewable: true, accent: "original" },
   { id: "originalAcademicReview", title: "オリジナル学科問題振返り", icon: "↩", type: "review", reviewForCategoryId: "originalAcademic", topGroup: "examPrep", isActive: true, accent: "original" },
+  { id: "socialLegal", title: "社会情勢・法制関連問題", icon: "⚖️", type: "quiz", questionBankId: "socialLegal", questionLimit: 10, topGroup: "socialLegal", isActive: true, reviewable: true, accent: "original" },
+  { id: "socialLegalReview", title: "社会情勢・法制関連問題振返り", icon: "↩", type: "review", reviewForCategoryId: "socialLegal", topGroup: "socialLegal", isActive: true, accent: "original" },
   { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
   { id: "cbt", title: "認知行動療法", icon: "🧠", type: "quiz", questionBankId: "cbt", topGroup: "accordion", isActive: true },
   { id: "counseling", title: "カウンセリング理論", icon: "🗣️", type: "quiz", questionBankId: "counseling", topGroup: "accordion", isActive: true },
@@ -106,7 +108,7 @@ const els = {
   episodeDirectoryList: document.getElementById("episodeDirectoryList"),
   timelineExamFilter: document.getElementById("timelineExamFilter"), timelineSortOrder: document.getElementById("timelineSortOrder"),
   timelineCount: document.getElementById("timelineCount"), timelineList: document.getElementById("timelineList"),
-  quizPage: document.getElementById("quizPage"), mapStudyCategoryGrid: document.getElementById("mapStudyCategoryGrid"),
+  quizPage: document.getElementById("quizPage"), socialLegalCategoryGrid: document.getElementById("socialLegalCategoryGrid"), mapStudyCategoryGrid: document.getElementById("mapStudyCategoryGrid"),
   dailyEpisodeBox: document.getElementById("dailyEpisodeBox"), dailyEpisodeImage: document.getElementById("dailyEpisodeImage"),
   dailyEpisodeName: document.getElementById("dailyEpisodeName"), dailyEpisodeTitle: document.getElementById("dailyEpisodeTitle"),
   dailyEpisodeText: document.getElementById("dailyEpisodeText"),
@@ -121,7 +123,9 @@ const els = {
   questionArea: document.getElementById("questionArea"), questionKicker: document.getElementById("questionKicker"),
   questionText: document.getElementById("questionText"), interruptQuizButton: document.getElementById("interruptQuizButton"),
   prevQuestionButton: document.getElementById("prevQuestionButton"), choices: document.getElementById("choices"),
-  feedbackArea: document.getElementById("feedbackArea"), resultBadge: document.getElementById("resultBadge"),
+  feedbackArea: document.getElementById("feedbackArea"), feedbackQuestionBlock: document.getElementById("feedbackQuestionBlock"),
+  feedbackQuestionText: document.getElementById("feedbackQuestionText"), resultBadge: document.getElementById("resultBadge"),
+  feedbackResultIcon: document.getElementById("feedbackResultIcon"), feedbackResultIconImage: document.getElementById("feedbackResultIconImage"),
   userAnswerText: document.getElementById("userAnswerText"), feedbackImage: document.getElementById("feedbackImage"),
   answerText: document.getElementById("answerText"), psychologistName: document.getElementById("psychologistName"),
   psychologistMeta: document.getElementById("psychologistMeta"), explanationText: document.getElementById("explanationText"),
@@ -359,6 +363,57 @@ function renderDailyEpisode() {
   els.dailyEpisodeName.textContent = displayName;
   els.dailyEpisodeTitle.textContent = episode.title;
   els.dailyEpisodeText.textContent = episode.text;
+}
+
+function shouldUseAnswerReviewLayout() {
+  return ["careerFrequent", "industrialFrequent", "originalAcademic", "socialLegal"].includes(state.currentCategory?.id);
+}
+
+function shouldUseResultCharacterIcon() {
+  return ["originalAcademic", "socialLegal"].includes(state.currentCategory?.id);
+}
+
+function isSocialLegalQuestion(q) {
+  return state.currentCategory?.id === "socialLegal" || (q.categoryIds || []).includes("socialLegal");
+}
+
+function clearFeedbackImageFrame(spacerOnly = false) {
+  els.feedbackImage.removeAttribute("src");
+  els.feedbackImage.alt = "";
+  els.feedbackImage.onerror = null;
+  const frame = els.feedbackImage.closest(".feedback-image");
+  frame?.classList.add("is-empty");
+  frame?.classList.toggle("is-spacer-only", spacerOnly);
+}
+
+function showFeedbackImage(file, altText) {
+  const frame = els.feedbackImage.closest(".feedback-image");
+  frame?.classList.remove("is-empty", "is-spacer-only");
+  setImageWithFallback(els.feedbackImage, file, altText);
+}
+
+function setFeedbackResultIcon(isCorrect) {
+  if (!els.feedbackResultIcon || !els.feedbackResultIconImage) return;
+  if (!shouldUseResultCharacterIcon()) {
+    els.feedbackResultIcon.style.display = "none";
+    els.feedbackResultIconImage.removeAttribute("src");
+    els.feedbackResultIconImage.alt = "";
+    return;
+  }
+  const src = isCorrect ? "cimg/s1.png" : "cimg/s2.png";
+  els.feedbackResultIconImage.src = src;
+  els.feedbackResultIconImage.alt = isCorrect ? "正答" : "不正解";
+  els.feedbackResultIcon.style.display = "flex";
+}
+
+function setPsychologistMetaVisibility(show) {
+  const nameWrap = els.psychologistName?.parentElement;
+  if (nameWrap) nameWrap.style.display = show ? "" : "none";
+  if (els.psychologistMeta) els.psychologistMeta.style.display = show ? "" : "none";
+}
+
+function renderUserAnswerText(q, selectedIndex) {
+  return `<span class="user-answer-label">あなたの解答</span><span class="user-answer-choice">${escapeHtml(q.options[selectedIndex])}</span>`;
 }
 
 function getQuestionCategoryText(q) {
@@ -842,6 +897,11 @@ function startQuiz(categoryId, setIndex = null) {
 function loadQuestion() {
   state.isAnswered = false; const q = state.deck[state.currentQuestionIndex];
   els.feedbackArea.classList.add("hidden"); els.questionArea.classList.remove("hidden");
+  if (els.feedbackQuestionBlock) els.feedbackQuestionBlock.style.display = "none";
+  if (els.feedbackQuestionText) els.feedbackQuestionText.textContent = "";
+  if (els.feedbackResultIcon) els.feedbackResultIcon.style.display = "none";
+  if (els.feedbackResultIconImage) { els.feedbackResultIconImage.removeAttribute("src"); els.feedbackResultIconImage.alt = ""; }
+  els.userAnswerText.innerHTML = ""; els.userAnswerText.style.display = "none";
   bindQuestionMemo(els.questionMemoInput, els.questionMemoCount, els.questionMemoStatus, "");
   els.psychologistDetailAction.innerHTML = ""; els.psychologistDetailAction.style.display = "none";
   els.questionKicker.textContent = `第 ${state.currentQuestionIndex + 1} 問`; els.questionText.textContent = q.text;
@@ -859,17 +919,37 @@ function handleAnswer(selectedIndex) {
   if (state.isAnswered) return; state.isAnswered = true;
   const q = state.deck[state.currentQuestionIndex]; const isCorrect = (selectedIndex === q.answer);
   state.history.push({ question: q, selectedIndex: selectedIndex, isCorrect: isCorrect }); saveCurrentReviewLog();
+  const useAnswerReviewLayout = shouldUseAnswerReviewLayout();
+  if (els.feedbackQuestionBlock && els.feedbackQuestionText) {
+    els.feedbackQuestionText.textContent = q.text;
+    els.feedbackQuestionBlock.style.display = useAnswerReviewLayout ? "block" : "none";
+  }
   if (isCorrect) {
-    state.score++; els.resultBadge.textContent = "⭕ 正解！"; els.resultBadge.className = "result-badge correct"; els.userAnswerText.style.display = "none";
+    state.score++; els.resultBadge.textContent = "⭕ 正解！"; els.resultBadge.className = "result-badge correct";
+    if (useAnswerReviewLayout) {
+      els.userAnswerText.innerHTML = renderUserAnswerText(q, selectedIndex); els.userAnswerText.style.display = "block";
+    } else {
+      els.userAnswerText.innerHTML = ""; els.userAnswerText.style.display = "none";
+    }
   } else {
     els.resultBadge.textContent = "❌ 不正解..."; els.resultBadge.className = "result-badge wrong";
-    els.userAnswerText.textContent = `あなたの解答：${q.options[selectedIndex]}`; els.userAnswerText.style.display = "block";
+    if (useAnswerReviewLayout) {
+      els.userAnswerText.innerHTML = renderUserAnswerText(q, selectedIndex);
+    } else {
+      els.userAnswerText.textContent = `あなたの解答：${q.options[selectedIndex]}`;
+    }
+    els.userAnswerText.style.display = "block";
   }
-  const feedbackImageSrc = (!isCorrect && (q.categoryIds || []).includes("originalAcademic")) ? "cimg/s2.png" : q.image;
-  setImageWithFallback(els.feedbackImage, feedbackImageSrc, `画像: ${q.name}`);
+  setFeedbackResultIcon(isCorrect);
+  if (shouldUseResultCharacterIcon()) {
+    clearFeedbackImageFrame(isSocialLegalQuestion(q));
+  } else {
+    showFeedbackImage(q.image, `画像: ${q.name}`);
+  }
   els.answerText.textContent = q.options[q.answer]; els.psychologistName.textContent = q.name;
   const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText; const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
   els.psychologistMeta.innerHTML = q.metaText || `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`;
+  setPsychologistMetaVisibility(!isSocialLegalQuestion(q));
   els.explanationText.textContent = q.explanation;
   if (q.extendedExplanation) {
     els.extendedExplanationBox.style.display = "block"; els.extendedExplanationBox.open = false;
@@ -968,10 +1048,10 @@ if(els.interruptQuizButton) els.interruptQuizButton.addEventListener("click", co
 if(els.prevQuestionButton) els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
 
 function renderCategoryButtons() {
-  els.categoryAccordionGrid.innerHTML = ""; els.mapStudyCategoryGrid.innerHTML = ""; els.directoryCategoryGrid.innerHTML = ""; els.examPrepCategoryGrid.innerHTML = "";
+  els.categoryAccordionGrid.innerHTML = ""; els.socialLegalCategoryGrid.innerHTML = ""; els.mapStudyCategoryGrid.innerHTML = ""; els.directoryCategoryGrid.innerHTML = ""; els.examPrepCategoryGrid.innerHTML = "";
   CATEGORIES.forEach(cat => {
     if (cat.topGroup === "hidden") return;
-    const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
+    const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "socialLegal" ? els.socialLegalCategoryGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
     target.appendChild(createCategoryButton(cat));
   });
   updateSaveLoadBtnState();
@@ -1097,3 +1177,5 @@ function initApp() {
 }
 
 initApp();
+
+
