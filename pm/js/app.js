@@ -10,7 +10,8 @@ const CATEGORIES = [
   { id: "industrialFrequentReview", title: "産業保健領域頻出振返り", icon: "↩", type: "review", reviewForCategoryId: "industrialFrequent", topGroup: "mapStudy", isActive: true },
   { id: "directoryAiueo", title: "一覧（あいうえお順）", icon: "🔎", type: "directory", directoryMode: "aiueo", topGroup: "directory", isActive: true },
   { id: "directoryTheoryTimeline", title: "一覧（理論別・年代順）", icon: "🗂️", type: "directory", directoryMode: "theoryTimeline", topGroup: "directory", isActive: true },
-  { id: "timeline", title: "タイムライン", icon: "🕰️", type: "timeline", topGroup: "directory", isActive: true },
+  { id: "timeline", title: "タイムライン", icon: "🕰️", type: "timeline", topGroup: "hidden", isActive: true },
+  { id: "episodeDirectory", title: "心理学者エピソード一覧", icon: "📚", type: "episodeDirectory", topGroup: "directory", isActive: true },
   { id: "originalAcademic", title: "オリジナル学科問題", icon: "📝", type: "quiz", questionBankId: "originalAcademic", questionLimit: 10, topGroup: "examPrep", isActive: true, reviewable: true, accent: "original" },
   { id: "originalAcademicReview", title: "オリジナル学科問題振返り", icon: "↩", type: "review", reviewForCategoryId: "originalAcademic", topGroup: "examPrep", isActive: true, accent: "original" },
   { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
@@ -39,28 +40,35 @@ const ROOT_IMAGE_FILES = new Set([]);
 // ==========================================
 // パスワードロック設定
 // ==========================================
-// テツオさんへ：毎月ここのパスワードを変更してください！
 const CURRENT_MONTH_PASSWORD = "ninin"; 
 
 const LOCKED_CATEGORY_IDS = [
   "industrialFrequent",
-  "careerFrequentReview",
   "industrialFrequentReview",
-  "directoryTheoryTimeline",
   "timeline",
+  "episodeDirectory",
   "originalAcademic",
   "originalAcademicReview"
 ];
 
-// 現在の年月を取得する関数（例： "2026-06"）
-function getCurrentMonthString() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-}
+const LOCKED_REVIEW_SET_RULES = { careerFrequent: 3 };
+const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
-// 今月のパスワードが認証済みかチェックする関数
-function isUnlocked() {
-  return localStorage.getItem("pm_unlocked_month") === getCurrentMonthString();
+const DIRECTORY_JOKE_TABS = [
+  { id: "jokeBurger", label: "🍔", personIds: ["mayo_roethlisberger", "schlossberg", "herzberg", "ginzberg"] },
+  { id: "jokeSon", label: "ソン", personIds: ["levinson", "nicholson", "williamson", "erikson"] }
+];
+
+const EPISODE_SORT_KANA = {
+  atkinson: "あときんそん", seligman: "せりぐまん", taylor: "ていらー", watson: "わとそん", william_james: "じぇーむず"
+};
+
+function getCurrentMonthString() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; }
+function isUnlocked() { return localStorage.getItem("pm_unlocked_month") === getCurrentMonthString(); }
+
+function requestUnlockThen(action) {
+  pendingAction = action;
+  els.passwordModal.classList.add("active");
 }
 
 const KANA_GROUPS = [
@@ -94,9 +102,14 @@ const els = {
   reviewBackToSetsButton: document.getElementById("reviewBackToSetsButton"), reviewPdfButton: document.getElementById("reviewPdfButton"),
   reviewSummary: document.getElementById("reviewSummary"), reviewList: document.getElementById("reviewList"),
   directoryPage: document.getElementById("directoryPage"), timelinePage: document.getElementById("timelinePage"),
+  episodeDirectoryPage: document.getElementById("episodeDirectoryPage"), episodeDirectoryCount: document.getElementById("episodeDirectoryCount"),
+  episodeDirectoryList: document.getElementById("episodeDirectoryList"),
   timelineExamFilter: document.getElementById("timelineExamFilter"), timelineSortOrder: document.getElementById("timelineSortOrder"),
   timelineCount: document.getElementById("timelineCount"), timelineList: document.getElementById("timelineList"),
   quizPage: document.getElementById("quizPage"), mapStudyCategoryGrid: document.getElementById("mapStudyCategoryGrid"),
+  dailyEpisodeBox: document.getElementById("dailyEpisodeBox"), dailyEpisodeImage: document.getElementById("dailyEpisodeImage"),
+  dailyEpisodeName: document.getElementById("dailyEpisodeName"), dailyEpisodeTitle: document.getElementById("dailyEpisodeTitle"),
+  dailyEpisodeText: document.getElementById("dailyEpisodeText"),
   directoryCategoryGrid: document.getElementById("directoryCategoryGrid"), examPrepCategoryGrid: document.getElementById("examPrepCategoryGrid"),
   categoryAccordionGrid: document.getElementById("categoryAccordionGrid"), dummyHeaderTitle: document.getElementById("dummyHeaderTitle"),
   directoryHeaderTitle: document.getElementById("directoryHeaderTitle"), directorySearch: document.getElementById("directorySearch"),
@@ -121,56 +134,159 @@ const els = {
   pastExamQuestion: document.getElementById("pastExamQuestion"), pastExamOptions: document.getElementById("pastExamOptions"),
   nextButton: document.getElementById("nextButton"), nextButtonTop: document.getElementById("nextButtonTop"),
   
-  // パスワードモーダル用の要素を追加
-  passwordModal: document.getElementById("passwordModal"),
-  closePasswordModalBtn: document.getElementById("closePasswordModalBtn"),
-  membershipPassword: document.getElementById("membershipPassword"),
-  verifyPasswordButton: document.getElementById("verifyPasswordButton"),
-  passwordError: document.getElementById("passwordError")
+  // パスワードモーダル用
+  passwordModal: document.getElementById("passwordModal"), closePasswordModalBtn: document.getElementById("closePasswordModalBtn"),
+  membershipPassword: document.getElementById("membershipPassword"), verifyPasswordButton: document.getElementById("verifyPasswordButton"), passwordError: document.getElementById("passwordError"),
+
+  // 学習記録・カレンダー用
+  learningRecordPanel: document.getElementById("learningRecordPanel"), streakCountText: document.getElementById("streakCountText"),
+  examCountdownText: document.getElementById("examCountdownText"),
+  welcomeBackModal: document.getElementById("welcomeBackModal"), closeWelcomeBackBtn: document.getElementById("closeWelcomeBackBtn"),
+  thisMonthLabel: document.getElementById("thisMonthLabel"), thisMonthGrid: document.getElementById("thisMonthGrid"),
+  nextMonthLabel: document.getElementById("nextMonthLabel"), nextMonthGrid: document.getElementById("nextMonthGrid"),
+  topExamDateInput: document.getElementById("topExamDateInput"), saveTopExamDateBtn: document.getElementById("saveTopExamDateBtn")
 };
 
 let pendingAction = null;
 
+// ==========================================
+// 学習記録＆カレンダーロジック
+// ==========================================
+function getFormattedDateString(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function checkLoginStatus() {
+  const d = new Date();
+  const todayStr = getFormattedDateString(d);
+  d.setDate(d.getDate() - 1);
+  const yesterdayStr = getFormattedDateString(d);
+  
+  let lastLogin = localStorage.getItem("pm_last_login");
+  let history = JSON.parse(localStorage.getItem("pm_login_history") || "[]");
+  let streak = parseInt(localStorage.getItem("pm_login_streak") || "0", 10);
+
+  if (lastLogin !== todayStr) {
+    if (!history.includes(todayStr)) { history.push(todayStr); localStorage.setItem("pm_login_history", JSON.stringify(history)); }
+    if (lastLogin === yesterdayStr) {
+      streak++;
+    } else {
+      streak = 1;
+      // 過去にログインしたことがあり、かつ昨日ではない（＝途切れた）場合、ウェルカムバックモーダルを表示
+      if (lastLogin !== null && els.welcomeBackModal) { els.welcomeBackModal.classList.add("active"); }
+    }
+    localStorage.setItem("pm_login_streak", streak.toString());
+    localStorage.setItem("pm_last_login", todayStr);
+  }
+  renderLearningRecord();
+}
+
+function renderLearningRecord() {
+  let streak = parseInt(localStorage.getItem("pm_login_streak") || "1", 10);
+  if(els.streakCountText) els.streakCountText.textContent = streak;
+
+  let examDateStr = localStorage.getItem("pm_exam_date");
+  if (els.topExamDateInput) els.topExamDateInput.value = examDateStr || "";
+  
+  if (examDateStr && els.examCountdownText) {
+    const examDate = new Date(examDateStr); examDate.setHours(0,0,0,0);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diffTime = examDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 0) els.examCountdownText.innerHTML = `🎯 試験まで あと<b>${diffDays}</b>日`;
+    else if (diffDays === 0) els.examCountdownText.innerHTML = `🎯 <b>試験日当日です！</b>`;
+    else els.examCountdownText.innerHTML = `🎯 試験は終了しました`;
+  } else if (els.examCountdownText) {
+    els.examCountdownText.innerHTML = `<span style="font-size:0.8rem; color:var(--muted); font-weight:normal;">下で試験日を設定</span>`;
+  }
+}
+
+function generateCalendarHtml(year, month, history, todayStr, examDateStr) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // 月曜始まり
+  
+  const weekDays = ["月", "火", "水", "木", "金", "土", "日"];
+  let html = weekDays.map(day => `<div class="mini-calendar-day-header">${day}</div>`).join("");
+  
+  for (let i = 0; i < startDayOfWeek; i++) { html += `<div class="mini-calendar-cell empty"></div>`; }
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const dateObj = new Date(year, month, d);
+    const dateStr = getFormattedDateString(dateObj);
+    const isLogged = history.includes(dateStr);
+    const isToday = dateStr === todayStr;
+    const isExam = examDateStr === dateStr;
+    
+    let classes = ["mini-calendar-cell"];
+    if (isToday) classes.push("today");
+    if (isLogged) classes.push("logged");
+    if (isExam) classes.push("exam-date");
+    
+    html += `<div class="${classes.join(' ')}">${d}</div>`;
+  }
+  return html;
+}
+
+function renderCalendar() {
+  const d = new Date();
+  const year1 = d.getFullYear(); const month1 = d.getMonth();
+  const d2 = new Date(year1, month1 + 1, 1);
+  const year2 = d2.getFullYear(); const month2 = d2.getMonth();
+  
+  if(els.thisMonthLabel) els.thisMonthLabel.textContent = `${month1 + 1}月`;
+  if(els.nextMonthLabel) els.nextMonthLabel.textContent = `${month2 + 1}月`;
+  
+  let history = JSON.parse(localStorage.getItem("pm_login_history") || "[]");
+  const todayStr = getFormattedDateString(new Date());
+  const examDateStr = localStorage.getItem("pm_exam_date");
+  
+  if(els.thisMonthGrid) els.thisMonthGrid.innerHTML = generateCalendarHtml(year1, month1, history, todayStr, examDateStr);
+  if(els.nextMonthGrid) els.nextMonthGrid.innerHTML = generateCalendarHtml(year2, month2, history, todayStr, examDateStr);
+}
+
+// カレンダー・試験日設定のイベント登録
+if (els.closeWelcomeBackBtn) els.closeWelcomeBackBtn.addEventListener("click", () => els.welcomeBackModal.classList.remove("active"));
+if (els.saveTopExamDateBtn) {
+  els.saveTopExamDateBtn.addEventListener("click", () => {
+    if (els.topExamDateInput.value) {
+      localStorage.setItem("pm_exam_date", els.topExamDateInput.value);
+    } else {
+      localStorage.removeItem("pm_exam_date");
+    }
+    const originalText = els.saveTopExamDateBtn.textContent;
+    els.saveTopExamDateBtn.textContent = "保存済！";
+    setTimeout(() => { els.saveTopExamDateBtn.textContent = originalText; }, 1500);
+    renderLearningRecord();
+    renderCalendar();
+  });
+}
+
 // パスワードモーダルを閉じる
 function closePasswordModal() {
-  if (els.passwordModal) {
-    els.passwordModal.classList.remove("active");
-  }
+  if (els.passwordModal) els.passwordModal.classList.remove("active");
   if (els.membershipPassword) els.membershipPassword.value = "";
   if (els.passwordError) els.passwordError.style.display = "none";
   pendingAction = null;
 }
-
-// モーダルイベントの設定
-if (els.closePasswordModalBtn) {
-  els.closePasswordModalBtn.addEventListener("click", closePasswordModal);
-}
+if (els.closePasswordModalBtn) els.closePasswordModalBtn.addEventListener("click", closePasswordModal);
 if (els.verifyPasswordButton) {
   els.verifyPasswordButton.addEventListener("click", () => {
     if (els.membershipPassword.value.trim() === CURRENT_MONTH_PASSWORD) {
-      // 正解なら現在の「年月」を保存し、その月は再入力不要にする
       localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
       els.passwordModal.classList.remove("active");
       els.membershipPassword.value = "";
       els.passwordError.style.display = "none";
-      
-      // ボタン群を再描画してグレーアウトを解除する
       renderCategoryButtons();
-
-      if (pendingAction) {
-        pendingAction();
-        pendingAction = null;
-      }
-    } else {
-      els.passwordError.style.display = "block";
-    }
+      if (pendingAction) { pendingAction(); pendingAction = null; }
+    } else els.passwordError.style.display = "block";
   });
 }
 
 function showTopPage() {
   els.quizPage.classList.add("hidden"); els.dummyPage.classList.add("hidden");
   els.setSelectPage.classList.add("hidden"); els.reviewPage.classList.add("hidden");
-  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.topPage.classList.remove("hidden"); window.scrollTo(0, 0);
 }
 
@@ -178,172 +294,42 @@ function showDummyPage(title) {
   els.dummyHeaderTitle.textContent = title;
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.setSelectPage.classList.add("hidden"); els.reviewPage.classList.add("hidden");
-  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.dummyPage.classList.remove("hidden"); window.scrollTo(0, 0);
 }
 
 function confirmBackToTop() { if (confirm("テストを中断してTOPに戻りますか？")) showTopPage(); }
-
-function goToPreviousQuestion() {
-  if (state.currentQuestionIndex <= 0 || state.isAnswered) return;
-  const previousIndex = state.currentQuestionIndex - 1;
-  state.history = state.history.slice(0, previousIndex);
-  state.score = state.history.filter(item => item.isCorrect).length;
-  state.currentQuestionIndex = previousIndex;
-  saveCurrentReviewLog(); loadQuestion(); window.scrollTo({ top: 0, behavior: 'instant' });
-}
-
-function togglePastExam(targetId) {
-  let box = targetId === 'quizPastExam' ? els.pastExamBox : document.getElementById(targetId);
-  if(box) box.classList.toggle('open');
-}
-
-function getPastExamAnswerNumber(answerText) {
-  const match = String(answerText || "").match(/\d/);
-  return match ? match[0] : String(answerText || "").trim();
-}
-
-function isPastExamCorrectOption(originalText, answerText) {
-  const answerNumber = getPastExamAnswerNumber(answerText);
-  const normalizedText = String(originalText || "").trim();
-  return normalizedText.startsWith(answerNumber + ".") || normalizedText.startsWith(answerNumber + " ");
-}
-
-function getPastExamShortExplanation(q) {
-  const raw = (q && q.pastExam && q.pastExam.explanation) ? q.pastExam.explanation : (q && q.explanation ? q.explanation : "");
-  const compact = String(raw || "").replace(/\s+/g, " ").trim();
-  if (!compact) return "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
-  if (compact.length <= 105) return compact;
-  const sliced = compact.slice(0, 105);
-  const breakAt = Math.max(sliced.lastIndexOf("。"), sliced.lastIndexOf("、"));
-  return `${breakAt > 45 ? sliced.slice(0, breakAt + 1) : sliced}…`;
-}
-
-function getPastExamCorrectOptionText(optionsUl, answerText) {
-  const correctLi = Array.from(optionsUl.children).find(li => {
-    const originalText = li.getAttribute('data-original-text') || li.textContent;
-    return isPastExamCorrectOption(originalText, answerText);
-  });
-  const originalText = correctLi ? (correctLi.getAttribute('data-original-text') || correctLi.textContent) : "";
-  return originalText.replace(/^\s*\d+\.\s*/, "");
-}
-
-function clearPastExamFeedback(optionsUl) {
-  if (!optionsUl) return;
-  const existing = optionsUl.nextElementSibling;
-  if (existing && existing.classList.contains('past-exam-feedback')) existing.remove();
-}
-
-function renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText) {
-  clearPastExamFeedback(optionsUl);
-  const answerNumber = getPastExamAnswerNumber(answerText);
-  const correctOptionText = getPastExamCorrectOptionText(optionsUl, answerNumber);
-  const feedback = document.createElement("div");
-  feedback.className = `past-exam-feedback ${clickedIsCorrect ? 'correct' : 'wrong'}`;
-  const title = document.createElement("p");
-  title.className = "past-exam-feedback-title";
-  title.textContent = clickedIsCorrect ? "✅ 正解です" : `✅ 正解は ${answerNumber}. ${correctOptionText} です`;
-  const text = document.createElement("p");
-  text.className = "past-exam-feedback-text";
-  text.textContent = optionsUl.dataset.explanation || "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。";
-  feedback.appendChild(title); feedback.appendChild(text);
-  optionsUl.insertAdjacentElement("afterend", feedback);
-}
-
-function revealAnswer(targetId, answerText, clickedLi) {
-  let optionsUl = targetId === 'quizPastExam' ? els.pastExamOptions : document.getElementById(targetId + 'Options');
-  if(optionsUl && !optionsUl.classList.contains('revealed')) {
-    optionsUl.classList.add('revealed'); clearPastExamFeedback(optionsUl);
-    let clickedIsCorrect = false;
-    Array.from(optionsUl.children).forEach(li => {
-      const originalText = li.getAttribute('data-original-text') || li.textContent;
-      if (!li.hasAttribute('data-original-text')) li.setAttribute('data-original-text', originalText);
-      const isCorrect = isPastExamCorrectOption(originalText, answerText);
-      if (li === clickedLi) clickedIsCorrect = isCorrect;
-      if(isCorrect) {
-        li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">✅</span><span>${originalText}</span>`;
-        li.classList.add('correct-choice');
-      } else if (li === clickedLi) {
-        li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">❌</span><span>${originalText}</span>`;
-        li.classList.add('wrong-choice');
-      } else {
-        li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; width:1.1rem; display:inline-block;"></span><span>${originalText}</span>`;
-        li.classList.add('unselected-choice');
-      }
-    });
-    renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText);
-  }
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
-function renderExtendedExplanationHtml(q) {
-  if (!q.extendedExplanation) return "";
-  const title = q.extendedExplanationTitle ? `詳しい解説：${q.extendedExplanationTitle}` : "詳しい解説を読む";
-  return `<details class="extended-explanation-box"><summary>${escapeHtml(title)}</summary><div class="extended-explanation-text">${escapeHtml(q.extendedExplanation)}</div></details>`;
-}
-
+function goToPreviousQuestion() { if (state.currentQuestionIndex <= 0 || state.isAnswered) return; const previousIndex = state.currentQuestionIndex - 1; state.history = state.history.slice(0, previousIndex); state.score = state.history.filter(item => item.isCorrect).length; state.currentQuestionIndex = previousIndex; saveCurrentReviewLog(); loadQuestion(); window.scrollTo({ top: 0, behavior: 'instant' }); }
+function togglePastExam(targetId) { let box = targetId === 'quizPastExam' ? els.pastExamBox : document.getElementById(targetId); if(box) box.classList.toggle('open'); }
+function getPastExamAnswerNumber(answerText) { const match = String(answerText || "").match(/\d/); return match ? match[0] : String(answerText || "").trim(); }
+function isPastExamCorrectOption(originalText, answerText) { const answerNumber = getPastExamAnswerNumber(answerText); const normalizedText = String(originalText || "").trim(); return normalizedText.startsWith(answerNumber + ".") || normalizedText.startsWith(answerNumber + " "); }
+function getPastExamShortExplanation(q) { const raw = (q && q.pastExam && q.pastExam.explanation) ? q.pastExam.explanation : (q && q.explanation ? q.explanation : ""); const compact = String(raw || "").replace(/\s+/g, " ").trim(); if (!compact) return "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。"; if (compact.length <= 105) return compact; const sliced = compact.slice(0, 105); const breakAt = Math.max(sliced.lastIndexOf("。"), sliced.lastIndexOf("、")); return `${breakAt > 45 ? sliced.slice(0, breakAt + 1) : sliced}…`; }
+function getPastExamCorrectOptionText(optionsUl, answerText) { const correctLi = Array.from(optionsUl.children).find(li => { const originalText = li.getAttribute('data-original-text') || li.textContent; return isPastExamCorrectOption(originalText, answerText); }); const originalText = correctLi ? (correctLi.getAttribute('data-original-text') || correctLi.textContent) : ""; return originalText.replace(/^\s*\d+\.\s*/, ""); }
+function clearPastExamFeedback(optionsUl) { if (!optionsUl) return; const existing = optionsUl.nextElementSibling; if (existing && existing.classList.contains('past-exam-feedback')) existing.remove(); }
+function renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText) { clearPastExamFeedback(optionsUl); const answerNumber = getPastExamAnswerNumber(answerText); const correctOptionText = getPastExamCorrectOptionText(optionsUl, answerNumber); const feedback = document.createElement("div"); feedback.className = `past-exam-feedback ${clickedIsCorrect ? 'correct' : 'wrong'}`; const title = document.createElement("p"); title.className = "past-exam-feedback-title"; title.textContent = clickedIsCorrect ? "✅ 正解です" : `✅ 正解は ${answerNumber}. ${correctOptionText} です`; const text = document.createElement("p"); text.className = "past-exam-feedback-text"; text.textContent = optionsUl.dataset.explanation || "人物名・理論名・中心キーワードの結びつきを押さえるのがポイントです。"; feedback.appendChild(title); feedback.appendChild(text); optionsUl.insertAdjacentElement("afterend", feedback); }
+function revealAnswer(targetId, answerText, clickedLi) { let optionsUl = targetId === 'quizPastExam' ? els.pastExamOptions : document.getElementById(targetId + 'Options'); if(optionsUl && !optionsUl.classList.contains('revealed')) { optionsUl.classList.add('revealed'); clearPastExamFeedback(optionsUl); let clickedIsCorrect = false; Array.from(optionsUl.children).forEach(li => { const originalText = li.getAttribute('data-original-text') || li.textContent; if (!li.hasAttribute('data-original-text')) li.setAttribute('data-original-text', originalText); const isCorrect = isPastExamCorrectOption(originalText, answerText); if (li === clickedLi) clickedIsCorrect = isCorrect; if(isCorrect) { li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">✅</span><span>${originalText}</span>`; li.classList.add('correct-choice'); } else if (li === clickedLi) { li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; font-size:1.1rem;">❌</span><span>${originalText}</span>`; li.classList.add('wrong-choice'); } else { li.innerHTML = `<span style="flex-shrink:0; margin-right:8px; width:1.1rem; display:inline-block;"></span><span>${originalText}</span>`; li.classList.add('unselected-choice'); } }); renderPastExamFeedback(optionsUl, clickedIsCorrect, answerText); } }
+function escapeHtml(value) { return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+function renderExtendedExplanationHtml(q) { if (!q.extendedExplanation) return ""; const title = q.extendedExplanationTitle ? `詳しい解説：${q.extendedExplanationTitle}` : "詳しい解説を読む"; return `<details class="extended-explanation-box"><summary>${escapeHtml(title)}</summary><div class="extended-explanation-text">${escapeHtml(q.extendedExplanation)}</div></details>`; }
 function getQuestionMemoKey(questionId) { return `pmQuestionMemo:v1:${questionId}`; }
+function loadQuestionMemo(questionId) { if (!questionId) return ""; try { return localStorage.getItem(getQuestionMemoKey(questionId)) || ""; } catch (error) { return ""; } }
+function saveQuestionMemo(questionId, value) { if (!questionId) return false; try { const memo = String(value || "").slice(0, 255); const key = getQuestionMemoKey(questionId); if (memo) localStorage.setItem(key, memo); else localStorage.removeItem(key); return true; } catch (error) { return false; } }
+function updateMemoCount(textarea, countEl) { if (!textarea || !countEl) return; countEl.textContent = `${textarea.value.length} / 255`; }
+function bindQuestionMemo(textarea, countEl, statusEl, questionId) { if (!textarea || !countEl) return; if (!questionId) { textarea.value = ""; textarea.oninput = null; updateMemoCount(textarea, countEl); if (statusEl) statusEl.textContent = ""; return; } textarea.value = loadQuestionMemo(questionId).slice(0, 255); updateMemoCount(textarea, countEl); if (statusEl) statusEl.textContent = textarea.value ? "保存済み" : ""; textarea.oninput = () => { if (textarea.value.length > 255) textarea.value = textarea.value.slice(0, 255); updateMemoCount(textarea, countEl); const saved = saveQuestionMemo(questionId, textarea.value); if (statusEl) statusEl.textContent = saved ? "保存済み" : "保存できませんでした"; }; }
+function renderQuestionMemoHtml(q, idPrefix = "modalQuestionMemo") { const safeId = String(q.id || "question").replace(/[^a-zA-Z0-9_-]/g, "-"); const textareaId = `${idPrefix}_${safeId}`; const countId = `${textareaId}_count`; const statusId = `${textareaId}_status`; return `<div class="question-memo-box" data-question-memo-id="${escapeHtml(q.id)}"><div class="question-memo-header"><label class="question-memo-label" for="${escapeHtml(textareaId)}">この問題のメモ</label><span class="question-memo-count" id="${escapeHtml(countId)}">0 / 255</span></div><textarea class="question-memo-input" id="${escapeHtml(textareaId)}" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea><div class="question-memo-status" id="${escapeHtml(statusId)}"></div></div>`; }
+function bindQuestionMemos(root = document) { root.querySelectorAll(".question-memo-box[data-question-memo-id]").forEach(box => { const textarea = box.querySelector(".question-memo-input"); const countEl = box.querySelector(".question-memo-count"); const statusEl = box.querySelector(".question-memo-status"); bindQuestionMemo(textarea, countEl, statusEl, box.dataset.questionMemoId); }); }
+function getPersonById(personId) { if (!personId) return null; return PSYCHOLOGIST_BANK.find(person => person.id === personId) || null; }
 
-function loadQuestionMemo(questionId) {
-  if (!questionId) return "";
-  try { return localStorage.getItem(getQuestionMemoKey(questionId)) || ""; } catch (error) { return ""; }
-}
+function renderDailyEpisode() {
+  if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return;
+  const episode = EPISODES[Math.floor(Math.random() * EPISODES.length)];
+  const person = getPersonById(episode.id);
+  const displayName = episode.name || person?.displayName || person?.name || episode.id;
+  const imageFile = person?.images?.[0] || episode.image || "map.jpg";
 
-function saveQuestionMemo(questionId, value) {
-  if (!questionId) return false;
-  try {
-    const memo = String(value || "").slice(0, 255);
-    const key = getQuestionMemoKey(questionId);
-    if (memo) localStorage.setItem(key, memo); else localStorage.removeItem(key);
-    return true;
-  } catch (error) { return false; }
-}
-
-function updateMemoCount(textarea, countEl) {
-  if (!textarea || !countEl) return;
-  countEl.textContent = `${textarea.value.length} / 255`;
-}
-
-function bindQuestionMemo(textarea, countEl, statusEl, questionId) {
-  if (!textarea || !countEl) return;
-  if (!questionId) {
-    textarea.value = ""; textarea.oninput = null; updateMemoCount(textarea, countEl);
-    if (statusEl) statusEl.textContent = ""; return;
-  }
-  textarea.value = loadQuestionMemo(questionId).slice(0, 255);
-  updateMemoCount(textarea, countEl);
-  if (statusEl) statusEl.textContent = textarea.value ? "保存済み" : "";
-  textarea.oninput = () => {
-    if (textarea.value.length > 255) textarea.value = textarea.value.slice(0, 255);
-    updateMemoCount(textarea, countEl);
-    const saved = saveQuestionMemo(questionId, textarea.value);
-    if (statusEl) statusEl.textContent = saved ? "保存済み" : "保存できませんでした";
-  };
-}
-
-function renderQuestionMemoHtml(q, idPrefix = "modalQuestionMemo") {
-  const safeId = String(q.id || "question").replace(/[^a-zA-Z0-9_-]/g, "-");
-  const textareaId = `${idPrefix}_${safeId}`;
-  const countId = `${textareaId}_count`;
-  const statusId = `${textareaId}_status`;
-  return `<div class="question-memo-box" data-question-memo-id="${escapeHtml(q.id)}"><div class="question-memo-header"><label class="question-memo-label" for="${escapeHtml(textareaId)}">この問題のメモ</label><span class="question-memo-count" id="${escapeHtml(countId)}">0 / 255</span></div><textarea class="question-memo-input" id="${escapeHtml(textareaId)}" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea><div class="question-memo-status" id="${escapeHtml(statusId)}"></div></div>`;
-}
-
-function bindQuestionMemos(root = document) {
-  root.querySelectorAll(".question-memo-box[data-question-memo-id]").forEach(box => {
-    const textarea = box.querySelector(".question-memo-input");
-    const countEl = box.querySelector(".question-memo-count");
-    const statusEl = box.querySelector(".question-memo-status");
-    bindQuestionMemo(textarea, countEl, statusEl, box.dataset.questionMemoId);
-  });
-}
-
-function getPersonById(personId) {
-  if (!personId) return null;
-  return PSYCHOLOGIST_BANK.find(person => person.id === personId) || null;
+  setImageWithFallback(els.dailyEpisodeImage, imageFile, `画像: ${displayName}`);
+  els.dailyEpisodeName.textContent = displayName;
+  els.dailyEpisodeTitle.textContent = episode.title;
+  els.dailyEpisodeText.textContent = episode.text;
 }
 
 function getQuestionCategoryText(q) {
@@ -454,6 +440,7 @@ function isCategoryActive(cat) {
   if (cat.isActive === false) return false;
   if (cat.type === "timeline") return true;
   if (cat.type === "directory") return true;
+  if (cat.type === "episodeDirectory") return typeof EPISODES !== "undefined" && Array.isArray(EPISODES) && EPISODES.length > 0;
   if (cat.type === "review") { const targetCat = CATEGORIES.find(c => c.id === cat.reviewForCategoryId); return getQuestionSetsForCategory(targetCat).length > 0; }
   return getQuestionsForCategory(cat).length > 0;
 }
@@ -482,7 +469,7 @@ function showQuizSetPage(categoryId) {
   });
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.dummyPage.classList.add("hidden"); els.reviewPage.classList.add("hidden");
-  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.setSelectPage.classList.remove("hidden"); window.scrollTo(0, 0);
 }
 
@@ -515,6 +502,25 @@ function formatReviewDate(isoText) {
   return date.toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
+function getReviewSetProgress(log, set) {
+  const total = set && Array.isArray(set.questions) ? set.questions.length : (log?.total || 0);
+  const items = log && Array.isArray(log.items) ? log.items : [];
+  const answered = Math.min(items.length, total);
+  const correct = items.filter(item => item.isCorrect).length;
+  let label = `${correct}/${answered}/${total}問`;
+  let statusClass = "";
+
+  if (total > 0 && answered === total && correct === total) {
+    label = `クリア🎉${label}`;
+    statusClass = "clear";
+  } else if (correct >= 8) {
+    label = `すごい✨${label}`;
+    statusClass = "great";
+  }
+
+  return { label, statusClass };
+}
+
 function showReviewPage(categoryId) {
   const cat = CATEGORIES.find(c => c.id === categoryId);
   const sets = getQuestionSetsForCategory(cat);
@@ -525,18 +531,26 @@ function showReviewPage(categoryId) {
   els.reviewSetList.innerHTML = ""; els.reviewSummary.textContent = ""; els.reviewList.innerHTML = "";
   sets.forEach(set => {
     const log = loadReviewLog(categoryId, set.index);
+    const progress = getReviewSetProgress(log, set);
+    const lockFromSetIndex = LOCKED_REVIEW_SET_RULES[categoryId];
+    const needsUnlock = Number.isInteger(lockFromSetIndex) && set.index >= lockFromSetIndex && !isUnlocked();
     const btn = document.createElement("button"); btn.className = "set-button";
-    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット</span><span class="set-meta">${log ? `${log.items.length}/${log.total}問` : "未実施"}</span>`;
-    btn.addEventListener("click", () => renderReviewLog(categoryId, set.index));
+    if (needsUnlock) btn.classList.add("locked-set");
+    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}</span><span class="set-meta ${progress.statusClass}">${progress.label}</span>`;
+    btn.addEventListener("click", () => {
+      const action = () => renderReviewLog(categoryId, set.index);
+      if (needsUnlock) requestUnlockThen(action); else action();
+    });
     els.reviewSetList.appendChild(btn);
   });
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.dummyPage.classList.add("hidden"); els.setSelectPage.classList.add("hidden");
-  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.reviewPage.classList.remove("hidden"); window.scrollTo(0, 0);
 }
 
 function showReviewSetList() {
+  if (state.currentReviewCategoryId) { showReviewPage(state.currentReviewCategoryId); return; }
   state.currentReviewSetIndex = null; state.currentReviewLog = null; state.currentReviewHistory = [];
   els.reviewDetailView.classList.add("hidden"); els.reviewSetView.classList.remove("hidden");
   els.reviewSummary.textContent = ""; els.reviewList.innerHTML = ""; window.scrollTo(0, 0);
@@ -577,11 +591,28 @@ function getUsedTheoryCategories() {
   return CATEGORIES.filter(cat => cat.type === "quiz" && usedCategoryIds.has(cat.id)).map(cat => ({ id: cat.id, label: cat.title }));
 }
 
+function getDirectoryJokeTab(categoryId) {
+  return DIRECTORY_JOKE_TABS.find(tab => tab.id === categoryId) || null;
+}
+
+function isDirectoryTheoryCategoryLocked(categoryId) {
+  if (getDirectoryJokeTab(categoryId)) return false;
+  if (categoryId === "all") return true;
+  return !UNLOCKED_THEORY_CATEGORY_IDS.has(categoryId);
+}
+
 function renderFilterChips(container, options, activeValue, onSelect) {
   container.innerHTML = "";
   options.forEach(option => {
     const btn = document.createElement("button"); btn.type = "button"; btn.className = `filter-chip ${option.id === activeValue ? "active" : ""}`;
-    btn.textContent = option.label; btn.addEventListener("click", () => onSelect(option.id)); container.appendChild(btn);
+    const needsUnlock = option.locked && !isUnlocked();
+    if (needsUnlock) btn.classList.add("locked-filter");
+    btn.innerHTML = `${option.label}${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}`;
+    btn.addEventListener("click", () => {
+      const action = () => onSelect(option.id);
+      if (needsUnlock) requestUnlockThen(action); else action();
+    });
+    container.appendChild(btn);
   });
 }
 
@@ -589,15 +620,16 @@ function renderDirectoryModeFilters() {
   const isAiueo = state.directoryMode === "aiueo";
   els.directoryKanaPanel.style.display = isAiueo ? "grid" : "none"; els.directoryTheoryPanel.style.display = isAiueo ? "none" : "grid";
   renderFilterChips(els.directoryKanaFilters, KANA_GROUPS, state.directoryKanaGroup, value => { state.directoryKanaGroup = value; renderDirectory(); });
-  renderFilterChips(els.directoryTheoryFilters, [{ id: "all", label: "すべて" }, ...getUsedTheoryCategories()], state.directoryTheoryCategory, value => { state.directoryTheoryCategory = value; renderDirectory(); });
+  const theoryOptions = [{ id: "all", label: "すべて" }, ...DIRECTORY_JOKE_TABS, ...getUsedTheoryCategories()].map(option => ({ ...option, locked: isDirectoryTheoryCategoryLocked(option.id) }));
+  renderFilterChips(els.directoryTheoryFilters, theoryOptions, state.directoryTheoryCategory, value => { state.directoryTheoryCategory = value; renderDirectory(); });
 }
 
 function showDirectoryPage(filterTag = "all", mode = "aiueo") {
-  state.directoryMode = mode; state.directoryKanaGroup = "all"; state.directoryTheoryCategory = "all";
+  state.directoryMode = mode; state.directoryKanaGroup = "all"; state.directoryTheoryCategory = mode === "theoryTimeline" ? "transition" : "all";
   els.directoryHeaderTitle.textContent = getDirectoryModeLabel(mode); els.directoryFilter.value = filterTag;
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.setSelectPage.classList.add("hidden"); els.reviewPage.classList.add("hidden");
-  els.dummyPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.dummyPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.directoryPage.classList.remove("hidden"); renderDirectory(); window.scrollTo(0, 0);
 }
 
@@ -610,7 +642,8 @@ function renderDirectory() {
   if (filterTag !== "all") people = people.filter(person => (person.examTags || []).includes(filterTag));
   if (state.directoryMode === "aiueo" && state.directoryKanaGroup !== "all") people = people.filter(person => getKanaGroupId(person.sortKana) === state.directoryKanaGroup);
   if (state.directoryMode === "theoryTimeline" && state.directoryTheoryCategory !== "all") {
-    const targetPersonIds = new Set(getAllQuestions().filter(q => (q.categoryIds || []).includes(state.directoryTheoryCategory)).map(q => q.psychologistId));
+    const jokeTab = getDirectoryJokeTab(state.directoryTheoryCategory);
+    const targetPersonIds = jokeTab ? new Set(jokeTab.personIds) : new Set(getAllQuestions().filter(q => (q.categoryIds || []).includes(state.directoryTheoryCategory)).map(q => q.psychologistId));
     people = people.filter(person => targetPersonIds.has(person.id));
   }
   if (query) { people = people.filter(person => { const haystack = [person.name, person.displayName, person.en, person.topic, ...(person.images || [])].join(" ").toLowerCase(); return haystack.includes(query); }); }
@@ -624,6 +657,45 @@ function renderDirectory() {
     card.addEventListener("click", () => openPsychologistDetailModal(person));
     card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openPsychologistDetailModal(person); } });
     els.directoryList.appendChild(card);
+  });
+}
+
+function getEpisodeDisplayData(episode) {
+  const person = getPersonById(episode.id);
+  const displayName = episode.name || person?.displayName || person?.name || episode.id;
+  const imageFile = person?.images?.[0] || episode.image || "map.jpg";
+  const sortText = person?.sortKana || EPISODE_SORT_KANA[episode.id] || displayName;
+  return { episode, person, displayName, imageFile, sortText };
+}
+
+function getSortedEpisodes() {
+  if (typeof EPISODES === "undefined" || !Array.isArray(EPISODES)) return [];
+  return EPISODES.map(getEpisodeDisplayData).sort((a, b) => {
+    const nameDiff = a.sortText.localeCompare(b.sortText, "ja");
+    if (nameDiff !== 0) return nameDiff;
+    return a.episode.title.localeCompare(b.episode.title, "ja");
+  });
+}
+
+function showEpisodeDirectoryPage() {
+  els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
+  els.dummyPage.classList.add("hidden"); els.setSelectPage.classList.add("hidden");
+  els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.episodeDirectoryPage.classList.remove("hidden"); renderEpisodeDirectory(); window.scrollTo(0, 0);
+}
+
+function renderEpisodeDirectory() {
+  const episodes = getSortedEpisodes();
+  els.episodeDirectoryCount.textContent = `${episodes.length}件表示`;
+  els.episodeDirectoryList.innerHTML = "";
+  if (!episodes.length) {
+    const empty = document.createElement("div"); empty.className = "dummy-content";
+    empty.innerHTML = "<p>エピソードはまだ登録されていません。</p>"; els.episodeDirectoryList.appendChild(empty); return;
+  }
+  episodes.forEach(item => {
+    const card = document.createElement("details"); card.className = "episode-directory-card";
+    card.innerHTML = `<summary class="episode-directory-summary"><img src="${getImageSrc(item.imageFile)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(item.imageFile)}'" alt="${item.displayName}"><span class="episode-directory-copy"><span class="episode-directory-name">${item.displayName}</span><span class="episode-directory-title">${item.episode.title}</span></span></summary><p class="episode-directory-text">${item.episode.text}</p>`;
+    els.episodeDirectoryList.appendChild(card);
   });
 }
 
@@ -644,7 +716,7 @@ function getTimelineLifespan(item) { return `${item.birth || "?"} - ${item.death
 function showTimelinePage() {
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.dummyPage.classList.add("hidden"); els.setSelectPage.classList.add("hidden");
-  els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden");
+  els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.timelinePage.classList.remove("hidden"); renderTimeline(); window.scrollTo(0, 0);
 }
 
@@ -673,7 +745,7 @@ function startQuiz(categoryId, setIndex = null) {
   state.currentSetStart = selectedSet ? selectedSet.start : null; state.currentSetEnd = selectedSet ? selectedSet.end : null;
   state.deck = selectedSet ? shuffleArray(selectedQuestions) : shuffleArray(selectedQuestions).slice(0, questionLimit);
   els.topPage.classList.add("hidden"); els.dummyPage.classList.add("hidden"); els.setSelectPage.classList.add("hidden");
-  els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
+  els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden"); els.episodeDirectoryPage.classList.add("hidden");
   els.quizPage.classList.remove("hidden"); loadQuestion(); window.scrollTo(0, 0);
 }
 
@@ -794,26 +866,21 @@ function goToNextQuestionOrResult() {
   else { showFinalResult(); }
 }
 
-els.nextButton.addEventListener("click", goToNextQuestionOrResult);
-els.nextButtonTop.addEventListener("click", goToNextQuestionOrResult);
-els.reviewBackToSetsButton.addEventListener("click", showReviewSetList);
-els.reviewPdfButton.addEventListener("click", exportReviewPdf);
-els.directorySearch.addEventListener("input", renderDirectory);
-els.directoryFilter.addEventListener("change", renderDirectory);
-els.timelineExamFilter.addEventListener("change", renderTimeline);
-els.timelineSortOrder.addEventListener("change", renderTimeline);
-els.interruptQuizButton.addEventListener("click", confirmBackToTop);
-els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
+if(els.nextButton) els.nextButton.addEventListener("click", goToNextQuestionOrResult);
+if(els.nextButtonTop) els.nextButtonTop.addEventListener("click", goToNextQuestionOrResult);
+if(els.reviewBackToSetsButton) els.reviewBackToSetsButton.addEventListener("click", showReviewSetList);
+if(els.reviewPdfButton) els.reviewPdfButton.addEventListener("click", exportReviewPdf);
+if(els.directorySearch) els.directorySearch.addEventListener("input", renderDirectory);
+if(els.directoryFilter) els.directoryFilter.addEventListener("change", renderDirectory);
+if(els.timelineExamFilter) els.timelineExamFilter.addEventListener("change", renderTimeline);
+if(els.timelineSortOrder) els.timelineSortOrder.addEventListener("change", renderTimeline);
+if(els.interruptQuizButton) els.interruptQuizButton.addEventListener("click", confirmBackToTop);
+if(els.prevQuestionButton) els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
 
-// 各カテゴリを所属グリッドに描画する関数
 function renderCategoryButtons() {
-  // 古いボタンをクリア
-  els.categoryAccordionGrid.innerHTML = "";
-  els.mapStudyCategoryGrid.innerHTML = "";
-  els.directoryCategoryGrid.innerHTML = "";
-  els.examPrepCategoryGrid.innerHTML = "";
-
+  els.categoryAccordionGrid.innerHTML = ""; els.mapStudyCategoryGrid.innerHTML = ""; els.directoryCategoryGrid.innerHTML = ""; els.examPrepCategoryGrid.innerHTML = "";
   CATEGORIES.forEach(cat => {
+    if (cat.topGroup === "hidden") return;
     const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
     target.appendChild(createCategoryButton(cat));
   });
@@ -822,12 +889,11 @@ function renderCategoryButtons() {
 function createCategoryButton(cat) {
   const active = isCategoryActive(cat);
   const isLocked = LOCKED_CATEGORY_IDS.includes(cat.id);
-  const needsUnlock = isLocked && !isUnlocked(); // ロック対象かつ未解除ならtrue
+  const needsUnlock = isLocked && !isUnlocked();
 
   const btn = document.createElement("button");
   btn.className = "category-button";
   
-  // アクティブかつパスワード解除済み（またはロック対象外）なら通常表示。それ以外はグレーアウト
   if (active && !needsUnlock) {
     btn.classList.add("active-cat");
   } else {
@@ -836,7 +902,6 @@ function createCategoryButton(cat) {
   
   if (cat.accent) btn.classList.add(`${cat.accent}-cat`);
   
-  // ロック対象ならタイトルに鍵マークを追加（解除済みの場合は開いた鍵アイコン）
   let lockIcon = "";
   if (isLocked) {
     lockIcon = needsUnlock 
@@ -850,16 +915,15 @@ function createCategoryButton(cat) {
     const action = () => {
       if (cat.type === "directory" && active) showDirectoryPage("all", cat.directoryMode || "aiueo");
       else if (cat.type === "timeline" && active) showTimelinePage();
+      else if (cat.type === "episodeDirectory" && active) showEpisodeDirectoryPage();
       else if (cat.type === "review" && active) showReviewPage(cat.reviewForCategoryId);
       else if (active && cat.questionLimit && (cat.examTag || cat.questionBankId || cat.questionBankIds)) showQuizSetPage(cat.id);
       else if (active) startQuiz(cat.id);
       else showDummyPage(cat.title);
     };
 
-    // ロック対象かつ未認証なら、アクションを保留してモーダルを開く
     if (needsUnlock) {
-      pendingAction = action;
-      els.passwordModal.classList.add("active");
+      requestUnlockThen(action);
     } else {
       action();
     }
@@ -868,7 +932,7 @@ function createCategoryButton(cat) {
   return btn;
 }
 
-// 開発用の隠しトグルボタン（画面右下に透明で配置）
+// 開発用の隠しトグルボタン
 function createDevToggleButton() {
   const btn = document.createElement("button");
   btn.style.position = "fixed";
@@ -876,21 +940,26 @@ function createDevToggleButton() {
   btn.style.right = "0";
   btn.style.width = "60px";
   btn.style.height = "60px";
-  btn.style.opacity = "0"; // 完全に透明にして隠す
+  btn.style.opacity = "0"; 
   btn.style.zIndex = "9999";
   btn.style.border = "none";
   btn.style.background = "transparent";
-  btn.style.cursor = "default"; // パソコンで触れても指マークにならないようにする
+  btn.style.cursor = "default"; 
   
   btn.addEventListener("click", () => {
     if (isUnlocked()) {
-      // 解除済みならロック状態に戻す
       localStorage.removeItem("pm_unlocked_month");
     } else {
-      // ロック状態なら解除状態にする
       localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
+      if (els.passwordModal) els.passwordModal.classList.remove("active");
+      if (els.membershipPassword) els.membershipPassword.value = "";
+      if (els.passwordError) els.passwordError.style.display = "none";
+      if (pendingAction) {
+        const action = pendingAction;
+        pendingAction = null;
+        action();
+      }
     }
-    // 画面のボタン群を再描画して、グレーアウトや鍵アイコンの表示を更新
     renderCategoryButtons(); 
   });
   
@@ -898,8 +967,11 @@ function createDevToggleButton() {
 }
 
 function initApp() {
+  renderDailyEpisode();
   renderCategoryButtons();
-  createDevToggleButton(); // アプリ初期化時に隠しボタンを追加
+  createDevToggleButton();
+  checkLoginStatus(); // ログイン判定
+  renderCalendar();   // 極小2ヶ月カレンダー描画
   showTopPage();
 }
 
