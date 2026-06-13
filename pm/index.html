@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ninin監修　2026心理学者マップ関連アプリ</title>
+  <title>ninin監修　2026心理学 学習支援サイト</title>
   <!-- 外部のCSSファイルを読み込む -->
   <link rel="stylesheet" href="style.css">
   
@@ -77,18 +77,18 @@
          ========================================= -->
     <section id="topPage">
       <header class="topbar">
-        <div class="brand">
-          <h1>ninin監修　2026心理学者マップ関連アプリ</h1>
+        <div class="brand" style="width: 100%; text-align: center;">
+          <h1>ninin監修　2026心理学 学習支援サイト</h1>
         </div>
       </header>
 
       <div class="category-container">
         
-        <!-- ▼▼ 学習の記録（超極小2ヶ月カレンダー・試験日設定一行化） ▼▼ -->
-        <div id="learningRecordPanel" class="learning-record-panel">
+        <!-- ▼▼ 学習の記録（超極小2ヶ月カレンダー・試験日設定一行化・累計日数追加） ▼▼ -->
+        <div id="learningRecordPanel" class="learning-record-panel" style="margin-bottom: 8px;">
           <div class="record-header">
             <div style="display: flex; align-items: center; gap: 4px;">
-              <div class="record-streak">🔥連続:<span id="streakCountText">1</span>日</div>
+              <div class="record-streak">🔥連続:<span id="streakCountText">1</span>日 <span style="font-size: 0.65rem; color: var(--muted); margin-left: 2px; font-weight: normal;">(累計:<span id="totalCountText">1</span>日)</span></div>
               <div class="record-exam" id="examCountdownText">設定なし</div>
             </div>
             
@@ -111,6 +111,11 @@
             </div>
           </div>
         </div>
+
+        <!-- データ引継ぎボタン -->
+        <button id="saveLoadBtn" class="category-button" style="margin-bottom: 14px; background: #fff; border-color: var(--line); color: var(--teal-dark); justify-content: center; width: 100%;">
+          <span class="cat-icon">📱💻</span><span style="font-weight: bold;">学習データを引き継ぐ (セーブ/ロード)</span><span id="saveLoadLockIcon" style="font-size: 0.8rem; margin-left: 4px;">🔒</span>
+        </button>
         <!-- ▲▲ 学習の記録 ここまで ▲▲ -->
 
         <!-- けー。の吹き出し（カレンダーとエピソードの間） -->

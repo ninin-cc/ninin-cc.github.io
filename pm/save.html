@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>データ引継ぎ - 心理学学習支援サイト</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- データを短く圧縮するためのライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+  <style>
+    .save-container {
+      padding: 24px 16px;
+      background: #fff;
+      border-radius: 12px;
+      margin: 16px;
+      box-shadow: var(--shadow);
+    }
+    .save-title {
+      font-size: 1.1rem;
+      color: var(--teal-dark);
+      margin-top: 0;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .save-description {
+      font-size: 0.85rem;
+      color: var(--ink);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .url-box {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      background: var(--paper);
+      color: var(--muted);
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="icon-button" onclick="window.location.href='index.html'">◀ 戻る</button>
+      <div class="brand" style="width: 100%; text-align: center;">
+        <h1>データ引継ぎ (セーブ/ロード)</h1>
+      </div>
+      <div style="width: 70px;"></div>
+    </header>
+
+    <!-- ▼ セーブモード（URLにデータがない時） ▼ -->
+    <div id="saveModeUI" class="save-container" style="display: none;">
+      <h2 class="save-title">📱 ➡ 💻 データを書き出す</h2>
+      <p class="save-description">
+        現在の学習状況（正誤履歴、カレンダーの記録、問題のメモなど）を他の端末に引き継ぐことができます。<br><br>
+        下のボタンを押して専用のURLをコピーし、PCや別のスマホにメールやLINE等で送って開いてください。
+      </p>
+      <button id="execSaveBtn" class="primary-button" style="margin-bottom: 16px;">専用URLを作成してコピー</button>
+      
+      <div id="saveResultArea" style="display: none;">
+        <p style="font-size: 0.8rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 8px;">✅ コピーしました！</p>
+        <textarea id="shareUrlInput" class="url-box" rows="4" readonly></textarea>
+        <p style="font-size: 0.75rem; color: var(--rose);">※このURLにはあなたの学習データが含まれています。第三者には教えないでください。</p>
+      </div>
+    </div>
+
+    <!-- ▼ ロードモード（URLにデータが含まれている時） ▼ -->
+    <div id="loadModeUI" class="save-container" style="display: none;">
+      <h2 class="save-title">💻 ➡ 📱 データを読み込む</h2>
+      <p class="save-description" style="color: var(--rose); font-weight: bold;">
+        URLから学習データを復元します。<br>
+        ※現在この端末に保存されている学習データはすべて上書きされます！
+      </p>
+      <button id="execLoadBtn" class="primary-button" style="margin-bottom: 12px;">データを復元して再開する</button>
+      <button onclick="window.location.href='index.html'" class="category-button" style="width: 100%; justify-content: center;">キャンセルしてトップに戻る</button>
+    </div>
+
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      
+      if (dataParam) {
+        // ロードモード
+        document.getElementById("loadModeUI").style.display = "block";
+        
+        document.getElementById("execLoadBtn").addEventListener("click", () => {
+          if (confirm("現在の端末の学習データは上書きされます。本当によろしいですか？")) {
+            try {
+              // データの解凍
+              const decompressed = LZString.decompressFromEncodedURIComponent(dataParam);
+              if (!decompressed) throw new Error("解凍失敗");
+              
+              const importedData = JSON.parse(decompressed);
+              
+              // 既存の学習データ(pm_系)を一旦クリアして綺麗にする
+              const keysToRemove = [];
+              for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("pm_") || key.startsWith("pmQuizReview:") || key.startsWith("pmQuestionMemo:")) {
+                  keysToRemove.push(key);
+                }
+              }
+              keysToRemove.forEach(k => localStorage.removeItem(k));
+
+              // 新しいデータをセット
+              for (const key in importedData) {
+                localStorage.setItem(key, importedData[key]);
+              }
+              
+              alert("データの復元が完了しました！トップページに戻ります。");
+              window.location.href = "index.html";
+            } catch (e) {
+              alert("不正なURLデータです。復元できませんでした。");
+            }
+          }
+        });
+      } else {
+        // セーブモード
+        document.getElementById("saveModeUI").style.display = "block";
+        
+        document.getElementById("execSaveBtn").addEventListener("click", () => {
+          const exportData = {};
+          // アプリのデータだけを抽出
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("pm_") || key.startsWith("pmQuizReview:") || key.startsWith("pmQuestionMemo:")) {
+              exportData[key] = localStorage.getItem(key);
+            }
+          }
+          
+          // JSON化して圧縮
+          const jsonStr = JSON.stringify(exportData);
+          const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+          
+          // 現在のURLベースを取得してパラメータを付与
+          const baseUrl = window.location.origin + window.location.pathname;
+          const shareUrl = baseUrl + "?d=" + compressed;
+          
+          // クリップボードへコピー
+          copyToClipboard(shareUrl);
+          
+          document.getElementById("saveResultArea").style.display = "block";
+          document.getElementById("shareUrlInput").value = shareUrl;
+        });
+      }
+
+      // コピー用関数
+      function copyToClipboard(text) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {}).catch(err => { fallbackCopy(text); });
+        } else {
+          fallbackCopy(text);
+        }
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try { document.execCommand('copy'); } catch (err) { alert("コピーに失敗しました。下の枠から手動でコピーしてください。"); }
+        document.body.removeChild(textArea);
+      }
+    });
+  </script>
+</body>
+</html>
