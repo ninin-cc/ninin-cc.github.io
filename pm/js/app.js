@@ -352,9 +352,21 @@ function renderQuestionMemoHtml(q, idPrefix = "modalQuestionMemo") { const safeI
 function bindQuestionMemos(root = document) { root.querySelectorAll(".question-memo-box[data-question-memo-id]").forEach(box => { const textarea = box.querySelector(".question-memo-input"); const countEl = box.querySelector(".question-memo-count"); const statusEl = box.querySelector(".question-memo-status"); bindQuestionMemo(textarea, countEl, statusEl, box.dataset.questionMemoId); }); }
 function getPersonById(personId) { if (!personId) return null; return PSYCHOLOGIST_BANK.find(person => person.id === personId) || null; }
 
-function renderDailyEpisode() {
-  if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return;
-  const episode = EPISODES[Math.floor(Math.random() * EPISODES.length)];
+let dailyEpisodeTimer = null;
+let dailyEpisodeIndex = -1;
+
+function pickDailyEpisodeIndex() {
+  if (typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return -1;
+  if (EPISODES.length === 1) return 0;
+  let nextIndex = dailyEpisodeIndex;
+  while (nextIndex === dailyEpisodeIndex) nextIndex = Math.floor(Math.random() * EPISODES.length);
+  return nextIndex;
+}
+
+function setDailyEpisode(index) {
+  if (index < 0 || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES[index]) return;
+  dailyEpisodeIndex = index;
+  const episode = EPISODES[index];
   const person = getPersonById(episode.id);
   const displayName = episode.name || person?.displayName || person?.name || episode.id;
   const imageFile = person?.images?.[0] || episode.image || "map.jpg";
@@ -363,6 +375,26 @@ function renderDailyEpisode() {
   els.dailyEpisodeName.textContent = displayName;
   els.dailyEpisodeTitle.textContent = episode.title;
   els.dailyEpisodeText.textContent = episode.text;
+}
+
+function slideToNextDailyEpisode() {
+  if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || EPISODES.length < 2) return;
+  const nextIndex = pickDailyEpisodeIndex();
+  els.dailyEpisodeBox.classList.remove("is-sliding-in");
+  els.dailyEpisodeBox.classList.add("is-sliding-out");
+  window.setTimeout(() => {
+    setDailyEpisode(nextIndex);
+    els.dailyEpisodeBox.classList.remove("is-sliding-out");
+    els.dailyEpisodeBox.classList.add("is-sliding-in");
+    window.setTimeout(() => els.dailyEpisodeBox.classList.remove("is-sliding-in"), 380);
+  }, 260);
+}
+
+function renderDailyEpisode() {
+  if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return;
+  setDailyEpisode(pickDailyEpisodeIndex());
+  if (dailyEpisodeTimer) window.clearInterval(dailyEpisodeTimer);
+  dailyEpisodeTimer = window.setInterval(slideToNextDailyEpisode, 5000);
 }
 
 function shouldUseAnswerReviewLayout() {
