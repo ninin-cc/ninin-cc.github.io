@@ -328,6 +328,30 @@ button {
   line-height: 1.65;
 }
 
+#dailyEpisodeBox {
+  overflow: hidden;
+}
+#dailyEpisodeBox summary,
+#dailyEpisodeBox > div {
+  will-change: transform, opacity;
+}
+#dailyEpisodeBox.is-sliding-out summary,
+#dailyEpisodeBox.is-sliding-out > div {
+  animation: dailyEpisodeSlideOut 0.26s ease-in forwards;
+}
+#dailyEpisodeBox.is-sliding-in summary,
+#dailyEpisodeBox.is-sliding-in > div {
+  animation: dailyEpisodeSlideIn 0.34s ease-out both;
+}
+@keyframes dailyEpisodeSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-24px); }
+}
+@keyframes dailyEpisodeSlideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 /* 10問セット選択ページ */
 #setSelectPage { display: flex; flex-direction: column; flex-grow: 1; background: var(--paper); }
 .set-select-content { padding: 16px; }
@@ -665,15 +689,32 @@ button {
 .choice-button:active { transform: scale(0.98); background: var(--paper); }
 
 #feedbackArea { animation: fadeIn 0.3s ease; }
+.feedback-question-card { margin-bottom: 10px; padding: 12px 14px; border-radius: 8px; background: #fff; box-shadow: var(--shadow-soft, var(--shadow)); }
+.feedback-question-label { margin: 0 0 5px; color: var(--teal-dark); font-size: 0.78rem; font-weight: bold; }
+.feedback-question-text { margin: 0; color: var(--ink); font-size: 0.96rem; font-weight: bold; line-height: 1.55; }
+.feedback-result-row { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); gap: 10px; align-items: start; margin-bottom: 10px; }
+.feedback-status-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.feedback-result-icon { display: flex; justify-content: center; margin: 0; }
+.feedback-result-icon img { width: 78px; height: 78px; object-fit: contain; }
 .result-badge { display: inline-block; padding: 6px 16px; border-radius: 999px; font-weight: bold; font-size: 1.1rem; margin-bottom: 8px; }
+.feedback-result-row .result-badge { margin-bottom: 0; align-self: center; white-space: nowrap; }
 .result-badge.correct { background: var(--green); color: #fff; }
 .result-badge.wrong { background: var(--rose); color: #fff; }
 .top-next-button { margin: 10px 0 14px; }
-.user-answer-text { font-size: 0.9rem; font-weight: bold; color: var(--rose); margin-bottom: 16px; line-height: 1.4; }
+.user-answer-text { min-height: 100%; padding: 7px 10px; border-radius: 8px; background: #f8f9fa; font-size: 0.82rem; font-weight: bold; color: var(--ink); line-height: 1.45; align-self: start; }
+.user-answer-label { display: block; margin-bottom: 2px; color: var(--muted); font-size: 0.7rem; line-height: 1.2; }
+.user-answer-choice { color: var(--ink); }
+
+@media (max-width: 380px) {
+  .feedback-result-row { grid-template-columns: 1fr; }
+  .result-badge { width: fit-content; }
+}
 
 .feedback-header { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; background: var(--paper); padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
 .feedback-image { width: 100px; height: 100px; flex-shrink: 0; border-radius: 8px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .feedback-image img { width: 100%; height: 100%; object-fit: contain; padding: 4px; font-size: 0.75rem; color: var(--muted); text-align: center; }
+.feedback-image.is-empty img { display: none; }
+.feedback-image.is-spacer-only { background: transparent; border-color: transparent; }
 .feedback-answer { flex-grow: 1; }
 .answer-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; font-weight: bold; }
 .answer-text { font-size: 1.15rem; font-weight: bold; color: var(--ink); line-height: 1.4; margin-bottom: 8px; }
