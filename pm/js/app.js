@@ -89,7 +89,7 @@ const state = {
   currentQuestionIndex: 0, score: 0, isAnswered: false, deck: [], history: [],
   currentCategory: null, currentSetIndex: null, currentSetStart: null, currentSetEnd: null,
   currentReviewCategoryId: null, currentReviewSetIndex: null, currentReviewLog: null, currentReviewHistory: [],
-  directoryMode: "aiueo", directoryKanaGroup: "all", directoryTheoryCategory: "all",
+  directoryMode: "aiueo", directoryKanaGroup: "all", directoryTheoryCategory: "all", episodeKanaGroup: "all",
   timelineExamFilter: "all", timelineSortOrder: "theory", currentPastExamAnswer: null
 };
 
@@ -102,7 +102,7 @@ const els = {
   reviewBackToSetsButton: document.getElementById("reviewBackToSetsButton"), reviewPdfButton: document.getElementById("reviewPdfButton"),
   reviewSummary: document.getElementById("reviewSummary"), reviewList: document.getElementById("reviewList"),
   directoryPage: document.getElementById("directoryPage"), timelinePage: document.getElementById("timelinePage"),
-  episodeDirectoryPage: document.getElementById("episodeDirectoryPage"), episodeDirectoryCount: document.getElementById("episodeDirectoryCount"),
+  episodeDirectoryPage: document.getElementById("episodeDirectoryPage"), episodeKanaFilters: document.getElementById("episodeKanaFilters"), episodeDirectoryCount: document.getElementById("episodeDirectoryCount"),
   episodeDirectoryList: document.getElementById("episodeDirectoryList"),
   timelineExamFilter: document.getElementById("timelineExamFilter"), timelineSortOrder: document.getElementById("timelineSortOrder"),
   timelineCount: document.getElementById("timelineCount"), timelineList: document.getElementById("timelineList"),
@@ -719,7 +719,50 @@ function getSortedEpisodes() {
   });
 }
 
+function getEpisodePreview(text) {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  return clean.length > 92 ? `${clean.slice(0, 92)}...` : clean;
+}
+
+function getEpisodeMetaQuestion(item) {
+  if (item.person) {
+    const related = getPersonRelatedQuestions(item.person.id);
+    if (related.length) return related[0];
+  }
+  return getAllQuestions().find(q => q.psychologistId === item.episode.id || q.name === item.displayName || q.name === item.episode.name) || null;
+}
+
+function renderEpisodeDirectoryMeta(item) {
+  const q = getEpisodeMetaQuestion(item);
+  const lifespan = q?.lifespan || item.person?.lifespan || "";
+  const birthCountry = q?.birthCountry || q?.birthCountryText;
+  const activeCountry = q?.activeCountry || q?.activeCountryText;
+  const parts = [];
+  if (lifespan) parts.push(`<span class="episode-directory-meta-pill">${escapeHtml(lifespan)}</span>`);
+  if (birthCountry) parts.push(`<span class="episode-directory-meta-pill" title="生まれた国">出生 ${escapeHtml(birthCountry)}</span>`);
+  if (activeCountry) parts.push(`<span class="episode-directory-meta-pill" title="活躍した国">活躍 ${escapeHtml(activeCountry)}</span>`);
+  return parts.length ? `<div class="episode-directory-meta">${parts.join("")}</div>` : "";
+}
+
+function renderRelatedQuestionsHtml(questions, sourceQuestion = null) {
+  if (!questions.length) return `<div class="dummy-content"><p>関連問題はまだ登録されていません。</p></div>`;
+  return questions.map(q => renderPersonQuestionDetail(q, sourceQuestion && q.id === sourceQuestion.id)).join("");
+}
+
+function openEpisodeDetailModal(item) {
+  const person = item.person;
+  const relatedQuestions = person ? getPersonRelatedQuestions(person.id) : [];
+  const tags = person ? (person.examTags || []).map(tag => EXAM_TAG_LABELS[tag]).filter(Boolean) : [];
+  const profileTopic = person ? (person.topic || "") : "エピソードから心理学者・理論のつながりを確認できます。";
+  const profileMeta = person ? (person.en || "") : "";
+  const html = `<div class="person-detail-profile"><img src="${getImageSrc(item.imageFile)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(item.imageFile)}'" alt="${escapeHtml(item.displayName)}"><div><p class="person-detail-name">${escapeHtml(item.displayName)}</p><p class="person-detail-meta">${escapeHtml(profileMeta)}</p><p class="person-detail-topic">${escapeHtml(profileTopic)}</p><div class="tag-row">${tags.map(label => `<span class="mini-tag">${escapeHtml(label)}</span>`).join("")}</div></div></div><div class="episode-detail-box"><p class="episode-detail-title">${escapeHtml(item.episode.title)}</p><p class="episode-detail-text">${escapeHtml(item.episode.text)}</p></div><p class="person-detail-count">関連問題 ${relatedQuestions.length}件</p>${renderRelatedQuestionsHtml(relatedQuestions)}`;
+  document.getElementById("modalBody").innerHTML = html;
+  bindQuestionMemos(document.getElementById("modalBody"));
+  document.getElementById("resultModal").classList.add("active");
+}
+
 function showEpisodeDirectoryPage() {
+  state.episodeKanaGroup = "all";
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
   els.dummyPage.classList.add("hidden"); els.setSelectPage.classList.add("hidden");
   els.reviewPage.classList.add("hidden"); els.directoryPage.classList.add("hidden"); els.timelinePage.classList.add("hidden");
@@ -727,16 +770,21 @@ function showEpisodeDirectoryPage() {
 }
 
 function renderEpisodeDirectory() {
-  const episodes = getSortedEpisodes();
-  els.episodeDirectoryCount.textContent = `${episodes.length}件表示`;
+  const allEpisodes = getSortedEpisodes();
+  renderFilterChips(els.episodeKanaFilters, KANA_GROUPS, state.episodeKanaGroup, value => { state.episodeKanaGroup = value; renderEpisodeDirectory(); });
+  const episodes = state.episodeKanaGroup === "all" ? allEpisodes : allEpisodes.filter(item => getKanaGroupId(item.sortText) === state.episodeKanaGroup);
+  els.episodeDirectoryCount.textContent = `${episodes.length}/${allEpisodes.length}件表示`;
   els.episodeDirectoryList.innerHTML = "";
   if (!episodes.length) {
     const empty = document.createElement("div"); empty.className = "dummy-content";
     empty.innerHTML = "<p>エピソードはまだ登録されていません。</p>"; els.episodeDirectoryList.appendChild(empty); return;
   }
   episodes.forEach(item => {
-    const card = document.createElement("details"); card.className = "episode-directory-card";
-    card.innerHTML = `<summary class="episode-directory-summary"><img src="${getImageSrc(item.imageFile)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(item.imageFile)}'" alt="${item.displayName}"><span class="episode-directory-copy"><span class="episode-directory-name">${item.displayName}</span><span class="episode-directory-title">${item.episode.title}</span></span></summary><p class="episode-directory-text">${item.episode.text}</p>`;
+    const card = document.createElement("article"); card.className = "episode-directory-card"; card.tabIndex = 0;
+    card.setAttribute("role", "button"); card.setAttribute("aria-label", `${item.displayName}のエピソードを開く`);
+    card.innerHTML = `<img src="${getImageSrc(item.imageFile)}" onerror="this.onerror=null;this.src='${getFallbackImageSrc(item.imageFile)}'" alt="${escapeHtml(item.displayName)}"><div class="episode-directory-copy"><div class="episode-directory-heading"><p class="episode-directory-name">${escapeHtml(item.displayName)}</p>${renderEpisodeDirectoryMeta(item)}</div><p class="episode-directory-title">${escapeHtml(item.episode.title)}</p><p class="episode-directory-preview">${escapeHtml(getEpisodePreview(item.episode.text))}</p></div>`;
+    card.addEventListener("click", () => openEpisodeDetailModal(item));
+    card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openEpisodeDetailModal(item); } });
     els.episodeDirectoryList.appendChild(card);
   });
 }
