@@ -645,11 +645,24 @@ function renderFilterChips(container, options, activeValue, onSelect) {
   });
 }
 
+// 🍔とソンを一番後ろにし、転機と意思決定を先頭にする処理
 function renderDirectoryModeFilters() {
   const isAiueo = state.directoryMode === "aiueo";
   els.directoryKanaPanel.style.display = isAiueo ? "grid" : "none"; els.directoryTheoryPanel.style.display = isAiueo ? "none" : "grid";
   renderFilterChips(els.directoryKanaFilters, KANA_GROUPS, state.directoryKanaGroup, value => { state.directoryKanaGroup = value; renderDirectory(); });
-  const theoryOptions = [{ id: "all", label: "すべて" }, ...DIRECTORY_JOKE_TABS, ...getUsedTheoryCategories()].map(option => ({ ...option, locked: isDirectoryTheoryCategoryLocked(option.id) }));
+  
+  let theoryCats = getUsedTheoryCategories();
+  const topIds = ["transition", "decision"];
+  const topCats = topIds.map(id => theoryCats.find(c => c.id === id)).filter(Boolean);
+  const otherCats = theoryCats.filter(c => !topIds.includes(c.id) && c.id !== "originalAcademic");
+  
+  const theoryOptions = [
+    { id: "all", label: "すべて" }, 
+    ...topCats, 
+    ...otherCats, 
+    ...DIRECTORY_JOKE_TABS
+  ].map(option => ({ ...option, locked: isDirectoryTheoryCategoryLocked(option.id) }));
+  
   renderFilterChips(els.directoryTheoryFilters, theoryOptions, state.directoryTheoryCategory, value => { state.directoryTheoryCategory = value; renderDirectory(); });
 }
 
