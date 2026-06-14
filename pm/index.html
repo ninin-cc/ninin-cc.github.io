@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>合同会社ninin監修　2026心理学 学習支援サイト</title>
+  <script>
+    window.__cqLoadStartedAt = Date.now();
+  </script>
+
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Z1T35THNDV');
+  </script>
+  <style>
+    /* =========================================
+       心理学者マップのプロモーション用スタイル
+       ========================================= */
+    .map-promo-container {
+      display: block; position: relative; width: 100%; max-width: 320px; margin: 0 auto;
+      aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 6px 20px rgba(15, 118, 110, 0.15); border: 2px solid var(--teal);
+      text-decoration: none; background: #fff; -webkit-tap-highlight-color: transparent;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .map-promo-container:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(15, 118, 110, 0.1); }
+    .map-promo-image-layer, .map-promo-katsuyou-layer, .map-promo-text-layer {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 16px;
+      animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: ease-in-out;
+    }
+    @keyframes fadeImage { 0%, 28% { opacity: 1; visibility: visible; } 33%, 95% { opacity: 0; visibility: hidden; } 100% { opacity: 1; visibility: visible; } }
+    @keyframes fadeKatsuyou { 0%, 28% { opacity: 0; visibility: hidden; } 33%, 61% { opacity: 1; visibility: visible; } 66%, 100% { opacity: 0; visibility: hidden; } }
+    @keyframes fadeText { 0%, 61% { opacity: 0; visibility: hidden; } 66%, 95% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+    .map-promo-image-layer { background-image: url("img/map.jpg"); background-position: center; background-size: cover; animation-name: fadeImage; }
+    .map-promo-katsuyou-layer { background-image: url("img/katsuyou.jpg"); background-position: center; background-size: cover; animation-name: fadeKatsuyou; }
+    .map-promo-image-layer::after { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.15); }
+    .map-promo-image-layer b { position: relative; z-index: 1; color: var(--teal-dark); font-size: 1.15rem; background: rgba(255, 255, 255, 0.95); padding: 8px 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); }
+    .map-promo-text-layer { background: #f0fdfa; animation-name: fadeText; text-align: left; }
+    .map-promo-text-content { width: 100%; color: var(--ink); font-size: 0.8rem; line-height: 1.5; }
+    .map-promo-text-content b { color: var(--teal-dark); display: block; margin-bottom: 6px; font-size: 0.9rem; border-bottom: 1px dashed #99f6e4; padding-bottom: 4px; }
+    .promo-buy-button { display: block; margin-top: 10px; padding: 8px; background: var(--amber); color: #fff; text-align: center; border-radius: 8px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3); }
+
+    /* =========================================
+       学習の記録（極小2ヶ月カレンダー・ストリーク）用
+       ========================================= */
+    .learning-record-panel {
+      background: #fff; border: 1px solid var(--teal); border-radius: 12px;
+      margin-bottom: 16px; padding: 8px 10px; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; flex-wrap: wrap; gap: 4px; }
+    .record-streak { font-size: 0.75rem; font-weight: bold; color: var(--teal-dark); display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+    .record-exam { font-size: 0.7rem; font-weight: bold; color: var(--rose); background: #fff1f2; padding: 2px 6px; border-radius: 999px; white-space: nowrap; }
+
+    /* 超極小2ヶ月並びカレンダー */
+    .two-month-container { display: flex; gap: 6px; }
+    .month-wrapper { flex: 1; min-width: 0; }
+    .month-label { text-align: center; font-size: 0.65rem; font-weight: bold; margin-bottom: 2px; color: var(--ink); }
+    .mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+    .mini-calendar-day-header { text-align: center; font-size: 0.4rem; color: var(--muted); font-weight: bold; padding: 1px 0; }
+    .mini-calendar-cell { 
+      display: flex; flex-direction: column; align-items: center; justify-content: center; 
+      font-size: 0.45rem; border-radius: 2px; background: var(--paper); position: relative; padding: 2px 0; 
+    }
+    .mini-calendar-cell.empty { background: transparent; }
+    .mini-calendar-cell.today { font-weight: bold; border: 1px solid var(--teal); color: var(--teal-dark); background: #f0fdfa; }
+    .mini-calendar-cell.logged { background: #fef3c7; color: #b45309; font-weight: bold; border: 1px solid #fde68a; }
+    .mini-calendar-cell.logged::after { content: "✨"; position: absolute; font-size: 0.4rem; top: -2px; right: -2px; opacity: 0.9; }
+    .mini-calendar-cell.exam-date { background: #fff1f2; color: #be123c; font-weight: bold; border: 1px solid #fecdd3; }
+    .mini-calendar-cell.exam-date::after { content: "🎯"; position: absolute; font-size: 0.4rem; top: -2px; right: -2px; }
+    
+    .exam-setting-row { display: flex; gap: 4px; align-items: center; margin: 0; padding: 0; border: none; }
+    .exam-date-input { width: 90px; padding: 2px; font-size: 0.65rem; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; }
+    .exam-date-btn { background: var(--teal); color: #fff; border: none; border-radius: 4px; padding: 2px 6px; font-weight: bold; font-size: 0.65rem; cursor: pointer; transition: transform 0.1s, background 0.1s; white-space: nowrap; }
+    .exam-date-btn:active { transform: scale(0.95); background: var(--teal-dark); }
+  </style>
+  <!-- 外部のCSSファイルを読み込む -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+
+    <!-- =========================================
+         TOPページ（カテゴリ選択画面）
+         ========================================= -->
+    <section id="topPage">
+      <header class="topbar">
+        <div class="brand" style="width: 100%; text-align: center;">
+          <h1>合同会社ninin監修　2026心理学 学習支援サイト</h1>
+        </div>
+      </header>
+
+      <div class="category-container">
+        <div class="top-responsive-grid">
+          <div class="top-responsive-column top-responsive-column-left">
+        
+        <!-- ▼▼ 学習の記録（超極小2ヶ月カレンダー・試験日設定一行化・累計日数追加） ▼▼ -->
+        <div id="learningRecordPanel" class="learning-record-panel" style="margin-bottom: 8px;">
+          <div class="record-header">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <div class="record-streak">🔥連続:<span id="streakCountText">1</span>日 <span style="font-size: 0.65rem; color: var(--muted); margin-left: 2px; font-weight: normal;">(累計:<span id="totalCountText">1</span>日)</span></div>
+              <div class="record-exam" id="examCountdownText">設定なし</div>
+            </div>
+            
+            <!-- トップからの試験日直接設定を一行に配置 -->
+            <div class="exam-setting-row">
+              <input type="date" id="topExamDateInput" class="exam-date-input">
+              <button id="saveTopExamDateBtn" class="exam-date-btn">保存</button>
+            </div>
+          </div>
+          
+          <!-- 超極小カレンダー2ヶ月分 -->
+          <div class="two-month-container">
+            <div class="month-wrapper">
+              <div class="month-label" id="thisMonthLabel"></div>
+              <div class="mini-calendar-grid" id="thisMonthGrid"></div>
+            </div>
+            <div class="month-wrapper">
+              <div class="month-label" id="nextMonthLabel"></div>
+              <div class="mini-calendar-grid" id="nextMonthGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- データ引継ぎボタン -->
+        <button id="saveLoadBtn" class="category-button" style="margin-bottom: 14px; background: #fff; border-color: var(--line); color: var(--teal-dark); justify-content: center; width: 100%;">
+          <span class="cat-icon">📱💻</span><span style="font-weight: bold;">学習データを引き継ぐ (セーブ/ロード)</span><span id="saveLoadLockIcon" style="font-size: 0.8rem; margin-left: 4px;">🔒</span>
+        </button>
+        <!-- ▲▲ 学習の記録 ここまで ▲▲ -->
+
+        <!-- けー。の吹き出し（カレンダーとエピソードの間） -->
+        <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
+          <div class="talk-row left">
+            <div class="talk-character-wrap">
+              <img class="talk-character" src="cimg/k2.png" alt="けー。">
+              <span class="talk-character-label">けー。</span>
+            </div>
+            <div class="talk-bubble">
+              <p class="talk-message">楽しく心理学者や理論を学んでいきましょう♪</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日の心理学者エピソード -->
+        <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+          <p class="top-category-title section-heading-band section-heading-brand">
+            <span class="section-number">①</span>
+            <span style="font-size: 1.2rem;">📖</span>
+            <span>今日の心理学者エピソード</span>
+          </p>
+          <details class="extended-explanation-box" style="margin-top: 0; border: 1px solid var(--teal); background: #f0fdfa;" id="dailyEpisodeBox">
+            <summary style="padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;">
+              <img id="dailyEpisodeImage" src="" alt="心理学者" style="width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; background: var(--paper);">
+              <div style="flex-grow: 1; line-height: 1.3;">
+                <div id="dailyEpisodeName" style="font-size: 0.75rem; color: var(--muted); margin-bottom: 2px;"></div>
+                <div id="dailyEpisodeTitle" style="font-size: 0.9rem; font-weight: bold; color: var(--teal-dark);">エピソードを準備中です</div>
+              </div>
+            </summary>
+            <div style="padding: 0 12px 12px; background: #fff; border-top: 1px dashed var(--teal);">
+              <p id="dailyEpisodeText" style="font-size: 0.85rem; line-height: 1.6; color: var(--ink); margin: 12px 0 0;"></p>
+            </div>
+          </details>
+        </section>
+
+        <!-- ▼▼ 面談実技支援用 無料note記事のご紹介 ▼▼ -->
+        <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+          <details class="extended-explanation-box note-article-box" id="noteArticleBox" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
+            <summary class="top-category-title section-heading-band section-heading-accent" style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
+              <span class="section-number">②</span>
+              <span style="font-size: 1.2rem;">🎤</span>
+              面談実技支援用 無料note記事
+            </summary>
+            <div style="padding: 12px; background: #f8fafc; border-top: 1px dashed var(--teal);">
+              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                <li>
+                  <a href="https://note.com/ninin2025/n/nec8404799ee7" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>自分のクセを診断してみませんか？</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://note.com/ninin2025/n/n8cc24a8861a3" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>沈黙って怖いですか？</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://note.com/ninin2025/n/nac443d58bc98" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>面談力をあげる【一人練習】って？</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://note.com/ninin2025/n/ndbc598eb99e2" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>【重い話】に備える？</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://note.com/ninin2025/n/n6c6dccfabb28" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>【振り返り】が合否を決める。</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://note.com/ninin2025/n/na45d61cf78e6" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>事例検討【３つの逐語記録】</span>
+                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </details>
+          <p style="font-size: 0.75rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.4;">
+            沈黙の扱い方、一人での練習のしかた、また本番での落とし穴への対策などを紹介しています。
+          </p>
+        </section>
+        <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
+
+        <!-- 社会情勢・法制関連問題 -->
+        <section class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
+          <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>社会情勢・法制関連問題</p>
+          <div class="category-grid" id="socialLegalCategoryGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </section>
+
+          </div>
+          <div class="top-responsive-column top-responsive-column-right">
+
+        <section class="top-category-section membership-intro-section" aria-label="メンバーシップのご紹介" style="margin-bottom: 14px; background: var(--accent-soft); border-color: rgba(183, 110, 53, 0.28);">
+          <p class="top-category-title section-heading-band section-heading-accent" style="margin-bottom: 10px;">
+            <span style="font-size: 1.15rem;">🤝</span>
+            メンバーシップのご紹介
+          </p>
+          <p style="font-size: 0.86rem; color: var(--ink); line-height: 1.65; margin: 0 0 10px;">
+            メンバーシップでパスワードを毎月お知らせしています。パスワードを入れると法制度年表のPDF出力機能、オリジナル問題などをフル機能でご利用いただけます。直前の3か月だけの加入でも合計1500円と非常にお得です。
+          </p>
+          <a href="https://note.com/ninin2025/membership" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0; width: 100%; text-decoration: none;">
+            メンバーシップを見る（月額500円）
+          </a>
+        </section>
+
+        <!-- マップ理解補助問題 -->
+        <section class="top-category-section map-study-section" aria-label="マップ理解補助問題">
+          <p class="top-category-title section-heading-band"><span class="section-number">④</span><span>🧭</span>マップ理解補助問題</p>
+          <div class="category-grid" id="mapStudyCategoryGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+          <div class="note-link-area">
+            
+            <!-- 交互に切り替わるプロモーションコンテナ -->
+            <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="map-promo-container">
+              <!-- 画像レイヤー -->
+              <div class="map-promo-image-layer">
+                <b>心理学者マップ</b>
+              </div>
+              <div class="map-promo-katsuyou-layer" aria-hidden="true"></div>
+              <!-- テキスト説明レイヤー -->
+              <div class="map-promo-text-layer">
+                <div class="map-promo-text-content">
+                  <b>💡pointは…<br>🕦時系列×📍二次元配置×👦人の顔！</b>
+                  脳科学的に記憶に定着しやすい「位置情報 × 関係性」と「顔のある情報」で脳の顔認知野（FFA）を刺激。<br>
+                  だから、“誰がどの理論を唱えたか”が自然に覚えられるんです✨
+                  <div class="promo-buy-button">割引価格で購入してみる？<br><del style="font-size: 0.85em; opacity: 0.8;">2,980円</del> → 1,980円</div>
+                </div>
+              </div>
+            </a>
+
+            <p class="note-link-caption" style="margin-top: 12px;">【広告】理論家同士のつながりを一枚で見たい方へ</p>
+          </div>
+        </section>
+
+        <!-- サポさんの吹き出し（マップ理解補助問題の下に移動） -->
+        <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
+          <div class="talk-row right">
+            <div class="talk-bubble">
+              <p class="talk-message">学科試験対策になるし、理論を知ることは相談者さんの支援のためになるさぽー✨</p>
+            </div>
+            <div class="talk-character-wrap">
+              <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
+              <span class="talk-character-label">サポさん</span>
+            </div>
+          </div>
+        </div>
+
+        <section class="top-category-section directory-section" aria-label="心理学者一覧">
+          <p class="top-category-title section-heading-band section-heading-brand"><span class="section-number">⑤</span><span>🔎</span>心理学者一覧</p>
+          <div class="category-grid" id="directoryCategoryGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </section>
+
+        <section class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
+          <p class="top-category-title section-heading-band"><span class="section-number">⑥</span><span>📝</span>キャリコン学科試験対策</p>
+          <div class="category-grid" id="examPrepCategoryGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </section>
+
+        <!-- ▼▼ 資格を取ったら、活動しよう！ ▼▼ -->
+        <section class="top-category-section" style="margin-top: 14px; background: #fff; border-color: var(--line);" aria-label="資格を取ったら、活動しよう！">
+          <p class="top-category-title"><span>🌱</span>資格を取ったら、活動しよう！</p>
+          
+          <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
+            <div class="talk-row left">
+              <div class="talk-character-wrap">
+                <img class="talk-character" src="cimg/k2.png" alt="けー。">
+                <span class="talk-character-label">けー。</span>
+              </div>
+              <div class="talk-bubble">
+                <p class="talk-message">活動の最初の一歩は…人に届ける準備をすることです♪</p>
+              </div>
+            </div>
+            
+            <div class="talk-row right">
+              <div class="talk-bubble">
+                <p class="talk-message">nininではアプリで集客をお手伝いするメンバーシップもやってるみたいなんさぽ。興味があったら行ってみるといいさぽー。</p>
+              </div>
+              <div class="talk-character-wrap">
+                <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
+                <span class="talk-character-label">サポさん</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="note-link-area" style="padding-bottom: 0;">
+            <a href="https://note.com/ninin2025/membership/" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0 auto 8px; width: 100%;">
+              【たべラボ】心の支援を届けたいあなたへ
+            </a>
+            <p style="font-size: 0.8rem; color: var(--ink); line-height: 1.5; font-weight: bold; margin: 0 0 4px; text-align: center;">
+              【スローガン：心のサポートを 日本の日常に】
+            </p>
+            <p style="font-size: 0.75rem; color: var(--muted); margin: 0; text-align: center;">
+              ～支援者が活躍する事が、社会に心理支援を届ける事～
+            </p>
+          </div>
+        </section>
+        <!-- ▲▲ 資格を取ったら、活動しよう！ ここまで ▲▲ -->
+
+        <details class="category-accordion hidden">
+          <summary>その他の分野</summary>
+          <div class="category-grid" id="categoryAccordionGrid">
+            <!-- JSで動的に生成されます -->
+          </div>
+        </details>
+          </div>
+        </div>
+      </div>
+
+      <footer class="top-footer">
+        <div>©2026 ninin consulting＆counseling</div>
+        <a href="../index.html">トップへ</a>
+      </footer>
+    </section>
+
+    <!-- =========================================
+         ダミーページ（準備中画面）
+         ========================================= -->
+    <section id="dummyPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="dummyHeaderTitle">カテゴリ名</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+      
+      <div class="dummy-content">
+        <div class="dummy-icon">🚧</div>
+        <h2>問題作成中</h2>
+        <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
+        <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
+      </div>
+    </section>
+
+    <!-- =========================================
+         10問セット選択ページ
+         ========================================= -->
+    <section id="setSelectPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="setSelectHeaderTitle">問題セット選択</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="set-select-content">
+        <div class="set-list" id="quizSetList"></div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         頻出問題の振返りページ
+         ========================================= -->
+    <section id="reviewPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="reviewHeaderTitle">振返り</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="review-content">
+        <div id="reviewSetView">
+          <div id="reviewSetGuide" class="review-empty">確認したいセットを選んでください。</div>
+          <div class="review-set-list" id="reviewSetList"></div>
+        </div>
+        <div id="reviewDetailView" class="hidden">
+          <div class="review-detail-actions">
+            <button type="button" class="question-action-button" id="reviewBackToSetsButton">セット一覧へ戻る</button>
+            <button type="button" class="question-action-button pdf-export-button" id="reviewPdfButton">PDFで振り返り出力</button>
+          </div>
+          <div id="reviewSummary" class="directory-count"></div>
+          <ul class="review-list" id="reviewList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         心理学者一覧ページ（五十音順・タグ絞り込み）
+         ========================================= -->
+    <section id="directoryPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="directoryHeaderTitle">心理学者一覧</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="directory-toolbar">
+        <input id="directorySearch" type="search" placeholder="人物名・理論・画像名で検索">
+        <select id="directoryFilter">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリア関連頻出</option>
+          <option value="industrialCounselor">産業保健領域頻出</option>
+        </select>
+        <div class="directory-filter-panel" id="directoryKanaPanel">
+          <div class="filter-chip-row" id="directoryKanaFilters"></div>
+        </div>
+        <div class="directory-filter-panel" id="directoryTheoryPanel">
+          <div class="filter-chip-row" id="directoryTheoryFilters"></div>
+        </div>
+        <div class="directory-count" id="directoryCount"></div>
+      </div>
+
+      <div class="directory-list" id="directoryList"></div>
+    </section>
+
+    <!-- =========================================
+         心理学者タイムライン
+         ========================================= -->
+    <section id="timelinePage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1>心理学者タイムライン</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="timeline-toolbar">
+        <select id="timelineExamFilter" aria-label="受験頻出フィルター">
+          <option value="all">すべて表示</option>
+          <option value="careerConsultant">キャリア関連頻出</option>
+          <option value="industrialCounselor">産業保健領域頻出</option>
+        </select>
+        <select id="timelineSortOrder" aria-label="並び順">
+          <option value="theory">理論発表年順</option>
+          <option value="birth">生年順</option>
+          <option value="theme">理論カテゴリ順</option>
+        </select>
+      </div>
+      <div class="timeline-count" id="timelineCount"></div>
+      <div class="timeline-list" id="timelineList"></div>
+    </section>
+
+    <!-- =========================================
+         心理学者エピソード一覧
+         ========================================= -->
+    <section id="episodeDirectoryPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
+        <div class="brand">
+          <h1>心理学者エピソード一覧</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="episode-list-toolbar">
+        <div class="filter-chip-row" id="episodeKanaFilters"></div>
+        <div class="directory-count" id="episodeDirectoryCount"></div>
+      </div>
+      <div class="episode-directory-list" id="episodeDirectoryList"></div>
+    </section>
+
+    <!-- =========================================
+         クイズページ（キャリア理論等）
+         ========================================= -->
+    <section id="quizPage" class="hidden">
+      <header class="topbar">
+        <button class="icon-button" onclick="confirmBackToTop()">◀ 戻る</button>
+        <div class="brand">
+          <h1 id="quizHeaderTitle">キャリア理論</h1>
+        </div>
+        <div style="width: 70px;"></div>
+      </header>
+
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 10問</div>
+      </div>
+
+      <div class="quiz-container">
+        <div id="questionArea">
+          <div class="question-kicker" id="questionKicker">第1問</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="question-action-row">
+            <button type="button" class="question-action-button danger" id="interruptQuizButton">中断して戻る</button>
+            <button type="button" class="question-action-button" id="prevQuestionButton">1問前に戻る</button>
+          </div>
+          <div class="choice-grid" id="choices"></div>
+        </div>
+
+        <div class="hidden" id="feedbackArea">
+          <div class="feedback-question-card" id="feedbackQuestionBlock" style="display: none;">
+            <p class="feedback-question-label">問題文</p>
+            <p class="feedback-question-text" id="feedbackQuestionText"></p>
+          </div>
+          <div class="feedback-result-row">
+            <div class="feedback-status-block">
+              <div class="feedback-result-icon" id="feedbackResultIcon" style="display: none;">
+                <img id="feedbackResultIconImage" src="" alt="">
+              </div>
+              <div id="resultBadge" class="result-badge"></div>
+            </div>
+            <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
+          </div>
+          <button class="primary-button top-next-button" id="nextButtonTop">次の問題へ</button>
+          
+          <div class="feedback-header">
+            <div class="feedback-image">
+              <img id="feedbackImage" src="" alt="画像">
+            </div>
+            <div class="feedback-answer">
+              <div class="answer-label">正答</div>
+              <div class="answer-text" id="answerText"></div>
+              <div><span class="psychologist-name" id="psychologistName"></span></div>
+              <div class="psychologist-meta" id="psychologistMeta"></div>
+            </div>
+          </div>
+
+          <div class="feedback-body">
+            <p class="explanation-title">解説・ポイント</p>
+            <p class="explanation-text" id="explanationText"></p>
+            <details class="extended-explanation-box" id="extendedExplanationBox">
+              <summary id="extendedExplanationTitle">詳しい解説を読む</summary>
+              <div class="extended-explanation-text" id="extendedExplanationText"></div>
+            </details>
+            <div class="question-memo-box" id="questionMemoBox">
+              <div class="question-memo-header">
+                <label class="question-memo-label" for="questionMemoInput">この問題のメモ</label>
+                <span class="question-memo-count" id="questionMemoCount">0 / 255</span>
+              </div>
+              <textarea class="question-memo-input" id="questionMemoInput" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea>
+              <div class="question-memo-status" id="questionMemoStatus"></div>
+            </div>
+            <div class="person-detail-action" id="psychologistDetailAction"></div>
+          </div>
+
+          <div class="works-box" id="worksBox">
+            <p class="works-title">📚 主な理論・著作の変遷</p>
+            <ul class="works-list" id="worksList"></ul>
+          </div>
+
+          <!-- 過去問エリア -->
+          <div class="past-exam-box" id="pastExamBox">
+            <div class="past-exam-header" onclick="togglePastExam('quizPastExam')">
+                <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
+                <span class="past-exam-toggle-icon">▼</span>
+            </div>
+            <div class="past-exam-content">
+                <p class="past-exam-question" id="pastExamQuestion"></p>
+                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
+                <ul class="past-exam-options" id="pastExamOptions"></ul>
+            </div>
+          </div>
+
+          <button class="primary-button" id="nextButton">次の問題へ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         モーダル（ポップアップ）群
+         ========================================= -->
+    <!-- 結果表示用モーダル -->
+    <div id="resultModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+
+    <!-- パスワードロック用モーダル -->
+    <div id="passwordModal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <button type="button" class="modal-close" id="closePasswordModalBtn">×</button>
+        <div class="dummy-icon" style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
+        <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--teal-dark);">メンバー限定コンテンツ</h2>
+        <p style="font-size: 0.9rem; color: var(--ink); line-height: 1.5; margin-bottom: 20px;">
+          ここから先は、noteメンバーシップ限定のコンテンツです。<br>今月のパスワードを入力してください。
+        </p>
+        <input type="text" id="membershipPassword" placeholder="今月のパスワード" style="width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; margin-bottom: 16px; text-align: center;">
+        <p id="passwordError" style="color: var(--rose); font-size: 0.8rem; margin-top: -8px; margin-bottom: 16px; display: none; font-weight: bold;">パスワードが違います</p>
+        <button class="primary-button" id="verifyPasswordButton" style="margin-bottom: 12px;">ロックを解除する</button>
+        <a href="https://note.com/ninin2025/membership" target="_blank" style="display: block; font-size: 0.85rem; color: var(--teal); font-weight: bold; text-decoration: underline;">メンバーシップについて（月額500円）</a>
+      </div>
+    </div>
+
+    <!-- ▼▼ おかえりなさいモーダル ▼▼ -->
+    <div id="welcomeBackModal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 320px; text-align: center; padding: 24px;">
+        <button class="modal-close" id="closeWelcomeBackBtn">×</button>
+        <img src="cimg/s1.png" alt="サポさん" style="width: 80px; margin: 0 auto 12px; display: block;">
+        <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--teal-dark);">おかえりなさい！</h2>
+        <p style="font-size: 0.9rem; color: var(--ink); line-height: 1.5; margin-bottom: 20px;">
+          おかえりなさい、<br>また一緒に学びましょうね✨
+        </p>
+        <button class="primary-button" onclick="document.getElementById('welcomeBackModal').classList.remove('active')">学習をスタート</button>
+      </div>
+    </div>
+
+  </main>
+  
+  <section class="print-report" id="printReport" aria-hidden="true"></section>
+
+  <!-- =========================================
+       外部データ・スクリプトの読み込み
+       ========================================= -->
+  <script src="data/psychologists.js"></script>
+  <script src="data/questions-career.js"></script>
+  <script src="data/questions-original-exam.js"></script>
+  <script src="data/syakai.js"></script>
+  <script src="data/question-banks.js"></script>
+  
+  <script src="data/timeline.js"></script>
+  <script src="data/episodes.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      document.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+      });
+      document.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+      });
+      document.addEventListener('keydown', function (event) {
+        const key = String(event.key || '').toLowerCase();
+        const isCommand = event.ctrlKey || event.metaKey;
+        const blocksCommand = isCommand && (
+          key === 'u' ||
+          key === 's' ||
+          (event.shiftKey && (key === 'i' || key === 'j' || key === 'c'))
+        );
+        const blocksDevtool = event.key === 'F12';
+        if (blocksCommand || blocksDevtool) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    })();
+  </script>
+</body>
+</html>
