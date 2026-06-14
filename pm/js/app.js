@@ -16,6 +16,7 @@ const CATEGORIES = [
   { id: "originalAcademicReview", title: "オリジナル学科問題振返り", icon: "↩", type: "review", reviewForCategoryId: "originalAcademic", topGroup: "examPrep", isActive: true, accent: "original" },
   { id: "socialLegal", title: "社会情勢・法制関連問題", icon: "⚖️", type: "quiz", questionBankId: "socialLegal", questionLimit: 10, topGroup: "socialLegal", isActive: true, reviewable: true, accent: "original" },
   { id: "socialLegalReview", title: "社会情勢・法制関連問題振返り", icon: "↩", type: "review", reviewForCategoryId: "socialLegal", topGroup: "socialLegal", isActive: true, accent: "original" },
+  { id: "socialLegalTimeline", title: "心理学者・社会情勢法制年表", icon: "🗓️", type: "externalLink", href: "housei.html", topGroup: "socialLegal", isActive: true, accent: "original", previewImage: "img/nenpyo.jpg", description: "心理学理論と社会情勢・法制度の流れを横断して確認" },
   { id: "career", title: "キャリア理論", icon: "🛤️", type: "quiz", questionBankId: "career", questionLimit: 10, topGroup: "accordion", isActive: true },
   { id: "cbt", title: "認知行動療法", icon: "🧠", type: "quiz", questionBankId: "cbt", topGroup: "accordion", isActive: true },
   { id: "counseling", title: "カウンセリング理論", icon: "🗣️", type: "quiz", questionBankId: "counseling", topGroup: "accordion", isActive: true },
@@ -45,15 +46,14 @@ const ROOT_IMAGE_FILES = new Set([]);
 const CURRENT_MONTH_PASSWORD = "ninin"; 
 
 const LOCKED_CATEGORY_IDS = [
-  "industrialFrequent",
-  "industrialFrequentReview",
   "timeline",
   "episodeDirectory",
   "originalAcademic",
   "originalAcademicReview"
 ];
 
-const LOCKED_REVIEW_SET_RULES = { careerFrequent: 3 };
+const LOCKED_QUIZ_SET_RULES = { industrialFrequent: 3 };
+const LOCKED_REVIEW_SET_RULES = { careerFrequent: 3, industrialFrequent: 3 };
 const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
 const DIRECTORY_JOKE_TABS = [
@@ -357,6 +357,9 @@ let dailyEpisodeIndex = -1;
 let dailyEpisodePaused = false;
 let dailyEpisodeIsAnimating = false;
 let dailyEpisodeControlsBound = false;
+let dailyEpisodeDesktopQuery = null;
+let topDetailsDesktopQuery = null;
+let topDetailsControlsBound = false;
 
 function pickDailyEpisodeIndex() {
   if (typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return -1;
@@ -441,10 +444,40 @@ function bindDailyEpisodeControls() {
     els.dailyEpisodeBox.classList.remove("is-paused");
     scheduleDailyEpisodeSlide();
   });
+  dailyEpisodeDesktopQuery = window.matchMedia("(min-width: 980px)");
+  const syncDailyEpisodeDesktopOpen = () => {
+    if (dailyEpisodeDesktopQuery.matches && !els.dailyEpisodeBox.open) {
+      els.dailyEpisodeBox.open = true;
+    }
+  };
+  syncDailyEpisodeDesktopOpen();
+  if (dailyEpisodeDesktopQuery.addEventListener) {
+    dailyEpisodeDesktopQuery.addEventListener("change", syncDailyEpisodeDesktopOpen);
+  } else if (dailyEpisodeDesktopQuery.addListener) {
+    dailyEpisodeDesktopQuery.addListener(syncDailyEpisodeDesktopOpen);
+  }
+}
+
+function bindTopResponsiveDetails() {
+  if (topDetailsControlsBound) return;
+  const noteArticleBox = document.getElementById("noteArticleBox");
+  if (!noteArticleBox) return;
+  topDetailsControlsBound = true;
+  topDetailsDesktopQuery = window.matchMedia("(min-width: 980px)");
+  const syncTopResponsiveDetails = () => {
+    noteArticleBox.open = topDetailsDesktopQuery.matches;
+  };
+  syncTopResponsiveDetails();
+  if (topDetailsDesktopQuery.addEventListener) {
+    topDetailsDesktopQuery.addEventListener("change", syncTopResponsiveDetails);
+  } else if (topDetailsDesktopQuery.addListener) {
+    topDetailsDesktopQuery.addListener(syncTopResponsiveDetails);
+  }
 }
 
 function renderDailyEpisode() {
   if (!els.dailyEpisodeBox || typeof EPISODES === "undefined" || !Array.isArray(EPISODES) || !EPISODES.length) return;
+  bindTopResponsiveDetails();
   bindDailyEpisodeControls();
   setDailyEpisode(pickDailyEpisodeIndex());
   scheduleDailyEpisodeSlide();
@@ -608,6 +641,7 @@ function getQuestionsForCategory(cat) {
 function isCategoryActive(cat) {
   if (cat.isActive === false) return false;
   if (cat.type === "timeline") return true;
+  if (cat.type === "externalLink") return Boolean(cat.href);
   if (cat.type === "directory") return true;
   if (cat.type === "episodeDirectory") return typeof EPISODES !== "undefined" && Array.isArray(EPISODES) && EPISODES.length > 0;
   if (cat.type === "review") { const targetCat = CATEGORIES.find(c => c.id === cat.reviewForCategoryId); return getQuestionSetsForCategory(targetCat).length > 0; }
@@ -631,9 +665,15 @@ function showQuizSetPage(categoryId) {
   if (!sets.length) { showDummyPage(cat ? cat.title : "問題"); return; }
   els.setSelectHeaderTitle.textContent = cat.title; els.quizSetList.innerHTML = "";
   sets.forEach(set => {
+    const lockFromSetIndex = LOCKED_QUIZ_SET_RULES[categoryId];
+    const needsUnlock = Number.isInteger(lockFromSetIndex) && set.index >= lockFromSetIndex && !isUnlocked();
     const btn = document.createElement("button"); btn.className = "set-button";
-    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット</span><span class="set-meta">${set.questions.length}問 / ${set.start + 1}-${set.end}</span>`;
-    btn.addEventListener("click", () => startQuiz(categoryId, set.index));
+    if (needsUnlock) btn.classList.add("locked-set");
+    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}</span><span class="set-meta">${set.questions.length}問 / ${set.start + 1}-${set.end}</span>`;
+    btn.addEventListener("click", () => {
+      const action = () => startQuiz(categoryId, set.index);
+      if (needsUnlock) requestUnlockThen(action); else action();
+    });
     els.quizSetList.appendChild(btn);
   });
   els.topPage.classList.add("hidden"); els.quizPage.classList.add("hidden");
@@ -1165,12 +1205,24 @@ function createCategoryButton(cat) {
       : `<span style="font-size: 0.8rem; margin-left: 4px; opacity: 0.5;">🔓</span>`;
   }
   
-  btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}${lockIcon}</span>`;
+  if (cat.previewImage) {
+    btn.classList.add("category-button-with-preview");
+    btn.innerHTML = `
+      <span class="category-preview-media"><img src="${cat.previewImage}" alt="${cat.title}"></span>
+      <span class="category-preview-copy">
+        <span class="category-preview-title"><span class="cat-icon">${cat.icon}</span>${cat.title}${lockIcon}</span>
+        <span class="category-preview-description">${cat.description || ""}</span>
+      </span>
+    `;
+  } else {
+    btn.innerHTML = `<span class="cat-icon">${cat.icon}</span><span>${cat.title}${lockIcon}</span>`;
+  }
 
   btn.addEventListener("click", () => {
     const action = () => {
       if (cat.type === "directory" && active) showDirectoryPage("all", cat.directoryMode || "aiueo");
       else if (cat.type === "timeline" && active) showTimelinePage();
+      else if (cat.type === "externalLink" && active) window.location.href = cat.href;
       else if (cat.type === "episodeDirectory" && active) showEpisodeDirectoryPage();
       else if (cat.type === "review" && active) showReviewPage(cat.reviewForCategoryId);
       else if (active && cat.questionLimit && (cat.examTag || cat.questionBankId || cat.questionBankIds)) showQuizSetPage(cat.id);
@@ -1253,6 +1305,7 @@ if (els.saveLoadBtn) {
 }
 
 function initApp() {
+  bindTopResponsiveDetails();
   renderDailyEpisode();
   renderCategoryButtons();
   createDevToggleButton();
