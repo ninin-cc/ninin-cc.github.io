@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ninin監修　2026心理学 学習支援サイト</title>
+  <title>合同会社ninin監修　2026心理学 学習支援サイト</title>
   <script>
     window.__cqLoadStartedAt = Date.now();
   </script>
@@ -99,11 +99,13 @@
     <section id="topPage">
       <header class="topbar">
         <div class="brand" style="width: 100%; text-align: center;">
-          <h1>ninin監修　2026心理学 学習支援サイト</h1>
+          <h1>合同会社ninin監修　2026心理学 学習支援サイト</h1>
         </div>
       </header>
 
       <div class="category-container">
+        <div class="top-responsive-grid">
+          <div class="top-responsive-column top-responsive-column-left">
         
         <!-- ▼▼ 学習の記録（超極小2ヶ月カレンダー・試験日設定一行化・累計日数追加） ▼▼ -->
         <div id="learningRecordPanel" class="learning-record-panel" style="margin-bottom: 8px;">
@@ -154,10 +156,11 @@
 
         <!-- 今日の心理学者エピソード -->
         <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
-          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+          <p class="top-category-title section-heading-band section-heading-brand">
+            <span class="section-number">①</span>
             <span style="font-size: 1.2rem;">📖</span>
-            <span style="font-weight: bold; color: var(--ink); font-size: 0.9rem;">今日の心理学者エピソード</span>
-          </div>
+            <span>今日の心理学者エピソード</span>
+          </p>
           <details class="extended-explanation-box" style="margin-top: 0; border: 1px solid var(--teal); background: #f0fdfa;" id="dailyEpisodeBox">
             <summary style="padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;">
               <img id="dailyEpisodeImage" src="" alt="心理学者" style="width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; background: var(--paper);">
@@ -174,11 +177,9 @@
 
         <!-- ▼▼ 面談実技支援用 無料note記事のご紹介 ▼▼ -->
         <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
-          <p style="font-size: 0.75rem; color: var(--muted); margin: 0 0 8px 4px; line-height: 1.4;">
-            沈黙の扱い方、一人での練習のしかた、また本番での落とし穴への対策などを紹介しています。
-          </p>
-          <details class="extended-explanation-box" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
-            <summary style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
+          <details class="extended-explanation-box note-article-box" id="noteArticleBox" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
+            <summary class="top-category-title section-heading-band section-heading-accent" style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
+              <span class="section-number">②</span>
               <span style="font-size: 1.2rem;">🎤</span>
               面談実技支援用 無料note記事
             </summary>
@@ -223,20 +224,39 @@
               </ul>
             </div>
           </details>
+          <p style="font-size: 0.75rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.4;">
+            沈黙の扱い方、一人での練習のしかた、また本番での落とし穴への対策などを紹介しています。
+          </p>
         </section>
         <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
 
         <!-- 社会情勢・法制関連問題 -->
         <section class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
-          <p class="top-category-title"><span>⚖️</span>社会情勢・法制関連問題</p>
+          <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>社会情勢・法制関連問題</p>
           <div class="category-grid" id="socialLegalCategoryGrid">
             <!-- JSで動的に生成されます -->
           </div>
         </section>
 
+          </div>
+          <div class="top-responsive-column top-responsive-column-right">
+
+        <section class="top-category-section membership-intro-section" aria-label="メンバーシップのご紹介" style="margin-bottom: 14px; background: var(--accent-soft); border-color: rgba(183, 110, 53, 0.28);">
+          <p class="top-category-title section-heading-band section-heading-accent" style="margin-bottom: 10px;">
+            <span style="font-size: 1.15rem;">🤝</span>
+            メンバーシップのご紹介
+          </p>
+          <p style="font-size: 0.86rem; color: var(--ink); line-height: 1.65; margin: 0 0 10px;">
+            メンバーシップでパスワードを毎月お知らせしています。パスワードを入れると法制度年表のPDF出力機能、オリジナル問題などをフル機能でご利用いただけます。直前の3か月だけの加入でも合計1500円と非常にお得です。
+          </p>
+          <a href="https://note.com/ninin2025/membership" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0; width: 100%; text-decoration: none;">
+            メンバーシップを見る（月額500円）
+          </a>
+        </section>
+
         <!-- マップ理解補助問題 -->
         <section class="top-category-section map-study-section" aria-label="マップ理解補助問題">
-          <p class="top-category-title"><span>🧭</span>マップ理解補助問題</p>
+          <p class="top-category-title section-heading-band"><span class="section-number">④</span><span>🧭</span>マップ理解補助問題</p>
           <div class="category-grid" id="mapStudyCategoryGrid">
             <!-- JSで動的に生成されます -->
           </div>
@@ -278,14 +298,14 @@
         </div>
 
         <section class="top-category-section directory-section" aria-label="心理学者一覧">
-          <p class="top-category-title"><span>🔎</span>心理学者一覧</p>
+          <p class="top-category-title section-heading-band section-heading-brand"><span class="section-number">⑤</span><span>🔎</span>心理学者一覧</p>
           <div class="category-grid" id="directoryCategoryGrid">
             <!-- JSで動的に生成されます -->
           </div>
         </section>
 
         <section class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
-          <p class="top-category-title"><span>📝</span>キャリコン学科試験対策</p>
+          <p class="top-category-title section-heading-band"><span class="section-number">⑥</span><span>📝</span>キャリコン学科試験対策</p>
           <div class="category-grid" id="examPrepCategoryGrid">
             <!-- JSで動的に生成されます -->
           </div>
@@ -318,7 +338,7 @@
           </div>
 
           <div class="note-link-area" style="padding-bottom: 0;">
-            <a href="https://note.com/ninin2025/membership/" target="_blank" class="promo-buy-button" style="background: var(--teal); margin: 0 auto 8px; width: 100%; box-shadow: 0 3px 6px rgba(15, 118, 110, 0.2);">
+            <a href="https://note.com/ninin2025/membership/" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0 auto 8px; width: 100%;">
               【たべラボ】心の支援を届けたいあなたへ
             </a>
             <p style="font-size: 0.8rem; color: var(--ink); line-height: 1.5; font-weight: bold; margin: 0 0 4px; text-align: center;">
@@ -337,6 +357,8 @@
             <!-- JSで動的に生成されます -->
           </div>
         </details>
+          </div>
+        </div>
       </div>
 
       <footer class="top-footer">
@@ -599,7 +621,7 @@
     <!-- パスワードロック用モーダル -->
     <div id="passwordModal" class="modal-overlay">
       <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <button class="modal-close" id="closePasswordModalBtn">×</button>
+        <button type="button" class="modal-close" id="closePasswordModalBtn">×</button>
         <div class="dummy-icon" style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
         <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--teal-dark);">メンバー限定コンテンツ</h2>
         <p style="font-size: 0.9rem; color: var(--ink); line-height: 1.5; margin-bottom: 20px;">
