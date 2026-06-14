@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャリコン・法制度クロニクル</title>
+    <!-- Tailwind CSS (デザイン用) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons (アイコン用) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* カスタムスクロールバーとユーティリティクラス */
+        .custom-scrollbar::-webkit-scrollbar { width: 12px; height: 12px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* 印刷用のスタイル調整 */
+        @media print {
+            html { font-size: 100% !important; }
+            body { background: white !important; padding: 0 !important; }
+            .bg-teal-800 { background-color: #f1f5f9 !important; color: #1e293b !important; box-shadow: none !important;}
+            .text-teal-100 { color: #475569 !important; }
+            button, .print-hide { display: none !important; }
+            .overflow-auto { overflow: visible !important; height: auto !important; max-height: none !important; }
+            #map-container { overflow: visible !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans p-4 md:p-8">
+
+    <!-- アプリケーションの描画領域 -->
+    <div id="app"></div>
+
+    <script>
+        // ==========================================
+        // データ定義
+        // ==========================================
+        
+        // 経済指標データ（日経平均株価・ドル円レートの概算値）
+        const economicData = {
+            1945: { nikkei: "-", usd: "15" },
+            1947: { nikkei: "100", usd: "50" },
+            1950: { nikkei: "100", usd: "360" }, 
+            1955: { nikkei: "400", usd: "360" },
+            1958: { nikkei: "600", usd: "360" },
+            1959: { nikkei: "800", usd: "360" },
+            1960: { nikkei: "1,300", usd: "360" },
+            1966: { nikkei: "1,400", usd: "360" },
+            1971: { nikkei: "2,700", usd: "308" }, 
+            1972: { nikkei: "5,000", usd: "308" },
+            1973: { nikkei: "4,300", usd: "280" },
+            1974: { nikkei: "3,800", usd: "300" },
+            1975: { nikkei: "4,300", usd: "300" },
+            1985: { nikkei: "13,000", usd: "238" }, 
+            1987: { nikkei: "21,000", usd: "144" },
+            1988: { nikkei: "30,000", usd: "128" },
+            1989: { nikkei: "38,915", usd: "143" }, 
+            1991: { nikkei: "22,000", usd: "134" }, 
+            1993: { nikkei: "17,000", usd: "111" },
+            1995: { nikkei: "19,000", usd: "94" },  
+            1997: { nikkei: "15,000", usd: "120" },
+            2000: { nikkei: "13,000", usd: "114" }, 
+            2001: { nikkei: "10,000", usd: "121" }, 
+            2006: { nikkei: "17,000", usd: "116" },
+            2007: { nikkei: "15,000", usd: "117" },
+            2008: { nikkei: "8,000", usd: "90" },   
+            2011: { nikkei: "8,400", usd: "79" },   
+            2013: { nikkei: "16,000", usd: "105" }, 
+            2014: { nikkei: "17,000", usd: "119" },
+            2015: { nikkei: "19,000", usd: "121" },
+            2016: { nikkei: "19,000", usd: "116" },
+            2018: { nikkei: "20,000", usd: "110" },
+            2019: { nikkei: "23,000", usd: "109" },
+            2020: { nikkei: "27,000", usd: "106" }, 
+            2021: { nikkei: "28,000", usd: "115" },
+            2022: { nikkei: "26,000", usd: "131" },
+            2023: { nikkei: "33,000", usd: "140" },
+            2024: { nikkei: "39,000", usd: "150" }, 
+            2025: { nikkei: "38,000", usd: "150" },
+            2026: { nikkei: "-", usd: "-" },
+            2028: { nikkei: "-", usd: "-" }
+        };
+
+        // 指導者データ（アメリカ大統領）
+        const usPresidents = [
+          { start: 1945.3, end: 1953.0, generation: "第33代", shortName: "トルーマン", fullName: "ハリー・S・トルーマン", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 1953.0, end: 1961.0, generation: "第34代", shortName: "アイゼンハワー", fullName: "ドワイト・D・アイゼンハワー", color: "text-red-800", bg: "bg-red-400" },
+          { start: 1961.0, end: 1963.9, generation: "第35代", shortName: "ケネディ", fullName: "ジョン・F・ケネディ", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 1963.9, end: 1969.0, generation: "第36代", shortName: "ジョンソン", fullName: "リンドン・B・ジョンソン", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 1969.0, end: 1974.6, generation: "第37代", shortName: "ニクソン", fullName: "リチャード・ニクソン", color: "text-red-800", bg: "bg-red-400" },
+          { start: 1974.6, end: 1977.0, generation: "第38代", shortName: "フォード", fullName: "ジェラルド・フォード", color: "text-red-800", bg: "bg-red-400" },
+          { start: 1977.0, end: 1981.0, generation: "第39代", shortName: "カーター", fullName: "ジミー・カーター", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 1981.0, end: 1989.0, generation: "第40代", shortName: "レーガン", fullName: "ロナルド・レーガン", color: "text-red-800", bg: "bg-red-400" },
+          { start: 1989.0, end: 1993.0, generation: "第41代", shortName: "ブッシュ(父)", fullName: "ジョージ・H・W・ブッシュ", color: "text-red-800", bg: "bg-red-400" },
+          { start: 1993.0, end: 2001.0, generation: "第42代", shortName: "クリントン", fullName: "ビル・クリントン", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 2001.0, end: 2009.0, generation: "第43代", shortName: "ブッシュ(子)", fullName: "ジョージ・W・ブッシュ", color: "text-red-800", bg: "bg-red-400" },
+          { start: 2009.0, end: 2017.0, generation: "第44代", shortName: "オバマ", fullName: "バラク・オバマ", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 2017.0, end: 2021.0, generation: "第45代", shortName: "トランプ", fullName: "ドナルド・トランプ", color: "text-red-800", bg: "bg-red-400" },
+          { start: 2021.0, end: 2025.0, generation: "第46代", shortName: "バイデン", fullName: "ジョー・バイデン", color: "text-blue-800", bg: "bg-blue-400" },
+          { start: 2025.0, end: 2029.0, generation: "第47代", shortName: "トランプ", fullName: "ドナルド・トランプ", color: "text-red-800", bg: "bg-red-400" }
+        ];
+
+        // 指導者データ（日本の総理大臣）
+        const jpPrimeMinisters = [
+          { start: 1944.5, end: 1945.3, generation: "第41代", shortName: "小磯", fullName: "小磯國昭", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1945.3, end: 1945.6, generation: "第42代", shortName: "鈴木", fullName: "鈴木貫太郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1945.6, end: 1945.8, generation: "第43代", shortName: "東久邇宮", fullName: "東久邇宮稔彦王", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1945.8, end: 1946.4, generation: "第44代", shortName: "幣原", fullName: "幣原喜重郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1946.4, end: 1947.4, generation: "第45代", shortName: "吉田", fullName: "吉田茂", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1947.4, end: 1948.2, generation: "第46代", shortName: "片山", fullName: "片山哲", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 1948.2, end: 1948.8, generation: "第47代", shortName: "芦田", fullName: "芦田均", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 1948.8, end: 1954.9, generation: "第48・49・50・51代", shortName: "吉田", fullName: "吉田茂", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1954.9, end: 1956.9, generation: "第52・53・54代", shortName: "鳩山", fullName: "鳩山一郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1956.9, end: 1957.1, generation: "第55代", shortName: "石橋", fullName: "石橋湛山", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1957.1, end: 1960.6, generation: "第56・57代", shortName: "岸", fullName: "岸信介", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1960.6, end: 1964.9, generation: "第58・59・60代", shortName: "池田", fullName: "池田勇人", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1964.9, end: 1972.5, generation: "第61・62・63代", shortName: "佐藤", fullName: "佐藤栄作", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1972.5, end: 1974.9, generation: "第64・65代", shortName: "田中", fullName: "田中角栄", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1974.9, end: 1976.9, generation: "第66代", shortName: "三木", fullName: "三木武夫", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1976.9, end: 1978.9, generation: "第67代", shortName: "福田", fullName: "福田赳夫", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1978.9, end: 1980.5, generation: "第68・69代", shortName: "大平", fullName: "大平正芳", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1980.5, end: 1982.9, generation: "第70代", shortName: "鈴木", fullName: "鈴木善幸", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1982.9, end: 1987.9, generation: "第71・72・73代", shortName: "中曾根", fullName: "中曾根康弘", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1987.9, end: 1989.4, generation: "第74代", shortName: "竹下", fullName: "竹下登", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1989.4, end: 1989.6, generation: "第75代", shortName: "宇野", fullName: "宇野宗佑", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1989.6, end: 1991.9, generation: "第76・77代", shortName: "海部", fullName: "海部俊樹", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1991.9, end: 1993.6, generation: "第78代", shortName: "宮澤", fullName: "宮澤喜一", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1993.6, end: 1994.3, generation: "第79代", shortName: "細川", fullName: "細川護熙", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 1994.3, end: 1994.5, generation: "第80代", shortName: "羽田", fullName: "羽田孜", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 1994.5, end: 1996.0, generation: "第81代", shortName: "村山", fullName: "村山富市", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 1996.0, end: 1998.5, generation: "第82・83代", shortName: "橋本", fullName: "橋本龍太郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 1998.5, end: 2000.3, generation: "第84代", shortName: "小渕", fullName: "小渕恵三", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2000.3, end: 2001.3, generation: "第85・86代", shortName: "森", fullName: "森喜朗", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2001.3, end: 2006.7, generation: "第87・88・89代", shortName: "小泉", fullName: "小泉純一郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2006.7, end: 2007.7, generation: "第90・96・97・98代", shortName: "安倍", fullName: "安倍晋三", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2007.7, end: 2008.7, generation: "第91代", shortName: "福田", fullName: "福田康夫", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2008.7, end: 2009.7, generation: "第92代", shortName: "麻生", fullName: "麻生太郎", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2009.7, end: 2010.5, generation: "第93代", shortName: "鳩山", fullName: "鳩山由紀夫", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 2010.5, end: 2011.7, generation: "第94代", shortName: "菅", fullName: "菅直人", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 2011.7, end: 2012.9, generation: "第95代", shortName: "野田", fullName: "野田佳彦", color: "text-amber-800", bg: "bg-amber-400" },
+          { start: 2012.9, end: 2020.7, generation: "第96・97・98代", shortName: "安倍", fullName: "安倍晋三", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2020.7, end: 2021.8, generation: "第99代", shortName: "菅", fullName: "菅義偉", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2021.8, end: 2024.8, generation: "第100・101代", shortName: "岸田", fullName: "岸田文雄", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2024.8, end: 2025.8, generation: "第102・103代", shortName: "石破", fullName: "石破茂", color: "text-emerald-800", bg: "bg-emerald-400" },
+          { start: 2025.8, end: 2029.0, generation: "第104・105代", shortName: "高市", fullName: "高市早苗", color: "text-emerald-800", bg: "bg-emerald-400" }
+        ];
+
+        const timelineData = [
+          { id: 1, year: 1945, title: "[B] 第二次世界大戦 終戦", category: "society", importance: "B", description: "戦後復興の始まり。ここから現代の労働法制が整備され始める。" },
+          { id: 41, year: 1945, title: "[A] 労働組合法 制定", category: "law", importance: "A", description: "労働三法の一つ。労働者の団結権、団体交渉権、団体行動権を保障。" },
+          { id: 42, year: 1946, title: "[B] 労働関係調整法 制定", category: "law", importance: "B", description: "労働三法の一つ。労働関係の公正な調整を図り、労働争議の予防・解決を目的とする。" },
+          { id: 2, year: 1947, title: "[S] 労働基準法・職業安定法 制定", category: "law", importance: "S", description: "労働条件の最低基準を定め、職業紹介の原則を確立した戦後労働法制の根幹。", relatedTo: [1] },
+          { id: 3, year: 1947, title: "[A] 教育基本法・学校教育法 制定", category: "education", importance: "A", description: "戦後の教育制度の土台。個人の尊厳と人格の完成を目指す。" },
+          
+          { id: 121, year: 1950, title: "[A] 朝鮮戦争 勃発", category: "society", importance: "A", description: "朝鮮特需により、日本の戦後復興と経済成長が大きく加速した。" },
+          
+          { id: 101, year: 1955, title: "[B] 高度経済成長の始まり", category: "society", importance: "B", description: "「もはや戦後ではない」と言われ、重化学工業化が進展。労働需要が急増し、集団就職などが活発化。", relatedTo: [121] },
+          
+          { id: 4, year: 1958, title: "[A] 職業訓練法 制定", category: "law", subCategory: "career", importance: "A", description: "現在の職業能力開発促進法の前身。高度経済成長を支える技能労働者の育成が目的。", relatedTo: [101] },
+          
+          { id: 43, year: 1959, title: "[A] 最低賃金法 制定", category: "law", importance: "A", description: "労働条件の改善と労働者の生活安定のため、賃金の最低額を保障。" },
+          { id: 44, year: 1960, title: "[S] 障害者雇用促進法 制定", category: "law", importance: "S", description: "（旧：身体障害者雇用促進法）事業主に対する障害者の雇用義務等を定める。" },
+          { id: 5, year: 1960, title: "[B] 国民所得倍増計画", category: "society", importance: "B", description: "高度経済成長期。終身雇用・年功序列といった日本型雇用システムが確立していく時期。" },
+          { id: 45, year: 1966, title: "[B] 雇用対策法 制定", category: "law", importance: "B", description: "現在の「労働施策総合推進法」。国の雇用政策の基本理念を定める。" },
+          
+          { id: 122, year: 1971, title: "[S] ニクソン・ショック（固定相場崩壊）", category: "society", importance: "S", description: "金とドルの交換停止。1ドル360円の固定相場制が崩壊し、日本経済に大きな衝撃を与えた。", isSpecial: true },
+          
+          { id: 6, year: 1972, title: "[B] 勤労婦人福祉法 制定", category: "law", importance: "B", description: "後の「男女雇用機会均等法」の前身。" },
+          
+          { id: 46, year: 1972, title: "[S] 労働安全衛生法 制定", category: "law", subCategory: "mental", importance: "S", description: "労働基準法から分離独立。職場における労働者の安全と健康の確保を目的とする。", relatedTo: [2] },
+          
+          { id: 123, year: 1972, title: "[A] 沖縄返還", category: "society", importance: "A", description: "アメリカの施政権下にあった沖縄が日本に返還され、戦後処理の大きな節目となった。" },
+          
+          { id: 102, year: 1973, title: "[B] 第1次オイルショック", category: "society", importance: "B", description: "高度経済成長の終焉。安定成長期へ移行し、雇用調整や日本的経営の再編が進む。", relatedTo: [122] },
+          { id: 47, year: 1974, title: "[S] 雇用保険法 制定", category: "law", importance: "S", description: "失業保険法を全面改正。失業等給付や雇用安定事業・能力開発事業等を創設。", relatedTo: [102] },
+          
+          { id: 124, year: 1975, title: "[B] ベトナム戦争 終結", category: "society", importance: "B", description: "長きにわたる冷戦下の代理戦争が終結。国際情勢の新たな局面へ。" },
+          
+          { id: 7, year: 1985, title: "[S] 男女雇用機会均等法 制定", category: "law", importance: "S", description: "雇用の分野における男女の均等な機会と待遇の確保。翌1986年施行。", relatedTo: [6] },
+          { id: 8, year: 1985, title: "[S] 労働者派遣法 制定", category: "law", importance: "S", description: "労働者派遣事業の適正な運営と派遣労働者の保護。翌1986年施行。" },
+          
+          { id: 48, year: 1985, title: "[A] 職業能力開発促進法へ改称", category: "law", subCategory: "career", importance: "A", description: "職業訓練法を全面改正し改称。生涯を通じた段階的・体系的な職業能力開発の促進へ。", relatedTo: [4] },
+          
+          { id: 125, year: 1987, title: "[A] 国鉄民営化", category: "society", importance: "A", description: "日本国有鉄道（国鉄）が分割・民営化され、JRグループが発足。行政改革の象徴的出来事。" },
+          
+          { id: 113, year: 1988, title: "[A] 労働安全衛生法 改正(THP)", category: "law", subCategory: "mental", importance: "A", description: "健康教育等が努力義務化。トータル・ヘルスプロモーション・プラン（THP）指針が策定され心身両面の健康づくりが推進。", relatedTo: [46] },
+          
+          { id: 126, year: 1989, title: "[A] ベルリンの壁 崩壊", category: "society", importance: "A", description: "東西冷戦の象徴であった壁が崩壊。世界的な歴史の転換点となる。" },
+          
+          { id: 9, year: 1991, title: "[A] バブル経済崩壊", category: "society", importance: "A", description: "これ以降「失われた20年」と呼ばれる長期不況に突入。就職氷河期や非正規雇用の増加の背景となる。", isSpecial: true },
+          
+          { id: 127, year: 1991, title: "[B] 湾岸戦争", category: "society", importance: "B", description: "冷戦終結後の新たな国際秩序の中で勃発。日本の国際貢献のあり方が問われた。" },
+          { id: 128, year: 1991, title: "[S] ソビエト連邦 崩壊", category: "society", importance: "S", description: "長きにわたる東西冷戦構造が完全に終結し、グローバル化が加速する契機となった。", relatedTo: [126] },
+          
+          { id: 10, year: 1991, title: "[S] 育児休業法 制定", category: "law", importance: "S", description: "後の「育児・介護休業法」。少子高齢化への対応が本格化。", relatedTo: [7] },
+          { id: 49, year: 1993, title: "[A] パートタイム労働法 制定", category: "law", importance: "A", description: "パートタイム労働者の雇用管理の改善や、正社員との均衡のとれた待遇の確保を促進。" },
+          { id: 103, year: 1995, title: "[A] 就職氷河期の本格化", category: "society", importance: "A", description: "バブル崩壊後の新卒採用抑制により、若年層の就職難が深刻化。後の「ロスジェネ」問題へ繋がる。", relatedTo: [9] },
+          { id: 11, year: 1997, title: "[A] 男女雇用機会均等法 改正", category: "law", importance: "A", description: "女性に対する差別的取扱いの「努力義務」から「禁止」へ。", relatedTo: [7] },
+          
+          { id: 120, year: 2000, title: "[A] ITバブル崩壊", category: "society", importance: "A", description: "ネット関連企業の株価暴落。就職氷河期の長期化や非正規雇用の増加にさらなる拍車をかけた。" },
+          
+          { id: 114, year: 2000, title: "[S] 労働者の心の健康づくり指針", category: "guideline", subCategory: "mental", importance: "S", description: "過労自殺問題等を受け厚労省が策定。職場におけるメンタルヘルス対策の基本方針が示された。" },
+          
+          { id: 104, year: 2000, title: "[A] 非正規雇用の増加", category: "society", importance: "A", description: "規制緩和や企業の人件費削減により、派遣社員やパート等、非正規雇用の割合が急増し社会問題化。", relatedTo: [120] },
+          
+          { id: 52, year: 2001, title: "[A] 第7次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "A", description: "個人の自発的なキャリア形成支援、キャリアコンサルティング体制の整備を推進。" },
+          { id: 12, year: 2001, title: "[S] キャリコン5万人計画", category: "guideline", subCategory: "career", importance: "S", description: "厚生労働省が策定。キャリアコンサルタントの育成が国策として本格的に始まる。", relatedTo: [52, 103] },
+          { id: 115, year: 2006, title: "[S] 心の健康の保持増進のための指針", category: "guideline", subCategory: "mental", importance: "S", description: "セルフ、ライン、事業場内、事業場外の「4つのケア」を明示。産業カウンセラーの重要性がさらに高まる。", relatedTo: [114] },
+          
+          { id: 13, year: 2006, title: "[A] 改正教育基本法 施行", category: "education", importance: "A", description: "約60年ぶりの全面改正。「生涯学習の理念」などが明記され、キャリア教育の法的な後ろ盾となる。", relatedTo: [3] },
+          { id: 14, year: 2006, title: "[A] 高年齢者雇用安定法 改正", category: "law", importance: "A", description: "65歳までの雇用確保措置（定年引き上げ、継続雇用制度、定年廃止）の段階的義務化。" },
+          
+          { id: 53, year: 2006, title: "[A] 第8次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "A", description: "若年者（フリーター等）の職業自立支援、団塊の世代退職に伴う熟練技能の継承を推進。", relatedTo: [52] },
+          
+          { id: 50, year: 2007, title: "[S] 労働契約法 制定", category: "law", importance: "S", description: "労働契約の基本的なルールや「安全配慮義務」を明文化。個別の労働紛争を防止、労働者の保護を図る。" },
+          
+          { id: 15, year: 2008, title: "[A] リーマン・ショック", category: "society", importance: "A", description: "世界的な金融危機。「派遣切り」などが社会問題化し、労働者保護の機運が高まる。", isSpecial: true },
+          
+          { id: 16, year: 2008, title: "[S] ジョブ・カード制度 創設", category: "system", subCategory: "career", importance: "S", description: "フリーター等の正社員就職を支援するため、実践的な職業訓練と評価を行う制度としてスタート。", relatedTo: [53, 104] },
+          { id: 116, year: 2011, title: "[A] 精神疾患を「5大疾病」に追加", category: "society", subCategory: "mental", importance: "A", description: "医療計画の重点疾患に「精神疾患」が追加され、がん・脳卒中・心筋梗塞・糖尿病と並ぶ「5大疾病」となった。" },
+          
+          { id: 105, year: 2011, title: "[S] 東日本大震災", category: "society", importance: "S", description: "未曾有の災害により、労働市場も混乱。震災復興と被災者の雇用確保・キャリア支援が急務となる。", isSpecial: true },
+          
+          { id: 39, year: 2011, title: "[A] 第9次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "A", description: "震災復興、非正規雇用のキャリアアップ、全員参加の社会に向けた人材育成。", relatedTo: [105] },
+          { id: 17, year: 2011, title: "[A] キャリア教育・職業教育の在り方（答申）", category: "guideline", subCategory: "career", importance: "A", description: "中央教育審議会答申。基礎的・汎用的能力の育成など、学校を通じたキャリア教育の方向性を示す。", relatedTo: [13] },
+          
+          { id: 106, year: 2013, title: "[A] 【女性】M字カーブの底上げ傾向", category: "society", importance: "A", description: "女性の労働参加が進み、出産・育児期における就業率低下（M字カーブ）の底が浅くなり始める。" },
+          { id: 107, year: 2014, title: "[A] 【若年層】売り手市場へ転換", category: "society", importance: "A", description: "景気回復や少子化による人手不足を背景に、新卒採用が就職氷河期から売り手市場へと大きく転換。" },
+          { id: 18, year: 2015, title: "[A] 若者雇用促進法 成立", category: "law", importance: "A", description: "若者の適切な職業選択の支援等。ユースエール認定制度など。", relatedTo: [107] },
+          
+          { id: 19, year: 2015, title: "[S] ストレスチェック制度 施行", category: "law", subCategory: "mental", importance: "S", description: "労働安全衛生法改正。労働者数50人以上の事業場に義務化（一次予防が目的）。", relatedTo: [115] },
+          { id: 20, year: 2015, title: "[A] 新ジョブ・カード制度", category: "system", subCategory: "career", importance: "A", description: "これまでの就職支援だけでなく「生涯を通じたキャリア・プランニング」のツールとして見直し。", relatedTo: [16] },
+          { id: 21, year: 2016, title: "[A] 第10次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "A", description: "生産性向上と全員参加の社会実現に向けた職業能力開発の推進。", relatedTo: [39] },
+          { id: 22, year: 2016, title: "[S] キャリコン 国家資格化", category: "system", subCategory: "career", importance: "S", description: "職業能力開発促進法の改正。名称独占の国家資格となる。", relatedTo: [12] },
+          
+          { id: 23, year: 2016, title: "[A] 女性活躍推進法 施行", category: "law", importance: "A", description: "大企業等における女性の活躍状況の把握・課題分析、行動計画の策定・届出の義務化。", relatedTo: [106] },
+          { id: 108, year: 2016, title: "[A] 【高年齢】シニア就業率の増加", category: "society", importance: "A", description: "人手不足を背景に65歳以上の就業者が年々増加。労働力の中核としての期待が高まる。" },
+          
+          { id: 117, year: 2018, title: "[S] 精神障害者の雇用義務化", category: "law", subCategory: "mental", importance: "S", description: "障害者雇用促進法により、法定雇用率の算定基礎に精神障害者が追加。企業の対応が本格化。", relatedTo: [44, 116] },
+          
+          { id: 109, year: 2018, title: "[S] 【女性】M字からL字カーブ化へ", category: "society", importance: "S", description: "女性の就業率が過去最高を更新。M字の谷が解消に向かい、欧米諸国に見られるL字型へ近づく。" },
+          
+          { id: 51, year: 2019, title: "[S] パワハラ防止法 成立", category: "law", subCategory: "mental", importance: "S", description: "労働施策総合推進法改正。職場におけるパワーハラスメント防止措置を事業主に義務化。", relatedTo: [45] },
+          
+          { id: 24, year: 2019, title: "[S] 働き方改革関連法 順次施行", category: "law", importance: "S", description: "時間外労働の上限規制、年次有給休暇の年5日取得義務、同一労働同一賃金、産業医機能の強化など。", relatedTo: [15, 19] },
+          
+          { id: 25, year: 2020, title: "[A] 新型コロナウイルス 拡大", category: "society", importance: "A", description: "テレワークの急速な普及、新しい働き方の模索、雇用調整助成金の特例措置などが展開される。", isSpecial: true },
+          
+          { id: 26, year: 2020, title: "[S] キャリア・パスポート 本格実施", category: "system", subCategory: "career", importance: "S", description: "小・中・高等学校を通じて、児童生徒が自身の学習や活動の履歴を蓄積し、振り返るためのポートフォリオ。", relatedTo: [17] },
+          
+          { id: 110, year: 2021, title: "[S] 【非正規】コロナ禍による打撃", category: "society", importance: "S", description: "宿泊・飲食業等を中心に、非正規雇用（特に女性や若年層）の深刻な雇用喪失・所得減少が浮き彫りに。", relatedTo: [25] },
+          
+          { id: 27, year: 2021, title: "[S] 第11次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "S", description: "デジタル化等に対応する「人への投資」。自律的・主体的な学びを強調。", relatedTo: [21, 110] },
+          
+          { id: 28, year: 2021, title: "[S] 改正高年齢者雇用安定法 施行", category: "law", importance: "S", description: "「70歳までの就業機会確保」が企業の努力義務に。", relatedTo: [108] },
+          { id: 29, year: 2022, title: "[S] 改正育児・介護休業法 順次施行", category: "law", importance: "S", description: "「産後パパ育休」の創設、育児休業の分割取得、雇用環境整備の義務化など。", relatedTo: [109] },
+          
+          { id: 30, year: 2022, title: "[S] 改正職業能力開発促進法 施行", category: "law", subCategory: "career", importance: "S", description: "事業主に対し、労働者への「キャリアコンサルティングの機会の確保」等の責務が強化。", relatedTo: [22] },
+          { id: 118, year: 2023, title: "[A] 精神障害の労災認定基準 改正", category: "guideline", subCategory: "mental", importance: "A", description: "心理的負荷の評価基準を見直し、「顧客等からの著しい迷惑行為（カスハラ）」等が明記された。", relatedTo: [51] },
+          
+          { id: 111, year: 2023, title: "[A] 【若年層】早期離職の高止まり", category: "society", importance: "A", description: "新卒者の3年以内離職率が3割前後で推移。価値観の多様化により、エンゲージメント向上が企業の課題に。" },
+          { id: 112, year: 2024, title: "[S] 【全体】人手不足と労働移動", category: "society", importance: "S", description: "構造的な人手不足が深刻化。賃上げの動きと共に、リスキリングを通じた成長産業への労働移動が活発化。" },
+          { id: 31, year: 2024, title: "[A] 労働基準法 改正（猶予適用）", category: "law", importance: "A", description: "4月施行。建設業、自動車運転の業務、医師等への時間外労働の上限規制の適用。", relatedTo: [24] },
+          { id: 32, year: 2024, title: "[A] 職業安定法 改正", category: "law", importance: "A", description: "4月施行。求人要件の明示等に関するルール変更。" },
+          { id: 33, year: 2024, title: "[A] フリーランス新法 施行", category: "law", importance: "A", description: "11月1日施行。「特定受託事業者に係る取引の適正化等に関する法律」。就業環境の整備。" },
+          
+          { id: 119, year: 2025, title: "[S] AIエージェント元年", category: "society", importance: "S", description: "生成AIや自律型エージェントの本格導入。ホワイトカラーの業務や若年層の働き方・雇用に世界的なパラダイムシフトが起き始める。", isSpecial: true },
+          
+          { id: 34, year: 2025, title: "[S] 高年齢者雇用安定法 経過措置終了", category: "law", importance: "S", description: "4月施行。「65歳までの雇用確保」が完全義務化される。", relatedTo: [28] },
+          { id: 35, year: 2025, title: "[S] 改正育児・介護休業法 施行", category: "law", importance: "S", description: "4月・10月施行。柔軟な働き方の実現措置の義務化、子の看護休暇の対象拡大等。", relatedTo: [29] },
+          { id: 36, year: 2025, title: "[A] 出生後休業支援給付金 等の創設", category: "system", importance: "A", description: "4月施行。雇用保険法改正。両親ともに育休を取得した場合等の給付金。", relatedTo: [35] },
+          
+          { id: 40, year: 2026, title: "[S] 第12次職業能力開発基本計画", category: "guideline", subCategory: "career", importance: "S", description: "DX・GX対応のリスキリング、「人への投資」と自律的キャリア形成の強化。", relatedTo: [27, 112] },
+          
+          { id: 37, year: 2028, title: "[S] 雇用保険の適用拡大（予定）", category: "law", importance: "S", description: "10月施行予定。雇用保険の加入要件が「週20時間以上」から「週10時間以上」へ拡大。" },
+          
+          { id: 38, year: 2028, title: "[S] 50人未満ストレスチェック義務化", category: "law", subCategory: "mental", importance: "S", description: "改正労働安全衛生法により全事業場義務化へ。", relatedTo: [19] },
+        ];
+
+        // 主要理論・フレームの発表年データ
+        const theoryData = [
+          { year: 1943, name: "マズロー", theory: "欲求階層説", description: "人間の欲求を5つの階層で理論化し、低次の欲求が満たされることで高次の「自己実現の欲求」へ向かうとした。" },
+          { year: 1950, name: "エリクソン", theory: "心理社会的発達理論", description: "人生を8つの発達段階に分け、各段階において乗り越えるべき「心理社会的危機（発達課題）」が存在すると提唱した。" },
+          { year: 1951, name: "ロジャーズ", theory: "来談者中心療法", description: "クライエント自身の内なる成長力を信じ、「自己一致」「無条件の肯定的関心」「共感的理解」を重視するアプローチ。" },
+          { year: 1953, name: "スーパー", theory: "職業的発達理論", description: "キャリアを生涯にわたるプロセス（ライフスパン）と捉え、成長・探索・確立・維持・解放の5つの発達段階を提唱。" },
+          { year: 1959, name: "ホランド", theory: "職業選択理論(RIASEC)", description: "人々の性格と職業環境を6つのタイプ（RIASEC）に分類し、自己と環境の一致度が高いほど職業的満足が得られるとした。" },
+          { year: 1959, name: "ハーズバーグ", theory: "二要因理論", description: "職務満足をもたらす『動機づけ要因（達成や承認など）』と、不満を防ぐ『衛生要因（給与や環境など）』は別次元であるとした。" },
+          { year: 1976, name: "ホール", theory: "プロティアン・キャリア", description: "組織ではなく「個人」が主体となって形成する、環境の変化に柔軟に適応する変幻自在なキャリアのあり方を提唱した。" },
+          { year: 1977, name: "バンデューラ", theory: "自己効力感", description: "ある行動を適切に遂行できるという自己への確信（自己効力感）が、新しい行動の獲得や困難の克服に不可欠であるとした。" },
+          { year: 1978, name: "シャイン", theory: "キャリア・アンカー", description: "個人がキャリアを選択・形成する際、どうしても犠牲にしたくない中核的な価値観や欲求（8つのアンカー）を提唱した。" },
+          { year: 1979, name: "國分康孝", theory: "構成的グループ・エンカウンター", description: "日本のカウンセリングの草分け。リーダーの枠組みの中で、自己理解と他者理解を深め、人間関係を育む手法を体系化。" },
+          { year: 1980, name: "スーパー", theory: "ライフキャリアレインボー", description: "人生の各時期において果たす複数の役割（子ども、学生、余暇を楽しむ人、市民、労働者など）の重なりを虹に例えた。" },
+          { year: 1980, name: "ブリッジズ", theory: "トランジション理論", description: "人生の転機を出来事そのものではなく心理的な移行プロセスと捉え、『終わり』『ニュートラルゾーン』『新たな始まり』の3段階とした。" },
+          { year: 1984, name: "シュロスバーグ", theory: "トランジション理論", description: "転機をイベント（予期していた事・していなかった事・期待していたが起きなかった事）として評価し、4S（状況・自己・支援・戦略）で乗り越えるとした。" },
+          { year: 1989, name: "ジェラット", theory: "積極的不確実性", description: "変化の激しい現代では過去の情報に基づく合理的判断だけでなく、不確実性を積極的に受け入れ、直感や創造性を活かす意思決定を推奨。" },
+          { year: 1990, name: "チクセントミハイ", theory: "フロー理論", description: "人がそのときしていることに完全に浸り、精力的に集中している感覚に特徴づけられる心理的状態「フロー」を提唱した。" },
+          { year: 1996, name: "ハンセン", theory: "統合的ライフ・プランニング", description: "人生の4つの重要な役割（労働、愛、学習、余暇）をパッチワークのキルトのように統合的に織り合わせるプランニングを提唱。" },
+          { year: 1998, name: "セリグマン", theory: "ポジティブ心理学", description: "人間の病理や弱点だけでなく、強みや長所、幸福やウェルビーイングに焦点を当てる「ポジティブ心理学」を提唱した。" },
+          { year: 1999, name: "クランボルツ", theory: "計画的偶発性理論", description: "個人のキャリアの8割は予想外の偶然によって形成されるとし、偶然を計画的にキャリアに活かすための5つのスキル（好奇心など）を提唱。" },
+          { year: 2002, name: "サビカス", theory: "キャリア構築理論", description: "激変する社会で個人が自らの人生の物語（ナラティブ）を紡ぎ、キャリアを適応的（アダプタビリティ）に構築していく構成主義的理論。" }
+        ];
+
+        // 重要指標の推移データ
+        const trendData = [
+          {
+            title: "障害者法定雇用率",
+            color: "text-blue-700",
+            lineColor: "stroke-blue-400 border-blue-400 bg-blue-100",
+            events: [
+              { year: 1998, value: "1.8%" },
+              { year: 2013, value: "2.0%" },
+              { year: 2018, value: "2.2%" },
+              { year: 2021, value: "2.3%" },
+              { year: 2024, value: "2.5%" },
+              { year: 2026, value: "2.7%" }
+            ]
+          },
+          {
+            title: "高年齢者雇用確保",
+            color: "text-orange-700",
+            lineColor: "stroke-orange-400 border-orange-400 bg-orange-100",
+            events: [
+              { year: 1986, value: "60歳(努力)" },
+              { year: 1998, value: "60歳(義務)" },
+              { year: 2006, value: "65歳(段階)" },
+              { year: 2013, value: "65歳(義務)" },
+              { year: 2021, value: "70歳(努力)" },
+              { year: 2025, value: "65歳(完全)" }
+            ]
+          },
+          {
+            title: "時間外労働上限",
+            color: "text-rose-700",
+            lineColor: "stroke-rose-400 border-rose-400 bg-rose-100",
+            events: [
+              { year: 2019, value: "大企業" },
+              { year: 2020, value: "中小企業" },
+              { year: 2024, value: "猶予業種" }
+            ]
+          },
+          {
+            title: "雇用保険適用拡大",
+            color: "text-emerald-700",
+            lineColor: "stroke-emerald-400 border-emerald-400 bg-emerald-100",
+            events: [
+              { year: 1989, value: "週33時間" },
+              { year: 2001, value: "週20時間" },
+              { year: 2028, value: "週10時間" }
+            ]
+          }
+        ];
+
+        // カテゴリ（分野）ごとの色分け設定
+        const categoryConfig = {
+            society: { icon: 'globe', color: 'text-emerald-700', bg: 'bg-white', border: 'border-emerald-500', label: '社会情勢' },
+            law: { icon: 'scale', color: 'text-blue-900', bg: 'bg-white', border: 'border-blue-900', label: '法律' },
+            education: { icon: 'graduation-cap', color: 'text-rose-700', bg: 'bg-white', border: 'border-rose-500', label: '教育関係' },
+            system: { icon: 'briefcase', color: 'text-amber-700', bg: 'bg-white', border: 'border-amber-500', label: '制度・施策' },
+            guideline: { icon: 'book-open', color: 'text-purple-700', bg: 'bg-white', border: 'border-purple-500', label: '指針・計画' },
+        };
+        const categoryKeys = ['society', 'law', 'education', 'system', 'guideline'];
+
+        // ==========================================
+        // 状態管理・フィルターデータ
+        // ==========================================
+        let viewMode = 'map'; 
+        let currentScale = 100; 
+        let currentPeriod = 'all'; 
+        let isExpandAll = false; 
+        let isCompactWidth = false; 
+
+        // ★ 各レーンの表示状態を管理するオブジェクト
+        let laneVisibility = {
+            leaders: true,
+            theory: true,
+            trend: true,
+            society: true,
+            law: true,
+            education: true,
+            system: true,
+            guideline: true
+        };
+
+        // フィルタリングされたデータ
+        let fTimelineData = [];
+        let fTheoryData = [];
+        let fTrendData = [];
+        let fMapYears = [];
+
+        // ==========================================
+        // ロジック関数
+        // ==========================================
+
+        function getPeriodBgClass(year) {
+            const group = Math.floor((year - 1) / 5);
+            return group % 2 === 0 ? 'bg-slate-300/40' : 'bg-teal-900/5';
+        }
+
+        function getCardBgClass(subCategory) {
+            if (subCategory === 'mental') return 'bg-gradient-to-br from-emerald-100 to-white';
+            if (subCategory === 'career') return 'bg-gradient-to-br from-amber-100 to-white';
+            return 'bg-white';
+        }
+
+        function getEconomicStr(year) {
+            const years = Object.keys(economicData).map(Number).sort((a,b) => a-b);
+            let targetYear = years[0];
+            for(let y of years) {
+                if(y <= year) targetYear = y;
+                else break;
+            }
+            return economicData[targetYear];
+        }
+
+        function updateFilteredData() {
+            let minYear = 0;
+            let maxYear = 9999;
+            if (currentPeriod === 'p1') { minYear = 1943; maxYear = 1985; }
+            if (currentPeriod === 'p2') { minYear = 1985; maxYear = 2011; }
+            if (currentPeriod === 'p3') { minYear = 2011; maxYear = 2030; }
+
+            fTimelineData = timelineData.filter(d => d.year >= minYear && d.year <= maxYear);
+            fTheoryData = theoryData.filter(d => d.year >= minYear && d.year <= maxYear);
+            
+            fTrendData = [];
+            trendData.forEach(trend => {
+                const events = trend.events.filter(e => e.year >= minYear && e.year <= maxYear);
+                if (events.length > 0) {
+                    fTrendData.push({ ...trend, events: events });
+                }
+            });
+
+            const allY = new Set(fTimelineData.map(d => d.year));
+            fTheoryData.forEach(d => allY.add(d.year));
+            fTrendData.forEach(trend => trend.events.forEach(e => allY.add(e.year)));
+            fMapYears = Array.from(allY).sort((a, b) => a - b);
+        }
+
+        function setPeriod(period) {
+            currentPeriod = period;
+            updateFilteredData();
+            renderApp();
+        }
+
+        function changeFontSize(step) {
+            currentScale += step * 10;
+            if (currentScale < 70) currentScale = 70;
+            if (currentScale > 150) currentScale = 150;
+            renderApp();
+        }
+
+        function toggleExpandAll() {
+            if (viewMode === 'list') return;
+            isExpandAll = !isExpandAll;
+            renderApp();
+        }
+
+        function toggleCompactWidth() {
+            isCompactWidth = !isCompactWidth;
+            renderApp();
+        }
+
+        // ★ レーンの表示/非表示を切り替える関数
+        function toggleLane(laneKey) {
+            laneVisibility[laneKey] = !laneVisibility[laneKey];
+            renderApp();
+        }
+
+        const getSafeLines = (text, innerW, fontSize) => {
+            if (!text || typeof text !== 'string') return 1;
+            const safeInnerW = Math.max(innerW, 50); 
+            let length = 0;
+            for (let i = 0; i < text.length; i++) {
+                length += text.charCodeAt(i) > 255 ? fontSize : fontSize * 0.6;
+            }
+            return Math.max(1, Math.ceil(length / safeInnerW));
+        };
+
+        function calculateTheoryHeight(theory, scale, baseWidth) {
+            if (!isExpandAll) return 32 * scale; 
+            const width = baseWidth * scale; 
+            const innerWidth = width - 20 * scale;
+            const titleSize = 13 * scale;
+            const descSize = 11 * scale;
+            
+            const titleText = (theory.name || "") + " " + (theory.theory || "");
+            const descText = theory.description || "";
+            
+            const titleLines = getSafeLines(titleText, innerWidth, titleSize);
+            const descLines = getSafeLines(descText, innerWidth, descSize);
+            
+            const titleH = titleLines * titleSize * 1.4;
+            const descH = descLines * descSize * 1.6;
+            
+            return titleH + descH + 32 * scale; 
+        }
+
+        function calculateItemHeight(item, scale, isS, baseWidth) {
+            if (!isExpandAll) return 32 * scale; 
+            const width = baseWidth * scale; 
+            const innerWidth = width - 20 * scale;
+            const titleSize = (isS ? 14 : 13) * scale;
+            const descSize = 11 * scale;
+            
+            const titleText = item.title || "";
+            const descText = item.description || "";
+            
+            const titleLines = getSafeLines(titleText, innerWidth, titleSize);
+            const descLines = getSafeLines(descText, innerWidth, descSize);
+            
+            const titleH = titleLines * titleSize * 1.4;
+            const descH = descLines * descSize * 1.6;
+            
+            return titleH + descH + 32 * scale; 
+        }
+
+        function getTheoryLayout(colWidth) {
+            const scale = currentScale / 100;
+            const positioned = [];
+            let maxBottom = 0;
+
+            [...fTheoryData].sort((a, b) => a.year - b.year).forEach(theory => {
+                const yearIndex = fMapYears.indexOf(theory.year);
+                const left = yearIndex * colWidth + 8 * scale;
+                
+                let width, height;
+                if (isExpandAll) {
+                    const baseW = isCompactWidth ? 160 : 240;
+                    width = baseW * scale; 
+                    height = calculateTheoryHeight(theory, scale, baseW);
+                } else {
+                    const nameLen = (theory.name || "").length;
+                    const padding = isCompactWidth ? 16 : 24;
+                    width = nameLen * 14 * scale + padding * scale; 
+                    height = 32 * scale;
+                }
+                
+                const right = left + width;
+                let currentY = 12 * scale; 
+                
+                let loopCount = 0;
+                while (loopCount < 100) {
+                    const currentBottom = currentY + height;
+                    const isOverlap = positioned.some(p => {
+                        const overlapX = left < p.right + 6 * scale && right > p.left;
+                        const overlapY = currentY < p.bottom + 4 * scale && currentBottom > p.top;
+                        return overlapX && overlapY;
+                    });
+
+                    if (!isOverlap) break;
+                    currentY += 8 * scale; 
+                    loopCount++;
+                }
+
+                positioned.push({ ...theory, left, right, top: currentY, bottom: currentY + height, width, height });
+                maxBottom = Math.max(maxBottom, currentY + height);
+            });
+
+            return {
+                items: positioned,
+                height: Math.max(56 * scale, maxBottom + 16 * scale)
+            };
+        }
+        
+        function getLayoutData(colWidth) {
+            const scale = currentScale / 100;
+            const layout = {};
+            
+            categoryKeys.forEach(cat => {
+                const items = fTimelineData.filter(d => d.category === cat).sort((a, b) => a.year - b.year);
+                const positionedItems = [];
+                let maxBottom = 0;
+
+                items.forEach(item => {
+                    const leftIndex = fMapYears.indexOf(item.year);
+                    const left = leftIndex * colWidth;
+                    const isS = item.importance === 'S';
+                    
+                    let width, height;
+                    if (isExpandAll) {
+                        const baseW = isCompactWidth ? (isS ? 160 : 130) : (isS ? 220 : 180);
+                        width = baseW * scale;
+                        height = calculateItemHeight(item, scale, isS, baseW);
+                    } else {
+                        const baseW = isCompactWidth ? (isS ? 130 : 100) : (isS ? 190 : 150);
+                        width = baseW * scale;
+                        height = 32 * scale; 
+                    }
+                    const right = left + width;
+
+                    let currentY = 16 * scale; 
+                    
+                    let loopCount = 0;
+                    while (loopCount < 100) {
+                        const currentBottom = currentY + height;
+                        const isOverlap = positionedItems.some(p => {
+                            const overlapX = left < p.right + 12 * scale && right > p.left;
+                            const overlapY = currentY < p.bottom + 6 * scale && currentBottom > p.top;
+                            return overlapX && overlapY;
+                        });
+
+                        if (!isOverlap) break;
+                        currentY += 8 * scale;
+                        loopCount++;
+                    }
+
+                    positionedItems.push({
+                        ...item, left, right, top: currentY, bottom: currentY + height, width, height, isS
+                    });
+                    
+                    maxBottom = Math.max(maxBottom, currentY + height);
+                });
+
+                layout[cat] = {
+                    items: positionedItems,
+                    height: Math.max(70 * scale, maxBottom + 20 * scale) 
+                };
+            });
+            return layout;
+        }
+
+        function getXPos(year, fMapYears, COL_W) {
+            if (!fMapYears || fMapYears.length === 0) return 0;
+            const getPoint = (i) => i * COL_W + COL_W / 2;
+
+            if (year <= fMapYears[0]) {
+                if (fMapYears.length >= 2) {
+                    const span = fMapYears[1] - fMapYears[0];
+                    const pxPerYear = COL_W / span;
+                    const diff = fMapYears[0] - year;
+                    return getPoint(0) - (diff * pxPerYear);
+                }
+                return getPoint(0);
+            }
+            
+            const lastI = fMapYears.length - 1;
+            if (year >= fMapYears[lastI]) {
+                if (fMapYears.length >= 2) {
+                    const span = fMapYears[lastI] - fMapYears[lastI-1];
+                    const pxPerYear = COL_W / span;
+                    const diff = year - fMapYears[lastI];
+                    return getPoint(lastI) + (diff * pxPerYear);
+                }
+                return getPoint(lastI);
+            }
+            
+            for (let i = 0; i < lastI; i++) {
+                if (year >= fMapYears[i] && year < fMapYears[i+1]) {
+                    const ratio = (year - fMapYears[i]) / (fMapYears[i+1] - fMapYears[i]);
+                    const p1 = getPoint(i);
+                    const p2 = getPoint(i+1);
+                    return p1 + (p2 - p1) * ratio;
+                }
+            }
+            return 0;
+        }
+
+        window.toggleLane = toggleLane; // グローバルに公開
+
+        function drawConnections() {
+            const container = document.getElementById('map-container');
+            const svg = document.getElementById('svg-connections');
+            if (!container || !svg || viewMode !== 'map') return;
+
+            const containerRect = container.getBoundingClientRect();
+            
+            const paths = svg.querySelectorAll('path');
+            paths.forEach(p => p.remove());
+
+            fTimelineData.forEach(item => {
+                // そのアイテムの属するカテゴリが表示されている場合のみ線を引く
+                if (!laneVisibility[item.category]) return;
+
+                if (item.relatedTo && item.relatedTo.length > 0) {
+                    item.relatedTo.forEach(targetId => {
+                        const targetItem = fTimelineData.find(d => d.id === targetId);
+                        // ターゲット先のカテゴリも表示されている場合のみ線を引く
+                        if (!targetItem || !laneVisibility[targetItem.category]) return;
+
+                        const fromEl = document.getElementById(`card-${targetId}`);
+                        const toEl = document.getElementById(`card-${item.id}`);
+                        
+                        if (fromEl && toEl) {
+                            const fromRect = fromEl.getBoundingClientRect();
+                            const toRect = toEl.getBoundingClientRect();
+
+                            const startX = fromRect.right - containerRect.left;
+                            const startY = (fromRect.top + fromRect.height / 2) - containerRect.top;
+                            const endX = toRect.left - containerRect.left;
+                            const endY = (toRect.top + toRect.height / 2) - containerRect.top;
+                            
+                            const cpX = Math.max(30, (endX - startX) * 0.4);
+
+                            const pathData = `M ${startX} ${startY} C ${startX + cpX} ${startY}, ${endX - cpX} ${endY}, ${endX} ${endY}`;
+                            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            path.setAttribute("d", pathData);
+                            path.setAttribute("stroke", "rgba(20, 184, 166, 0.6)");
+                            path.setAttribute("stroke-width", "2");
+                            path.setAttribute("fill", "none");
+                            path.setAttribute("stroke-dasharray", "4 3");
+                            path.setAttribute("marker-end", "url(#arrowhead)");
+                            
+                            svg.appendChild(path);
+                        }
+                    });
+                }
+            });
+        }
+
+        // ==========================================
+        // UI描画関数
+        // ==========================================
+        function renderList() {
+            const scale = currentScale / 100;
+            const sortedData = [...fTimelineData].sort((a, b) => a.year - b.year);
+            let html = `<div class="w-full overflow-auto custom-scrollbar bg-slate-100" style="height: calc(100vh - 360px); min-height: 400px;">`;
+            html += `<div class="p-6 md:p-10 relative border-l-4 border-teal-300 ml-4 md:ml-8 space-y-8">`;
+            
+            sortedData.forEach(item => {
+                const catInfo = categoryConfig[item.category];
+                const isFuture = item.year > new Date().getFullYear();
+                const isSpecial = item.isSpecial;
+                
+                const cardBgClass = isSpecial ? 'bg-slate-800' : getCardBgClass(item.subCategory);
+                const textColorClass = isSpecial ? 'text-white' : catInfo.color;
+                const descColorClass = isSpecial ? 'text-slate-300' : 'text-slate-700';
+                const borderColorClass = isSpecial ? 'border-slate-800' : catInfo.border;
+                const badgeBgClass = isSpecial ? 'bg-slate-700 text-slate-100' : `bg-white/70 ${catInfo.color}`;
+                const yearColorClass = isFuture ? 'text-teal-600' : (isSpecial ? 'text-slate-800' : 'text-slate-800');
+
+                html += `
+                  <div class="relative pl-6 md:pl-10 group">
+                    <div class="absolute -left-2.5 mt-1.5 w-4 h-4 rounded-full border-4 border-white shadow-sm bg-slate-400 group-hover:scale-125 transition-transform"></div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl font-bold ${yearColorClass}">
+                          ${item.year}年 ${isFuture ? '<span class="text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full ml-2">予定</span>' : ''}
+                        </span>
+                    </div>
+                    <div class="rounded-xl p-5 transition-all hover:shadow-lg border-l-8 ${borderColorClass} ${isFuture ? 'border-dashed' : ''} ${cardBgClass} shadow-md">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="flex items-center gap-1 text-xs px-2 py-1 rounded-md font-bold ${badgeBgClass}">
+                          <i data-lucide="${catInfo.icon}" class="w-4 h-4"></i>${catInfo.label}
+                        </span>
+                      </div>
+                      <h3 class="font-bold mb-2 ${textColorClass}" style="font-size: ${18 * scale}px; line-height: 1.4;">${item.title}</h3>
+                      <p class="${descColorClass}" style="font-size: ${14 * scale}px; line-height: 1.6;">${item.description}</p>
+                    </div>
+                  </div>
+                `;
+            });
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderMap() {
+            if (!fMapYears || fMapYears.length === 0) {
+                return `<div class="p-10 text-center text-slate-500 font-bold">表示するデータがありません</div>`;
+            }
+
+            const scale = currentScale / 100;
+            const baseColW = isCompactWidth ? 65 : 130;
+            const COL_W = baseColW * scale; 
+            
+            const layoutData = getLayoutData(COL_W);
+            const theoryLayout = getTheoryLayout(COL_W);
+            
+            // ★ 各レーンの実際の高さを表示状態に応じて決定
+            const leadersH = laneVisibility.leaders ? 80 * scale : 40;
+            const theoryH = laneVisibility.theory ? theoryLayout.height : 40;
+            const trendH = laneVisibility.trend ? (fTrendData.length * 45 * scale + 25 * scale) : 40;
+
+            let html = `<div class="w-full overflow-auto custom-scrollbar flex bg-slate-100" style="height: calc(100vh - 360px); min-height: 400px;">`;
+
+            // ================= 【左側固定ヘッダー】 =================
+            html += `<div class="sticky left-0 z-[45] bg-white border-r-2 border-slate-300 shadow-[4px_0_10px_rgba(0,0,0,0.05)] flex flex-col w-[120px] flex-shrink-0 print-hide">`;
+            
+            // 年号部分
+            html += `<div class="h-[100px] min-h-[100px] flex-shrink-0 sticky top-0 z-[70] border-b-2 border-teal-600 bg-white w-full"></div>`;
+            
+            // 指導者ヘッダー
+            html += `<div onclick="toggleLane('leaders')" class="flex flex-col items-center justify-center p-2 border-b-2 border-slate-300 bg-slate-100/50 box-border flex-shrink-0 cursor-pointer hover:bg-slate-200/50 transition-colors relative" style="height: ${leadersH}px; min-height: ${leadersH}px; max-height: ${leadersH}px; overflow: hidden;">
+                        <i data-lucide="${laneVisibility.leaders ? 'minus-square' : 'plus-square'}" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 text-slate-400"></i>
+                        <span class="text-[11px] font-bold text-slate-700 text-center leading-tight mt-1">【指導者】${laneVisibility.leaders ? '<br>大統領／総理' : ''}</span>
+                     </div>`;
+
+            // 主要理論ヘッダー
+            html += `<div onclick="toggleLane('theory')" class="flex flex-col items-center justify-center p-2 border-b-2 border-slate-300 bg-orange-50/50 box-border flex-shrink-0 cursor-pointer hover:bg-orange-100/50 transition-colors relative" style="height: ${theoryH}px; min-height: ${theoryH}px; max-height: ${theoryH}px; overflow: hidden;">
+                        <i data-lucide="${laneVisibility.theory ? 'minus-square' : 'plus-square'}" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 text-orange-400"></i>
+                        <span class="text-[11px] font-bold text-orange-700 text-center leading-tight mt-1">【主要理論】${laneVisibility.theory ? '<br>発表年' : ''}</span>
+                     </div>`;
+
+            // 重要指標ヘッダー
+            html += `<div onclick="toggleLane('trend')" class="flex flex-col items-center justify-center p-2 border-b-2 border-slate-300 bg-slate-50/50 box-border flex-shrink-0 cursor-pointer hover:bg-slate-200/50 transition-colors relative" style="height: ${trendH}px; min-height: ${trendH}px; max-height: ${trendH}px; overflow: hidden;">
+                        <i data-lucide="${laneVisibility.trend ? 'minus-square' : 'plus-square'}" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 text-slate-400"></i>
+                        <span class="text-[11px] font-bold text-slate-700 text-center leading-tight mt-1">【重要指標】${laneVisibility.trend ? '<br>の推移' : ''}</span>
+                     </div>`;
+
+            // カテゴリ（法律、社会情勢など）ヘッダー
+            categoryKeys.forEach(catKey => {
+                const catInfo = categoryConfig[catKey];
+                const isVisible = laneVisibility[catKey];
+                const catH = isVisible ? (layoutData[catKey] ? layoutData[catKey].height : 100) : 40;
+                
+                html += `
+                  <div onclick="toggleLane('${catKey}')" class="flex flex-col items-center justify-center p-2 border-b border-slate-200 bg-white box-border flex-shrink-0 cursor-pointer hover:bg-slate-50 transition-colors relative" style="height: ${catH}px; min-height: ${catH}px; max-height: ${catH}px; overflow: hidden;">
+                    <i data-lucide="${isVisible ? 'minus-square' : 'plus-square'}" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 text-slate-300"></i>
+                    ${isVisible ? `
+                    <div class="p-2 rounded-full mb-1 bg-slate-100 ${catInfo.color}">
+                      <i data-lucide="${catInfo.icon}" class="w-5 h-5"></i>
+                    </div>
+                    ` : ''}
+                    <span class="${isVisible ? 'text-sm' : 'text-xs mt-1'} font-bold ${catInfo.color}">${catInfo.label}</span>
+                  </div>
+                `;
+            });
+            html += `</div>`;
+
+            // ================= 【メインガントエリア】 =================
+            html += `<div class="relative min-w-max pb-8" id="map-container">
+                        <svg id="svg-connections" class="absolute inset-0 pointer-events-none z-0" style="width: 100%; height: 100%;">
+                          <defs>
+                            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" fill="rgba(20, 184, 166, 0.6)">
+                              <polygon points="0 0, 6 3, 0 6" />
+                            </marker>
+                          </defs>
+                        </svg>`;
+
+            // 【年ヘッダー（経済指標）】
+            html += `<div class="flex h-[100px] min-h-[100px] flex-shrink-0 sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b-2 border-teal-600">`;
+            fMapYears.forEach(year => {
+                const isFuture = year > new Date().getFullYear();
+                const periodBgClass = getPeriodBgClass(year);
+                const eco = getEconomicStr(year);
+
+                html += `
+                  <div class="relative flex flex-col items-center justify-end pb-2 border-l border-slate-300 ${periodBgClass} flex-shrink-0" style="width: ${COL_W}px">
+                    <div class="absolute top-2 left-1/2 transform -translate-x-1/2 flex flex-col gap-1 w-[90%] items-center opacity-80 hover:opacity-100 transition-opacity">
+                        <span class="text-[9px] text-red-600 font-bold bg-white/90 px-1 rounded shadow-sm border border-red-200 flex justify-between w-full max-w-[80px]" style="font-size: ${isCompactWidth ? 8 : 9}px;">
+                            <span class="mr-1">日経</span><span>${eco.nikkei}</span>
+                        </span>
+                        <span class="text-[9px] text-emerald-700 font-bold bg-white/90 px-1 rounded shadow-sm border border-emerald-200 flex justify-between w-full max-w-[80px]" style="font-size: ${isCompactWidth ? 8 : 9}px;">
+                            <span class="mr-1">ドル</span><span>${eco.usd}円</span>
+                        </span>
+                    </div>
+                    <span class="text-xl font-bold ${isFuture ? 'text-teal-600' : 'text-slate-800'}">${year}</span>
+                    ${isFuture ? '<span class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-[9px] bg-teal-100 text-teal-800 px-1.5 rounded-full">予定</span>' : ''}
+                  </div>
+                `;
+            });
+            html += `</div>`;
+
+            // 【指導者レーン】
+            html += `<div class="relative border-b-2 border-slate-300 box-border" style="height: ${leadersH}px; min-height: ${leadersH}px; max-height: ${leadersH}px; width: ${fMapYears.length * COL_W}px">`;
+            fMapYears.forEach((year, i) => {
+                const periodBgClass = getPeriodBgClass(year);
+                html += `<div class="absolute top-0 bottom-0 border-l border-dashed border-slate-300 ${periodBgClass}" style="left: ${i * COL_W}px; width: ${COL_W}px;"></div>`;
+            });
+
+            if (laneVisibility.leaders) {
+                const minYear = fMapYears[0];
+                const maxYear = fMapYears[fMapYears.length - 1];
+                const filteredUs = usPresidents.filter(p => p.end >= minYear && p.start <= maxYear);
+                const filteredJp = jpPrimeMinisters.filter(p => p.end >= minYear && p.start <= maxYear);
+
+                const renderLeader = (leader, yBase, index) => {
+                    const startX = getXPos(leader.start, fMapYears, COL_W);
+                    const endX = getXPos(leader.end, fMapYears, COL_W);
+                    const w = endX - startX;
+                    if (w <= 0) return '';
+                    
+                    const barBottom = (index % 2 === 0) ? 0 : (4 * scale);
+                    const textBottom = (index % 2 === 0) ? (6 * scale) : (10 * scale);
+                    
+                    return `
+                      <div class="absolute group" style="left: ${startX}px; width: ${w}px; top: ${yBase}px; height: ${36 * scale}px;">
+                          <div class="absolute left-1/2 transform -translate-x-1/2 whitespace-nowrap cursor-default font-bold ${leader.color} z-10" style="bottom: ${textBottom}px; font-size: ${10 * scale}px;">
+                              ${leader.shortName}
+                          </div>
+                          <div class="absolute left-0 w-full ${leader.bg} rounded-full opacity-80" style="bottom: ${barBottom}px; height: ${4 * scale}px;"></div>
+                          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-1 hidden group-hover:block z-50 bg-white border border-slate-300 rounded px-2 py-1 text-xs shadow-lg whitespace-nowrap font-bold text-slate-700">
+                              ${leader.generation} ${leader.fullName || leader.shortName}<br/>(${Math.floor(leader.start)}年〜${Math.floor(leader.end)}年)
+                          </div>
+                      </div>
+                    `;
+                };
+
+                filteredUs.forEach((leader, i) => html += renderLeader(leader, 2 * scale, i));
+                filteredJp.forEach((leader, i) => html += renderLeader(leader, 42 * scale, i)); 
+            }
+            html += `</div>`;
+
+
+            // 【理論発表レーン】
+            html += `<div class="relative border-b-2 border-slate-300 box-border" style="height: ${theoryH}px; min-height: ${theoryH}px; max-height: ${theoryH}px; width: ${fMapYears.length * COL_W}px">`;
+            fMapYears.forEach((year, i) => {
+                const periodBgClass = getPeriodBgClass(year);
+                html += `<div class="absolute top-0 bottom-0 border-l border-dashed border-slate-300 ${periodBgClass}" style="left: ${i * COL_W}px; width: ${COL_W}px;"></div>`;
+            });
+
+            if (laneVisibility.theory) {
+                theoryLayout.items.forEach(theory => {
+                    if (isExpandAll) {
+                        html += `
+                          <div class="absolute flex flex-col justify-start transition-all duration-300 rounded-md shadow-md border-l-[5px] border-orange-500 bg-white overflow-hidden box-border"
+                               style="left: ${theory.left}px; top: ${theory.top}px; height: ${theory.height}px; width: ${theory.width}px; padding: ${8 * scale}px;">
+                              <div class="flex items-center gap-1 mb-1">
+                                <span class="font-bold text-orange-600 truncate" style="font-size: ${13 * scale}px;">${theory.name}</span>
+                                <span class="text-slate-400 font-medium flex-shrink-0" style="font-size: ${10 * scale}px;">(${theory.year}年)</span>
+                              </div>
+                              <h4 class="font-bold text-slate-800 whitespace-normal mb-1" style="font-size: ${11 * scale}px; line-height: 1.3;">${theory.theory}</h4>
+                              <p class="text-slate-600 whitespace-normal" style="font-size: ${10 * scale}px; line-height: 1.4;">${theory.description}</p>
+                          </div>
+                        `;
+                    } else {
+                        html += `
+                          <div class="absolute flex items-center justify-center px-3 py-1 rounded-md bg-white border-l-[5px] border-orange-500 shadow-[0_2px_4px_rgba(0,0,0,0.15)] hover:shadow-xl hover:z-[60] z-20 transition-all cursor-default group w-max"
+                               style="left: ${theory.left}px; top: ${theory.top}px; height: ${32 * scale}px;">
+                              <span class="font-bold text-orange-600 whitespace-nowrap" style="font-size: ${12 * scale}px;">${theory.name}</span>
+                              
+                              <div class="absolute top-full left-0 bg-white rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border-l-4 border-orange-500 z-[60] pointer-events-none"
+                                   style="margin-top: ${4 * scale}px; width: ${280 * scale}px; padding: ${12 * scale}px;">
+                                <div class="flex items-center gap-2" style="margin-bottom: ${4 * scale}px;">
+                                  <span class="font-bold text-orange-600" style="font-size: ${14 * scale}px;">${theory.name}</span>
+                                  <span class="text-slate-400 font-medium" style="font-size: ${11 * scale}px;">(${theory.year}年)</span>
+                                </div>
+                                <h4 class="font-bold text-slate-800 whitespace-normal" style="font-size: ${13 * scale}px; margin-bottom: ${6 * scale}px; line-height: 1.3;">${theory.theory}</h4>
+                                <p class="text-slate-600 whitespace-normal" style="font-size: ${11 * scale}px; line-height: 1.5;">${theory.description}</p>
+                              </div>
+                          </div>
+                        `;
+                    }
+                });
+            }
+            html += `</div>`;
+
+            // 【トレンド推移レーン】
+            html += `<div class="relative border-b-2 border-slate-300 box-border" style="height: ${trendH}px; min-height: ${trendH}px; max-height: ${trendH}px; width: ${fMapYears.length * COL_W}px">`;
+            fMapYears.forEach((year, i) => {
+                const periodBgClass = getPeriodBgClass(year);
+                html += `<div class="absolute top-0 bottom-0 border-l border-dashed border-slate-300 ${periodBgClass}" style="left: ${i * COL_W}px; width: ${COL_W}px;"></div>`;
+            });
+
+            if (laneVisibility.trend) {
+                html += `<div class="absolute inset-0 pt-3">`;
+                fTrendData.forEach((trend, index) => {
+                    const top = index * 45 * scale + 25 * scale;
+                    const firstYearIdx = fMapYears.indexOf(trend.events[0].year);
+                    const lastYearIdx = fMapYears.indexOf(trend.events[trend.events.length - 1].year);
+                    const startX = firstYearIdx * COL_W + COL_W / 2;
+                    const endX = lastYearIdx * COL_W + COL_W / 2;
+                    
+                    html += `<div class="absolute bg-slate-300 rounded-full z-10 shadow-inner" style="left: ${startX}px; width: ${endX - startX}px; top: ${top}px; height: ${4 * scale}px;"></div>`;
+                    
+                    trend.events.forEach(event => {
+                        const yearIndex = fMapYears.indexOf(event.year);
+                        const left = yearIndex * COL_W + COL_W / 2;
+                        const bgColor = trend.color.split(' ')[0]; 
+                        const textColor = trend.color.split(' ')[1]; 
+                        const borderColor = trend.color.split(' ')[2]; 
+                        
+                        html += `
+                          <div class="absolute flex flex-col items-center justify-center transform -translate-x-1/2 hover:z-[60] z-30 group" style="left: ${left}px; top: ${top - 16 * scale}px;">
+                              <span class="font-bold mb-[2px] ${textColor} drop-shadow-sm whitespace-nowrap" style="font-size: ${9 * scale}px;">${trend.title}</span>
+                              <div class="rounded-full ${bgColor} border-2 ${borderColor} shadow-md relative z-10" style="width: ${12 * scale}px; height: ${12 * scale}px;"></div>
+                              <div class="absolute font-bold bg-white border ${borderColor} ${textColor} z-20 cursor-default rounded-full shadow-sm transition-transform group-hover:scale-110 flex items-center justify-center"
+                                   style="top: ${22 * scale}px; font-size: ${10 * scale}px; padding: ${1 * scale}px ${6 * scale}px; min-width: ${30 * scale}px;">
+                                  ${event.value}
+                              </div>
+                          </div>
+                        `;
+                    });
+                });
+                html += `</div>`;
+            }
+            html += `</div>`;
+
+            // 【アイテム配置エリア】
+            categoryKeys.forEach(catKey => {
+                const catInfo = categoryConfig[catKey];
+                const isVisible = laneVisibility[catKey];
+                const catH = isVisible ? (layoutData[catKey] ? layoutData[catKey].height : 100) : 40;
+                
+                html += `<div class="relative border-b border-slate-200 box-border" style="height: ${catH}px; min-height: ${catH}px; max-height: ${catH}px; width: ${fMapYears.length * COL_W}px">`;
+                
+                fMapYears.forEach((year, i) => {
+                    const periodBgClass = getPeriodBgClass(year);
+                    html += `<div class="absolute top-0 bottom-0 border-l border-dashed border-slate-300 ${periodBgClass}" style="left: ${i * COL_W}px; width: ${COL_W}px;"></div>`;
+                });
+
+                if(isVisible && layoutData[catKey]) {
+                    layoutData[catKey].items.forEach(item => {
+                        const isSpecial = item.isSpecial;
+                        
+                        const borderColorClass = isSpecial ? 'border-slate-800' : catInfo.border;
+                        const textColorClass = isSpecial ? 'text-white' : catInfo.color;
+                        const descColorClass = isSpecial ? 'text-slate-300' : 'text-slate-700';
+                        const cardBgClass = isSpecial ? 'bg-slate-800' : getCardBgClass(item.subCategory);
+                        const tipBgClass = isSpecial ? 'bg-slate-800' : 'bg-white';
+                        
+                        if (isExpandAll) {
+                            html += `
+                              <div id="card-${item.id}" class="absolute flex flex-col justify-start transition-all duration-300 rounded-md shadow-md border-l-[5px] ${borderColorClass} ${cardBgClass} overflow-hidden box-border" 
+                                   style="left: ${item.left + 8 * scale}px; top: ${item.top}px; width: ${item.width}px; height: ${item.height}px; padding: ${8 * scale}px;">
+                                  <h3 class="font-bold whitespace-normal ${textColorClass}" style="font-size: ${(item.isS ? 14 : 13) * scale}px; margin-bottom: ${4 * scale}px; line-height: 1.3;">${item.title}</h3>
+                                  <p class="${descColorClass} whitespace-normal" style="font-size: ${11 * scale}px; line-height: 1.4;">${item.description}</p>
+                              </div>
+                            `;
+                        } else {
+                            html += `
+                              <div id="card-${item.id}" class="absolute group hover:z-[60] z-10 transition-all duration-300 rounded-md shadow-[0_2px_5px_rgba(0,0,0,0.15)] hover:shadow-xl border-l-[5px] ${borderColorClass} ${cardBgClass}" 
+                                   style="left: ${item.left + 8 * scale}px; top: ${item.top}px; width: ${item.width}px; height: ${item.height}px;">
+                                   
+                                  <div class="w-full h-full flex items-center" style="padding: 0 ${8 * scale}px;">
+                                    <h3 class="font-bold truncate ${textColorClass}" style="font-size: ${12 * scale}px;">${item.title}</h3>
+                                    
+                                    <div class="absolute top-full left-0 ${tipBgClass} rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border-l-[5px] ${borderColorClass} z-[60] pointer-events-none"
+                                         style="margin-top: ${4 * scale}px; width: ${260 * scale}px; padding: ${12 * scale}px;">
+                                      <h4 class="font-bold whitespace-normal ${textColorClass}" style="font-size: ${13 * scale}px; margin-bottom: ${4 * scale}px; line-height: 1.3;">${item.title}</h4>
+                                      <p class="${descColorClass} whitespace-normal" style="font-size: ${11 * scale}px; line-height: 1.5;">${item.description}</p>
+                                    </div>
+                                  </div>
+                              </div>
+                            `;
+                        }
+                    });
+                }
+                html += `</div>`;
+            });
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderApp() {
+            try {
+                const appDiv = document.getElementById('app');
+                const listBtnClass = viewMode === 'list' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white';
+                const mapBtnClass = viewMode === 'map' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white';
+                
+                const expandDisabledAttr = viewMode === 'list' ? 'disabled' : '';
+
+                appDiv.innerHTML = `
+                  <div class="w-full">
+                    
+                    <div class="bg-teal-800 text-white rounded-xl p-6 shadow-lg mb-6 flex flex-col md:flex-row justify-between md:items-end gap-4">
+                      <div>
+                        <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
+                          <i data-lucide="calendar" class="w-8 h-8"></i>
+                          キャリコン・法制度クロニクル
+                        </h1>
+                        <p class="mt-2 text-teal-100 text-sm md:text-base">
+                          社会情勢の変遷と、それに伴い整備された法律・教育・ガイドラインの関連性を俯瞰する年表
+                        </p>
+                        <div class="mt-3 inline-flex items-center gap-2 bg-teal-900/60 text-teal-50 px-3 py-1.5 rounded-md text-xs md:text-sm border border-teal-700 print-hide">
+                          <i data-lucide="monitor" class="w-4 h-4"></i>
+                          <span>PCの大画面での閲覧、またはPDF出力・印刷でのご利用を推奨します</span>
+                        </div>
+                      </div>
+                      
+                      <div class="flex flex-col gap-3 items-end print-hide">
+                        <div class="flex bg-teal-900/50 rounded-lg p-1 border border-teal-700 w-max">
+                          <button onclick="setPeriod('all')" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${currentPeriod === 'all' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white'}">
+                            全期間
+                          </button>
+                          <button onclick="setPeriod('p1')" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${currentPeriod === 'p1' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white'}">
+                            1945〜1985
+                          </button>
+                          <button onclick="setPeriod('p2')" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${currentPeriod === 'p2' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white'}">
+                            1985〜2011
+                          </button>
+                          <button onclick="setPeriod('p3')" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${currentPeriod === 'p3' ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white'}">
+                            2011〜2028
+                          </button>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center bg-teal-900/50 rounded-lg p-1 border border-teal-700 w-max">
+                              <button onclick="toggleCompactWidth()" class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${isCompactWidth ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white hover:bg-teal-800/50'}">
+                                <i data-lucide="${isCompactWidth ? 'expand' : 'shrink'}" class="w-4 h-4"></i>
+                                ${isCompactWidth ? '通常幅' : '横幅圧縮'}
+                              </button>
+                            </div>
+
+                            <div class="flex items-center bg-teal-900/50 rounded-lg p-1 border border-teal-700 w-max">
+                              <button onclick="changeFontSize(-1)" class="flex items-center justify-center p-2 rounded-md transition-colors text-teal-100 hover:text-white hover:bg-teal-800/50" title="縮小">
+                                <i data-lucide="zoom-out" class="w-4 h-4"></i>
+                              </button>
+                              <div class="w-[40px] text-center text-teal-50 font-bold text-sm select-none">
+                                ${currentScale}%
+                              </div>
+                              <button onclick="changeFontSize(1)" class="flex items-center justify-center p-2 rounded-md transition-colors text-teal-100 hover:text-white hover:bg-teal-800/50" title="拡大">
+                                <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                              </button>
+                            </div>
+
+                            <div class="flex bg-teal-900/50 rounded-lg p-1 border border-teal-700 w-max">
+                              <button onclick="setViewMode('list')" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${listBtnClass}">
+                                <i data-lucide="list" class="w-4 h-4"></i> リスト
+                              </button>
+                              <button onclick="setViewMode('map')" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${mapBtnClass}">
+                                <i data-lucide="network" class="w-4 h-4"></i> 関連マップ
+                              </button>
+                              
+                              <div class="w-px bg-teal-700 my-1 mx-1"></div>
+                              <button onclick="toggleExpandAll()" ${expandDisabledAttr} class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${viewMode === 'list' ? 'opacity-50 cursor-not-allowed text-teal-300' : (isExpandAll ? 'bg-white text-teal-800 shadow-sm' : 'text-teal-100 hover:text-white')}">
+                                <i data-lucide="${isExpandAll ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>
+                                ${isExpandAll ? '折りたたむ' : 'すべて展開'}
+                              </button>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+                      ${viewMode === 'list' ? renderList() : renderMap()}
+                    </div>
+
+                    <div class="mt-6 bg-white rounded-xl p-5 border border-slate-200 shadow-sm text-sm text-slate-600 flex gap-4 items-start">
+                      <i data-lucide="alert-circle" class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5"></i>
+                      <div>
+                        <p class="font-bold text-slate-800 mb-1">【関連マップの読み方と色分け】</p>
+                        <p class="mb-2">
+                          付箋やカードの色は、【分野】（社会情勢、法律、教育、制度・施策、指針）を表しています。背景のグレーの濃淡は「5年ごとの区切り（2021〜2025年など）」を表します。
+                        </p>
+                        <p class="mb-1">
+                          ・タイトルの頭にある【S】【A】【B】は、試験における重要度（頻出度）を表しています。<br/>
+                          ・付箋の背景が<span class="font-bold text-emerald-700 bg-emerald-50 px-1 rounded">薄い緑色</span>のものは「メンタルヘルス関係」、<span class="font-bold text-orange-700 bg-orange-50 px-1 rounded">薄いオレンジ色</span>のものは「雇用・職能向上関係」です。<br/>
+                          ・背景が<span class="font-bold text-white bg-slate-800 px-1 rounded">ネイビー色</span>のカードは、法制度に甚大な影響を与えた「歴史的な特異点（パラダイムシフト）」を表します。<br/>
+                          ・「すべて展開」をオンにすると、ホバーなしで全テキストが表示されます。オフの場合はコンパクトに表示され、ホバーで詳細が確認できます。<br/>
+                          ・左側の【分野名】をクリックすると、その項目の表示／非表示を切り替えることができます。
+                        </p>
+                        <p>点線（矢印）は、過去の出来事から現在の制度へ至る文脈や関連性を示しています。</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+                lucide.createIcons();
+
+                if (viewMode === 'map') {
+                    setTimeout(drawConnections, 100);
+                }
+            } catch (error) {
+                console.error("Render Error:", error);
+                document.getElementById('app').innerHTML = `<div class="p-8 text-red-600 bg-red-50 font-bold rounded-lg border border-red-200">描画中にエラーが発生しました。設定を初期化してページをリロードしてください。</div>`;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (viewMode === 'map') {
+                drawConnections();
+            }
+        });
+
+        updateFilteredData(); 
+        renderApp();
+    </script>
+</body>
+</html>
