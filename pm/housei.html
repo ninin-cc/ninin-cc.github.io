@@ -1270,7 +1270,7 @@
 
         function getXPos(year, fMapYears, COL_W) {
             if (!fMapYears || fMapYears.length === 0) return 0;
-            const getPoint = (i) => i * COL_W + COL_W / 2;
+            const getPoint = (i) => i * COL_W;
 
             if (year <= fMapYears[0]) {
                 if (fMapYears.length >= 2) {
