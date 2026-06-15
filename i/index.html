@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="scroll-smooth">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
@@ -140,6 +140,31 @@
                 </a>
             </div>
 
+            <!-- マンガでわかる！RIESM™（追加エリア） -->
+            <div class="w-full bg-white p-4 rounded-2xl shadow-sm border border-stone-100">
+                <p class="text-[14px] font-bold text-stone-800 text-center mb-3">
+                    マンガでわかる！RIESM™
+                </p>
+                <a 
+                    href="../riesm.html?open_manga=true" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="relative block group rounded-xl overflow-hidden border border-stone-200 bg-stone-100 h-[240px] flex items-center justify-center transition-transform active:scale-[0.98]"
+                >
+                    <!-- スライドショー表示用画像 -->
+                    <img id="manga-thumbnail" src="../img/m/1.jpg" alt="漫画サムネイル" class="w-full h-full object-contain transition-opacity duration-300" onerror="this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=Manga+(1.jpg)'">
+                    
+                    <!-- 漫画を読むボタン（スマホでわかりやすいよう常時半透明表示） -->
+                    <div class="absolute inset-0 bg-black/20 flex items-center justify-center transition-colors group-active:bg-black/40">
+                        <span class="bg-white/95 text-stone-800 text-xs font-bold py-2.5 px-5 rounded-full shadow-md flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            漫画を読む
+                        </span>
+                    </div>
+                </a>
+                <p class="text-[10px] text-stone-400 text-center mt-2">タップするとRIESM™のページが開きます</p>
+            </div>
+
             <!-- 心理学者マップ -->
             <div class="w-full">
                 <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" rel="noopener noreferrer" 
@@ -272,5 +297,44 @@
         </p>
     </footer>
 
+    <!-- スライドショー用スクリプト -->
+    <script>
+        // 漫画サムネイルのスライドショー（5秒おきに 2.jpg -> 4.jpg -> 6.jpg -> 1.jpg をループ）
+        document.addEventListener('DOMContentLoaded', () => {
+            const thumbnail = document.getElementById('manga-thumbnail');
+            if (!thumbnail) return;
+
+            // 表示する画像の順番
+            const images = [
+                '../img/m/2.jpg',
+                '../img/m/4.jpg',
+                '../img/m/6.jpg',
+                '../img/m/1.jpg'
+            ];
+            
+            let currentIndex = 0;
+
+            setInterval(() => {
+                const nextSrc = images[currentIndex];
+                
+                // 切り替え時にフワッとするように一瞬透明度を下げる
+                thumbnail.style.opacity = '0.4';
+                
+                setTimeout(() => {
+                    thumbnail.src = nextSrc;
+                    thumbnail.style.opacity = '1';
+                    
+                    // 万が一画像がない場合のプレースホルダー文字も更新
+                    const fileName = nextSrc.split('/').pop();
+                    thumbnail.onerror = function() {
+                        this.src = `https://placehold.co/600x400/fdfcf9/a8a29e?text=Manga+(${fileName})`;
+                    };
+                }, 150); // 150ms後に画像を差し替え
+
+                // 次の画像のインデックスをセット
+                currentIndex = (currentIndex + 1) % images.length;
+            }, 5000); // 5000ms = 5秒ごとに実行
+        });
+    </script>
 </body>
 </html>
