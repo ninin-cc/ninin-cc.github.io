@@ -535,6 +535,22 @@
                 currentIndex = (currentIndex + 1) % images.length;
             }, 5000); // 5000ms = 5秒ごとに実行
         });
+
+        // URLパラメータによる自動モーダルオープン処理
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('open_manga') === 'true') {
+                // 目印があったら、少し待ってから漫画モーダルを開く
+                setTimeout(() => {
+                    if (typeof openMangaModal === 'function') {
+                        openMangaModal();
+                    }
+                }, 100);
+                
+                // URLから目印を消して、元のきれいなURLに戻しておく
+                history.replaceState(null, '', window.location.pathname);
+            }
+        });
     </script>
 </body>
 </html>
