@@ -86,6 +86,54 @@
     .exam-date-input { width: 90px; padding: 2px; font-size: 0.65rem; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; }
     .exam-date-btn { background: var(--teal); color: #fff; border: none; border-radius: 4px; padding: 2px 6px; font-weight: bold; font-size: 0.65rem; cursor: pointer; transition: transform 0.1s, background 0.1s; white-space: nowrap; }
     .exam-date-btn:active { transform: scale(0.95); background: var(--teal-dark); }
+
+    .top-shortcut-panel {
+      margin: 0 0 14px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .top-shortcut-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 8px;
+      color: var(--teal-dark);
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+    .top-shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .top-shortcut-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 38px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: var(--teal-dark);
+      border: 1px solid var(--line);
+      text-decoration: none;
+      font-size: 0.76rem;
+      font-weight: bold;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .top-shortcut-button.accent {
+      background: var(--accent-soft);
+      color: #7b3f1f;
+      border-color: rgba(183, 110, 53, 0.22);
+    }
+    @media (min-width: 720px) {
+      .top-shortcut-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
   </style>
   <!-- 外部のCSSファイルを読み込む -->
   <link rel="stylesheet" href="style.css">
@@ -135,6 +183,20 @@
           </div>
         </div>
 
+        <nav class="top-shortcut-panel" aria-label="TOP目次">
+          <p class="top-shortcut-title"><span>目次</span><span style="color: var(--muted); font-size: 0.72rem; font-weight: normal;">よく使う場所へ移動</span></p>
+          <div class="top-shortcut-grid">
+            <a class="top-shortcut-button" href="#practiceNoteSection">🎤 実技支援note</a>
+            <a class="top-shortcut-button" href="#socialLegalSection">⚖️ 法制関連問題</a>
+            <a class="top-shortcut-button" href="#mapStudySection">🧭 心理学者問題</a>
+            <a class="top-shortcut-button" href="#psychologistMapPromo">🗺️ 心理学者MAP</a>
+            <a class="top-shortcut-button" href="housei.html">📅 学科対策年表</a>
+            <a class="top-shortcut-button" href="#examPrepSection">📝 キャリコン学科</a>
+            <a class="top-shortcut-button accent" href="#membershipIntroSection">🤝 メンバーシップ</a>
+            <a class="top-shortcut-button accent" href="#tabelaboSection">🍽️ たべラボ</a>
+          </div>
+        </nav>
+
         <!-- データ引継ぎボタン -->
         <button id="saveLoadBtn" class="category-button" style="margin-bottom: 14px; background: #fff; border-color: var(--line); color: var(--teal-dark); justify-content: center; width: 100%;">
           <span class="cat-icon">📱💻</span><span style="font-weight: bold;">学習データを引き継ぐ (セーブ/ロード)</span><span id="saveLoadLockIcon" style="font-size: 0.8rem; margin-left: 4px;">🔒</span>
@@ -155,7 +217,7 @@
         </div>
 
         <!-- 今日の心理学者エピソード -->
-        <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+        <section id="practiceNoteSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
           <p class="top-category-title section-heading-band section-heading-brand">
             <span class="section-number">①</span>
             <span style="font-size: 1.2rem;">📖</span>
@@ -231,7 +293,7 @@
         <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
 
         <!-- 社会情勢・法制関連問題 -->
-        <section class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
+        <section id="socialLegalSection" class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
           <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>社会情勢・法制関連問題</p>
           <div class="category-grid" id="socialLegalCategoryGrid">
             <!-- JSで動的に生成されます -->
@@ -241,7 +303,7 @@
           </div>
           <div class="top-responsive-column top-responsive-column-right">
 
-        <section class="top-category-section membership-intro-section" aria-label="メンバーシップのご紹介" style="margin-bottom: 14px; background: var(--accent-soft); border-color: rgba(183, 110, 53, 0.28);">
+        <section id="membershipIntroSection" class="top-category-section membership-intro-section" aria-label="メンバーシップのご紹介" style="margin-bottom: 14px; background: var(--accent-soft); border-color: rgba(183, 110, 53, 0.28);">
           <p class="top-category-title section-heading-band section-heading-accent" style="margin-bottom: 10px;">
             <span style="font-size: 1.15rem;">🤝</span>
             メンバーシップのご紹介
@@ -255,7 +317,7 @@
         </section>
 
         <!-- マップ理解補助問題 -->
-        <section class="top-category-section map-study-section" aria-label="マップ理解補助問題">
+        <section id="mapStudySection" class="top-category-section map-study-section" aria-label="マップ理解補助問題">
           <p class="top-category-title section-heading-band"><span class="section-number">④</span><span>🧭</span>マップ理解補助問題</p>
           <div class="category-grid" id="mapStudyCategoryGrid">
             <!-- JSで動的に生成されます -->
@@ -263,7 +325,7 @@
           <div class="note-link-area">
             
             <!-- 交互に切り替わるプロモーションコンテナ -->
-            <a href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="map-promo-container">
+            <a id="psychologistMapPromo" href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="map-promo-container">
               <!-- 画像レイヤー -->
               <div class="map-promo-image-layer">
                 <b>心理学者マップ</b>
@@ -304,7 +366,7 @@
           </div>
         </section>
 
-        <section class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
+        <section id="examPrepSection" class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
           <p class="top-category-title section-heading-band"><span class="section-number">⑥</span><span>📝</span>キャリコン学科試験対策</p>
           <div class="category-grid" id="examPrepCategoryGrid">
             <!-- JSで動的に生成されます -->
@@ -312,7 +374,7 @@
         </section>
 
         <!-- ▼▼ 資格を取ったら、活動しよう！ ▼▼ -->
-        <section class="top-category-section" style="margin-top: 14px; background: #fff; border-color: var(--line);" aria-label="資格を取ったら、活動しよう！">
+        <section id="tabelaboSection" class="top-category-section" style="margin-top: 14px; background: #fff; border-color: var(--line);" aria-label="資格を取ったら、活動しよう！">
           <p class="top-category-title"><span>🌱</span>資格を取ったら、活動しよう！</p>
           
           <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
