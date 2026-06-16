@@ -121,7 +121,7 @@
       color: var(--teal-dark);
       border: 1px solid var(--line);
       text-decoration: none;
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       font-weight: bold;
       line-height: 1.25;
       text-align: center;
@@ -133,6 +133,28 @@
     }
     @media (min-width: 720px) {
       .top-shortcut-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    /* =========================================
+       目次スクロール時のアニメーション・調整
+       ========================================= */
+    .top-category-title, .section-heading-band {
+      /* 固定ヘッダーに隠れないようにスマホ表示向けに最適化 */
+      scroll-margin-top: 60px;
+    }
+    
+    @keyframes titleFlashRed {
+      0%, 50%, 100% { transform: scale(1); box-shadow: none; z-index: 1; position: relative; }
+      25%, 75% { transform: scale(1.02); background-color: #ef4444 !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); z-index: 10; position: relative; border-color: transparent !important; }
+    }
+    .flash-target {
+      animation: titleFlashRed 1.2s ease-in-out;
+      border-radius: 8px;
+    }
+
+    /* ▼▼ ページ下部のセクションでも最上部にスクロールできるように余白を追加 ▼▼ */
+    #topPage {
+      padding-bottom: 60vh;
     }
   </style>
   <!-- 外部のCSSファイルを読み込む -->
@@ -186,14 +208,14 @@
         <nav class="top-shortcut-panel" aria-label="TOP目次">
           <p class="top-shortcut-title"><span>目次</span><span style="color: var(--muted); font-size: 0.72rem; font-weight: normal;">よく使う場所へ移動</span></p>
           <div class="top-shortcut-grid">
-            <a class="top-shortcut-button" href="#practiceNoteSection">🎤 実技支援note</a>
+            <a class="top-shortcut-button" href="#noteArticleSection">🎤 実技支援note</a>
             <a class="top-shortcut-button" href="#socialLegalSection">⚖️ 法制関連問題</a>
             <a class="top-shortcut-button" href="#mapStudySection">🧭 心理学者問題</a>
             <a class="top-shortcut-button" href="#psychologistMapPromo">🗺️ 心理学者MAP</a>
-            <a class="top-shortcut-button" href="housei.html">📅 学科対策年表</a>
+            <a class="top-shortcut-button" href="#socialLegalSection">📅 学科対策年表</a>
             <a class="top-shortcut-button" href="#examPrepSection">📝 キャリコン学科</a>
             <a class="top-shortcut-button accent" href="#membershipIntroSection">🤝 メンバーシップ</a>
-            <a class="top-shortcut-button accent" href="#tabelaboSection">🍽️ たべラボ</a>
+            <a class="top-shortcut-button accent" href="#tabelaboSection">🍽️ 活動するなら【たべラボ】</a>
           </div>
         </nav>
 
@@ -217,7 +239,7 @@
         </div>
 
         <!-- 今日の心理学者エピソード -->
-        <section id="practiceNoteSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+        <section id="dailyEpisodeSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
           <p class="top-category-title section-heading-band section-heading-brand">
             <span class="section-number">①</span>
             <span style="font-size: 1.2rem;">📖</span>
@@ -238,7 +260,7 @@
         </section>
 
         <!-- ▼▼ 面談実技支援用 無料note記事のご紹介 ▼▼ -->
-        <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+        <section id="noteArticleSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
           <details class="extended-explanation-box note-article-box" id="noteArticleBox" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
             <summary class="top-category-title section-heading-band section-heading-accent" style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
               <span class="section-number">②</span>
@@ -292,9 +314,9 @@
         </section>
         <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
 
-        <!-- 社会情勢・法制関連問題 -->
-        <section id="socialLegalSection" class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
-          <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>社会情勢・法制関連問題</p>
+        <!-- ▼▼ タイトル名を変更 ▼▼ -->
+        <section id="socialLegalSection" class="top-category-section social-legal-section" aria-label="心理学者・社会情勢法制年表">
+          <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>心理学者・社会情勢法制年表</p>
           <div class="category-grid" id="socialLegalCategoryGrid">
             <!-- JSで動的に生成されます -->
           </div>
@@ -375,7 +397,7 @@
 
         <!-- ▼▼ 資格を取ったら、活動しよう！ ▼▼ -->
         <section id="tabelaboSection" class="top-category-section" style="margin-top: 14px; background: #fff; border-color: var(--line);" aria-label="資格を取ったら、活動しよう！">
-          <p class="top-category-title"><span>🌱</span>資格を取ったら、活動しよう！</p>
+          <p class="top-category-title section-heading-band" style="background: var(--amber); color: #fff;"><span>🌱</span>資格を取ったら、活動しよう！</p>
           
           <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
             <div class="talk-row left">
@@ -747,6 +769,44 @@
           event.stopPropagation();
         }
       }, true);
+
+      // ▼▼ 追加：目次ボタンのスムーススクロール＆画面上部表示＆明滅エフェクト＆アコーディオン展開 ▼▼
+      document.querySelectorAll('.top-shortcut-button[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            // 対象セクション内に details があれば開く（アコーディオンを展開）
+            const detailsElement = targetElement.querySelector('details') || (targetElement.tagName.toLowerCase() === 'details' ? targetElement : null);
+            if (detailsElement && !detailsElement.open) {
+              detailsElement.setAttribute('open', '');
+            }
+
+            // セクション自体が大きい場合を考慮し、タイトル部分（あれば）を基準にする
+            const titleElement = targetElement.querySelector('.top-category-title, .section-heading-band') || targetElement;
+            
+            // スムーススクロールで画面の最上部に配置
+            titleElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+
+            // 明滅アニメーションをリセットして適用
+            titleElement.classList.remove('flash-target');
+            void titleElement.offsetWidth; // リフローを強制
+            titleElement.classList.add('flash-target');
+
+            // アニメーション完了後にクラスを外す
+            setTimeout(() => {
+              titleElement.classList.remove('flash-target');
+            }, 1200);
+          }
+        });
+      });
+      // ▲▲ 追加ここまで ▲▲
+
     })();
   </script>
 </body>
