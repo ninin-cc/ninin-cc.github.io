@@ -14,6 +14,8 @@ const CATEGORIES = [
   { id: "episodeDirectory", title: "心理学者エピソード一覧", icon: "📚", type: "episodeDirectory", topGroup: "directory", isActive: true },
   { id: "originalAcademic", title: "オリジナル学科問題", icon: "📝", type: "quiz", questionBankId: "originalAcademic", questionLimit: 10, topGroup: "examPrep", isActive: true, reviewable: true, accent: "original" },
   { id: "originalAcademicReview", title: "オリジナル学科問題振返り", icon: "↩", type: "review", reviewForCategoryId: "originalAcademic", topGroup: "examPrep", isActive: true, accent: "original" },
+  { id: "categoryTarget", title: "カテゴリ別問題", icon: "🧰", type: "quiz", questionBankId: "categoryTarget", questionLimit: 10, topGroup: "practicalExam", isActive: true, reviewable: true, accent: "original" },
+  { id: "categoryTargetReview", title: "カテゴリ別問題振返り", icon: "↩", type: "review", reviewForCategoryId: "categoryTarget", topGroup: "practicalExam", isActive: true, accent: "original" },
   { id: "socialLegal", title: "社会情勢・法制関連問題", icon: "⚖️", type: "quiz", questionBankId: "socialLegal", questionLimit: 10, topGroup: "socialLegal", isActive: true, reviewable: true, accent: "original" },
   { id: "socialLegalReview", title: "社会情勢・法制関連問題振返り", icon: "↩", type: "review", reviewForCategoryId: "socialLegal", topGroup: "socialLegal", isActive: true, accent: "original" },
   { id: "socialLegalTimeline", title: "心理学者・社会情勢法制年表", icon: "🗓️", type: "externalLink", href: "housei.html", topGroup: "socialLegal", isActive: true, accent: "original", previewImage: "img/nenpyo.jpg", description: "心理学理論と社会情勢・法制度の流れを横断して確認" },
@@ -57,6 +59,26 @@ const LOCKED_CATEGORY_IDS = [
 
 const LOCKED_QUIZ_SET_RULES = { industrialFrequent: 3 };
 const LOCKED_REVIEW_SET_RULES = { careerFrequent: 3, industrialFrequent: 3 };
+const LOCKED_QUIZ_SET_INDICES = { categoryTarget: [1, 2, 5, 6, 9, 10, 13, 14] };
+const LOCKED_REVIEW_SET_INDICES = { categoryTarget: [1, 2, 5, 6, 9, 10, 13, 14] };
+const CATEGORY_TARGET_IMAGE_MAP = {
+  student: "img/category/student.svg",
+  newcomer: "img/category/newcomer.svg",
+  housewife: "img/category/housewife.svg",
+  dualincome: "img/category/dualincome.svg",
+  midlevel: "img/category/midlevel.svg",
+  temp: "img/category/temp.svg",
+  parttime: "img/category/parttime.svg",
+  rehire: "img/category/rehire.svg",
+  freeter: "img/category/freeter.svg",
+  contract: "img/category/contract.svg",
+  freelance: "img/category/freelance.svg",
+  entrepreneur: "img/category/entrepreneur.svg",
+  "women-empowerment": "img/category/women-empowerment.svg",
+  "career-design": "img/category/career-design.svg",
+  reskilling: "img/category/reskilling.svg",
+  consultant: "img/category/consultant.svg"
+};
 const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
 const DIRECTORY_JOKE_TABS = [
@@ -128,7 +150,7 @@ const els = {
   dailyEpisodeBox: document.getElementById("dailyEpisodeBox"), dailyEpisodeImage: document.getElementById("dailyEpisodeImage"),
   dailyEpisodeName: document.getElementById("dailyEpisodeName"), dailyEpisodeTitle: document.getElementById("dailyEpisodeTitle"),
   dailyEpisodeText: document.getElementById("dailyEpisodeText"),
-  directoryCategoryGrid: document.getElementById("directoryCategoryGrid"), examPrepCategoryGrid: document.getElementById("examPrepCategoryGrid"),
+  directoryCategoryGrid: document.getElementById("directoryCategoryGrid"), examPrepCategoryGrid: document.getElementById("examPrepCategoryGrid"), practicalExamCategoryGrid: document.getElementById("practicalExamCategoryGrid"),
   categoryAccordionGrid: document.getElementById("categoryAccordionGrid"), dummyHeaderTitle: document.getElementById("dummyHeaderTitle"),
   directoryHeaderTitle: document.getElementById("directoryHeaderTitle"), directorySearch: document.getElementById("directorySearch"),
   directoryFilter: document.getElementById("directoryFilter"), directoryKanaPanel: document.getElementById("directoryKanaPanel"),
@@ -499,15 +521,19 @@ function renderDailyEpisode() {
 }
 
 function shouldUseAnswerReviewLayout() {
-  return ["careerFrequent", "industrialFrequent", "originalAcademic", "socialLegal"].includes(state.currentCategory?.id);
+  return ["careerFrequent", "industrialFrequent", "originalAcademic", "socialLegal", "categoryTarget"].includes(state.currentCategory?.id);
 }
 
 function shouldUseResultCharacterIcon() {
-  return ["originalAcademic", "socialLegal"].includes(state.currentCategory?.id);
+  return ["originalAcademic", "socialLegal", "categoryTarget"].includes(state.currentCategory?.id);
 }
 
 function isSocialLegalQuestion(q) {
   return state.currentCategory?.id === "socialLegal" || (q.categoryIds || []).includes("socialLegal");
+}
+
+function isGenericExamQuestion(q) {
+  return isSocialLegalQuestion(q) || state.currentCategory?.id === "categoryTarget" || (q.categoryIds || []).includes("categoryTarget");
 }
 
 function clearFeedbackImageFrame(spacerOnly = false) {
@@ -674,17 +700,51 @@ function getQuestionSetsForCategory(cat) {
   return sets;
 }
 
+function isSetLockedByRule(categoryId, setIndex, rangeRules, indexRules) {
+  const lockFromSetIndex = rangeRules[categoryId];
+  const lockedIndices = indexRules[categoryId] || [];
+  return (Number.isInteger(lockFromSetIndex) && setIndex >= lockFromSetIndex) || lockedIndices.includes(setIndex);
+}
+
+function getCategoryTargetGroupLabel(targetId) {
+  if (typeof CATEGORY_TARGET_GROUPS === "undefined" || !Array.isArray(CATEGORY_TARGET_GROUPS)) return "";
+  return CATEGORY_TARGET_GROUPS.find(group => group.id === targetId)?.label || "";
+}
+
+function getSetCategoryLabel(cat, set) {
+  if (!cat || cat.id !== "categoryTarget" || !set?.questions?.length) return "";
+  return getCategoryTargetGroupLabel(set.questions[0].targetId);
+}
+
+function getSetCategoryImage(cat, set) {
+  if (!cat || cat.id !== "categoryTarget" || !set?.questions?.length) return "";
+  return CATEGORY_TARGET_IMAGE_MAP[set.questions[0].targetId] || "";
+}
+
+function renderSetTitleHtml(cat, set, needsUnlock) {
+  const label = getSetCategoryLabel(cat, set);
+  return `<span class="set-title">第${set.index + 1}セット${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}${label ? `<span class="set-category-label">${escapeHtml(label)}</span>` : ""}</span>`;
+}
+
+function renderSetImageHtml(cat, set) {
+  const imagePath = getSetCategoryImage(cat, set);
+  const label = getSetCategoryLabel(cat, set);
+  if (!imagePath) return "";
+  return `<span class="set-image-wrap"><img src="${escapeHtml(imagePath)}" alt="${escapeHtml(label)}のイメージ" loading="lazy"></span>`;
+}
+
 function showQuizSetPage(categoryId) {
   const cat = CATEGORIES.find(c => c.id === categoryId);
   const sets = getQuestionSetsForCategory(cat);
   if (!sets.length) { showDummyPage(cat ? cat.title : "問題"); return; }
   els.setSelectHeaderTitle.textContent = cat.title; els.quizSetList.innerHTML = "";
   sets.forEach(set => {
-    const lockFromSetIndex = LOCKED_QUIZ_SET_RULES[categoryId];
-    const needsUnlock = Number.isInteger(lockFromSetIndex) && set.index >= lockFromSetIndex && !isUnlocked();
+    const needsUnlock = isSetLockedByRule(categoryId, set.index, LOCKED_QUIZ_SET_RULES, LOCKED_QUIZ_SET_INDICES) && !isUnlocked();
     const btn = document.createElement("button"); btn.className = "set-button";
     if (needsUnlock) btn.classList.add("locked-set");
-    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}</span><span class="set-meta">${set.questions.length}問 / ${set.start + 1}-${set.end}</span>`;
+    const imageHtml = renderSetImageHtml(cat, set);
+    if (imageHtml) btn.classList.add("has-set-image");
+    btn.innerHTML = `<span class="set-copy">${renderSetTitleHtml(cat, set, needsUnlock)}<span class="set-meta">${set.questions.length}問 / ${set.start + 1}-${set.end}</span></span>${imageHtml}`;
     btn.addEventListener("click", () => {
       const action = () => startQuiz(categoryId, set.index);
       if (needsUnlock) requestUnlockThen(action); else action();
@@ -756,11 +816,12 @@ function showReviewPage(categoryId) {
   sets.forEach(set => {
     const log = loadReviewLog(categoryId, set.index);
     const progress = getReviewSetProgress(log, set);
-    const lockFromSetIndex = LOCKED_REVIEW_SET_RULES[categoryId];
-    const needsUnlock = Number.isInteger(lockFromSetIndex) && set.index >= lockFromSetIndex && !isUnlocked();
+    const needsUnlock = isSetLockedByRule(categoryId, set.index, LOCKED_REVIEW_SET_RULES, LOCKED_REVIEW_SET_INDICES) && !isUnlocked();
     const btn = document.createElement("button"); btn.className = "set-button";
     if (needsUnlock) btn.classList.add("locked-set");
-    btn.innerHTML = `<span class="set-title">第${set.index + 1}セット${needsUnlock ? `<span class="inline-lock">🔒</span>` : ""}</span><span class="set-meta ${progress.statusClass}">${progress.label}</span>`;
+    const imageHtml = renderSetImageHtml(cat, set);
+    if (imageHtml) btn.classList.add("has-set-image");
+    btn.innerHTML = `<span class="set-copy">${renderSetTitleHtml(cat, set, needsUnlock)}<span class="set-meta ${progress.statusClass}">${progress.label}</span></span>${imageHtml}`;
     btn.addEventListener("click", () => {
       const action = () => renderReviewLog(categoryId, set.index);
       if (needsUnlock) requestUnlockThen(action); else action();
@@ -1082,14 +1143,14 @@ function handleAnswer(selectedIndex) {
   }
   setFeedbackResultIcon(isCorrect);
   if (shouldUseResultCharacterIcon()) {
-    clearFeedbackImageFrame(isSocialLegalQuestion(q));
+    clearFeedbackImageFrame(isGenericExamQuestion(q));
   } else {
     showFeedbackImage(q.image, `画像: ${q.name}`);
   }
   els.answerText.textContent = q.options[q.answer]; els.psychologistName.textContent = q.name;
   const bCountry = isEmojiSupported ? q.birthCountry : q.birthCountryText; const aCountry = isEmojiSupported ? q.activeCountry : q.activeCountryText;
   els.psychologistMeta.innerHTML = q.metaText || `出生：${bCountry} 活躍：${aCountry}<br>生没：${q.lifespan}`;
-  setPsychologistMetaVisibility(!isSocialLegalQuestion(q));
+  setPsychologistMetaVisibility(!isGenericExamQuestion(q));
   els.explanationText.textContent = q.explanation;
   if (q.extendedExplanation) {
     els.extendedExplanationBox.style.display = "block"; els.extendedExplanationBox.open = false;
@@ -1188,10 +1249,11 @@ if(els.interruptQuizButton) els.interruptQuizButton.addEventListener("click", co
 if(els.prevQuestionButton) els.prevQuestionButton.addEventListener("click", goToPreviousQuestion);
 
 function renderCategoryButtons() {
-  els.categoryAccordionGrid.innerHTML = ""; els.socialLegalCategoryGrid.innerHTML = ""; els.mapStudyCategoryGrid.innerHTML = ""; els.directoryCategoryGrid.innerHTML = ""; els.examPrepCategoryGrid.innerHTML = "";
+  els.categoryAccordionGrid.innerHTML = ""; els.socialLegalCategoryGrid.innerHTML = ""; els.mapStudyCategoryGrid.innerHTML = ""; els.directoryCategoryGrid.innerHTML = ""; els.examPrepCategoryGrid.innerHTML = ""; if (els.practicalExamCategoryGrid) els.practicalExamCategoryGrid.innerHTML = "";
   CATEGORIES.forEach(cat => {
     if (cat.topGroup === "hidden") return;
-    const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "socialLegal" ? els.socialLegalCategoryGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : els.mapStudyCategoryGrid;
+    const target = cat.topGroup === "accordion" ? els.categoryAccordionGrid : cat.topGroup === "socialLegal" ? els.socialLegalCategoryGrid : cat.topGroup === "mapStudy" ? els.mapStudyCategoryGrid : cat.topGroup === "directory" ? els.directoryCategoryGrid : cat.topGroup === "examPrep" ? els.examPrepCategoryGrid : cat.topGroup === "practicalExam" ? els.practicalExamCategoryGrid : els.mapStudyCategoryGrid;
+    if (!target) return;
     target.appendChild(createCategoryButton(cat));
   });
   updateSaveLoadBtnState();
