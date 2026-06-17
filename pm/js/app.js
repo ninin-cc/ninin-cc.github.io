@@ -44,6 +44,9 @@ const ROOT_IMAGE_FILES = new Set([]);
 // パスワードロック設定
 // ==========================================
 const CURRENT_MONTH_PASSWORD = "ninin"; 
+const PERMANENT_PASSWORD = "ninin_chosaku";
+const UNLOCKED_MONTH_KEY = "pm_unlocked_month";
+const UNLOCKED_PERMANENT_KEY = "pm_unlocked_permanent";
 
 const LOCKED_CATEGORY_IDS = [
   "timeline",
@@ -66,7 +69,20 @@ const EPISODE_SORT_KANA = {
 };
 
 function getCurrentMonthString() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; }
-function isUnlocked() { return localStorage.getItem("pm_unlocked_month") === getCurrentMonthString(); }
+function isPermanentUnlocked() { return localStorage.getItem(UNLOCKED_PERMANENT_KEY) === "true"; }
+function isUnlocked() { return isPermanentUnlocked() || localStorage.getItem(UNLOCKED_MONTH_KEY) === getCurrentMonthString(); }
+function unlockWithPassword(inputPassword) {
+  const password = String(inputPassword || "").trim();
+  if (password === CURRENT_MONTH_PASSWORD) {
+    localStorage.setItem(UNLOCKED_MONTH_KEY, getCurrentMonthString());
+    return true;
+  }
+  if (password === PERMANENT_PASSWORD) {
+    localStorage.setItem(UNLOCKED_PERMANENT_KEY, "true");
+    return true;
+  }
+  return false;
+}
 
 function requestUnlockThen(action) {
   pendingAction = action;
@@ -281,8 +297,7 @@ function closePasswordModal() {
 if (els.closePasswordModalBtn) els.closePasswordModalBtn.addEventListener("click", closePasswordModal);
 if (els.verifyPasswordButton) {
   els.verifyPasswordButton.addEventListener("click", () => {
-    if (els.membershipPassword.value.trim() === CURRENT_MONTH_PASSWORD) {
-      localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
+    if (unlockWithPassword(els.membershipPassword.value)) {
       els.passwordModal.classList.remove("active");
       els.membershipPassword.value = "";
       els.passwordError.style.display = "none";
@@ -1256,9 +1271,10 @@ function createDevToggleButton() {
   
   btn.addEventListener("click", () => {
     if (isUnlocked()) {
-      localStorage.removeItem("pm_unlocked_month");
+      localStorage.removeItem(UNLOCKED_MONTH_KEY);
+      localStorage.removeItem(UNLOCKED_PERMANENT_KEY);
     } else {
-      localStorage.setItem("pm_unlocked_month", getCurrentMonthString());
+      localStorage.setItem(UNLOCKED_MONTH_KEY, getCurrentMonthString());
       if (els.passwordModal) els.passwordModal.classList.remove("active");
       if (els.membershipPassword) els.membershipPassword.value = "";
       if (els.passwordError) els.passwordError.style.display = "none";
