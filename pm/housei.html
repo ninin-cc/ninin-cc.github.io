@@ -189,9 +189,9 @@
         <h2 id="membershipModalTitle" class="membership-modal-title">メンバー限定コンテンツ</h2>
         <p class="membership-modal-text">
           ここから先は、noteメンバーシップ限定のコンテンツです。<br>
-          今月のパスワードを入力してください。
+          今月のパスワード、または買い切り用パスワードを入力してください。
         </p>
-        <input type="text" id="membershipPassword" class="membership-modal-input" placeholder="今月のパスワード">
+        <input type="text" id="membershipPassword" class="membership-modal-input" placeholder="パスワード">
         <p id="membershipPasswordError" class="membership-modal-error">パスワードが違います</p>
         <button type="button" class="membership-modal-primary" id="verifyMembershipPasswordButton">ロックを解除する</button>
         <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="membership-modal-link">メンバーシップについて（月額500円）</a>
@@ -523,7 +523,9 @@
         };
         const categoryKeys = ['society', 'law', 'education', 'system', 'guideline'];
         const CURRENT_MONTH_PASSWORD = "ninin";
+        const PERMANENT_PASSWORD = "ninin_chosaku";
         const UNLOCKED_MONTH_KEY = "pm_unlocked_month";
+        const UNLOCKED_PERMANENT_KEY = "pm_unlocked_permanent";
         const CHRONICLE_SETTINGS_KEY = "pm_housei_chronicle_settings_v1";
         const CHRONICLE_NOTICE_SEEN_KEY = "pm_housei_chronicle_notice_seen_v1";
         const theoryImageMap = {
@@ -600,7 +602,7 @@
 
         function isHouseiUnlocked() {
             try {
-                return localStorage.getItem(UNLOCKED_MONTH_KEY) === getCurrentMonthString();
+                return localStorage.getItem(UNLOCKED_PERMANENT_KEY) === "true" || localStorage.getItem(UNLOCKED_MONTH_KEY) === getCurrentMonthString();
             } catch (error) {
                 return false;
             }
@@ -612,6 +614,27 @@
             } catch (error) {
                 // localStorageが使えない環境では、このページ内だけ解除する。
             }
+        }
+
+        function unlockHouseiPermanently() {
+            try {
+                localStorage.setItem(UNLOCKED_PERMANENT_KEY, "true");
+            } catch (error) {
+                // localStorageが使えない環境では、このページ内だけで解除状態を扱う。
+            }
+        }
+
+        function unlockHouseiWithPassword(inputPassword) {
+            const password = String(inputPassword || '').trim();
+            if (password === CURRENT_MONTH_PASSWORD) {
+                unlockHouseiForCurrentMonth();
+                return true;
+            }
+            if (password === PERMANENT_PASSWORD) {
+                unlockHouseiPermanently();
+                return true;
+            }
+            return false;
         }
 
         function isRangeAllowedForLockState(startYear, endYear, locked) {
@@ -701,7 +724,6 @@
         let isCompactWidth = false; 
         
         let isLocked = !initialHouseiUnlocked;
-        const SECRET_PASSWORD = CURRENT_MONTH_PASSWORD;
 
         let laneVisibility = {
             leaders: true,
@@ -736,8 +758,7 @@
             const inputEl = document.getElementById('membershipPassword') || document.getElementById('lock-password');
             if (!inputEl) return;
             
-            if (inputEl.value.trim() === SECRET_PASSWORD) {
-                unlockHouseiForCurrentMonth();
+            if (unlockHouseiWithPassword(inputEl.value)) {
                 isLocked = false;
                 const savedSettings = loadChronicleSettings(true);
                 currentPeriod = savedSettings.currentPeriod;
@@ -1871,7 +1892,7 @@
                       <div>
                         <p class="font-bold text-slate-800 mb-1">【関連マップの操作と色分け】</p>
                         <p class="mb-2">
-                          ・右上のパスワード欄に<span class="font-bold bg-slate-100 px-1 rounded mx-1">ninin</span>と入力して解除すると、過去の全期間の閲覧と理論の詳細展開が可能になります。<br/>
+                          ・右上のパスワード欄に<span class="font-bold bg-slate-100 px-1 rounded mx-1">今月のパスワード、または買い切り用パスワード</span>を入力して解除すると、過去の全期間の閲覧と理論の詳細展開が可能になります。<br/>
                           ・左側の各項目の見出しにある<span class="font-bold bg-slate-100 px-1 rounded mx-1">隠す/表示ボタン</span>でレーン全体の表示・非表示を切り替えられます。<br/>
                           ・各項目の見出しにある<span class="font-bold bg-slate-100 px-1 rounded mx-1">詳細/縮小ボタン</span>で、その項目のカードだけを詳細展開（大きく表示）できます。
                         </p>
