@@ -4,6 +4,7 @@ const QUESTION_BANKS = {
   career: QUESTIONS_CAREER,
   originalAcademic: QUESTIONS_ORIGINAL_EXAM,
   socialLegal: QUESTIONS_SYAKAI,
+  categoryTarget: QUESTIONS_CATEGORY,
   cbt: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("cbt")),
   counseling: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("counseling")),
   development: QUESTIONS_CAREER.filter(q => (q.categoryIds || []).includes("development")),
