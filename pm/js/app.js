@@ -383,7 +383,20 @@ function showDummyPage(title) {
   els.dummyPage.classList.remove("hidden"); window.scrollTo(0, 0);
 }
 
-function confirmBackToTop() { if (confirm("テストを中断してTOPに戻りますか？")) showTopPage(); }
+function showCurrentQuizSetListOrTop() {
+  const categoryId = state.currentCategory?.id;
+  const cat = categoryId ? CATEGORIES.find(c => c.id === categoryId) : null;
+  if (cat && getQuestionSetsForCategory(cat).length) {
+    saveCurrentReviewLog();
+    showQuizSetPage(categoryId);
+  } else {
+    showTopPage();
+  }
+}
+
+function confirmBackToTop() {
+  if (confirm("テストを中断してセット一覧に戻りますか？")) showCurrentQuizSetListOrTop();
+}
 function goToPreviousQuestion() { if (state.currentQuestionIndex <= 0 || state.isAnswered) return; const previousIndex = state.currentQuestionIndex - 1; state.history = state.history.slice(0, previousIndex); state.score = state.history.filter(item => item.isCorrect).length; state.currentQuestionIndex = previousIndex; saveCurrentReviewLog(); loadQuestion(); window.scrollTo({ top: 0, behavior: 'instant' }); }
 function togglePastExam(targetId) { let box = targetId === 'quizPastExam' ? els.pastExamBox : document.getElementById(targetId); if(box) box.classList.toggle('open'); }
 function getPastExamAnswerNumber(answerText) { const match = String(answerText || "").match(/\d/); return match ? match[0] : String(answerText || "").trim(); }
