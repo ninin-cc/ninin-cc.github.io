@@ -1439,10 +1439,10 @@ function scrollToTopHash(hashValue, options = {}) {
 
   if (shortcutPanel && titleElement) {
     const titleParent = titleElement.parentElement;
-    if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
+    if (sectionElement && sectionElement.parentElement) {
+      sectionElement.parentElement.insertBefore(shortcutPanel, sectionElement);
+    } else if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
       titleParent.insertBefore(shortcutPanel, titleElement);
-    } else if (sectionElement && sectionElement.parentElement) {
-      sectionElement.insertBefore(shortcutPanel, sectionElement.firstElementChild);
     }
   }
 
