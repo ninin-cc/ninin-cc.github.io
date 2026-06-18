@@ -31,7 +31,7 @@ body {
 .top-category-section,
 .map-promo-container,
 .top-shortcut-panel {
-  scroll-margin-top: 78px;
+  scroll-margin-top: 126px;
 }
 
 @keyframes titleFlashRed {
@@ -53,8 +53,20 @@ body {
 }
 
 .flash-target {
-  animation: titleFlashRed 2.2s ease-in-out;
+  animation: none;
   border-radius: 8px;
+}
+
+.shortcut-selected-title {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 5px 18px rgba(220, 38, 38, 0.42) !important;
+}
+
+.shortcut-selected-title .section-number {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
 }
 
 button {
@@ -110,7 +122,7 @@ button {
 
 .brand h1 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   line-height: 1.2;
   text-align: center;
   flex-grow: 1;
@@ -935,6 +947,10 @@ body {
   box-shadow: 0 2px 14px rgba(11, 83, 78, 0.16);
 }
 
+#topPage > .topbar {
+  position: static;
+}
+
 .category-container {
   padding: 18px 16px 24px;
 }
@@ -1028,6 +1044,20 @@ body {
 .directory-section .top-category-title,
 .exam-section .top-category-title {
   color: var(--teal-dark);
+}
+
+.section-heading-band.shortcut-selected-title,
+.top-category-title.shortcut-selected-title {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 5px 18px rgba(220, 38, 38, 0.42) !important;
+}
+
+.section-heading-band.shortcut-selected-title .section-number,
+.top-category-title.shortcut-selected-title .section-number {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
 }
 
 .category-grid {
