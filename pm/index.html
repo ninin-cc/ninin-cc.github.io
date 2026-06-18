@@ -104,9 +104,9 @@
       font-size: 0.82rem;
       font-weight: bold;
     }
-    .top-shortcut-grid {
+  .top-shortcut-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
     }
     .top-shortcut-button {
@@ -115,13 +115,13 @@
       justify-content: center;
       gap: 5px;
       min-height: 38px;
-      padding: 7px 8px;
+      padding: 7px 5px;
       border-radius: 8px;
       background: #f8fafc;
       color: var(--teal-dark);
       border: 1px solid var(--line);
       text-decoration: none;
-      font-size: 0.76rem;
+      font-size: 0.7rem;
       font-weight: bold;
       line-height: 1.25;
       text-align: center;
@@ -130,9 +130,6 @@
       background: var(--accent-soft);
       color: #7b3f1f;
       border-color: rgba(183, 110, 53, 0.22);
-    }
-    @media (min-width: 720px) {
-      .top-shortcut-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
   </style>
   <!-- 外部のCSSファイルを読み込む -->
@@ -190,7 +187,7 @@
             <a class="top-shortcut-button" href="#socialLegalSection">⚖️ 法制関連問題</a>
             <a class="top-shortcut-button" href="#mapStudySection">🧭 心理学者問題</a>
             <a class="top-shortcut-button" href="#psychologistMapPromo">🗺️ 心理学者MAP</a>
-            <a class="top-shortcut-button" href="housei.html">📅 学科対策年表</a>
+            <a class="top-shortcut-button" href="#socialLegalSection" data-flash-selector="#socialLegalCategoryGrid .category-button-with-preview .category-preview-media">📅 学科対策年表</a>
             <a class="top-shortcut-button" href="#examPrepSection">📝 キャリコン学科</a>
             <a class="top-shortcut-button" href="#practicalExamSection">🧰 実務直結問題</a>
             <a class="top-shortcut-button accent" href="#membershipIntroSection">🤝 メンバーシップ</a>
@@ -218,7 +215,7 @@
         </div>
 
         <!-- 今日の心理学者エピソード -->
-        <section id="practiceNoteSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+        <section id="dailyEpisodeSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
           <p class="top-category-title section-heading-band section-heading-brand">
             <span class="section-number">①</span>
             <span style="font-size: 1.2rem;">📖</span>
@@ -239,7 +236,7 @@
         </section>
 
         <!-- ▼▼ 面談実技支援用 無料note記事のご紹介 ▼▼ -->
-        <section class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
+        <section id="practiceNoteSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
           <details class="extended-explanation-box note-article-box" id="noteArticleBox" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
             <summary class="top-category-title section-heading-band section-heading-accent" style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
               <span class="section-number">②</span>

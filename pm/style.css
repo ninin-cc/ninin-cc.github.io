@@ -26,6 +26,37 @@ body {
   background: var(--line);
 }
 
+.top-category-title,
+.section-heading-band,
+.top-category-section,
+.map-promo-container,
+.top-shortcut-panel {
+  scroll-margin-top: 70px;
+}
+
+@keyframes titleFlashRed {
+  0%, 25%, 50%, 75%, 100% {
+    transform: scale(1);
+    box-shadow: none;
+    z-index: 1;
+    position: relative;
+  }
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: scale(1.025);
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    box-shadow: 0 5px 18px rgba(220, 38, 38, 0.62);
+    z-index: 10;
+    position: relative;
+    border-color: transparent !important;
+  }
+}
+
+.flash-target {
+  animation: titleFlashRed 2.2s ease-in-out;
+  border-radius: 8px;
+}
+
 button {
   font: inherit;
   cursor: pointer;
@@ -95,6 +126,7 @@ button {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  padding-bottom: 60vh;
 }
 
 .category-container {
