@@ -453,6 +453,63 @@ button {
 }
 .set-image-wrap img { width: 76%; height: 76%; object-fit: contain; display: block; }
 
+@media (max-width: 520px) {
+  .set-select-content { padding: 14px 12px; }
+  .set-list { gap: 8px; }
+
+  .set-button.has-set-image {
+    position: relative;
+    display: block;
+    min-height: 118px;
+    padding: 14px 10px 12px;
+    overflow: hidden;
+  }
+
+  .set-button.has-set-image .set-copy {
+    position: relative;
+    z-index: 1;
+    min-height: 92px;
+    align-content: start;
+  }
+
+  .set-button.has-set-image .set-title {
+    white-space: nowrap;
+    font-size: clamp(0.86rem, 4vw, 1rem);
+    line-height: 1.15;
+  }
+
+  .set-button.has-set-image .set-category-label {
+    margin-top: 8px;
+    font-size: clamp(0.78rem, 3.55vw, 0.92rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .set-button.has-set-image .set-meta {
+    margin-top: 4px;
+    font-size: clamp(0.7rem, 3.25vw, 0.84rem);
+    line-height: 1.18;
+    white-space: nowrap;
+  }
+
+  .set-button.has-set-image .set-image-wrap {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: min(48%, 82px);
+    transform: translateY(-50%);
+    background: transparent;
+    opacity: 0.26;
+    pointer-events: none;
+  }
+
+  .set-button.has-set-image .set-image-wrap img {
+    width: 100%;
+    height: 100%;
+    filter: saturate(0.95);
+  }
+}
+
 /* 振返りページ */
 #reviewPage { display: flex; flex-direction: column; flex-grow: 1; background: var(--paper); }
 .review-content { padding: 16px; }
