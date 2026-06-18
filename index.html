@@ -95,8 +95,8 @@
       border-radius: 12px;
       box-shadow: var(--shadow);
       position: sticky;
-      top: 50px;
-      z-index: 9;
+      top: 0;
+      z-index: 20;
       backdrop-filter: blur(10px);
       transition: box-shadow 0.2s ease, transform 0.2s ease;
     }
@@ -111,22 +111,22 @@
     }
   .top-shortcut-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
     }
     .top-shortcut-button {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      min-height: 38px;
-      padding: 7px 5px;
+      gap: 3px;
+      min-height: 34px;
+      padding: 6px 3px;
       border-radius: 8px;
       background: #f8fafc;
       color: var(--teal-dark);
       border: 1px solid var(--line);
       text-decoration: none;
-      font-size: 0.7rem;
+      font-size: 0.62rem;
       font-weight: bold;
       line-height: 1.25;
       text-align: center;
@@ -166,14 +166,14 @@
       <nav class="top-shortcut-panel" aria-label="TOP目次">
         <p class="top-shortcut-title"><span>目次</span><span style="color: var(--muted); font-size: 0.72rem; font-weight: normal;">よく使う場所へ移動</span></p>
         <div class="top-shortcut-grid">
-          <a class="top-shortcut-button" href="#pn">🎤 実技支援note</a>
-          <a class="top-shortcut-button" href="#sl">⚖️ 法制関連問題</a>
-          <a class="top-shortcut-button" href="#ms">🧭 心理学者問題</a>
-          <a class="top-shortcut-button" href="#pm">🗺️ 心理学者MAP</a>
-          <a class="top-shortcut-button" href="#ny" data-flash-selector="#socialLegalCategoryGrid .category-button-with-preview .category-preview-media">📅 学科対策年表</a>
-          <a class="top-shortcut-button" href="#ep">📝 学科予想問題</a>
-          <a class="top-shortcut-button" href="#pe">🧰 実務直結問題</a>
-          <a class="top-shortcut-button accent" href="#mi">🤝 メンバーシップ</a>
+          <a class="top-shortcut-button" href="#pn">🎤 実技note</a>
+          <a class="top-shortcut-button" href="#sl">⚖️ 法制問題</a>
+          <a class="top-shortcut-button" href="#ms">🧭 心理問題</a>
+          <a class="top-shortcut-button" href="#pm">🗺️ MAP</a>
+          <a class="top-shortcut-button" href="#ny" data-flash-selector="#socialLegalCategoryGrid .category-button-with-preview .category-preview-media">📅 年表</a>
+          <a class="top-shortcut-button" href="#ep">📝 予想問題</a>
+          <a class="top-shortcut-button" href="#pe">🧰 実務問題</a>
+          <a class="top-shortcut-button accent" href="#mi">🤝 ﾒﾝﾊﾞｰｼｯﾌﾟ</a>
           <a class="top-shortcut-button accent" href="#tl">🍽️ たべラボ</a>
         </div>
       </nav>
@@ -372,7 +372,7 @@
           </div>
         </div>
 
-        <section class="top-category-section directory-section" aria-label="心理学者一覧">
+        <section id="directorySection" class="top-category-section directory-section" aria-label="心理学者一覧">
           <p class="top-category-title section-heading-band section-heading-brand"><span class="section-number">⑤</span><span>🔎</span>心理学者一覧</p>
           <div class="category-grid" id="directoryCategoryGrid">
             <!-- JSで動的に生成されます -->

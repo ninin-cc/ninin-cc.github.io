@@ -82,8 +82,12 @@ const CATEGORY_TARGET_IMAGE_MAP = {
 const TOP_HASH_ALIASES = {
   de: "dailyEpisodeSection",
   pn: "practiceNoteSection",
+  sl: "socialLegalSection",
   ms: "mapStudySection",
   pm: "psychologistMapPromo",
+  di: "directorySection",
+  ep: "examPrepSection",
+  pe: "practicalExamSection",
   mi: "membershipIntroSection",
   tl: "tabelaboSection",
   ny: "socialLegalSection"
@@ -92,19 +96,19 @@ const TOP_HASH_FLASH_SELECTORS = {
   ny: "#socialLegalCategoryGrid .category-button-with-preview .category-preview-media"
 };
 const TOP_HASH_ACTIONS = {
-  ca: { type: "quiz", categoryId: "careerFrequent" },
-  ih: { type: "quiz", categoryId: "industrialFrequent" },
-  sl: { type: "quiz", categoryId: "socialLegal" },
-  ep: { type: "quiz", categoryId: "originalAcademic" },
-  pe: { type: "quiz", categoryId: "categoryTarget" },
-  cr: { type: "review", categoryId: "careerFrequent" },
-  ir: { type: "review", categoryId: "industrialFrequent" },
-  sr: { type: "review", categoryId: "socialLegal" },
-  er: { type: "review", categoryId: "originalAcademic" },
-  pr: { type: "review", categoryId: "categoryTarget" },
-  ed: { type: "episodeDirectory" },
-  ai: { type: "directory", mode: "aiueo" },
-  th: { type: "directory", mode: "theoryTimeline" }
+  CA: { type: "quiz", categoryId: "careerFrequent" },
+  IH: { type: "quiz", categoryId: "industrialFrequent" },
+  SL: { type: "quiz", categoryId: "socialLegal" },
+  EP: { type: "quiz", categoryId: "originalAcademic" },
+  PE: { type: "quiz", categoryId: "categoryTarget" },
+  CR: { type: "review", categoryId: "careerFrequent" },
+  IR: { type: "review", categoryId: "industrialFrequent" },
+  SR: { type: "review", categoryId: "socialLegal" },
+  ER: { type: "review", categoryId: "originalAcademic" },
+  PR: { type: "review", categoryId: "categoryTarget" },
+  ED: { type: "episodeDirectory" },
+  AI: { type: "directory", mode: "aiueo" },
+  TH: { type: "directory", mode: "theoryTimeline" }
 };
 const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
@@ -1460,6 +1464,10 @@ function scrollToTopHash(hashValue, options = {}) {
   if (!config) return false;
   if (config.action) return runTopHashAction(config.action);
 
+  if (els.topPage && els.topPage.classList.contains("hidden")) {
+    showTopPage();
+  }
+
   const targetElement = document.getElementById(config.targetId);
   if (!targetElement) return false;
 
@@ -1471,24 +1479,12 @@ function scrollToTopHash(hashValue, options = {}) {
     targetElement.querySelector(".top-category-title, .section-heading-band") ||
     (sectionElement ? sectionElement.querySelector(".top-category-title, .section-heading-band") : null) ||
     targetElement;
-  const flashSelector = options.flashSelector || config.flashSelector;
-  const flashElement = (flashSelector ? document.querySelector(flashSelector) : null) || titleElement;
-  const shortcutPanel = options.shortcutPanel || document.querySelector(".top-shortcut-panel");
 
-  if (shortcutPanel && titleElement) {
-    const titleParent = titleElement.parentElement;
-    if (sectionElement && sectionElement.parentElement) {
-      sectionElement.parentElement.insertBefore(shortcutPanel, sectionElement);
-    } else if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
-      titleParent.insertBefore(shortcutPanel, titleElement);
-    }
-  }
-
-  (shortcutPanel || titleElement).scrollIntoView({ behavior: options.behavior || "smooth", block: "start" });
-  flashElement.classList.remove("flash-target");
-  void flashElement.offsetWidth;
-  flashElement.classList.add("flash-target");
-  window.setTimeout(() => flashElement.classList.remove("flash-target"), 2200);
+  titleElement.scrollIntoView({ behavior: options.behavior || "smooth", block: "start" });
+  document.querySelectorAll(".shortcut-selected-title").forEach(element => {
+    element.classList.remove("shortcut-selected-title", "flash-target");
+  });
+  titleElement.classList.add("shortcut-selected-title");
   return true;
 }
 
@@ -1497,7 +1493,7 @@ function initTopShortcutScroll() {
     anchor.addEventListener("click", event => {
       event.preventDefault();
       const targetHash = anchor.getAttribute("href");
-      if (scrollToTopHash(targetHash, { flashSelector: anchor.getAttribute("data-flash-selector") || "", shortcutPanel: anchor.closest(".top-shortcut-panel") })) {
+      if (scrollToTopHash(targetHash, { flashSelector: anchor.getAttribute("data-flash-selector") || "" })) {
         history.replaceState(null, "", targetHash);
       }
     });
