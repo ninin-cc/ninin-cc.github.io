@@ -1382,8 +1382,49 @@ if (els.saveLoadBtn) {
   });
 }
 
+function initTopShortcutScroll() {
+  document.querySelectorAll('a.top-shortcut-button[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", event => {
+      const targetId = anchor.getAttribute("href");
+      if (!targetId || targetId === "#") return;
+
+      const targetElement = document.querySelector(targetId);
+      if (!targetElement) return;
+
+      event.preventDefault();
+
+      const detailsElement = targetElement.querySelector("details") || (targetElement.tagName.toLowerCase() === "details" ? targetElement : null);
+      if (detailsElement && !detailsElement.open) detailsElement.setAttribute("open", "");
+
+      const sectionElement = targetElement.classList.contains("top-category-section") ? targetElement : targetElement.closest(".top-category-section");
+      const titleElement =
+        targetElement.querySelector(".top-category-title, .section-heading-band") ||
+        (sectionElement ? sectionElement.querySelector(".top-category-title, .section-heading-band") : null) ||
+        targetElement;
+      const flashSelector = anchor.getAttribute("data-flash-selector");
+      const flashElement = (flashSelector ? document.querySelector(flashSelector) : null) || titleElement;
+      const shortcutPanel = anchor.closest(".top-shortcut-panel");
+      if (shortcutPanel && titleElement) {
+        const titleParent = titleElement.parentElement;
+        if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
+          titleParent.insertBefore(shortcutPanel, titleElement);
+        } else if (sectionElement && sectionElement.parentElement) {
+          sectionElement.insertBefore(shortcutPanel, sectionElement.firstElementChild);
+        }
+      }
+
+      (shortcutPanel || titleElement).scrollIntoView({ behavior: "smooth", block: "start" });
+      flashElement.classList.remove("flash-target");
+      void flashElement.offsetWidth;
+      flashElement.classList.add("flash-target");
+      window.setTimeout(() => flashElement.classList.remove("flash-target"), 2200);
+    });
+  });
+}
+
 function initApp() {
   bindTopResponsiveDetails();
+  initTopShortcutScroll();
   renderDailyEpisode();
   renderCategoryButtons();
   createDevToggleButton();
