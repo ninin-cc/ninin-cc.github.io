@@ -79,6 +79,21 @@ const CATEGORY_TARGET_IMAGE_MAP = {
   reskilling: "img/category/reskilling.svg",
   consultant: "img/category/consultant.svg"
 };
+const TOP_HASH_ALIASES = {
+  de: "dailyEpisodeSection",
+  pn: "practiceNoteSection",
+  sl: "socialLegalSection",
+  ms: "mapStudySection",
+  pm: "psychologistMapPromo",
+  ep: "examPrepSection",
+  pe: "practicalExamSection",
+  mi: "membershipIntroSection",
+  tl: "tabelaboSection",
+  ny: "socialLegalSection"
+};
+const TOP_HASH_FLASH_SELECTORS = {
+  ny: "#socialLegalCategoryGrid .category-button-with-preview .category-preview-media"
+};
 const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
 const DIRECTORY_JOKE_TABS = [
@@ -1382,43 +1397,63 @@ if (els.saveLoadBtn) {
   });
 }
 
+function getTopHashConfig(hashValue) {
+  const raw = String(hashValue || "").replace(/^#/, "");
+  if (!raw) return null;
+  const decoded = decodeURIComponent(raw);
+  const targetId = TOP_HASH_ALIASES[decoded] || decoded;
+  return { alias: decoded, targetId, flashSelector: TOP_HASH_FLASH_SELECTORS[decoded] || "" };
+}
+
+function scrollToTopHash(hashValue, options = {}) {
+  const config = getTopHashConfig(hashValue);
+  if (!config) return false;
+
+  const targetElement = document.getElementById(config.targetId);
+  if (!targetElement) return false;
+
+  const detailsElement = targetElement.querySelector("details") || (targetElement.tagName.toLowerCase() === "details" ? targetElement : null);
+  if (detailsElement && !detailsElement.open) detailsElement.setAttribute("open", "");
+
+  const sectionElement = targetElement.classList.contains("top-category-section") ? targetElement : targetElement.closest(".top-category-section");
+  const titleElement =
+    targetElement.querySelector(".top-category-title, .section-heading-band") ||
+    (sectionElement ? sectionElement.querySelector(".top-category-title, .section-heading-band") : null) ||
+    targetElement;
+  const flashSelector = options.flashSelector || config.flashSelector;
+  const flashElement = (flashSelector ? document.querySelector(flashSelector) : null) || titleElement;
+  const shortcutPanel = options.shortcutPanel || document.querySelector(".top-shortcut-panel");
+
+  if (shortcutPanel && titleElement) {
+    const titleParent = titleElement.parentElement;
+    if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
+      titleParent.insertBefore(shortcutPanel, titleElement);
+    } else if (sectionElement && sectionElement.parentElement) {
+      sectionElement.insertBefore(shortcutPanel, sectionElement.firstElementChild);
+    }
+  }
+
+  (shortcutPanel || titleElement).scrollIntoView({ behavior: options.behavior || "smooth", block: "start" });
+  flashElement.classList.remove("flash-target");
+  void flashElement.offsetWidth;
+  flashElement.classList.add("flash-target");
+  window.setTimeout(() => flashElement.classList.remove("flash-target"), 2200);
+  return true;
+}
+
 function initTopShortcutScroll() {
   document.querySelectorAll('a.top-shortcut-button[href^="#"]').forEach(anchor => {
     anchor.addEventListener("click", event => {
-      const targetId = anchor.getAttribute("href");
-      if (!targetId || targetId === "#") return;
-
-      const targetElement = document.querySelector(targetId);
-      if (!targetElement) return;
-
       event.preventDefault();
-
-      const detailsElement = targetElement.querySelector("details") || (targetElement.tagName.toLowerCase() === "details" ? targetElement : null);
-      if (detailsElement && !detailsElement.open) detailsElement.setAttribute("open", "");
-
-      const sectionElement = targetElement.classList.contains("top-category-section") ? targetElement : targetElement.closest(".top-category-section");
-      const titleElement =
-        targetElement.querySelector(".top-category-title, .section-heading-band") ||
-        (sectionElement ? sectionElement.querySelector(".top-category-title, .section-heading-band") : null) ||
-        targetElement;
-      const flashSelector = anchor.getAttribute("data-flash-selector");
-      const flashElement = (flashSelector ? document.querySelector(flashSelector) : null) || titleElement;
-      const shortcutPanel = anchor.closest(".top-shortcut-panel");
-      if (shortcutPanel && titleElement) {
-        const titleParent = titleElement.parentElement;
-        if (titleParent && titleParent.tagName.toLowerCase() !== "details") {
-          titleParent.insertBefore(shortcutPanel, titleElement);
-        } else if (sectionElement && sectionElement.parentElement) {
-          sectionElement.insertBefore(shortcutPanel, sectionElement.firstElementChild);
-        }
+      const targetHash = anchor.getAttribute("href");
+      if (scrollToTopHash(targetHash, { flashSelector: anchor.getAttribute("data-flash-selector") || "", shortcutPanel: anchor.closest(".top-shortcut-panel") })) {
+        history.replaceState(null, "", targetHash);
       }
-
-      (shortcutPanel || titleElement).scrollIntoView({ behavior: "smooth", block: "start" });
-      flashElement.classList.remove("flash-target");
-      void flashElement.offsetWidth;
-      flashElement.classList.add("flash-target");
-      window.setTimeout(() => flashElement.classList.remove("flash-target"), 2200);
     });
+  });
+
+  window.addEventListener("hashchange", () => {
+    if (location.hash) scrollToTopHash(location.hash);
   });
 }
 
@@ -1431,6 +1466,7 @@ function initApp() {
   checkLoginStatus(); // ログイン判定・スタンプ描画
   renderCalendar();   // 極小2ヶ月カレンダー描画
   showTopPage();
+  if (location.hash) window.setTimeout(() => scrollToTopHash(location.hash, { behavior: "auto" }), 80);
 }
 
 initApp();
