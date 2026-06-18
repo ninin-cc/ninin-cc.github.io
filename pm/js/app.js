@@ -82,17 +82,29 @@ const CATEGORY_TARGET_IMAGE_MAP = {
 const TOP_HASH_ALIASES = {
   de: "dailyEpisodeSection",
   pn: "practiceNoteSection",
-  sl: "socialLegalSection",
   ms: "mapStudySection",
   pm: "psychologistMapPromo",
-  ep: "examPrepSection",
-  pe: "practicalExamSection",
   mi: "membershipIntroSection",
   tl: "tabelaboSection",
   ny: "socialLegalSection"
 };
 const TOP_HASH_FLASH_SELECTORS = {
   ny: "#socialLegalCategoryGrid .category-button-with-preview .category-preview-media"
+};
+const TOP_HASH_ACTIONS = {
+  ca: { type: "quiz", categoryId: "careerFrequent" },
+  ih: { type: "quiz", categoryId: "industrialFrequent" },
+  sl: { type: "quiz", categoryId: "socialLegal" },
+  ep: { type: "quiz", categoryId: "originalAcademic" },
+  pe: { type: "quiz", categoryId: "categoryTarget" },
+  cr: { type: "review", categoryId: "careerFrequent" },
+  ir: { type: "review", categoryId: "industrialFrequent" },
+  sr: { type: "review", categoryId: "socialLegal" },
+  er: { type: "review", categoryId: "originalAcademic" },
+  pr: { type: "review", categoryId: "categoryTarget" },
+  ed: { type: "episodeDirectory" },
+  ai: { type: "directory", mode: "aiueo" },
+  th: { type: "directory", mode: "theoryTimeline" }
 };
 const UNLOCKED_THEORY_CATEGORY_IDS = new Set(["transition", "decision"]);
 
@@ -1414,13 +1426,39 @@ function getTopHashConfig(hashValue) {
   const raw = String(hashValue || "").replace(/^#/, "");
   if (!raw) return null;
   const decoded = decodeURIComponent(raw);
+  if (TOP_HASH_ACTIONS[decoded]) return { alias: decoded, action: TOP_HASH_ACTIONS[decoded] };
   const targetId = TOP_HASH_ALIASES[decoded] || decoded;
   return { alias: decoded, targetId, flashSelector: TOP_HASH_FLASH_SELECTORS[decoded] || "" };
+}
+
+function runTopHashAction(action) {
+  if (!action) return false;
+  const categoryId = action.categoryId;
+  const cat = categoryId ? CATEGORIES.find(c => c.id === categoryId) : null;
+  const execute = () => {
+    if (action.type === "quiz" && cat) showQuizSetPage(categoryId);
+    else if (action.type === "review" && cat) showReviewPage(categoryId);
+    else if (action.type === "episodeDirectory") showEpisodeDirectoryPage();
+    else if (action.type === "directory") showDirectoryPage("all", action.mode || "aiueo");
+    else return false;
+    return true;
+  };
+
+  if (cat && LOCKED_CATEGORY_IDS.includes(cat.id) && !isUnlocked()) {
+    requestUnlockThen(execute);
+    return true;
+  }
+  if (action.type === "episodeDirectory" && LOCKED_CATEGORY_IDS.includes("episodeDirectory") && !isUnlocked()) {
+    requestUnlockThen(execute);
+    return true;
+  }
+  return execute();
 }
 
 function scrollToTopHash(hashValue, options = {}) {
   const config = getTopHashConfig(hashValue);
   if (!config) return false;
+  if (config.action) return runTopHashAction(config.action);
 
   const targetElement = document.getElementById(config.targetId);
   if (!targetElement) return false;
