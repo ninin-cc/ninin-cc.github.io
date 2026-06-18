@@ -31,7 +31,7 @@ body {
 .top-category-section,
 .map-promo-container,
 .top-shortcut-panel {
-  scroll-margin-top: 70px;
+  scroll-margin-top: 78px;
 }
 
 @keyframes titleFlashRed {
