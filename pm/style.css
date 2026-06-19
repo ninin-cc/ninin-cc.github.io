@@ -932,28 +932,31 @@ button {
 
 .print-report { display: none; }
 @media print {
-  @page { size: A4; margin: 12mm; }
+  @page { size: A4 portrait; margin: 7mm; }
   body { background: #fff; }
   .app-shell, .modal-overlay { display: none !important; }
-  .print-report { display: block; color: #111827; font-family: "Yu Gothic", "Meiryo", sans-serif; font-size: 10.5pt; line-height: 1.55; }
-  .print-report-header { border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 10px; }
-  .print-report-title { margin: 0 0 4px; font-size: 17pt; color: #0f766e; }
-  .print-report-meta { margin: 0; color: #475569; font-size: 9pt; }
-  .print-report-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0 12px; }
-  .print-summary-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; background: #f8fafc; }
-  .print-summary-label { display: block; color: #64748b; font-size: 8pt; }
-  .print-summary-value { display: block; margin-top: 2px; color: #0f172a; font-size: 13pt; font-weight: bold; }
-  .print-question-card { break-inside: avoid; page-break-inside: avoid; border: 1px solid #cbd5e1; border-left: 5px solid #0f766e; border-radius: 6px; padding: 8px 10px; margin: 0 0 8px; }
+  .print-report { display: block; color: #111827; font-family: "Yu Gothic", "Meiryo", sans-serif; font-size: 8.6pt; line-height: 1.35; }
+  .print-report-header { border-bottom: 2px solid #0f766e; padding-bottom: 5px; margin-bottom: 6px; }
+  .print-report-title { margin: 0 0 2px; font-size: 14pt; color: #0f766e; }
+  .print-report-meta { margin: 0; color: #475569; font-size: 7.8pt; }
+  .print-report-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 6px 0 7px; }
+  .print-summary-box { border: 1px solid #cbd5e1; border-radius: 5px; padding: 4px 6px; background: #f8fafc; }
+  .print-summary-label { display: block; color: #64748b; font-size: 7pt; }
+  .print-summary-value { display: block; margin-top: 1px; color: #0f172a; font-size: 11pt; font-weight: bold; }
+  .print-question-list { display: block; }
+  .print-question-card { break-inside: avoid; page-break-inside: avoid; box-sizing: border-box; height: 48mm; overflow: hidden; border: 1px solid #cbd5e1; border-left: 4px solid #0f766e; border-radius: 5px; padding: 5px 7px; margin: 0 0 5px; }
+  .print-question-card.print-page-break { break-before: page; page-break-before: always; }
   .print-question-card.wrong { border-left-color: #e11d48; }
-  .print-question-heading { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-weight: bold; }
+  .print-question-heading { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; font-weight: bold; }
   .print-question-result { white-space: nowrap; }
-  .print-question-text { margin: 0 0 6px; font-weight: bold; }
-  .print-answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-  .print-answer-box { border: 1px solid #e2e8f0; border-radius: 5px; padding: 5px 6px; }
-  .print-answer-label, .print-section-label { display: block; margin-bottom: 2px; color: #64748b; font-size: 8pt; font-weight: bold; }
+  .print-question-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; margin: 0 0 4px; font-weight: bold; }
+  .print-answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 4px; }
+  .print-answer-box { border: 1px solid #e2e8f0; border-radius: 4px; padding: 3px 5px; }
+  .print-answer-label, .print-section-label { display: block; margin-bottom: 1px; color: #64748b; font-size: 7pt; font-weight: bold; }
   .print-answer-text { font-weight: bold; }
-  .print-explanation, .print-memo { margin-top: 5px; }
-  .print-memo { padding: 6px; border-radius: 5px; background: #f8fafc; white-space: pre-wrap; }
+  .print-explanation, .print-memo { margin-top: 3px; }
+  .print-explanation { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; max-height: 16mm; }
+  .print-memo { min-height: 7mm; max-height: 10mm; overflow: hidden; padding: 3px 5px; border-radius: 4px; background: #f8fafc; white-space: pre-wrap; }
 }
 
 .modal-overlay {
