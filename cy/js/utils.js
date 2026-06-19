@@ -11,65 +11,6 @@
       return new TextDecoder().decode(bytes);
     };
 
-    const bytesToBase64 = (bytes) => {
-      let binary = '';
-      const chunkSize = 0x8000;
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        const chunk = bytes.subarray(i, i + chunkSize);
-        binary += String.fromCharCode.apply(null, chunk);
-      }
-      return btoa(binary);
-    };
-
-    const base64ToBytes = (encoded) => {
-      const normalized = String(encoded || '').trim().replace(/\s/g, '+');
-      const binary = atob(normalized);
-      return Uint8Array.from(binary, char => char.charCodeAt(0));
-    };
-
-    const requireCompressionStreams = () => {
-      if (!('CompressionStream' in window) || !('DecompressionStream' in window)) {
-        throw new Error('Compression Streams API is not supported in this browser.');
-      }
-    };
-
-    const gzipCompressBytes = async (bytes) => {
-      requireCompressionStreams();
-      const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'));
-      return new Uint8Array(await new Response(stream).arrayBuffer());
-    };
-
-    const gzipDecompressBytes = async (bytes) => {
-      requireCompressionStreams();
-      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-      return new Uint8Array(await new Response(stream).arrayBuffer());
-    };
-
-    const createCompressedStoryUrl = async (encodedStoryData) => {
-      const jsonText = decodeBase64Unicode(encodedStoryData);
-      const jsonBytes = new TextEncoder().encode(jsonText);
-      const compressedBytes = await gzipCompressBytes(jsonBytes);
-      const compressedBase64 = bytesToBase64(compressedBytes);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('openExternalBrowser');
-      url.searchParams.set('data', compressedBase64);
-      return url.toString();
-    };
-
-    const restoreStoryBase64FromCompressedParam = async (compressedParam) => {
-      const decodedParam = (() => {
-        try {
-          return decodeURIComponent(String(compressedParam || ''));
-        } catch (error) {
-          return String(compressedParam || '');
-        }
-      })();
-      const compressedBytes = base64ToBytes(decodedParam);
-      const jsonBytes = await gzipDecompressBytes(compressedBytes);
-      const jsonText = new TextDecoder().decode(jsonBytes);
-      return encodeBase64Unicode(jsonText);
-    };
-
     const copyTextToClipboard = async (text) => {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);

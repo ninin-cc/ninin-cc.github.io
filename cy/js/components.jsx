@@ -1,19 +1,14 @@
-    const WindowBox = ({ title, children, iconName, className = "" }) => {
-      const shouldApplyUiFrame = !className.includes('print-friendly') && !className.includes('no-ui-frame');
-      const frameTheme = shouldApplyUiFrame ? APP_UI_FRAME_THEME : UI_FRAME_THEMES.default;
-
-      return (
-        <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative w-full ${frameTheme.windowClass} ${className} animate-fade-in`}>
-          {title && (
-            <div className={`window-box-title absolute -top-4 left-4 bg-black px-2 flex items-center space-x-2 ${frameTheme.titleClass}`}>
-              {iconName && <i className={iconName}></i>}
-              <h2 className="text-xl font-bold tracking-widest">{title}</h2>
-            </div>
-          )}
-          <div className="window-box-content mt-2 w-full">{children}</div>
-        </div>
-      );
-    };
+    const WindowBox = ({ title, children, iconName, className = "" }) => (
+      <div className={`bg-black text-white border-4 border-white p-4 rounded-lg shadow-md relative w-full ${className} animate-fade-in`}>
+        {title && (
+          <div className="absolute -top-4 left-4 bg-black px-2 flex items-center space-x-2">
+            {iconName && <i className={iconName}></i>}
+            <h2 className="text-xl font-bold tracking-widest">{title}</h2>
+          </div>
+        )}
+        <div className="mt-2 w-full">{children}</div>
+      </div>
+    );
 
     const renderTextLines = (value) => (
       value.split('\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)
@@ -71,8 +66,8 @@
       const isImageRight = imageSide === 'right';
 
       return (
-        <div onClick={handleSkip} className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative animate-fade-in shadow-xl mt-6 md:mt-8 cursor-pointer`}>
-          <div className={`dialog-nameplate-translucent absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div onClick={handleSkip} className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative animate-fade-in shadow-xl mt-6 md:mt-8 cursor-pointer`}>
+          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
@@ -109,8 +104,8 @@
       const isImageRight = imageSide === 'right';
 
       return (
-        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 opacity-90`}>
-          <div className={`dialog-nameplate-translucent absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 opacity-90`}>
+          <div className={`absolute -top-3 ${isImageRight ? 'right-4' : 'left-4'} ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className={`flex items-start gap-4 md:gap-6 mt-1 md:mt-2 ${isImageRight ? 'flex-row-reverse' : ''}`}>
@@ -141,8 +136,8 @@
       const { color, imgBg, img } = config.reflem;
 
       return (
-        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 animate-memory-fade`}>
-          <div className={`dialog-nameplate-translucent absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-6 md:mt-8 animate-memory-fade`}>
+          <div className={`absolute -top-3 left-4 ${color.split(' ')[0]} px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10`}>
             {speaker}
           </div>
           <div className="flex items-start gap-4 md:gap-6 mt-1 md:mt-2">
@@ -164,8 +159,8 @@
       const img = APP_CONFIG.char2.img;
 
       return (
-        <div className={`dialog-window-translucent w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
-          <div className="dialog-nameplate-translucent absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
+        <div className={`w-full ${color} border-2 p-3 md:p-4 rounded-lg mb-5 relative shadow-xl mt-4 animate-memory-fade`}>
+          <div className="absolute -top-3 right-4 bg-rose-900 px-3 border border-white rounded-full text-white text-xs md:text-sm font-bold tracking-widest shadow-sm z-10">
             {speaker}
           </div>
           <div className="flex flex-row-reverse items-start gap-4 md:gap-6 mt-1 md:mt-2">
@@ -465,64 +460,36 @@
       );
     };
 
-    const LifelineChart = ({ data, editable = false, onPointChange, onLineAddRequest, canAddLineEvent = true, agePositioning = false }) => {
-      const svgRef = useRef(null);
-      const [draggingId, setDraggingId] = useState(null);
-      const [lineAddPrompt, setLineAddPrompt] = useState(null);
-      useEffect(() => {
-        if (!editable) {
-          setDraggingId(null);
-          setLineAddPrompt(null);
-        }
-      }, [editable]);
+    const LifelineChart = ({ data }) => {
       if (!data || data.length === 0) return <div className="text-center p-4">記憶がありません。</div>;
       const sortedData = [...data].sort((a, b) => a.age - b.age);
-      const width = 1000; const height = 450; const paddingX = 70; const paddingY = 30;
-      const labelAreaHeight = 120;
-      const chartWidth = width - paddingX * 2; const chartHeight = height - paddingY - labelAreaHeight;
-      const chartBottom = paddingY + chartHeight;
-      const axisY = paddingY + chartHeight / 2;
-      const ageTextY = chartBottom + 24;
-      const eventLabelTop = ageTextY + 12;
-      const eventLabelHeight = 38;
-      const eventLabelGap = 8;
+      const width = 1000; const height = 360; const paddingX = 70; const paddingY = 30;
+      const chartWidth = width - paddingX * 2; const chartHeight = height - paddingY * 2;
       const futureIndex = sortedData.length;
       const totalPointCount = sortedData.length + 1;
       const lastUserMemory = sortedData[sortedData.length - 1];
-      const memoryAges = sortedData.map(item => Number(item.age) || 0);
-      const minMemoryAge = Math.min(...memoryAges);
-      const maxMemoryAge = Math.max(...memoryAges);
-      const agePadding = Math.max(2, Math.round((maxMemoryAge - minMemoryAge) * 0.08));
-      const maxAxisAge = Math.max(80, maxMemoryAge);
-      const chartMinAge = agePositioning ? Math.max(15, minMemoryAge - agePadding) : minMemoryAge;
-      const chartMaxAge = agePositioning ? Math.min(maxAxisAge, Math.max(maxMemoryAge + agePadding, minMemoryAge + 5)) : maxMemoryAge;
-      const ageToX = (age) => {
-        const range = Math.max(1, chartMaxAge - chartMinAge);
-        const normalized = (Number(age) - chartMinAge) / range;
-        return paddingX + (Math.max(0, Math.min(1, normalized)) * chartWidth);
-      };
-      const indexToX = (index) => paddingX + (index * (chartWidth / Math.max(1, totalPointCount - 1)));
-      const getX = (index, item = sortedData[index]) => agePositioning && item ? ageToX(item.age) : indexToX(index);
 
+      const getX = (index) => paddingX + (index * (chartWidth / Math.max(1, totalPointCount - 1)));
       const getY = (satisfaction) => {
         const normalized = (satisfaction + 50) / 100;
         return paddingY + chartHeight - (normalized * chartHeight);
       };
-      const lastUserX = getX(sortedData.length - 1, lastUserMemory);
+      const lastUserX = getX(sortedData.length - 1);
       const lastUserY = getY(lastUserMemory.satisfaction);
-      const futureX = agePositioning ? width - paddingX : getX(futureIndex);
+      const futureX = getX(futureIndex);
       const futureY = Math.max(10, lastUserY - 55);
-      const labelWidth = 170;
-      const getEventLabelY = (index) => eventLabelTop + ((index % 2) * (eventLabelHeight + eventLabelGap));
-      const getEventLabelX = (x, widthValue = labelWidth) => Math.max(0, Math.min(width - widthValue, x - widthValue / 2));
+      const labelWidth = 180;
+      const labelHeight = 60;
+      const labelGap = 30;
+      const clampLabelY = (y) => Math.max(8, Math.min(height - labelHeight - 18, y));
 
       const generateSmoothPath = (items) => {
         if (items.length === 0) return '';
-        if (items.length === 1) return `M ${getX(0, items[0])},${getY(items[0].satisfaction)}`;
-        let path = `M ${getX(0, items[0])},${getY(items[0].satisfaction)}`;
+        if (items.length === 1) return `M ${getX(0)},${getY(items[0].satisfaction)}`;
+        let path = `M ${getX(0)},${getY(items[0].satisfaction)}`;
         for (let i = 0; i < items.length - 1; i++) {
-          const x0 = getX(i, items[i]); const y0 = getY(items[i].satisfaction);
-          const x1 = getX(i + 1, items[i + 1]); const y1 = getY(items[i + 1].satisfaction);
+          const x0 = getX(i); const y0 = getY(items[i].satisfaction);
+          const x1 = getX(i + 1); const y1 = getY(items[i + 1].satisfaction);
           const cx0 = x0 + (x1 - x0) * 0.4; const cy0 = y0;
           const cx1 = x1 - (x1 - x0) * 0.4; const cy1 = y1;
           path += ` C ${cx0},${cy0} ${cx1},${cy1} ${x1},${y1}`;
@@ -531,121 +498,15 @@
       };
 
       const pathData = generateSmoothPath(sortedData);
-      const clampSatisfaction = (value) => Math.max(-50, Math.min(50, Math.round(value / 5) * 5));
-      const getSvgPointFromPointer = (event) => {
-        const svg = svgRef.current;
-        if (!svg) return null;
-        const point = svg.createSVGPoint();
-        point.x = event.clientX;
-        point.y = event.clientY;
-        const screenCtm = svg.getScreenCTM();
-        if (!screenCtm) return null;
-        return point.matrixTransform(screenCtm.inverse());
-      };
-      const getSatisfactionFromSvgY = (svgY) => {
-        const boundedY = Math.max(paddingY, Math.min(chartBottom, svgY));
-        const normalized = (paddingY + chartHeight - boundedY) / chartHeight;
-        return clampSatisfaction(normalized * 100 - 50);
-      };
-      const getSatisfactionFromPointer = (event) => {
-        const svgPoint = getSvgPointFromPointer(event);
-        if (!svgPoint) return 0;
-        return getSatisfactionFromSvgY(svgPoint.y);
-      };
-      const getAgeFromSvgX = (svgX) => {
-        if (agePositioning) {
-          const boundedX = Math.max(paddingX, Math.min(paddingX + chartWidth, svgX));
-          const normalized = (boundedX - paddingX) / chartWidth;
-          return Math.round(chartMinAge + ((chartMaxAge - chartMinAge) * normalized));
-        }
-        if (sortedData.length === 1) return Number(sortedData[0].age);
-        const firstX = getX(0);
-        const lastX = getX(sortedData.length - 1);
-        const boundedX = Math.max(firstX, Math.min(lastX, svgX));
-        const stepWidth = chartWidth / Math.max(1, totalPointCount - 1);
-        const rawIndex = (boundedX - paddingX) / stepWidth;
-        const segmentIndex = Math.max(0, Math.min(sortedData.length - 2, Math.floor(rawIndex)));
-        const ratio = Math.max(0, Math.min(1, rawIndex - segmentIndex));
-        const startAge = Number(sortedData[segmentIndex].age);
-        const endAge = Number(sortedData[segmentIndex + 1].age);
-        return Math.round(startAge + ((endAge - startAge) * ratio));
-      };
-      const clampPointAge = (item, age) => {
-        const itemIndex = sortedData.findIndex(d => String(d.id) === String(item.id));
-        const prevAge = itemIndex > 0 ? Number(sortedData[itemIndex - 1].age) : 15;
-        const nextAge = itemIndex >= 0 && itemIndex < sortedData.length - 1 ? Number(sortedData[itemIndex + 1].age) : maxAxisAge;
-        return Math.max(prevAge, Math.min(nextAge, Number(age) || Number(item.age)));
-      };
-      const updatePointFromPointer = (event, item) => {
-        if (!editable || !onPointChange) return;
-        event.preventDefault();
-        setLineAddPrompt(null);
-        const svgPoint = getSvgPointFromPointer(event);
-        if (!svgPoint) return;
-        onPointChange(item.id, {
-          satisfaction: getSatisfactionFromSvgY(svgPoint.y),
-          age: clampPointAge(item, getAgeFromSvgX(svgPoint.x))
-        });
-      };
-      const startPointDrag = (event, item) => {
-        if (!editable || !onPointChange) return;
-        event.preventDefault();
-        setDraggingId(item.id);
-        event.currentTarget.setPointerCapture?.(event.pointerId);
-        updatePointFromPointer(event, item);
-      };
-      const continuePointDrag = (event, item) => {
-        if (draggingId !== item.id) return;
-        updatePointFromPointer(event, item);
-      };
-      const endPointDrag = (event) => {
-        if (!editable) return;
-        event.currentTarget.releasePointerCapture?.(event.pointerId);
-        setDraggingId(null);
-      };
-      const handleLineAddPointerDown = (event) => {
-        if (!editable || !onLineAddRequest || !canAddLineEvent || sortedData.length < 2) return;
-        event.preventDefault();
-        const svgPoint = getSvgPointFromPointer(event);
-        if (!svgPoint) return;
-        const promptWidth = 220;
-        const promptHeight = 96;
-        setLineAddPrompt({
-          x: Math.max(8, Math.min(width - promptWidth - 8, svgPoint.x - (promptWidth / 2))),
-          y: Math.max(8, Math.min(height - promptHeight - 8, svgPoint.y - promptHeight - 10)),
-          age: getAgeFromSvgX(svgPoint.x),
-          satisfaction: getSatisfactionFromSvgY(svgPoint.y),
-          width: promptWidth,
-          height: promptHeight
-        });
-      };
 
       return (
-        <div className={`w-full bg-gray-900 border-2 border-dashed p-2 rounded mt-4 lifeline-print print-avoid-break ${editable ? 'lifeline-editing border-yellow-400' : 'border-gray-600'}`}>
-          <svg
-            ref={svgRef}
-            viewBox={`0 0 ${width} ${height}`}
-            className="w-full h-auto text-white"
-            preserveAspectRatio="xMidYMid meet"
-            style={{ touchAction: editable ? 'none' : 'auto' }}
-          >
-            <line x1={paddingX} y1={axisY} x2={width - paddingX} y2={axisY} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
-            <text x={paddingX - 10} y={axisY + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
+        <div className="w-full bg-gray-900 border-2 border-dashed border-gray-600 p-2 rounded mt-4 lifeline-print print-avoid-break">
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto text-white" preserveAspectRatio="xMidYMid meet">
+            <line x1={paddingX} y1={height / 2} x2={width - paddingX} y2={height / 2} stroke="#555" strokeWidth="2" strokeDasharray="4 4" />
+            <text x={paddingX - 10} y={height / 2 + 5} fill="#aaa" fontSize="12" textAnchor="end">±0</text>
             <text x={paddingX - 10} y={paddingY + 10} fill="#60A5FA" fontSize="12" textAnchor="end">+50</text>
-            <text x={paddingX - 10} y={chartBottom} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
+            <text x={paddingX - 10} y={height - paddingY} fill="#F87171" fontSize="12" textAnchor="end">-50</text>
             <path d={pathData} fill="none" stroke="#FCD34D" strokeWidth="4" />
-            {editable && onLineAddRequest && canAddLineEvent && sortedData.length > 1 && (
-              <path
-                d={pathData}
-                fill="none"
-                stroke="transparent"
-                strokeWidth="28"
-                strokeLinecap="round"
-                pointerEvents="stroke"
-                style={{ cursor: 'copy' }}
-                onPointerDown={handleLineAddPointerDown}
-              />
-            )}
             <line
               x1={lastUserX}
               y1={lastUserY}
@@ -657,38 +518,14 @@
               strokeLinecap="round"
             />
             {sortedData.map((d, i) => {
-              const cx = getX(i, d); const cy = getY(d.satisfaction);
-              const isDragging = draggingId === d.id;
+              const cx = getX(i); const cy = getY(d.satisfaction);
+              const labelY = clampLabelY(Number(d.satisfaction) >= 0 ? cy + labelGap : cy - labelHeight - labelGap);
               return (
                 <g key={d.id}>
-                  <circle cx={cx} cy={cy} r={editable ? 8 : 6} fill="#000" stroke="#FCD34D" strokeWidth={editable ? 4 : 3} />
-                  {editable && (
-                    <>
-                      <circle
-                        cx={cx}
-                        cy={cy}
-                        r={24}
-                        fill="transparent"
-                        stroke="transparent"
-                        pointerEvents="all"
-                        style={{ cursor: 'move' }}
-                        onPointerDown={event => startPointDrag(event, d)}
-                        onPointerMove={event => continuePointDrag(event, d)}
-                        onPointerUp={endPointDrag}
-                        onPointerCancel={endPointDrag}
-                        onLostPointerCapture={() => setDraggingId(null)}
-                      />
-                      <text x={cx} y={Math.max(18, cy - 14)} fill="#FCD34D" fontSize="13" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                        {d.age}歳 / {Number(d.satisfaction) > 0 ? '+' : ''}{d.satisfaction}
-                      </text>
-                      {isDragging && (
-                        <circle cx={cx} cy={cy} r="17" fill="none" stroke="#FDE68A" strokeWidth="2" strokeDasharray="4 4" pointerEvents="none" />
-                      )}
-                    </>
-                  )}
-                  <text x={cx} y={ageTextY} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
-                  <foreignObject x={getEventLabelX(cx)} y={getEventLabelY(i)} width={labelWidth} height={eventLabelHeight}>
-                    <div xmlns="http://www.w3.org/1999/xhtml" className="h-full overflow-hidden text-[11px] text-center text-gray-100 leading-tight bg-black bg-opacity-60 rounded border border-gray-700 px-2 py-1">
+                  <circle cx={cx} cy={cy} r="6" fill="#000" stroke="#FCD34D" strokeWidth="3" />
+                  <text x={cx} y={height - 5} fill="#fff" fontSize="14" textAnchor="middle">{d.age}歳</text>
+                  <foreignObject x={Math.max(0, Math.min(width - labelWidth, cx - labelWidth / 2))} y={labelY} width={labelWidth} height={labelHeight}>
+                    <div xmlns="http://www.w3.org/1999/xhtml" className="h-full overflow-hidden text-xs text-center text-gray-100 leading-snug bg-black bg-opacity-60 rounded border border-gray-700 px-2 py-1">
                       {d.event}
                     </div>
                   </foreignObject>
@@ -710,47 +547,13 @@
             />
             <g key="system-future">
               <circle cx={futureX} cy={futureY} r="7" fill="#0B1220" stroke="#93C5FD" strokeWidth="3" strokeDasharray="4 3" />
-              <text x={futureX} y={ageTextY} fill="#93C5FD" fontSize="14" textAnchor="middle">未来</text>
-              <foreignObject x={getEventLabelX(futureX, 144)} y={getEventLabelY(futureIndex)} width="144" height={eventLabelHeight}>
+              <text x={futureX} y={height - 5} fill="#93C5FD" fontSize="14" textAnchor="middle">未来</text>
+              <foreignObject x={futureX - 72} y={clampLabelY(futureY + 16)} width="144" height="44">
                 <div xmlns="http://www.w3.org/1999/xhtml" className="h-full text-xs text-center text-blue-100 leading-tight bg-black bg-opacity-70 rounded px-1 py-1 border border-blue-300">
                   未定の未来
                 </div>
               </foreignObject>
             </g>
-            {editable && lineAddPrompt && (
-              <foreignObject x={lineAddPrompt.x} y={lineAddPrompt.y} width={lineAddPrompt.width} height={lineAddPrompt.height}>
-                <div xmlns="http://www.w3.org/1999/xhtml" className="lifeline-add-popover h-full rounded border-2 border-yellow-400 bg-black bg-opacity-90 p-2 text-center text-xs text-white shadow-xl">
-                  <p className="font-bold text-yellow-300">ここに出来事を追加しますか？</p>
-                  <p className="mt-1 text-gray-300">{lineAddPrompt.age}歳ごろ / {lineAddPrompt.satisfaction > 0 ? '+' : ''}{lineAddPrompt.satisfaction}</p>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      className="rounded border border-yellow-300 bg-yellow-300 px-2 py-1 font-bold text-black"
-                      onClick={event => {
-                        event.stopPropagation();
-                        onLineAddRequest({
-                          age: lineAddPrompt.age,
-                          satisfaction: lineAddPrompt.satisfaction
-                        });
-                        setLineAddPrompt(null);
-                      }}
-                    >
-                      YES
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded border border-gray-500 bg-gray-900 px-2 py-1 font-bold text-gray-200"
-                      onClick={event => {
-                        event.stopPropagation();
-                        setLineAddPrompt(null);
-                      }}
-                    >
-                      NO
-                    </button>
-                  </div>
-                </div>
-              </foreignObject>
-            )}
           </svg>
         </div>
       );

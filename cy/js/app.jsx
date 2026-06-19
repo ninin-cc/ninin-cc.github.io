@@ -4,10 +4,6 @@
       const [currentTheme, setCurrentTheme] = useLocalStorage('cq_theme', 'rpg');
       const activeThemeKey = THEMES[currentTheme] ? currentTheme : 'rpg';
       APP_CONFIG = THEMES[activeThemeKey];
-      const [uiFrameTone, setUiFrameTone] = useLocalStorage('cq_ui_frame_tone', 'default');
-      const [isUiFramePickerOpen, setIsUiFramePickerOpen] = useState(false);
-      const activeUiFrameTone = UI_FRAME_THEMES[uiFrameTone] ? uiFrameTone : 'default';
-      APP_UI_FRAME_THEME = UI_FRAME_THEMES[activeUiFrameTone];
 
       useEffect(() => {
         const loadingScreen = document.getElementById('cq-loading-screen');
@@ -68,19 +64,9 @@
       const [showImportBox, setShowImportBox] = useState(false);
       const [importText, setImportText] = useState('');
       const [importMessage, setImportMessage] = useState('');
-      const [saveMessage, setSaveMessage] = useState('');
-      const [summaryOpenSections, setSummaryOpenSections] = useState({
-        memory: true,
-        can: false,
-        will: false,
-        must: false,
-        route: true
-      });
       const [introPreviewOpen, setIntroPreviewOpen] = useState(false);
       const [innMeaningOpen, setInnMeaningOpen] = useState(false);
       const [canInnPreviewOpen, setCanInnPreviewOpen] = useState(false);
-      const [isInterimPathEditing, setIsInterimPathEditing] = useState(false);
-      const [interimMemoryDraft, setInterimMemoryDraft] = useState(null);
       const [otherTableState, setOtherTableState] = useState({
         isOpen: false,
         context: 'can',
@@ -111,13 +97,6 @@
           setPlayer(current => ({ ...current, age: String(APP_CONFIG.defaultAge) }));
         }
       }, []);
-
-      useEffect(() => {
-        if (scene !== 'interim') {
-          setIsInterimPathEditing(false);
-          setInterimMemoryDraft(null);
-        }
-      }, [scene]);
 
       useEffect(() => {
         const allowedTypes = canStep === 0 ? ['skill', 'magic'] : ['ally'];
@@ -188,35 +167,17 @@
         ];
       };
 
-      const getPlayerNameReaction = () => {
-        const enteredName = (player.name || '').trim();
-        const sameNameNames = ['りふれむ', 'リフレム', 'はるか', 'ハルカ'];
-        const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
-        const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
-        if (sameNameNames.includes(enteredName)) return '同じ名とは奇遇じゃな。';
-        if (heroLikeNames.includes(enteredName)) return 'ふむ…古の勇者のような名前じゃのう…。';
-        if (lookalikeNames.includes(enteredName)) return '…いや…まさかな。他人の空似じゃろう…。';
-        return 'よい面構えじゃ。';
-      };
-
       const getPageNo = () => {
         switch (scene) {
           case 'intro': return `1-${introStep + 1}${isInputPhase ? '-Input' : ''}`;
-          case 'memory': {
-            const base = `2-${memoryStep + 1}`;
-            const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
-            const hasMemoryConfirmation = !isInputPhase && memoryStep < 5 && Boolean(sortedMemories[memoryStep]);
-            if (hasMemoryConfirmation) return `${base}-Confirm`;
-            return `${base}${isInputPhase ? '-Input' : ''}`;
-          }
-          case 'chart': return showRestPrompt ? '3-2' : '3-1';
           case 'can': {
-            if (canReviewing) return '4-3-Review';
-            const base = `4-${canStep + 1}`;
+            if (canReviewing) return '2-2-Review';
+            const base = `2-${canStep + 1}`;
             if (!isInputPhase) return base;
             return `${base}-${canConfirming ? 'Confirm' : 'Input'}`;
           }
-          case 'interim': return '4-4';
+          case 'memory': return `3-${memoryStep + 1}${isInputPhase ? '-Input' : ''}`;
+          case 'chart': return showRestPrompt ? '4-2' : '4-1';
           case 'will': return `5-${willStep + 1}${isInputPhase ? '-Input' : ''}`;
           case 'must':
             if (mustStep === 0) return mustRecollectionVisible ? '6-1-2' : '6-1-1';
@@ -242,13 +203,6 @@
         setShowRestPrompt(false);
         setIsInputPhase(false);
         if (next === 'intro') setIntroStep(0);
-        if (next === 'can') {
-          setCanStep(0);
-          setNewCan({ type: 'skill', name: '', desc: '' });
-          setCanConfirming(false);
-          setCanAddOpen(true);
-          setCanReviewing(false);
-        }
         if (next === 'memory') {
           setMemoryStep(0);
           const suggestedAges = getSuggestedAges();
@@ -256,10 +210,6 @@
           setMemoryEditId(null);
         }
         if (next === 'will') setWillStep(0);
-        if (next === 'interim') {
-          setCanReviewing(false);
-          setCanConfirming(false);
-        }
         if (next === 'must') {
           setMustStep(0);
           setMustWorkStep(0);
@@ -310,15 +260,6 @@
       const goToProgressScene = (target) => {
         if (target === 'intro') return goToIntro();
         if (target === 'can') return goToCanInput(0);
-        if (target === 'interim') {
-          scrollTop();
-          setShowRestPrompt(false);
-          setIsInputPhase(false);
-          setCanReviewing(false);
-          setCanConfirming(false);
-          setScene('interim');
-          return;
-        }
         if (target === 'will') return goToWillInput(0);
         if (target === 'must') return goToMustEdit();
 
@@ -374,21 +315,7 @@
             setNewCan({ type: 'skill', name: '', desc: '' });
             return;
           }
-          if (memories.length > 0 || memoryStep > 0) {
-            setScene('chart');
-            setIsInputPhase(false);
-            return;
-          }
           goToIntro();
-          return;
-        }
-
-        if (scene === 'interim') {
-          setScene('can');
-          setCanStep(1);
-          setCanReviewing(true);
-          setCanConfirming(false);
-          setIsInputPhase(false);
           return;
         }
 
@@ -406,7 +333,9 @@
             setMemoryEditId(null);
             return;
           }
-          goToIntro();
+          setScene('can');
+          setCanStep(1);
+          setIsInputPhase(false);
           return;
         }
 
@@ -429,8 +358,7 @@
             setWillStep(willStep - 1);
             return;
           }
-          setScene('interim');
-          setIsInputPhase(false);
+          setScene('chart');
           return;
         }
 
@@ -462,15 +390,13 @@
         }
       };
 
-      const handleStartMemory = () => {
-        scrollTop();
-        setShowRestPrompt(false);
-        setMemoryStep(0);
-        const suggestedAges = getSuggestedAges();
-        setNewMemory({ age: suggestedAges[0], event: '', satisfaction: 0 });
-        setMemoryEditId(null);
-        setIsInputPhase(false);
-        setScene('memory');
+      const handleStartCan = () => {
+        setCanStep(0);
+        setNewCan({ type: 'skill', name: '', desc: '' });
+        setCanConfirming(false);
+        setCanAddOpen(true);
+        setCanReviewing(false);
+        nextScene('can');
       };
 
       const handleAddCan = () => {
@@ -515,7 +441,7 @@
 
       const handleProceedFromCanReview = () => {
         setCanReviewing(false);
-        nextScene('interim');
+        nextScene('memory');
       };
 
       const handleEditCanFromReview = (step) => {
@@ -575,56 +501,6 @@
       const handleRemoveMemory = (id) => {
         setMemories(memories.filter(m => m.id !== id));
         if (memoryEditId === id) setMemoryEditId(null);
-      };
-
-      const handleUpdateMemorySatisfaction = (id, update) => {
-        setMemories(currentMemories => {
-          let changed = false;
-          const nextMemories = currentMemories.map(memory => {
-            if (String(memory.id) !== String(id)) return memory;
-            const updatePayload = typeof update === 'object' && update !== null
-              ? update
-              : { satisfaction: update };
-            const nextSatisfaction = Number(updatePayload.satisfaction);
-            const nextAge = updatePayload.age === undefined ? Number(memory.age) : Number(updatePayload.age);
-            const shouldUpdateSatisfaction = Number(memory.satisfaction) !== nextSatisfaction;
-            const shouldUpdateAge = Number(memory.age) !== nextAge;
-            if (!shouldUpdateSatisfaction && !shouldUpdateAge) return memory;
-            changed = true;
-            return {
-              ...memory,
-              age: shouldUpdateAge ? nextAge : memory.age,
-              satisfaction: shouldUpdateSatisfaction ? nextSatisfaction : memory.satisfaction
-            };
-          });
-          return changed ? nextMemories : currentMemories;
-        });
-      };
-
-      const getInterimAddedMemoryCount = () => memories.filter(memory => memory.addedFromInterim).length;
-
-      const handleRequestInterimMemoryAdd = ({ age, satisfaction }) => {
-        if (getInterimAddedMemoryCount() >= 3) return;
-        setInterimMemoryDraft({
-          age: Math.max(15, Math.min(80, Number(age) || APP_CONFIG.memoryStartAge)),
-          event: '',
-          satisfaction: Number(satisfaction) || 0
-        });
-      };
-
-      const handleSaveInterimMemory = () => {
-        if (!interimMemoryDraft || !interimMemoryDraft.event.trim() || getInterimAddedMemoryCount() >= 3) return;
-        setMemories(currentMemories => ([
-          ...currentMemories,
-          {
-            id: Date.now() + Math.random(),
-            age: Number(interimMemoryDraft.age),
-            event: interimMemoryDraft.event.trim(),
-            satisfaction: Number(interimMemoryDraft.satisfaction),
-            addedFromInterim: true
-          }
-        ]));
-        setInterimMemoryDraft(null);
       };
 
       const handleKeepMemory = () => {
@@ -785,6 +661,34 @@
 
       const createStoryExportText = () => encodeBase64Unicode(JSON.stringify(createStoryExportPayload()));
 
+      const formatGoogleCalendarDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+      };
+
+      const buildGoogleCalendarStoryUrl = (encodedStoryData) => {
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 1);
+        const playerName = player.name || '名もなき勇者';
+        const details = [
+          'キャリアの宿屋™で作成した「あなたの物語」の再開用データです。',
+          'この文字列を、アプリTOP画面の「『あなたの物語』の記憶を呼び覚ます（データを読み込む）」に貼り付けると再開できます。',
+          '',
+          '【あなたの物語データ】',
+          encodedStoryData
+        ].join('\n');
+        const params = new URLSearchParams({
+          action: 'TEMPLATE',
+          text: `${APP_CONFIG.appName}：${playerName}さんの「あなたの物語」`,
+          dates: `${formatGoogleCalendarDate(startDate)}/${formatGoogleCalendarDate(endDate)}`,
+          details
+        });
+        return `${APP_CONFIG.googleCalendarCreateUrl}?${params.toString()}`;
+      };
+
       const extractStoryImportText = (source) => {
         const marker = '【あなたの物語データ】';
         let text = source.trim();
@@ -797,101 +701,52 @@
         return (base64Match ? base64Match[0] : text).trim();
       };
 
-      const resolveStoryImportText = async (source) => {
-        const text = source.trim();
-        try {
-          const url = new URL(text, window.location.href);
-          const compressed = url.searchParams.get('data');
-          if (compressed) {
-            return restoreStoryBase64FromCompressedParam(compressed);
-          }
-        } catch (error) {}
-        return extractStoryImportText(text).replace(/^CQ-STORY:/, '');
-      };
-
-      const restoreStoryPayload = (payload) => {
-        const data = payload.data || payload;
-        if (!data || typeof data !== 'object') throw new Error('invalid payload');
-
-        clearAdventureData();
-        Object.entries(data).forEach(([key, value]) => {
-          if (!key.startsWith('cq_')) return;
-          const serialized = JSON.stringify(value);
-          if (serialized !== undefined) {
-            window.localStorage.setItem(key, serialized);
-          }
-        });
-        if (!Object.prototype.hasOwnProperty.call(data, 'cq_scene')) {
-          window.localStorage.setItem('cq_scene', JSON.stringify('intro'));
-        }
-        return data;
-      };
-
-      const handleExportStoryData = async () => {
+      const handleExportStoryData = async ({ openCalendar = false } = {}) => {
         const encoded = createStoryExportText();
+        if (openCalendar) {
+          window.open(buildGoogleCalendarStoryUrl(encoded), '_blank', 'noopener,noreferrer');
+        }
         try {
-          const saveUrl = await createCompressedStoryUrl(encoded);
-          await copyTextToClipboard(saveUrl);
-          setSaveMessage('セーブ用URLをコピーしました。別のブラウザで開くと、この「あなたの物語」を呼び覚ませます。');
-          alert('セーブ用URLをコピーしました。PCやスマホなど別のブラウザで開くと、この「あなたの物語」を呼び覚ませます。');
-        } catch (error) {
-          const message = error && /Compression Streams/.test(error.message || '')
-            ? 'このブラウザは圧縮セーブURLの作成に対応していません。Chrome / Edge / Safari などの新しいブラウザでお試しください。'
-            : 'コピーに失敗しました。以下のURLを選択して保存してください。';
-          try {
-            const saveUrl = await createCompressedStoryUrl(encoded);
-            window.prompt(message, saveUrl);
-          } catch (fallbackError) {
-            alert(message);
+          await copyTextToClipboard(encoded);
+          if (openCalendar) {
+            alert('コピーしました。Googleカレンダーの新規予定画面を開きました。予定の「説明」欄に「あなたの物語」データが入っています。内容を確認して保存してください。');
+          } else {
+            alert('コピーしました。Googleカレンダーの予定の「説明」欄などに貼り付けて保存してください。');
           }
+        } catch (error) {
+          window.prompt('コピーに失敗しました。以下の文字列を選択して保存してください。', encoded);
         }
       };
 
-      const handleImportStoryData = async () => {
+      const handleImportStoryData = () => {
         const source = importText.trim();
         if (!source) {
           setImportMessage('読み込む文字列を貼り付けてください。');
           return;
         }
         try {
-          const encoded = await resolveStoryImportText(source);
-          const decoded = decodeBase64Unicode(encoded);
+          const decoded = decodeBase64Unicode(extractStoryImportText(source).replace(/^CQ-STORY:/, ''));
           const payload = JSON.parse(decoded);
-          restoreStoryPayload(payload);
+          const data = payload.data || payload;
+          if (!data || typeof data !== 'object') throw new Error('invalid payload');
+
+          clearAdventureData();
+          Object.entries(data).forEach(([key, value]) => {
+            if (!key.startsWith('cq_')) return;
+            const serialized = JSON.stringify(value);
+            if (serialized !== undefined) {
+              window.localStorage.setItem(key, serialized);
+            }
+          });
+          if (!Object.prototype.hasOwnProperty.call(data, 'cq_scene')) {
+            window.localStorage.setItem('cq_scene', JSON.stringify('intro'));
+          }
           setImportMessage('読み込みました。あなたの物語を呼び覚まします。');
           window.setTimeout(() => window.location.reload(), 500);
         } catch (error) {
-          setImportMessage('読み込みに失敗しました。セーブ用URL、または書き出した文字列をそのまま貼り付けてください。');
+          setImportMessage('読み込みに失敗しました。書き出した文字列をそのまま貼り付けてください。');
         }
       };
-
-      useEffect(() => {
-        const compressed = new URLSearchParams(window.location.search).get('data');
-        if (!compressed) return undefined;
-
-        let cancelled = false;
-        (async () => {
-          try {
-            const encoded = await restoreStoryBase64FromCompressedParam(compressed);
-            console.log('Restored career-inn story data:', encoded);
-            const payload = JSON.parse(decodeBase64Unicode(encoded));
-            restoreStoryPayload(payload);
-            if (cancelled) return;
-
-            const cleanUrl = new URL(window.location.href);
-            cleanUrl.searchParams.delete('data');
-            window.history.replaceState(null, document.title, cleanUrl.toString());
-            window.location.reload();
-          } catch (error) {
-            console.error('Failed to restore career-inn story data from URL:', error);
-            setImportMessage('URLからの読み込みに失敗しました。セーブ用URLを確認してください。');
-          }
-        })();
-
-        return () => {
-          cancelled = true;
-        };
-      }, []);
 
       const openOtherTableTalk = (context) => {
         setOtherTableState({
@@ -1003,17 +858,6 @@
                     <button onClick={() => setIntroStep(1)} className="rpg-button text-xl px-8 py-4 mt-4 animate-bounce">
                       ハルカの案内に進む
                     </button>
-                    <div className="mt-4 flex justify-center">
-                      <a
-                        href={APP_CONFIG.bookingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rpg-button inline-flex items-center justify-center gap-2 px-6 py-3 text-base"
-                      >
-                        <i className="fa-regular fa-comments"></i>
-                        {APP_CONFIG.bookingButtonText}
-                      </a>
-                    </div>
                     {renderAppNote('mt-5')}
                   </div>
                 )}
@@ -1054,7 +898,7 @@
                             className="rpg-input h-28 resize-none text-xs leading-relaxed"
                             value={importText}
                             onChange={e => setImportText(e.target.value)}
-                            placeholder="セーブ用URL、または保存した文字列を貼り付けてください。"
+                            placeholder="Googleカレンダーの説明欄などに保存した文字列を貼り付けてください。"
                           />
                         </WritableField>
                         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -1122,7 +966,7 @@
                   </div>
                 </WindowBox>
                 <div className="text-center mt-6">
-                  <button onClick={handleStartMemory} disabled={!player.name || !player.age} className={`rpg-button text-xl px-8 py-4 ${(!player.name || !player.age) ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}>
+                  <button onClick={handleStartCan} disabled={!player.name || !player.age} className={`rpg-button text-xl px-8 py-4 ${(!player.name || !player.age) ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}>
                     二人との会話を続ける
                   </button>
                 </div>
@@ -1175,14 +1019,20 @@
         const skillCans = cans.filter(c => c.type === 'skill');
         const magicCans = cans.filter(c => c.type === 'magic');
         const allyCans = cans.filter(c => c.type === 'ally');
-        const title = isWeaponMagicStep ? 'シーン4-1：武器・魔法の確認' : 'シーン4-2：仲間・関係性の確認';
-        const nameReaction = getPlayerNameReaction();
+        const title = isWeaponMagicStep ? 'シーン2-1：武器・魔法の確認' : 'シーン2-2：仲間・関係性の確認';
+        const enteredName = (player.name || '').trim();
+        const sameNameNames = ['りふれむ', 'リフレム', 'はるか', 'ハルカ'];
+        const heroLikeNames = ['ろと', 'ロト', 'ひんめる', 'ヒンメル', 'あるす', 'アルス', 'パーン', 'せいや', 'セイヤ', 'けんしろう', 'ケンシロウ', 'らおう', 'ラオウ', 'ルフィ', 'るふぃ', 'ごくう', 'ゴクウ', '悟空'];
+        const lookalikeNames = ['とき', 'トキ', 'ディードリット', 'ふりーれん', 'フリーレン', 'はいたー', 'ハイター', 'あいぜん', 'アイゼン', 'フェルン', 'ふぇるん', 'しゅたるく', 'シュタルク', 'クラウド', 'くらうど', 'えありす', 'エアリス', 'てぃふぁ', 'ティファ', 'ゆふぃ', 'ユフィ'];
+        const nameReaction = sameNameNames.includes(enteredName)
+          ? '同じ名とは奇遇じゃな。'
+          : heroLikeNames.includes(enteredName)
+            ? 'ふむ…古の勇者のような名前じゃのう…。'
+            : lookalikeNames.includes(enteredName)
+              ? '…いや…まさかな。他人の空似じゃろう…。'
+              : 'よい面構えじゃ。';
         const dialog = isWeaponMagicStep
-          ? [{
-              speaker: APP_CONFIG.char1NameShort,
-              type: APP_CONFIG.char1Type,
-              text: `「ふむ、Lv.${player.age}になるまでに、様々あったようじゃな。${nameReaction === 'よい面構えじゃ。' ? 'さすがの面構えじゃ。' : nameReaction}\n…では次に、ここまでの冒険で磨いてきたそなたの武器と魔法を見せてくれぬか？」`
-            }]
+          ? [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主がこれまで磨いてきた武器と魔法を見せてくれんか。」` }]
           : [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんの力、すごく見えてきました！\n次は、どんな人たちに支えられてきたか、どんな関係性を育ててきたかを聞かせてください。\n仲間とのつながりも、大切なステータスです！」` }];
 
         if (canReviewing) {
@@ -1191,7 +1041,7 @@
               <DialogBox
                 speaker={APP_CONFIG.char1NameShort}
                 type={APP_CONFIG.char1Type}
-                text={"「ふむ。武器、魔法、仲間との関係性が出そろったようじゃな。\n未来へ向かう前に、ここまでのステータスを一度眺めてみるのじゃ。」"}
+                text={"「ふむ。武器、魔法、仲間との関係性が出そろったようじゃな。\n旅路の記録（ﾗｲﾌﾗｲﾝﾁｬｰﾄ）へ向かう前に、ここまでのステータスを一度眺めてみるのじゃ。」"}
               />
 
               <WindowBox title="ここまでのステータス確認" iconName="fa-solid fa-shield-heart">
@@ -1236,7 +1086,7 @@
                   仲間・関係性を見直す
                 </button>
                 <button onClick={handleProceedFromCanReview} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
-                  OK、いったん自室で振り返る <i className="fa-solid fa-arrow-right"></i>
+                  OK、記憶を語りに進む <i className="fa-solid fa-arrow-right"></i>
                 </button>
               </div>
             </div>
@@ -1250,8 +1100,8 @@
                 <DialogGroup dialogs={dialog}>
                   <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
                     {isWeaponMagicStep ? (
-                      <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> 旅路の記録に戻る
+                      <button onClick={() => nextScene('intro')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
                       </button>
                     ) : (
                       <button onClick={handleBackCanStep} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
@@ -1259,6 +1109,35 @@
                       </button>
                     )}
                     <div className="order-1 md:order-2 flex flex-col items-center gap-5">
+                      {isWeaponMagicStep && (
+                        <button
+                          type="button"
+                          onClick={() => setInnMeaningOpen(true)}
+                          className="rpg-button orange-aura-pulse inline-flex w-60 items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-orange-100 hover:bg-orange-100 hover:text-black"
+                        >
+                          <i className="fa-solid fa-hat-wizard"></i>
+                          この宿屋の意味を聞く
+                        </button>
+                      )}
+                      {isWeaponMagicStep && (
+                        <div className="w-full max-w-xl text-center">
+                          <button
+                            type="button"
+                            onClick={() => setCanInnPreviewOpen(!canInnPreviewOpen)}
+                            className="rpg-button inline-flex w-60 items-center justify-center gap-2 border-yellow-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-yellow-100 hover:bg-yellow-100 hover:text-black"
+                            aria-expanded={canInnPreviewOpen}
+                          >
+                            <i className="fa-solid fa-house-chimney-window"></i>
+                            <i className={`fa-solid ${canInnPreviewOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                            この宿屋でできる事
+                          </button>
+                          {canInnPreviewOpen && (
+                            <div className="mt-4 animate-fade-in">
+                              {renderIntroPreviewCard()}
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <button
                         onClick={() => {
                           setNewCan({ type: isWeaponMagicStep ? 'skill' : activeType, name: '', desc: '' });
@@ -1266,7 +1145,7 @@
                           setCanAddOpen(true);
                           setIsInputPhase(true);
                         }}
-                        className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2"
+                        className={`rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 ${isWeaponMagicStep ? 'mt-4' : ''}`}
                       >
                         <i className="fa-regular fa-message"></i> {isWeaponMagicStep ? '武器と魔法を語る' : '仲間との関係性を語る'}
                       </button>
@@ -1466,16 +1345,12 @@
         const currentAge = parseInt(player.age) || 30;
         const suggestedAges = getSuggestedAges();
         const pName = player.name || '〇〇';
-        const nameReaction = getPlayerNameReaction();
         const sortedMemories = [...memories].sort((a, b) => a.age - b.age);
         const existingStepMemory = memoryStep < 5 ? sortedMemories[memoryStep] : null;
         const memoryAges = suggestedAges.map((age, index) => sortedMemories[index]?.age || age);
 
         const dialogSteps = [
-          [
-            { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「Lv.${player.age}の ${pName} と申すか。${nameReaction}\nまずは、お主が歩んできた冒険を聞かせてもらえぬか？」` },
-            { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${memoryAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }
-          ],
+          [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「まずは${pName}さんが社会に出たばかりの頃…\n（${memoryAges[0]}歳ごろ）の時はどうでしたか？いろんな期待や不安があったと思います！」` }],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「ふむ。仕事にも少し慣れてきた、${memoryAges[1]}歳ごろの思い出はどうじゃ？\n何か心に残っている出来事はあるかな？」` }],
           [{ speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「そんなことが有ったんですね…！次は、${memoryAges[2]}歳ごろの思い出を聞かせてください！\n何か大きな成功や、逆に失敗したことなどはありましたか？」` }],
           [{ speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: `「うむうむ。次は${memoryAges[3]}歳ごろじゃな。\n責任ある立場になったりしたのではないかな？」` }],
@@ -1503,35 +1378,6 @@
                             <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-100">{existingStepMemory.event}</p>
                           </div>
                         </WindowBox>
-                        {memoryStep === 0 && (
-                          <div className="mt-6 flex flex-col items-center gap-4">
-                            <button
-                              type="button"
-                              onClick={() => setInnMeaningOpen(true)}
-                              className="rpg-button orange-aura-pulse inline-flex w-60 items-center justify-center gap-2 border-orange-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-orange-100 hover:bg-orange-100 hover:text-black"
-                            >
-                              <i className="fa-solid fa-hat-wizard"></i>
-                              この宿屋の意味を聞く
-                            </button>
-                            <div className="w-full max-w-xl text-center">
-                              <button
-                                type="button"
-                                onClick={() => setCanInnPreviewOpen(!canInnPreviewOpen)}
-                                className="rpg-button inline-flex w-60 items-center justify-center gap-2 border-yellow-400 bg-black bg-opacity-85 px-5 py-2 text-sm text-yellow-100 hover:bg-yellow-100 hover:text-black"
-                                aria-expanded={canInnPreviewOpen}
-                              >
-                                <i className="fa-solid fa-house-chimney-window"></i>
-                                <i className={`fa-solid ${canInnPreviewOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                                この宿屋でできる事
-                              </button>
-                              {canInnPreviewOpen && (
-                                <div className="mt-4 animate-fade-in">
-                                  {renderIntroPreviewCard()}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
                         <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
                           <button onClick={handleKeepMemory} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold">
                             このままでいい <i className="fa-solid fa-arrow-right ml-1"></i>
@@ -1544,8 +1390,8 @@
                     ) : (
                       <>
                         <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                          <button onClick={goToIntro} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                            <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
+                          <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                            <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
                           </button>
                           <button onClick={() => { setMemoryEditId(null); setIsInputPhase(true); }} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
                             <i className="fa-regular fa-message"></i> 記憶を語る（{memoryStep + 1}/5）
@@ -1560,11 +1406,11 @@
                   </DialogGroup>
                 ) : (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれた。これでお主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらを旅路の記録（あなたの物語）にまとめてみようかの。」" }
+                    { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「よく話してくれたな。お主の歩んできた道がはっきりと見えてきたぞい。\nさあ、これらをあなたの物語（旅路の記録）にまとめてみよう。」" }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                      <button onClick={goToIntro} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> 宿屋の入口へ戻る
+                      <button onClick={() => nextScene('can')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> ステータス確認に戻る
                       </button>
                       <button onClick={() => nextScene('chart')} className="rpg-button text-xl px-8 py-4 animate-pulse flex items-center gap-2 bg-white text-black font-bold order-1 md:order-2">
                         旅路の記録を見る <i className="fa-solid fa-arrow-right"></i>
@@ -1669,7 +1515,7 @@
         <div className="space-y-6 max-w-5xl mx-auto w-full">
           <DialogBox speaker={APP_CONFIG.char1NameShort} type={APP_CONFIG.char1Type} text={`「ほほう…これが ${player.name} の歩んできた軌跡（旅路の記録）か。」`} />
 
-          <WindowBox title="シーン3：旅路の記録" iconName="fa-solid fa-chart-line">
+          <WindowBox title="シーン4：旅路の記録" iconName="fa-solid fa-chart-line">
             <LifelineChart data={memories} />
           </WindowBox>
 
@@ -1702,7 +1548,7 @@
                   <button onClick={handleSuspend} className="rpg-button text-base px-8 py-3">
                     やすむ
                   </button>
-                  <button onClick={() => nextScene('can')} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
+                  <button onClick={() => nextScene('will')} className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2">
                     つづける <i className="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
@@ -1713,7 +1559,7 @@
                   <i className="fa-solid fa-arrow-right rotate-180"></i> 記憶を語り直す
                 </button>
                 <button onClick={() => setShowRestPrompt(true)} className="rpg-button text-xl px-8 py-4 flex items-center justify-center gap-2 bg-white text-black font-bold order-1 md:order-2">
-                  ステータスを語り合う <i className="fa-solid fa-arrow-right"></i>
+                  これからの未来を語り合う <i className="fa-solid fa-arrow-right"></i>
                 </button>
                 <div className="w-40 hidden md:block order-3"></div>
               </div>
@@ -1721,204 +1567,6 @@
           </DialogGroup>
         </div>
       );
-
-      const renderInterim = () => {
-        const skillCans = cans.filter(c => c.type === 'skill');
-        const magicCans = cans.filter(c => c.type === 'magic');
-        const allyCans = cans.filter(c => c.type === 'ally');
-        const interimAddedMemoryCount = getInterimAddedMemoryCount();
-        const canAddInterimMemory = interimAddedMemoryCount < 3;
-
-        return (
-          <div className="space-y-6 max-w-5xl mx-auto w-full animate-fade-in">
-            <NarrationBox
-              iconName="fa-solid fa-bed"
-              text={"武器と魔法、そして仲間との関係性を語り終えたあなたは、\nいったん宿屋の自室へ戻り、ここまでの旅を静かに振り返る。\nまだ物語の途中だが、歩んできた道と、身につけてきた力が少しずつ見えてきた。"}
-            />
-
-            <WindowBox title="自室での途中振り返り" iconName="fa-solid fa-scroll">
-              <div className="rounded border-2 border-yellow-500 bg-gray-900 bg-opacity-85 p-4 text-center mb-5">
-                <p className="text-sm text-gray-400">冒険者</p>
-                <p className="text-3xl md:text-4xl font-bold">
-                  {player.name || '名もなき勇者'} <span className="text-yellow-400">Lv.{player.age || '?'}</span>
-                </p>
-                <p className="mt-2 text-xs text-gray-400">ここまでの入力を眺めるための途中経過です。未来とクエストは、このあと語っていきます。</p>
-              </div>
-
-              <div className="space-y-5">
-                <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
-                  <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <h3 className="flex items-center gap-2 text-lg font-bold text-yellow-300">
-                        <i className="fa-solid fa-chart-line"></i> 歩んできた道
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-gray-400">
-                        {isInterimPathEditing
-                          ? `点を上下左右に動かすと、年齢と満足度を修正できます。線の上をクリックすると出来事を追加できます（追加 ${interimAddedMemoryCount}/3）。`
-                          : '必要なら、ここで満足度の山と谷だけを軽く調整できます。'}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const nextEditing = !isInterimPathEditing;
-                        setIsInterimPathEditing(nextEditing);
-                        if (!nextEditing) setInterimMemoryDraft(null);
-                      }}
-                      className={`rpg-button text-sm px-4 py-2 ${isInterimPathEditing ? 'border-yellow-300 bg-yellow-300 text-black' : ''}`}
-                    >
-                      <i className={`fa-solid ${isInterimPathEditing ? 'fa-check' : 'fa-pen-to-square'} mr-2`}></i>
-                      {isInterimPathEditing ? '修正を終える' : '歩んできた道を修正する'}
-                    </button>
-                  </div>
-                  <LifelineChart
-                    data={memories}
-                    editable={isInterimPathEditing}
-                    onPointChange={handleUpdateMemorySatisfaction}
-                    onLineAddRequest={handleRequestInterimMemoryAdd}
-                    canAddLineEvent={canAddInterimMemory}
-                    agePositioning
-                  />
-                  {isInterimPathEditing && !canAddInterimMemory && (
-                    <p className="mt-2 text-xs font-bold text-yellow-300">
-                      追加できる出来事は最大3つまでです。追加済みの出来事を整理したい場合は、旅路の記録の入力画面で見直してください。
-                    </p>
-                  )}
-                  {interimMemoryDraft && (
-                    <div className="mt-4 rounded border-2 border-yellow-500 bg-black bg-opacity-80 p-4 animate-fade-in">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <p className="font-bold text-yellow-300">
-                          <i className="fa-solid fa-plus mr-2"></i>出来事を追加する
-                        </p>
-                        <p className="text-xs text-gray-400">追加 {interimAddedMemoryCount}/3</p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-[7rem_1fr_8rem] gap-3 items-end">
-                        <label className="block">
-                          <span className="mb-1 block text-xs text-gray-400">年齢</span>
-                          <WritableField value={String(interimMemoryDraft.age)}>
-                            <input
-                              type="number"
-                              min="15"
-                              max="80"
-                              className="rpg-input text-center"
-                              value={interimMemoryDraft.age}
-                              onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, age: e.target.value })}
-                            />
-                          </WritableField>
-                        </label>
-                        <label className="block">
-                          <span className="mb-1 block text-xs text-gray-400">出来事</span>
-                          <WritableField value={interimMemoryDraft.event}>
-                            <input
-                              type="text"
-                              className="rpg-input"
-                              placeholder="例：この頃、価値観が変わる出来事があった"
-                              value={interimMemoryDraft.event}
-                              onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, event: e.target.value })}
-                            />
-                          </WritableField>
-                        </label>
-                        <div>
-                          <span className="mb-1 block text-xs text-gray-400">満足度</span>
-                          <p className={`mb-1 text-center text-sm font-bold ${interimMemoryDraft.satisfaction > 0 ? 'text-blue-400' : interimMemoryDraft.satisfaction < 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                            {interimMemoryDraft.satisfaction > 0 ? '+' : ''}{interimMemoryDraft.satisfaction}
-                          </p>
-                          <input
-                            type="range"
-                            min="-50"
-                            max="50"
-                            step="5"
-                            className="w-full accent-yellow-400"
-                            value={interimMemoryDraft.satisfaction}
-                            onChange={e => setInterimMemoryDraft({ ...interimMemoryDraft, satisfaction: Number(e.target.value) })}
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4 flex flex-col md:flex-row justify-end gap-2">
-                        <button type="button" onClick={() => setInterimMemoryDraft(null)} className="rpg-button text-sm px-5 py-2">
-                          やめる
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSaveInterimMemory}
-                          disabled={!interimMemoryDraft.event.trim()}
-                          className={`rpg-button text-sm px-6 py-2 bg-white text-black font-bold ${!interimMemoryDraft.event.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          出来事を追加する
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  <div className="mt-4 rounded border border-gray-700 bg-gray-900 bg-opacity-70 p-3">
-                    <p className="mb-1 text-sm font-bold text-yellow-300">旅路の記録から見えた気づき</p>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{chartInsight || 'まだメモはありません。'}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="rounded border border-blue-500 bg-gray-900 bg-opacity-80 p-4">
-                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-blue-300">
-                      <i className={canTypeMeta.skill.icon}></i> 武器
-                    </h3>
-                    <CanList cans={skillCans} emptyText="まだ武器は記録されていません。" compact />
-                  </div>
-                  <div className="rounded border border-purple-500 bg-gray-900 bg-opacity-80 p-4">
-                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-300">
-                      <i className={canTypeMeta.magic.icon}></i> 魔法
-                    </h3>
-                    <CanList cans={magicCans} emptyText="まだ魔法は記録されていません。" compact />
-                  </div>
-                  <div className="rounded border border-green-500 bg-gray-900 bg-opacity-80 p-4">
-                    <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-green-300">
-                      <i className={canTypeMeta.ally.icon}></i> 仲間・関係性
-                    </h3>
-                    <CanList cans={allyCans} emptyText="まだ仲間との関係性は記録されていません。" compact />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
-                    <p className="mb-2 text-sm font-bold text-yellow-300">武器・魔法についての気づき</p>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{canInsight || 'まだメモはありません。'}</p>
-                  </div>
-                  <div className="rounded border border-gray-700 bg-black bg-opacity-60 p-4">
-                    <p className="mb-2 text-sm font-bold text-yellow-300">仲間・関係性についての気づき</p>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">{allyInsight || 'まだメモはありません。'}</p>
-                  </div>
-                </div>
-              </div>
-            </WindowBox>
-
-            <DialogBox
-              speaker={`回想の${APP_CONFIG.char1NameShort}`}
-              type={APP_CONFIG.char1Type}
-              text={"「ここまでで、お主の歩んできた道と、身につけてきた力が少し見えてきたのう。\nでは次は、その力を持ってどこへ向かいたいか…未来の話をしてみようか。」"}
-            />
-
-            <div className="flex flex-col md:flex-row justify-center gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setScene('can');
-                  setCanStep(1);
-                  setCanReviewing(true);
-                  setCanConfirming(false);
-                  setIsInputPhase(false);
-                  scrollTop();
-                }}
-                className="rpg-button text-base px-6 py-3"
-              >
-                ステータスを見直す
-              </button>
-              <button
-                onClick={() => nextScene('will')}
-                className="rpg-button text-base px-8 py-3 bg-white text-black font-bold flex items-center justify-center gap-2"
-              >
-                酒場へ戻り、未来を語る <i className="fa-solid fa-arrow-right"></i>
-              </button>
-            </div>
-          </div>
-        );
-      };
 
       const renderWill = () => {
         const pName = player.name || '〇〇';
@@ -1948,11 +1596,11 @@
               <div className="animate-fade-in text-center">
                 {willStep === 0 ? (
                   <DialogGroup dialogs={[
-                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「おかえりなさい♪\n${pName}さんのこれからのこと、もっと教えてください…！\n…直近の目標として、1年後はどんな風になっていたいですか？」` }
+                    { speaker: APP_CONFIG.char2NameShort, type: APP_CONFIG.char2Type, text: `「${pName}さんのこれからのこと、もっと教えてください！\n直近の目標として、1年後はどんな風になっていたいですか？」` }
                   ]}>
                     <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4 w-full">
-                      <button onClick={() => nextScene('interim')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
-                        <i className="fa-solid fa-arrow-right rotate-180"></i> 自室の振り返りに戻る
+                      <button onClick={() => nextScene('chart')} className="text-gray-400 hover:text-white px-4 py-2 order-2 md:order-1 flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-right rotate-180"></i> あなたの物語に戻る
                       </button>
                       <button onClick={() => setIsInputPhase(true)} className="rpg-button text-xl px-8 py-4 animate-bounce flex items-center gap-2 order-1 md:order-2">
                         <i className="fa-regular fa-message"></i> 1年後の未来を語る
@@ -2578,14 +2226,12 @@
         const builders = {
           memory: createMemoryExportImage,
           status: createStatusExportImage,
-          willMust: createWillMustExportImage,
-          storyLong: createStorySummaryLongExportImage
+          willMust: createWillMustExportImage
         };
         const labels = {
           memory: 'memory',
           status: 'status',
-          willMust: 'will-must',
-          storyLong: 'story-summary-long'
+          willMust: 'will-must'
         };
         const builder = builders[kind];
         if (!builder) return;
@@ -2599,43 +2245,14 @@
         });
       };
 
-      const SummarySection = ({ title, iconName, children, sectionKey, defaultOpen = false }) => {
-        const isOpen = summaryOpenSections[sectionKey] ?? defaultOpen;
-        const toggleSection = () => {
-          setSummaryOpenSections(current => ({
-            ...current,
-            [sectionKey]: !(current[sectionKey] ?? defaultOpen)
-          }));
-        };
-
-        return (
-          <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly print-avoid-break">
-            <button
-              type="button"
-              onClick={toggleSection}
-              className="summary-accordion-toggle w-full text-left text-xl text-yellow-300 font-bold flex items-center justify-between gap-3"
-              aria-expanded={isOpen}
-            >
-              <span className="flex items-center gap-2">
-                <i className={iconName}></i>{title}
-              </span>
-              <i className={`fa-solid ${isOpen ? 'fa-chevron-up' : 'fa-chevron-down'} text-base`}></i>
-            </button>
-            <div className={`summary-accordion-body ${isOpen ? 'is-open mt-3' : 'is-closed'}`}>
-              {children}
-              <div className="summary-accordion-close print-hidden mt-4 flex justify-center">
-                <button
-                  type="button"
-                  onClick={toggleSection}
-                  className="rpg-button px-8 py-2 text-sm"
-                >
-                  閉じる
-                </button>
-              </div>
-            </div>
-          </section>
-        );
-      };
+      const SummarySection = ({ title, iconName, children }) => (
+        <section className="border-2 border-gray-600 rounded p-4 bg-gray-900 bg-opacity-70 print-friendly print-avoid-break">
+          <h3 className="text-xl text-yellow-300 font-bold mb-3 flex items-center gap-2">
+            <i className={iconName}></i>{title}
+          </h3>
+          {children}
+        </section>
+      );
 
       const MemoBox = ({ title, text }) => (
         <div className="mt-4 bg-black bg-opacity-40 border border-gray-700 rounded p-3 print-friendly print-avoid-break">
@@ -2701,7 +2318,7 @@
                     </div>
                   </div>
 
-                  <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line" sectionKey="memory">
+                  <SummarySection title="歩んできた道：Memory" iconName="fa-solid fa-chart-line">
                     <LifelineChart data={memories} />
                     <MemoBox title="ライフラインを見て気づいたこと" text={chartInsight} />
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2723,7 +2340,7 @@
                 </div>
 
                 <div className="space-y-5 print-page-break">
-                  <SummarySection title="ステータス：Can" iconName="fa-solid fa-shield-halved" sectionKey="can">
+                  <SummarySection title="ステータス：Can" iconName="fa-solid fa-shield-halved">
                     <div className="print-hidden mb-4 flex flex-col md:flex-row gap-2">
                       <button type="button" onClick={() => goToCanInput(0)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> 武器・魔法を書き直す
@@ -2748,7 +2365,7 @@
                     <MemoBox title="仲間・関係性から見えた気づき" text={allyInsight} />
                   </SummarySection>
 
-                  <SummarySection title="次なる冒険：Will" iconName="fa-solid fa-map" sectionKey="will">
+                  <SummarySection title="次なる冒険：Will" iconName="fa-solid fa-map">
                     <div className="print-hidden mb-4 flex flex-col md:flex-row gap-2">
                       <button type="button" onClick={() => goToWillInput(0)} className="rpg-button flex-1 py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> 1年後を書き直す
@@ -2774,7 +2391,7 @@
                     <MemoBox title="3年後の気づき" text={willThreeYearsInsight} />
                   </SummarySection>
 
-                  <SummarySection title="現実のクエスト：Must" iconName="fa-solid fa-scroll" sectionKey="must">
+                  <SummarySection title="現実のクエスト：Must" iconName="fa-solid fa-scroll">
                     <div className="print-hidden mb-4">
                       <button type="button" onClick={goToMustEdit} className="rpg-button w-full py-2 text-sm flex items-center justify-center gap-2">
                         <i className="fa-solid fa-pen-to-square"></i> クエストを書き直す
@@ -2806,7 +2423,7 @@
                       { speaker: APP_CONFIG.char1NameShort, type: APP_CONFIG.char1Type, text: "「うむ。よい書ができたのう。\nお主のこれからの良き旅を、心から祈っておるぞ。」" }
                     ]} />
                   </div>
-                  <SummarySection title="ここから先の旅" iconName="fa-solid fa-route" sectionKey="route" defaultOpen>
+                  <SummarySection title="ここから先の旅" iconName="fa-solid fa-route">
                     <div className="text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap">
 {`ここまでのあなたの物語が綴られました。
 
@@ -2830,7 +2447,7 @@
                           aria-describedby="think-alone-tooltip"
                           className="rpg-button w-full py-3 text-base"
                         >
-                          今は、ひとりで考えてみる（PDF保存）
+                          今は、ひとりで考えてみる
                         </button>
                       </div>
                       <div className="relative flex-1 route-choice-item">
@@ -2858,26 +2475,23 @@
             </WindowBox>
 
             <div className="print-hidden bg-black bg-opacity-70 border border-blue-500 rounded p-4 mt-8">
-              <p className="text-sm text-blue-200 font-bold mb-2">▼ セーブする</p>
+              <p className="text-sm text-blue-200 font-bold mb-2">▼ 「あなたの物語」のデータを書き出す</p>
               <p className="text-xs text-gray-300 mb-3">
-                現在の記録を圧縮し、別のブラウザで開けるセーブ用URLとしてコピーします。スマホからPCへ、PCからスマホへ移動したい時にも使えます。
+                別の日に続きを開きたい時のために、現在の記録を保存用文字列としてコピーします。Googleカレンダーの新規予定画面を開くこともできます。最後にGoogleカレンダー側で保存してください。
               </p>
-              <button type="button" onClick={handleExportStoryData} className="rpg-button w-full py-3 text-sm bg-white text-black font-bold">
-                <i className="fa-solid fa-floppy-disk mr-2"></i>セーブ用URLをコピーする
-              </button>
-              {saveMessage && (
-                <p className="mt-3 rounded border border-blue-400 bg-blue-950 bg-opacity-60 px-3 py-2 text-xs text-blue-100">
-                  {saveMessage}
-                </p>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <button type="button" onClick={() => handleExportStoryData({ openCalendar: true })} className="rpg-button w-full py-3 text-sm bg-white text-black font-bold">
+                  <i className="fa-regular fa-calendar-plus mr-2"></i>Googleカレンダーに保存する
+                </button>
+                <button type="button" onClick={() => handleExportStoryData()} className="rpg-button w-full py-3 text-sm">
+                  <i className="fa-solid fa-copy mr-2"></i>文字列だけコピーする
+                </button>
+              </div>
             </div>
 
             <div className="print-hidden bg-black bg-opacity-70 border border-yellow-600 rounded p-4 mt-8">
               <p className="text-sm text-yellow-300 font-bold mb-2">▼ 画像として保存</p>
-              <p className="text-xs text-gray-400 mb-3">細長い1枚画像、またはA4縦サイズの分割PNGとして保存できます。</p>
-              <button type="button" onClick={() => handleDownloadSummaryImage('storyLong')} className="rpg-button mb-3 w-full py-3 text-sm flex items-center justify-center gap-2 bg-white text-black font-bold">
-                <i className="fa-solid fa-camera"></i> あなたの物語まとめ〜Mustまでを1枚画像で保存する
-              </button>
+              <p className="text-xs text-gray-400 mb-3">A4縦サイズのPNGとして保存します。文字とグラフが読みやすいよう、内容ごとに3枚へ分けています。</p>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                 <button type="button" onClick={() => handleDownloadSummaryImage('memory')} className="rpg-button py-2 text-sm flex items-center justify-center gap-2">
                   <i className="fa-solid fa-image"></i> 歩んできた道
@@ -2912,54 +2526,6 @@
         );
       };
 
-      const renderUiFramePicker = () => {
-        const uiFrameOptions = ['default', 2, 1, 0];
-
-        return (
-          <div className="mt-4 flex justify-center">
-            <div className="ui-frame-picker w-full max-w-2xl rounded-lg px-3 py-2 text-left">
-              <button
-                type="button"
-                onClick={() => setIsUiFramePickerOpen(!isUiFramePickerOpen)}
-                className="flex w-full items-center justify-between gap-3 text-xs font-bold text-yellow-200 md:text-sm"
-                aria-expanded={isUiFramePickerOpen}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <i className="fa-solid fa-layer-group"></i>
-                  UIの質感を選ぶ
-                  <span className="rounded-full border border-yellow-500 px-2 py-0.5 text-[10px] text-yellow-100 md:text-xs">
-                    {APP_UI_FRAME_THEME.label}
-                  </span>
-                </span>
-                <i className={`fa-solid ${isUiFramePickerOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-              </button>
-
-              {isUiFramePickerOpen && (
-                <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4 animate-fade-in">
-                  {uiFrameOptions.map(optionKey => {
-                    const option = UI_FRAME_THEMES[optionKey];
-                    const selected = String(activeUiFrameTone) === String(optionKey);
-
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        onClick={() => setUiFrameTone(option.id)}
-                        className={`ui-frame-picker-option rounded border px-2 py-2 text-left ${selected ? 'border-yellow-300 bg-yellow-900 bg-opacity-70' : 'border-gray-600 bg-black bg-opacity-45 hover:border-yellow-500'}`}
-                      >
-                        <span className={`mb-2 block h-8 rounded border border-white border-opacity-30 ${option.swatchClass}`}></span>
-                        <span className="block text-sm font-bold text-white">{option.label}</span>
-                        <span className="mt-1 block text-[10px] leading-snug text-gray-300">{option.description}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      };
-
       const renderHeader = () => (
         <div className="mb-8 text-center animate-fade-in relative z-20 print-hidden">
           <div className="mb-3 flex justify-center">
@@ -2980,7 +2546,6 @@
           <p className="app-tagline-text theme-shadow-text text-yellow-300 text-sm md:text-lg font-bold tracking-widest" style={{ textShadow: '2px 2px 0 #000' }}>
             {APP_CONFIG.appTagline}
           </p>
-          {renderUiFramePicker()}
         </div>
       );
 
@@ -3000,8 +2565,8 @@
       };
 
       const renderProgressBar = () => {
-        const SCENES = ['intro', 'memory', 'chart', 'can', 'interim', 'will', 'must', 'summary'];
-        const SCENE_NAMES = ['宿屋', '記憶', 'あなたの物語', 'ステータス', '小休止', '未来', 'クエスト', 'まとめ'];
+        const SCENES = ['intro', 'can', 'memory', 'chart', 'will', 'must', 'summary'];
+        const SCENE_NAMES = ['宿屋', 'ステータス', '記憶', 'あなたの物語', '未来', 'クエスト', 'まとめ'];
         const currentIndex = SCENES.indexOf(scene);
 
         return (
@@ -3034,28 +2599,25 @@
         journey: `url('${APP_CONFIG.backgroundImages.journey}')`
       };
       const isOpeningScene = scene === 'intro' && introStep <= 1 && !isInputPhase;
-      const backgroundImage = scene === 'must' || scene === 'interim'
+      const backgroundImage = scene === 'must'
         ? backgroundImages.room
         : isOpeningScene || scene === 'summary'
           ? backgroundImages.journey
           : backgroundImages.tavern;
       const themedBackgroundImage = backgroundImage;
-      const backgroundPosition = scene === 'must' || scene === 'interim'
+      const backgroundPosition = scene === 'must'
         ? 'center'
         : isOpeningScene || scene === 'summary'
           ? 'center bottom'
           : 'center';
       const isSummaryScene = scene === 'summary';
-      const isTavernScene = backgroundImage === backgroundImages.tavern;
       const backgroundOverlayOpacity = activeThemeKey === 'cafe'
-        ? (isSummaryScene ? 0.14 : isTavernScene ? 0 : 0.28)
+        ? (isSummaryScene ? 0.14 : 0.28)
         : isSummaryScene
           ? 0.18
           : isOpeningScene
             ? 0.42
-            : isTavernScene
-              ? 0
-              : 0.5;
+            : 0.5;
       const backgroundAtmosphereStyle = isOpeningScene
         ? {
             background: 'radial-gradient(circle at 82% 32%, rgba(255, 190, 92, 0.34), transparent 34%), linear-gradient(120deg, rgba(255, 122, 48, 0.18), rgba(255, 210, 120, 0.10) 48%, rgba(40, 80, 140, 0.08))',
@@ -3070,7 +2632,7 @@
             }
           : null;
 
-      const locationName = scene === 'must' || scene === 'interim'
+      const locationName = scene === 'must'
         ? '宿屋の自室'
         : scene === 'summary'
           ? 'あなたの物語まとめ'
@@ -3087,7 +2649,7 @@
 
       return (
         <div
-          className={`theme-${activeThemeKey} ui-tone-${activeUiFrameTone} min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell`}
+          className={`theme-${activeThemeKey} min-h-screen p-4 md:p-8 rpg-font overflow-x-hidden relative transition-all duration-1000 print-shell`}
           style={{ backgroundImage: themedBackgroundImage, backgroundColor: APP_CONFIG.colors.pageBg, backgroundSize: 'cover', backgroundPosition: backgroundPosition, backgroundAttachment: 'fixed', color: APP_CONFIG.colors.baseText }}
         >
           <div className="absolute inset-0 z-0 transition-opacity duration-1000 print-hidden" style={{ backgroundColor: `rgba(0, 0, 0, ${backgroundOverlayOpacity})` }}></div>
@@ -3120,8 +2682,8 @@
                     <div className="text-sm text-yellow-300 font-bold hidden md:block" style={{ textShadow: '1px 1px 0 #000' }}>
                       現在地：{locationName}
                     </div>
-                    <button onClick={handleExportStoryData} className="text-xs md:text-sm border border-blue-400 text-blue-200 hover:bg-blue-300 hover:text-black hover:border-blue-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
-                      <i className="fa-solid fa-floppy-disk"></i> セーブする
+                    <button onClick={() => handleExportStoryData({ openCalendar: true })} className="text-xs md:text-sm border border-blue-400 text-blue-200 hover:bg-blue-300 hover:text-black hover:border-blue-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
+                      <i className="fa-regular fa-calendar-plus"></i> カレンダーに保存
                     </button>
                     <button onClick={handleSuspend} className="text-xs md:text-sm border border-yellow-500 text-yellow-300 hover:bg-yellow-400 hover:text-black hover:border-yellow-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1 font-bold">
                       <i className="fa-solid fa-pause"></i> 中断する
@@ -3137,7 +2699,6 @@
               {scene === 'can' && renderCan()}
               {scene === 'memory' && renderMemory()}
               {scene === 'chart' && renderChart()}
-              {scene === 'interim' && renderInterim()}
               {scene === 'will' && renderWill()}
               {scene === 'must' && renderMust()}
               {scene === 'summary' && renderSummary()}
