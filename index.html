@@ -1,774 +1,450 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>合同会社ninin監修　2026心理学 学習支援サイト</title>
-  <script>
-    window.__cqLoadStartedAt = Date.now();
-  </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
-  <script>
-    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
-      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
-      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
-    }
-  </script>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-Z1T35THNDV');
-  </script>
-  <style>
-    /* =========================================
-       心理学者マップのプロモーション用スタイル
-       ========================================= */
-    .map-promo-container {
-      display: block; position: relative; width: 100%; max-width: 320px; margin: 0 auto;
-      aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 6px 20px rgba(15, 118, 110, 0.15); border: 2px solid var(--teal);
-      text-decoration: none; background: #fff; -webkit-tap-highlight-color: transparent;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .map-promo-container:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(15, 118, 110, 0.1); }
-    .map-promo-image-layer, .map-promo-katsuyou-layer, .map-promo-text-layer {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      justify-content: center; align-items: center; padding: 16px;
-      animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: ease-in-out;
-    }
-    @keyframes fadeImage { 0%, 28% { opacity: 1; visibility: visible; } 33%, 95% { opacity: 0; visibility: hidden; } 100% { opacity: 1; visibility: visible; } }
-    @keyframes fadeKatsuyou { 0%, 28% { opacity: 0; visibility: hidden; } 33%, 61% { opacity: 1; visibility: visible; } 66%, 100% { opacity: 0; visibility: hidden; } }
-    @keyframes fadeText { 0%, 61% { opacity: 0; visibility: hidden; } 66%, 95% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
-    .map-promo-image-layer { background-image: url("img/map.jpg"); background-position: center; background-size: cover; animation-name: fadeImage; }
-    .map-promo-katsuyou-layer { background-image: url("img/katsuyou.jpg"); background-position: center; background-size: cover; animation-name: fadeKatsuyou; }
-    .map-promo-image-layer::after { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.15); }
-    .map-promo-image-layer b { position: relative; z-index: 1; color: var(--teal-dark); font-size: 1.15rem; background: rgba(255, 255, 255, 0.95); padding: 8px 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); }
-    .map-promo-text-layer { background: #f0fdfa; animation-name: fadeText; text-align: left; }
-    .map-promo-text-content { width: 100%; color: var(--ink); font-size: 0.8rem; line-height: 1.5; }
-    .map-promo-text-content b { color: var(--teal-dark); display: block; margin-bottom: 6px; font-size: 0.9rem; border-bottom: 1px dashed #99f6e4; padding-bottom: 4px; }
-    .promo-buy-button { display: block; margin-top: 10px; padding: 8px; background: var(--amber); color: #fff; text-align: center; border-radius: 8px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3); }
-
-    /* =========================================
-       学習の記録（極小2ヶ月カレンダー・ストリーク）用
-       ========================================= */
-    .learning-record-panel {
-      background: #fff; border: 1px solid var(--teal); border-radius: 12px;
-      margin-bottom: 16px; padding: 8px 10px; box-shadow: var(--shadow);
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; flex-wrap: wrap; gap: 4px; }
-    .record-streak { font-size: 0.75rem; font-weight: bold; color: var(--teal-dark); display: flex; align-items: center; gap: 2px; white-space: nowrap; }
-    .record-exam { font-size: 0.7rem; font-weight: bold; color: var(--rose); background: #fff1f2; padding: 2px 6px; border-radius: 999px; white-space: nowrap; }
-
-    /* 超極小2ヶ月並びカレンダー */
-    .two-month-container { display: flex; gap: 6px; }
-    .month-wrapper { flex: 1; min-width: 0; }
-    .month-label { text-align: center; font-size: 0.65rem; font-weight: bold; margin-bottom: 2px; color: var(--ink); }
-    .mini-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
-    .mini-calendar-day-header { text-align: center; font-size: 0.4rem; color: var(--muted); font-weight: bold; padding: 1px 0; }
-    .mini-calendar-cell { 
-      display: flex; flex-direction: column; align-items: center; justify-content: center; 
-      font-size: 0.45rem; border-radius: 2px; background: var(--paper); position: relative; padding: 2px 0; 
-    }
-    .mini-calendar-cell.empty { background: transparent; }
-    .mini-calendar-cell.today { font-weight: bold; border: 1px solid var(--teal); color: var(--teal-dark); background: #f0fdfa; }
-    .mini-calendar-cell.logged { background: #fef3c7; color: #b45309; font-weight: bold; border: 1px solid #fde68a; }
-    .mini-calendar-cell.logged::after { content: "✨"; position: absolute; font-size: 0.4rem; top: -2px; right: -2px; opacity: 0.9; }
-    .mini-calendar-cell.exam-date { background: #fff1f2; color: #be123c; font-weight: bold; border: 1px solid #fecdd3; }
-    .mini-calendar-cell.exam-date::after { content: "🎯"; position: absolute; font-size: 0.4rem; top: -2px; right: -2px; }
+  gtag('config', 'G-Z1T35THNDV');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合同会社ninin</title>
     
-    .exam-setting-row { display: flex; gap: 4px; align-items: center; margin: 0; padding: 0; border: none; }
-    .exam-date-input { width: 90px; padding: 2px; font-size: 0.65rem; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; }
-    .exam-date-btn { background: var(--teal); color: #fff; border: none; border-radius: 4px; padding: 2px 6px; font-weight: bold; font-size: 0.65rem; cursor: pointer; transition: transform 0.1s, background 0.1s; white-space: nowrap; }
-    .exam-date-btn:active { transform: scale(0.95); background: var(--teal-dark); }
+    <!-- ファビコン（ブラウザのタブ用アイコン）の設定 -->
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <!-- スマホのホーム画面に追加した時などのアイコン設定 -->
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
 
-    .top-shortcut-panel {
-      margin: 0 16px 14px;
-      padding: 10px;
-      background: #fff;
-      border: 1px solid rgba(15, 118, 110, 0.18);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(10px);
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-    }
-    .top-shortcut-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin: 0 0 8px;
-      color: var(--teal-dark);
-      font-size: 0.82rem;
-      font-weight: bold;
-    }
-  .top-shortcut-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 5px;
-    }
-    .top-shortcut-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      min-height: 34px;
-      padding: 6px 3px;
-      border-radius: 8px;
-      background: #f8fafc;
-      color: var(--teal-dark);
-      border: 1px solid var(--line);
-      text-decoration: none;
-      font-size: 0.62rem;
-      font-weight: bold;
-      line-height: 1.25;
-      text-align: center;
-    }
-    .top-shortcut-button.accent {
-      background: var(--accent-soft);
-      color: #7b3f1f;
-      border-color: rgba(183, 110, 53, 0.22);
-    }
-    @media (min-width: 980px) {
-      .top-shortcut-grid {
-        grid-template-columns: repeat(9, minmax(0, 1fr));
-      }
-      .top-shortcut-button {
-        min-height: 34px;
-        padding: 6px 4px;
-        font-size: 0.66rem;
-      }
-    }
-  </style>
-  <!-- 外部のCSSファイルを読み込む -->
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="app-shell">
-
-    <!-- =========================================
-         TOPページ（カテゴリ選択画面）
-         ========================================= -->
-    <section id="topPage">
-      <header class="topbar">
-        <div class="brand" style="width: 100%; text-align: center;">
-          <h1>合同会社ninin監修　2026心理学 学習支援サイト</h1>
-        </div>
-      </header>
-
-      <nav class="top-shortcut-panel" aria-label="TOP目次">
-        <p class="top-shortcut-title"><span>目次</span><span style="color: var(--muted); font-size: 0.72rem; font-weight: normal;">よく使う場所へ移動</span></p>
-        <div class="top-shortcut-grid">
-          <a class="top-shortcut-button" href="#pn">🎤 実技note</a>
-          <a class="top-shortcut-button" href="#sl">⚖️ 法制問題</a>
-          <a class="top-shortcut-button" href="#ms">🧭 心理問題</a>
-          <a class="top-shortcut-button" href="#pm">🗺️ MAP</a>
-          <a class="top-shortcut-button" href="#ny" data-flash-selector="#socialLegalCategoryGrid .category-button-with-preview .category-preview-media">📅 年表</a>
-          <a class="top-shortcut-button" href="#ep">📝 予想問題</a>
-          <a class="top-shortcut-button" href="#pe">🧰 実務問題</a>
-          <a class="top-shortcut-button accent" href="#mi">🤝 ﾒﾝﾊﾞｰｼｯﾌﾟ</a>
-          <a class="top-shortcut-button accent" href="#tl">🍽️ たべラボ</a>
-        </div>
-      </nav>
-
-      <div class="category-container">
-        <div class="top-responsive-grid">
-          <div class="top-responsive-column top-responsive-column-left">
-        
-        <!-- ▼▼ 学習の記録（超極小2ヶ月カレンダー・試験日設定一行化・累計日数追加） ▼▼ -->
-        <div id="learningRecordPanel" class="learning-record-panel" style="margin-bottom: 8px;">
-          <div class="record-header">
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <div class="record-streak">🔥連続:<span id="streakCountText">1</span>日 <span style="font-size: 0.65rem; color: var(--muted); margin-left: 2px; font-weight: normal;">(累計:<span id="totalCountText">1</span>日)</span></div>
-              <div class="record-exam" id="examCountdownText">設定なし</div>
-            </div>
-            
-            <!-- トップからの試験日直接設定を一行に配置 -->
-            <div class="exam-setting-row">
-              <input type="date" id="topExamDateInput" class="exam-date-input">
-              <button id="saveTopExamDateBtn" class="exam-date-btn">保存</button>
-            </div>
-          </div>
-          
-          <!-- 超極小カレンダー2ヶ月分 -->
-          <div class="two-month-container">
-            <div class="month-wrapper">
-              <div class="month-label" id="thisMonthLabel"></div>
-              <div class="mini-calendar-grid" id="thisMonthGrid"></div>
-            </div>
-            <div class="month-wrapper">
-              <div class="month-label" id="nextMonthLabel"></div>
-              <div class="mini-calendar-grid" id="nextMonthGrid"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- データ引継ぎボタン -->
-        <button id="saveLoadBtn" class="category-button" style="margin-bottom: 14px; background: #fff; border-color: var(--line); color: var(--teal-dark); justify-content: center; width: 100%;">
-          <span class="cat-icon">📱💻</span><span style="font-weight: bold;">学習データを引き継ぐ (セーブ/ロード)</span><span id="saveLoadLockIcon" style="font-size: 0.8rem; margin-left: 4px;">🔒</span>
-        </button>
-        <!-- ▲▲ 学習の記録 ここまで ▲▲ -->
-
-        <!-- けー。の吹き出し（カレンダーとエピソードの間） -->
-        <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
-          <div class="talk-row left">
-            <div class="talk-character-wrap">
-              <img class="talk-character" src="cimg/k2.png" alt="けー。">
-              <span class="talk-character-label">けー。</span>
-            </div>
-            <div class="talk-bubble">
-              <p class="talk-message">楽しく心理学者や理論を学んでいきましょう♪</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- 今日の心理学者エピソード -->
-        <section id="dailyEpisodeSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
-          <p class="top-category-title section-heading-band section-heading-brand">
-            <span class="section-number">①</span>
-            <span style="font-size: 1.2rem;">📖</span>
-            <span>今日の心理学者エピソード</span>
-          </p>
-          <details class="extended-explanation-box" style="margin-top: 0; border: 1px solid var(--teal); background: #f0fdfa;" id="dailyEpisodeBox">
-            <summary style="padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-              <img id="dailyEpisodeImage" src="" alt="心理学者" style="width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; background: var(--paper);">
-              <div style="flex-grow: 1; line-height: 1.3;">
-                <div id="dailyEpisodeName" style="font-size: 0.75rem; color: var(--muted); margin-bottom: 2px;"></div>
-                <div id="dailyEpisodeTitle" style="font-size: 0.9rem; font-weight: bold; color: var(--teal-dark);">エピソードを準備中です</div>
-              </div>
-            </summary>
-            <div style="padding: 0 12px 12px; background: #fff; border-top: 1px dashed var(--teal);">
-              <p id="dailyEpisodeText" style="font-size: 0.85rem; line-height: 1.6; color: var(--ink); margin: 12px 0 0;"></p>
-            </div>
-          </details>
-        </section>
-
-        <!-- ▼▼ 面談実技支援用 無料note記事のご紹介 ▼▼ -->
-        <section id="practiceNoteSection" class="top-category-section" style="margin-bottom: 14px; background: #fff; border-color: var(--line);">
-          <details class="extended-explanation-box note-article-box" id="noteArticleBox" style="margin-top: 0; border: 1px solid var(--teal); background: #fff;">
-            <summary class="top-category-title section-heading-band section-heading-accent" style="padding: 10px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; color: var(--teal-dark); font-size: 0.9rem;">
-              <span class="section-number">②</span>
-              <span style="font-size: 1.2rem;">🎤</span>
-              面談実技支援用 無料note記事
-            </summary>
-            <div style="padding: 12px; background: #f8fafc; border-top: 1px dashed var(--teal);">
-              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
-                <li>
-                  <a href="https://note.com/ninin2025/n/nec8404799ee7" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>自分のクセを診断してみませんか？</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://note.com/ninin2025/n/n8cc24a8861a3" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>沈黙って怖いですか？</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://note.com/ninin2025/n/nac443d58bc98" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>面談力をあげる【一人練習】って？</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://note.com/ninin2025/n/ndbc598eb99e2" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>【重い話】に備える？</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://note.com/ninin2025/n/n6c6dccfabb28" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>【振り返り】が合否を決める。</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://note.com/ninin2025/n/na45d61cf78e6" target="_blank" class="category-button" style="text-decoration: none; width: 100%; justify-content: space-between; border-color: var(--line); min-height: 44px;">
-                    <span style="display: flex; align-items: center; gap: 6px; font-weight: normal; font-size: 0.85rem; color: var(--ink);"><span style="font-size: 1rem;">📝</span>事例検討【３つの逐語記録】</span>
-                    <span style="color: var(--muted); font-size: 0.7rem;">▶</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </details>
-          <p style="font-size: 0.75rem; color: var(--muted); margin: 8px 4px 0; line-height: 1.4;">
-            沈黙の扱い方、一人での練習のしかた、また本番での落とし穴への対策などを紹介しています。
-          </p>
-        </section>
-        <!-- ▲▲ 面談実技支援用 無料note記事のご紹介 ここまで ▲▲ -->
-
-        <!-- 社会情勢・法制関連問題 -->
-        <section id="socialLegalSection" class="top-category-section social-legal-section" aria-label="社会情勢・法制関連問題">
-          <p class="top-category-title section-heading-band"><span class="section-number">③</span><span>⚖️</span>社会情勢・法制関連問題</p>
-          <div class="category-grid" id="socialLegalCategoryGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-        </section>
-
-          </div>
-          <div class="top-responsive-column top-responsive-column-right">
-
-        <section id="membershipIntroSection" class="top-category-section membership-intro-section" aria-label="メンバーシップのご紹介" style="margin-bottom: 14px; background: var(--accent-soft); border-color: rgba(183, 110, 53, 0.28);">
-          <p class="top-category-title section-heading-band section-heading-accent" style="margin-bottom: 10px;">
-            <span style="font-size: 1.15rem;">🤝</span>
-            メンバーシップのご紹介
-          </p>
-          <p style="font-size: 0.86rem; color: var(--ink); line-height: 1.65; margin: 0 0 10px;">
-            メンバーシップでパスワードを毎月お知らせしています。パスワードを入れると法制度年表のPDF出力機能、オリジナル問題などをフル機能でご利用いただけます。直前の3か月だけの加入でも合計1500円と非常にお得です。
-          </p>
-          <a href="https://note.com/ninin2025/membership" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0; width: 100%; text-decoration: none;">
-            メンバーシップを見る（月額500円）
-          </a>
-        </section>
-
-        <!-- マップ理解補助問題 -->
-        <section id="mapStudySection" class="top-category-section map-study-section" aria-label="マップ理解補助問題">
-          <p class="top-category-title section-heading-band"><span class="section-number">④</span><span>🧭</span>マップ理解補助問題</p>
-          <div class="category-grid" id="mapStudyCategoryGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-          <div class="note-link-area">
-            
-            <!-- 交互に切り替わるプロモーションコンテナ -->
-            <a id="psychologistMapPromo" href="https://note.com/ninin2025/n/ncd395d79b182" target="_blank" class="map-promo-container">
-              <!-- 画像レイヤー -->
-              <div class="map-promo-image-layer">
-                <b>心理学者マップ</b>
-              </div>
-              <div class="map-promo-katsuyou-layer" aria-hidden="true"></div>
-              <!-- テキスト説明レイヤー -->
-              <div class="map-promo-text-layer">
-                <div class="map-promo-text-content">
-                  <b>💡pointは…<br>🕦時系列×📍二次元配置×👦人の顔！</b>
-                  脳科学的に記憶に定着しやすい「位置情報 × 関係性」と「顔のある情報」で脳の顔認知野（FFA）を刺激。<br>
-                  だから、“誰がどの理論を唱えたか”が自然に覚えられるんです✨
-                  <div class="promo-buy-button">割引価格で購入してみる？<br><del style="font-size: 0.85em; opacity: 0.8;">2,980円</del> → 1,980円</div>
-                </div>
-              </div>
-            </a>
-
-            <p class="note-link-caption" style="margin-top: 12px;">【広告】理論家同士のつながりを一枚で見たい方へ</p>
-          </div>
-        </section>
-
-        <!-- サポさんの吹き出し（マップ理解補助問題の下に移動） -->
-        <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
-          <div class="talk-row right">
-            <div class="talk-bubble">
-              <p class="talk-message">学科試験対策になるし、理論を知ることは相談者さんの支援のためになるさぽー✨</p>
-            </div>
-            <div class="talk-character-wrap">
-              <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
-              <span class="talk-character-label">サポさん</span>
-            </div>
-          </div>
-        </div>
-
-        <section id="directorySection" class="top-category-section directory-section" aria-label="心理学者一覧">
-          <p class="top-category-title section-heading-band section-heading-brand"><span class="section-number">⑤</span><span>🔎</span>心理学者一覧</p>
-          <div class="category-grid" id="directoryCategoryGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-        </section>
-
-        <section id="examPrepSection" class="top-category-section exam-section" aria-label="キャリコン学科試験対策">
-          <p class="top-category-title section-heading-band"><span class="section-number">⑥</span><span>📝</span>キャリコン学科試験対策</p>
-          <div class="category-grid" id="examPrepCategoryGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-        </section>
-
-        <section id="practicalExamSection" class="top-category-section exam-section" aria-label="キャリコン実務直結試験問題">
-          <p class="top-category-title section-heading-band"><span class="section-number">⑦</span><span>🧰</span>キャリコン実務直結試験問題</p>
-          <div class="category-grid" id="practicalExamCategoryGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-        </section>
-
-        <!-- ▼▼ 資格を取ったら、活動しよう！ ▼▼ -->
-        <section id="tabelaboSection" class="top-category-section" style="margin-top: 14px; background: #fff; border-color: var(--line);" aria-label="資格を取ったら、活動しよう！">
-          <p class="top-category-title"><span>🌱</span>資格を取ったら、活動しよう！</p>
-          
-          <div class="top-character-talk" aria-label="キャラクターからのメッセージ" style="margin-bottom: 14px; padding: 0;">
-            <div class="talk-row left">
-              <div class="talk-character-wrap">
-                <img class="talk-character" src="cimg/k2.png" alt="けー。">
-                <span class="talk-character-label">けー。</span>
-              </div>
-              <div class="talk-bubble">
-                <p class="talk-message">活動の最初の一歩は…人に届ける準備をすることです♪</p>
-              </div>
-            </div>
-            
-            <div class="talk-row right">
-              <div class="talk-bubble">
-                <p class="talk-message">nininではアプリで集客をお手伝いするメンバーシップもやってるみたいなんさぽ。興味があったら行ってみるといいさぽー。</p>
-              </div>
-              <div class="talk-character-wrap">
-                <img class="talk-character" src="cimg/s1.png" alt="サポさん。">
-                <span class="talk-character-label">サポさん</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="note-link-area" style="padding-bottom: 0;">
-            <a href="https://note.com/ninin2025/membership/" target="_blank" class="promo-buy-button tabelabo-button" style="margin: 0 auto 8px; width: 100%;">
-              【たべラボ】心の支援を届けたいあなたへ
-            </a>
-            <p style="font-size: 0.8rem; color: var(--ink); line-height: 1.5; font-weight: bold; margin: 0 0 4px; text-align: center;">
-              【スローガン：心のサポートを 日本の日常に】
-            </p>
-            <p style="font-size: 0.75rem; color: var(--muted); margin: 0; text-align: center;">
-              ～支援者が活躍する事が、社会に心理支援を届ける事～
-            </p>
-          </div>
-        </section>
-        <!-- ▲▲ 資格を取ったら、活動しよう！ ここまで ▲▲ -->
-
-        <details class="category-accordion hidden">
-          <summary>その他の分野</summary>
-          <div class="category-grid" id="categoryAccordionGrid">
-            <!-- JSで動的に生成されます -->
-          </div>
-        </details>
-          </div>
-        </div>
-      </div>
-
-      <footer class="top-footer">
-        <div>©2026 ninin consulting＆counseling</div>
-        <a href="../index.html">トップへ</a>
-      </footer>
-    </section>
-
-    <!-- =========================================
-         ダミーページ（準備中画面）
-         ========================================= -->
-    <section id="dummyPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1 id="dummyHeaderTitle">カテゴリ名</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-      
-      <div class="dummy-content">
-        <div class="dummy-icon">🚧</div>
-        <h2>問題作成中</h2>
-        <p>この分野のテストは現在準備中です。<br>公開までもうしばらくお待ちください。</p>
-        <button class="primary-button" style="margin-top: 24px;" onclick="showTopPage()">TOPに戻る</button>
-      </div>
-    </section>
-
-    <!-- =========================================
-         10問セット選択ページ
-         ========================================= -->
-    <section id="setSelectPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1 id="setSelectHeaderTitle">問題セット選択</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="set-select-content">
-        <div class="set-list" id="quizSetList"></div>
-      </div>
-    </section>
-
-    <!-- =========================================
-         頻出問題の振返りページ
-         ========================================= -->
-    <section id="reviewPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1 id="reviewHeaderTitle">振返り</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="review-content">
-        <div id="reviewSetView">
-          <div id="reviewSetGuide" class="review-empty">確認したいセットを選んでください。</div>
-          <div class="review-set-list" id="reviewSetList"></div>
-        </div>
-        <div id="reviewDetailView" class="hidden">
-          <div class="review-detail-actions">
-            <button type="button" class="question-action-button" id="reviewBackToSetsButton">セット一覧へ戻る</button>
-            <button type="button" class="question-action-button pdf-export-button" id="reviewPdfButton">PDFで振り返り出力</button>
-          </div>
-          <div id="reviewSummary" class="directory-count"></div>
-          <ul class="review-list" id="reviewList"></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================
-         心理学者一覧ページ（五十音順・タグ絞り込み）
-         ========================================= -->
-    <section id="directoryPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1 id="directoryHeaderTitle">心理学者一覧</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="directory-toolbar">
-        <input id="directorySearch" type="search" placeholder="人物名・理論・画像名で検索">
-        <select id="directoryFilter">
-          <option value="all">すべて表示</option>
-          <option value="careerConsultant">キャリア関連頻出</option>
-          <option value="industrialCounselor">産業保健領域頻出</option>
-        </select>
-        <div class="directory-filter-panel" id="directoryKanaPanel">
-          <div class="filter-chip-row" id="directoryKanaFilters"></div>
-        </div>
-        <div class="directory-filter-panel" id="directoryTheoryPanel">
-          <div class="filter-chip-row" id="directoryTheoryFilters"></div>
-        </div>
-        <div class="directory-count" id="directoryCount"></div>
-      </div>
-
-      <div class="directory-list" id="directoryList"></div>
-    </section>
-
-    <!-- =========================================
-         心理学者タイムライン
-         ========================================= -->
-    <section id="timelinePage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1>心理学者タイムライン</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="timeline-toolbar">
-        <select id="timelineExamFilter" aria-label="受験頻出フィルター">
-          <option value="all">すべて表示</option>
-          <option value="careerConsultant">キャリア関連頻出</option>
-          <option value="industrialCounselor">産業保健領域頻出</option>
-        </select>
-        <select id="timelineSortOrder" aria-label="並び順">
-          <option value="theory">理論発表年順</option>
-          <option value="birth">生年順</option>
-          <option value="theme">理論カテゴリ順</option>
-        </select>
-      </div>
-      <div class="timeline-count" id="timelineCount"></div>
-      <div class="timeline-list" id="timelineList"></div>
-    </section>
-
-    <!-- =========================================
-         心理学者エピソード一覧
-         ========================================= -->
-    <section id="episodeDirectoryPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="showTopPage()">◀ 戻る</button>
-        <div class="brand">
-          <h1>心理学者エピソード一覧</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="episode-list-toolbar">
-        <div class="filter-chip-row" id="episodeKanaFilters"></div>
-        <div class="directory-count" id="episodeDirectoryCount"></div>
-      </div>
-      <div class="episode-directory-list" id="episodeDirectoryList"></div>
-    </section>
-
-    <!-- =========================================
-         クイズページ（キャリア理論等）
-         ========================================= -->
-    <section id="quizPage" class="hidden">
-      <header class="topbar">
-        <button class="icon-button" onclick="confirmBackToTop()">◀ 戻る</button>
-        <div class="brand">
-          <h1 id="quizHeaderTitle">キャリア理論</h1>
-        </div>
-        <div style="width: 70px;"></div>
-      </header>
-
-      <div class="progress-container">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="progress-text" id="progressText">0 / 10問</div>
-      </div>
-
-      <div class="quiz-container">
-        <div id="questionArea">
-          <div class="question-kicker" id="questionKicker">第1問</div>
-          <div class="question-text" id="questionText"></div>
-          <div class="question-action-row">
-            <button type="button" class="question-action-button danger" id="interruptQuizButton">中断して戻る</button>
-            <button type="button" class="question-action-button" id="prevQuestionButton">1問前に戻る</button>
-          </div>
-          <div class="choice-grid" id="choices"></div>
-        </div>
-
-        <div class="hidden" id="feedbackArea">
-          <div class="feedback-question-card" id="feedbackQuestionBlock" style="display: none;">
-            <p class="feedback-question-label">問題文</p>
-            <p class="feedback-question-text" id="feedbackQuestionText"></p>
-          </div>
-          <div class="feedback-result-row">
-            <div class="feedback-status-block">
-              <div class="feedback-result-icon" id="feedbackResultIcon" style="display: none;">
-                <img id="feedbackResultIconImage" src="" alt="">
-              </div>
-              <div id="resultBadge" class="result-badge"></div>
-            </div>
-            <div id="userAnswerText" class="user-answer-text" style="display: none;"></div>
-          </div>
-          <button class="primary-button top-next-button" id="nextButtonTop">次の問題へ</button>
-          
-          <div class="feedback-header">
-            <div class="feedback-image">
-              <img id="feedbackImage" src="" alt="画像">
-            </div>
-            <div class="feedback-answer">
-              <div class="answer-label">正答</div>
-              <div class="answer-text" id="answerText"></div>
-              <div><span class="psychologist-name" id="psychologistName"></span></div>
-              <div class="psychologist-meta" id="psychologistMeta"></div>
-            </div>
-          </div>
-
-          <div class="feedback-body">
-            <p class="explanation-title">解説・ポイント</p>
-            <p class="explanation-text" id="explanationText"></p>
-            <details class="extended-explanation-box" id="extendedExplanationBox">
-              <summary id="extendedExplanationTitle">詳しい解説を読む</summary>
-              <div class="extended-explanation-text" id="extendedExplanationText"></div>
-            </details>
-            <div class="question-memo-box" id="questionMemoBox">
-              <div class="question-memo-header">
-                <label class="question-memo-label" for="questionMemoInput">この問題のメモ</label>
-                <span class="question-memo-count" id="questionMemoCount">0 / 255</span>
-              </div>
-              <textarea class="question-memo-input" id="questionMemoInput" maxlength="255" rows="3" placeholder="覚えておきたいポイントを短くメモできます"></textarea>
-              <div class="question-memo-status" id="questionMemoStatus"></div>
-            </div>
-            <div class="person-detail-action" id="psychologistDetailAction"></div>
-          </div>
-
-          <div class="works-box" id="worksBox">
-            <p class="works-title">📚 主な理論・著作の変遷</p>
-            <ul class="works-list" id="worksList"></ul>
-          </div>
-
-          <!-- 過去問エリア -->
-          <div class="past-exam-box" id="pastExamBox">
-            <div class="past-exam-header" onclick="togglePastExam('quizPastExam')">
-                <p class="past-exam-title">📘 <span id="pastExamRef"></span></p>
-                <span class="past-exam-toggle-icon">▼</span>
-            </div>
-            <div class="past-exam-content">
-                <p class="past-exam-question" id="pastExamQuestion"></p>
-                <p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">※正解だと思う選択肢をタップ</p>
-                <ul class="past-exam-options" id="pastExamOptions"></ul>
-            </div>
-          </div>
-
-          <button class="primary-button" id="nextButton">次の問題へ</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================
-         モーダル（ポップアップ）群
-         ========================================= -->
-    <!-- 結果表示用モーダル -->
-    <div id="resultModal" class="modal-overlay">
-      <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()">×</button>
-        <div id="modalBody"></div>
-      </div>
-    </div>
-
-    <!-- パスワードロック用モーダル -->
-    <div id="passwordModal" class="modal-overlay">
-      <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <button type="button" class="modal-close" id="closePasswordModalBtn">×</button>
-        <div class="dummy-icon" style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
-        <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--teal-dark);">メンバー限定コンテンツ</h2>
-        <p style="font-size: 0.9rem; color: var(--ink); line-height: 1.5; margin-bottom: 20px;">
-          ここから先は、noteメンバーシップ限定のコンテンツです。<br>今月のパスワード、または買い切り用パスワードを入力してください。
-        </p>
-        <input type="text" id="membershipPassword" placeholder="パスワード" style="width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; margin-bottom: 16px; text-align: center;">
-        <p id="passwordError" style="color: var(--rose); font-size: 0.8rem; margin-top: -8px; margin-bottom: 16px; display: none; font-weight: bold;">パスワードが違います</p>
-        <button class="primary-button" id="verifyPasswordButton" style="margin-bottom: 12px;">ロックを解除する</button>
-        <a href="https://note.com/ninin2025/membership" target="_blank" style="display: block; font-size: 0.85rem; color: var(--teal); font-weight: bold; text-decoration: underline;">メンバーシップについて（月額500円）</a>
-      </div>
-    </div>
-
-    <!-- ▼▼ おかえりなさいモーダル ▼▼ -->
-    <div id="welcomeBackModal" class="modal-overlay">
-      <div class="modal-content" style="max-width: 320px; text-align: center; padding: 24px;">
-        <button class="modal-close" id="closeWelcomeBackBtn">×</button>
-        <img src="cimg/s1.png" alt="サポさん" style="width: 80px; margin: 0 auto 12px; display: block;">
-        <h2 style="font-size: 1.2rem; margin-top: 0; color: var(--teal-dark);">おかえりなさい！</h2>
-        <p style="font-size: 0.9rem; color: var(--ink); line-height: 1.5; margin-bottom: 20px;">
-          おかえりなさい、<br>また一緒に学びましょうね✨
-        </p>
-        <button class="primary-button" onclick="document.getElementById('welcomeBackModal').classList.remove('active')">学習をスタート</button>
-      </div>
-    </div>
-
-  </main>
-  
-  <section class="print-report" id="printReport" aria-hidden="true"></section>
-
-  <!-- =========================================
-       外部データ・スクリプトの読み込み
-       ========================================= -->
-  <script src="data/psychologists.js"></script>
-  <script src="data/questions-career.js"></script>
-  <script src="data/questions-original-exam.js"></script>
-  <script src="data/syakai.js"></script>
-  <script src="data/category.js"></script>
-  <script src="data/question-banks.js"></script>
-  
-  <script src="data/timeline.js"></script>
-  <script src="data/episodes.js"></script>
-  <script src="js/app.js"></script>
-  <script>
-    (function () {
-      document.addEventListener('contextmenu', function (event) {
-        event.preventDefault();
-      });
-      document.addEventListener('dragstart', function (event) {
-        event.preventDefault();
-      });
-      document.addEventListener('keydown', function (event) {
-        const key = String(event.key || '').toLowerCase();
-        const isCommand = event.ctrlKey || event.metaKey;
-        const blocksCommand = isCommand && (
-          key === 'u' ||
-          key === 's' ||
-          (event.shiftKey && (key === 'i' || key === 'j' || key === 'c'))
-        );
-        const blocksDevtool = event.key === 'F12';
-        if (blocksCommand || blocksDevtool) {
-          event.preventDefault();
-          event.stopPropagation();
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            /* 和紙のような温かみのあるベースカラー（生成り色） */
+            background-color: #fdfcf9;
+            /* SVGを用いた微細なノイズ（繊維感）で和紙のテクスチャを表現。ノイズを強めに調整 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
         }
-      }, true);
-    })();
-  </script>
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-stone-800 min-h-screen flex flex-col items-center">
+
+    <!-- ヒーローセクション 兼 企業理念 -->
+    <header class="w-full max-w-4xl px-6 mb-8 mt-12 text-center fade-in">
+        <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-stone-100 shadow-sm relative flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+            <!-- バッジ -->
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#fdfcf9] border border-stone-100 px-5 py-1 rounded-full text-xs font-bold text-stone-400 tracking-widest uppercase">
+                Philosophy
+            </div>
+            
+            <!-- 左側：ロゴ -->
+            <div class="flex-shrink-0">
+                <img 
+                    src="https://ninin-cc.github.io/img/ninin.png" 
+                    alt="ninin logo" 
+                    class="h-24 w-24 object-contain transition-opacity duration-500 rounded-full bg-white shadow-sm border border-stone-100 p-1"
+                    onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-24 w-24 bg-white rounded-full flex flex-col items-center justify-center shadow-sm border border-stone-100 p-2\'><span class=\'text-lg font-light tracking-widest text-stone-300 italic\'>ninin</span></div>';"
+                >
+            </div>
+
+            <!-- 右側：テキスト -->
+            <div class="flex flex-col justify-center items-center sm:items-stretch">
+                <p class="text-stone-700 font-medium leading-relaxed text-[15px] sm:text-base md:text-lg text-center">
+                    私たちは、自分らしく生きていける<br />
+                    社会 / 心理支援を<br />
+                    「日本のあたり前」にしてゆきます
+                </p>
+                <div class="text-right w-full mt-4 sm:mt-6 leading-none">
+                    <span class="text-[10px] md:text-xs text-stone-400 tracking-wider">合同会社ninin consulting ＆ counseling</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインリンク一覧 -->
+    <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+        
+        <!-- RIESM ロゴセクション (Philosophyと同じ幅) -->
+        <div class="w-full mb-6">
+            <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" class="bg-white py-2 rounded-[2rem] border border-stone-100 shadow-sm flex justify-center items-center group transition-all duration-300 hover:shadow-md active:scale-95 block">
+                <img 
+                    src="https://ninin-cc.github.io/img/riesm.png" 
+                    alt="RIESM logo" 
+                    class="w-full max-w-[100px] md:max-w-[120px] h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                >
+            </a>
+        </div>
+
+        <!-- コンテンツカード群（PC時2カラム・Gridレイアウト・上詰め配置） -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            
+            <!-- メインサービス：あなたの心のコックピット -->
+            <div class="w-full">
+                <a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-xl font-bold">🌈あなたの心のコックピット</h2>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-stone-400 group-hover:text-stone-600"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                        </div>
+                        <p class="text-sm text-stone-500 leading-relaxed mt-2">
+                            RIESM™は一人ひとりの個性（役割の分布）を可視化し【<span class="text-slate-600 font-medium">人生のパイロットとしてのあなた</span>】を<span class="text-slate-600 font-medium">ナビゲート</span>するためのアセスメントツールです。
+                        </p>
+                        
+                        <!-- 挿入画像 (高さ300px固定、幅80%、画像全体を表示・スライドショー化) -->
+                        <div class="mt-4 mb-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 w-4/5 mx-auto h-[300px] flex items-center justify-center">
+                            <img 
+                                id="riesm-slideshow"
+                                src="./img/m/2.jpg" 
+                                alt="RIESM イメージ画像" 
+                                class="w-full h-full object-contain transition-opacity duration-300"
+                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/fdfcf9/a8a29e?text=Image';"
+                            >
+                        </div>
+
+                        <p class="text-sm text-stone-500 leading-relaxed">
+                            RIESM™では、お互いが心地よくコミュニケーションできる<span class="text-slate-600 font-medium">スキルも身につけられます。</span>国内大手企業での<span class="text-slate-600 font-medium">導入実績</span>もありますので、安心してご活用ください。
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ワークショップのご案内 (アコーディオン) -->
+            <div class="w-full">
+                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                    <button 
+                        onclick="toggleAccordion('workshop-content', 'workshop-icon')"
+                        class="w-full flex items-center justify-between p-5 text-left group transition-colors hover:bg-stone-50/50"
+                    >
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            </div>
+                            <h2 class="text-lg md:text-xl font-bold leading-tight">RIESM™ワークショップ<br class="sm:hidden"/>のご案内</h2>
+                        </div>
+                        <div id="workshop-icon" class="transition-transform duration-300 flex-shrink-0 ml-2 rotate-180">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </button>
+                    <div 
+                        id="workshop-content" 
+                        class="max-h-[1000px] opacity-100 overflow-hidden transition-all duration-300 ease-in-out"
+                    >
+                        <div class="p-5 pt-0 mt-2 border-t border-stone-100">
+                            <!-- 追加：ワークショップ画像 -->
+                            <div class="mt-4 rounded-xl overflow-hidden border border-stone-100 shadow-sm bg-stone-50 relative group/img">
+                                <img src="./img/modenavi.png" alt="ワークショップ" class="w-full h-auto object-cover transition-transform duration-700 group-hover/img:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x300/fdfcf9/a8a29e?text=modenavi.png';">
+                            </div>
+                            <p class="text-sm text-stone-500 leading-relaxed mt-4">
+                                チームをより良く理解するための、ワークショップのテキストやスライド台本など、より深く学ぶための資料を格納しています。
+                            </p>
+                            <div class="mt-4 flex flex-wrap gap-2 justify-end">
+                                <a href="https://ninin-cc.github.io/touroku.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-stone-500 font-medium hover:text-stone-700 transition-colors bg-stone-50 border border-stone-200 px-4 py-2 rounded-full">
+                                    <span>登録者一覧を見る</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </a>
+                                <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-sm text-amber-600 font-medium hover:text-amber-700 transition-colors bg-amber-50 px-4 py-2 rounded-full">
+                                    <span>資料を見る</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- nininカウンセリングルーム -->
+            <div class="w-full">
+                <a href="https://note.com/ninin2024/n/nfb94f7b9fd88" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-start space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-pink-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-start justify-between gap-3">
+                                <h2 class="text-base md:text-lg font-bold leading-snug">
+                                    あなたのお話<br/>聞かせてくださいませんか？
+                                </h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 text-stone-300 group-hover:text-stone-500 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-xs sm:text-sm text-stone-500 mt-2 leading-relaxed">
+                                <span class="font-bold text-stone-600">➤nininカウンセリングルーム</span><br/>
+                                <span class="font-bold text-stone-600">➤nininキャリアルーム</span><br/>
+                                セラピー、ヒーリング、カウンセリング、コンサルティング、またご希望に応じて「悩みを解決（軽く）」するためのティーチングも行えます（男女2名のカウンセラー在籍）。
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- WEBアプリ セクション (アコーディオンボタン内にバナー配置) -->
+            <div class="w-full">
+                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                    <button 
+                        onclick="toggleAccordion('app-content', 'app-icon')"
+                        class="w-full block p-5 text-left group transition-colors hover:bg-stone-50/50"
+                    >
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex items-center space-x-4">
+                                <div class="p-3 rounded-xl text-white bg-indigo-600 shadow-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                                </div>
+                                <h2 class="text-lg md:text-xl font-bold leading-tight">nininの<br/>遊べる深まるWEBアプリ</h2>
+                            </div>
+                            <div id="app-icon" class="transition-transform duration-300 flex-shrink-0 ml-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-400 group-hover:text-stone-600"><path d="m6 9 6 6 6-6"/></svg>
+                            </div>
+                        </div>
+                        
+                        <!-- WEBアプリ関連バナー (常に表示されるボタン領域に配置) -->
+                        <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-stone-100 bg-stone-50 relative group/img">
+                            <img src="./img/app.jpg" alt="WEBアプリバナー" class="w-full h-auto object-cover transition-transform duration-700 group-hover/img:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x200/eef2ff/4f46e5?text=app.jpg';">
+                        </div>
+                    </button>
+                    <div 
+                        id="app-content" 
+                        class="max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out"
+                    >
+                        <div class="p-5 pt-0 mt-2 border-t border-stone-100">
+                            <p class="text-sm text-stone-500 leading-relaxed mt-4 mb-4">
+                                RIESM™mini、RIESM™RoleTRADE™、メンテーリアタロットカードなどのアプリをご紹介するページです。
+                            </p>
+                            <div class="space-y-3">
+                                <a href="https://ninin-cc.github.io/ca/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                    <div class="flex items-center justify-between gap-3 mb-1">
+                                        <div class="flex items-center gap-2 min-w-0 flex-wrap">
+                                            <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">心の錨を観る魔法</span>
+                                            <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider flex-shrink-0">New</span>
+                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    </div>
+                                    <p class="text-xs text-stone-500 leading-snug">あなたの大切なキャリアアンカーをみつめます(魔法世界版）</p>
+                                </a>
+
+                                <a href="https://ninin-cc.github.io/cr/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                    <div class="flex items-center justify-between gap-3 mb-1">
+                                        <div class="flex items-center gap-2 min-w-0 flex-wrap">
+                                            <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">心の錨を見つめる時間</span>
+                                            <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider flex-shrink-0">New</span>
+                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    </div>
+                                    <p class="text-xs text-stone-500 leading-snug">あなたの大切なキャリアアンカーをみつめます(Cafe版）</p>
+                                </a>
+
+                                <a href="https://ninin-cc.github.io/rm/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">RIESM™mini</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    </div>
+                                    <p class="text-xs text-stone-500 leading-snug">心の基礎体温を毎日チェック💗</p>
+                                </a>
+                                
+                                <!-- RoleTRADE はリンクを外し、Coming Soonを明滅させる -->
+                                <div class="block p-3 rounded-lg border border-stone-100 bg-stone-50/50">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-400">RIESM™RoleTRADE™</span>
+                                        <span class="text-[10px] font-bold text-red-500 animate-pulse tracking-wider">COMING SOON</span>
+                                    </div>
+                                </div>
+
+                                <a href="https://ninin-cc.github.io/tr/" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-stone-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group/link">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-sm font-bold text-stone-700 group-hover/link:text-indigo-700">メンテーリアタロットカード</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-stone-300 group-hover/link:text-indigo-400 flex-shrink-0"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                    </div>
+                                    <p class="text-xs text-stone-500 leading-snug">伝統的なワンオラクル（1枚引き）。引いた1枚にあなたは何を感じるか。偶然から自己と対話する、タロット本来の体験を。</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 企業研修プログラム -->
+            <div class="w-full">
+                <a href="kougilp202511.html" target="_blank" rel="noopener noreferrer" 
+                   class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 rounded-xl text-white bg-amber-600 shadow-sm transition-transform group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold">企業研修プログラム</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                            </div>
+                            <p class="text-sm text-stone-400 mt-1 leading-snug">
+                                RIESM™活用コミュニケーション研修、「人生は伏線回収」、ハラスメント、1on1研修など多彩に対応。
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div> <!-- コンテンツカード群ここまで -->
+
+        <!-- 導入メッセージ -->
+        <div class="w-full pt-8 pb-4 text-center px-2">
+            <p class="text-stone-500 leading-relaxed text-xs md:text-sm">
+                自己理解と他者理解・心地よいコミュニケーション、<br class="md:hidden" />
+                そして人生の「伏線回収」。<br />
+                わたしたちはあなたの物語のナビゲーター。
+                <span class="block mt-3 text-stone-600 font-medium tracking-widest">
+                    ― あなたの物語には、価値がある。 ―
+                </span>
+            </p>
+        </div>
+
+        <!-- Media & SNS 区切り線 -->
+        <div class="flex items-center mt-2 mb-6">
+            <div class="flex-grow h-px bg-stone-200"></div>
+            <span class="px-4 text-xs font-bold text-stone-400 tracking-widest uppercase">Media ＆ SNS</span>
+            <div class="flex-grow h-px bg-stone-200"></div>
+        </div>
+
+        <!-- SNSリンク（PC時2カラムGrid） -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- note -->
+            <a href="https://note.com/ninin2025" target="_blank" rel="noopener noreferrer" 
+               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-white border border-stone-200 text-stone-900 shadow-sm transition-transform group-hover:scale-110 flex items-center justify-center">
+                        <!-- 文字で note アイコンを表現（太字で大きく） -->
+                        <span class="text-[34px] leading-none pb-1" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900;">n</span>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold">note</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                        </div>
+                        <p class="text-sm text-stone-400 mt-1 leading-snug">日々の気づきや🌈RIESMについて綴る場所</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/ninin2025/" target="_blank" rel="noopener noreferrer" 
+               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-blue-700 shadow-sm transition-transform group-hover:scale-110">
+                        <!-- LinkedIn SVG アイコン -->
+                        <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold">LinkedIn</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                        </div>
+                        <p class="text-sm text-stone-400 mt-1 leading-snug">ビジネスプロフィール</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- X (Twitter) -->
+            <a href="https://x.com/ninin2025" target="_blank" rel="noopener noreferrer" 
+               class="group block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 active:scale-95">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-black shadow-sm transition-transform group-hover:scale-110">
+                        <!-- X SVG アイコン -->
+                        <svg role="img" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold">X (Twitter)</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-stone-300 group-hover:text-stone-500"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                        </div>
+                        <p class="text-sm text-stone-400 mt-1 leading-snug">リアルタイムな発信と対話の場</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 公告リンク -->
+        <div class="mt-12 mb-20 text-center">
+            <a href="https://ninin-cc.github.io/koukoku.html" target="_blank" rel="noopener noreferrer" 
+               class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 border border-stone-200 rounded-full text-sm bg-white/50">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span>電子公告はこちら</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <div class="text-xs text-stone-400 space-y-1 mb-3">
+            <p>合同会社ninin consulting ＆ counseling</p>
+            <p>法人番号 9011503006532</p>
+            <p>※社名由来は「二人三脚」</p>
+        </div>
+        <p class="text-xs text-stone-400 tracking-widest uppercase">
+            © 2025 ninin LLC. All Rights Reserved.
+        </p>
+    </footer>
+
+    <script>
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            if (content.classList.contains('max-h-0')) {
+                // 開く処理
+                content.classList.remove('max-h-0', 'opacity-0');
+                content.classList.add('max-h-[1000px]', 'opacity-100'); // 画像追加に伴い高さを拡張
+                icon.classList.add('rotate-180');
+            } else {
+                // 閉じる処理
+                content.classList.add('max-h-0', 'opacity-0');
+                content.classList.remove('max-h-[1000px]', 'opacity-100');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // RIESM スライドショーのスクリプト
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = [
+                './img/m/2.jpg',
+                './img/m/4.jpg',
+                './img/m/6.jpg',
+                './img/m/1.jpg'
+            ];
+            let currentIndex = 0;
+            const imgElement = document.getElementById('riesm-slideshow');
+            
+            if (imgElement) {
+                // 初期画像のセット（HTML側で既に2.jpgを指定していますが念のため）
+                imgElement.src = images[currentIndex];
+                
+                setInterval(() => {
+                    // ふわっと消える
+                    imgElement.classList.add('opacity-0');
+                    
+                    // 消えきったタイミング(300ms後)で画像を差し替えて、再び表示
+                    setTimeout(() => {
+                        currentIndex = (currentIndex + 1) % images.length;
+                        imgElement.src = images[currentIndex];
+                        imgElement.classList.remove('opacity-0');
+                    }, 300);
+                }, 5000); // 5秒ごとに実行
+            }
+        });
+    </script>
 </body>
 </html>
