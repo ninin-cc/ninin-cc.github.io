@@ -770,6 +770,32 @@
       }
     ];
 
+    function randomInt(max) {
+      if (!Number.isInteger(max) || max <= 0) {
+        throw new Error('max must be a positive integer');
+      }
+      const range = 0x100000000;
+      const limit = range - (range % max);
+      const buffer = new Uint32Array(1);
+      do {
+        crypto.getRandomValues(buffer);
+      } while (buffer[0] >= limit);
+      return buffer[0] % max;
+    }
+
+    function randomFloat() {
+      const buffer = new Uint32Array(1);
+      crypto.getRandomValues(buffer);
+      return buffer[0] / 0x100000000;
+    }
+
+    function randomChance(probability) {
+      return randomFloat() < probability;
+    }
+
+    function randomItem(array) {
+      return array[randomInt(array.length)];
+    }
     let state = {
       gameState: 'START',
       drawMode: 'ONE_CARD', // 'ONE_CARD' or 'FOUR_CARDS'
@@ -786,27 +812,27 @@
       isAccordionOpen: false,
       isOriginalAccordionOpen: false,
       isMeaningReadable: false,
-      startBgImage: BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)],
-      guide: Math.random() < 0.25 ? 'haruka' : 'refrem', // 25%の確率でハルカが案内
-      harukaAvatar: HARUKA_IMAGES[Math.floor(Math.random() * HARUKA_IMAGES.length)] // ハルカの場合の画像をランダム決定
+      startBgImage: randomItem(BG_START_IMAGES),
+      guide: randomChance(0.25) ? 'haruka' : 'refrem', // 25%の確率でハルカが案内
+      harukaAvatar: randomItem(HARUKA_IMAGES) // ハルカの場合の画像をランダム決定
     };
 
     const MagicDustHTML = (() => {
       let html = '<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-60">';
       for(let i=0; i<15; i++) {
-        const w = Math.random() * 4 + 2;
-        const l = Math.random() * 100;
-        const t = Math.random() * 100;
-        const dur = Math.random() * 12 + 10;
-        const del = Math.random() * -20;
+        const w = randomFloat() * 4 + 2;
+        const l = randomFloat() * 100;
+        const t = randomFloat() * 100;
+        const dur = randomFloat() * 12 + 10;
+        const del = randomFloat() * -20;
         html += '<div class="absolute bg-yellow-300 rounded-full animate-float blur-[1px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 8px 2px rgba(253, 224, 71, 0.8)"></div>';
       }
       for(let i=0; i<10; i++) {
-        const w = Math.random() * 6 + 3;
-        const l = Math.random() * 100;
-        const t = Math.random() * 100;
-        const dur = Math.random() * 15 + 15;
-        const del = Math.random() * -20;
+        const w = randomFloat() * 6 + 3;
+        const l = randomFloat() * 100;
+        const t = randomFloat() * 100;
+        const dur = randomFloat() * 15 + 15;
+        const del = randomFloat() * -20;
         html += '<div class="absolute bg-orange-400 rounded-full animate-float blur-[2px]" style="width:' + w + 'px; height:' + w + 'px; left:' + l + '%; top:' + t + '%; animation-duration:' + dur + 's; animation-delay:' + del + 's; box-shadow:0 0 12px 3px rgba(251, 146, 60, 0.6)"></div>';
       }
       html += '</div>';
@@ -862,7 +888,7 @@
 
     function drawCard(isUserDrawn = false) {
       state.drawMode = 'ONE_CARD';
-      const randomIndex = Math.floor(Math.random() * tarotCards.length);
+      const randomIndex = randomInt(tarotCards.length);
       const baseCard = tarotCards[randomIndex];
 
       // 元のデータを変更しないようコピーを作成
@@ -870,20 +896,20 @@
 
       // カードにバリエーション画像がある場合は、さらにランダムで1つ選ぶ
       if (state.drawnCard.variants && state.drawnCard.variants.length > 0) {
-        const variantIndex = Math.floor(Math.random() * state.drawnCard.variants.length);
+        const variantIndex = randomInt(state.drawnCard.variants.length);
         state.drawnCard.file = state.drawnCard.variants[variantIndex];
       }
 
-      state.isHorizontal = Math.random() < (1/6);
+      state.isHorizontal = randomChance(1/6);
       state.isUserDrawn = isUserDrawn; // 自分で引いたかどうかを記録
 
       if (state.isHorizontal) {
         state.orientation = "未知の向き";
-        state.tiltAngle = Math.random() < 0.5 ? 90 : -90;
-        state.drawingTilt = Math.random() < 0.5 ? 10 : -10;
+        state.tiltAngle = randomChance(0.5) ? 90 : -90;
+        state.drawingTilt = randomChance(0.5) ? 10 : -10;
       } else {
-        state.orientation = Math.random() < 0.5 ? "正位置" : "逆位置";
-        state.tiltAngle = Math.random() < 0.5 ? 10 : -10;
+        state.orientation = randomChance(0.5) ? "正位置" : "逆位置";
+        state.tiltAngle = randomChance(0.5) ? 10 : -10;
         state.drawingTilt = state.tiltAngle;
       }
 
@@ -909,18 +935,14 @@
       let available = [...tarotCards];
       let selected = [];
       for(let i = 0; i < 4; i++) {
-        let idx = Math.floor(Math.random() * available.length);
+        let idx = randomInt(available.length);
         let card = { ...available[idx] };
         
         if (card.variants && card.variants.length > 0) {
-           card.file = card.variants[Math.floor(Math.random() * card.variants.length)];
+           card.file = card.variants[randomInt(card.variants.length)];
         }
-        card.isHorizontal = Math.random() < (1/6);
-        if (card.isHorizontal) {
-           card.orientation = "未知の向き";
-        } else {
-           card.orientation = Math.random() < 0.5 ? "正位置" : "逆位置";
-        }
+        card.isHorizontal = false;
+        card.orientation = randomChance(0.5) ? "正位置" : "逆位置";
         card.isOpen = false;
         card.isFlipping = false;
         selected.push(card);
@@ -1494,7 +1516,7 @@
       }
 
       if (state.gameState === 'DRAWING') {
-        const isDrawingReversed = state.orientation === "逆位置" || (state.isHorizontal && Math.random() < 0.5);
+        const isDrawingReversed = state.orientation === "逆位置" || (state.isHorizontal && randomChance(0.5));
         const drawingRotationClass = isDrawingReversed ? "card-reversed" : "";
         const isHaruka = state.guide === 'haruka';
 
@@ -1994,9 +2016,9 @@
           state.isAccordionOpen = false;
           state.isOriginalAccordionOpen = false;
           state.isMeaningReadable = false;
-          state.startBgImage = BG_START_IMAGES[Math.floor(Math.random() * BG_START_IMAGES.length)];
-          state.guide = Math.random() < 0.25 ? 'haruka' : 'refrem'; // 25%の確率でハルカが案内
-          state.harukaAvatar = HARUKA_IMAGES[Math.floor(Math.random() * HARUKA_IMAGES.length)]; // ハルカの場合の画像をランダム決定
+          state.startBgImage = randomItem(BG_START_IMAGES);
+          state.guide = randomChance(0.25) ? 'haruka' : 'refrem'; // 25%の確率でハルカが案内
+          state.harukaAvatar = randomItem(HARUKA_IMAGES); // ハルカの場合の画像をランダム決定
         });
       }
     });
