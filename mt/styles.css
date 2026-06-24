@@ -1,0 +1,436 @@
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+      25% { opacity: 0.8; }
+      50% { transform: translateY(-100px) translateX(20px) scale(1.2); }
+      75% { opacity: 0.8; }
+      100% { transform: translateY(-200px) translateX(-20px) scale(1); opacity: 0; }
+    }
+    .animate-float {
+      animation-name: float;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+    .magic-text-glow {
+      text-shadow: 0 0 15px rgba(249, 115, 22, 0.4), 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    @keyframes flyUp {
+      0% { transform: translateY(0) scale(1.2); opacity: 1; z-index: 100; }
+      100% { transform: translateY(-300px) scale(0.5) rotate(15deg); opacity: 0; z-index: 100; }
+    }
+    @keyframes flyDown {
+      0% { transform: translateY(0) scale(1.05); opacity: 1; z-index: 100; }
+      100% { transform: translateY(300px) scale(0.5) rotate(-15deg); opacity: 0; z-index: 100; }
+    }
+    @keyframes dropIn {
+      0% { transform: translateY(-40px) scale(1.05); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    
+    /* ▼▼ 滑らかな画面遷移用のアニメーション ▼▼ */
+    @keyframes fadeOutStage {
+      0% { opacity: 1; filter: blur(0px); }
+      100% { opacity: 0; filter: blur(4px); }
+    }
+    @keyframes fadeInStage {
+      0% { opacity: 0; filter: blur(4px); }
+      100% { opacity: 1; filter: blur(0px); }
+    }
+    .animate-fadeOut {
+      animation: fadeOutStage 0.4s ease-out forwards !important;
+      pointer-events: none;
+    }
+    .animate-fadeInStage {
+      animation: fadeInStage 0.6s ease-out forwards;
+    }
+    
+    .animate-fly-up {
+      animation: flyUp 0.6s ease-in-out forwards !important;
+      pointer-events: none;
+    }
+    .animate-fly-down {
+      animation: flyDown 0.6s ease-in-out forwards !important;
+      pointer-events: none;
+    }
+    .animate-drop-in {
+      animation: dropIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    /* ▼▼ 確認モーダル用の専用フェードアニメーション ▼▼ */
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeOutModal {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    .animate-fadeInModal {
+      animation: fadeInModal 0.3s ease-out forwards;
+    }
+    .animate-fadeOutModal {
+      animation: fadeOutModal 0.3s ease-in forwards;
+    }
+
+    /* ▼▼ 木目調ボタンと魔法のオーラエフェクト ▼▼ */
+    @keyframes magicAura {
+      0% { box-shadow: 0 0 15px 2px rgba(251, 146, 60, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 25px 8px rgba(253, 224, 71, 0.8), inset 0 0 10px rgba(0,0,0,0.5); border-color: rgba(253, 224, 71, 0.8); color: #fef08a; }
+      100% { box-shadow: 0 0 15px 2px rgba(251, 146, 60, 0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+    }
+    .animate-magicAura {
+      animation: magicAura 1s ease-in-out infinite;
+    }
+
+    /* ▼▼ 手札カード用の魔法のオーラエフェクト ▼▼ */
+    @keyframes cardAura {
+      0% { box-shadow: 0 0 10px rgba(253, 224, 71, 0.4), 0 0 5px rgba(251, 146, 60, 0.3); border-color: rgba(253, 224, 71, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(253, 224, 71, 0.8), 0 0 10px rgba(251, 146, 60, 0.6); border-color: rgba(253, 224, 71, 0.9); }
+      100% { box-shadow: 0 0 10px rgba(253, 224, 71, 0.4), 0 0 5px rgba(251, 146, 60, 0.3); border-color: rgba(253, 224, 71, 0.5); }
+    }
+    .animate-cardAura {
+      animation: cardAura 2.5s ease-in-out infinite;
+    }
+
+    @keyframes cardAuraSelected {
+      0% { box-shadow: 0 0 30px rgba(253, 224, 71, 0.8), 0 0 15px rgba(251, 146, 60, 0.6); border-color: rgba(253, 224, 71, 0.9); }
+      50% { box-shadow: 0 0 50px rgba(253, 224, 71, 1), 0 0 25px rgba(251, 146, 60, 0.9); border-color: rgba(255, 255, 255, 1); }
+      100% { box-shadow: 0 0 30px rgba(253, 224, 71, 0.8), 0 0 15px rgba(251, 146, 60, 0.6); border-color: rgba(253, 224, 71, 0.9); }
+    }
+    .animate-cardAuraSelected {
+      animation: cardAuraSelected 1.5s ease-in-out infinite;
+    }
+    
+    /* 共通木目ボタンベース */
+    .wood-btn {
+      position: relative;
+      overflow: hidden;
+      border-width: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* ダークな木目ボタン（主要アクション用） */
+    .wood-btn-dark {
+      background-color: #5d4037; 
+      border-color: #3e2723;
+      color: #ffffff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .wood-btn-dark:hover:not(:disabled) {
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.7), 0 5px 20px rgba(251, 146, 60, 0.4);
+    }
+    .wood-btn-dark:hover:not(:disabled) .wood-texture {
+      filter: brightness(0.9);
+    }
+    .wood-btn-dark:disabled {
+      background-color: #78716c;
+      border-color: #57534e;
+      color: #d6d3d1;
+      text-shadow: none;
+      box-shadow: none;
+    }
+    .wood-btn-dark:disabled .wood-texture {
+      filter: grayscale(1) brightness(0.6);
+      opacity: 0.5;
+    }
+
+    /* ライトな木目ボタン（サブアクション、戻る用） */
+    .wood-btn-light {
+      background-color: #f4ebd8; 
+      border-color: #8c7355;
+      color: #3e2723;
+      font-weight: bold;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+      box-shadow: inset 0 0 5px rgba(255,255,255,0.6), 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .wood-btn-light:hover:not(:disabled) {
+      background-color: #e8dcc4;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.1), 0 4px 12px rgba(249, 115, 22, 0.2);
+    }
+    .wood-btn-light:hover:not(:disabled) .wood-texture {
+      filter: brightness(0.9);
+    }
+    .wood-btn-light:disabled {
+      background-color: #d6d3d1;
+      border-color: #a8a29e;
+      color: #78716c;
+      text-shadow: none;
+      box-shadow: none;
+    }
+    .wood-btn-light:disabled .wood-texture {
+      filter: grayscale(1) opacity(0.3);
+    }
+
+    /* 共通木目テクスチャ */
+    .wood-texture {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("https://ninin-cc.github.io/img/rt/mokuzai.jpg");
+      background-size: cover;
+      background-position: center;
+      transition: filter 0.3s ease;
+      z-index: 0;
+    }
+    .wood-btn-dark .wood-texture {
+      mix-blend-mode: normal; 
+      opacity: 0.8; 
+    }
+    .wood-btn-light .wood-texture {
+      mix-blend-mode: luminosity;
+      opacity: 0.2; 
+    }
+
+    /* 文字を読みやすくする影のユーティリティ */
+    .text-glow-soft {
+      text-shadow: 0 0 4px #e8dcc4, 0 0 8px #e8dcc4, 0 0 12px #e8dcc4;
+    }
+
+.rules-guide-block {
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(1px);
+  transition:
+    opacity 760ms ease,
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 760ms ease;
+  will-change: opacity, transform, filter;
+}
+
+.rules-guide-block.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rules-guide-block {
+    transition: none;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes initialHandGather {
+  0% {
+    opacity: 0;
+    transform: translate(var(--initial-hand-x), var(--initial-hand-y)) scale(0.62) rotate(var(--initial-hand-rotate));
+    filter: blur(2px);
+  }
+  68% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.04) rotate(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+}
+
+.initial-hand-card {
+  --initial-hand-x: 0px;
+  --initial-hand-y: -180px;
+  --initial-hand-rotate: 0deg;
+  opacity: 0;
+  transform-origin: center bottom;
+  animation: initialHandGather 920ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc((var(--initial-hand-order, 1) - 1) * 120ms + 180ms);
+  will-change: transform, opacity, filter;
+}
+
+.initial-hand-card-1 {
+  --initial-hand-order: 1;
+  --initial-hand-x: -150px;
+  --initial-hand-y: -210px;
+  --initial-hand-rotate: -16deg;
+}
+
+.initial-hand-card-2 {
+  --initial-hand-order: 2;
+  --initial-hand-x: -28px;
+  --initial-hand-y: -235px;
+  --initial-hand-rotate: -5deg;
+}
+
+.initial-hand-card-3 {
+  --initial-hand-order: 3;
+  --initial-hand-x: 130px;
+  --initial-hand-y: -215px;
+  --initial-hand-rotate: 14deg;
+}
+
+.initial-hand-card-4 {
+  --initial-hand-order: 4;
+  --initial-hand-x: -92px;
+  --initial-hand-y: -150px;
+  --initial-hand-rotate: -10deg;
+}
+
+.initial-hand-card-5 {
+  --initial-hand-order: 5;
+  --initial-hand-x: 92px;
+  --initial-hand-y: -150px;
+  --initial-hand-rotate: 10deg;
+}
+
+@media (max-width: 480px) {
+  .initial-hand-card-1 { --initial-hand-x: -86px; --initial-hand-y: -170px; }
+  .initial-hand-card-2 { --initial-hand-x: -14px; --initial-hand-y: -190px; }
+  .initial-hand-card-3 { --initial-hand-x: 78px; --initial-hand-y: -170px; }
+  .initial-hand-card-4 { --initial-hand-x: -58px; --initial-hand-y: -125px; }
+  .initial-hand-card-5 { --initial-hand-x: 58px; --initial-hand-y: -125px; }
+}
+@keyframes initialHandToDock {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(var(--initial-hand-dock-x), var(--initial-hand-dock-y)) scale(0.82) rotate(var(--initial-hand-dock-rotate));
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--initial-hand-dock-x), calc(var(--initial-hand-dock-y) + 76px)) scale(0.62) rotate(var(--initial-hand-dock-rotate));
+    filter: blur(1px);
+  }
+}
+
+.initial-hand-card.is-collecting {
+  --initial-hand-dock-x: 0px;
+  --initial-hand-dock-y: 180px;
+  --initial-hand-dock-rotate: 0deg;
+  opacity: 1;
+  animation: initialHandToDock 720ms cubic-bezier(0.2, 0.9, 0.24, 1) forwards;
+  animation-delay: calc((5 - var(--initial-hand-order, 1)) * 36ms);
+  pointer-events: none;
+}
+
+.initial-hand-card-1.is-collecting {
+  --initial-hand-dock-x: 118px;
+  --initial-hand-dock-y: 210px;
+  --initial-hand-dock-rotate: 8deg;
+}
+
+.initial-hand-card-2.is-collecting {
+  --initial-hand-dock-x: 58px;
+  --initial-hand-dock-y: 210px;
+  --initial-hand-dock-rotate: 4deg;
+}
+
+.initial-hand-card-3.is-collecting {
+  --initial-hand-dock-x: -10px;
+  --initial-hand-dock-y: 210px;
+  --initial-hand-dock-rotate: 0deg;
+}
+
+.initial-hand-card-4.is-collecting {
+  --initial-hand-dock-x: -54px;
+  --initial-hand-dock-y: 126px;
+  --initial-hand-dock-rotate: -4deg;
+}
+
+.initial-hand-card-5.is-collecting {
+  --initial-hand-dock-x: -118px;
+  --initial-hand-dock-y: 126px;
+  --initial-hand-dock-rotate: -8deg;
+}
+
+@media (max-width: 480px) {
+  .initial-hand-card.is-collecting {
+    --initial-hand-dock-y: 150px;
+  }
+  .initial-hand-card-1.is-collecting { --initial-hand-dock-x: 76px; --initial-hand-dock-y: 184px; }
+  .initial-hand-card-2.is-collecting { --initial-hand-dock-x: 36px; --initial-hand-dock-y: 184px; }
+  .initial-hand-card-3.is-collecting { --initial-hand-dock-x: -4px; --initial-hand-dock-y: 184px; }
+  .initial-hand-card-4.is-collecting { --initial-hand-dock-x: -34px; --initial-hand-dock-y: 118px; }
+  .initial-hand-card-5.is-collecting { --initial-hand-dock-x: -76px; --initial-hand-dock-y: 118px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .initial-hand-card {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    filter: none;
+  }
+}
+
+@keyframes rulesNextBlink {
+  0%, 100% { opacity: 0.35; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(4px); }
+}
+.selection-guide-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.5rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(120, 53, 15, 0.35);
+  border-radius: 999px;
+  background: rgba(244, 235, 216, 0.92);
+  color: #3f2a16;
+  font-family: serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  box-shadow: 0 4px 12px rgba(41, 24, 12, 0.16);
+}
+
+.selection-guide-label-dock {
+  align-self: center;
+  margin-top: 0.45rem;
+  margin-bottom: -0.25rem;
+  background: rgba(244, 235, 216, 0.95);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+}
+
+@media (min-width: 640px) {
+  .selection-guide-label {
+    min-height: 1.75rem;
+    padding: 0.3rem 1rem;
+    font-size: 13px;
+  }
+}
+
+.rules-next-cue {
+  margin-top: 1rem;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: rgba(124, 45, 18, 0.82);
+}
+
+@media (min-width: 640px) {
+  .rules-next-cue {
+    margin-top: 1.5rem;
+    font-size: 14px;
+  }
+}
+
+.rules-next-arrow {
+  display: inline-block;
+  animation: rulesNextBlink 1.1s ease-in-out infinite;
+}
