@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z1T35THNDV');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>けー。お花×カウンセリング｜Information</title>
+    <meta name="description" content="華道の師範で、心のケアを大切にするカウンセラー「けー。」のインフォメーションページです。">
+
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #3f3a33;
+            --muted: #7b7168;
+            --paper: #fffdf8;
+            --petal: #f8c9c7;
+            --petal-soft: #fff0ef;
+            --leaf: #8aa884;
+            --leaf-soft: #edf5ec;
+            --blue: #6f9bb8;
+            --line: rgba(126, 107, 89, 0.18);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--ink);
+            background-color: #fbf7ef;
+            background-image:
+                linear-gradient(90deg, rgba(255,255,255,0.45) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(255,255,255,0.45) 1px, transparent 1px),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+            background-size: 44px 44px, 44px 44px, 220px 220px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .page-shell {
+            width: min(100%, 980px);
+        }
+
+        .soft-panel {
+            background: rgba(255, 253, 248, 0.86);
+            border: 1px solid var(--line);
+            box-shadow: 0 18px 48px rgba(92, 70, 52, 0.08);
+            backdrop-filter: blur(8px);
+        }
+
+        .flower-mark {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            flex: 0 0 auto;
+        }
+
+        .flower-mark span {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #e6bf49;
+            box-shadow: 0 0 0 1px rgba(111, 85, 36, 0.12);
+        }
+
+        .flower-mark::before,
+        .flower-mark::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 50% 0%, var(--petal) 0 26%, transparent 27%),
+                radial-gradient(circle at 100% 50%, var(--petal) 0 26%, transparent 27%),
+                radial-gradient(circle at 50% 100%, var(--petal) 0 26%, transparent 27%),
+                radial-gradient(circle at 0% 50%, var(--petal) 0 26%, transparent 27%);
+        }
+
+        .flower-mark::after {
+            transform: rotate(45deg);
+            opacity: 0.72;
+        }
+
+        .leaf-line {
+            background: linear-gradient(90deg, transparent, rgba(138, 168, 132, 0.55), transparent);
+            height: 1px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.7s ease-out both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(138, 168, 132, 0.34);
+            background: rgba(237, 245, 236, 0.72);
+            color: #4d6849;
+            border-radius: 999px;
+            padding: 0.38rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .info-list li {
+            position: relative;
+            padding-left: 1.05rem;
+        }
+
+        .info-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.72em;
+            width: 0.42rem;
+            height: 0.42rem;
+            border-radius: 999px;
+            background: var(--petal);
+            box-shadow: 0 0 0 3px rgba(248, 201, 199, 0.28);
+        }
+
+        .hero-image {
+            box-shadow: 0 24px 58px rgba(82, 74, 66, 0.14);
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2.15rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+    <main class="page-shell mx-auto px-4 py-6 sm:px-6 sm:py-10">
+        <section class="soft-panel rounded-[28px] p-5 sm:p-8 fade-in">
+            <div class="grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+                <div class="order-2 lg:order-1">
+                    <div class="mb-5 flex items-center gap-3 text-sm font-bold text-[#6f875f]">
+                        <div class="flower-mark" aria-hidden="true"><span></span></div>
+                        <span>Information page</span>
+                    </div>
+
+                    <h1 class="hero-title text-[2.75rem] font-extrabold leading-tight text-[#40362f]">
+                        けー。<br>
+                        <span class="text-[#cf7778]">お花×カウンセリング</span>
+                    </h1>
+
+                    <p class="mt-5 text-base leading-8 text-[#675c53]">
+                        華道の師範で、心のケアを大切にするカウンセラーを目指しています。花とカウンセリングを融合させた「フラワーカウンセリング（仮）」を考案中。心に寄り添い、自由な発想で癒しを届けます。
+                    </p>
+
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="tag">華道の師範</span>
+                        <span class="tag">産業カウンセラー</span>
+                        <span class="tag">国家資格キャリアコンサルタント</span>
+                        <span class="tag">認定心理士</span>
+                    </div>
+
+                    <div class="mt-7 grid gap-3 sm:grid-cols-2">
+                        <a href="https://note.com/ninin2024" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-2xl border border-[#f1c5c3] bg-[#fff5f4] px-5 py-4 font-bold text-[#8d4d4f] transition active:scale-[0.98]">
+                            <span>noteを見る</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+                        </a>
+                        <a href="https://x.com/ninin2024" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-2xl border border-[#b7cde0] bg-[#f1f7fb] px-5 py-4 font-bold text-[#3f6f91] transition active:scale-[0.98]">
+                            <span>Xを見る</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="order-1 lg:order-2">
+                    <div class="relative mx-auto max-w-[360px] overflow-hidden rounded-[28px] border border-white bg-white p-3 hero-image">
+                        <img src="./img/k.png" alt="花を持つけー。のイラスト" class="h-auto w-full rounded-[22px] object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+            <div class="soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.08s;">
+                <h2 class="text-xl font-extrabold text-[#40362f]">nininとは</h2>
+                <div class="leaf-line my-4"></div>
+                <p class="text-sm leading-7 text-[#675c53]">
+                    「二人三脚で、共に未来に向かって進む」という意味を込めて名付けました。
+                </p>
+                <blockquote class="mt-5 rounded-2xl border-l-4 border-[#f3aaa8] bg-white/70 px-5 py-4 text-sm font-bold leading-8 text-[#5e524a]">
+                    人はだれでも自分で考える能力をもち<br>
+                    人はだれでも自分の運命を決めることができ<br>
+                    その決定は変えることができる
+                </blockquote>
+            </div>
+
+            <div class="soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.14s;">
+                <h2 class="text-xl font-extrabold text-[#40362f]">プロフィール</h2>
+                <div class="leaf-line my-4"></div>
+                <ul class="info-list grid gap-2 text-sm leading-7 text-[#675c53] sm:grid-cols-2">
+                    <li>大学 臨床心理学科卒</li>
+                    <li>学業奨励賞を受賞</li>
+                    <li>産業カウンセラー</li>
+                    <li>国家資格キャリアコンサルタント</li>
+                    <li>認定心理士</li>
+                    <li>健康心理士</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mt-5 grid gap-5 lg:grid-cols-2">
+            <div class="soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.2s;">
+                <h2 class="text-xl font-extrabold text-[#40362f]">所属・学び</h2>
+                <div class="leaf-line my-4"></div>
+                <ul class="info-list space-y-2 text-sm leading-7 text-[#675c53]">
+                    <li>公益社団法人日本心理学会 会員</li>
+                    <li>認定心理士の会 会員</li>
+                    <li>一般社団法人日本健康心理学会 会員</li>
+                    <li>一般社団法人日本産業カウンセラー協会 会員</li>
+                    <li>産業カウンセラー実技指導者修習生</li>
+                </ul>
+            </div>
+
+            <div class="soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.26s;">
+                <h2 class="text-xl font-extrabold text-[#40362f]">活動</h2>
+                <div class="leaf-line my-4"></div>
+                <ul class="info-list space-y-2 text-sm leading-7 text-[#675c53]">
+                    <li>日本産業カウンセラー協会支部組織にて、イベント・講習会の企画運営活動</li>
+                    <li>日本産業カウンセラー協会主催 2025年3月産業カウンセラー養成講座修了者の集いにて先輩体験談として登壇</li>
+                    <li>他社にてカウンセラーとして相談業務に従事しながら、合同会社nininにも協力</li>
+                    <li>日本産業カウンセラー協会主催 第37回産業カウンセラー活動報告会に登壇</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mt-5 soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.32s;">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <h2 class="text-xl font-extrabold text-[#40362f]">制作・販売</h2>
+                    <p class="mt-2 text-sm leading-7 text-[#675c53]">こころの学びを、やさしく手に取りやすい形で届けています。</p>
+                </div>
+            </div>
+            <div class="mt-5 grid gap-3 sm:grid-cols-3">
+                <a href="https://amzn.asia/d/0hv21OzZ" target="_blank" rel="noopener noreferrer" class="rounded-2xl border border-[#ead8bd] bg-white/78 p-4 transition active:scale-[0.98]">
+                    <p class="text-xs font-bold text-[#9a7a45]">Kindle</p>
+                    <h3 class="mt-1 text-sm font-extrabold leading-6 text-[#40362f]">サポさんと学ぶ！こころのトレーニング入門</h3>
+                    <p class="mt-2 text-xs leading-6 text-[#7b7168]">認知行動療法（CBT）の基本が優しくわかる本</p>
+                </a>
+                <div class="rounded-2xl border border-[#d6e4d3] bg-white/78 p-4">
+                    <p class="text-xs font-bold text-[#66845f]">LINEスタンプ</p>
+                    <h3 class="mt-1 text-sm font-extrabold leading-6 text-[#40362f]">けーとさぽさん</h3>
+                    <p class="mt-2 text-xs leading-6 text-[#7b7168]">けー。とサポさんのスタンプです。</p>
+                </div>
+                <div class="rounded-2xl border border-[#c9dcec] bg-white/78 p-4">
+                    <p class="text-xs font-bold text-[#517a99]">学習ツール</p>
+                    <h3 class="mt-1 text-sm font-extrabold leading-6 text-[#40362f]">心理学理論家 相関全マップ</h3>
+                    <p class="mt-2 text-xs leading-6 text-[#7b7168]">キャリアコンサルタント/産業カウンセラー受験のための教材です。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-5 soft-panel rounded-3xl p-5 sm:p-6 fade-in" style="animation-delay: 0.38s;">
+            <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+                <div>
+                    <h2 class="text-xl font-extrabold text-[#40362f]">ご紹介</h2>
+                    <p class="mt-3 text-sm font-bold leading-7 text-[#675c53]">
+                        てつお（柏崎哲生）<br>
+                        ninin Consulting&amp;Counseling代表
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#eee0d1] bg-white/72 p-4 text-sm leading-7 text-[#675c53]">
+                    <p class="font-extrabold text-[#40362f]">心のサポートを 日本の日常に</p>
+                    <p class="mt-2">私たちは、自分らしく生きていける社会 / 心理支援を「日本のあたり前」にしてゆきます。</p>
+                    <p class="mt-3 text-xs text-[#8b8177]">法人番号9011503006532 / 合同会社ninin</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-5 mb-8 rounded-3xl border border-[#f1c5c3] bg-[#fff5f4] p-5 text-center fade-in" style="animation-delay: 0.44s;">
+            <p class="text-sm font-bold leading-7 text-[#8d4d4f]">お仕事のご依頼・最新情報はこちらから</p>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <a href="https://note.com/ninin2024" target="_blank" rel="noopener noreferrer" class="rounded-2xl bg-white px-5 py-4 text-sm font-extrabold text-[#8d4d4f] shadow-sm transition active:scale-[0.98]">公式note</a>
+                <a href="https://x.com/ninin2024" target="_blank" rel="noopener noreferrer" class="rounded-2xl bg-white px-5 py-4 text-sm font-extrabold text-[#3f6f91] shadow-sm transition active:scale-[0.98]">X（旧Twitter）</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-[#eadfd1] bg-white/72 px-4 py-6 text-center">
+        <p class="text-[11px] font-bold text-[#7b7168]">合同会社ninin consulting &amp; counseling</p>
+        <p class="mt-1 text-[10px] text-[#a59b91]">法人番号 9011503006532</p>
+        <p class="mt-3 text-[10px] uppercase text-[#b8afa6]">© 2026 ninin LLC. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
