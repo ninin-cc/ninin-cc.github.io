@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+    <script>
+      if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+        var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+        window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z1T35THNDV');
+    </script>
     <title>ウェルビーみのや | 北村貞彦</title>
-    <meta name="description" content="ウェルビーみのや 代表 北村貞彦の企業紹介ページです。企業のAI活用伴走、キャリアデザイン研修、コミュニケーション向上、チームビルディング研修、講演依頼等を柔軟に承ります。">
+    <meta name="description" content="ウェルビーみのや 代表 北村貞彦の企業紹介ページです。企業のAI活用伴走、キャリアデザイン研修、セカンドキャリア・副業・独立相談、コミュニケーション向上、チームビルディング研修、講演依頼等を柔軟に承ります。">
     <style>
         :root {
             --ink: #17231f;
@@ -637,6 +654,7 @@
                     <div class="hero-tags" aria-label="支援領域">
                         <span class="tag">AI活用伴走</span>
                         <span class="tag">キャリアデザイン研修</span>
+                        <span class="tag">セカンドキャリア相談</span>
                         <span class="tag">チームビルディング</span>
                         <span class="tag">講演依頼</span>
                     </div>
@@ -691,6 +709,13 @@
                     </article>
                     <article class="service-card">
                         <span class="service-num">03</span>
+                        <div>
+                            <h3>セカンドキャリア・副業・独立相談</h3>
+                            <p>これからの働き方を見つめ直し、自分らしい次の一歩を現実的に考える相談をご紹介できます。</p>
+                        </div>
+                    </article>
+                    <article class="service-card">
+                        <span class="service-num">04</span>
                         <div>
                             <h3>コミュニケーション向上・チームビルディング研修</h3>
                             <p>関係性を整え、対話を増やし、チームの力が発揮されやすい土台づくりをご紹介できます。</p>
@@ -760,7 +785,7 @@
                     </div>
                     <div class="overview-card">
                         <dt>主な領域</dt>
-                        <dd>AI活用伴走、キャリアデザイン研修、コミュニケーション向上、チームビルディング研修</dd>
+                        <dd>AI活用伴走、キャリアデザイン研修、セカンドキャリア・副業・独立相談、コミュニケーション向上、チームビルディング研修</dd>
                     </div>
                     <div class="overview-card">
                         <dt>連絡先</dt>
