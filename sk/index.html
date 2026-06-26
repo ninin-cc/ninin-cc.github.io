@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北村貞彦 | ウェルビーみのや</title>
+    <meta name="description" content="ウェルビーみのや 代表 北村貞彦の紹介ページです。企業のAI活用伴走、キャリアデザイン研修、コミュニケーション向上・チームビルディング研修、講演依頼等のご相談を承ります。">
+    <style>
+        :root {
+            --ink: #1f2924;
+            --muted: #64736b;
+            --deep: #075f46;
+            --green: #1b8a57;
+            --leaf: #7db36f;
+            --mist: #eef7eb;
+            --paper: #fffef8;
+            --cream: #f6f1df;
+            --line: rgba(25, 99, 68, 0.18);
+            --shadow: 0 22px 56px rgba(18, 70, 49, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            font-family: "Yu Gothic", "YuGothic", "Hiragino Sans", "Meiryo", sans-serif;
+            line-height: 1.8;
+            background:
+                radial-gradient(circle at 12% 10%, rgba(125, 179, 111, 0.18), transparent 26rem),
+                radial-gradient(circle at 94% 0%, rgba(27, 138, 87, 0.13), transparent 24rem),
+                linear-gradient(135deg, #fbfff8 0%, #fffef8 45%, #eef7eb 100%);
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.42;
+            background-image:
+                linear-gradient(90deg, rgba(7, 95, 70, 0.05) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(7, 95, 70, 0.05) 1px, transparent 1px);
+            background-size: 38px 38px;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .shell {
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .hero {
+            min-height: 92vh;
+            display: grid;
+            align-items: center;
+            padding: 32px 0 52px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.02fr) minmax(300px, 0.86fr);
+            gap: clamp(28px, 5vw, 64px);
+            align-items: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 20px;
+            color: var(--deep);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 38px;
+            height: 2px;
+            border-radius: 999px;
+            background: var(--green);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(3.25rem, 8vw, 6.4rem);
+            line-height: 1.03;
+            letter-spacing: 0;
+            font-weight: 800;
+        }
+
+        .kana {
+            display: block;
+            margin-top: 16px;
+            color: var(--deep);
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            font-weight: 700;
+        }
+
+        .trade-name {
+            display: inline-flex;
+            align-items: center;
+            margin: 28px 0 0;
+            padding: 10px 16px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.68);
+            color: var(--deep);
+            font-size: 0.95rem;
+            font-weight: 800;
+            box-shadow: 0 10px 24px rgba(18, 70, 49, 0.07);
+        }
+
+        .lead {
+            max-width: 680px;
+            margin: 28px 0 0;
+            color: #39483f;
+            font-size: clamp(1rem, 1.7vw, 1.16rem);
+            font-weight: 600;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px 18px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button-primary {
+            background: var(--deep);
+            color: #fff;
+            box-shadow: 0 16px 30px rgba(7, 95, 70, 0.18);
+        }
+
+        .button-secondary {
+            border-color: var(--line);
+            background: rgba(255, 255, 255, 0.74);
+            color: var(--deep);
+        }
+
+        .portrait-wrap {
+            position: relative;
+        }
+
+        .portrait-card {
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .portrait-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+
+        .email-strip {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 14px;
+            align-items: center;
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 12px 28px rgba(18, 70, 49, 0.08);
+        }
+
+        .seal {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            background: var(--deep);
+            color: #fff;
+            font-size: 1.45rem;
+            font-weight: 800;
+        }
+
+        .email-strip span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .email-strip a {
+            display: block;
+            overflow-wrap: anywhere;
+            color: var(--ink);
+            font-size: clamp(0.95rem, 2.3vw, 1.12rem);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .section {
+            padding: 34px 0;
+        }
+
+        .section-title {
+            margin: 0 0 18px;
+            color: var(--deep);
+            font-size: clamp(1.55rem, 3vw, 2.3rem);
+            line-height: 1.28;
+            letter-spacing: 0;
+        }
+
+        .purpose {
+            display: grid;
+            grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+            gap: 28px;
+            align-items: center;
+            padding: clamp(24px, 4vw, 44px);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(238, 247, 235, 0.82)),
+                var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .purpose-text {
+            margin: 0;
+            font-size: clamp(1.18rem, 2.25vw, 1.8rem);
+            font-weight: 800;
+            line-height: 1.75;
+        }
+
+        .business-card {
+            overflow: hidden;
+            border: 1px solid rgba(7, 95, 70, 0.16);
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 16px 34px rgba(18, 70, 49, 0.11);
+        }
+
+        .business-card img {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.76);
+            box-shadow: 0 14px 34px rgba(18, 70, 49, 0.08);
+        }
+
+        .story {
+            padding: clamp(22px, 4vw, 38px);
+        }
+
+        .story p {
+            margin: 0;
+            white-space: pre-line;
+            font-size: clamp(1rem, 1.7vw, 1.12rem);
+            font-weight: 700;
+            line-height: 2.08;
+        }
+
+        .services {
+            display: grid;
+            gap: 12px;
+            padding: clamp(22px, 4vw, 38px);
+        }
+
+        .service-item {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 12px;
+            align-items: start;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(25, 99, 68, 0.12);
+        }
+
+        .service-item:last-child {
+            border-bottom: 0;
+        }
+
+        .service-num {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: var(--mist);
+            color: var(--deep);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .service-item p {
+            margin: 0;
+            color: #33433a;
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.7;
+        }
+
+        .contact {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 22px;
+            align-items: center;
+            margin: 34px 0 56px;
+            padding: clamp(22px, 4vw, 38px);
+            border: 1px solid rgba(7, 95, 70, 0.22);
+            border-radius: 8px;
+            background: var(--deep);
+            color: #fff;
+            box-shadow: 0 24px 52px rgba(7, 95, 70, 0.2);
+        }
+
+        .contact p {
+            margin: 0;
+            font-size: clamp(1rem, 1.7vw, 1.15rem);
+            font-weight: 700;
+            line-height: 1.9;
+        }
+
+        .contact .button {
+            background: #fff;
+            color: var(--deep);
+            white-space: nowrap;
+        }
+
+        footer {
+            padding: 26px 16px 34px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 860px) {
+            .hero {
+                min-height: auto;
+                padding-top: 24px;
+            }
+
+            .hero-grid,
+            .purpose,
+            .profile-grid,
+            .contact {
+                grid-template-columns: 1fr;
+            }
+
+            .portrait-wrap {
+                max-width: 440px;
+                margin: 0 auto;
+            }
+
+            .contact .button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .shell {
+                width: min(100% - 22px, 1120px);
+            }
+
+            .hero-actions {
+                display: grid;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .email-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .seal {
+                width: 42px;
+                height: 42px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="hero">
+            <div class="shell hero-grid">
+                <div>
+                    <p class="eyebrow">ウェルビーみのや 代表</p>
+                    <h1>北村貞彦<span class="kana">きたむら さだひこ</span></h1>
+                    <p class="trade-name">屋号: ウェルビーみのや</p>
+                    <p class="lead">ひとりひとりが自らの個性や強みを心おきなく発揮し、それぞれのWell-beingを実感できる、魅力ある持続可能な社会を実現する。</p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="mailto:kitamurasadahiko@gmail.com">メールで問い合わせる</a>
+                        <a class="button button-secondary" href="#profile">紹介を見る</a>
+                    </div>
+                </div>
+
+                <div class="portrait-wrap" aria-label="北村貞彦の写真と連絡先">
+                    <div class="portrait-card">
+                        <img src="./img/kitamura.jpg" alt="北村貞彦">
+                    </div>
+                    <div class="email-strip">
+                        <div class="seal" aria-hidden="true">美</div>
+                        <div>
+                            <span>メールアドレス</span>
+                            <a href="mailto:kitamurasadahiko@gmail.com">kitamurasadahiko@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="purpose-title">
+            <div class="shell purpose">
+                <div>
+                    <p class="eyebrow">Purpose</p>
+                    <h2 class="section-title" id="purpose-title">パーパス</h2>
+                    <p class="purpose-text">ひとりひとりが自らの個性や強みを心おきなく発揮し、それぞれのWell-beingを実感できる、魅力ある持続可能な社会を実現する。</p>
+                </div>
+                <div class="business-card">
+                    <img src="./img/meishi.png" alt="ウェルビーみのや 北村貞彦の名刺">
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="profile" aria-labelledby="profile-title">
+            <div class="shell profile-grid">
+                <div class="panel story">
+                    <p class="eyebrow">Profile</p>
+                    <h2 class="section-title" id="profile-title">きたむら さだひこ。</h2>
+                    <p>名古屋の酒屋の長男坊。
+大手通信会社で働きつつ、
+七転び八起
+さまざまいろいろあって
+
+「ウェルビーみのや」を
+立ち上げました。</p>
+                </div>
+
+                <div class="panel services" aria-label="ご紹介できること">
+                    <div>
+                        <p class="eyebrow">Works</p>
+                        <h2 class="section-title">ご紹介できること</h2>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-num">01</span>
+                        <p>企業のAI活用伴走</p>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-num">02</span>
+                        <p>キャリアデザイン研修の導入</p>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-num">03</span>
+                        <p>コミュニケーション向上<br>チームビルディング研修</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="shell contact" aria-label="講演依頼とお問い合わせ">
+            <p>◆ご講演依頼等、柔軟にお受けいたします。<br>お気軽にお問合せください。</p>
+            <a class="button" href="mailto:kitamurasadahiko@gmail.com">kitamurasadahiko@gmail.com</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>Well-being Minoya / Sadahiko Kitamura</p>
+    </footer>
+</body>
+</html>
