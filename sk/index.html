@@ -121,11 +121,17 @@
             place-items: center;
             width: 34px;
             height: 34px;
+            overflow: hidden;
             border-radius: 999px;
-            background: var(--deep);
-            color: #fff;
-            font-size: 1.05rem;
-            font-weight: 900;
+            background: #fff;
+            border: 1px solid rgba(0, 105, 79, 0.16);
+            box-shadow: 0 6px 14px rgba(7, 69, 56, 0.1);
+        }
+
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .nav-links {
@@ -633,7 +639,7 @@
     <header class="topbar">
         <div class="shell topbar-inner">
             <a class="brand" href="#top" aria-label="ウェルビーみのや トップ">
-                <span class="brand-mark" aria-hidden="true">美</span>
+                <span class="brand-mark" aria-hidden="true"><img src="./img/logo.png" alt=""></span>
                 <span>ウェルビーみのや</span>
             </a>
             <nav class="nav-links" aria-label="ページ内リンク">
