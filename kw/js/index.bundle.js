@@ -21,6 +21,26 @@ const CONFIG = {
   }
 };
 
+// --- 相談導線設定 ---
+// 別サービスとして展開するときは、主にこのブロックを手で変更してください。
+// profileText / profileUrl / profileLinkLabel は空欄のままなら紹介文枠に表示されません。
+const CONTACT_CONFIG = {
+  consultationName: 'nininカウンセリングルーム',
+  consultationUrl: 'https://ninin-cc.github.io/',
+  consultationDescription: 'nininカウンセリングルームでは、仕事や役割、人間関係の中で重くなった気持ちを、ゆっくり言葉にする時間を大切にしています。今すぐ答えを出すためではなく、今の心の天気を一緒に見つめるための相談先です。',
+  profileText: '',
+  profileUrl: '',
+  profileLinkLabel: '',
+  talkButtonLabel: 'ひとに話してみる',
+  resultButtonLabel: 'ひとに話してみる',
+  popupTitle: 'カフェの片隅で',
+  popupLeadText: '自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。\n\n言葉にして、誰かに話してみることで、\n「ああ、自分はこんなに背負っていたんだ」と気づくこともあります。',
+  ctaLabel: 'nininカウンセリングルームへ向かう'
+};
+
+// 著作表記リンク先。相談先を変えてもここは ninin HP のままにします。
+const NININ_HOME_URL = 'https://ninin-cc.github.io/';
+
 // --- 10の物語と役割の定義 ---
 const WEATHER_DATA = {
   silent: {
@@ -491,7 +511,7 @@ const App = () => {
 
   React.createElement("div", { className: "flex flex-col gap-2 mt-2" }, /*#__PURE__*/
   React.createElement("button", { onClick: () => openPopup('talk'), className: "text-gray-400 hover:text-yellow-300 transition-colors text-sm font-bold flex items-center justify-center gap-2 underline underline-offset-4" }, /*#__PURE__*/
-  React.createElement("i", { className: "fa-solid fa-comments" }), " \u3072\u3068\u306B\u8A71\u3057\u3066\u307F\u308B"
+  React.createElement("i", { className: "fa-solid fa-comments" }), " ", CONTACT_CONFIG.talkButtonLabel
   )
   )
   )
@@ -850,12 +870,12 @@ const App = () => {
       ), /*#__PURE__*/
 
       React.createElement("a", {
-        href: "https://ninin-cc.github.io/",
+        href: CONTACT_CONFIG.consultationUrl,
         target: "_blank",
         rel: "noopener noreferrer",
         className: "rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]" }, /*#__PURE__*/
 
-      React.createElement("i", { className: "fa-solid fa-comments" }), " \u3072\u3068\u306B\u8A71\u3057\u3066\u307F\u308B"
+      React.createElement("i", { className: "fa-solid fa-comments" }), " ", CONTACT_CONFIG.resultButtonLabel
       )
       ), /*#__PURE__*/
 
@@ -992,19 +1012,42 @@ const App = () => {
       return /*#__PURE__*/(
         React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm" }, /*#__PURE__*/
         React.createElement("div", { className: "w-full max-w-lg" }, /*#__PURE__*/
-        React.createElement(WindowBox, { title: "\u30AB\u30D5\u30A7\u306E\u7247\u9685\u3067", iconName: "fa-solid fa-mug-hot", className: "bg-opacity-100 border-yellow-500 shadow-2xl" }, /*#__PURE__*/
+        React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "bg-opacity-100 border-yellow-500 shadow-2xl" }, /*#__PURE__*/
         React.createElement(DialogBox, {
           charConfig: CONFIG.char1,
-          text: `自分が背負っている役割は、一人で抱えているだけでは見えにくいことがあります。\n\n言葉にして、誰かに話してみることで、\n「ああ、自分はこんなに背負っていたんだ」と気づくこともあります。\n\nもしよければ、nininキャリアルームで、あなたの話をゆっくり聞かせてください。` }
+          text: `${CONTACT_CONFIG.popupLeadText}\n\nもしよければ、【 ${CONTACT_CONFIG.consultationName} 】で、あなたの話をゆっくり聞かせてください。` }
         ), /*#__PURE__*/
         React.createElement("div", { className: "flex flex-col gap-3 mt-6" }, /*#__PURE__*/
         React.createElement("a", {
-          href: "https://ninin-cc.github.io/",
+          href: CONTACT_CONFIG.consultationUrl,
           target: "_blank",
           rel: "noopener noreferrer",
           className: "rpg-button bg-yellow-900 border-yellow-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2" }, /*#__PURE__*/
 
-        React.createElement("i", { className: "fa-solid fa-door-open" }), " ninin\u30AD\u30E3\u30EA\u30A2\u30EB\u30FC\u30E0\u3078"
+        React.createElement("i", { className: "fa-solid fa-door-open" }), " ", CONTACT_CONFIG.ctaLabel
+        ), /*#__PURE__*/
+        CONTACT_CONFIG.consultationDescription && /*#__PURE__*/
+        React.createElement("div", {
+          className: "letter-note relative mt-3 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]" }, /*#__PURE__*/
+
+        React.createElement("div", { className: "absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow" }, "紹介状"
+        ), /*#__PURE__*/
+        React.createElement("p", { className: "text-[12px] leading-7 font-medium" },
+        CONTACT_CONFIG.consultationDescription
+        ),
+        CONTACT_CONFIG.profileText && /*#__PURE__*/
+        React.createElement("p", { className: "mt-3 border-t border-stone-300/60 pt-2 text-[10px] leading-relaxed text-stone-500" }, CONTACT_CONFIG.profileText),
+        CONTACT_CONFIG.profileUrl && /*#__PURE__*/
+        React.createElement("p", { className: "mt-3 border-t border-stone-300/60 pt-2 text-[10px] leading-relaxed text-stone-500" }, /*#__PURE__*/
+        React.createElement("span", null, CONTACT_CONFIG.profileLinkLabel || '自己紹介ページ', "："), /*#__PURE__*/
+        React.createElement("a", {
+          href: CONTACT_CONFIG.profileUrl,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          className: "underline underline-offset-2 hover:text-stone-700 break-all" },
+        CONTACT_CONFIG.profileUrl
+        )
+        )
         ), /*#__PURE__*/
         React.createElement("button", {
           onClick: closePopup,
