@@ -92,19 +92,39 @@
 
         .hero-wrap {
             position: relative;
-            min-height: min(760px, calc(82vh - 70px));
+            min-height: clamp(520px, 64vw, 720px);
             display: flex;
             align-items: center;
             overflow: hidden;
-            background:
-                linear-gradient(90deg, rgba(251, 250, 247, 0.96) 0%, rgba(251, 250, 247, 0.88) 34%, rgba(251, 250, 247, 0.24) 66%, rgba(251, 250, 247, 0.08) 100%),
-                url("./img/hero-conversation-bg.png") center / cover no-repeat;
+            background: #fbfaf7;
             border-top: 1px solid rgba(20, 28, 36, 0.04);
             border-bottom: 1px solid rgba(20, 28, 36, 0.08);
         }
 
+        .hero-wrap::before,
+        .hero-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hero-wrap::before {
+            left: 50%;
+            width: min(1120px, calc(100% - 32px));
+            transform: translateX(-50%);
+            background: url("./img/hero-conversation-bg.png") center center / 100% auto no-repeat;
+            opacity: 0.94;
+        }
+
+        .hero-wrap::after {
+            background: linear-gradient(90deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.9) 34%, rgba(251, 250, 247, 0.42) 60%, rgba(251, 250, 247, 0.1) 100%);
+        }
+
         .hero {
-            padding: 74px 0 86px;
+            position: relative;
+            z-index: 1;
+            padding: clamp(58px, 7vw, 84px) 0;
         }
 
         .hero-copy {
@@ -398,20 +418,57 @@
             gap: 20px;
         }
 
+        @media (max-width: 1180px) {
+            .hero-wrap {
+                min-height: clamp(500px, 58vw, 650px);
+            }
+
+            .hero-wrap::before {
+                width: min(1040px, calc(100% - 32px));
+                background-size: 100% auto;
+            }
+
+            .hero-wrap::after {
+                background: linear-gradient(90deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 34%, rgba(251, 250, 247, 0.42) 64%, rgba(251, 250, 247, 0.12) 100%);
+            }
+
+            .hero {
+                padding: clamp(48px, 6vw, 70px) 0;
+            }
+
+            .hero-copy {
+                width: min(470px, 58%);
+            }
+
+            .lead {
+                max-width: 470px;
+            }
+        }
+
         @media (max-width: 900px) {
             .services {
                 grid-template-columns: 1fr;
             }
 
             .hero-wrap {
-                min-height: 660px;
-                background:
-                    linear-gradient(180deg, rgba(251, 250, 247, 0.96) 0%, rgba(251, 250, 247, 0.88) 42%, rgba(251, 250, 247, 0.24) 100%),
-                    url("./img/hero-conversation-bg.png") 62% center / cover no-repeat;
+                min-height: 640px;
+            }
+
+            .hero-wrap::before {
+                width: min(660px, calc(100% - 32px));
+                background: url("./img/hero-conversation-bg-mobile.png") center bottom / 100% auto no-repeat;
+            }
+
+            .hero-wrap::after {
+                background: linear-gradient(180deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 46%, rgba(251, 250, 247, 0.22) 100%);
             }
 
             .hero {
-                padding: 54px 0 360px;
+                padding: 54px 0 330px;
+            }
+
+            .hero-copy {
+                width: min(520px, 100%);
             }
         }
 
@@ -430,7 +487,7 @@
 
             .hero {
                 gap: 28px;
-                padding: 42px 0 310px;
+                padding: 42px 0 clamp(350px, 102vw, 450px);
             }
 
             .actions,
@@ -439,10 +496,15 @@
             }
 
             .hero-wrap {
-                min-height: 710px;
-                background:
-                    linear-gradient(180deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 42%, rgba(251, 250, 247, 0.2) 100%),
-                    url("./img/hero-conversation-bg.png") 64% bottom / auto 62% no-repeat;
+                min-height: clamp(650px, 178vw, 760px);
+            }
+
+            .hero-wrap::before {
+                width: min(500px, 100%);
+            }
+
+            .hero-wrap::after {
+                background: linear-gradient(180deg, rgba(251, 250, 247, 0.99) 0%, rgba(251, 250, 247, 0.96) 43%, rgba(251, 250, 247, 0.18) 100%);
             }
 
             .services {
