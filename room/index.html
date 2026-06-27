@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z1T35THNDV');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ninin カウンセリングルームとninin キャリアルームのサービス紹介ページです。">
+    <title>ninin カウンセリングルーム / ninin キャリアルーム</title>
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #141c24;
+            --muted: #5f6872;
+            --line: rgba(20, 28, 36, 0.12);
+            --paper: #fbfaf7;
+            --warm: #b66b45;
+            --trust: #1e6678;
+            --navy: #172531;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--ink);
+            background: linear-gradient(180deg, #fbfaf7 0%, #f5f8f8 64%, #fffaf4 100%);
+        }
+
+        img {
+            display: block;
+        }
+
+        .container {
+            width: min(1120px, calc(100% - 32px));
+            margin-inline: auto;
+        }
+
+        .nav {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .brand img {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: white;
+            padding: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .nav-links a {
+            color: #58636e;
+            text-decoration: none;
+        }
+
+        .hero-wrap {
+            position: relative;
+            min-height: min(760px, calc(82vh - 70px));
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background:
+                linear-gradient(90deg, rgba(251, 250, 247, 0.96) 0%, rgba(251, 250, 247, 0.88) 34%, rgba(251, 250, 247, 0.24) 66%, rgba(251, 250, 247, 0.08) 100%),
+                url("./img/hero-conversation-bg.png") center / cover no-repeat;
+            border-top: 1px solid rgba(20, 28, 36, 0.04);
+            border-bottom: 1px solid rgba(20, 28, 36, 0.08);
+        }
+
+        .hero {
+            padding: 74px 0 86px;
+        }
+
+        .hero-copy {
+            width: min(560px, 100%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #52606b;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--warm), var(--trust));
+        }
+
+        h1 {
+            margin: 22px 0 0;
+            font-size: clamp(2.75rem, 6vw, 5.7rem);
+            line-height: 1.02;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            margin: 24px 0 0;
+            max-width: 560px;
+            color: var(--muted);
+            font-size: 1.03rem;
+            line-height: 2;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            border-radius: 8px;
+            padding: 12px 18px;
+            color: white;
+            background: var(--navy);
+            text-decoration: none;
+            font-weight: 900;
+            box-shadow: 0 16px 38px rgba(23, 37, 49, 0.2);
+        }
+
+        .button.secondary {
+            color: var(--navy);
+            background: white;
+            border: 1px solid var(--line);
+            box-shadow: none;
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            padding: 0 0 38px;
+        }
+
+        .service {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.86);
+            box-shadow: 0 22px 62px rgba(24, 38, 50, 0.08);
+        }
+
+        .service-photo {
+            height: 230px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .service-body {
+            padding: 30px;
+        }
+
+        .room-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 7px 13px 7px 7px;
+            background: white;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .room-label img {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            object-fit: cover;
+        }
+
+        .room-label.warm {
+            color: #7b4028;
+        }
+
+        .room-label.trust {
+            color: #173f51;
+        }
+
+        h2 {
+            margin: 20px 0 0;
+            font-size: clamp(2rem, 3.4vw, 3.55rem);
+            line-height: 1.12;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .message {
+            margin: 20px 0 0;
+            color: #43505c;
+            font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+            line-height: 2;
+            font-weight: 500;
+        }
+
+        .details-section {
+            padding: 0 0 68px;
+        }
+
+        .details-panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 22px 62px rgba(24, 38, 50, 0.08);
+            overflow: hidden;
+        }
+
+        .details-head {
+            padding: 30px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .details-head h2 {
+            margin-top: 8px;
+            font-size: clamp(1.8rem, 3.3vw, 3rem);
+        }
+
+        .details-lead {
+            margin: 16px 0 0;
+            color: var(--muted);
+            line-height: 2;
+        }
+
+        .accordion {
+            border-bottom: 1px solid var(--line);
+        }
+
+        .accordion:last-child {
+            border-bottom: 0;
+        }
+
+        .accordion summary {
+            cursor: pointer;
+            list-style: none;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            color: #172531;
+            font-size: 1.05rem;
+            font-weight: 900;
+        }
+
+        .accordion summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .accordion summary::after {
+            content: "+";
+            flex: 0 0 auto;
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: #fff;
+            color: #52606b;
+            font-weight: 900;
+        }
+
+        .accordion[open] summary::after {
+            content: "-";
+        }
+
+        .accordion-body {
+            padding: 0 30px 28px;
+            color: #43505c;
+            line-height: 1.95;
+        }
+
+        .accordion-body h3 {
+            margin: 22px 0 10px;
+            color: #172531;
+            font-size: 1.02rem;
+            font-weight: 900;
+        }
+
+        .accordion-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .accordion-body p,
+        .accordion-body ul,
+        .accordion-body ol {
+            margin: 10px 0 0;
+        }
+
+        .accordion-body ul,
+        .accordion-body ol {
+            padding-left: 1.35em;
+        }
+
+        .price-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .price-item {
+            border-left: 4px solid rgba(30, 102, 120, 0.35);
+            padding: 2px 0 2px 14px;
+        }
+
+        .source-chip {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            padding: 5px 10px;
+            background: #fff;
+            color: #667085;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .book-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .book-item {
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(20, 28, 36, 0.08);
+        }
+
+        .book-item:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.78);
+            padding: 26px 0;
+            color: #69737d;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .services {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-wrap {
+                min-height: 660px;
+                background:
+                    linear-gradient(180deg, rgba(251, 250, 247, 0.96) 0%, rgba(251, 250, 247, 0.88) 42%, rgba(251, 250, 247, 0.24) 100%),
+                    url("./img/hero-conversation-bg.png") 62% center / cover no-repeat;
+            }
+
+            .hero {
+                padding: 54px 0 360px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .container {
+                width: min(100% - 24px, 1120px);
+            }
+
+            .nav {
+                height: 62px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                gap: 28px;
+                padding: 42px 0 310px;
+            }
+
+            .actions,
+            .button {
+                width: 100%;
+            }
+
+            .hero-wrap {
+                min-height: 710px;
+                background:
+                    linear-gradient(180deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 42%, rgba(251, 250, 247, 0.2) 100%),
+                    url("./img/hero-conversation-bg.png") 64% bottom / auto 62% no-repeat;
+            }
+
+            .services {
+                padding-bottom: 46px;
+            }
+
+            .service-photo {
+                height: 210px;
+            }
+
+            .service-body {
+                padding: 24px 20px 26px;
+            }
+
+            .details-section {
+                padding-bottom: 48px;
+            }
+
+            .details-head,
+            .accordion summary,
+            .accordion-body {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container nav">
+            <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" class="brand" aria-label="ninin 公式サイト">
+                <img src="https://ninin-cc.github.io/img/ninin.png" alt="ninin logo">
+                <span>ninin</span>
+            </a>
+            <div class="nav-links">
+                <a href="#counseling">カウンセリング</a>
+                <a href="#career">キャリア</a>
+                <a href="#service-details">詳細</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-wrap">
+            <div class="container hero">
+            <div class="hero-copy">
+                <div class="eyebrow">counseling & career room</div>
+                <h1>ほどく。<br>見出す。</h1>
+                <p class="lead">
+                    nininは、こころの相談とキャリアの整理を二人三脚で支える小さな相談室です。
+                </p>
+                <div class="actions">
+                    <a href="#service-details" class="button">サービス詳細を見る</a>
+                    <a href="https://ninin-cc.github.io/" target="_blank" rel="noopener noreferrer" class="button secondary">公式サイトへ</a>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <section class="container services">
+            <article id="counseling" class="service">
+                <img src="./img/counseling-room-photo.png" alt="" class="service-photo">
+                <div class="service-body">
+                    <div class="room-label warm">
+                        <img src="./img/kei.png" alt="">
+                        <span>ninin カウンセリングルーム</span>
+                    </div>
+                    <h2>ゆっくりと、<br>お話を。</h2>
+                    <p class="message">
+                        ゆっくりとお話を聞かせてください。<br>
+                        心のカタ結びをほどいていきましょう。
+                    </p>
+                </div>
+            </article>
+
+            <article id="career" class="service">
+                <img src="./img/career-room-photo.png" alt="" class="service-photo">
+                <div class="service-body">
+                    <div class="room-label trust">
+                        <img src="./img/teten.png" alt="">
+                        <span>ninin キャリアルーム</span>
+                    </div>
+                    <h2>価値と力を、<br>見出す。</h2>
+                    <p class="message">
+                        あなたのコアバリューと<br>
+                        コアコンピテンスを<br>
+                        見出していきましょう。
+                    </p>
+                </div>
+            </article>
+        </section>
+
+        <section id="service-details" class="container details-section">
+            <div class="details-panel">
+                <div class="details-head">
+                    <div class="eyebrow">service details</div>
+                    <h2>サービス詳細</h2>
+                    <p class="details-lead">
+                        キャリアコンサルタント / 産業カウンセラーのWライセンス保持者二名が在籍するnininへのご依頼・ご相談について。
+                    </p>
+                </div>
+
+                <details class="accordion" open>
+                    <summary>ご相談・依頼フォーム</summary>
+                    <div class="accordion-body">
+                        <h3>nininへのご依頼・ご相談フォーム</h3>
+                        <p>
+                            キャリア講義、カウンセリング、出版支援、副業相談など、ご相談内容に応じてお受けしています。
+                        </p>
+                        <span class="source-chip">forms.gle</span>
+                    </div>
+                </details>
+
+                <details class="accordion">
+                    <summary>カウンセラーのご紹介</summary>
+                    <div class="accordion-body">
+                        <p>
+                            どうぞ、ご相談内容に応じてお選びください。ざっくり言うと「癒しカウンセリングが けー。」「エンパワー＆強み発見副業支援は てつお」が得意。どちらもあなたに寄り添うカウンセラーです。
+                        </p>
+                        <h3>来談者中心的な基本姿勢</h3>
+                        <p>
+                            来談者中心的とは、現代のカウンセリングの土台となっている基本姿勢です。カール・ロジャーズが提唱した「答えはクライエントの中にある」という考えに基づき、クライエント本来の力を引き出す支援を行います。自ら気づき、変化していく力が育まれることを大切にしています。
+                        </p>
+                        <h3>けー。のご紹介</h3>
+                        <p>
+                            カウンセラーの「けー。」です。そして、華道の師範。お花×カウンセリングで、癒しをお届けします。
+                        </p>
+                        <span class="source-chip">けー。お花×カウンセリング｜note</span>
+                        <h3>柏崎哲生のご紹介</h3>
+                        <p>
+                            1on1ミーティングと傾聴技法の実践、キャリア支援、強み発見、副業支援などを通じて、語りを力に変える支援を行います。
+                        </p>
+                        <span class="source-chip">いまここTokyo Online</span>
+                    </div>
+                </details>
+
+                <details class="accordion">
+                    <summary>カウンセリング / 出版支援 / 副業相談</summary>
+                    <div class="accordion-body">
+                        <p>
+                            使える心理学について、分かりやすく物語にしています。一度読んでみてください。それだけで心が楽になるかもしれません。
+                        </p>
+                        <span class="source-chip">【物語で心理学】ハルカとリフレム｜note</span>
+                        <h3>受付時間</h3>
+                        <p>平日19:00～22:00 / 土日祝10:00～21:00</p>
+                        <div class="price-list">
+                            <div class="price-item">
+                                <strong>1. 対面カウンセリング（60分） 22,000円</strong><br>
+                                一番ベーシックなカウンセリングです。山手線沿線にて対面のカウンセリングを行います。
+                            </div>
+                            <div class="price-item">
+                                <strong>2. オンライン対面カウンセリング（50分） 11,000円</strong><br>
+                                ZOOM等を使い、オンラインでカウンセリングをするコースです。遠方の方や継続的なカウンセリングをご希望の方にお勧めです。
+                            </div>
+                            <div class="price-item">
+                                <strong>3. 出版支援 / 副業相談</strong><br>
+                                30分の初回面談は無料です。お気軽にお問い合わせください。
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="accordion">
+                    <summary>ご依頼の流れ</summary>
+                    <div class="accordion-body">
+                        <ol>
+                            <li>LINE「カウンセリングルームninin公式アカウント」を友達追加ください。その後フォームにて必要事項にご記入願います。</li>
+                            <li>カウンセラーより原則24時間以内に日程調整のメールが届きます。</li>
+                            <li>日程調整、ご入金確認後ができ次第、ご希望の日時でカウンセリング / トレーニングを行います。</li>
+                        </ol>
+                    </div>
+                </details>
+
+                <details class="accordion">
+                    <summary>著作紹介</summary>
+                    <div class="accordion-body">
+                        <div class="book-list">
+                            <div class="book-item">あなたの物語には価値が在る: 50歳からのセルフキャリア構築インタビュー narrative efficacy (ninin出版) / 1,250円</div>
+                            <div class="book-item">ノートを片付けるのはやめなさい: 『行動の極小化』で『あなた』が動き出す (ninin出版) / 980円</div>
+                            <div class="book-item">The Narrative Efficacy〜キャリア支援における「ナラティブ・エフィカシー」実践モデル論文〜: 語ることは癒しであり、意味であり、力である narrativeefficacy (ninin出版) / 1,250円</div>
+                            <div class="book-item">『AIと紡ぐ、語りと書きの未来』: ナラティブ・エフィカシー理論 拡張モデル narrative efficacy (ninin出版) / 390円</div>
+                            <div class="book-item">僕の相棒はAIのガプトさん: プロンプトはもう古い！AIに命を吹き込んで相棒にしよう！ (ninin出版) / 390円</div>
+                        </div>
+                        <span class="source-chip">amzn.asia</span>
+                    </div>
+                </details>
+
+                <details class="accordion">
+                    <summary>カウンセリング規定・個人情報保護方針</summary>
+                    <div class="accordion-body">
+                        <ol>
+                            <li>現在、精神科・心療内科に通院、または服薬されている方は、事前にお知らせください。又、ご依頼者の状態によっては、カウンセリングをお受け出来ない場合がございますので、ご了承ください。</li>
+                            <li>カウンセリングによって、必ずしも症状の改善をお約束するものではございません。</li>
+                            <li>カウンセリングの過程で、様々な不快な感情が起きることがあります。そのことについて話し合う場合もありますのでご了承ください。</li>
+                            <li>ご相談の内容がカウンセラーの能力を超える場合、災害や事故、施設内のトラブルなど、状況的にカウンセリングが難しい場合は、カウンセリングをお断りさせていただくことがございます。</li>
+                            <li>ご依頼者に重大な約束違反があった場合、またはカウンセリングの継続が不適切となるような事態が生じた場合は、以後のカウンセリングをお断りすることがございます。</li>
+                            <li>対面及び、訪問カウンセリングのキャンセル料金につきましては、平日は前々日から、土日は1週間前から発生いたします。平日は前々日1,000円、前日50%、当日100%。土日祝は1週間前から前々日1,000円、前日50%、当日100%です。</li>
+                            <li>ご依頼者に自傷他害の恐れがある場合には、人命を守るためにご依頼者の承諾を得ずに、適切な人または他機関に知らせる場合がありますので、ご了承ください。</li>
+                            <li>カウンセリングご利用の際に、ご依頼者様の行為により生じた損害全てに対して、いかなる理由があれ、当方は一切責任を負わないものとし、損害賠償義務を一切負いません。</li>
+                            <li>当カウンセリングのセミナー等において、参加者同士の宗教やマルチ商法等への勧誘、またはセミナーの円滑な進行に支障をきたすと思われる行為を禁止しております。お困りの際はスタッフに速やかにご相談ください。</li>
+                            <li>オンラインを利用したカウンセリングにて発生したご自身の通信費等の費用はクライアント様負担になります。また、設備不備等による不具合において、こちらでは弁済や保証は致しかねます。</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-inner">
+            <div>
+                <strong>合同会社ninin consulting ＆ counseling</strong><br>
+                法人番号 9011503006532 / 社名由来は「二人三脚」
+            </div>
+            <div>© 2025 ninin LLC. All Rights Reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>
