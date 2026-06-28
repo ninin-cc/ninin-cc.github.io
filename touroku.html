@@ -24,6 +24,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- linkdata.js を読み込み -->
+    <script src="./js/linkdata.js"></script>
+
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -167,27 +171,10 @@
                                         <th scope="col" class="px-4 py-3 font-bold">コメント</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-stone-100 bg-white text-stone-600">
+                                <!-- JSで動的にデータを挿入するtbody -->
+                                <tbody id="riesm-tbody" class="divide-y divide-stone-100 bg-white text-stone-600">
                                     <tr>
-                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-001</td>
-                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">けー。</td>
-                                        <td class="px-4 py-3 whitespace-nowrap">オンライン中心</td>
-                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
-                                        <td class="px-4 py-3 leading-relaxed">楽しく、わかりやすい事を心がけてます。</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-002</td>
-                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">れい</td>
-                                        <td class="px-4 py-3 whitespace-nowrap">オンライン中心</td>
-                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
-                                        <td class="px-4 py-3 leading-relaxed">これからの活動も楽しみにしています。</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">AMB-003</td>
-                                        <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">りんこ</td>
-                                        <td class="px-4 py-3 whitespace-nowrap">広島県</td>
-                                        <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
-                                        <td class="px-4 py-3 leading-relaxed">安心して自分らしく働ける文化を作っていきたい。</td>
+                                        <td colspan="5" class="px-4 py-3 text-center text-stone-500">データを読み込んでいます...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -280,6 +267,45 @@
             </a>
         </div>
     </footer>
+
+    <!-- 連携用のJavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // linkDataが読み込まれているかチェック
+            if (typeof linkData !== 'undefined') {
+                // linkDataから「riesm」のタグを持つメンバーだけを抽出
+                const riesmMembers = linkData.filter(member => member.tags && member.tags.includes('riesm'));
+                const tbody = document.getElementById('riesm-tbody');
+                
+                if (tbody && riesmMembers.length > 0) {
+                    // 抽出したメンバーをテーブルの行（tr）として生成
+                    const html = riesmMembers.map(member => {
+                        // AMB-XXX のような番号を抽出
+                        let ambNumber = '-';
+                        if (member.certification) {
+                            const match = member.certification.match(/(AMB-\d{3})/);
+                            if (match) {
+                                ambNumber = match[1];
+                            }
+                        }
+                        
+                        return `
+                            <tr>
+                                <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">${ambNumber}</td>
+                                <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">${member.name}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">-</td>
+                                <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
+                                <td class="px-4 py-3 leading-relaxed">${member.desc}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                    tbody.innerHTML = html;
+                } else if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-3 text-center text-stone-500">現在、該当する登録者はいません。</td></tr>';
+                }
+            }
+        });
+    </script>
 
     <!-- アコーディオン用のJavaScript -->
     <script>
