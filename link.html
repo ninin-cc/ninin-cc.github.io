@@ -199,6 +199,93 @@
         .empty-results.is-visible {
             display: block;
         }
+        .member-rotator {
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.76);
+            box-shadow: 0 4px 16px rgba(24, 38, 50, 0.04);
+            overflow: hidden;
+        }
+
+        .member-rotator-row {
+            display: grid;
+            grid-template-columns: minmax(8rem, auto) 1fr auto;
+            align-items: start;
+            gap: 0.6rem 1rem;
+            padding: 0.95rem 1rem;
+            cursor: pointer;
+        }
+
+        .member-rotator-name {
+            color: var(--navy);
+            font-size: 1rem;
+            font-weight: 900;
+            line-height: 1.45;
+        }
+
+        .member-rotator-title {
+            color: var(--trust);
+            font-size: 0.8rem;
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        .member-rotator-text {
+            grid-column: 1 / 3;
+            color: #43505c;
+            font-size: 0.84rem;
+            line-height: 1.75;
+        }
+
+        .member-rotator-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .rotator-btn {
+            width: 2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: white;
+            color: var(--navy);
+            transition: all 0.2s;
+        }
+
+        .rotator-btn:hover,
+        .rotator-btn:focus-visible {
+            border-color: rgba(30, 102, 120, 0.4);
+            background: rgba(30, 102, 120, 0.08);
+            outline: none;
+        }
+
+        .rotator-btn svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .member-rotator.is-paused {
+            border-color: rgba(182, 107, 69, 0.28);
+        }
+
+        @media (max-width: 640px) {
+            .member-rotator-row {
+                grid-template-columns: 1fr auto;
+                gap: 0.45rem 0.75rem;
+                padding: 0.85rem;
+            }
+
+            .member-rotator-title,
+            .member-rotator-text {
+                grid-column: 1 / -1;
+            }
+        }
+
         .filter-btn {
             white-space: nowrap;
             padding: 8px 16px;
@@ -462,7 +549,10 @@
             margin-top: 0.1rem;
             padding-top: 0;
             border-top: none;
+            display: flex;
+            align-items: center;
             justify-content: flex-start;
+            flex-wrap: wrap;
         }
 
         .view-list .card-link-btn {
@@ -470,6 +560,8 @@
             height: 1.85rem;
             padding: 0;
             font-size: 0.68rem;
+            display: inline-flex;
+            flex: 0 0 auto;
         }
 
         .view-list .profile-trigger {
@@ -477,6 +569,7 @@
             height: 1.85rem;
             padding: 0 0.75rem;
             font-size: 0.68rem;
+            flex: 0 0 auto;
         }
 
         @media (max-width: 640px) {
@@ -539,6 +632,26 @@
             </details>
         </header>
 
+            <section id="member-rotator" class="member-rotator" aria-live="polite">
+                <div class="member-rotator-row" id="member-rotator-row" role="button" tabindex="0" aria-label="メンバー紹介を停止または再開">
+                    <div>
+                        <div id="rotator-name" class="member-rotator-name"></div>
+                        <div id="rotator-title" class="member-rotator-title"></div>
+                    </div>
+                    <p id="rotator-text" class="member-rotator-text"></p>
+                    <div class="member-rotator-controls">
+                        <button id="rotator-prev" class="rotator-btn" type="button" aria-label="前のメンバー">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button id="rotator-toggle" class="rotator-btn" type="button" aria-label="停止">
+                            <svg id="rotator-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"></path></svg>
+                        </button>
+                        <button id="rotator-next" class="rotator-btn" type="button" aria-label="次のメンバー">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 w-full">
                 <!-- 左側：ラインとタイトル -->
@@ -554,7 +667,8 @@
                     <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
                         <span class="text-[0.65rem] font-bold text-[var(--muted)] px-1.5 hidden sm:inline">並び</span>
                         <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors bg-[var(--navy)] text-white shadow-sm" data-sort="original">古参</button>
-                        <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-sort="kana">あいうえお</button>
+                        <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-sort="kana-asc">あいうえお↑</button>
+                        <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-sort="kana-desc">あいうえお↓</button>
                     </div>
                     <!-- 文字サイズ切り替え -->
                     <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
@@ -1000,6 +1114,104 @@
                     <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
                 </div>
             </article>
+            <!-- カード13 -->
+            <article class="member-card" data-tags="riesm">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/kei.png" alt="けー。のプロフィール画像" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">けー。</h2>
+                </div>
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    RIESM™アンバサダー / AMB-001 / オンライン中心
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
+                    <span class="badge badge-riesm">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    楽しく、わかりやすい事を心がけてます。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード14 -->
+            <article class="member-card" data-tags="riesm">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
+                        れ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">れい</h2>
+                </div>
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    RIESM™アンバサダー / AMB-002 / オンライン中心
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
+                    <span class="badge badge-riesm">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    これからの活動も楽しみにしています。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード15 -->
+            <article class="member-card" data-tags="riesm">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
+                        り
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">りんこ</h2>
+                </div>
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    RIESM™アンバサダー / AMB-003 / 広島県
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
+                    <span class="badge badge-riesm">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    安心して自分らしく働ける文化を作っていきたい。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
         </div>
         <div id="empty-results" class="empty-results">該当するメンバーが見つかりません</div>
         <div id="profile-popover" class="profile-popover" role="dialog" aria-live="polite"></div>
@@ -1020,6 +1232,15 @@
             const profilePopover = document.getElementById('profile-popover');
             const membersContainer = document.getElementById('members-grid');
             const memberCards = Array.from(document.querySelectorAll('.member-card'));
+            const rotator = document.getElementById('member-rotator');
+            const rotatorRow = document.getElementById('member-rotator-row');
+            const rotatorName = document.getElementById('rotator-name');
+            const rotatorTitle = document.getElementById('rotator-title');
+            const rotatorText = document.getElementById('rotator-text');
+            const rotatorPrev = document.getElementById('rotator-prev');
+            const rotatorNext = document.getElementById('rotator-next');
+            const rotatorToggle = document.getElementById('rotator-toggle');
+            const rotatorToggleIcon = document.getElementById('rotator-toggle-icon');
             const filterAliases = {
                 al: 'all',
                 all: 'all',
@@ -1041,6 +1262,9 @@
                 'キャリコンみやび': 'きゃりこんみやび',
                 'ゆうり＠大学キャリアセンターの人': 'ゆうりだいがくきゃりあせんたーのひと',
                 'けー。お花カウンセリング': 'けーおはなかうんせりんぐ',
+                'けー。': 'けー',
+                'れい': 'れい',
+                'りんこ': 'りんこ',
                 'こぐみ': 'こぐみ',
                 'あきこ': 'あきこ',
                 'ぎっしー｜春日部キャリア部 部長': 'ぎっしーかすかべきゃりあぶぶちょう',
@@ -1062,6 +1286,8 @@
                 const title = card.querySelector('.member-title')?.textContent.trim() || '';
                 const desc = card.querySelector('.member-desc')?.textContent.trim() || '';
                 card.dataset.sortName = kanaSortKeys[name] || name;
+                card.dataset.sortGroup = /^[A-Za-z0-9]/.test(name) ? '1' : '0';
+                card.dataset.alphaName = name.normalize('NFKC').toLowerCase();
                 card.dataset.profileName = name;
                 card.dataset.profileText = desc;
                 card.dataset.searchText = normalizeSearchText(`${name} ${title} ${desc}`);
@@ -1169,13 +1395,23 @@
                 emptyResults.classList.toggle('is-visible', visibleCount === 0);
             }
 
+            function compareKanaThenAlpha(a, b) {
+                const groupA = Number(a.dataset.sortGroup);
+                const groupB = Number(b.dataset.sortGroup);
+                if (groupA !== groupB) return groupA - groupB;
+
+                const keyA = groupA === 1 ? a.dataset.alphaName : a.dataset.sortName;
+                const keyB = groupB === 1 ? b.dataset.alphaName : b.dataset.sortName;
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+                return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
+            }
+
             function applySort(sortValue) {
                 currentSort = sortValue;
                 const sortedCards = [...memberCards].sort((a, b) => {
-                    if (sortValue === 'kana') {
-                        if (a.dataset.sortName < b.dataset.sortName) return -1;
-                        if (a.dataset.sortName > b.dataset.sortName) return 1;
-                    }
+                    if (sortValue === 'kana-asc') return compareKanaThenAlpha(a, b);
+                    if (sortValue === 'kana-desc') return compareKanaThenAlpha(b, a);
                     return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
                 });
                 sortedCards.forEach(card => membersContainer.appendChild(card));
@@ -1202,6 +1438,87 @@
             window.addEventListener('scroll', hideProfilePopover, { passive: true });
             window.addEventListener('resize', hideProfilePopover);
 
+            function shuffleCards(cards) {
+                const shuffled = [...cards];
+                for (let i = shuffled.length - 1; i > 0; i -= 1) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            }
+
+            let rotatorDeck = shuffleCards(memberCards);
+            let rotatorIndex = 0;
+            let rotatorTimer = null;
+            let rotatorPaused = false;
+
+            function renderRotator() {
+                const card = rotatorDeck[rotatorIndex];
+                if (!card) return;
+                rotatorName.textContent = card.dataset.profileName || '';
+                rotatorTitle.textContent = card.querySelector('.member-title')?.textContent.trim() || '';
+                rotatorText.textContent = card.dataset.profileText || '';
+            }
+
+            function setRotatorPaused(paused) {
+                rotatorPaused = paused;
+                rotator.classList.toggle('is-paused', paused);
+                rotatorToggle.setAttribute('aria-label', paused ? '再開' : '停止');
+                rotatorToggleIcon.innerHTML = paused
+                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5v14l11-7-11-7z"></path>'
+                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"></path>';
+            }
+
+            function restartRotatorTimer() {
+                window.clearInterval(rotatorTimer);
+                rotatorTimer = window.setInterval(() => {
+                    if (!rotatorPaused) moveRotator(1, false);
+                }, 4000);
+            }
+
+            function moveRotator(direction, pauseAfterMove = true) {
+                if (direction > 0 && rotatorIndex === rotatorDeck.length - 1) {
+                    const currentCard = rotatorDeck[rotatorIndex];
+                    rotatorDeck = shuffleCards(memberCards);
+                    if (rotatorDeck[0] === currentCard && rotatorDeck.length > 1) {
+                        [rotatorDeck[0], rotatorDeck[1]] = [rotatorDeck[1], rotatorDeck[0]];
+                    }
+                    rotatorIndex = 0;
+                } else {
+                    rotatorIndex = (rotatorIndex + direction + rotatorDeck.length) % rotatorDeck.length;
+                }
+                renderRotator();
+                if (pauseAfterMove) setRotatorPaused(true);
+                restartRotatorTimer();
+            }
+
+            function toggleRotator() {
+                setRotatorPaused(!rotatorPaused);
+                restartRotatorTimer();
+            }
+
+            rotatorPrev.addEventListener('click', event => {
+                event.stopPropagation();
+                moveRotator(-1);
+            });
+            rotatorNext.addEventListener('click', event => {
+                event.stopPropagation();
+                moveRotator(1);
+            });
+            rotatorToggle.addEventListener('click', event => {
+                event.stopPropagation();
+                toggleRotator();
+            });
+            rotatorRow.addEventListener('click', toggleRotator);
+            rotatorRow.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleRotator();
+                }
+            });
+
+            renderRotator();
+            restartRotatorTimer();
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const filterValue = btn.getAttribute('data-filter');
