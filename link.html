@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./js/linkdata.js"></script> <!-- 外部データファイルの読み込み -->
     <style>
         :root {
             color-scheme: light;
@@ -472,7 +473,45 @@
             box-shadow: 0 6px 18px rgba(67, 48, 28, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.82);
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: 32rem;
+            min-height: 32rem;
+        }
+
+        .member-desc,
+        .member-qualifications {
+            flex: 0 0 auto;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 0.35rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(182, 107, 69, 0.42) rgba(255, 255, 255, 0.35);
+        }
+
+        .member-desc {
+            line-height: 1.65;
+            max-height: calc(1.65em * 5);
+        }
+
+        .member-qualifications {
+            line-height: 1.55;
+            max-height: calc(1.55em * 2);
+        }
+
+        .member-desc::-webkit-scrollbar,
+        .member-qualifications::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .member-desc::-webkit-scrollbar-track,
+        .member-qualifications::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 999px;
+        }
+
+        .member-desc::-webkit-scrollbar-thumb,
+        .member-qualifications::-webkit-scrollbar-thumb {
+            background: rgba(182, 107, 69, 0.42);
+            border-radius: 999px;
         }
 
         .member-card:hover {
@@ -670,6 +709,7 @@
             align-items: start;
             gap: 0.35rem 1rem;
             height: auto;
+            min-height: 0;
         }
 
         .view-list .member-qualifications,
@@ -687,15 +727,25 @@
         .view-list .member-header {
             margin-bottom: 0;
             min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
         .view-list .member-header .w-12 {
-            display: none;
+            display: flex;
+            width: 2.1rem;
+            height: 2.1rem;
+            min-width: 2.1rem;
+            font-size: 0.82rem;
         }
 
         .view-list .member-header h2 {
             font-size: 1rem;
             white-space: nowrap;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .view-list .member-title {
@@ -789,7 +839,6 @@
         <header class="link-hero text-center mb-4 w-full mx-auto">
             <h1 class="text-3xl md:text-4xl font-black mb-4 tracking-tight text-[var(--navy)]">つながるリンク集</h1>
             
-            <!-- ご指定通り、説明文の文字を小さく（text-[0.8rem]）設定 -->
             <p class="text-[var(--muted)] text-[0.8rem] leading-relaxed mb-6 font-medium">
                 「たべラボ」メンバーや、「心理支援者の集い」に参加されている方々の活動・発信をご紹介する場所です。<br class="hidden md:inline">
                 気になる発信を見つけたら、ぜひリンク先を覗いてみてください。
@@ -808,24 +857,25 @@
                 </div>
         </details>
 
-            <section id="member-rotator" class="member-rotator" aria-live="polite">
-                <div class="member-rotator-row" id="member-rotator-row" role="button" tabindex="0" aria-label="メンバー紹介を停止または再開">
-                    <div class="member-rotator-viewport">
-                        <div class="member-rotator-track" id="member-rotator-track"></div>
-                    </div>
-                    <div class="member-rotator-controls">
-                        <button id="rotator-prev" class="rotator-btn" type="button" aria-label="前のメンバー">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <button id="rotator-toggle" class="rotator-btn" type="button" aria-label="停止">
-                            <svg id="rotator-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"></path></svg>
-                        </button>
-                        <button id="rotator-next" class="rotator-btn" type="button" aria-label="次のメンバー">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
+        <section id="member-rotator" class="member-rotator" aria-live="polite">
+            <div class="member-rotator-row" id="member-rotator-row" role="button" tabindex="0" aria-label="メンバー紹介を停止または再開">
+                <div class="member-rotator-viewport">
+                    <div class="member-rotator-track" id="member-rotator-track"></div>
                 </div>
-            </section>
+                <div class="member-rotator-controls">
+                    <button id="rotator-prev" class="rotator-btn" type="button" aria-label="前のメンバー">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button id="rotator-toggle" class="rotator-btn" type="button" aria-label="停止">
+                        <svg id="rotator-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"></path></svg>
+                    </button>
+                    <button id="rotator-next" class="rotator-btn" type="button" aria-label="次のメンバー">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 w-full">
                 <!-- 左側：ラインとタイトル -->
@@ -854,7 +904,7 @@
                     <!-- ビュー切り替えボタン -->
                     <div class="flex gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
                         <button id="view-grid-btn" class="view-toggle-btn bg-[var(--navy)] text-white shadow-sm" aria-label="カード表示">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         </button>
                         <button id="view-list-btn" class="view-toggle-btn bg-transparent text-[var(--muted)] hover:text-[var(--navy)]" aria-label="リスト表示">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -878,521 +928,9 @@
             </div>
         </div>
 
-        <!-- メンバーカードグリッド -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="members-grid">
-            <!-- カード1 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/mango.jpg" alt="mango_pudding03のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">mango_pudding03</h2>
-                </div>
-                
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    キャリア相談 / 40代からの選び直し
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    走り続けている間に、自分のことが見えなくなった人へ。キャリアも、子どもの進路も、働き方も。選ぶ前に、まず整理する。人材業界18年・国家資格キャリコン10年。副業で3年間、週末にキャリア相談を続けてきました。AIも使いながら、40代からの選び直しを考えています。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード2 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/miyabi.webp" alt="キャリコンみやびのプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">キャリコンみやび</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    キャリアコンサルタント
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    はじめまして、キャリアコンサルタントのみやびです。会社員、高校生の母として日々奮闘中。2級技能士や国家資格キャリアコンサルタントの受験対策、50代の転職記録などを発信。X | https://x.gd/j3PZ1　音声配信 | https://x.gd/VQl73
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <a href="https://x.gd/j3PZ1" target="_blank" rel="noopener" class="card-link-btn" aria-label="X" title="X">X</a>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード3 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/yuuri.webp" alt="ゆうり＠大学キャリアセンターの人のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ゆうり＠大学キャリアセンターの人</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    大学キャリアセンター / 学生支援
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    大学キャリアセンターで年間2000件くらい学生面談してた人。大手有名企業に絶対内定！みたいなテクニックは教えられません。後悔しない就活。6歳&1歳のママ。学生のキャリア支援をしたい方向きにKindle、note書きました。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード4 -->
-            <article class="member-card" data-tags="tabelab shinri riesm">
-                <div class="member-certification">🌈RIESM™アンバサダー / AMB-001</div>
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/kei.png" alt="けー。お花カウンセリングのプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">けー。お花カウンセリング</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    たべラボメンバー / 心理支援者の集い
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    楽しく、わかりやすい事を心がけてます。たべラボ、心理支援者の集い、🌈RIESM™で活動されています。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード5 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/kogumi.webp" alt="こぐみのプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">こぐみ</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    キャリアコンサルタント / 福祉系職員
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    他人に支配され自分を置き去りにし続けた結婚生活。モラハラ夫から逃げるように家出し、約1年超の調停を経て離婚。徹底した見直しでストレス障害を2か月で克服。キャリアコンサルタント、栄養睡眠カウンセラー講座受講。最高の健康と自分軸で人生を再スタート。福祉系職員。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード6 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
-                        あ
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">あきこ</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    たべラボメンバー
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード7 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/gissy.webp" alt="ぎっしー｜春日部キャリア部 部長のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ぎっしー｜春日部キャリア部 部長</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    春日部キャリア部 部長
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    「このままでいいのかな？」春日部でキャリアに悩むあなたのためのコミュニティ「#春日部キャリア部」。毎週月曜、対話の場で強みを発見し、複業やスキルUPに挑戦しませんか？安心安全な場で仲間と共に一歩踏み出すあなたを全力で応援します。武里駅近くの「わたしの基地」で開催中。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード8 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/akari.webp" alt="あかり| 1on1で生きやすい世界に🌏のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">あかり| 1on1で生きやすい世界に🌏</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    傾聴1on1 / 産業カウンセラー / キャリアコンサルタント
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    傾聴1on1。どんな女性も明るく元気でいるために、こころのままに語れる場を週末限定で活動しています。産業カウンセラー×キャリアコンサルタント。小学生2人のワーママ。ママでありながら働くことの意義、自分らしく生きることも大切にしています。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード9 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/maron.webp" alt="ころころまころん＠心理福祉のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ころころまころん＠心理福祉</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    心理福祉
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード10 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
-                        Y
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">YK</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    たべラボメンバー
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード11 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
-                        t
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">takku</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    たべラボメンバー
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード12 -->
-            <article class="member-card" data-tags="tabelab">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/dayama.webp" alt="だーやま｜書いて、語るひとのプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">だーやま｜書いて、語るひと</h2>
-                </div>
-
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    書いて、語るひと
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    自分から見える世界を、内側で起こることも含めて書くことで語っています。noteのほか、ワークショップやセッション、Podcastなどでも「語ることで見えてくる景色」を探求中。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-            <!-- カード14 -->
-            <article class="member-card" data-tags="riesm">
-                <div class="member-certification">🌈RIESM™アンバサダー / AMB-002</div>
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
-                        れ
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">れい</h2>
-                </div>
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    🌈RIESM™認定者
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    これからの活動も楽しみにしています。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-            <!-- カード15 -->
-            <article class="member-card" data-tags="riesm">
-                <div class="member-certification">🌈RIESM™アンバサダー / AMB-003</div>
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
-                        り
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">りんこ</h2>
-                </div>
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    🌈RIESM™認定者
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    安心して自分らしく働ける文化を作っていきたい。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-            <!-- カード16 -->
-            <article class="member-card" data-tags="shinri">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/matsuda.jpg" alt="まつだ⭐︎松田真弘のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">まつだ⭐︎松田真弘</h2>
-                </div>
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    魂の共鳴、しなやかな一歩を願って
-                </div>
-                
-                <div class="badges-wrap">
-                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
-                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
-                    <span class="badge badge-shinri">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    企業内で経営企画×キャリアコンサルタントとして組織改革に取り組んでいます。実務・経営層・管理職を問わずフラットに接し、多様な個人の価値観を大切にしながら、個人と企業戦略の整合を図り、自律性向上と組織強化の両立を目指しています。変化の時代に人と組織が「しなやかな一歩」を踏み出せるよう多角的に活動中です。文化芸術を愛し、人生の洞察と深い学びを得ることを大切にしています。みなさんとの、コラボ、ウェルカムですー！
-                </p>
-                
-                <div class="member-qualifications text-[0.78rem] text-[var(--muted)] leading-relaxed mb-4">
-                    国家資格キャリアコンサルタント / 産業カウンセラー / 2級キャリアコンサルティング技能士 / JCDA認定CDA / アスリートキャリアコーディネーター / ワークライフファシリテーター / 価値観ババ抜きインストラクター / 両立支援コーディネーター
-                </div>
-
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <a href="https://x.com/aaaaaaaaaaedu_m?s=11&t=pt2H1x2UaNkPwaH23BlnVQ" target="_blank" rel="noopener" class="card-link-btn" aria-label="X" title="X">X</a>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
-        </div>
+        <!-- JSで動的にメンバーカードが挿入されるエリア -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="members-grid"></div>
+        
         <div id="empty-results" class="empty-results">該当するメンバーが見つかりません</div>
         <div id="profile-popover" class="profile-popover" role="dialog" aria-live="polite"></div>
     </main>
@@ -1404,6 +942,103 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            // --- HTML生成用のユーティリティ関数 ---
+            function generateBadgesHTML(tags) {
+                const badgeConfig = {
+                    tabelab: { label: 'たべラボ', class: 'badge-tabelab', href: 'https://note.com/ninin2025/membership' },
+                    riesm: { label: '🌈RIESM™', class: 'badge-riesm', href: 'https://ninin-cc.github.io/guide.html' },
+                    shinri: { label: '心理支援者の集い', class: 'badge-shinri' }
+                };
+                const allTags = ['tabelab', 'riesm', 'shinri'];
+                return allTags.map(tag => {
+                    const isActive = tags.includes(tag);
+                    const config = badgeConfig[tag];
+                    const activeClass = isActive ? config.class : `${config.class} badge-inactive`;
+                    if (config.href) {
+                        return `<a href="${config.href}" target="_blank" rel="noopener" class="badge ${activeClass}" title="${config.label}">${config.label}</a>`;
+                    } else {
+                        return `<span class="badge ${activeClass}">${config.label}</span>`;
+                    }
+                }).join('');
+            }
+
+            function generateLinksHTML(userLinks = {}) {
+                const linkIcons = {
+                    note: 'n',
+                    web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg>',
+                    x: 'X',
+                    line: 'LINE',
+                    linkedin: 'in',
+                    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>'
+                };
+                const linkTypes = ['note', 'web', 'x', 'line', 'linkedin', 'instagram'];
+                const labels = {note:'note', web:'Web', x:'X', line:'LINE', linkedin:'LinkedIn', instagram:'Instagram'};
+                
+                return linkTypes.map(type => {
+                    const url = userLinks[type];
+                    const icon = linkIcons[type];
+                    const isLine = type === 'line' ? ' is-line' : '';
+                    const isLinkedin = type === 'linkedin' ? ' is-linkedin' : '';
+                    const label = labels[type];
+                    
+                    if (url) {
+                        return `<a href="${url}" target="_blank" rel="noopener" class="card-link-btn${isLine}${isLinkedin}" aria-label="${label}" title="${label}">${icon}</a>`;
+                    } else {
+                        return `<span class="card-link-btn is-empty${isLine}${isLinkedin}" aria-disabled="true" aria-label="${label} 未設定" title="${label} 未設定">${icon}</span>`;
+                    }
+                }).join('');
+            }
+
+            // --- メンバーカードの動的生成 ---
+            const grid = document.getElementById('members-grid');
+            
+            // linkData は外部ファイル (linkdata.js) から読み込まれています
+            grid.innerHTML = linkData.map((member, index) => {
+                const tagsHtml = generateBadgesHTML(member.tags || []);
+                const linksHtml = generateLinksHTML(member.links || {});
+                
+                let avatarHtml = '';
+                if (member.avatar.src) {
+                    avatarHtml = `<div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                                    <img src="${member.avatar.src}" alt="${member.name}のプロフィール画像" class="w-full h-full object-cover rounded-full">
+                                  </div>`;
+                } else {
+                    const colorClass = member.avatar.color || 'navy';
+                    avatarHtml = `<div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--${colorClass})] font-black text-xl">
+                                    ${member.avatar.text}
+                                  </div>`;
+                }
+
+                const certHtml = member.certification ? `<div class="member-certification">${member.certification}</div>` : '';
+                const qualHtml = member.qualifications ? `<div class="member-qualifications text-[0.78rem] text-[var(--muted)] leading-relaxed mb-4">${member.qualifications}</div>` : '';
+
+                return `
+                    <article class="member-card" data-tags="${(member.tags || []).join(' ')}" id="member-card-${index}">
+                        ${certHtml}
+                        <div class="member-header flex items-center gap-4 mb-3">
+                            ${avatarHtml}
+                            <h2 class="text-xl font-black text-[var(--navy)] leading-tight">${member.name}</h2>
+                        </div>
+                        <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                            ${member.title}
+                        </div>
+                        <div class="badges-wrap">
+                            ${tagsHtml}
+                        </div>
+                        <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                            ${member.desc}
+                        </p>
+                        ${qualHtml}
+                        <div class="card-links">
+                            ${linksHtml}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+
+            // --- 以降は既存のスクリプト（フィルタリングや検索など） ---
             const filterBtns = document.querySelectorAll('.filter-btn');
             const sortBtns = document.querySelectorAll('.sort-btn');
             const searchInput = document.getElementById('member-search');
@@ -1460,7 +1095,6 @@
 
             memberCards.forEach((card, index) => {
                 card.dataset.originalIndex = index;
-                card.id = card.id || `member-card-${index}`;
                 const name = card.querySelector('h2')?.textContent.trim() || '';
                 const certification = card.querySelector('.member-certification')?.textContent.trim() || '';
                 const title = card.querySelector('.member-title')?.textContent.trim() || '';
