@@ -31,10 +31,47 @@
         body {
             font-family: 'Noto Sans JP', sans-serif;
             color: var(--ink);
-            background: linear-gradient(180deg, #fbfaf7 0%, #f5f8f8 64%, #fffaf4 100%);
+            background:
+                linear-gradient(180deg, rgba(251, 250, 247, 0.9) 0%, rgba(245, 248, 248, 0.86) 64%, rgba(255, 250, 244, 0.9) 100%),
+                url("./room/img/hero-conversation-bg.png") center top / cover fixed no-repeat;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                background:
+                    linear-gradient(180deg, rgba(251, 250, 247, 0.9) 0%, rgba(245, 248, 248, 0.88) 64%, rgba(255, 250, 244, 0.92) 100%),
+                    url("./room/img/hero-conversation-bg-mobile.png") center top / cover fixed no-repeat;
+            }
+        }
+
+        .link-hero {
+            position: relative;
+            isolation: isolate;
+            min-height: clamp(18rem, 42vw, 28rem);
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.58) 52%, rgba(255, 255, 255, 0.92) 100%),
+                url("./room/img/hero-conversation-bg.png") center center / cover no-repeat;
+            box-shadow: 0 12px 34px rgba(24, 38, 50, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+        }
+
+        @media (max-width: 640px) {
+            .link-hero {
+                min-height: 22rem;
+                padding: 1.25rem 1rem;
+                background:
+                    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.62) 52%, rgba(255, 255, 255, 0.94) 100%),
+                    url("./room/img/hero-conversation-bg-mobile.png") center center / cover no-repeat;
+            }
         }
 
         .eyebrow-badge {
@@ -67,8 +104,8 @@
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid var(--line);
             border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 0.85rem;
+            padding: 8px 10px;
+            font-size: 0.72rem;
             color: var(--muted);
             font-weight: 700;
             cursor: pointer;
@@ -98,10 +135,10 @@
             border: 1px solid var(--line);
             border-top: none;
             border-radius: 0 0 8px 8px;
-            padding: 0 16px 16px;
-            font-size: 0.85rem;
+            padding: 0 10px 10px;
+            font-size: 0.72rem;
             color: var(--muted);
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         .filter-scroll-area {
@@ -210,32 +247,122 @@
 
         .member-rotator-row {
             display: grid;
-            grid-template-columns: minmax(8rem, auto) 1fr auto;
-            align-items: start;
-            gap: 0.6rem 1rem;
-            padding: 0.95rem 1rem;
+            grid-template-columns: 1fr auto;
+            align-items: stretch;
+            gap: 0.75rem;
+            padding: 0.8rem;
             cursor: pointer;
+        }
+
+        .member-rotator-viewport {
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .member-rotator-track {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .member-rotator.is-sliding .member-rotator-track {
+            animation: rotatorSlideIn 0.62s ease both;
+        }
+
+        @keyframes rotatorSlideIn {
+            from {
+                opacity: 0.35;
+                transform: translateX(2.2rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .member-rotator-card {
+            min-width: 0;
+            height: 100%;
+            padding: 0.85rem;
+            border: 1px solid rgba(20, 28, 36, 0.08);
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 8px 22px rgba(24, 38, 50, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .member-rotator-card:hover,
+        .member-rotator-card:focus-visible {
+            transform: translateY(-1px);
+            border-color: rgba(30, 102, 120, 0.28);
+            box-shadow: 0 12px 28px rgba(24, 38, 50, 0.08);
+            outline: none;
+        }
+
+        .member-card.is-scroll-target {
+            border-color: rgba(182, 107, 69, 0.55);
+            box-shadow: 0 0 0 4px rgba(182, 107, 69, 0.13), 0 12px 30px rgba(24, 38, 50, 0.1);
+        }
+
+        .member-rotator-head {
+            display: grid;
+            grid-template-columns: 2.35rem 1fr;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 0.45rem;
+            min-width: 0;
+        }
+
+        .member-rotator-avatar {
+            width: 2.35rem;
+            height: 2.35rem;
+            border-radius: 999px;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            color: var(--trust);
+            font-size: 0.95rem;
+            font-weight: 900;
+        }
+
+        .member-rotator-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .member-rotator-name {
             color: var(--navy);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 900;
-            line-height: 1.45;
+            line-height: 1.35;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .member-rotator-title {
             color: var(--trust);
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 800;
-            line-height: 1.55;
+            line-height: 1.45;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .member-rotator-text {
-            grid-column: 1 / 3;
             color: #43505c;
-            font-size: 0.84rem;
-            line-height: 1.75;
+            font-size: 0.78rem;
+            line-height: 1.65;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .member-rotator-controls {
@@ -275,14 +402,20 @@
 
         @media (max-width: 640px) {
             .member-rotator-row {
-                grid-template-columns: 1fr auto;
-                gap: 0.45rem 0.75rem;
-                padding: 0.85rem;
+                grid-template-columns: 1fr;
+                padding: 0.7rem;
             }
 
-            .member-rotator-title,
-            .member-rotator-text {
-                grid-column: 1 / -1;
+            .member-rotator-track {
+                grid-template-columns: 1fr;
+            }
+
+            .member-rotator-card:nth-child(2) {
+                display: none;
+            }
+
+            .member-rotator-controls {
+                justify-content: flex-end;
             }
         }
 
@@ -355,6 +488,14 @@
             font-size: 0.7rem;
             font-weight: 800;
             letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+
+        a.badge:hover,
+        a.badge:focus-visible {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(24, 38, 50, 0.08);
+            outline: none;
         }
 
         .badge-tabelab {
@@ -379,6 +520,22 @@
             background: rgba(255, 255, 255, 0.86);
             color: #97a0a9;
             border: 1px solid rgba(20, 28, 36, 0.14);
+        }
+
+        .member-certification {
+            display: inline-flex;
+            align-self: flex-start;
+            max-width: 100%;
+            margin-bottom: 0.65rem;
+            padding: 0.32rem 0.58rem;
+            border-radius: 6px;
+            border: 1px solid rgba(23, 37, 49, 0.18);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 248, 248, 0.9));
+            color: var(--navy);
+            font-size: 0.72rem;
+            font-weight: 900;
+            line-height: 1.35;
+            letter-spacing: 0;
         }
 
         .card-links {
@@ -511,6 +668,13 @@
             display: none; 
         }
 
+        .view-list .member-certification {
+            grid-column: 1 / -1;
+            margin-bottom: 0;
+            padding: 0.24rem 0.48rem;
+            font-size: 0.66rem;
+        }
+
         .view-list .member-header {
             margin-bottom: 0;
             min-width: 0;
@@ -585,6 +749,9 @@
             .view-list .member-title {
                 font-size: 0.75rem;
             }
+            .view-list .member-certification {
+                font-size: 0.62rem;
+            }
             .view-list .badges-wrap,
             .view-list .card-links {
                 flex-wrap: wrap;
@@ -610,8 +777,7 @@
 
     <main class="flex-grow w-full max-w-5xl mx-auto px-4 pt-12 pb-24">
         
-        <header class="text-center mb-10 max-w-2xl mx-auto">
-            <div class="eyebrow-badge">ninin connections</div>
+        <header class="link-hero text-center mb-4 w-full mx-auto">
             <h1 class="text-3xl md:text-4xl font-black mb-4 tracking-tight text-[var(--navy)]">つながるリンク集</h1>
             
             <!-- ご指定通り、説明文の文字を小さく（text-[0.8rem]）設定 -->
@@ -620,7 +786,9 @@
                 気になる発信を見つけたら、ぜひリンク先を覗いてみてください。
             </p>
 
-            <details class="notice-accordion text-left mx-auto">
+        </header>
+
+        <details class="notice-accordion text-left max-w-2xl mx-auto mb-8">
                 <summary>
                     <span>【掲載についてのお願いとご注意】</span>
                     <svg class="w-4 h-4 text-[var(--muted)] transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -629,16 +797,13 @@
                     このリンク集は、コミュニティ内の交流や活動を知っていただくための紹介ページです。掲載されているサービス内容や支援の品質、発信内容について、合同会社nininが推薦・保証するものではありません。各リンク先の情報は、ご本人の責任において運営されています。<br>
                     <span class="text-xs mt-2 block opacity-80">※掲載や内容修正をご希望のメンバーは、専用フォームよりご連絡ください。</span>
                 </div>
-            </details>
-        </header>
+        </details>
 
             <section id="member-rotator" class="member-rotator" aria-live="polite">
                 <div class="member-rotator-row" id="member-rotator-row" role="button" tabindex="0" aria-label="メンバー紹介を停止または再開">
-                    <div>
-                        <div id="rotator-name" class="member-rotator-name"></div>
-                        <div id="rotator-title" class="member-rotator-title"></div>
+                    <div class="member-rotator-viewport">
+                        <div class="member-rotator-track" id="member-rotator-track"></div>
                     </div>
-                    <p id="rotator-text" class="member-rotator-text"></p>
                     <div class="member-rotator-controls">
                         <button id="rotator-prev" class="rotator-btn" type="button" aria-label="前のメンバー">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -701,7 +866,7 @@
                 <button class="filter-btn" data-filter="all">すべて</button>
                 <button class="filter-btn active" data-filter="tabelab">たべラボメンバー</button>
                 <button class="filter-btn" data-filter="shinri">心理支援者の集い</button>
-                <button class="filter-btn" data-filter="riesm">RIESM™</button>
+                <button class="filter-btn" data-filter="riesm">🌈RIESM™</button>
             </div>
         </div>
 
@@ -710,8 +875,8 @@
             <!-- カード1 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
-                        m
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/mango.jpg" alt="mango_pudding03のプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">mango_pudding03</h2>
                 </div>
@@ -722,8 +887,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -744,8 +909,8 @@
             <!-- カード2 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
-                        み
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/miyabi.webp" alt="キャリコンみやびのプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">キャリコンみやび</h2>
                 </div>
@@ -756,8 +921,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -778,8 +943,8 @@
             <!-- カード3 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
-                        ゆ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/yuuri.webp" alt="ゆうり＠大学キャリアセンターの人のプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ゆうり＠大学キャリアセンターの人</h2>
                 </div>
@@ -790,8 +955,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -810,7 +975,8 @@
             </article>
 
             <!-- カード4 -->
-            <article class="member-card" data-tags="tabelab">
+            <article class="member-card" data-tags="tabelab shinri riesm">
+                <div class="member-certification">🌈RIESM™アンバサダー / AMB-001</div>
                 <div class="member-header flex items-center gap-4 mb-3">
                     <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
                         <img src="./img/link/kei.png" alt="けー。お花カウンセリングのプロフィール画像" class="w-full h-full object-cover rounded-full">
@@ -820,17 +986,17 @@
 
 
                 <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    たべラボメンバー
+                    たべラボメンバー / 心理支援者の集い
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
+                    <span class="badge badge-shinri">心理支援者の集い</span>
                 </div>
                 
                 <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
+                    楽しく、わかりやすい事を心がけてます。たべラボ、心理支援者の集い、🌈RIESM™で活動されています。
                 </p>
                 
                 <div class="card-links">
@@ -846,8 +1012,8 @@
             <!-- カード5 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
-                        こ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/kogumi.webp" alt="こぐみのプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">こぐみ</h2>
                 </div>
@@ -858,8 +1024,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -892,8 +1058,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -914,8 +1080,8 @@
             <!-- カード7 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
-                        ぎ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/gissy.webp" alt="ぎっしー｜春日部キャリア部 部長のプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ぎっしー｜春日部キャリア部 部長</h2>
                 </div>
@@ -926,8 +1092,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -948,8 +1114,8 @@
             <!-- カード8 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
-                        あ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/akari.webp" alt="あかり| 1on1で生きやすい世界に🌏のプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">あかり| 1on1で生きやすい世界に🌏</h2>
                 </div>
@@ -960,8 +1126,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -982,8 +1148,8 @@
             <!-- カード9 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
-                        こ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/maron.webp" alt="ころころまころん＠心理福祉のプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ころころまころん＠心理福祉</h2>
                 </div>
@@ -994,8 +1160,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1028,8 +1194,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1062,8 +1228,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1084,8 +1250,8 @@
             <!-- カード12 -->
             <article class="member-card" data-tags="tabelab">
                 <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
-                        だ
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/dayama.webp" alt="だーやま｜書いて、語るひとのプロフィール画像" class="w-full h-full object-cover rounded-full">
                     </div>
                     <h2 class="text-xl font-black text-[var(--navy)] leading-tight">だーやま｜書いて、語るひと</h2>
                 </div>
@@ -1096,8 +1262,8 @@
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab">たべラボ</span>
-                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1114,41 +1280,9 @@
                     <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
                 </div>
             </article>
-            <!-- カード13 -->
-            <article class="member-card" data-tags="riesm">
-                <div class="member-header flex items-center gap-4 mb-3">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
-                        <img src="./img/link/kei.png" alt="けー。のプロフィール画像" class="w-full h-full object-cover rounded-full">
-                    </div>
-                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">けー。</h2>
-                </div>
-
-                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    RIESM™アンバサダー / AMB-001 / オンライン中心
-                </div>
-                
-                <div class="badges-wrap">
-                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
-                    <span class="badge badge-riesm">RIESM™</span>
-                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
-                </div>
-                
-                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                    楽しく、わかりやすい事を心がけてます。
-                </p>
-                
-                <div class="card-links">
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
-                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
-                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
-                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
-                </div>
-            </article>
-
             <!-- カード14 -->
             <article class="member-card" data-tags="riesm">
+                <div class="member-certification">🌈RIESM™アンバサダー / AMB-002</div>
                 <div class="member-header flex items-center gap-4 mb-3">
                     <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
                         れ
@@ -1157,12 +1291,12 @@
                 </div>
 
                 <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    RIESM™アンバサダー / AMB-002 / オンライン中心
+                    🌈RIESM™認定者
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
-                    <span class="badge badge-riesm">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1182,6 +1316,7 @@
 
             <!-- カード15 -->
             <article class="member-card" data-tags="riesm">
+                <div class="member-certification">🌈RIESM™アンバサダー / AMB-003</div>
                 <div class="member-header flex items-center gap-4 mb-3">
                     <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
                         り
@@ -1190,12 +1325,12 @@
                 </div>
 
                 <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
-                    RIESM™アンバサダー / AMB-003 / 広島県
+                    🌈RIESM™認定者
                 </div>
                 
                 <div class="badges-wrap">
-                    <span class="badge badge-tabelab badge-inactive">たべラボ</span>
-                    <span class="badge badge-riesm">RIESM™</span>
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm" title="🌈RIESM™">🌈RIESM™</a>
                     <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
                 </div>
                 
@@ -1212,6 +1347,43 @@
                     <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
                 </div>
             </article>
+            <!-- カード16 -->
+            <article class="member-card" data-tags="shinri">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/matsuda.jpg" alt="まつだ⭐︎松田真弘のプロフィール画像" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">まつだ⭐︎松田真弘</h2>
+                </div>
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    魂の共鳴、しなやかな一歩を願って
+                </div>
+                
+                <div class="badges-wrap">
+                    <a href="https://note.com/ninin2025/membership" target="_blank" rel="noopener" class="badge badge-tabelab badge-inactive" title="たべラボ">たべラボ</a>
+                    <a href="https://ninin-cc.github.io/guide.html" target="_blank" rel="noopener" class="badge badge-riesm badge-inactive" title="🌈RIESM™">🌈RIESM™</a>
+                    <span class="badge badge-shinri">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    企業内で経営企画×キャリアコンサルタントとして組織改革に取り組んでいます。実務・経営層・管理職を問わずフラットに接し、多様な個人の価値観を大切にしながら、個人と企業戦略の整合を図り、自律性向上と組織強化の両立を目指しています。変化の時代に人と組織が「しなやかな一歩」を踏み出せるよう多角的に活動中です。文化芸術を愛し、人生の洞察と深い学びを得ることを大切にしています。みなさんとの、コラボ、ウェルカムですー！
+                </p>
+                
+                <div class="member-qualifications text-[0.78rem] text-[var(--muted)] leading-relaxed mb-4">
+                    国家資格キャリアコンサルタント / 産業カウンセラー / 2級キャリアコンサルティング技能士 / JCDA認定CDA / アスリートキャリアコーディネーター / ワークライフファシリテーター / 価値観ババ抜きインストラクター / 両立支援コーディネーター
+                </div>
+
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <a href="https://x.com/aaaaaaaaaaedu_m?s=11&t=pt2H1x2UaNkPwaH23BlnVQ" target="_blank" rel="noopener" class="card-link-btn" aria-label="X" title="X">X</a>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
         </div>
         <div id="empty-results" class="empty-results">該当するメンバーが見つかりません</div>
         <div id="profile-popover" class="profile-popover" role="dialog" aria-live="polite"></div>
@@ -1234,9 +1406,7 @@
             const memberCards = Array.from(document.querySelectorAll('.member-card'));
             const rotator = document.getElementById('member-rotator');
             const rotatorRow = document.getElementById('member-rotator-row');
-            const rotatorName = document.getElementById('rotator-name');
-            const rotatorTitle = document.getElementById('rotator-title');
-            const rotatorText = document.getElementById('rotator-text');
+            const rotatorTrack = document.getElementById('member-rotator-track');
             const rotatorPrev = document.getElementById('rotator-prev');
             const rotatorNext = document.getElementById('rotator-next');
             const rotatorToggle = document.getElementById('rotator-toggle');
@@ -1262,9 +1432,9 @@
                 'キャリコンみやび': 'きゃりこんみやび',
                 'ゆうり＠大学キャリアセンターの人': 'ゆうりだいがくきゃりあせんたーのひと',
                 'けー。お花カウンセリング': 'けーおはなかうんせりんぐ',
-                'けー。': 'けー',
                 'れい': 'れい',
                 'りんこ': 'りんこ',
+                'まつだ⭐︎松田真弘': 'まつだまつだまさひろ',
                 'こぐみ': 'こぐみ',
                 'あきこ': 'あきこ',
                 'ぎっしー｜春日部キャリア部 部長': 'ぎっしーかすかべきゃりあぶぶちょう',
@@ -1282,7 +1452,9 @@
 
             memberCards.forEach((card, index) => {
                 card.dataset.originalIndex = index;
+                card.id = card.id || `member-card-${index}`;
                 const name = card.querySelector('h2')?.textContent.trim() || '';
+                const certification = card.querySelector('.member-certification')?.textContent.trim() || '';
                 const title = card.querySelector('.member-title')?.textContent.trim() || '';
                 const desc = card.querySelector('.member-desc')?.textContent.trim() || '';
                 card.dataset.sortName = kanaSortKeys[name] || name;
@@ -1290,7 +1462,7 @@
                 card.dataset.alphaName = name.normalize('NFKC').toLowerCase();
                 card.dataset.profileName = name;
                 card.dataset.profileText = desc;
-                card.dataset.searchText = normalizeSearchText(`${name} ${title} ${desc}`);
+                card.dataset.searchText = normalizeSearchText(`${name} ${certification} ${title} ${desc}`);
 
                 const links = card.querySelector('.card-links');
                 const profileButton = document.createElement('button');
@@ -1447,17 +1619,53 @@
                 return shuffled;
             }
 
-            let rotatorDeck = shuffleCards(memberCards);
+            const rotatorCards = memberCards.filter(card => card.querySelector('.member-header img'));
+            let rotatorDeck = shuffleCards(rotatorCards);
             let rotatorIndex = 0;
             let rotatorTimer = null;
             let rotatorPaused = false;
 
-            function renderRotator() {
-                const card = rotatorDeck[rotatorIndex];
-                if (!card) return;
-                rotatorName.textContent = card.dataset.profileName || '';
-                rotatorTitle.textContent = card.querySelector('.member-title')?.textContent.trim() || '';
-                rotatorText.textContent = card.dataset.profileText || '';
+            function getRotatorCard(offset) {
+                if (!rotatorDeck.length) return null;
+                return rotatorDeck[(rotatorIndex + offset + rotatorDeck.length) % rotatorDeck.length];
+            }
+
+            function getRotatorAvatar(card) {
+                const image = card.querySelector('.member-header img');
+                if (image) {
+                    return `<span class="member-rotator-avatar"><img src="${escapeHtml(image.getAttribute('src') || '')}" alt=""></span>`;
+                }
+                const initial = card.querySelector('.member-header .w-12')?.textContent.trim() || (card.dataset.profileName || '').slice(0, 1);
+                return `<span class="member-rotator-avatar">${escapeHtml(initial)}</span>`;
+            }
+
+            function createRotatorCard(card) {
+                const name = card.dataset.profileName || '';
+                const title = card.querySelector('.member-title')?.textContent.trim() || '';
+                const text = card.dataset.profileText || '';
+                return `
+                    <article class="member-rotator-card" data-member-index="${escapeHtml(card.dataset.originalIndex || '')}" role="button" tabindex="0">
+                        <div class="member-rotator-head">
+                            ${getRotatorAvatar(card)}
+                            <div class="min-w-0">
+                                <div class="member-rotator-name">${escapeHtml(name)}</div>
+                                <div class="member-rotator-title">${escapeHtml(title)}</div>
+                            </div>
+                        </div>
+                        <p class="member-rotator-text">${escapeHtml(text)}</p>
+                    </article>
+                `;
+            }
+
+            function renderRotator(animate = false) {
+                const cards = [getRotatorCard(0), getRotatorCard(1)].filter(Boolean);
+                if (!cards.length) return;
+                rotatorTrack.innerHTML = cards.map(createRotatorCard).join('');
+                if (animate) {
+                    rotator.classList.remove('is-sliding');
+                    void rotator.offsetWidth;
+                    rotator.classList.add('is-sliding');
+                }
             }
 
             function setRotatorPaused(paused) {
@@ -1473,13 +1681,13 @@
                 window.clearInterval(rotatorTimer);
                 rotatorTimer = window.setInterval(() => {
                     if (!rotatorPaused) moveRotator(1, false);
-                }, 4000);
+                }, 5000);
             }
 
             function moveRotator(direction, pauseAfterMove = true) {
                 if (direction > 0 && rotatorIndex === rotatorDeck.length - 1) {
                     const currentCard = rotatorDeck[rotatorIndex];
-                    rotatorDeck = shuffleCards(memberCards);
+                    rotatorDeck = shuffleCards(rotatorCards);
                     if (rotatorDeck[0] === currentCard && rotatorDeck.length > 1) {
                         [rotatorDeck[0], rotatorDeck[1]] = [rotatorDeck[1], rotatorDeck[0]];
                     }
@@ -1487,7 +1695,7 @@
                 } else {
                     rotatorIndex = (rotatorIndex + direction + rotatorDeck.length) % rotatorDeck.length;
                 }
-                renderRotator();
+                renderRotator(true);
                 if (pauseAfterMove) setRotatorPaused(true);
                 restartRotatorTimer();
             }
@@ -1495,6 +1703,26 @@
             function toggleRotator() {
                 setRotatorPaused(!rotatorPaused);
                 restartRotatorTimer();
+            }
+
+            function getPrimaryFilterForCard(card) {
+                const tags = (card.getAttribute('data-tags') || '').split(/\s+/).filter(Boolean);
+                return tags[0] || 'all';
+            }
+
+            function scrollToMemberCard(card) {
+                if (!card) return;
+                const isHidden = getComputedStyle(card).display === 'none';
+                if (isHidden) {
+                    searchInput.value = '';
+                    const targetFilter = getPrimaryFilterForCard(card);
+                    setActiveFilter(targetFilter);
+                    updateFilterUrl(targetFilter);
+                    applyFilter();
+                }
+                card.classList.add('is-scroll-target');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                window.setTimeout(() => card.classList.remove('is-scroll-target'), 1600);
             }
 
             rotatorPrev.addEventListener('click', event => {
@@ -1508,6 +1736,24 @@
             rotatorToggle.addEventListener('click', event => {
                 event.stopPropagation();
                 toggleRotator();
+            });
+            rotatorTrack.addEventListener('click', event => {
+                const rotatorCard = event.target.closest('.member-rotator-card');
+                if (!rotatorCard) return;
+                event.stopPropagation();
+                setRotatorPaused(true);
+                restartRotatorTimer();
+                scrollToMemberCard(memberCards[Number(rotatorCard.dataset.memberIndex)]);
+            });
+            rotatorTrack.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const rotatorCard = event.target.closest('.member-rotator-card');
+                if (!rotatorCard) return;
+                event.preventDefault();
+                event.stopPropagation();
+                setRotatorPaused(true);
+                restartRotatorTimer();
+                scrollToMemberCard(memberCards[Number(rotatorCard.dataset.memberIndex)]);
             });
             rotatorRow.addEventListener('click', toggleRotator);
             rotatorRow.addEventListener('keydown', event => {
