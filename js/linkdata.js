@@ -118,7 +118,7 @@ const linkData = [
         title: "心に虹🌈のかかる毎日を。",
         tags: ["shinri"],
         desc: "人生後半の働き方と生き方を整えるセカンドキャリア支援の専門家。カウンセリングからキャリアコンサルティング、コーチングを一貫して提供する独自メソッド、『ハッピーライフレインボー🌈』を提供しています。",
-        qualifications: "国家資格キャリアコンサルタント / 産業カウンセラー / ２級技能士 キャリアコンサルティング技能士２級 / １級技能士 キャリアコンサルティング技能士１級 / 銀座コーチングスクール認定プロコーチ",
+        qualifications: "国家資格キャリアコンサルタント / 産業カウンセラー / 2級技能士 キャリアコンサルティング技能士2級 / 1級技能士 キャリアコンサルティング技能士1級 / 銀座コーチングスクール認定プロコーチ",
         links: { x: "https://x.com/xcoach_a" }
     },
     {
@@ -133,6 +133,19 @@ const linkData = [
             x: "https://x.com/siii__career",
             line: "https://lin.ee/U2BHx4o",
             instagram: "https://www.instagram.com/siii_manawel?igsh=YzRkeGJ1eHUxNmE5&utm_source=qr"
+        }
+    },
+    {
+        name: "竹島弘幸",
+        avatar: { src: "./img/link/takeshima.jpg" },
+        title: "REBOOOT代表",
+        tags: ["shinri"],
+        desc: "自分を再起動、組織を再起動、日本を再起動\n企業領域を中心にキャリアコンサルティングをしています",
+        qualifications: "国家資格キャリアコンサルタント / 2級技能士 キャリアコンサルティング技能士2級 / 1級技能士 キャリアコンサルティング技能士1級",
+        links: { 
+            note: "https://note.com/reboot_career",
+            x: "https://x.com/home",
+            linkedin: "https://www.linkedin.com/in/%E5%BC%98%E5%B9%B8-%E7%AB%B9%E5%B3%B6-bb50b3147/"
         }
     }
 ];
