@@ -1,0 +1,1297 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="たべラボメンバー、心理支援者の集いのメンバー活動紹介リンク集です。">
+    <title>ninin つながるリンク集</title>
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #141c24;
+            --muted: #5f6872;
+            --line: rgba(20, 28, 36, 0.12);
+            --paper: #fbfaf7;
+            --warm: #b66b45;
+            --trust: #1e6678;
+            --navy: #172531;
+        }
+
+        /* html要素のフォントサイズを基準(rem)として使うため、初期値を指定 */
+        html {
+            font-size: 16px;
+            transition: font-size 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--ink);
+            background: linear-gradient(180deg, #fbfaf7 0%, #f5f8f8 64%, #fffaf4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #52606b;
+            font-size: 0.75rem; /* remを使って文字サイズ変更に連動 */
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .eyebrow-badge::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--warm), var(--trust));
+        }
+
+        .notice-accordion {
+            width: 100%;
+        }
+        
+        .notice-accordion summary {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        
+        .notice-accordion summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .notice-accordion[open] summary {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-color: transparent;
+        }
+        
+        .notice-accordion[open] summary svg {
+            transform: rotate(180deg);
+        }
+        
+        .notice-accordion-content {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--line);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 0 16px 16px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .filter-scroll-area {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .filter-scroll-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        .search-box {
+            max-width: 36rem;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .search-box svg {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8c96a0;
+            pointer-events: none;
+        }
+
+        .search-icon {
+            left: 0.9rem;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.72rem 2.75rem 0.72rem 2.45rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--navy);
+            outline: none;
+            box-shadow: 0 4px 16px rgba(24, 38, 50, 0.04);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: rgba(30, 102, 120, 0.45);
+            box-shadow: 0 0 0 3px rgba(30, 102, 120, 0.09);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 0.45rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #7a848e;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .search-clear:hover {
+            background: #f1f4f5;
+            color: var(--navy);
+        }
+
+        .search-clear svg {
+            position: static;
+            transform: none;
+            width: 0.95rem;
+            height: 0.95rem;
+            pointer-events: none;
+        }
+
+        .empty-results {
+            display: none;
+            margin-top: 1.5rem;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.65);
+            padding: 1.2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .empty-results.is-visible {
+            display: block;
+        }
+        .filter-btn {
+            white-space: nowrap;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            border: 1px solid var(--line);
+            color: var(--muted);
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(30, 102, 120, 0.3);
+            color: var(--navy);
+        }
+
+        .filter-btn.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+            box-shadow: 0 4px 12px rgba(23, 37, 49, 0.15);
+        }
+
+        .view-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .member-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(24, 38, 50, 0.04);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(24, 38, 50, 0.08);
+            border-color: rgba(30, 102, 120, 0.2);
+        }
+
+        .badges-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-tabelab {
+            background: rgba(182, 107, 69, 0.1);
+            color: var(--warm);
+            border: 1px solid rgba(182, 107, 69, 0.2);
+        }
+
+        .badge-shinri {
+            background: rgba(30, 102, 120, 0.1);
+            color: var(--trust);
+            border: 1px solid rgba(30, 102, 120, 0.2);
+        }
+
+        .badge-riesm {
+            background: rgba(23, 37, 49, 0.1);
+            color: var(--navy);
+            border: 1px solid rgba(23, 37, 49, 0.2);
+        }
+
+        .badge-inactive {
+            background: rgba(255, 255, 255, 0.86);
+            color: #97a0a9;
+            border: 1px solid rgba(20, 28, 36, 0.14);
+        }
+
+        .card-links {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-link-btn {
+            width: 2.05rem;
+            height: 2.05rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            color: white;
+            background: var(--navy);
+            border: 1px solid var(--navy);
+            text-decoration: none;
+            transition: all 0.2s;
+            line-height: 1;
+        }
+
+        .card-link-btn svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .card-link-btn:hover {
+            background: var(--trust);
+            border-color: var(--trust);
+            transform: translateY(-1px);
+        }
+
+        .card-link-btn.is-empty {
+            color: #9aa3ac;
+            background: white;
+            border-color: var(--line);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .card-link-btn.is-line {
+            font-size: 0.52rem;
+            letter-spacing: 0;
+        }
+
+        .card-link-btn.is-linkedin {
+            font-size: 0.82rem;
+            font-family: Arial, sans-serif;
+        }
+
+        .profile-trigger {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            height: 2.05rem;
+            padding: 0 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(30, 102, 120, 0.22);
+            background: white;
+            color: var(--trust);
+            font-size: 0.72rem;
+            font-weight: 900;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+
+        .profile-trigger:hover,
+        .profile-trigger:focus-visible {
+            background: rgba(30, 102, 120, 0.08);
+            border-color: rgba(30, 102, 120, 0.42);
+            outline: none;
+        }
+
+        .profile-popover {
+            position: fixed;
+            z-index: 60;
+            display: none;
+            width: min(22rem, calc(100vw - 2rem));
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 18px 44px rgba(24, 38, 50, 0.16);
+            color: var(--ink);
+        }
+
+        .profile-popover.is-visible {
+            display: block;
+        }
+
+        .profile-popover-title {
+            margin-bottom: 0.35rem;
+            color: var(--navy);
+            font-size: 0.95rem;
+            font-weight: 900;
+            line-height: 1.45;
+        }
+
+        .profile-popover-text {
+            color: #43505c;
+            font-size: 0.82rem;
+            font-weight: 500;
+            line-height: 1.75;
+        }
+
+        .view-list {
+            display: flex !important;
+            flex-direction: column;
+            gap: 0.5rem !important;
+        }
+
+        .view-list .member-card {
+            padding: 0.9rem 1rem;
+            display: grid;
+            grid-template-columns: minmax(8rem, auto) 1fr;
+            align-items: start;
+            gap: 0.35rem 1rem;
+            height: auto;
+        }
+
+        .view-list .member-qualifications,
+        .view-list .member-desc {
+            display: none; 
+        }
+
+        .view-list .member-header {
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .view-list .member-header .w-12 {
+            display: none;
+        }
+
+        .view-list .member-header h2 {
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .view-list .member-title {
+            font-size: 0.8rem;
+            line-height: 1.55;
+            margin-bottom: 0;
+            min-width: 0;
+            white-space: normal;
+        }
+
+        .view-list .badges-wrap {
+            grid-column: 1 / -1;
+            margin: 0.1rem 0 0;
+            justify-content: flex-start;
+        }
+
+        .view-list .badge {
+            padding: 3px 6px;
+            font-size: 0.65rem;
+        }
+
+        .view-list .card-links {
+            grid-column: 1 / -1;
+            margin-top: 0.1rem;
+            padding-top: 0;
+            border-top: none;
+            justify-content: flex-start;
+        }
+
+        .view-list .card-link-btn {
+            width: 1.85rem;
+            height: 1.85rem;
+            padding: 0;
+            font-size: 0.68rem;
+        }
+
+        .view-list .profile-trigger {
+            display: inline-flex;
+            height: 1.85rem;
+            padding: 0 0.75rem;
+            font-size: 0.68rem;
+        }
+
+        @media (max-width: 640px) {
+            .view-list .member-card {
+                padding: 10px;
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .view-list .member-header h2 {
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+            .view-list .member-title {
+                font-size: 0.75rem;
+            }
+            .view-list .badges-wrap,
+            .view-list .card-links {
+                flex-wrap: wrap;
+            }
+            .view-list .card-link-btn {
+                width: 1.8rem;
+                height: 1.8rem;
+                padding: 0;
+                font-size: 0.64rem;
+                white-space: nowrap;
+            }
+
+            .view-list .profile-trigger {
+                height: 1.8rem;
+                padding: 0 0.7rem;
+                font-size: 0.64rem;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <main class="flex-grow w-full max-w-5xl mx-auto px-4 pt-12 pb-24">
+        
+        <header class="text-center mb-10 max-w-2xl mx-auto">
+            <div class="eyebrow-badge">ninin connections</div>
+            <h1 class="text-3xl md:text-4xl font-black mb-4 tracking-tight text-[var(--navy)]">つながるリンク集</h1>
+            
+            <!-- ご指定通り、説明文の文字を小さく（text-[0.8rem]）設定 -->
+            <p class="text-[var(--muted)] text-[0.8rem] leading-relaxed mb-6 font-medium">
+                「たべラボ」メンバーや、「心理支援者の集い」に参加されている方々の活動・発信をご紹介する場所です。<br class="hidden md:inline">
+                気になる発信を見つけたら、ぜひリンク先を覗いてみてください。
+            </p>
+
+            <details class="notice-accordion text-left mx-auto">
+                <summary>
+                    <span>【掲載についてのお願いとご注意】</span>
+                    <svg class="w-4 h-4 text-[var(--muted)] transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </summary>
+                <div class="notice-accordion-content">
+                    このリンク集は、コミュニティ内の交流や活動を知っていただくための紹介ページです。掲載されているサービス内容や支援の品質、発信内容について、合同会社nininが推薦・保証するものではありません。各リンク先の情報は、ご本人の責任において運営されています。<br>
+                    <span class="text-xs mt-2 block opacity-80">※掲載や内容修正をご希望のメンバーは、専用フォームよりご連絡ください。</span>
+                </div>
+            </details>
+        </header>
+
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 w-full">
+                <!-- 左側：ラインとタイトル -->
+                <div class="flex items-center flex-grow w-full md:w-auto">
+                    <div class="flex-grow h-px bg-[var(--line)] md:hidden"></div>
+                    <span class="text-xs font-black text-[var(--muted)] uppercase tracking-wider px-4 md:px-0">Display & Filter</span>
+                    <div class="flex-grow h-px bg-[var(--line)] md:ml-4"></div>
+                </div>
+                
+                <!-- 右側：操作ボタン群 -->
+                <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 shrink-0">
+                    <!-- 並び替え -->
+                    <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
+                        <span class="text-[0.65rem] font-bold text-[var(--muted)] px-1.5 hidden sm:inline">並び</span>
+                        <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors bg-[var(--navy)] text-white shadow-sm" data-sort="original">古参</button>
+                        <button class="sort-btn text-[0.75rem] px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-sort="kana">あいうえお</button>
+                    </div>
+                    <!-- 文字サイズ切り替え -->
+                    <div class="flex items-center gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
+                        <span class="text-[0.65rem] font-bold text-[var(--muted)] px-1.5 hidden sm:inline">文字</span>
+                        <button class="font-btn text-[0.7rem] px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-size="14px">小</button>
+                        <button class="font-btn text-sm px-2.5 py-1 rounded transition-colors bg-[var(--navy)] text-white shadow-sm" data-size="16px">中</button>
+                        <button class="font-btn text-base px-2.5 py-1 rounded transition-colors text-[var(--muted)] hover:bg-gray-100" data-size="18px">大</button>
+                    </div>
+
+                    <!-- ビュー切り替えボタン -->
+                    <div class="flex gap-1 bg-white p-1 rounded-lg border border-[var(--line)] shadow-sm">
+                        <button id="view-grid-btn" class="view-toggle-btn bg-[var(--navy)] text-white shadow-sm" aria-label="カード表示">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        </button>
+                        <button id="view-list-btn" class="view-toggle-btn bg-transparent text-[var(--muted)] hover:text-[var(--navy)]" aria-label="リスト表示">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="search-box">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input id="member-search" class="search-input" type="search" placeholder="名前・紹介文で検索" autocomplete="off" aria-label="名前・紹介文で検索">
+                <button id="clear-search" class="search-clear" type="button" aria-label="検索をクリア" hidden>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="filter-scroll-area justify-start md:justify-center" id="filter-container">
+                <button class="filter-btn" data-filter="all">すべて</button>
+                <button class="filter-btn active" data-filter="tabelab">たべラボメンバー</button>
+                <button class="filter-btn" data-filter="shinri">心理支援者の集い</button>
+                <button class="filter-btn" data-filter="riesm">RIESM™</button>
+            </div>
+        </div>
+
+        <!-- メンバーカードグリッド -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="members-grid">
+            <!-- カード1 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
+                        m
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">mango_pudding03</h2>
+                </div>
+                
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    キャリア相談 / 40代からの選び直し
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    走り続けている間に、自分のことが見えなくなった人へ。キャリアも、子どもの進路も、働き方も。選ぶ前に、まず整理する。人材業界18年・国家資格キャリコン10年。副業で3年間、週末にキャリア相談を続けてきました。AIも使いながら、40代からの選び直しを考えています。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード2 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
+                        み
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">キャリコンみやび</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    キャリアコンサルタント
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    はじめまして、キャリアコンサルタントのみやびです。会社員、高校生の母として日々奮闘中。2級技能士や国家資格キャリアコンサルタントの受験対策、50代の転職記録などを発信。X | https://x.gd/j3PZ1　音声配信 | https://x.gd/VQl73
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <a href="https://x.gd/j3PZ1" target="_blank" rel="noopener" class="card-link-btn" aria-label="X" title="X">X</a>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード3 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
+                        ゆ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ゆうり＠大学キャリアセンターの人</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    大学キャリアセンター / 学生支援
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    大学キャリアセンターで年間2000件くらい学生面談してた人。大手有名企業に絶対内定！みたいなテクニックは教えられません。後悔しない就活。6歳&1歳のママ。学生のキャリア支援をしたい方向きにKindle、note書きました。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード4 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] overflow-hidden flex items-center justify-center">
+                        <img src="./img/link/kei.png" alt="けー。お花カウンセリングのプロフィール画像" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">けー。お花カウンセリング</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    たべラボメンバー
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード5 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
+                        こ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">こぐみ</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    キャリアコンサルタント / 福祉系職員
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    他人に支配され自分を置き去りにし続けた結婚生活。モラハラ夫から逃げるように家出し、約1年超の調停を経て離婚。徹底した見直しでストレス障害を2か月で克服。キャリアコンサルタント、栄養睡眠カウンセラー講座受講。最高の健康と自分軸で人生を再スタート。福祉系職員。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード6 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
+                        あ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">あきこ</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    たべラボメンバー
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード7 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
+                        ぎ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ぎっしー｜春日部キャリア部 部長</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    春日部キャリア部 部長
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    「このままでいいのかな？」春日部でキャリアに悩むあなたのためのコミュニティ「#春日部キャリア部」。毎週月曜、対話の場で強みを発見し、複業やスキルUPに挑戦しませんか？安心安全な場で仲間と共に一歩踏み出すあなたを全力で応援します。武里駅近くの「わたしの基地」で開催中。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード8 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
+                        あ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">あかり| 1on1で生きやすい世界に🌏</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    傾聴1on1 / 産業カウンセラー / キャリアコンサルタント
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    傾聴1on1。どんな女性も明るく元気でいるために、こころのままに語れる場を週末限定で活動しています。産業カウンセラー×キャリアコンサルタント。小学生2人のワーママ。ママでありながら働くことの意義、自分らしく生きることも大切にしています。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード9 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
+                        こ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">ころころまころん＠心理福祉</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    心理福祉
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード10 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--navy)] font-black text-xl">
+                        Y
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">YK</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    たべラボメンバー
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード11 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--warm)] font-black text-xl">
+                        t
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">takku</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    たべラボメンバー
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    たべラボメンバーとして活動・発信されています。紹介文やリンクは、掲載情報が揃い次第更新します。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+
+            <!-- カード12 -->
+            <article class="member-card" data-tags="tabelab">
+                <div class="member-header flex items-center gap-4 mb-3">
+                    <div class="w-12 h-12 shrink-0 rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center text-[var(--trust)] font-black text-xl">
+                        だ
+                    </div>
+                    <h2 class="text-xl font-black text-[var(--navy)] leading-tight">だーやま｜書いて、語るひと</h2>
+                </div>
+
+
+                <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
+                    書いて、語るひと
+                </div>
+                
+                <div class="badges-wrap">
+                    <span class="badge badge-tabelab">たべラボ</span>
+                    <span class="badge badge-riesm badge-inactive">RIESM™</span>
+                    <span class="badge badge-shinri badge-inactive">心理支援者の集い</span>
+                </div>
+                
+                <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
+                    自分から見える世界を、内側で起こることも含めて書くことで語っています。noteのほか、ワークショップやセッション、Podcastなどでも「語ることで見えてくる景色」を探求中。
+                </p>
+                
+                <div class="card-links">
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="note 未設定" title="note 未設定">n</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Web 未設定" title="Web 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg></span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="X 未設定" title="X 未設定">X</span>
+                    <span class="card-link-btn is-empty is-line" aria-disabled="true" aria-label="LINE 未設定" title="LINE 未設定">LINE</span>
+                    <span class="card-link-btn is-empty is-linkedin" aria-disabled="true" aria-label="LinkedIn 未設定" title="LinkedIn 未設定">in</span>
+                    <span class="card-link-btn is-empty" aria-disabled="true" aria-label="Instagram 未設定" title="Instagram 未設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></span>
+                </div>
+            </article>
+        </div>
+        <div id="empty-results" class="empty-results">該当するメンバーが見つかりません</div>
+        <div id="profile-popover" class="profile-popover" role="dialog" aria-live="polite"></div>
+    </main>
+
+    <footer class="w-full text-center py-8 text-xs text-[#69737d] leading-relaxed border-t border-[var(--line)] bg-[rgba(255,255,255,0.5)]">
+        <strong>合同会社ninin consulting ＆ counseling</strong><br>
+        © 2025 ninin LLC. All Rights Reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const sortBtns = document.querySelectorAll('.sort-btn');
+            const searchInput = document.getElementById('member-search');
+            const clearSearchBtn = document.getElementById('clear-search');
+            const emptyResults = document.getElementById('empty-results');
+            const profilePopover = document.getElementById('profile-popover');
+            const membersContainer = document.getElementById('members-grid');
+            const memberCards = Array.from(document.querySelectorAll('.member-card'));
+            const filterAliases = {
+                al: 'all',
+                all: 'all',
+                tb: 'tabelab',
+                tabelab: 'tabelab',
+                ps: 'shinri',
+                shinri: 'shinri',
+                ri: 'riesm',
+                riesm: 'riesm'
+            };
+            const filterUrlAliases = {
+                all: 'al',
+                tabelab: 'tb',
+                shinri: 'ps',
+                riesm: 'ri'
+            };
+            const kanaSortKeys = {
+                'mango_pudding03': 'まんごぷりんぐ',
+                'キャリコンみやび': 'きゃりこんみやび',
+                'ゆうり＠大学キャリアセンターの人': 'ゆうりだいがくきゃりあせんたーのひと',
+                'けー。お花カウンセリング': 'けーおはなかうんせりんぐ',
+                'こぐみ': 'こぐみ',
+                'あきこ': 'あきこ',
+                'ぎっしー｜春日部キャリア部 部長': 'ぎっしーかすかべきゃりあぶぶちょう',
+                'あかり| 1on1で生きやすい世界に🌏': 'あかりわんおんわんでいきやすいせかいに',
+                'ころころまころん＠心理福祉': 'ころころまころんしんりふくし',
+                'YK': 'わいけー',
+                'takku': 'たっく',
+                'だーやま｜書いて、語るひと': 'だーやまかいてかたるひと'
+            };
+            let currentSort = 'original';
+
+            function normalizeSearchText(value) {
+                return value.normalize('NFKC').toLowerCase();
+            }
+
+            memberCards.forEach((card, index) => {
+                card.dataset.originalIndex = index;
+                const name = card.querySelector('h2')?.textContent.trim() || '';
+                const title = card.querySelector('.member-title')?.textContent.trim() || '';
+                const desc = card.querySelector('.member-desc')?.textContent.trim() || '';
+                card.dataset.sortName = kanaSortKeys[name] || name;
+                card.dataset.profileName = name;
+                card.dataset.profileText = desc;
+                card.dataset.searchText = normalizeSearchText(`${name} ${title} ${desc}`);
+
+                const links = card.querySelector('.card-links');
+                const profileButton = document.createElement('button');
+                profileButton.type = 'button';
+                profileButton.className = 'profile-trigger';
+                profileButton.textContent = 'プロフィール';
+                profileButton.setAttribute('aria-label', `${name}のプロフィール`);
+                links?.prepend(profileButton);
+            });
+
+            function escapeHtml(value) {
+                return value.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+            }
+
+            function isListView() {
+                return membersContainer.classList.contains('view-list');
+            }
+
+            function hideProfilePopover() {
+                profilePopover.classList.remove('is-visible');
+            }
+
+            function showProfilePopover(card, anchor) {
+                if (!isListView()) return;
+                const name = card.dataset.profileName || '';
+                const text = card.dataset.profileText || '';
+                profilePopover.innerHTML = `<div class="profile-popover-title">${escapeHtml(name)}</div><div class="profile-popover-text">${escapeHtml(text)}</div>`;
+                profilePopover.classList.add('is-visible');
+
+                const rect = anchor.getBoundingClientRect();
+                const popoverRect = profilePopover.getBoundingClientRect();
+                const gap = 10;
+                let left = rect.left;
+                let top = rect.bottom + gap;
+
+                if (left + popoverRect.width > window.innerWidth - gap) {
+                    left = window.innerWidth - popoverRect.width - gap;
+                }
+                if (top + popoverRect.height > window.innerHeight - gap) {
+                    top = rect.top - popoverRect.height - gap;
+                }
+
+                profilePopover.style.left = `${Math.max(gap, left)}px`;
+                profilePopover.style.top = `${Math.max(gap, top)}px`;
+            }
+
+            function normalizeAlias(value) {
+                return normalizeSearchText(value || '').replace(/[\s_\-.#?=&]+/g, '');
+            }
+
+            function resolveFilterAlias(value) {
+                return filterAliases[normalizeAlias(value)] || null;
+            }
+
+            function getInitialFilterFromUrl() {
+                const url = new URL(window.location.href);
+                const queryKeys = ['filter', 'f', 'view', 'category', 'cat', 'type'];
+                for (const key of queryKeys) {
+                    const resolved = resolveFilterAlias(url.searchParams.get(key));
+                    if (resolved) return resolved;
+                }
+                for (const [key, value] of url.searchParams.entries()) {
+                    const resolved = resolveFilterAlias(value) || resolveFilterAlias(key);
+                    if (resolved) return resolved;
+                }
+                return resolveFilterAlias(window.location.hash.slice(1)) || 'tabelab';
+            }
+
+            function setActiveFilter(filterValue) {
+                const target = document.querySelector(`.filter-btn[data-filter="${filterValue}"]`) || document.querySelector('.filter-btn[data-filter="tabelab"]');
+                filterBtns.forEach(b => b.classList.remove('active'));
+                target.classList.add('active');
+            }
+
+            function updateFilterUrl(filterValue) {
+                const url = new URL(window.location.href);
+                ['filter', 'f', 'view', 'category', 'cat', 'type', 'al', 'tb', 'ps', 'ri'].forEach(key => url.searchParams.delete(key));
+                url.searchParams.set('f', filterUrlAliases[filterValue] || 'tb');
+                url.hash = '';
+                window.history.replaceState(null, '', url);
+            }
+
+            function getActiveFilter() {
+                return document.querySelector('.filter-btn.active')?.getAttribute('data-filter') || 'tabelab';
+            }
+
+            function applyFilter() {
+                const filterValue = getActiveFilter();
+                const queryParts = normalizeSearchText(searchInput.value.trim()).split(/\s+/).filter(Boolean);
+                let visibleCount = 0;
+
+                memberCards.forEach(card => {
+                    const tags = card.getAttribute('data-tags');
+                    const matchesTag = filterValue === 'all' || (tags && tags.includes(filterValue));
+                    const matchesSearch = queryParts.length === 0 || queryParts.every(part => card.dataset.searchText.includes(part));
+                    const shouldShow = matchesTag && matchesSearch;
+                    card.style.display = shouldShow ? '' : 'none';
+                    if (shouldShow) visibleCount += 1;
+                });
+
+                clearSearchBtn.hidden = searchInput.value.trim().length === 0;
+                emptyResults.classList.toggle('is-visible', visibleCount === 0);
+            }
+
+            function applySort(sortValue) {
+                currentSort = sortValue;
+                const sortedCards = [...memberCards].sort((a, b) => {
+                    if (sortValue === 'kana') {
+                        if (a.dataset.sortName < b.dataset.sortName) return -1;
+                        if (a.dataset.sortName > b.dataset.sortName) return 1;
+                    }
+                    return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
+                });
+                sortedCards.forEach(card => membersContainer.appendChild(card));
+            }
+
+            memberCards.forEach(card => {
+                const profileButton = card.querySelector('.profile-trigger');
+                profileButton?.addEventListener('click', event => {
+                    event.stopPropagation();
+                    showProfilePopover(card, profileButton);
+                });
+                profileButton?.addEventListener('mouseenter', () => showProfilePopover(card, profileButton));
+                profileButton?.addEventListener('focus', () => showProfilePopover(card, profileButton));
+                card.addEventListener('mouseenter', () => showProfilePopover(card, card));
+                card.addEventListener('mouseleave', event => {
+                    if (!profilePopover.contains(event.relatedTarget)) hideProfilePopover();
+                });
+            });
+
+            profilePopover.addEventListener('mouseleave', hideProfilePopover);
+            document.addEventListener('click', event => {
+                if (!profilePopover.contains(event.target) && !event.target.closest('.profile-trigger')) hideProfilePopover();
+            });
+            window.addEventListener('scroll', hideProfilePopover, { passive: true });
+            window.addEventListener('resize', hideProfilePopover);
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filterValue = btn.getAttribute('data-filter');
+                    setActiveFilter(filterValue);
+                    updateFilterUrl(filterValue);
+                    applyFilter();
+                });
+            });
+
+            sortBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sortBtns.forEach(b => {
+                        b.classList.remove('bg-[var(--navy)]', 'text-white', 'shadow-sm');
+                        b.classList.add('text-[var(--muted)]', 'hover:bg-gray-100');
+                    });
+                    btn.classList.remove('text-[var(--muted)]', 'hover:bg-gray-100');
+                    btn.classList.add('bg-[var(--navy)]', 'text-white', 'shadow-sm');
+                    applySort(btn.getAttribute('data-sort'));
+                    applyFilter();
+                });
+            });
+
+            searchInput.addEventListener('input', applyFilter);
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchInput.focus();
+                applyFilter();
+            });
+
+            applySort(currentSort);
+            setActiveFilter(getInitialFilterFromUrl());
+            applyFilter();
+
+            // --- ビュー切り替え機能 ---
+            const viewGridBtn = document.getElementById('view-grid-btn');
+            const viewListBtn = document.getElementById('view-list-btn');
+
+            viewGridBtn.addEventListener('click', () => {
+                // コンテナのクラス変更
+                hideProfilePopover();
+                membersContainer.classList.remove('view-list');
+                membersContainer.classList.add('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-6');
+                
+                // ボタンスタイル更新
+                viewGridBtn.classList.replace('bg-transparent', 'bg-[var(--navy)]');
+                viewGridBtn.classList.replace('text-[var(--muted)]', 'text-white');
+                viewGridBtn.classList.add('shadow-sm');
+                
+                viewListBtn.classList.replace('bg-[var(--navy)]', 'bg-transparent');
+                viewListBtn.classList.replace('text-white', 'text-[var(--muted)]');
+                viewListBtn.classList.remove('shadow-sm');
+            });
+
+            viewListBtn.addEventListener('click', () => {
+                // コンテナのクラス変更
+                hideProfilePopover();
+                membersContainer.classList.add('view-list');
+                membersContainer.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-6');
+                
+                // ボタンスタイル更新
+                viewListBtn.classList.replace('bg-transparent', 'bg-[var(--navy)]');
+                viewListBtn.classList.replace('text-[var(--muted)]', 'text-white');
+                viewListBtn.classList.add('shadow-sm');
+                
+                viewGridBtn.classList.replace('bg-[var(--navy)]', 'bg-transparent');
+                viewGridBtn.classList.replace('text-white', 'text-[var(--muted)]');
+                viewGridBtn.classList.remove('shadow-sm');
+            });
+
+            // --- 文字サイズ切り替え機能 ---
+            const fontBtns = document.querySelectorAll('.font-btn');
+            
+            fontBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 全ボタンを非アクティブ状態にリセット
+                    fontBtns.forEach(b => {
+                        b.classList.remove('bg-[var(--navy)]', 'text-white', 'shadow-sm');
+                        b.classList.add('text-[var(--muted)]', 'hover:bg-gray-100');
+                    });
+                    
+                    // クリックされたボタンをアクティブ状態に
+                    btn.classList.remove('text-[var(--muted)]', 'hover:bg-gray-100');
+                    btn.classList.add('bg-[var(--navy)]', 'text-white', 'shadow-sm');
+                    
+                    // html要素のfont-sizeを変更（remの基準値を変更し、全体をスケーリング）
+                    const size = btn.getAttribute('data-size');
+                    document.documentElement.style.fontSize = size;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
