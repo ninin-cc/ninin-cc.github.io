@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャリアアンカー ～心の錨を見つめる時間～</title>
+
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    if (/Line/i.test(navigator.userAgent) && window.location.search.indexOf('openExternalBrowser=1') === -1) {
+      var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = window.location.href + separator + 'openExternalBrowser=1';
+    }
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Z1T35THNDV');
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script src="../shared/vendor/react-18.2.0/react.production.min.js"></script>
+  <script src="../shared/vendor/react-18.2.0/react-dom.production.min.js"></script>
+
+<!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- html2canvas (画像保存用) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- jsPDF (PDF保存用) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Yomogi&display=swap');
+    body { margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; }
+    html, body { -webkit-touch-callout: none; }
+    img { -webkit-user-drag: none; user-select: none; }
+    .rpg-font { font-family: 'Noto Sans JP', sans-serif; letter-spacing: 0; }
+    
+    /* ルビの調整 */
+    ruby { ruby-align: center; }
+    rt { font-size: 0.5em; color: white; } /* ルビを白文字に */
+    h1 rt { font-size: 0.35em; } /* タイトルでのルビはさらに小さく */
+
+    .rpg-button { 
+      border: 2px solid #4b2a14 !important; 
+      padding: 12px 16px; 
+      border-radius: 7px; 
+      transition: all 0.2s; 
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.08), transparent 18%, rgba(69,32,12,0.16) 34%, transparent 52%, rgba(255,255,255,0.06) 72%, rgba(69,32,12,0.18)),
+        linear-gradient(180deg, #b8793e 0%, #8b5329 48%, #5f351b 100%) !important;
+      color: #fff8df !important; 
+      cursor: pointer; 
+      text-align: center; 
+      font-weight: bold;
+      text-shadow: 0 1px 0 rgba(43, 24, 10, 0.9), 0 2px 4px rgba(0,0,0,0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 232, 176, 0.45),
+        inset 0 -3px 0 rgba(45, 22, 8, 0.65),
+        0 4px 0 #3a1d0c,
+        0 8px 16px rgba(0,0,0,0.32) !important;
+    }
+    .rpg-button:hover:not(:disabled) { 
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.12), transparent 18%, rgba(69,32,12,0.14) 34%, transparent 52%, rgba(255,255,255,0.08) 72%, rgba(69,32,12,0.15)),
+        linear-gradient(180deg, #c98945 0%, #9a5e30 48%, #70401f 100%) !important;
+      color: #fffaf0 !important; 
+      transform: translateY(-1px);
+    }
+    .rpg-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      filter: grayscale(0.35);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 232, 176, 0.25),
+        inset 0 -2px 0 rgba(45, 22, 8, 0.55),
+        0 2px 0 #3a1d0c !important;
+    }
+
+    .transparent-save-button {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      color: #fff8df !important;
+    }
+    .transparent-save-button:hover:not(:disabled) {
+      background: rgba(255, 248, 223, 0.08) !important;
+      border-color: rgba(255, 248, 223, 0.18) !important;
+      color: #fff8df !important;
+      box-shadow: none !important;
+    }
+
+    .letter-note {
+      font-family: 'Yomogi', 'Noto Sans JP', sans-serif;
+      background-color: #fffffd;
+      background-image:
+        linear-gradient(90deg, transparent 0, transparent 34px, rgba(170, 70, 65, 0.12) 35px, transparent 36px),
+        repeating-linear-gradient(178deg, transparent 0, transparent 27px, rgba(92, 72, 48, 0.16) 28px, transparent 29px);
+      box-shadow:
+        inset 0 0 18px rgba(120, 90, 60, 0.10),
+        0 6px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    .translucent-popup-overlay {
+      background: rgba(0, 0, 0, 0.42) !important;
+      backdrop-filter: blur(2px);
+    }
+    .translucent-popup-window {
+      background-color: rgba(18, 12, 8, 0.34) !important;
+      backdrop-filter: blur(3px);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42) !important;
+    }
+    .translucent-popup-window > div.absolute {
+      background-color: rgba(18, 12, 8, 0.48) !important;
+      backdrop-filter: blur(2px);
+    }
+    .translucent-popup-window .letter-note {
+      background-color: rgba(255, 255, 253, 0.95);
+    }
+    .talk-popup-window {
+      background-color: rgba(18, 12, 8, 0.06) !important;
+      backdrop-filter: blur(1px);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28) !important;
+    }
+    .talk-popup-window > div.absolute {
+      background-color: rgba(18, 12, 8, 0.44) !important;
+    }
+
+    .dialog-note {
+      position: relative;
+      overflow: hidden;
+      color: #2d1b10;
+      background:
+        linear-gradient(90deg, rgba(126, 73, 34, 0.18) 0 2px, transparent 2px 100%),
+        repeating-linear-gradient(to bottom, transparent 0 27px, rgba(126, 73, 34, 0.18) 28px, transparent 29px),
+        linear-gradient(135deg, #f8eac2 0%, #ecd19a 54%, #d4ad6b 100%);
+      background-size: 100% 100%, 100% 29px, 100% 100%;
+      border: 1px solid rgba(102, 59, 27, 0.62);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow:
+        inset 0 0 28px rgba(90, 48, 18, 0.22),
+        inset 0 2px 0 rgba(255,255,255,0.5),
+        0 3px 10px rgba(0,0,0,0.22);
+    }
+    .dialog-note::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 38px;
+      width: 1px;
+      background: rgba(132, 63, 45, 0.28);
+    }
+    .dialog-note::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(113, 70, 34, 0.12), transparent 18%),
+        radial-gradient(circle at 85% 70%, rgba(113, 70, 34, 0.10), transparent 20%);
+      mix-blend-mode: multiply;
+    }
+    .dialog-note > * {
+      position: relative;
+      z-index: 1;
+    }
+    .dialog-note rt {
+      color: #5c3620;
+    }
+
+    .question-frame-transparent {
+      background: transparent !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    .question-frame-soft {
+      background: rgba(0, 0, 0, 0.32) !important;
+      backdrop-filter: blur(1px);
+    }
+    .question-frame-letter {
+      background:
+        repeating-linear-gradient(to bottom, rgba(248,234,194,0.96) 0 27px, rgba(126,73,34,0.16) 28px, rgba(248,234,194,0.96) 29px),
+        linear-gradient(135deg, rgba(248,234,194,0.96), rgba(224,190,123,0.94)) !important;
+      color: #2d1b10 !important;
+      box-shadow:
+        inset 0 0 26px rgba(90,48,18,0.18),
+        0 10px 24px rgba(0,0,0,0.24) !important;
+    }
+    .question-frame-black {
+      background: #050505 !important;
+    }
+    .question-choice-transparent {
+      background: transparent !important;
+      box-shadow: inset 0 0 14px rgba(230,194,128,0.10) !important;
+    }
+    .question-choice-soft {
+      background: rgba(0, 0, 0, 0.34) !important;
+      box-shadow: inset 0 0 18px rgba(230,194,128,0.10) !important;
+    }
+    .question-choice-letter {
+      background:
+        linear-gradient(90deg, rgba(126,73,34,0.12) 0 1px, transparent 1px 100%),
+        repeating-linear-gradient(to bottom, rgba(255,248,223,0.9) 0 27px, rgba(126,73,34,0.14) 28px, rgba(255,248,223,0.9) 29px) !important;
+      box-shadow: inset 0 0 14px rgba(90,48,18,0.13) !important;
+    }
+    .question-choice-black {
+      background: #050505 !important;
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.04) !important;
+    }
+    .question-answer-transparent {
+      background: transparent !important;
+    }
+    .question-answer-soft {
+      background: rgba(0, 0, 0, 0.34) !important;
+    }
+    .question-answer-letter {
+      background: rgba(255,248,223,0.72) !important;
+    }
+    .question-answer-black {
+      background: #050505 !important;
+    }
+
+    .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ページ切り替えのフェードイン */
+    .animate-page-turn { 
+      position: relative;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* ページめくり（左固定で右から左へ縮小）アニメーション */
+    .page-flip-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(to right, #050505 0%, #1a1a1a 95%, #3a3a3a 100%);
+      z-index: 100;
+      transform-origin: left center;
+      animation: flipLeft 0.5s ease-in-out forwards;
+      pointer-events: none;
+    }
+    @keyframes flipLeft {
+      0% { transform: scaleX(1); opacity: 1; }
+      99% { transform: scaleX(0); opacity: 1; }
+      100% { transform: scaleX(0); opacity: 0; }
+    }
+    
+    /* オーラエフェクト */
+    .aura-effect-a {
+      animation: pulseAuraA 1.5s infinite;
+      box-shadow: 0 0 20px 10px rgba(230,194,128,0.6);
+    }
+    @keyframes pulseAuraA {
+      0% { box-shadow: 0 0 20px 10px rgba(230,194,128,0.6); transform: scale(1); }
+      50% { box-shadow: 0 0 30px 15px rgba(230,194,128,0.8); transform: scale(1.05); }
+      100% { box-shadow: 0 0 20px 10px rgba(230,194,128,0.6); transform: scale(1); }
+    }
+
+    .aura-effect-b {
+      animation: pulseAuraB 1.5s infinite;
+      box-shadow: 0 0 20px 10px rgba(212,184,149,0.6);
+    }
+    @keyframes pulseAuraB {
+      0% { box-shadow: 0 0 20px 10px rgba(212,184,149,0.6); transform: scale(1); }
+      50% { box-shadow: 0 0 30px 15px rgba(212,184,149,0.8); transform: scale(1.05); }
+      100% { box-shadow: 0 0 20px 10px rgba(212,184,149,0.6); transform: scale(1); }
+    }
+
+    .progress-bar-fill {
+      transition: width 0.3s ease-out;
+    }
+
+    /* 結果カードのスタイル */
+    .result-card-gold {
+      background: linear-gradient(135deg, rgba(30,25,0,0.9), rgba(10,5,0,0.95));
+      border: 2px solid #facc15;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+    }
+    .result-card-silver {
+      background: linear-gradient(135deg, rgba(20,25,30,0.9), rgba(5,10,15,0.95));
+      border: 2px solid #94a3b8;
+    }
+    .result-card-bronze {
+      background: linear-gradient(135deg, rgba(30,15,5,0.9), rgba(15,5,0,0.95));
+      border: 2px solid #b45309;
+    }
+    .result-card-danger {
+      background: linear-gradient(135deg, rgba(40,0,0,0.9), rgba(10,0,0,0.95));
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+    .result-window-translucent {
+      background: rgba(0, 0, 0, 0.62) !important;
+      backdrop-filter: blur(1px);
+    }
+    .result-window-translucent > div.absolute {
+      background-color: rgba(0, 0, 0, 0.74) !important;
+    }
+    .result-window-translucent .result-card-gold {
+      background: linear-gradient(135deg, rgba(30,25,0,0.72), rgba(10,5,0,0.78));
+    }
+    .result-window-translucent .result-card-silver {
+      background: linear-gradient(135deg, rgba(20,25,30,0.72), rgba(5,10,15,0.78));
+    }
+    .result-window-translucent .result-card-bronze {
+      background: linear-gradient(135deg, rgba(30,15,5,0.72), rgba(15,5,0,0.78));
+    }
+    .result-window-translucent .result-card-danger {
+      background: linear-gradient(135deg, rgba(40,0,0,0.72), rgba(10,0,0,0.78));
+    }
+    .result-story-toggle {
+      background: rgba(47, 29, 16, 0.62) !important;
+    }
+    .result-story-toggle:hover {
+      background: rgba(61, 39, 22, 0.72) !important;
+    }
+    .result-story-choice-positive {
+      background: rgba(66, 32, 6, 0.52) !important;
+    }
+    .result-story-choice-negative {
+      background: rgba(69, 10, 10, 0.52) !important;
+    }
+    .result-story-note {
+      background: rgba(69, 26, 3, 0.48) !important;
+    }
+  </style>
+</head>
+<body class="rpg-font min-h-screen relative" style="background-image: url('./img/cafeei.jpg'); background-size: cover; background-position: center; background-attachment: fixed;">
+  <!-- 背景の暗さを和らげる -->
+  <div class="absolute inset-0 z-0 bg-black bg-opacity-30"></div>
+  <div id="root" class="relative z-10 w-full max-w-2xl mx-auto p-4 md:p-6 min-h-screen flex flex-col overflow-hidden"></div>
+
+  <script src="./js/ponocareer.bundle.js"></script>
+  <script>
+    (() => {
+      const blockedCommandKeys = new Set(['u', 's']);
+      const blockedDevtoolKeys = new Set(['i', 'j', 'c']);
+
+      document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        const commandKey = event.ctrlKey || event.metaKey;
+        const shouldBlock =
+          event.key === 'F12' ||
+          (commandKey && blockedCommandKeys.has(key)) ||
+          (commandKey && event.shiftKey && blockedDevtoolKeys.has(key));
+
+        if (!shouldBlock) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
+    })();
+  </script>
+</body>
+</html>
