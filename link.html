@@ -523,19 +523,27 @@
         }
 
         .badges-wrap {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 6px;
             margin-top: 0.5rem;
             margin-bottom: 1rem;
+            width: 100%;
         }
 
         .badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 8px;
+            justify-content: center;
+            min-width: 0;
+            width: 100%;
+            padding: 4px 6px;
             border-radius: 6px;
-            font-size: 0.7rem;
+            font-size: clamp(0.52rem, 1.6vw, 0.7rem);
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             font-weight: 800;
             letter-spacing: 0.5px;
             text-decoration: none;
@@ -576,6 +584,7 @@
             display: inline-flex;
             align-self: flex-start;
             max-width: 100%;
+            margin-top: auto;
             margin-bottom: 0.65rem;
             padding: 0.32rem 0.58rem;
             border-radius: 6px;
@@ -589,7 +598,7 @@
         }
 
         .card-links {
-            margin-top: auto;
+            margin-top: 0;
             padding-top: 1rem;
             border-top: 1px solid rgba(0,0,0,0.04);
             display: flex;
@@ -721,6 +730,7 @@
 
         .view-list .member-certification {
             grid-column: 1 / -1;
+            margin-top: 0;
             margin-bottom: 0;
             padding: 0.24rem 0.48rem;
             font-size: 0.66rem;
@@ -761,12 +771,12 @@
         .view-list .badges-wrap {
             grid-column: 1 / -1;
             margin: 0.1rem 0 0;
-            justify-content: flex-start;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .view-list .badge {
-            padding: 3px 6px;
-            font-size: 0.65rem;
+            padding: 3px 5px;
+            font-size: clamp(0.5rem, 1.5vw, 0.65rem);
         }
 
         .view-list .card-links {
@@ -813,7 +823,6 @@
             .view-list .member-certification {
                 font-size: 0.62rem;
             }
-            .view-list .badges-wrap,
             .view-list .card-links {
                 flex-wrap: wrap;
             }
@@ -940,6 +949,12 @@
     <footer class="w-full text-center py-8 text-xs text-[#69737d] leading-relaxed border-t border-[var(--line)] bg-[rgba(255,255,255,0.5)]">
         <strong>合同会社ninin consulting ＆ counseling</strong><br>
         © 2025 ninin LLC. All Rights Reserved.
+        <div class="mt-4">
+            <a href="index.html" class="inline-flex items-center justify-center gap-1 text-[#1e6678] font-bold hover:underline">
+                <span>TOPへ戻る</span>
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
     </footer>
 
     <script>
@@ -1019,7 +1034,6 @@
 
                 return `
                     <article class="member-card" data-tags="${(member.tags || []).join(' ')}" id="member-card-${index}">
-                        ${certHtml}
                         <div class="member-header flex items-center gap-4 mb-3">
                             ${avatarHtml}
                             <h2 class="text-xl font-black text-[var(--navy)] leading-tight">${member.name}</h2>
@@ -1034,6 +1048,7 @@
                             ${memberDesc}
                         </p>
                         ${qualHtml}
+                        ${certHtml}
                         <div class="card-links">
                             ${linksHtml}
                         </div>
