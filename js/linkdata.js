@@ -26,6 +26,8 @@ const linkData = [
     {
         name: "けー。お花カウンセリング",
         certification: "🌈RIESM™アンバサダー / AMB-001",
+        location: "オンライン中心",
+        workshopCount: 0,
         avatar: { src: "./img/link/kei.png" },
         title: "たべラボメンバー / 心理支援者の集い",
         tags: ["tabelab", "shinri", "riesm"],
@@ -61,10 +63,13 @@ const linkData = [
     },
     {
         name: "ころころまころん＠心理福祉",
+        certification: "🌈RIESM™アンバサダー / AMB-004",
+        location: "東京都",
+        workshopCount: 0,
         avatar: { src: "./img/link/maron.webp" },
         title: "心理福祉",
-        tags: ["tabelab"],
-        desc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。"
+        tags: ["tabelab", "riesm"],
+        desc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。\n\n【アンバサダーより】\n自己理解が進むことで、物事の見方が拡がると思うので、多くの人に知ってもらいたいです。あなたの良さを一緒に見つけたいです。"
     },
     {
         name: "YK",
@@ -90,6 +95,8 @@ const linkData = [
     {
         name: "れい",
         certification: "🌈RIESM™アンバサダー / AMB-002",
+        location: "オンライン中心",
+        workshopCount: 0,
         avatar: { text: "れ", color: "trust" },
         title: "🌈RIESM™認定者",
         tags: ["riesm"],
@@ -98,6 +105,8 @@ const linkData = [
     {
         name: "りんこ",
         certification: "🌈RIESM™アンバサダー / AMB-003",
+        location: "広島県",
+        workshopCount: 0,
         avatar: { text: "り", color: "warm" },
         title: "🌈RIESM™認定者",
         tags: ["riesm"],
