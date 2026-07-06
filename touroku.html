@@ -271,10 +271,10 @@
     <!-- 連携用のJavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // linkDataが読み込まれているかチェック
-            if (typeof linkData !== 'undefined') {
-                // linkDataから「riesm」のタグを持つメンバーだけを抽出
-                const riesmMembers = linkData.filter(member => member.tags && member.tags.includes('riesm'));
+            const sharedLinkData = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+            if (sharedLinkData.length > 0) {
+                // linkdata.jsから「riesm」のタグを持つメンバーだけを抽出
+                const riesmMembers = sharedLinkData.filter(member => member.tags && member.tags.includes('riesm'));
                 const tbody = document.getElementById('riesm-tbody');
                 
                 if (tbody && riesmMembers.length > 0) {
@@ -289,13 +289,15 @@
                             }
                         }
                         
+                        const comment = member.ambassadorDesc || member.desc || '';
+
                         return `
                             <tr>
                                 <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">${ambNumber}</td>
                                 <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">${member.name}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">-</td>
-                                <td class="px-4 py-3 text-center whitespace-nowrap">-</td>
-                                <td class="px-4 py-3 leading-relaxed">${member.desc}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">${member.location || '-'}</td>
+                                <td class="px-4 py-3 text-center whitespace-nowrap">${member.workshopCount !== undefined ? member.workshopCount : '-'}</td>
+                                <td class="px-4 py-3 leading-relaxed whitespace-pre-wrap">${comment}</td>
                             </tr>
                         `;
                     }).join('');

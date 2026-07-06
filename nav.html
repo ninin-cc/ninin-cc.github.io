@@ -20,6 +20,7 @@
 
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./js/linkdata.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -626,24 +627,9 @@
                                         <th class="px-6 py-4">氏名</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-stone-100 text-stone-700">
-                                    <tr class="hover:bg-stone-50 transition-colors">
-                                        <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 bg-violet-50 text-violet-700 text-[11px] font-bold tracking-wider rounded border border-violet-200">コア</span></td>
-                                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">001</td>
-                                        <td class="px-6 py-4">東京都</td>
-                                        <td class="px-6 py-4 font-bold text-stone-800">柏崎 哲生</td>
-                                    </tr>
-                                    <tr class="hover:bg-stone-50 transition-colors">
-                                        <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[11px] font-bold tracking-wider rounded border border-emerald-200">ナビ</span></td>
-                                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">002</td>
-                                        <td class="px-6 py-4">大阪府</td>
-                                        <td class="px-6 py-4 font-bold text-stone-800">（仮）道頓堀 航</td>
-                                    </tr>
-                                    <tr class="hover:bg-stone-50 transition-colors">
-                                        <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 bg-sky-50 text-sky-700 text-[11px] font-bold tracking-wider rounded border border-sky-200">ワーク</span></td>
-                                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">003</td>
-                                        <td class="px-6 py-4">東京都 荒川区</td>
-                                        <td class="px-6 py-4 font-bold text-stone-800">（仮）皆野</td>
+                                <tbody id="nav-certified-tbody" class="divide-y divide-stone-100 text-stone-700">
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-4 text-center text-stone-500">データを読み込んでいます...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -678,16 +664,9 @@
                                         <th class="px-6 py-4">ニックネーム</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-stone-100 text-stone-700">
-                                    <tr class="hover:bg-stone-50 transition-colors">
-                                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">R-001</td>
-                                        <td class="px-6 py-4 text-stone-600">東京都（通信業界）</td>
-                                        <td class="px-6 py-4 font-bold text-stone-800">ジェミー</td>
-                                    </tr>
-                                    <tr class="hover:bg-stone-50 transition-colors">
-                                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">R-002</td>
-                                        <td class="px-6 py-4 text-stone-600">千葉県（教育機関）</td>
-                                        <td class="px-6 py-4 font-bold text-stone-800">ガペル</td>
+                                <tbody id="nav-ambassador-tbody" class="divide-y divide-stone-100 text-stone-700">
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-stone-500">データを読み込んでいます...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -855,6 +834,69 @@
             © 2026 ninin LLC. All Rights Reserved.
         </p>
     </footer>
+
+    <!-- linkdata.js 連携：ナビゲーター名簿 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sharedLinkData = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+            const certifiedTbody = document.getElementById('nav-certified-tbody');
+            const ambassadorTbody = document.getElementById('nav-ambassador-tbody');
+            if (!certifiedTbody || !ambassadorTbody) return;
+
+            function escapeHtml(value) {
+                return String(value || '').replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+            }
+
+            function getCertNumber(member) {
+                const source = [member.certification, member.certificationNumber, member.riesmNumber, member.id].filter(Boolean).join(' ');
+                const match = source.match(/(?:AMB|NAV|CORE|WORK|R)-?\d{3}|\b\d{3}\b/i);
+                return match ? match[0].replace(/^(AMB|NAV|CORE|WORK|R)(\d)/i, '$1-$2').toUpperCase() : '-';
+            }
+
+            function isAmbassador(member) {
+                const source = [member.certification, member.riesmRole, member.navigatorType].filter(Boolean).join(' ');
+                return /アンバサダー|AMB-/i.test(source);
+            }
+
+            function getNavigatorLabel(member) {
+                const source = [member.certification, member.riesmRole, member.navigatorType].filter(Boolean).join(' ');
+                if (/コア/i.test(source)) return { label: 'コア', className: 'bg-violet-50 text-violet-700 border-violet-200' };
+                if (/ワーク/i.test(source)) return { label: 'ワーク', className: 'bg-sky-50 text-sky-700 border-sky-200' };
+                return { label: 'ナビ', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+            }
+
+            const riesmMembers = sharedLinkData.filter(member => Array.isArray(member.tags) && member.tags.includes('riesm'));
+            const ambassadors = riesmMembers.filter(isAmbassador);
+            const certifiedNavigators = riesmMembers.filter(member => !isAmbassador(member));
+
+            certifiedTbody.innerHTML = certifiedNavigators.length
+                ? certifiedNavigators.map(member => {
+                    const type = getNavigatorLabel(member);
+                    return `
+                        <tr class="hover:bg-stone-50 transition-colors">
+                            <td class="px-6 py-4 font-medium"><span class="inline-flex items-center px-2.5 py-1 ${type.className} text-[11px] font-bold tracking-wider rounded border">${type.label}</span></td>
+                            <td class="px-6 py-4 text-stone-500 font-mono text-xs">${escapeHtml(getCertNumber(member))}</td>
+                            <td class="px-6 py-4">${escapeHtml(member.location || '-')}</td>
+                            <td class="px-6 py-4 font-bold text-stone-800">${escapeHtml(member.name)}</td>
+                        </tr>
+                    `;
+                }).join('')
+                : '<tr><td colspan="4" class="px-6 py-4 text-center text-stone-500">現在、該当する認定ナビゲーターはいません。</td></tr>';
+
+            ambassadorTbody.innerHTML = ambassadors.length
+                ? ambassadors.map(member => {
+                    const ambassadorComment = member.ambassadorDesc || member.desc || '';
+                    return `
+                    <tr class="hover:bg-stone-50 transition-colors">
+                        <td class="px-6 py-4 text-stone-500 font-mono text-xs">${escapeHtml(getCertNumber(member))}</td>
+                        <td class="px-6 py-4 text-stone-600">${escapeHtml(member.location || '-')}</td>
+                        <td class="px-6 py-4 font-bold text-stone-800">${escapeHtml(member.name)}</td>
+                    </tr>
+                `;
+                }).join('')
+                : '<tr><td colspan="3" class="px-6 py-4 text-center text-stone-500">現在、該当する登録者はいません。</td></tr>';
+        });
+    </script>
 
     <!-- スムーズスクロールとアコーディオン自動展開用スクリプト -->
     <script>

@@ -69,7 +69,9 @@ const linkData = [
         avatar: { src: "./img/link/maron.webp" },
         title: "心理福祉",
         tags: ["tabelab", "riesm"],
-        desc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。\n\n【アンバサダーより】\n自己理解が進むことで、物事の見方が拡がると思うので、多くの人に知ってもらいたいです。あなたの良さを一緒に見つけたいです。"
+        desc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。",
+        linkDesc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。",
+        ambassadorDesc: "自己理解が進むことで、物事の見方が拡がると思うので、多くの人に知ってもらいたいです。あなたの良さを一緒に見つけたいです。"
     },
     {
         name: "YK",
@@ -158,3 +160,19 @@ const linkData = [
         }
     }
 ];
+
+// 共通データの公開口です。
+// 各ページはここから必要な項目だけを選び、ページごとの表現で描画します。
+const linkDataMeta = {
+    version: "2026-07-06",
+    communities: {
+        tabelab: { label: "たべラボ", href: "https://note.com/ninin2025/membership" },
+        riesm: { label: "🌈RIESM™", href: "https://ninin-cc.github.io/guide.html" },
+        shinri: { label: "心理支援者の集い" }
+    },
+    linkTypes: ["note", "web", "x", "line", "linkedin", "instagram"]
+};
+
+window.NININ_LINK_DATA = linkData;
+window.NININ_LINK_META = linkDataMeta;
+window.linkData = linkData;
