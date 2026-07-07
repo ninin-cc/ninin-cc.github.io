@@ -73,7 +73,8 @@
       Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
       Shield: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-2 7-2 2.5 0 4.5 1 6.5 2a1 1 0 0 1 1 1z"/></svg>',
       Star: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-      Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+      Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+      FileText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>'
     };
 
     function getIcon(name, classes) {
@@ -218,28 +219,46 @@
       return randomItem(FAREWELL_MESSAGES);
     }
 
-    const HARUKA_AVATAR = "https://ninin-cc.github.io/img/mt/haruka.jpg";
-    const REFREM_AVATAR = "https://ninin-cc.github.io/img/mt/reflm.jpg";
-    const BG_START_MENTALIA = "https://ninin-cc.github.io/img/mt/top.jpg";
+    const ROLETRADE_SCENE_IMG = "./roletrade_ichimaie.jpg";
+    const MACHI_SCENE_IMG = "./machi.jpg";
+    const HARUKA_AVATAR = ROLETRADE_SCENE_IMG;
+    const REFREM_AVATAR = ROLETRADE_SCENE_IMG;
+    const HARUKA_CROP_POSITION = "62% 44%";
+    const REFREM_CROP_POSITION = "42% 40%";
+    const HARUKA_SCENE_ZOOM = 1.38;
+    const HARUKA_SCENE_ORIGIN = "62% 36%";
+    const BG_START_MENTALIA = ROLETRADE_SCENE_IMG;
 
     const GUIDE_MESSAGES = {
       1: {
         name: "ハルカ",
         place: "役割の庭",
         avatar: HARUKA_AVATAR,
+        avatarPosition: HARUKA_CROP_POSITION,
+        avatarZoom: 2.35,
+        avatarOrigin: "62% 32%",
         icon: "Sparkles",
         color: "text-orange-700",
-        message: "<p>手元の5つのうち、ひとつを手放して、<br>私が持ってる6つのカードの中から、ひとつを迎えてみてくださいね。</p>"
+        message: "<p>手元の5つのうち、ひとつを手放して、</p><p>私が持ってるカードの中から、</p><p>ひとつを 迎えてください。</p>"
       },
       6: {
         name: "リフレム",
         place: "灯火の間",
         avatar: REFREM_AVATAR,
+        avatarPosition: REFREM_CROP_POSITION,
+        avatarZoom: 2.25,
+        avatarOrigin: "42% 29%",
         icon: "Flame",
         color: "text-orange-700",
         message: "<p>うむ、よく戻ってきたな、旅人よ。</p><div class=\"h-1.5 sm:h-2\"></div><p>大切なのは、どの役割が強いかではないのじゃ。</p><div class=\"h-1.5 sm:h-2\"></div><p>おぬしが、なぜそれを残し、<br>今の自分に必要だと感じたのか……じゃな。</p><div class=\"h-1.5 sm:h-2\"></div><p>最後にもう一度だけ、役割を入れ替えることができるぞ。</p><div class=\"h-1.5 sm:h-2\"></div><p>変えても、変えなくてもよい。<br>選んだ理由を、おぬし自身の言葉で受け取ることじゃよ。</p>"
       }
     };
+
+    const FINAL_SHOP_GUIDE_INTRO = '<p>よくぞ戻ってきた。</p><div class="h-1.5 sm:h-2"></div><p>大切なのは</p><div class="h-1.5 sm:h-2"></div><p>おぬしが、なぜそれを残し、<br>今の自分に必要だと感じたのか……じゃな。</p>';
+
+    const FINAL_SHOP_GUIDE_DETAIL_1 = '<p>最後にもう一度だけ、<br>役割を入れ替えることができるぞ。</p><div class="h-1.5 sm:h-2"></div><p>変えても、変えなくてもよい。</p>';
+
+    const FINAL_SHOP_GUIDE_DETAIL_2 = '<p>大切なのは<br>選んだ理由を、<br>おぬし自身の言葉で<br>受け取ることじゃよ。</p>';
 
     const PARCHMENT_TEXTURE = "url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjAwIDIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZmlsdGVyIGlkPSdub2lzZUZpbHRlcic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9JzAuOCcgbnVtT2N0YXZlcz0nNCcgc3RpdGNoVGlsZXM9J3N0aXRjaCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbHRlcj0ndXJsKCNub2lzZUZpbHRlciknIG9wYWNpdHk9JzAuMTUnLz48L3N2Zz4=')";
     
@@ -248,6 +267,20 @@
     const BG_JUNBI_IMG = "https://ninin-cc.github.io/img/rt/junbi.jpg";
     const BG_TRADE_IMG = "https://ninin-cc.github.io/img/rt/bar.jpg"; 
     const BG_DOOR_IMG = "https://ninin-cc.github.io/img/rt/mon.jpg";
+    const BG_FINAL_SHOP_IMG = ROLETRADE_SCENE_IMG;
+    const BG_FINAL_SHOP_GUIDE_POSITION = "52% center";
+    const BG_FINAL_SHOP_GUIDE_ZOOM = 1;
+    const BG_FINAL_SHOP_POSITION = "100% center";
+    const BG_FINAL_SHOP_ZOOM = 2.2;
+    const BG_TAVERN_ROUTE_IMG = MACHI_SCENE_IMG;
+    const BG_TAVERN_ROUTE_POSITION = "20% center";
+    const BG_TAVERN_ROUTE_ZOOM = 1.35;
+    const BG_TAVERN_RETURN_IMG = MACHI_SCENE_IMG;
+    const BG_TAVERN_RETURN_POSITION = "56% center";
+    const BG_TAVERN_RETURN_ZOOM = 1.25;
+    const BG_FAREWELL_DOOR_IMG = MACHI_SCENE_IMG;
+    const BG_FAREWELL_DOOR_POSITION = "66% center";
+    const BG_FAREWELL_DOOR_ZOOM = 2;
 
     const HEADER_HIDDEN_STATES = [
       'START',
@@ -279,6 +312,7 @@
       isExchanging: false,
       isEntering: false,
       initialHandCollecting: false,
+      initialHandAnimated: false,
       isTransitioning: false,
       showTutorial: true,
       tradeConfirmOpen: false,
@@ -289,12 +323,16 @@
       zoomedCard: null,
       isConfirmModalClosing: false,
       shareMessage: '',
+      reflectionAnswers: { primary: '', dissonance: '', future: '' },
       isAppBrowser: false,
       pendingTradeAction: null,
       farewellMessage: '',
       isTrisetsuOpen: false,
       rulesExplanationPhase: 'guide',
-      rulesExplanationStep: 0
+      rulesExplanationStep: 0,
+      initialHandDialogueStep: 0,
+      leaveShopDialogueStep: 0,
+      finalShopGuideStep: 0
     };
 
     // ▼▼ 各シーンのページ番号を算出する関数 ▼▼
@@ -398,10 +436,15 @@
       state.isTrisetsuOpen = false;
       state.rulesExplanationPhase = 'guide';
       state.rulesExplanationStep = 0;
+      state.initialHandDialogueStep = 0;
+      state.leaveShopDialogueStep = 0;
+      state.finalShopGuideStep = 0;
       state.initialHandCollecting = false;
+      state.initialHandAnimated = false;
       
       state.gameState = 'INITIAL_HAND';
       state.shareMessage = '';
+      state.reflectionAnswers = { primary: '', dissonance: '', future: '' };
     }
 
     function handleTrade() {
@@ -471,8 +514,10 @@
 
         // ▼▼ ラウンド間でのシーン遷移 ▼▼
         if (state.round === 2) {
+          state.leaveShopDialogueStep = 0;
           state.gameState = 'LEAVE_SHOP_1';
         } else if (state.round === 6) {
+          state.finalShopGuideStep = 0;
           state.gameState = 'AFTER_TAVERN';
         } else {
           state.gameState = 'PLAYING';
@@ -565,6 +610,96 @@
         state.shareMessage = "画像を保存しました！";
       } catch (error) {
         state.shareMessage = "画像の保存に失敗しました。";
+      }
+      render();
+      setTimeout(() => { state.shareMessage = ''; render(); }, 3000);
+    }
+
+    function getResultQuestionData() {
+      return [
+        {
+          key: 'primary',
+          speaker: 'リフレムからの問い',
+          question: 'Q. なぜ、お主は【' + (state.primaryCard?.name || '') + '】を一番大切な役割として選んだのじゃ？'
+        },
+        {
+          key: 'dissonance',
+          speaker: 'リフレムからの問い',
+          question: 'Q. そこに「自分らしくない」と感じるカードがあるなら、それでも残した理由はなんじゃろうな…？'
+        },
+        {
+          key: 'future',
+          speaker: 'ハルカからの問い',
+          question: 'Q. この5つの役割を持ったあなたは、これからどんな未来へ歩いていきたいですか？'
+        }
+      ];
+    }
+
+    function renderReflectionTextarea(key) {
+      return '<textarea data-reflection-key="' + key + '" class="mt-3 w-full min-h-[86px] sm:min-h-[96px] bg-[#fffaf0]/90 border border-stone-400/70 rounded-sm p-3 text-sm sm:text-base leading-relaxed font-serif font-bold text-stone-900 shadow-inner focus:outline-none focus:ring-2 focus:ring-orange-800 resize-y" placeholder="ここに記入してください">' + escapeHTML(state.reflectionAnswers?.[key] || '') + '</textarea>';
+    }
+
+    function buildRolePdfReportHTML() {
+      const selectedRoles = state.hand.map((card, index) => {
+        const rank = card.id === state.primaryCard?.id ? '一番大切' : (card.id === state.secondaryCard?.id ? '二番目' : '選んだRole');
+        return '<div class="role-row"><div class="role-name"><span>' + (index + 1) + '</span>' + escapeHTML(card.name) + '</div><div class="role-desc">' + escapeHTML(card.desc) + '</div><div class="role-rank">' + rank + '</div></div>';
+      }).join('');
+      const answers = getResultQuestionData().map(item => {
+        return '<section class="question"><p class="speaker">' + escapeHTML(item.speaker) + '</p><p class="q">' + escapeHTML(item.question) + '</p><div class="answer">' + formatMultiline(state.reflectionAnswers?.[item.key] || '') + '</div></section>';
+      }).join('');
+      return `
+        <div class="pdf-report">
+          <style>
+            .pdf-report { width: 794px; min-height: 1123px; box-sizing: border-box; padding: 34px 42px; background: #f0e6d2; color: #2f2418; font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; }
+            .pdf-report h1 { margin: 0; text-align: center; font-size: 28px; letter-spacing: 0.12em; }
+            .pdf-report .subtitle { margin: 8px 0 20px; text-align: center; font-size: 13px; font-weight: 700; color: #6b3f1d; }
+            .pdf-report .section-title { margin: 18px 0 8px; font-size: 15px; font-weight: 900; letter-spacing: 0.08em; border-bottom: 2px solid rgba(120, 53, 15, 0.45); padding-bottom: 5px; }
+            .pdf-report .roles { display: grid; gap: 7px; }
+            .pdf-report .role-row { display: grid; grid-template-columns: 132px 1fr 82px; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid rgba(120, 53, 15, 0.32); background: rgba(255, 250, 240, 0.72); border-radius: 4px; }
+            .pdf-report .role-name { font-size: 18px; font-weight: 900; }
+            .pdf-report .role-name span { display: inline-block; width: 20px; height: 20px; margin-right: 7px; border-radius: 50%; background: #7c2d12; color: #fff7ed; text-align: center; line-height: 20px; font-size: 12px; }
+            .pdf-report .role-desc { font-size: 13px; font-weight: 700; line-height: 1.55; }
+            .pdf-report .role-rank { text-align: center; color: #7c2d12; font-size: 12px; font-weight: 900; }
+            .pdf-report .question { margin-top: 10px; padding: 10px 12px; border: 1px solid rgba(120, 53, 15, 0.35); background: rgba(255, 250, 240, 0.78); border-radius: 4px; }
+            .pdf-report .speaker { margin: 0 0 5px; font-size: 12px; font-weight: 900; color: #7c2d12; letter-spacing: 0.08em; }
+            .pdf-report .q { margin: 0 0 7px; font-size: 14px; line-height: 1.5; font-weight: 900; }
+            .pdf-report .answer { min-height: 74px; padding: 9px 11px; background: rgba(255,255,255,0.64); border: 1px dashed rgba(87, 64, 43, 0.45); font-size: 13px; line-height: 1.55; font-weight: 700; white-space: normal; }
+            .pdf-report .muted { color: #9a7b5f; }
+            .pdf-report .footer { margin-top: 14px; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #6b5a46; }
+          </style>
+          <h1>RoleTRADE™ Mentalia</h1>
+          <p class="subtitle">これがあなたが18歳の自分に持たせる「5つの役割」です。</p>
+          <div class="section-title">選んだRole</div>
+          <div class="roles">${selectedRoles}</div>
+          <div class="section-title">リフレムとハルカからの問い</div>
+          ${answers}
+          <div class="footer">RIESM™ RoleTRADE™ / © 2026 ninin consulting＆counseling</div>
+        </div>
+      `;
+    }
+
+    async function handleSaveRolePdf() {
+      state.shareMessage = "PDFを生成中...";
+      render();
+      try {
+        if (!window.html2canvas || !window.jspdf?.jsPDF) {
+          throw new Error("PDF library is not ready");
+        }
+        const report = document.createElement('div');
+        report.style.position = 'fixed';
+        report.style.left = '-9999px';
+        report.style.top = '0';
+        report.innerHTML = buildRolePdfReportHTML();
+        document.body.appendChild(report);
+        const target = report.querySelector('.pdf-report');
+        const canvas = await window.html2canvas(target, { backgroundColor: '#f0e6d2', scale: 2, useCORS: true });
+        document.body.removeChild(report);
+        const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.96), 'JPEG', 0, 0, 210, 297);
+        pdf.save('RIESM_RoleTrade_SelectedRoles.pdf');
+        state.shareMessage = "PDFを保存しました！";
+      } catch (error) {
+        state.shareMessage = "PDFの保存に失敗しました。";
       }
       render();
       setTimeout(() => { state.shareMessage = ''; render(); }, 3000);
@@ -754,12 +889,33 @@
     ];
 
     const RULES_DETAIL_BLOCKS = [
-      '<p>①持っていける役割カードは5枚だけじゃ。</p>',
-      '<p>②最初にハルカから5枚のカードを受け取る。</p>',
-      '<p>③旅の途中で、他の旅人たちと役割カードを交換する…。</p>',
-      '<p>④最後にわしのところに戻り、もう一度だけ役割を見つめ直すのじゃ。</p>',
-      '<p>このワークは診断ではなく、<br>自分の役割を見つめるための時間なのじゃよ。</p>'
+      '<p>①持っていける役割カードは<br>　5枚だけじゃ。</p>',
+      '<p>②最初にハルカから<br>　カードを受け取るぞ。</p>',
+      '<p>③そして酒場で、<br>　他の旅人たちと<br>　役割カードを交換する…。</p>',
+      '<p>④最後にわしのところに戻ってくる。</p>',
+      '<p>これは、自分を見つめるための<br>時間なのじゃよ。</p>'
     ];
+
+    const INITIAL_HAND_DIALOGUE_BLOCKS = [
+      '<p>これが、今のあなたに</p><p>最初に渡される</p><p>5つの役割です。</p>',
+      '<p>まずは、</p><p>ひとつひとつのカードを</p><p>読んでみてくださいね。</p>'
+    ];
+
+    const LEAVE_SHOP_DIALOGUE_BLOCKS = [
+      '<p>すてきな役割を</p><p>選びましたね！</p>',
+      '<p>この先にある酒場の</p><p>『RIESM亭』には、</p><p>あなたと同じような旅人たちが</p><p>集まってるんですよ。</p>',
+      '<p>いろんな役割のカードを</p><p>持った人たちに</p><p>出会えるといいですね</p>',
+      '<p>準備はいい？</p>',
+      '<p>じゃあ、</p><p>楽しんできてね！</p>'
+    ];
+
+    function renderProgressiveDialogueBlocks(blocks, step) {
+      const visibleCount = Math.min(blocks.length, step + 1);
+      return blocks.map((block, index) => {
+        const isVisible = index < visibleCount;
+        return '<div class="rules-guide-block ' + (isVisible ? 'is-visible' : '') + '"' + (isVisible ? '' : ' aria-hidden="true"') + '>' + block + '</div>';
+      }).join('');
+    }
 
     function getActiveRulesBlocks() {
       return state.rulesExplanationPhase === 'details' ? RULES_DETAIL_BLOCKS : RULES_GUIDE_BLOCKS;
@@ -799,11 +955,11 @@
 
     function renderRulesExplanationCard() {
       return `
-                <button type="button" data-action="advance-rules" data-rules-phase="${state.rulesExplanationPhase}" aria-label="説明を次へ進める" class="relative block w-full text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-8 overflow-hidden bg-[#e8dcc4] h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
+                <button type="button" data-action="advance-rules" data-rules-phase="${state.rulesExplanationPhase}" aria-label="説明を次へ進める" class="relative block w-full text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-8 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
                   <div class="absolute right-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
-                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-[50%_15%]" />
+                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover" style="object-position: ${REFREM_CROP_POSITION};" />
                   </div>
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.84) 68%, transparent 100% z-10 pointer-events-none"></div>
+                  <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.84) 68%, transparent 100% z-10 pointer-events-none"></div>
                   <div class="relative z-20 p-4 sm:p-8 w-[95%] sm:w-[68%] h-full flex flex-col justify-center text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     <div class="space-y-2 sm:space-y-3">
                       ${renderRulesExplanationText()}
@@ -841,21 +997,30 @@
 
     function renderStartScene() {
       return `
-              <div class="bg-center rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]" style="background-image: url('${BG_START_MENTALIA}'); background-size: cover; background-position: center top;">
+              <div class="start-scene-frame rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]">
+                <img src="${BG_START_MENTALIA}" alt="" aria-hidden="true" class="start-scene-image absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none">
                 <div class="absolute inset-0 bg-stone-900/10 z-0 pointer-events-none"></div>
                 <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-stone-900/90 via-stone-900/40 to-transparent z-0 pointer-events-none"></div>
                 
                 <div class="relative z-10 px-2 pb-6 sm:pb-8 pt-2 w-full">
                   <header class="text-center w-full">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold tracking-widest text-stone-100 drop-shadow-md magic-text-glow" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
-                      RIESM™ RoleTRADE<br/>Mentalia
+                    <h1 class="font-serif font-bold text-stone-100 drop-shadow-md magic-text-glow" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                      <span class="block text-sm sm:text-lg md:text-xl tracking-[0.28em] text-stone-200/90 mb-1">RIESM™</span>
+                      <span class="block text-4xl sm:text-5xl md:text-6xl tracking-widest leading-none">RoleTRADE™</span>
+                      <span class="block text-2xl sm:text-3xl md:text-4xl tracking-[0.18em] mt-2">Mentalia</span>
                     </h1>
                     <p class="text-[10px] sm:text-sm text-stone-200 mt-3 sm:mt-4 tracking-[0.2em] font-serif font-bold drop-shadow-sm bg-stone-900/60 inline-block px-4 py-1.5 rounded-full border border-stone-500/50">― リフレムとハルカと、5つの役割 ―</p>
                   </header>
                 </div>
               </div>
 
-              <div class="mt-3 sm:mt-4 mb-3 max-w-2xl mx-auto w-full relative z-10">
+              <div class="mt-1.5 sm:mt-2 text-center text-[8px] sm:text-[10px] leading-relaxed tracking-[0.12em] text-stone-700/70 font-serif font-bold relative z-10">
+                <p>商標出願中</p>
+                <p>RIESM™　商願2026-056753</p>
+                <p>RoleTRADE™　商願2026-060988</p>
+              </div>
+
+              <div class="mt-2 sm:mt-3 mb-3 max-w-2xl mx-auto w-full relative z-10">
                 <div class="text-stone-800 text-left mb-2 sm:mb-2 font-serif font-medium bg-[#f4ebd8]/90 p-2.5 sm:p-4 rounded-md border border-stone-400/50 shadow-sm" style="background-image: ${PARCHMENT_TEXTURE}">
                   <div class="text-[length:clamp(10px,2.9vw,13px)] sm:text-[13px] leading-[1.7] sm:leading-[1.65]">
                     <p class="text-stone-900 font-extrabold border-b border-stone-400/60 pb-2 mb-2 drop-shadow-sm break-keep">
@@ -977,17 +1142,24 @@
       let initialHandTopHTML = '';
       let initialHandBottomHTML = '';
       if (state.gameState === 'INITIAL_HAND') {
+        const shouldAnimateInitialHand = !state.initialHandAnimated || state.initialHandCollecting;
         const collectClass = state.initialHandCollecting ? ' is-collecting' : '';
+        const getInitialHandClass = (gatherIndex) => shouldAnimateInitialHand
+          ? 'initial-hand-card initial-hand-card-' + gatherIndex + collectClass + ' '
+          : '';
         initialHandTopHTML = state.hand.slice(0, 3).map((card, index) => {
           const isSelected = state.selectedHandCard?.id === card.id;
           const gatherIndex = index + 1;
-          return '<div class="initial-hand-card initial-hand-card-' + gatherIndex + collectClass + ' shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
+          return '<div class="' + getInitialHandClass(gatherIndex) + 'shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
         }).join('');
         initialHandBottomHTML = state.hand.slice(3, 5).map((card, index) => {
           const isSelected = state.selectedHandCard?.id === card.id;
           const gatherIndex = index + 4;
-          return '<div class="initial-hand-card initial-hand-card-' + gatherIndex + collectClass + ' shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
+          return '<div class="' + getInitialHandClass(gatherIndex) + 'shrink-0 transition-all duration-500 relative ' + (isSelected ? 'z-[100]' : 'z-10') + '">' + renderCardHTML(card, { isHandCard: true, isSelected: isSelected }) + '</div>';
         }).join('');
+        if (!state.initialHandAnimated && !state.initialHandCollecting) {
+          state.initialHandAnimated = true;
+        }
       }
 
       let shopCardsTopHTML = '';
@@ -1112,21 +1284,16 @@
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] min-h-[280px] sm:min-h-[300px] flex flex-col justify-center">
+                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent min-h-[280px] sm:min-h-[300px] flex flex-col justify-center">
                   
                   <div class="absolute right-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
-                    <img src="${HARUKA_AVATAR}" alt="ハルカ" class="w-full h-full object-cover object-top" />
+                    <img src="${HARUKA_AVATAR}" alt="ハルカ" class="w-full h-full object-cover" style="object-position: ${HARUKA_CROP_POSITION}; transform: scale(${HARUKA_SCENE_ZOOM}); transform-origin: ${HARUKA_SCENE_ORIGIN};" />
                   </div>
                   
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
+                  <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
 
-                  <div class="relative z-20 p-4 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
-                    <p>これが、今のあなたに最初に渡される</p>
-                    <p>5つの役割です。</p>
-                    <div class="h-1.5 sm:h-2"></div>
-                    <p>すぐに好き嫌いを決めなくても大丈夫ですよ。</p>
-                    <p>まずは、ひとつひとつのカードを</p>
-                    <p>読んでみてくださいね。</p>
+                  <div class="relative z-20 p-3 sm:p-8 w-[50%] max-w-[190px] sm:w-[66%] sm:max-w-none ml-0 mr-auto space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
+                    ${renderProgressiveDialogueBlocks(INITIAL_HAND_DIALOGUE_BLOCKS, state.initialHandDialogueStep)}
                     <br/><br/><br/><br/><br/><br/>
                   </div>
                 </div>
@@ -1162,25 +1329,16 @@
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] min-h-[220px] sm:min-h-[260px] flex flex-col justify-center">
+                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent min-h-[300px] sm:min-h-[320px] flex flex-col justify-center">
                   
                   <div class="absolute right-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
-                    <img src="${HARUKA_AVATAR}" alt="ハルカ" class="w-full h-full object-cover object-top" />
+                    <img src="${HARUKA_AVATAR}" alt="ハルカ" class="w-full h-full object-cover" style="object-position: ${HARUKA_CROP_POSITION}; transform: scale(${HARUKA_SCENE_ZOOM}); transform-origin: ${HARUKA_SCENE_ORIGIN};" />
                   </div>
                   
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
+                  <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
 
-                  <div class="relative z-20 p-4 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
-                    <p>ふふ、なかなかいい役割を</p>
-                    <p>選びましたね。</p>
-                    <div class="h-1.5 sm:h-2"></div>
-                    <p>この先にある『対話の酒場』には、</p>
-                    <p>あなたと同じような旅人たちが</p>
-                    <p>集まっていますよ。</p>
-                    <div class="h-1.5 sm:h-2"></div>
-                    <p>自分の手札を見せ合って、</p>
-                    <p>いろいろ話してみてくださいね。</p>
-                    <p>いってらっしゃい！</p>
+                  <div class="relative z-20 p-3 sm:p-8 w-[52%] max-w-[210px] sm:w-[66%] sm:max-w-none ml-0 mr-auto space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
+                    ${renderProgressiveDialogueBlocks(LEAVE_SHOP_DIALOGUE_BLOCKS, state.leaveShopDialogueStep)}
                   </div>
                 </div>
                 
@@ -1202,7 +1360,7 @@
         html += `
               <div class="bg-[#f0e6d2]/70 backdrop-blur-sm rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-60 mix-blend-multiply" />
+                  <img src="${BG_TAVERN_ROUTE_IMG}" alt="酒場へ向かう街の風景" class="w-full h-full object-cover opacity-60 mix-blend-multiply" style="object-position: ${BG_TAVERN_ROUTE_POSITION}; transform: scale(${BG_TAVERN_ROUTE_ZOOM}); transform-origin: ${BG_TAVERN_ROUTE_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
@@ -1234,7 +1392,7 @@
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_TRADE_IMG}" alt="酒場" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${BG_TAVERN_RETURN_IMG}" alt="酒場から戻る街の風景" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_TAVERN_RETURN_POSITION}; transform: scale(${BG_TAVERN_RETURN_ZOOM}); transform-origin: ${BG_TAVERN_RETURN_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
@@ -1274,17 +1432,17 @@
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_JUNBI_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${BG_FINAL_SHOP_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] min-h-[220px] sm:min-h-[260px] flex flex-col justify-center">
+                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent min-h-[220px] sm:min-h-[260px] flex flex-col justify-center">
                   
                   <div class="absolute right-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);">
-                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-center" />
+                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover" style="object-position: ${REFREM_CROP_POSITION};" />
                   </div>
                   
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
+                  <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
 
                   <div class="relative z-20 p-4 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     <p>本当に、この5つの役割とともに</p>
@@ -1334,17 +1492,17 @@
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_JUNBI_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${BG_FINAL_SHOP_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] min-h-[280px] sm:min-h-[300px] flex flex-col justify-center">
+                <div class="relative text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent min-h-[280px] sm:min-h-[300px] flex flex-col justify-center">
                   
                   <div class="absolute right-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
-                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover object-center" />
+                    <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover" style="object-position: ${REFREM_CROP_POSITION};" />
                   </div>
                   
-                  <div class="absolute inset-0 bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
+                  <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
 
                   <div class="relative z-20 p-5 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     <p>${state.farewellMessage}</p>
@@ -1366,49 +1524,64 @@
 
       // ▼▼ シーン：PLAYING（メインエリア） ▼▼
       if (state.gameState === 'PLAYING') {
+        const playingBgImg = isShopTime && state.round === 6 ? BG_FINAL_SHOP_IMG : (isShopTime ? BG_JUNBI_IMG : BG_TRADE_IMG);
+        const playingBgPosition = isShopTime && state.round === 6 ? BG_FINAL_SHOP_GUIDE_POSITION : "center center";
         html += `
               <div class="bg-[#f0e6d2]/95 rounded-sm shadow-[0_10px_30px_rgba(124,45,18,0.2)] border border-stone-400/80 min-h-[300px] sm:min-h-[340px] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${isShopTime ? BG_JUNBI_IMG : BG_TRADE_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${playingBgImg}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${playingBgPosition}; transform: scale(${isShopTime && state.round === 6 ? BG_FINAL_SHOP_GUIDE_ZOOM : 1}); transform-origin: ${playingBgPosition};" />
                 </div>
         `;
 
         if (isShopTime) {
           const guide = GUIDE_MESSAGES[state.round];
+          const finalShopGuideStep = state.round === 6 ? (state.finalShopGuideStep || 0) : 2;
+          const isFinalShopWaiting = state.round === 6 && finalShopGuideStep < 2;
+          const finalShopGuideMessages = [FINAL_SHOP_GUIDE_INTRO, FINAL_SHOP_GUIDE_DETAIL_1, FINAL_SHOP_GUIDE_DETAIL_2];
+          const guideMessage = state.round === 6
+            ? finalShopGuideMessages[Math.min(finalShopGuideStep, finalShopGuideMessages.length - 1)]
+            : guide.message;
           html += `
                   <div class="p-3 sm:p-8 relative z-10">
                     <div class="flex items-start max-w-2xl mx-auto w-full mb-4 sm:mb-8 px-1 sm:px-0">
                       <div class="flex flex-col items-center shrink-0 z-10 w-16 sm:w-28">
                         <div class="w-full aspect-[3/4] rounded-md border-2 border-stone-400 shadow-md overflow-hidden bg-stone-200">
-                          <img src="${guide.avatar}" alt="${guide.name}" class="w-full h-full object-cover" ${state.round === 1 ? 'style="object-position: 65% 10%;"' : 'style="object-position: 50% 15%;"'} />
+                          <img src="${guide.avatar}" alt="${guide.name}" class="w-full h-full object-cover" style="object-position: ${guide.avatarPosition || '50% 50%'}; transform: scale(${guide.avatarZoom || 1}); transform-origin: ${guide.avatarOrigin || guide.avatarPosition || '50% 50%'};" />
                         </div>
                         <div class="mt-1 sm:mt-2 text-center w-full">
-                          <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
+                          <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] dialog-meta-top px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
                             R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
                           </div>
-                          <div class="flex items-center justify-center gap-0.5 font-bold text-[8px] sm:text-[10px] bg-[#e8dcc4] px-0.5 sm:px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm ${guide.color} leading-tight">
+                          <div class="flex items-center justify-center gap-0.5 font-bold text-[8px] sm:text-[10px] bg-[#e8dcc4] dialog-meta-bottom px-0.5 sm:px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm ${guide.color} leading-tight">
                             ${getIcon(guide.icon, "w-2.5 h-2.5 " + guide.color)} ${guide.place}
                           </div>
                         </div>
                       </div>
                       
-                      <div class="relative bg-[#f4ebd8] p-2.5 sm:p-6 rounded-md border border-stone-400/60 shadow-md flex-1 ml-2 sm:ml-6 mt-0 sm:mt-0" style="background-image: ${PARCHMENT_TEXTURE}">
-                        <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] border-l border-b border-stone-400/60 transform rotate-45"></div>
+                      <div class="relative bg-[#f4ebd8] dialog-surface-translucent p-2.5 sm:p-6 rounded-md border border-stone-400/60 shadow-md flex-1 ml-2 sm:ml-6 mt-0 sm:mt-0" style="background-image: ${PARCHMENT_TEXTURE}">
+                        <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] dialog-tail-translucent border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <div class="text-[11px] sm:text-sm text-stone-900 font-serif font-bold leading-loose text-left space-y-1 sm:space-y-2">
-                          ${guide.message}
+                          ${guideMessage}
+                          ${isFinalShopWaiting ? `
+                            <button data-action="advance-final-shop-guide" class="rules-next-cue block ml-auto mt-4 sm:mt-5 font-serif font-extrabold tracking-widest">
+                              次へ➤
+                            </button>
+                          ` : ''}
                         </div>
                       </div>
                     </div>
 
-                    <div class="flex flex-col items-center gap-2 sm:gap-4 w-full mb-4 sm:mb-8 relative z-10">
-                      ${isInitialExchange ? '<p class="selection-guide-label mb-0.5 sm:mb-1">ここから一つ選ぶ</p>' : ''}
-                      <div class="flex justify-center gap-1 sm:gap-4 w-full">
-                        ${shopCardsTopHTML}
+                    ${isFinalShopWaiting ? '' : `
+                      <div class="flex flex-col items-center gap-2 sm:gap-4 w-full mb-4 sm:mb-8 relative z-10">
+                        ${isInitialExchange ? '<p class="selection-guide-label mb-0.5 sm:mb-1">ここから一つ選ぶ</p>' : ''}
+                        <div class="flex justify-center gap-1 sm:gap-4 w-full">
+                          ${shopCardsTopHTML}
+                        </div>
+                        <div class="flex justify-center gap-1 sm:gap-4 w-full">
+                          ${shopCardsBottomHTML}
+                        </div>
                       </div>
-                      <div class="flex justify-center gap-1 sm:gap-4 w-full">
-                        ${shopCardsBottomHTML}
-                      </div>
-                    </div>
+                    `}
                   </div>
           `;
         } else {
@@ -1420,22 +1593,22 @@
                           <img src="${state.tradeAvatarImg}" alt="転生者" class="w-full h-full object-cover object-center" />
                         </div>
                         <div class="mt-1 sm:mt-2 text-center w-full">
-                          <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
+                          <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] dialog-meta-top px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
                             R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
                           </div>
-                          <div class="flex items-center justify-center gap-0.5 font-bold text-[9px] sm:text-[10px] bg-[#e8dcc4] px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm text-blue-900 leading-tight">
+                          <div class="flex items-center justify-center gap-0.5 font-bold text-[9px] sm:text-[10px] bg-[#e8dcc4] dialog-meta-bottom px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm text-blue-900 leading-tight">
                             ${getIcon('ArrowRightLeft', "w-2.5 h-2.5 text-blue-700")} 酒場
                           </div>
                         </div>
                       </div>
 
-                      <div class="relative bg-[#f4ebd8] p-2.5 sm:p-3 rounded-md border border-stone-400/60 shadow-md min-w-0 flex flex-col items-center gap-2 sm:gap-2.5" style="background-image: ${PARCHMENT_TEXTURE}">
-                        <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] border-l border-b border-stone-400/60 transform rotate-45"></div>
+                      <div class="relative bg-[#f4ebd8] dialog-surface-translucent p-2.5 sm:p-3 rounded-md border border-stone-400/60 shadow-md min-w-0 flex flex-col items-center gap-2 sm:gap-2.5" style="background-image: ${PARCHMENT_TEXTURE}">
+                        <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] dialog-tail-translucent border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <p class="self-stretch text-[10.5px] sm:text-sm text-stone-900 font-serif font-bold leading-relaxed sm:leading-loose text-left">${state.tradeMessage || TRADE_MESSAGES[state.round]}</p>
                         <div class="w-full flex flex-col items-center pt-2 sm:pt-2.5 border-t border-stone-400/35 -translate-x-14">
                           <p class="text-[9px] sm:text-xs font-serif tracking-widest text-stone-700 mb-1.5 sm:mb-2 font-bold">旅人からの提示</p>
                           <div class="flex justify-center transform hover:scale-105 transition-transform duration-500">
-                            ${renderCardHTML(state.tradeOfferCard, { disabled: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
+                            ${renderCardHTML(state.tradeOfferCard, { isReadOnly: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
                           </div>
                         </div>
                       </div>
@@ -1471,14 +1644,14 @@
                       <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-2 magic-text-glow">これでいいですか？</h3>
                       <p class="text-xs sm:text-sm font-serif font-bold text-stone-700 mb-4">選んだ2枚を交換します。</p>
                       <div class="grid grid-cols-2 gap-3 sm:gap-5 items-start mb-5">
-                        <div class="flex flex-col items-center gap-2">
-                          <p class="text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-orange-800">受け取るカード</p>
+                        <div class="trade-card-direction-column trade-card-direction-column-receive flex flex-col items-center gap-2">
+                          <p class="trade-card-direction-label trade-card-direction-label-receive text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-orange-800">受け取るカード▼</p>
                           <div class="scale-[0.86] sm:scale-95 origin-top">
                             ${renderCardHTML(confirmReceiveCard, { isReadOnly: true, customStyle: "shadow-lg" })}
                           </div>
                         </div>
-                        <div class="flex flex-col items-center gap-2">
-                          <p class="text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-stone-700">手放すカード</p>
+                        <div class="trade-card-direction-column trade-card-direction-column-release flex flex-col items-center gap-2">
+                          <p class="trade-card-direction-label trade-card-direction-label-release text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-stone-700">▲手放すカード</p>
                           <div class="scale-[0.86] sm:scale-95 origin-top">
                             ${renderCardHTML(state.selectedHandCard, { isReadOnly: true, customStyle: "shadow-lg" })}
                           </div>
@@ -1545,7 +1718,7 @@
           html += `
                 <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                   <div class="absolute inset-0 z-0 pointer-events-none">
-                    <img src="${BG_JUNBI_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                    <img src="${BG_FAREWELL_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FAREWELL_DOOR_POSITION}; transform: scale(${BG_FAREWELL_DOOR_ZOOM}); transform-origin: ${BG_FAREWELL_DOOR_POSITION};" />
                   </div>
                   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                   
@@ -1580,15 +1753,15 @@
           html += `
                   <div id="capture-area" class="bg-[#f0e6d2] pt-10 pb-10 px-4 sm:px-8 md:px-12 text-center relative overflow-hidden mt-2 sm:mt-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <div class="absolute inset-0 z-0 pointer-events-none">
-                      <img src="${BG_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                      <img src="${BG_FAREWELL_DOOR_IMG}" alt="" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FAREWELL_DOOR_POSITION}; transform: scale(${BG_FAREWELL_DOOR_ZOOM}); transform-origin: ${BG_FAREWELL_DOOR_POSITION};" />
                     </div>
                     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                    <p class="text-stone-800 mb-6 sm:mb-8 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる<br class="sm:hidden" />「5つの役割」です。</p>
+                    <p class="text-stone-800 mb-10 sm:mb-12 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる<br class="sm:hidden" />「5つの役割」です。</p>
                     
                     <div class="flex flex-col items-center w-full mt-2 mb-2 relative z-10">
                       
-                      <div class="flex justify-center gap-6 sm:gap-16 z-10 mb-8 sm:mb-10 w-full mt-4">
+                      <div class="flex justify-center gap-6 sm:gap-16 z-10 mb-8 sm:mb-10 w-full mt-2 sm:mt-3">
                         <div class="relative transform scale-110 sm:scale-125 transition-transform duration-500 mx-2 sm:mx-4">
                           <div class="absolute -top-6 sm:-top-7 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-600 to-orange-800 text-yellow-300 text-[10px] sm:text-[12px] font-bold px-3 sm:px-4 py-1 rounded-full shadow-[0_0_10px_rgba(234,179,8,0.5)] z-30 whitespace-nowrap border border-orange-400/50 flex items-center tracking-widest">
                             ★★★★★
@@ -1659,11 +1832,11 @@
                   <div class="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 text-stone-900 font-serif font-bold text-left px-1 sm:px-4 relative z-10">
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-3 sm:px-4 rounded-sm border border-stone-300/50 shadow-sm leading-relaxed">
                       <span class="text-orange-900 mr-2 text-[10px] sm:text-xs tracking-widest border-b border-orange-900/30 pb-0.5 block mb-2 w-fit">リフレムからの問い</span>
-                      Q. なぜ、あなたは【${state.primaryCard?.name}】を一番大切な役割として残したのでしょうか？
+                      Q. なぜ、お主は【${state.primaryCard?.name}】を一番大切な役割として残したのじゃ？
                     </p>
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-3 sm:px-4 rounded-sm border border-stone-300/50 shadow-sm leading-relaxed">
                       <span class="text-orange-900 mr-2 text-[10px] sm:text-xs tracking-widest border-b border-orange-900/30 pb-0.5 block mb-2 w-fit">リフレムからの問い</span>
-                      Q. もし「自分らしくない」と感じるカードがあるなら、それでも残した理由は何でしょうか？
+                      Q. そこに「自分らしくない」と感じるカードがあるなら、それでも残した理由はなんじゃろうな…？
                     </p>
                     <p class="font-extrabold text-sm sm:text-base mb-2 text-stone-800 bg-[#e8dcc4]/70 py-4 px-3 sm:px-4 rounded-sm border border-stone-300/50 shadow-sm leading-relaxed">
                       <span class="text-blue-900 mr-2 text-[10px] sm:text-xs tracking-widest border-b border-blue-900/30 pb-0.5 block mb-2 w-fit">ハルカからの問い</span>
@@ -1672,6 +1845,12 @@
                   </div>
 
                   <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-6 sm:mt-12 relative z-10 w-full px-2 sm:px-4">
+                    <button data-action="save-role-pdf" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center">
+                        ${getIcon('FileText', "w-4 h-4 sm:w-5 sm:h-5 mr-2")} 選んだRoleを保存する。
+                      </span>
+                    </button>
                     <button data-action="capture-save" class="w-full sm:w-auto wood-btn wood-btn-dark rounded-full transition-all duration-300 hover:scale-105 flex items-center justify-center tracking-widest text-xs sm:text-sm font-bold py-3 sm:py-4 px-4 sm:px-8">
                       <div class="wood-texture"></div>
                       <span class="relative z-10 flex items-center justify-center">
@@ -1707,7 +1886,7 @@
           </div> <!-- End of main-stage -->
       `;
 
-      if (state.gameState === 'PLAYING') {
+      if (state.gameState === 'PLAYING' && !(state.round === 6 && (state.finalShopGuideStep || 0) < 2)) {
         let exchangeBtnHTML = '';
         if (isShopTime) {
           exchangeBtnHTML = `
@@ -1769,6 +1948,36 @@
       
       state.isTransitioning = false;
       scheduleRulesAutoAdvance();
+      scheduleSceneDialogueAutoAdvance();
+    }
+
+    let sceneDialogueAutoAdvanceTimer = null;
+
+    function clearSceneDialogueAutoAdvance() {
+      if (sceneDialogueAutoAdvanceTimer) {
+        clearTimeout(sceneDialogueAutoAdvanceTimer);
+        sceneDialogueAutoAdvanceTimer = null;
+      }
+    }
+
+    function scheduleSceneDialogueAutoAdvance() {
+      clearSceneDialogueAutoAdvance();
+      const sceneConfig = state.gameState === 'INITIAL_HAND'
+        ? { key: 'initialHandDialogueStep', blocks: INITIAL_HAND_DIALOGUE_BLOCKS }
+        : state.gameState === 'LEAVE_SHOP_1'
+          ? { key: 'leaveShopDialogueStep', blocks: LEAVE_SHOP_DIALOGUE_BLOCKS }
+          : null;
+      if (!sceneConfig) return;
+      if (state[sceneConfig.key] >= sceneConfig.blocks.length - 1) return;
+
+      const expectedState = state.gameState;
+      const expectedStep = state[sceneConfig.key];
+      sceneDialogueAutoAdvanceTimer = setTimeout(() => {
+        if (state.gameState !== expectedState) return;
+        if (state[sceneConfig.key] !== expectedStep) return;
+        state[sceneConfig.key] = Math.min(sceneConfig.blocks.length - 1, state[sceneConfig.key] + 1);
+        render();
+      }, RULES_AUTO_ADVANCE_MS);
     }
 
     function clearRulesAutoAdvance() {
@@ -1857,6 +2066,13 @@
     }
 
     // --- Event Listeners ---
+    document.addEventListener('input', (e) => {
+      const input = e.target.closest('[data-reflection-key]');
+      if (!input) return;
+      state.reflectionAnswers = state.reflectionAnswers || { primary: '', dissonance: '', future: '' };
+      state.reflectionAnswers[input.dataset.reflectionKey] = input.value;
+    });
+
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -1866,6 +2082,9 @@
         openRulesScene();
       } else if (action === 'advance-rules') {
         advanceRulesExplanation();
+      } else if (action === 'advance-final-shop-guide') {
+        state.finalShopGuideStep = Math.min((state.finalShopGuideStep || 0) + 1, 2);
+        render();
       } else if (action === 'toggle-trisetsu') {
         state.isTrisetsuOpen = !state.isTrisetsuOpen;
         render();
@@ -1970,6 +2189,8 @@
         });
       } else if (action === 'capture-share') {
         handleShare();
+      } else if (action === 'save-role-pdf') {
+        handleSaveRolePdf();
       } else if (action === 'capture-save') {
         handleSave();
       } else if (action === 'close-tutorial') {

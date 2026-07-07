@@ -416,6 +416,19 @@
   }
 }
 
+.trade-card-direction-label {
+  position: relative;
+  z-index: 2;
+}
+
+.trade-card-direction-column-receive {
+  transform: translateY(0.9em);
+}
+
+.trade-card-direction-column-release {
+  transform: translateY(-0.9em);
+}
+
 .rules-next-cue {
   margin-top: 1rem;
   font-size: 12px;
@@ -433,4 +446,55 @@
 .rules-next-arrow {
   display: inline-block;
   animation: rulesNextBlink 1.1s ease-in-out infinite;
+}
+
+
+.start-scene-image {
+  object-position: 52% center;
+}
+
+@media (max-width: 640px) {
+  .start-scene-image {
+    object-position: 52% center;
+  }
+}
+
+
+.dialog-panel-translucent {
+  background-color: rgba(232, 220, 196, 0.76) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.dialog-surface-translucent {
+  background-color: rgba(244, 235, 216, 0.78) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.dialog-tail-translucent {
+  background-color: rgba(244, 235, 216, 0.78) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.dialog-meta-top {
+  background-color: rgba(244, 235, 216, 0.78) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.dialog-meta-bottom {
+  background-color: rgba(232, 220, 196, 0.76) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.dialog-wash-translucent {
+  background: linear-gradient(
+    to right,
+    rgba(232, 220, 196, 0.78) 0%,
+    rgba(232, 220, 196, 0.66) 62%,
+    rgba(232, 220, 196, 0) 100%
+  ) !important;
 }
