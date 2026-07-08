@@ -20,7 +20,7 @@ window.ROLETRADE_EXPERIENCE = {
     initialHandJourneyDelayMs: 760,
 
     // Page 15-16: 最終決定の余韻。
-    resultDecisionHoldMs: 1400,
+    resultDecisionHoldMs: 3000,
     resultDecisionCloseMs: 620,
 
     // Page 4/7以降: 交換成立後、余韻画面へ入るまで。
@@ -71,6 +71,7 @@ window.ROLETRADE_EXPERIENCE = {
       '<p>この先にある酒場の</p><p>『RIESM亭』には、</p><p>あなたと同じような旅人たちが</p><p>集まってるんですよ。</p>',
       '<p>いろんな役割のカードを</p><p>持った人たちに</p><p>出会えるといいですね</p>',
       '<p>準備はいい？</p>',
+      '<p>あ！そうだ！</p><p>大事なことを言い忘れてた！</p><div class="h-1.5 sm:h-2"></div><p>酒場では「必ず」</p><p>カードを交換しなくちゃいけないの。</p><p>これは忘れないでね。</p>',
       '<p>じゃあ、</p><p>楽しんできてね！</p>'
     ],
 
