@@ -1,3 +1,16 @@
+    :root {
+      --rt-stage-fade-out-duration: 1.18s;
+      --rt-stage-fade-in-duration: 1.32s;
+      --rt-card-gather-duration: 1420ms;
+      --rt-first-review-appear-duration: 980ms;
+      --rt-route-dialogue-fade-duration: 720ms;
+      --rt-leave-shop-dialogue-fade-duration: 980ms;
+      --rt-initial-dialogue-fade-duration: 980ms;
+      --rt-final-review-return-duration: 1180ms;
+      --rt-scene-next-slot-height: 2.6rem;
+      --rt-scene-next-slot-height-sm: 3rem;
+    }
+
     body {
       margin: 0;
       padding: 0;
@@ -49,11 +62,11 @@
       100% { opacity: 1; filter: blur(0px); }
     }
     .animate-fadeOut {
-      animation: fadeOutStage 0.4s ease-out forwards !important;
+      animation: fadeOutStage var(--rt-stage-fade-out-duration, 1.18s) ease-out forwards !important;
       pointer-events: none;
     }
     .animate-fadeInStage {
-      animation: fadeInStage 0.6s ease-out forwards;
+      animation: fadeInStage var(--rt-stage-fade-in-duration, 1.32s) ease-out forwards;
     }
     
     .animate-fly-up {
@@ -497,4 +510,731 @@
     rgba(232, 220, 196, 0.66) 62%,
     rgba(232, 220, 196, 0) 100%
   ) !important;
+}
+
+
+@keyframes manualNextBlink {
+  0%, 100% { opacity: 0.28; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(4px); }
+}
+
+.manual-next-cursor {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.8rem;
+  color: rgba(124, 45, 18, 0.82);
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1;
+  animation: manualNextBlink 1.15s ease-in-out infinite;
+}
+
+.rules-next-cue { text-align: right; }
+
+.rules-next-arrow {
+  display: inline-block;
+  margin-left: 0.45em;
+  animation: manualNextBlink 1.15s ease-in-out infinite;
+}
+
+.trade-reflection-banner {
+  align-self: center;
+  width: min(92%, 42rem);
+  margin: 0.2rem auto 0.35rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(231, 184, 116, 0.4);
+  background: rgba(40, 20, 5, 0.58);
+  color: #f8ead1;
+  border-radius: 0.25rem;
+  text-align: center;
+  font-family: serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
+}
+
+.trade-reflection-label {
+  display: inline-block;
+  margin-right: 0.8em;
+  color: #fed7aa;
+  letter-spacing: 0.16em;
+}
+
+.trade-reflection-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.trade-reflection-copy {
+  max-width: 34rem;
+  color: #f8ead1;
+  font-family: serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.7;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.75);
+}
+
+@keyframes finalDecisionGlow {
+  0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 22px rgba(251,146,60,0.35), 0 0 10px rgba(253,224,71,0.35); }
+  45% { transform: scale(1.05); filter: brightness(1.16) saturate(1.08); box-shadow: 0 0 52px rgba(253,224,71,0.95), 0 0 30px rgba(251,146,60,0.85), 0 0 90px rgba(255,247,237,0.7); }
+  100% { transform: scale(1.02); filter: brightness(1.08); box-shadow: 0 0 36px rgba(253,224,71,0.72), 0 0 22px rgba(251,146,60,0.62); }
+}
+
+.animate-finalDecisionGlow { animation: finalDecisionGlow 1.6s ease-in-out forwards; }
+.animate-fadeOutModal { animation-duration: 0.62s; }
+
+.real-tavern-message {
+  border: 1px solid rgba(120, 53, 15, 0.36);
+  border-radius: 0.35rem;
+  background: linear-gradient(135deg, rgba(244,235,216,0.92), rgba(232,220,196,0.8)), url("https://ninin-cc.github.io/img/rt/mokuzai.jpg");
+  background-size: cover;
+  box-shadow: 0 12px 28px rgba(67,20,7,0.16), inset 0 0 24px rgba(255,255,255,0.28);
+  overflow: hidden;
+}
+
+.real-tavern-message::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 12% 0%, rgba(251,146,60,0.18), transparent 36%);
+}
+
+.real-tavern-message-inner {
+  position: relative;
+  padding: 1.15rem 1.2rem;
+}
+
+.real-tavern-kicker {
+  margin: 0 0 0.45rem;
+  color: #9a3412;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.real-tavern-message h3 {
+  margin: 0 0 0.75rem;
+  color: #2f2418;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.real-tavern-message p {
+  margin: 0.55rem 0 0;
+  color: #3b2f24;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.9;
+}
+
+@media (min-width: 640px) {
+  .manual-next-cursor { right: 1.4rem; bottom: 1.1rem; font-size: 1.35rem; }
+  .trade-reflection-copy { font-size: 0.82rem; }
+  .real-tavern-message-inner { padding: 1.35rem 1.6rem; }
+  .real-tavern-message h3 { font-size: 1.16rem; }
+  .real-tavern-message p { font-size: 0.94rem; }
+}
+
+
+.dialog-wash-translucent-rules-left {
+  background: linear-gradient(
+    to right,
+    rgba(232, 220, 196, 0) 0%,
+    rgba(232, 220, 196, 0.64) 38%,
+    rgba(232, 220, 196, 0.78) 100%
+  ) !important;
+}
+
+
+@keyframes manualNextDrift {
+  0% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  68% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateY(13px);
+  }
+}
+
+.rules-next-cue {
+  margin-top: 0.75rem !important;
+  text-align: center !important;
+  font-size: 1.12rem !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+}
+
+.rules-next-arrow,
+.manual-next-cursor {
+  animation: manualNextDrift 1.45s cubic-bezier(0.22, 0.9, 0.28, 1) infinite !important;
+}
+
+.manual-next-cursor {
+  position: relative !important;
+  right: auto !important;
+  bottom: auto !important;
+  display: block;
+  width: fit-content;
+  margin: 0.75rem auto 0;
+  padding: 0.15rem 0.45rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+
+.rules-back-link-wrap {
+  margin-top: 0.45rem;
+  text-align: left;
+}
+
+.rules-back-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.15rem 0.25rem;
+  color: rgba(68, 64, 60, 0.72);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+  transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+.rules-back-link:hover,
+.rules-back-link:focus-visible {
+  color: rgba(124, 45, 18, 0.95);
+  text-decoration-color: currentColor;
+  outline: none;
+}
+
+@media (min-width: 640px) {
+  .rules-back-link-wrap {
+    margin-top: 0.6rem;
+  }
+
+  .rules-back-link {
+    font-size: 0.78rem;
+  }
+}
+
+
+.initial-card-review-panel {
+  appearance: none;
+  border: 1px solid rgba(120, 53, 15, 0.5);
+  background: rgba(244, 235, 216, 0.9);
+  background-image: var(--parchment-texture, none);
+  border-radius: 6px;
+  box-shadow: 0 24px 70px rgba(28, 25, 23, 0.45), inset 0 0 24px rgba(120, 53, 15, 0.12);
+  padding: 1rem 1.1rem 1.15rem;
+  color: #2f2418;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  cursor: pointer;
+  transform-origin: center;
+  animation: initialReviewRise 420ms cubic-bezier(0.2, 0.9, 0.24, 1) both;
+}
+
+@keyframes initialReviewRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.initial-card-review-count {
+  margin-bottom: 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: rgba(124, 45, 18, 0.86);
+}
+
+.initial-card-review-card {
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.initial-card-review-scale {
+  width: 11.5rem !important;
+  height: 17rem !important;
+}
+
+.initial-card-review-hint {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(68, 64, 60, 0.78);
+}
+
+@media (max-width: 639px) {
+  .initial-card-review-scale {
+    width: 10rem !important;
+    height: 14.8rem !important;
+  }
+}
+
+
+.initial-card-review-start {
+  appearance: none;
+  border: 1px solid rgba(120, 53, 15, 0.42);
+  background: rgba(244, 235, 216, 0.84);
+  color: rgba(68, 64, 60, 0.9);
+  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  box-shadow: 0 8px 22px rgba(67, 20, 7, 0.16);
+  cursor: pointer;
+}
+
+.initial-card-review-start:hover,
+.initial-card-review-start:focus-visible {
+  color: rgba(124, 45, 18, 0.98);
+  border-color: rgba(124, 45, 18, 0.66);
+  outline: none;
+}
+
+@keyframes initialReviewFloatFromHand {
+  0% {
+    opacity: 0.72;
+    transform: translate(var(--review-start-x), var(--review-start-y)) scale(0.48) rotate(var(--review-start-rotate));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes initialReviewReturnToHand {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0.18;
+    transform: translate(var(--review-start-x), var(--review-start-y)) scale(0.48) rotate(var(--review-start-rotate));
+  }
+}
+
+.initial-card-review-panel {
+  --review-start-x: -8rem;
+  --review-start-y: -5.5rem;
+  --review-start-rotate: -8deg;
+  background: rgba(244, 235, 216, 0.86) !important;
+  pointer-events: auto;
+  animation: initialReviewFloatFromHand 560ms cubic-bezier(0.18, 0.95, 0.22, 1) both !important;
+}
+
+.initial-card-review-panel.is-returning {
+  pointer-events: none;
+  animation: initialReviewReturnToHand 380ms cubic-bezier(0.28, 0, 0.34, 1) both !important;
+}
+
+.initial-card-review-from-1 { --review-start-x: -9.4rem; --review-start-y: -7.8rem; --review-start-rotate: -12deg; }
+.initial-card-review-from-2 { --review-start-x: -2.8rem; --review-start-y: -8.4rem; --review-start-rotate: -4deg; }
+.initial-card-review-from-3 { --review-start-x: 4.8rem; --review-start-y: -7.7rem; --review-start-rotate: 10deg; }
+.initial-card-review-from-4 { --review-start-x: -5.2rem; --review-start-y: 2rem; --review-start-rotate: -8deg; }
+.initial-card-review-from-5 { --review-start-x: 5.2rem; --review-start-y: 2rem; --review-start-rotate: 8deg; }
+
+.initial-card-review-readable .font-black {
+  font-size: 1.65rem !important;
+  line-height: 1.08 !important;
+  padding-top: 0.95rem !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.initial-card-review-readable .line-clamp-4 {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+  font-size: 0.98rem !important;
+  line-height: 1.5 !important;
+  padding-left: 0.7rem !important;
+  padding-right: 0.7rem !important;
+}
+
+.initial-card-review-readable .tracking-widest {
+  font-size: 0.72rem !important;
+}
+
+@media (max-width: 639px) {
+  .initial-card-review-from-1 { --review-start-x: -5.4rem; --review-start-y: -7.2rem; }
+  .initial-card-review-from-2 { --review-start-x: 0; --review-start-y: -7.8rem; }
+  .initial-card-review-from-3 { --review-start-x: 5.4rem; --review-start-y: -7.2rem; }
+  .initial-card-review-from-4 { --review-start-x: -3.8rem; --review-start-y: 1.8rem; }
+  .initial-card-review-from-5 { --review-start-x: 3.8rem; --review-start-y: 1.8rem; }
+
+  .initial-card-review-readable .font-black {
+    font-size: 1.42rem !important;
+  }
+
+  .initial-card-review-readable .line-clamp-4 {
+    font-size: 0.88rem !important;
+    line-height: 1.45 !important;
+  }
+}
+
+
+
+
+@keyframes afterTradeTypewriter {
+  from { max-width: 0; }
+  to { max-width: 100%; }
+}
+
+.after-trade-typewriter {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  max-width: 0;
+  animation: afterTradeTypewriter var(--typewriter-duration, 1.8s) steps(var(--typewriter-steps, 20), end) forwards;
+}
+
+@media (max-width: 639px) {
+  .after-trade-typewriter {
+    white-space: normal;
+    animation-timing-function: ease-out;
+  }
+}
+
+
+.rules-next-cue-final {
+  margin-top: 1rem !important;
+  font-size: 0.96rem !important;
+  letter-spacing: 0.12em !important;
+  color: rgba(124, 45, 18, 0.95) !important;
+}
+
+.rules-next-text {
+  font-weight: 900;
+}
+
+.rules-next-play {
+  display: inline-block;
+  margin-left: 0.45em;
+  animation: manualNextDrift 1.45s cubic-bezier(0.22, 0.9, 0.28, 1) infinite;
+}
+
+
+
+.dialogue-inline-next-cue {
+  appearance: none;
+  display: block;
+  width: fit-content;
+  margin: 0.9rem auto 0;
+  border: 0;
+  background: transparent;
+  color: rgba(124, 45, 18, 0.95);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  text-align: center;
+  animation: fadeInStage 420ms ease-out both;
+}
+
+.dialogue-inline-next-cue:hover,
+.dialogue-inline-next-cue:focus-visible {
+  color: rgba(154, 52, 18, 1);
+  outline: none;
+}
+
+
+@keyframes initialReviewSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(42px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes initialReviewSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-46px) scale(0.98);
+  }
+}
+
+.initial-card-review-panel {
+  animation: none !important;
+}
+
+.initial-card-review-panel.is-first-review {
+  animation: initialReviewSoftAppear var(--rt-first-review-appear-duration, 220ms) ease-out both !important;
+}
+
+.initial-card-review-panel.is-slide-review {
+  animation: initialReviewSlideIn 360ms cubic-bezier(0.2, 0.88, 0.24, 1) both !important;
+}
+
+.initial-card-review-panel.is-returning {
+  pointer-events: none;
+  animation: initialReviewSlideOut 320ms cubic-bezier(0.28, 0, 0.34, 1) both !important;
+}
+
+.initial-hand-review-muted .initial-hand-display-card {
+  opacity: 0.34;
+  filter: grayscale(1) saturate(0.35);
+  transform: scale(0.96);
+}
+
+.manual-next-cursor,
+.dialogue-inline-next-cue {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  text-align: left !important;
+}
+
+.dialogue-inline-next-cue {
+  padding-left: 0 !important;
+}
+
+
+.initial-card-review-overlay {
+  background: rgba(41, 37, 36, 0.52);
+  backdrop-filter: grayscale(1) saturate(0.35) blur(1px);
+  -webkit-backdrop-filter: grayscale(1) saturate(0.35) blur(1px);
+}
+
+.dialogue-text-unified {
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(255, 250, 240, 0.38);
+}
+
+
+.initial-hand-review-gathering .initial-hand-display-card {
+  pointer-events: none;
+  animation: initialCardGatherToFirst var(--rt-card-gather-duration, 1420ms) cubic-bezier(0.18, 0.9, 0.2, 1) forwards !important;
+}
+
+.initial-hand-review-gathering .initial-hand-slot-1 {
+  --gather-x: 0px;
+  --gather-y: 0px;
+  --gather-rotate: -5deg;
+}
+
+.initial-hand-review-gathering .initial-hand-slot-2 {
+  --gather-x: -112px;
+  --gather-y: 0px;
+  --gather-rotate: -2deg;
+}
+
+.initial-hand-review-gathering .initial-hand-slot-3 {
+  --gather-x: -224px;
+  --gather-y: 0px;
+  --gather-rotate: 3deg;
+}
+
+.initial-hand-review-gathering .initial-hand-slot-4 {
+  --gather-x: -40px;
+  --gather-y: -154px;
+  --gather-rotate: -8deg;
+}
+
+.initial-hand-review-gathering .initial-hand-slot-5 {
+  --gather-x: -152px;
+  --gather-y: -154px;
+  --gather-rotate: 7deg;
+}
+
+@keyframes initialCardGatherToFirst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: none;
+  }
+  74% {
+    opacity: 0.98;
+    filter: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--gather-x), var(--gather-y)) scale(0.64) rotate(var(--gather-rotate));
+    filter: grayscale(0.25);
+  }
+}
+
+.initial-card-gather-overlay {
+  animation: gatherOverlayIn 300ms ease-out both;
+}
+
+@keyframes gatherOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.initial-card-stack-float {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 9rem;
+  height: 12.5rem;
+  transform-origin: center;
+  animation: stackFloatToCenter 1120ms cubic-bezier(0.16, 0.9, 0.24, 1) both;
+}
+
+.initial-card-stack-float span {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(120, 53, 15, 0.52);
+  background-image: url("https://ninin-cc.github.io/img/rt/card.jpg");
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 18px 44px rgba(28, 25, 23, 0.38);
+  transform: translate(calc(var(--stack-i, 0) * 2px), calc(var(--stack-i, 0) * -3px)) rotate(calc(var(--stack-i, 0) * -1.5deg));
+}
+
+.initial-card-stack-float span:nth-child(1) { --stack-i: 0; }
+.initial-card-stack-float span:nth-child(2) { --stack-i: 1; }
+.initial-card-stack-float span:nth-child(3) { --stack-i: 2; }
+.initial-card-stack-float span:nth-child(4) { --stack-i: 3; }
+.initial-card-stack-float span:nth-child(5) { --stack-i: 4; }
+
+@keyframes stackFloatToCenter {
+  0% {
+    opacity: 0;
+    transform: translate(-156px, 118px) scale(0.52) rotate(-8deg);
+    filter: blur(1px);
+  }
+  26% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.96) rotate(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.08) rotate(0deg);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 639px) {
+  .initial-hand-review-gathering .initial-hand-slot-2 { --gather-x: -104px; }
+  .initial-hand-review-gathering .initial-hand-slot-3 { --gather-x: -208px; }
+  .initial-hand-review-gathering .initial-hand-slot-4 { --gather-x: -52px; --gather-y: -144px; }
+  .initial-hand-review-gathering .initial-hand-slot-5 { --gather-x: -156px; --gather-y: -144px; }
+
+  .initial-card-stack-float {
+    width: 7.6rem;
+    height: 10.7rem;
+  }
+
+  @keyframes stackFloatToCenter {
+    0% {
+      opacity: 0;
+      transform: translate(-116px, 110px) scale(0.5) rotate(-8deg);
+      filter: blur(1px);
+    }
+    26% { opacity: 1; }
+    78% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.96) rotate(0deg);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.08) rotate(0deg);
+      filter: blur(0);
+    }
+  }
+}
+
+
+@keyframes initialReviewSoftAppear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.route-dialogue-panel .rules-guide-block {
+  transform: none;
+  transition:
+    opacity var(--rt-route-dialogue-fade-duration, 720ms) ease,
+    filter var(--rt-route-dialogue-fade-duration, 720ms) ease;
+}
+
+.leave-shop-dialogue-panel .rules-guide-block {
+  transform: none;
+  transition:
+    opacity var(--rt-leave-shop-dialogue-fade-duration, 980ms) ease,
+    filter var(--rt-leave-shop-dialogue-fade-duration, 980ms) ease;
+}
+
+.scene-next-slot {
+  min-height: var(--rt-scene-next-slot-height, 2.6rem);
+  display: flex;
+  align-items: flex-start;
+}
+
+@media (min-width: 640px) {
+  .scene-next-slot {
+    min-height: var(--rt-scene-next-slot-height-sm, 3rem);
+  }
+}
+
+
+.initial-card-review-panel.is-final-returning {
+  animation: initialReviewFinalFadeOut var(--rt-final-review-return-duration, 1180ms) ease-in-out both !important;
+}
+
+@keyframes initialReviewFinalFadeOut {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateX(0) scale(0.985);
+  }
+}
+
+.initial-hand-dialogue-panel .rules-guide-block {
+  transition:
+    opacity var(--rt-initial-dialogue-fade-duration, 980ms) ease,
+    transform var(--rt-initial-dialogue-fade-duration, 980ms) ease,
+    filter var(--rt-initial-dialogue-fade-duration, 980ms) ease;
 }

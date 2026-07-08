@@ -1,0 +1,15 @@
+/* RoleTRADE Mentalia - 体験調整用 CSS
+   微妙な「間」やアニメーション速度だけを触りたい時は、まずこのファイルを調整します。
+   styles.css 側の定義は var(...) でこの値を参照しています。 */
+
+:root {
+  --rt-stage-fade-out-duration: 1.18s;
+  --rt-stage-fade-in-duration: 1.32s;
+  --rt-card-gather-duration: 1420ms;
+  --rt-first-review-appear-duration: 980ms;
+  --rt-route-dialogue-fade-duration: 720ms;
+  --rt-initial-dialogue-fade-duration: 980ms;
+  --rt-final-review-return-duration: 1180ms;
+  --rt-scene-next-slot-height: 2.6rem;
+  --rt-scene-next-slot-height-sm: 3rem;
+}
