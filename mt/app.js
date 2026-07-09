@@ -215,7 +215,7 @@
       if (state.gameState === 'PLAYING') {
         if (state.round === 1) return '4';
         if (isFinalShopRound(state.round)) {
-          return (state.finalShopGuideStep || 0) < 2 ? '12-1' : '12-2';
+          return (state.finalShopGuideStep || 0) < 3 ? '12-1' : '12-2';
         }
         if (state.round >= 2 && state.round < FINAL_SHOP_ROUND) return String(5 + state.round); // R2=7 ... R5=10
       }
@@ -1020,21 +1020,22 @@
           const isSelected = state.selectedHandCard?.id === card.id;
           const isRequestedCard = state.requestedHandCard?.id === card.id;
           let edgeAdjustment = 'origin-bottom';
-          if (isSelected) {
+          const shouldLiftHandCard = isSelected && !isRequestedCard;
+          if (shouldLiftHandCard) {
             if (index === 0) edgeAdjustment = ' origin-bottom-left translate-x-4 sm:translate-x-6 ';
             else if (index === state.hand.length - 1) edgeAdjustment = ' origin-bottom-right -translate-x-4 sm:-translate-x-6 ';
           }
           let cStyle = "sm:!w-24 sm:!h-36 ";
           if (state.isExchanging && isSelected) cStyle += "animate-fly-up ";
-          if (isRequestedCard) cStyle += "ring-2 ring-orange-500 shadow-[0_0_18px_rgba(249,115,22,0.65)] ";
+          if (isRequestedCard) cStyle += "ring-2 ring-orange-500 shadow-[0_0_18px_rgba(249,115,22,0.65)] " + (!state.isExchanging ? "requested-hand-card-stable " : "");
           if (state.isEntering) cStyle += "animate-drop-in ";
           cStyle += edgeAdjustment;
           
           let wrapClass = "shrink-0 transition-all duration-500 relative ";
           if (index > 0) wrapClass += "-ml-8 sm:ml-2 ";
-          wrapClass += isSelected ? "z-[100]" : "z-10";
+          wrapClass += isRequestedCard ? "z-[90] requested-hand-card-wrap" : (isSelected ? "z-[100]" : "z-10");
 
-          return '<div class="' + wrapClass + '">' + renderCardHTML(card, { isSelected: isSelected, isHandCard: true, customStyle: cStyle }) + '</div>';
+          return '<div class="' + wrapClass + '">' + renderCardHTML(card, { isSelected: shouldLiftHandCard, isHandCard: true, customStyle: cStyle }) + '</div>';
         }).join('');
       }
 
@@ -1354,14 +1355,14 @@
 
         if (isShopTime) {
           const guide = GUIDE_MESSAGES[state.round];
-          const finalShopGuideStep = isFinalShopRound(state.round) ? (state.finalShopGuideStep || 0) : 2;
-          const isFinalShopWaiting = isFinalShopRound(state.round) && finalShopGuideStep < 2;
           const finalShopGuideMessages = [FINAL_SHOP_GUIDE_INTRO, FINAL_SHOP_GUIDE_DETAIL_1, FINAL_SHOP_GUIDE_DETAIL_2];
+          const finalShopGuideStep = isFinalShopRound(state.round) ? (state.finalShopGuideStep || 0) : finalShopGuideMessages.length;
+          const isFinalShopWaiting = isFinalShopRound(state.round) && finalShopGuideStep < finalShopGuideMessages.length;
           const guideMessage = isFinalShopRound(state.round)
             ? finalShopGuideMessages[Math.min(finalShopGuideStep, finalShopGuideMessages.length - 1)]
             : guide.message;
           if (isFinalShopWaiting) {
-            const isFinalGuideCue = finalShopGuideStep >= 1;
+            const isFinalGuideCue = finalShopGuideStep >= finalShopGuideMessages.length - 1;
             html += `
                   <div class="p-2 sm:p-8 relative z-10">
                     <div class="max-w-2xl mx-auto">
@@ -1487,13 +1488,13 @@
 
                       <div class="trade-dialogue-surface relative bg-[#f4ebd8] dialog-surface-translucent p-2.5 sm:p-3 rounded-md border border-stone-400/60 shadow-md min-w-0 flex flex-col items-center gap-2 sm:gap-2.5" style="background-image: ${PARCHMENT_TEXTURE}">
                         <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] dialog-tail-translucent border-l border-b border-stone-400/60 transform rotate-45"></div>
-                        <p class="dialogue-text-unified self-stretch text-[10.5px] sm:text-sm text-stone-900 font-serif font-bold leading-relaxed sm:leading-loose text-left">${state.tradeMessage || TRADE_MESSAGES[state.round]}</p>
+                        <p class="dialogue-text-unified requested-trade-message self-stretch text-[10.5px] sm:text-sm text-stone-900 font-serif font-bold leading-relaxed sm:leading-loose text-left">${state.tradeMessage || TRADE_MESSAGES[state.round]}</p>
+                        ${isRequestedHandTraveler ? '<div class="requested-trade-actions"><button type="button" data-action="accept-requested-trade" class="requested-trade-choice wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="requested-trade-choice wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : ''}
                         <div class="w-full flex flex-col items-center pt-2 sm:pt-2.5 border-t border-stone-400/35 ${isTwoCardTravelerOffer ? '' : '-translate-x-14'}">
                           ${isTwoCardTravelerOffer ? '<p class="selection-guide-label mb-1.5 sm:mb-2">ここから一つ選ぶ</p>' : '<p class="text-[9px] sm:text-xs font-serif tracking-widest text-stone-700 mb-1.5 sm:mb-2 font-bold">旅人からの提示</p>'}
                           <div class="${isTwoCardTravelerOffer ? 'traveler-offer-stack' : 'flex justify-center gap-1.5 sm:gap-4 transform hover:scale-105 transition-transform duration-500'}">
                             ${isTwoCardTravelerOffer ? travelerOfferCardsHTML : renderCardHTML(state.tradeOfferCard, { isReadOnly: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
                           </div>
-                          ${isRequestedHandTraveler ? '<div class="requested-trade-actions"><button type="button" data-action="accept-requested-trade" class="requested-trade-choice wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="requested-trade-choice wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : ''}
                         </div>
                       </div>
                     </div>
@@ -1779,7 +1780,7 @@
           </div> <!-- End of main-stage -->
       `;
 
-      if (state.gameState === 'PLAYING' && !(isFinalShopRound(state.round) && (state.finalShopGuideStep || 0) < 2)) {
+      if (state.gameState === 'PLAYING' && !(isFinalShopRound(state.round) && (state.finalShopGuideStep || 0) < 3)) {
         let exchangeBtnHTML = '';
         if (state.waitingAfterTrade) {
           exchangeBtnHTML = '';
@@ -2058,7 +2059,8 @@
         }, isFinalInitialReviewCard ? EXPERIENCE_TIMING.initialCardReviewFinalReturnMs : EXPERIENCE_TIMING.initialCardReviewAdvanceMs);
       } else if (action === 'advance-final-shop-guide') {
         transitionState(() => {
-          state.finalShopGuideStep = 2;
+          const guideLength = 3;
+          state.finalShopGuideStep = Math.min((state.finalShopGuideStep || 0) + 1, guideLength);
         });
       } else if (action === 'toggle-trisetsu') {
         state.isTrisetsuOpen = !state.isTrisetsuOpen;
@@ -2172,10 +2174,11 @@
             state.farewellMessage = getRandomFarewellMessage();
             state.gameState = 'SHOP_FAREWELL';
           });
-        } else if (state.pendingTradeAction === 'skip') {
+        } else {
           transitionState(() => {
             state.selectedHandCard = null;
             state.selectedShopCard = null;
+            state.pendingTradeAction = null;
             state.farewellMessage = getRandomFarewellMessage();
             state.gameState = 'SHOP_FAREWELL';
           });
