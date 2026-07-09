@@ -30,149 +30,7 @@
       });
     }
 
-    // --- データ定義 ---
-    const CARDS_DATA = [
-      { id: 1, name: '開拓者', desc: '誰も通っていない新しい道を作り出す役割。', mode: 'WONDER' },
-      { id: 2, name: '冒険者', desc: '未知の世界へ飛び込み、新しい発見をもたらす役割。', mode: 'WONDER' },
-      { id: 3, name: '表現者', desc: '自分の内なる思いや情熱を、形にして他者に届ける役割。', mode: 'WONDER' },
-      { id: 4, name: '発明家', desc: '常識にとらわれず、新しいアイデアや仕組みを生み出す役割。', mode: 'WONDER' },
-      { id: 5, name: '自由人', desc: '枠組みに縛られず、軽やかに状況を楽しむ役割。', mode: 'WONDER' },
-      { id: 6, name: '挑戦者', desc: '高い壁にもひるまず、果敢に挑み続ける役割。', mode: 'WONDER' },
-      { id: 7, name: '守護者', desc: '大切なルールや基準を守り、秩序を維持する役割。', mode: 'KEEPER' },
-      { id: 8, name: '分析家', desc: '事実やデータを冷静に見つめ、論理的な答えを導く役割。', mode: 'KEEPER' },
-      { id: 9, name: '設計者', desc: '物事の構造を理解し、再現性のある仕組みを作る役割。', mode: 'KEEPER' },
-      { id: 10, name: '審判', desc: '公平な視点で物事を判断し、正しい道を示す役割。', mode: 'KEEPER' },
-      { id: 11, name: '記録係', desc: '過去の経験や事実を正確に残し、未来へ繋ぐ役割。', mode: 'KEEPER' },
-      { id: 12, name: '職人', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
-      { id: 13, name: '養育者', desc: '他者の成長を温かく見守り、サポートする役割。', mode: 'NURTURE' },
-      { id: 14, name: '調停者', desc: '人と人との間に入り、対立を和らげ調和をもたらす役割。', mode: 'NURTURE' },
-      { id: 15, name: '共感者', desc: '他者の痛みに寄り添い、共に感情を分かち合う役割。', mode: 'NURTURE' },
-      { id: 16, name: '応援団', desc: '誰かの背中を押し、勇気とエネルギーを与える役割。', mode: 'NURTURE' },
-      { id: 17, name: '癒し手', desc: '緊張をほぐし、その場に安心感と安らぎをもたらす役割。', mode: 'NURTURE' },
-      { id: 18, name: '接着剤', desc: 'バラバラな個性を繋ぎ合わせ、チームを一つにする役割。', mode: 'NURTURE' },
-      { id: 19, name: '観察者', desc: '周囲の状況を静かに見渡し、小さな変化に気づく役割。', mode: 'ADAPTER' },
-      { id: 20, name: '調整役', desc: '求められる期待を察知し、自分の立ち位置を変化させる役割。', mode: 'ADAPTER' },
-      { id: 21, name: '防衛者', desc: '危険をいち早く察知し、自分やチームを守る役割。', mode: 'ADAPTER' },
-      { id: 22, name: 'カメレオン', desc: '環境に合わせて自分を柔軟に変化させ、溶け込む役割。', mode: 'ADAPTER' },
-      { id: 23, name: '慎重派', desc: '石橋を叩いて渡り、失敗のリスクを最小限に抑える役割。', mode: 'ADAPTER' },
-      { id: 24, name: '探知機', desc: '場の空気や他者の機嫌を読み取り、摩擦を避ける役割。', mode: 'ADAPTER' },
-      { id: 25, name: '道化師', desc: '場が固まりすぎたとき、笑いや遊び心で空気をゆるめる役割。', mode: 'WONDER' }
-    ];
-
-    const MODE_COLORS = {
-      WONDER: 'bg-gradient-to-r from-orange-900 via-orange-600 to-orange-900', 
-      KEEPER: 'bg-gradient-to-r from-slate-800 via-blue-800 to-slate-800',     
-      NURTURE: 'bg-gradient-to-r from-rose-900 via-rose-700 to-rose-900',      
-      ADAPTER: 'bg-gradient-to-r from-cyan-900 via-cyan-700 to-cyan-900'       
-    };
-
-    const MODE_TEXT_COLORS = {
-      WONDER: 'text-orange-600',
-      KEEPER: 'text-indigo-900',
-      NURTURE: 'text-pink-600',
-      ADAPTER: 'text-cyan-600'
-    };
-
-    const MODE_AURA_COLORS = {
-      WONDER: { sparkle: 'text-orange-400', star: 'text-orange-300 fill-orange-300', shadow: '0 0 15px rgba(249, 115, 22, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
-      KEEPER: { sparkle: 'text-indigo-400', star: 'text-indigo-300 fill-indigo-300', shadow: '0 0 15px rgba(79, 70, 229, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
-      NURTURE: { sparkle: 'text-pink-400', star: 'text-pink-300 fill-pink-300', shadow: '0 0 15px rgba(236, 72, 153, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' },
-      ADAPTER: { sparkle: 'text-cyan-400', star: 'text-cyan-300 fill-cyan-300', shadow: '0 0 15px rgba(6, 182, 212, 0.6), 0 0 5px rgba(255, 255, 255, 0.5)' }
-    };
-
-    const MODE_ICON_NAMES = {
-      WONDER: 'Compass',
-      KEEPER: 'Scale',
-      NURTURE: 'Heart',
-      ADAPTER: 'Eye'
-    };
-
-    const ICONS = {
-      Compass: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
-      Scale: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
-      Heart: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
-      Eye: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
-      Play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
-      Store: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-2.205a2 2 0 0 1 1.79 0L12 7l3.8-1.9a2 2 0 0 1 1.8 0L22 7"/><path d="M2 12V7"/><path d="M22 12V7"/><path d="M12 12V7"/><path d="M6 12v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-9"/><path d="M2 12h20"/><path d="M14 16v-4"/></svg>',
-      ArrowRightLeft: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>',
-      RefreshCw: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
-      User: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-      Swords: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>',
-      Scroll: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/></svg>',
-      Flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
-      Sparkles: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>',
-      ChevronLeft: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
-      Camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
-      Shield: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-2 7-2 2.5 0 4.5 1 6.5 2a1 1 0 0 1 1 1z"/></svg>',
-      Star: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-      Share2: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
-      FileText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>'
-    };
-
-    function getIcon(name, classes) {
-      let svg = ICONS[name] || '';
-      if (classes) {
-        svg = svg.replace('<svg ', '<svg class="' + classes + '" ');
-      }
-      return svg;
-    }
-
-    function escapeAttribute(value) {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-
-    const getModeColorText = (mode) => {
-      switch(mode) {
-        case 'WONDER': return 'オレンジ';
-        case 'KEEPER': return 'ネイビー';
-        case 'NURTURE': return 'ピンク';
-        case 'ADAPTER': return '水色';
-        default: return '';
-      }
-    };
-
-    const getJewelDescription = (mode) => {
-      switch(mode) {
-        case 'WONDER': return 'オレンジの【ワンダーの宝玉】は自由・発見・挑戦をつかさどります。';
-        case 'KEEPER': return '青の【キーパーの宝玉】は論理・ルール・正しさをつかさどります。';
-        case 'NURTURE': return 'ピンクの【ナーチャーの宝玉】は保護・調和をつかさどります。';
-        case 'ADAPTER': return '水色の【アダプターの宝玉】は洞察・適応・慎重さをつかさどります。';
-        default: return '';
-      }
-    };
-
-    const CARDS_BY_ID = new Map(CARDS_DATA.map(card => [card.id, card]));
-
-    const TOTAL_ROUNDS = 7;
-    const FINAL_SHOP_ROUND = 7;
-    const TRAVELER_OFFER_COUNTS = {
-      2: 3,
-      3: 3,
-      4: 2,
-      5: 2,
-      6: 1
-    };
-    const REQUESTED_HAND_TRAVELER_ROUND = 6;
-
-    function getTravelerOfferCount(round) {
-      return TRAVELER_OFFER_COUNTS[round] || 1;
-    }
-
-    function isTwoCardTravelerRound(round) {
-      return getTravelerOfferCount(round) > 1;
-    }
-
-    function isRequestedHandTravelerRound(round) {
-      return round === REQUESTED_HAND_TRAVELER_ROUND;
-    }
-
-    function isFinalShopRound(round) {
-      return round === FINAL_SHOP_ROUND;
-    }
+    // --- データ定義は app.data.js へ分割 ---
 
     function randomInt(max) {
       if (!Number.isInteger(max) || max <= 0) {
@@ -197,167 +55,7 @@
       return array[randomInt(array.length)];
     }
 
-    const TRADE_AVATAR_PROFILES = [
-      { src: "https://ninin-cc.github.io/img/rt/1.jpg", voice: "olderMale", gender: "male" },
-      { src: "https://ninin-cc.github.io/img/rt/2.jpg", voice: "youngFemale", gender: "female" },
-      { src: "https://ninin-cc.github.io/img/rt/3.jpg", voice: "youngFemale", gender: "female" },
-      { src: "https://ninin-cc.github.io/img/rt/4.jpg", voice: "male", gender: "male" },
-      { src: "https://ninin-cc.github.io/img/rt/5.jpg", voice: "male", gender: "male" },
-      { src: "https://ninin-cc.github.io/img/rt/6.jpg", voice: "youngFemale", gender: "female" },
-      { src: "https://ninin-cc.github.io/img/rt/7.jpg", voice: "male", gender: "male" }
-    ];
-
-    const TRADE_AVATARS_LIST = TRADE_AVATAR_PROFILES.map(profile => profile.src);
-
-    const TRADE_MESSAGE_VARIANTS = {
-      olderMale: [
-        "おぬしの持つカード、なかなか面白そうだな。旅の途中で役に立つかもしれん。",
-        "新しい役割を持って進むのも悪くない。ここでは互いにカードを交換する流れだ。",
-        "旅は、思いがけない役割に助けられるものだ。交換して進むとしよう。",
-        "正直に言うと、おぬしの持つカードの中に、俺の都合がいいものがありそうでな。",
-        "交換というのは、損得だけではない。だが今回は、俺も少し得をしたい気分でな。",
-        "互いの旅を少し進めるとしよう。俺の代わりの役割を渡すぞ。",
-        "ここでは役割を交換するものらしい。なら、淡々と一枚ずつ差し出してみるのも悪くない。",
-        "交換しなければならん流れなら、俺からはこのカードを出そう。"
-      ],
-      male: [
-        "君の持つカード、少し気になるな。俺の役割と交換して進もう。",
-        "お互いの旅に、新しい役割を連れていく価値がありそうだ。",
-        "自分では選ばなかった役割が、道をひらくこともある。ここで交換して道を変えてみよう。",
-        "手元のカードを手放したら、別の景色が見えるかもしれない。次へ行こう。",
-        "悪いが、君のカードの中に俺が欲しいものがあるんだ。条件は対等だろう？",
-        "今の俺には、新しい役割が必要なんだ。代わりに俺のカードを持っていってくれ。",
-        "心配はいらない。交換した役割も、旅の中で意味を持つ。ただ、一度見比べてほしい。",
-        "交換の場なら、交換する。それだけだ。俺からはこれを出す。",
-        "決まりだから差し出す、というのも変な話だが……まあ、俺からも出そう。",
-        "君の持つカードが俺の旅に噛み合いそうだ。少し自分勝手だが、交換を頼みたい。"
-      ],
-      youngFemale: [
-        "あなたのカードの中に、少し気になるものがあるな。私の役割と交換しよう。",
-        "自分では選ばなかった役割が、旅の途中で必要になることもあるよ。ここで交換して進もう。",
-        "新しい役割を持ったあなたも見てみたいな。交換して、次の旅に持っていって。",
-        "旅の途中だからこそ、いつもと違う役割を試せるのかも。交換して、少し景色を変えてみよう。",
-        "ごめんね、少し自分勝手かもしれない。でも、あなたの手札が今の私には必要なんだ。",
-        "このカードもあなたに合いそう。私からの役割として、ここで受け取ってほしいな。",
-        "交換する場所なら、交換してみる。理由はそれだけでもいいのかもしれないね。",
-        "交換しなきゃいけないらしいから……えっと、私からはこれを出してみるね。",
-        "ここでの交換が、あなたの旅にも私の旅にも意味がありそう。互いの旅を進めよう。",
-        "私はこっちの役割を手放してみる。そちらのどれかと交換して、次へ進みたいな。"
-      ]
-    };
-
-    const TRADE_MESSAGES = {
-      2: "君の持つカード、少し気になるな。俺の役割と交換してくれないか。",
-      3: "自分では選ばなかった役割が、旅の途中で必要になることもある。ここで交換して進もう。",
-      4: "だいぶ自分の強みが見えてきたんじゃない？ でも、他者と関わることで変わるものもある。さあ、交換しよう。",
-      5: "もうすぐ次の場所へ向かう時だ。最後にこのカードを渡そう。一見苦手に見える役割も、きっと君を助けるはずだ。"
-    };
-
-    function getRandomTradeMessage(voice, usedMessages = []) {
-      const messages = TRADE_MESSAGE_VARIANTS[voice] || TRADE_MESSAGE_VARIANTS.male;
-      const availableMessages = messages.filter(message => !usedMessages.includes(message));
-      return randomItem(availableMessages.length > 0 ? availableMessages : messages);
-    }
-
-    function getTravelerOfferCue(voice, offerCount) {
-      const offerLabel = offerCount >= 3 ? '三つ' : (offerCount === 2 ? '二つ' : '一枚');
-      const isMultiCardOffer = offerCount > 1;
-      if (voice === 'youngFemale') {
-        return isMultiCardOffer
-          ? 'この' + offerLabel + 'のどれかと、あなたの一枚を交換してほしいな。'
-          : 'この一枚と、あなたのどれか一枚を交換してほしいな。';
-      }
-      if (voice === 'olderMale') {
-        return isMultiCardOffer
-          ? 'この' + offerLabel + 'のどれかと、おぬしの一枚を交換してくれ。'
-          : 'この一枚と、おぬしのどれか一枚を交換してくれ。';
-      }
-      return isMultiCardOffer
-        ? 'この' + offerLabel + 'のどれかと、君の一枚を交換してくれ。'
-        : 'この一枚と、君のどれか一枚を交換してくれ。';
-    }
-
-    function withTravelerOfferCue(message, voice, offerCount) {
-      const cue = getTravelerOfferCue(voice, offerCount);
-      return message.includes(cue) ? message : message + ' ' + cue;
-    }
-
-    function getRequestedHandTradeMessage(message, voice, requestedCard) {
-      const requestedName = requestedCard?.name || 'そのカード';
-      let cue = 'できれば「' + requestedName + '」と、この一枚を交換してくれ。断ってもいいが、応じてくれると助かる。';
-      if (voice === 'youngFemale') {
-        cue = 'できれば「' + requestedName + '」と、この一枚を交換してほしいな。断っても大丈夫だけど、応じてくれたら助かるよ。';
-      } else if (voice === 'olderMale') {
-        cue = 'できれば「' + requestedName + '」と、この一枚を交換してくれんか。断ってもよいが、応じてくれると助かる。';
-      }
-      return message.includes(requestedName) ? message : message + ' ' + cue;
-    }
-
-    function getTradeToneFromMessage(message = '') {
-      if (message.includes('自分勝手') || message.includes('都合') || message.includes('得をしたい') || message.includes('欲しい') || message.includes('必要なんだ')) return 'selfish';
-      if (message.includes('心配はいらない') || message.includes('役に立つ') || message.includes('合いそう') || message.includes('持っていって') || message.includes('景色を変えて')) return 'gentle';
-      if (message.includes('交換する場所') || message.includes('交換の場') || message.includes('淡々') || message.includes('理由はそれだけ')) return 'flat';
-      if (message.includes('しなきゃ') || message.includes('決まり') || message.includes('ならん流れ')) return 'reluctant';
-      return 'balanced';
-    }
-
-    function getTradeProfileByAvatar(src) {
-      return TRADE_AVATAR_PROFILES.find(profile => profile.src === src) || null;
-    }
-
-    function getRandomTradeEncounter(usedAvatarImgs = [], usedMessages = []) {
-      const availableAvatars = TRADE_AVATAR_PROFILES.filter(profile => !usedAvatarImgs.includes(profile.src));
-      const avatar = randomItem(availableAvatars.length > 0 ? availableAvatars : TRADE_AVATAR_PROFILES);
-      const message = getRandomTradeMessage(avatar.voice, usedMessages);
-      return {
-        avatarImg: avatar.src,
-        message,
-        voice: avatar.voice,
-        tone: getTradeToneFromMessage(message)
-      };
-    }
-    const FAREWELL_MESSAGES = [
-      "うむ。<br/><br/>選んだ役割は、おぬしを縛る鎖ではない。<br/><br/>必要なときに思い出す、<br/><br/>小さな灯火じゃ。"
-    ];
-
-    function getRandomFarewellMessage() {
-      return randomItem(FAREWELL_MESSAGES);
-    }
-
-    const ROLETRADE_SCENE_IMG = "./roletrade_ichimaie.jpg";
-    const MACHI_SCENE_IMG = "./machi.jpg";
-    const HARUKA_AVATAR = ROLETRADE_SCENE_IMG;
-    const REFREM_AVATAR = ROLETRADE_SCENE_IMG;
-    const HARUKA_CROP_POSITION = "62% 44%";
-    const REFREM_CROP_POSITION = "42% 40%";
-    const HARUKA_SCENE_ZOOM = 1.38;
-    const HARUKA_SCENE_ORIGIN = "62% 36%";
-    const BG_START_MENTALIA = ROLETRADE_SCENE_IMG;
-
-    const GUIDE_MESSAGES = {
-      1: {
-        name: "ハルカ",
-        place: "役割の庭",
-        avatar: HARUKA_AVATAR,
-        avatarPosition: HARUKA_CROP_POSITION,
-        avatarZoom: 2.35,
-        avatarOrigin: "62% 32%",
-        icon: "Sparkles",
-        color: "text-orange-700",
-        message: "<p>じゃあ、</p><p>私と最初のカード交換をしましょう。</p><p>手元の5つのうち、ひとつを手放して、</p><p>私が持ってるカードの中から、</p><p>ひとつを 迎えてください。</p>"
-      },
-      7: {
-        name: "リフレム",
-        place: "灯火の間",
-        avatar: REFREM_AVATAR,
-        avatarPosition: REFREM_CROP_POSITION,
-        avatarZoom: 2.25,
-        avatarOrigin: "42% 29%",
-        icon: "Flame",
-        color: "text-orange-700",
-        message: "<p>うむ、よく戻ってきたな、旅人よ。</p><div class=\"h-1.5 sm:h-2\"></div><p>大切なのは、どの役割が強いかではないのじゃ。</p><div class=\"h-1.5 sm:h-2\"></div><p>おぬしが、なぜそれを残し、<br>今の自分に必要だと感じたのか……じゃな。</p><div class=\"h-1.5 sm:h-2\"></div><p>最後にもう一度だけ、役割を入れ替えることができるぞ。</p><div class=\"h-1.5 sm:h-2\"></div><p>変えても、変えなくてもよい。<br>選んだ理由を、おぬし自身の言葉で受け取ることじゃよ。</p>"
-      }
-    };
+    // --- 旅人・セリフ・背景設定は app.content.js へ分割 ---
 
     const FINAL_SHOP_GUIDE_INTRO = getExperienceText('finalShopGuideIntro', '<p>よくぞ戻ってきた。</p><div class="h-1.5 sm:h-2"></div><p>大切なのは</p><div class="h-1.5 sm:h-2"></div><p>おぬしが、なぜそれを残し、<br>今の自分に必要だと感じたのか……じゃな。</p>');
 
@@ -497,27 +195,45 @@
       shopConfirmDialogueStep: 0
     };
 
-    // ▼▼ 各シーンのページ番号を算出する関数 ▼▼
-    function getPageNumber() {
-      if (state.gameState === 'START') return 1;
-      if (state.gameState === 'RULES') return 2;
-      if (state.gameState === 'INITIAL_HAND') return 3;
+    // ▼▼ 各シーンのページラベルを算出する関数 ▼▼
+    function getPageLabel() {
+      if (state.gameState === 'START') return '1';
+      if (state.gameState === 'RULES') {
+        if (state.rulesExplanationPhase === 'details') return '2-4';
+        return '2-' + ((state.rulesGuideScene || 0) + 1);
+      }
+      if (state.gameState === 'INITIAL_HAND') {
+        if (state.initialHandReviewComplete) return '3-3';
+        if (
+          state.initialHandReviewArmed ||
+          state.initialHandReviewGathering ||
+          state.initialHandReviewReturning ||
+          state.initialHandReviewIndex >= 0
+        ) return '3-2';
+        return '3-1';
+      }
       if (state.gameState === 'PLAYING') {
-        if (state.round === 1) return 4;
-        if (state.round >= 2 && state.round <= 6) return 5 + state.round; // R2=7 ... R6=11
-        if (isFinalShopRound(state.round)) return 12;
+        if (state.round === 1) return '4';
+        if (isFinalShopRound(state.round)) {
+          return (state.finalShopGuideStep || 0) < 2 ? '12-1' : '12-2';
+        }
+        if (state.round >= 2 && state.round < FINAL_SHOP_ROUND) return String(5 + state.round); // R2=7 ... R5=10
       }
-      if (state.gameState === 'LEAVE_SHOP_1') return 5;
-      if (state.gameState === 'BEFORE_TAVERN') return 6;
-      if (state.gameState === 'AFTER_TAVERN') return 11;
-      if (state.gameState === 'SHOP_CONFIRM') return 13;
-      if (state.gameState === 'SHOP_FAREWELL') return 14;
+      if (state.gameState === 'LEAVE_SHOP_1') return '5';
+      if (state.gameState === 'BEFORE_TAVERN') return '6';
+      if (state.gameState === 'AFTER_TAVERN') return '11';
+      if (state.gameState === 'SHOP_CONFIRM') return '13';
+      if (state.gameState === 'SHOP_FAREWELL') return '14';
       if (state.gameState === 'RESULT') {
-        if (state.resultStep === 'SELECT_1') return 15;
-        if (state.resultStep === 'SELECT_2') return 16;
-        if (state.resultStep === 'FINAL') return 17;
+        if (state.resultStep === 'SELECT_1') return '15';
+        if (state.resultStep === 'SELECT_2') return '16';
+        if (state.resultStep === 'FINAL') return '17';
       }
-      return 0;
+      return '0';
+    }
+
+    function getPageNumber() {
+      return getPageLabel();
     }
 
     function checkAppBrowser() {
@@ -647,394 +363,9 @@
 
 
 
-    function pushUniqueCardId(list, card) {
-      if (!card || !Array.isArray(list)) return;
-      const without = list.filter(id => id !== card.id);
-      without.push(card.id);
-      list.splice(0, list.length, ...without);
-    }
+    // Tavern trade flow is split into app.flow.trade.js.
 
-    function rememberTradeHistory(releasedCard, receivedCard, kind) {
-      pushUniqueCardId(state.releasedCardIds, releasedCard);
-      pushUniqueCardId(state.acquiredCardIds, receivedCard);
-      if (kind === 'traveler') {
-        pushUniqueCardId(state.travelerReleasedCardIds, releasedCard);
-      }
-    }
-
-    function getCardsByHistory(ids, excludedIds = new Set()) {
-      const result = [];
-      const seen = new Set();
-      ids.forEach(id => {
-        if (seen.has(id) || excludedIds.has(id)) return;
-        const card = CARDS_BY_ID.get(id);
-        if (!card) return;
-        seen.add(id);
-        result.push(card);
-      });
-      return result;
-    }
-
-    function selectRequestedHandCard(handCards) {
-      const handIds = new Set(handCards.map(card => card.id));
-      const unique = (ids) => [...new Set(ids)].filter(id => handIds.has(id)).map(id => CARDS_BY_ID.get(id)).filter(Boolean);
-      const harukaChosen = unique(state.acquiredCardIds.filter(id => state.initialShopCardIds.includes(id)));
-      if (harukaChosen.length) return randomItem(harukaChosen);
-      const initialHand = unique(state.initialHandCardIds);
-      if (initialHand.length) return randomItem(initialHand);
-      const acquired = unique(state.acquiredCardIds);
-      if (acquired.length) return randomItem(acquired);
-      return randomItem(handCards);
-    }
-
-    function buildFinalShopCards(handCards, currentShop, currentDeck) {
-      const handIds = new Set(handCards.map(card => card.id));
-      const pickedIds = new Set();
-      const finalShop = [];
-      const addCards = (cards) => {
-        cards.forEach(card => {
-          if (!card || handIds.has(card.id) || pickedIds.has(card.id) || finalShop.length >= 6) return;
-          pickedIds.add(card.id);
-          finalShop.push(card);
-        });
-      };
-      addCards(getCardsByHistory([...state.travelerReleasedCardIds].reverse(), handIds));
-      addCards(getCardsByHistory([...state.releasedCardIds].reverse(), handIds));
-      addCards(currentShop || []);
-      addCards(currentDeck || []);
-      addCards(CARDS_DATA);
-      const finalIds = new Set(finalShop.map(card => card.id));
-      const finalDeck = (currentDeck || []).filter(card => !finalIds.has(card.id));
-      return { shop: finalShop.slice(0, 6), deck: finalDeck };
-    }
-
-    function getAfterTradeMessage(kind, receivedCard, releasedCard) {
-      if (kind === 'shop') {
-        return 'ありがとうございます。' + (releasedCard ? '「' + releasedCard.name + '」' : 'このカード') + '、大切に受け取りますね。';
-      }
-
-      const receivedName = receivedCard ? '「' + receivedCard.name + '」' : 'その役割';
-      const releasedName = releasedCard ? '「' + releasedCard.name + '」' : 'そのカード';
-      const profile = getTradeProfileByAvatar(state.tradeAvatarImg);
-      const voice = state.tradeVoice || profile?.voice || 'male';
-      const tone = state.tradeTone || getTradeToneFromMessage(state.tradeMessage || '') || 'balanced';
-      const afterTradeMessages = {
-        olderMale: {
-          selfish: [
-            '悪いな。' + releasedName + '、今の俺にはちょうど必要だった。ありがたく持っていく。',
-            '少し俺の都合に付き合わせたな。だが、いい交換だった。' + receivedName + 'も役に立つはずだ。'
-          ],
-          gentle: [
-            'ありがとな。' + releasedName + '、旅の途中で大事に使わせてもらう。',
-            'うむ、いい交換だった。おぬしの旅にも、' + receivedName + 'が力になるといいな。'
-          ],
-          flat: [
-            '交換成立だな。俺は' + releasedName + 'を預かる。おぬしもその一枚を持って進むといい。',
-            'これで互いに一枚ずつ入れ替わった。淡々としているが、悪くない交換だ。'
-          ],
-          reluctant: [
-            '流れとはいえ、交換できてよかった。' + releasedName + 'は俺が預かる。',
-            'これで一枚、旅が動いたな。おぬしも' + receivedName + 'を少し眺めてみるといい。'
-          ],
-          balanced: [
-            'ありがとな。いいカードを受け取った。俺の旅でも役に立ちそうだ。',
-            '交換してくれて助かった。' + releasedName + '、大事に持っていく。'
-          ]
-        },
-        male: {
-          selfish: [
-            'ありがとな。少し自分勝手を言ったけど、' + releasedName + 'は今の俺に必要なんだ。',
-            '助かった。俺の都合に付き合ってくれて悪いな。' + receivedName + 'も、きっと使いどころがある。'
-          ],
-          gentle: [
-            'ありがとう。' + receivedName + 'も、あなたの旅で意味を持つといいな。',
-            'いい交換だったな。お互い、この先でちゃんと活かしていこう。'
-          ],
-          flat: [
-            '交換成立だな。俺は' + releasedName + 'を持っていく。',
-            'これで一枚ずつ入れ替わった。次の旅でも、役割を見ていこう。'
-          ],
-          reluctant: [
-            '決まりとはいえ、交換してくれて助かった。' + releasedName + 'は俺が持っていく。',
-            '少し不思議な流れだけど、これで交換だな。ありがとう。'
-          ],
-          balanced: [
-            'ありがとな！いいカードを貰ったぜ。',
-            '交換してくれてありがとう。今の俺には、きっと必要なカードだ。'
-          ]
-        },
-        youngFemale: {
-          selfish: [
-            'ありがとう。少しわがままを言っちゃったけど、' + releasedName + 'は今の私に必要だったんだ。',
-            '付き合ってくれてありがとう。' + receivedName + 'も、あなたの旅でちゃんと意味を持つと思う。'
-          ],
-          gentle: [
-            'ありがとう。' + releasedName + '、大切に持っていくね。',
-            'いい交換だったね。あなたの手元に来た' + receivedName + 'も、きっと何か教えてくれるよ。'
-          ],
-          flat: [
-            '交換できたね。私は' + releasedName + 'を持っていくよ。',
-            'これで一枚ずつ入れ替わったね。次の旅でも、少し見つめてみて。'
-          ],
-          reluctant: [
-            '交換してくれてありがとう。ちょっと緊張したけど、これで進めるね。',
-            'これで交換できたね。' + receivedName + 'も、少しだけ眺めてみてほしいな。'
-          ],
-          balanced: [
-            'ありがとう。いいカードを受け取ったよ。',
-            '交換してくれてありがとう。' + releasedName + '、大切に持っていくね。'
-          ]
-        }
-      };
-      const voiceMessages = afterTradeMessages[voice] || afterTradeMessages.male;
-      const messages = voiceMessages[tone] || voiceMessages.balanced;
-      return messages[(state.round + (receivedCard?.id || 0) + (releasedCard?.id || 0)) % messages.length];
-    }
-
-    function handleTrade() {
-      if (!state.selectedHandCard || !state.tradeOfferCard || state.isExchanging || state.waitingAfterTrade) return;
-      const releasedCard = state.selectedHandCard;
-      const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
-      const receivedCard = state.selectedShopCard || state.tradeOfferCard;
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const offeredIds = offerCards.map(card => card.id);
-      const unchosenOfferCards = offerCards.filter(card => card.id !== receivedCard.id);
-      const newDeck = state.deck.filter(card => !offeredIds.includes(card.id));
-      newDeck.push(...unchosenOfferCards, releasedCard);
-
-      state.tradeConfirmOpen = false;
-      state.isExchanging = true;
-      render();
-      
-      setTimeout(() => {
-        transitionState(() => {
-          state.hand = newHand;
-          state.deck = newDeck;
-          state.selectedHandCard = null;
-          state.selectedShopCard = null;
-          state.tradeOfferCard = null;
-          state.tradeOfferCards = [];
-          state.requestedHandCard = null;
-          state.isExchanging = false;
-          state.waitingAfterTrade = true;
-          rememberTradeHistory(releasedCard, receivedCard, 'traveler');
-          state.pendingAfterTrade = { hand: newHand, shop: state.shop, deck: newDeck, releasedCard, receivedCard, kind: 'traveler' };
-          state.afterTradeMessage = getAfterTradeMessage('traveler', receivedCard, releasedCard);
-        });
-      }, EXPERIENCE_TIMING.exchangeSettleMs);
-    }
-
-    function handleRequestedTravelerTrade() {
-      if (!state.requestedHandCard || !state.tradeOfferCard || state.isExchanging || state.waitingAfterTrade) return;
-      const releasedCard = state.requestedHandCard;
-      const receivedCard = state.tradeOfferCard;
-      const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
-      const offeredIds = offerCards.map(card => card.id);
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const newDeck = state.deck.filter(card => !offeredIds.includes(card.id));
-      newDeck.push(releasedCard);
-
-      state.tradeConfirmOpen = false;
-      state.selectedHandCard = releasedCard;
-      state.isExchanging = true;
-      render();
-
-      setTimeout(() => {
-        transitionState(() => {
-          state.hand = newHand;
-          state.deck = newDeck;
-          state.selectedHandCard = null;
-          state.selectedShopCard = null;
-          state.tradeOfferCard = null;
-          state.tradeOfferCards = [];
-          state.requestedHandCard = null;
-          state.isExchanging = false;
-          state.waitingAfterTrade = true;
-          rememberTradeHistory(releasedCard, receivedCard, 'traveler');
-          state.pendingAfterTrade = { hand: newHand, shop: state.shop, deck: newDeck, releasedCard, receivedCard, kind: 'traveler' };
-          state.afterTradeMessage = '…ありがとう！助かったよ！';
-        });
-      }, EXPERIENCE_TIMING.exchangeSettleMs);
-    }
-
-    function refuseRequestedTravelerTrade() {
-      if (!state.requestedHandCard || state.isExchanging || state.waitingAfterTrade) return;
-      const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
-      const offeredIds = offerCards.map(card => card.id);
-      const newDeck = state.deck.filter(card => !offeredIds.includes(card.id));
-
-      transitionState(() => {
-        state.selectedHandCard = null;
-        state.selectedShopCard = null;
-        state.tradeOfferCard = null;
-        state.tradeOfferCards = [];
-        state.requestedHandCard = null;
-        state.waitingAfterTrade = true;
-        state.pendingAfterTrade = { hand: state.hand, shop: state.shop, deck: newDeck, releasedCard: null, receivedCard: null, kind: 'traveler-refused' };
-        state.afterTradeMessage = 'そんなにその役割が必要なのかよ、じゃあ仕方ないか…。';
-      });
-    }
-
-    function handleShopTrade() {
-      if (!state.selectedHandCard || !state.selectedShopCard || state.isExchanging || state.waitingAfterTrade) return;
-      const releasedCard = state.selectedHandCard;
-      const receivedCard = state.selectedShopCard;
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const newShop = state.shop.map(c => c.id === receivedCard.id ? releasedCard : c);
-
-      state.tradeConfirmOpen = false;
-      state.isExchanging = true;
-      render();
-      
-      setTimeout(() => {
-        transitionState(() => {
-          state.hand = newHand;
-          state.shop = newShop;
-          state.selectedHandCard = null;
-          state.selectedShopCard = null;
-          state.isExchanging = false;
-          state.waitingAfterTrade = true;
-          rememberTradeHistory(releasedCard, receivedCard, 'shop');
-          state.pendingAfterTrade = { hand: newHand, shop: newShop, deck: state.deck, releasedCard, receivedCard, kind: 'shop' };
-          state.afterTradeMessage = getAfterTradeMessage('shop', receivedCard, releasedCard);
-        });
-      }, EXPERIENCE_TIMING.exchangeSettleMs);
-    }
-
-    function proceedToNextRound(newHand, newShop, newDeck) {
-      state.selectedHandCard = null;
-      state.selectedShopCard = null;
-      state.tradeOfferCard = null;
-      state.tradeOfferCards = [];
-      state.requestedHandCard = null;
-      state.tradeConfirmOpen = false;
-      state.waitingAfterTrade = false;
-      state.pendingAfterTrade = null;
-      state.afterTradeMessage = '';
-
-      if (state.round >= TOTAL_ROUNDS) {
-        state.hand = newHand;
-        state.resultStep = 'SELECT_1';
-        state.gameState = 'RESULT';
-      } else {
-        state.round++;
-        state.hand = newHand;
-        state.shop = newShop;
-        state.deck = newDeck;
-        
-        state.isEntering = true;
-        setTimeout(() => {
-          state.isEntering = false;
-        }, 800);
-        
-        if (isFinalShopRound(state.round)) {
-          const finalShop = buildFinalShopCards(newHand, newShop, newDeck);
-          state.shop = finalShop.shop;
-          state.deck = finalShop.deck;
-        }
-
-        if (!state.shopRounds.includes(state.round)) {
-          const tradeEncounter = getRandomTradeEncounter(state.usedTradeAvatarImgs, state.usedTradeMessages);
-          const travelerOfferCount = getTravelerOfferCount(state.round);
-          state.tradeOfferCards = newDeck.slice(0, travelerOfferCount);
-          state.tradeOfferCard = state.tradeOfferCards[0];
-          state.requestedHandCard = isRequestedHandTravelerRound(state.round) ? selectRequestedHandCard(newHand) : null;
-          state.selectedHandCard = state.requestedHandCard || null;
-          state.selectedShopCard = null;
-          state.tradeAvatarImg = tradeEncounter.avatarImg;
-          state.tradeMessage = state.requestedHandCard
-            ? getRequestedHandTradeMessage(tradeEncounter.message, tradeEncounter.voice, state.requestedHandCard)
-            : withTravelerOfferCue(tradeEncounter.message, tradeEncounter.voice, state.tradeOfferCards.length);
-          state.tradeVoice = tradeEncounter.voice;
-          state.tradeTone = tradeEncounter.tone;
-          state.usedTradeAvatarImgs = [...state.usedTradeAvatarImgs, tradeEncounter.avatarImg];
-          state.usedTradeMessages = [...state.usedTradeMessages, tradeEncounter.message];
-        }
-
-        // ▼▼ ラウンド間でのシーン遷移 ▼▼
-        if (state.round === 2) {
-          state.leaveShopDialogueStep = 0;
-          state.gameState = 'LEAVE_SHOP_1';
-        } else if (isFinalShopRound(state.round)) {
-          state.finalShopGuideStep = 0;
-          state.gameState = 'AFTER_TAVERN';
-        } else {
-          state.gameState = 'PLAYING';
-        }
-      }
-    }
-
-    function handleResultCardSelect(card) {
-      if (state.resultStep === 'SELECT_1' || state.resultStep === 'SELECT_2') {
-        if (state.resultStep === 'SELECT_2' && card.id === state.primaryCard?.id) return;
-        clearResultDecisionTimers();
-        state.confirmingCard = card;
-        state.isConfirmModalClosing = false;
-        state.isResultConfirmSettling = false;
-        render();
-      }
-    }
-
-    let resultDecisionTimer = null;
-    let resultDecisionCloseTimer = null;
-
-    function clearResultDecisionTimers() {
-      if (resultDecisionTimer) {
-        clearTimeout(resultDecisionTimer);
-        resultDecisionTimer = null;
-      }
-      if (resultDecisionCloseTimer) {
-        clearTimeout(resultDecisionCloseTimer);
-        resultDecisionCloseTimer = null;
-      }
-    }
-
-    function finishResultDecision(decidedCard) {
-      state.isConfirmModalClosing = true;
-      render();
-      resultDecisionCloseTimer = setTimeout(() => {
-        resultDecisionCloseTimer = null;
-        if (state.resultStep === 'SELECT_1') {
-          state.primaryCard = decidedCard;
-          state.confirmingCard = null;
-          state.isResultConfirmSettling = false;
-          transitionState(() => { state.resultStep = 'SELECT_2'; });
-        } else if (state.resultStep === 'SELECT_2') {
-          state.secondaryCard = decidedCard;
-          state.confirmingCard = null;
-          state.isConfirmModalClosing = false;
-          state.isResultConfirmSettling = false;
-          state.resultStep = 'FINAL';
-          render();
-        }
-      }, EXPERIENCE_TIMING.resultDecisionCloseMs);
-    }
-
-    function confirmResultCard(isConfirmed) {
-      if (!isConfirmed) {
-        clearResultDecisionTimers();
-        state.isConfirmModalClosing = true;
-        state.isResultConfirmSettling = false;
-        render();
-        setTimeout(() => {
-          state.confirmingCard = null;
-          state.isConfirmModalClosing = false;
-          render();
-        }, 320);
-        return;
-      }
-
-      if (state.isResultConfirmSettling || !state.confirmingCard) return;
-      const decidedCard = state.confirmingCard;
-      state.isResultConfirmSettling = true;
-      state.isConfirmModalClosing = false;
-      render();
-
-      resultDecisionTimer = setTimeout(() => {
-        resultDecisionTimer = null;
-        finishResultDecision(decidedCard);
-      }, EXPERIENCE_TIMING.resultDecisionHoldMs);
-    }
+    // Result confirmation flow is split into app.flow.result.js.
 
     function getMostFrequentMode() {
       const counts = {};
@@ -1250,85 +581,7 @@
       }
     }
 
-    // --- Rendering Components ---
-    function renderCardHTML(card, options = {}) {
-      if (!card) return '';
-      const isSelected = options.isSelected || false;
-      const disabled = options.disabled || false;
-      const isHandCard = options.isHandCard || false;
-      const isReadOnly = options.isReadOnly || false;
-      const glow = options.glow || false;
-      const customStyle = options.customStyle || '';
-      
-      const ModeIconName = MODE_ICON_NAMES[card.mode];
-      
-      let auraClass = '';
-      if (isHandCard && !disabled && !isReadOnly) {
-         if (isSelected) {
-             auraClass = 'animate-cardAuraSelected';
-         } else {
-             auraClass = 'animate-cardAura';
-         }
-      }
-
-      let selectedStyle = '';
-      let normalStyle = '';
-
-      if (isHandCard && !disabled && !isReadOnly) {
-        selectedStyle = 'scale-[1.6] sm:scale-125 z-[100] -translate-y-6 sm:-translate-y-4 ' + auraClass;
-        normalStyle = 'hover:-translate-y-2 ' + auraClass;
-      } else {
-        selectedStyle = 'border-yellow-500 scale-110 shadow-[0_0_20px_rgba(234,179,8,0.6)] z-20 -translate-y-4';
-        normalStyle = 'border-stone-400 hover:border-orange-400/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] hover:-translate-y-2';
-      }
-
-      const baseClasses = 'relative w-[96px] h-[136px] sm:w-32 sm:h-48 rounded-md shadow-lg border flex flex-col transition-all duration-500 overflow-hidden origin-bottom bg-center bg-cover appearance-none bg-transparent p-0 text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900';
-      
-      let combinedClasses = baseClasses + " ";
-      combinedClasses += isSelected ? selectedStyle : normalStyle;
-      combinedClasses += " ";
-      if (disabled) combinedClasses += 'opacity-50 cursor-not-allowed grayscale-[0.3] hover:translate-y-0 hover:shadow-lg ';
-      combinedClasses += isReadOnly ? 'cursor-default hover:translate-y-0 hover:scale-100 ' : 'cursor-pointer ';
-      combinedClasses += glow ? 'border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.4)] z-20 ' : '';
-      combinedClasses += customStyle;
-
-      const isInteractive = !disabled && !isReadOnly && (isHandCard || options.isShopCard || options.isResultCard);
-      let actionData = '';
-      if (isInteractive) {
-        if (isHandCard) actionData = 'data-action="select-hand" data-id="' + card.id + '"';
-        else if (options.isShopCard) actionData = 'data-action="select-shop" data-id="' + card.id + '"';
-        else if (options.isResultCard) actionData = 'data-action="select-result" data-id="' + card.id + '"';
-      }
-
-      const cardTag = isInteractive ? 'button' : 'div';
-      const cardAttrs = isInteractive
-        ? 'type="button" ' + actionData + ' aria-label="' + escapeAttribute(card.name + '。' + card.desc + ' ' + (isSelected ? '選択を解除' : '選択')) + '" aria-pressed="' + (isSelected ? 'true' : 'false') + '" '
-        : '';
-
-      return `
-        <${cardTag} ${cardAttrs}class="${combinedClasses}" style="background-image: url('${CARD_BG_IMG}');">
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none z-0">
-            ${getIcon(ModeIconName, "w-12 h-12 sm:w-20 sm:h-20 text-orange-900")}
-          </div>
-          
-          <div class="absolute inset-0 bg-gradient-to-b from-orange-900/5 via-transparent to-stone-500/10 pointer-events-none rounded-md z-0"></div>
-          
-          <div class="p-1 sm:p-1.5 pb-2 sm:pb-3 flex-1 flex flex-col relative z-20 justify-between">
-            <div>
-              <div class="font-black font-sans text-stone-900 text-[15px] sm:text-[19px] tracking-tight text-center relative leading-none mb-1 sm:mb-1.5 w-full flex items-center justify-center pt-2 sm:pt-3">
-                <span class="break-keep drop-shadow-sm px-1 z-10 w-full text-center">${card.name}</span>
-              </div>
-            </div>
-            <div class="text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4 text-center px-0.5">${card.desc}</div>
-            <div class="text-[8px] sm:text-[9px] text-stone-600 font-serif tracking-widest mt-1 text-center font-bold flex justify-center items-center gap-0.5">
-              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
-              <span class="mt-[1px]">RIESM</span>
-              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
-            </div>
-          </div>
-        </${cardTag}>
-      `;
-    }
+    // --- 共通描画コンポーネントは app.render.js へ分割 ---
 
     const MagicDustHTML = (() => {
       let html = '<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-60">';
@@ -1448,6 +701,10 @@
       return state.rulesExplanationPhase === 'details' ? RULES_DETAIL_BLOCKS : getCurrentRulesGuideBlocks();
     }
 
+    function isRulesOpeningStatement() {
+      return state.rulesExplanationPhase === 'guide' && getCurrentRulesGuideBlocks().some(block => block.includes('roletrade-opening-statement'));
+    }
+
     function getRulesVisibleCount() {
       return Math.min(getActiveRulesBlocks().length, state.rulesExplanationStep + 1);
     }
@@ -1472,16 +729,34 @@
     }
 
     function renderRulesNextCue() {
-      const isFinalRulesCue = state.rulesExplanationPhase === 'details' && isRulesExplanationComplete();
+      const isSceneComplete = isRulesExplanationComplete();
+      const isFinalRulesCue = state.rulesExplanationPhase === 'details' && isSceneComplete;
+      const cueMarkup = isSceneComplete
+        ? (isFinalRulesCue ? '<span class="rules-next-text">次に進む</span><span class="rules-next-play">▶</span>' : '<span class="rules-next-play">▶</span>')
+        : '<span class="rules-next-arrow">▼</span>';
       return `
-                    <p class="rules-next-cue ${isFinalRulesCue ? 'rules-next-cue-final' : ''}" aria-label="${isFinalRulesCue ? '次に進む' : '次の言葉へ進む'}">
-                      ${isFinalRulesCue ? '<span class="rules-next-text">次に進む</span><span class="rules-next-play">▶</span>' : '<span class="rules-next-arrow">▼</span>'}
+                    <p class="rules-next-cue ${isSceneComplete ? 'rules-next-cue-final' : ''}" aria-label="${isSceneComplete ? '次へ進む' : '次の言葉へ進む'}">
+                      ${cueMarkup}
                     </p>
       `;
     }
 
     function renderRulesExplanationCard() {
       const isHarukaRules = state.rulesExplanationPhase === 'details';
+      const isOpeningStatement = isRulesOpeningStatement();
+      if (isOpeningStatement) {
+        return `
+                <button type="button" data-action="advance-rules" data-rules-phase="${state.rulesExplanationPhase}" aria-label="説明を次へ進める" class="relative block w-full text-center text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-8 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div class="absolute inset-0 bg-gradient-to-br from-[#f4ebd8]/75 via-[#e8dcc4]/68 to-[#d8c6a5]/65 z-0 pointer-events-none"></div>
+                  <div class="relative z-20 p-5 sm:p-10 h-full flex flex-col items-center justify-center text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
+                    <div class="rules-opening-statement-wrap space-y-4 sm:space-y-5">
+                      ${renderRulesExplanationText()}
+                    </div>
+                    ${renderRulesNextCue()}
+                  </div>
+                </button>
+        `;
+      }
       return `
                 <button type="button" data-action="advance-rules" data-rules-phase="${state.rulesExplanationPhase}" aria-label="説明を次へ進める" class="relative block w-full text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 mb-5 sm:mb-8 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
                   <div class="absolute ${isHarukaRules ? 'right-0' : 'left-0'} top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to ${isHarukaRules ? 'left' : 'right'}, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to ${isHarukaRules ? 'left' : 'right'}, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
@@ -1695,12 +970,14 @@
       let shopCardsBottomHTML = '';
       let travelerOfferCardsHTML = '';
       if (state.gameState === 'PLAYING' && isTwoCardTravelerOffer) {
-        travelerOfferCardsHTML = (state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean)).map(card => {
+        const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
+        travelerOfferCardsHTML = offerCards.map((card, index) => {
           const isSelected = state.selectedShopCard?.id === card.id;
-          let cStyle = "sm:!w-24 sm:!h-36 ";
+          let cStyle = "!w-[84px] !h-[119px] sm:!w-24 sm:!h-36 ";
           if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
           if (state.isEntering) cStyle += "animate-drop-in ";
-          return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle }) + '</div>';
+          const stackClass = "traveler-offer-stack-card traveler-offer-stack-card-" + offerCards.length + "-" + index + " " + (isSelected ? "is-selected" : "");
+          return '<div class="' + stackClass + '">' + renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle }) + '</div>';
         }).join('');
       }
       if (state.gameState === 'PLAYING' && isShopTime) {
@@ -1857,7 +1134,7 @@
                   </div>
                 </div>
                 
-                <div class="flex flex-col items-center gap-3 sm:gap-4 w-full relative z-10 ${initialReviewCard ? 'initial-hand-review-muted' : ''} ${state.initialHandReviewGathering ? 'initial-hand-review-gathering' : ''}">
+                <div class="initial-hand-cards-click-area flex flex-col items-center gap-3 sm:gap-4 w-full relative z-10 ${initialReviewCard ? 'initial-hand-review-muted' : ''} ${state.initialHandReviewGathering ? 'initial-hand-review-gathering' : ''}">
                   <div class="flex justify-center gap-2 sm:gap-4 w-full">
                     ${initialHandTopHTML}
                   </div>
@@ -1946,14 +1223,12 @@
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
                 <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-5 sm:mb-8 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-0 sm:mt-2">
-                  灯火の間へ
+                  酒場を後にして
                 </h2>
                 
                 <div class="text-stone-800 text-left space-y-4 mb-6 sm:mb-10 text-sm sm:text-base leading-relaxed font-serif font-bold bg-[#e8dcc4]/90 p-5 sm:p-8 rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] relative z-10">
-                  <p>酒場のざわめきが、少しずつ遠ざかっていく。</p>
-                  <p>手元のカードは、最初とは少し違う重さを持っているように感じられた。</p>
-                  <p>その先に、小さな灯火が見える。</p>
-                  <p>そこには、静かにあなたを待つリフレムがいた。</p>
+                  <p>足を踏み出すたびに<br>酒場のざわめきが、少しずつ遠ざかっていく。</p>
+                  <p>大事に手ににもつ役割のカードは、<br>さっきまでとは少し違う重さを<br>持っているように感じられた。</p>
                 </div>
                 
                 <div class="mt-6 sm:mt-12 flex justify-center relative z-10">
@@ -2174,6 +1449,7 @@
           `;
           }
         } else if (state.waitingAfterTrade) {
+          const travelerAfterTradeCueText = state.round >= FINAL_SHOP_ROUND - 1 ? '酒場から出る' : '次の旅人と話す';
           html += `
                   <div class="p-2 sm:p-5 relative z-10">
                     <div class="grid grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[6rem_minmax(0,1fr)] gap-x-3 sm:gap-x-4 max-w-[31rem] sm:max-w-[34rem] mx-auto w-full items-start">
@@ -2185,7 +1461,7 @@
                       <div class="trade-dialogue-surface relative bg-[#f4ebd8] dialog-surface-translucent p-3 sm:p-4 rounded-md border border-stone-400/60 shadow-md min-w-0" style="background-image: ${PARCHMENT_TEXTURE}">
                         <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] dialog-tail-translucent border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <p class="dialogue-text-unified text-[12px] sm:text-sm text-stone-900 font-serif font-bold leading-loose text-left"><span class="after-trade-typewriter" style="--typewriter-steps: ${(state.afterTradeMessage || getAfterTradeMessage('traveler', null, null)).length}; --typewriter-duration: ${Math.max(1.4, ((state.afterTradeMessage || getAfterTradeMessage('traveler', null, null)).length || 18) * 0.075)}s;">${state.afterTradeMessage || getAfterTradeMessage('traveler', null, null)}</span></p>
-                        <button type="button" data-action="continue-after-trade" class="dialogue-inline-next-cue mt-3" aria-label="次の旅人と話す"><span>次の旅人と話す</span><span class="rules-next-play">▶</span></button>
+                        <button type="button" data-action="continue-after-trade" class="dialogue-inline-next-cue mt-3" aria-label="${travelerAfterTradeCueText}"><span>${travelerAfterTradeCueText}</span><span class="rules-next-play">▶</span></button>
                       </div>
                     </div>
                   </div>
@@ -2213,10 +1489,10 @@
                         <p class="dialogue-text-unified self-stretch text-[10.5px] sm:text-sm text-stone-900 font-serif font-bold leading-relaxed sm:leading-loose text-left">${state.tradeMessage || TRADE_MESSAGES[state.round]}</p>
                         <div class="w-full flex flex-col items-center pt-2 sm:pt-2.5 border-t border-stone-400/35 ${isTwoCardTravelerOffer ? '' : '-translate-x-14'}">
                           ${isTwoCardTravelerOffer ? '<p class="selection-guide-label mb-1.5 sm:mb-2">ここから一つ選ぶ</p>' : '<p class="text-[9px] sm:text-xs font-serif tracking-widest text-stone-700 mb-1.5 sm:mb-2 font-bold">旅人からの提示</p>'}
-                          <div class="flex justify-center gap-1.5 sm:gap-4 transform hover:scale-105 transition-transform duration-500">
+                          <div class="${isTwoCardTravelerOffer ? 'traveler-offer-stack' : 'flex justify-center gap-1.5 sm:gap-4 transform hover:scale-105 transition-transform duration-500'}">
                             ${isTwoCardTravelerOffer ? travelerOfferCardsHTML : renderCardHTML(state.tradeOfferCard, { isReadOnly: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
                           </div>
-                          ${isRequestedHandTraveler ? '<div class="w-full flex flex-col gap-2 mt-3"><button type="button" data-action="accept-requested-trade" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-4 w-full"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-4 w-full"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : ''}
+                          ${isRequestedHandTraveler ? '<div class="requested-trade-actions"><button type="button" data-action="accept-requested-trade" class="requested-trade-choice wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="requested-trade-choice wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : ''}
                         </div>
                       </div>
                     </div>
@@ -2626,6 +1902,17 @@
 
       const cueText = document.querySelector('[data-rules-cue-text]');
       if (cueText) cueText.textContent = getRulesCueText();
+
+      const nextCue = document.querySelector('.rules-next-cue');
+      if (nextCue) {
+        const isSceneComplete = isRulesExplanationComplete();
+        const isFinalRulesCue = state.rulesExplanationPhase === 'details' && isSceneComplete;
+        nextCue.classList.toggle('rules-next-cue-final', isSceneComplete);
+        nextCue.setAttribute('aria-label', isSceneComplete ? '次へ進む' : '次の言葉へ進む');
+        nextCue.innerHTML = isSceneComplete
+          ? (isFinalRulesCue ? '<span class="rules-next-text">次に進む</span><span class="rules-next-play">▶</span>' : '<span class="rules-next-play">▶</span>')
+          : '<span class="rules-next-arrow">▼</span>';
+      }
     }
 
     function setRulesExplanationStep(nextStep) {
@@ -2696,7 +1983,16 @@
     });
 
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-action]');
+      let btn = e.target.closest('[data-action]');
+      if (!btn) {
+        const wideClickArea = e.target.closest('.character-dialogue-body, .route-dialogue-panel, .trade-dialogue-surface, .initial-hand-cards-click-area');
+        if (wideClickArea) {
+          btn = wideClickArea.querySelector('.manual-next-cursor[data-action], .dialogue-inline-next-cue[data-action]');
+          if (!btn && wideClickArea.classList.contains('initial-hand-cards-click-area')) {
+            btn = document.querySelector('.initial-hand-dialogue-panel .manual-next-cursor[data-action], .initial-hand-dialogue-panel .dialogue-inline-next-cue[data-action]');
+          }
+        }
+      }
       if (!btn) return;
       const action = btn.dataset.action;
 
@@ -2737,7 +2033,7 @@
         }, isFinalInitialReviewCard ? EXPERIENCE_TIMING.initialCardReviewFinalReturnMs : EXPERIENCE_TIMING.initialCardReviewAdvanceMs);
       } else if (action === 'advance-final-shop-guide') {
         transitionState(() => {
-          state.finalShopGuideStep = Math.min((state.finalShopGuideStep || 0) + 1, 2);
+          state.finalShopGuideStep = 2;
         });
       } else if (action === 'toggle-trisetsu') {
         state.isTrisetsuOpen = !state.isTrisetsuOpen;

@@ -31,7 +31,13 @@ window.ROLETRADE_EXPERIENCE = {
     // Page 2: リフレムの導入
     rulesGuideScreens: [
       [
-        '<p>この世界では、</p><p>人はひとつの役割【Role】だけで</p><p>生きているわけではない…。</p>',
+        '<p class="roletrade-opening-statement">人は役割を通じて世界と接し、</p>',
+        '<p class="roletrade-opening-statement">その役割の引き受け方を変えることで、</p>',
+        '<p class="roletrade-opening-statement">世界との関わり方を変えることができる。</p>',
+        '<div class="roletrade-opening-top-copy"><p class="roletrade-opening-top-lead">ここはメンテーリア。<br>役割と物語が、人の未来を少しだけ変える世界。</p><p>あなたは今、これまでの記憶と経験を持ったまま、<br>もう一度、<span class="roletrade-opening-top-emphasis">18歳の自分</span>として旅立とうとしています。</p><p>けれど、<span class="roletrade-opening-top-emphasis">持っていける役割は5つだけ</span>。<br>あなたは、どんな役割を未来の自分に託しますか？</p></div>'
+      ],
+      [
+        '<p>ようこそ、旅人よ。</p><div class="h-1.5 sm:h-2"></div><p>この世界では、</p><p>人はひとつの役割【Role】だけで</p><p>生きているわけではない…。</p>',
         '<p>ほれ、お主も身に覚えがあるじゃろう？</p>',
         '<p>そう、人は、場面のひとつひとつで</p><p>様々な役割を使っておるのじゃ。</p>',
         '<p>誰かを守る役割。</p><p>新しい道をひらく役割。</p><p>静かに観察する役割。</p><p>場をあたためる役割…。</p>'

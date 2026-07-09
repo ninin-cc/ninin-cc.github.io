@@ -1091,6 +1091,7 @@
   width: 72% !important;
   margin-left: auto !important;
   margin-right: 0 !important;
+  padding-left: calc(1rem + 4ch) !important;
 }
 
 .character-dialogue-body-haruka {
@@ -1103,6 +1104,10 @@
   .character-dialogue-body-refrem,
   .character-dialogue-body-haruka {
     width: 78% !important;
+  }
+
+  .character-dialogue-body-refrem {
+    padding-left: calc(0.75rem + 4ch) !important;
   }
 }
 
@@ -1338,4 +1343,150 @@
     opacity var(--rt-initial-dialogue-fade-duration, 980ms) ease,
     transform var(--rt-initial-dialogue-fade-duration, 980ms) ease,
     filter var(--rt-initial-dialogue-fade-duration, 980ms) ease;
+}
+
+
+@keyframes roletradeBlindReveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.2;
+    filter: blur(1px);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.rules-opening-statement-wrap {
+  width: min(100%, 46rem);
+  margin-inline: auto;
+}
+
+.roletrade-opening-statement {
+  display: inline-block;
+  white-space: nowrap;
+  text-align: center;
+  font-size: clamp(1rem, 2.25vw, 1.55rem);
+  line-height: 2.05;
+  letter-spacing: 0.04em;
+}
+
+.rules-guide-block.is-visible .roletrade-opening-statement {
+  animation: roletradeBlindReveal 1.05s cubic-bezier(0.18, 0.85, 0.25, 1) both;
+  will-change: clip-path, opacity, filter;
+}
+
+@media (max-width: 640px) {
+  .roletrade-opening-statement {
+    font-size: 0.94rem;
+    line-height: 1.9;
+    white-space: normal;
+  }
+}
+
+
+.roletrade-opening-top-copy {
+  width: min(100%, 38rem);
+  margin: 1.1rem auto 0;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid rgba(120, 113, 108, 0.5);
+  border-radius: 0.38rem;
+  background: rgba(244, 235, 216, 0.78);
+  box-shadow: 0 8px 18px rgba(67, 20, 7, 0.12), inset 0 0 18px rgba(255, 255, 255, 0.24);
+  text-align: left;
+  color: #1c1917;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(0.78rem, 1.65vw, 0.95rem);
+  line-height: 1.78;
+  letter-spacing: 0.02em;
+}
+
+.roletrade-opening-top-copy p {
+  margin: 0;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 250, 240, 0.38);
+}
+
+.roletrade-opening-top-copy p + p {
+  margin-top: 0.72rem;
+}
+
+.roletrade-opening-top-lead {
+  padding-bottom: 0.66rem;
+  border-bottom: 1px solid rgba(120, 113, 108, 0.46);
+}
+
+.roletrade-opening-top-emphasis {
+  color: #9a3412;
+  font-weight: 950;
+  font-size: clamp(0.92rem, 2vw, 1.2rem);
+}
+
+@media (max-width: 640px) {
+  .roletrade-opening-top-copy {
+    margin-top: 0.8rem;
+    padding: 0.8rem 0.82rem;
+    font-size: 0.74rem;
+    line-height: 1.66;
+  }
+
+  .roletrade-opening-top-copy p + p {
+    margin-top: 0.56rem;
+  }
+
+  .roletrade-opening-top-emphasis {
+    font-size: 0.92rem;
+  }
+}
+
+
+.traveler-offer-stack {
+  position: relative;
+  width: min(100%, 15.75rem);
+  height: 8rem;
+  margin-inline: auto;
+  transform: translateZ(0);
+}
+
+.traveler-offer-stack-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transition: transform 420ms ease, z-index 420ms ease;
+}
+
+.traveler-offer-stack-card-2-0 { transform: translateX(calc(-50% - 1.55rem)) rotate(-4deg); z-index: 1; }
+.traveler-offer-stack-card-2-1 { transform: translateX(calc(-50% + 1.55rem)) rotate(4deg); z-index: 2; }
+.traveler-offer-stack-card-3-0 { transform: translateX(calc(-50% - 2.35rem)) rotate(-6deg); z-index: 1; }
+.traveler-offer-stack-card-3-1 { transform: translateX(-50%) rotate(0deg); z-index: 2; }
+.traveler-offer-stack-card-3-2 { transform: translateX(calc(-50% + 2.35rem)) rotate(6deg); z-index: 3; }
+.traveler-offer-stack-card.is-selected { z-index: 20; }
+
+.requested-trade-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.requested-trade-choice {
+  width: 7em;
+  min-width: 7em;
+  max-width: 7em;
+}
+
+@media (min-width: 640px) {
+  .traveler-offer-stack {
+    width: 18.75rem;
+    height: 9.5rem;
+  }
+
+  .traveler-offer-stack-card-2-0 { transform: translateX(calc(-50% - 1.9rem)) rotate(-4deg); }
+  .traveler-offer-stack-card-2-1 { transform: translateX(calc(-50% + 1.9rem)) rotate(4deg); }
+  .traveler-offer-stack-card-3-0 { transform: translateX(calc(-50% - 2.8rem)) rotate(-6deg); }
+  .traveler-offer-stack-card-3-2 { transform: translateX(calc(-50% + 2.8rem)) rotate(6deg); }
 }
