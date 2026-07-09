@@ -1578,3 +1578,20 @@
     max-width: 6.4em;
   }
 }
+
+
+/* Traveler dialogue should wrap inside its parchment frame. */
+.trade-dialogue-surface > .dialogue-text-unified,
+.trade-dialogue-surface .requested-trade-message {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-break: strict;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.trade-dialogue-surface .requested-trade-message {
+  font-size: clamp(0.68rem, 2.7vw, 0.88rem) !important;
+  line-height: 1.75 !important;
+}

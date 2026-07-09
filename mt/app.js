@@ -864,6 +864,12 @@
                 <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isTrisetsuOpen ? 'max-h-[2000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}">
                   <div class="bg-[#f0e6d2]/95 backdrop-blur-sm p-3 sm:p-5 rounded-md border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.05)] text-left font-serif text-[11px] sm:text-xs text-stone-800 leading-relaxed space-y-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <p class="font-bold text-xs sm:text-sm border-b border-stone-400/50 pb-2 text-stone-900">このページは、RoleTRADE™を自己理解ワークとして安全に活用するための説明書です。</p>
+                    <div class="bg-[#fff8ea]/75 p-3 rounded-sm border border-orange-900/20 space-y-3">
+                      <p>本アプリを使用したワークショップは<br>社内や仲間内、あるいはご自身の活動で無償開催する事ができます。その際には下記フォームよりRIESM™アンバサダー登録（無料）をお願いします。登録番号とガイドブック、スライドと共に一週間以内に返信いたします。</p>
+                      <p class="font-bold text-orange-900">登録➤<a href="https://forms.gle/SChNQQ4auS6qKwji7" target="_blank" rel="noopener noreferrer" class="underline decoration-orange-700 underline-offset-2 break-all">https://forms.gle/SChNQQ4auS6qKwji7</a></p>
+                      <p>ワークショップを有償で開催する（収益を得る）ためには、RIESM™認定ワークナビゲーターになる必要があります。詳細は下記URLでご確認ください。</p>
+                      <p class="font-bold text-orange-900">詳細➤<a href="https://note.com/ninin2025/n/n2eaed311ebca" target="_blank" rel="noopener noreferrer" class="underline decoration-orange-700 underline-offset-2 break-all">https://note.com/ninin2025/n/n2eaed311ebca</a></p>
+                    </div>
                     <p>アプリ本編は、物語として体験できるように作られています。<br>一方で、研修・ワークショップ・対話の場で使う場合には、目的や前提、注意点を理解したうえで扱うことが大切です。<br><span class="text-orange-900 font-bold block mt-2 text-sm">RoleTRADE™は、人を分類するための診断ではありません。</span>役割カードを通じて、今の自分を少し違う角度から見つめるための自己理解ワークです。</p>
                     
                     <div class="bg-[#e8dcc4]/50 p-3 rounded-sm border border-stone-300/50">
@@ -1354,7 +1360,17 @@
         `;
 
         if (isShopTime) {
-          const guide = GUIDE_MESSAGES[state.round];
+          const guide = GUIDE_MESSAGES[state.round] || (isFinalShopRound(state.round) ? GUIDE_MESSAGES[FINAL_SHOP_ROUND] || GUIDE_MESSAGES[7] || {
+            name: "リフレム",
+            place: "灯火の間",
+            avatar: REFREM_AVATAR,
+            avatarPosition: REFREM_CROP_POSITION,
+            avatarZoom: 2.25,
+            avatarOrigin: "42% 29%",
+            icon: "Flame",
+            color: "text-orange-700",
+            message: FINAL_SHOP_GUIDE_INTRO
+          } : null);
           const finalShopGuideMessages = [FINAL_SHOP_GUIDE_INTRO, FINAL_SHOP_GUIDE_DETAIL_1, FINAL_SHOP_GUIDE_DETAIL_2];
           const finalShopGuideStep = isFinalShopRound(state.round) ? (state.finalShopGuideStep || 0) : finalShopGuideMessages.length;
           const isFinalShopWaiting = isFinalShopRound(state.round) && finalShopGuideStep < finalShopGuideMessages.length;
