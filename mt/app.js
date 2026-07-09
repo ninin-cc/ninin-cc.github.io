@@ -12,6 +12,8 @@
       exchangeSettleMs: 600
     }, ROLETRADE_EXPERIENCE.timing || {});
     const EXPERIENCE_COPY = ROLETRADE_EXPERIENCE.copy || {};
+        const IS_DEV_MODE = new URLSearchParams(window.location.search).get('dev') === '1';
+        const DEV_INITIAL_PAGE = IS_DEV_MODE ? new URLSearchParams(window.location.search).get('page') : '';
     function getExperienceCopy(key, fallback) {
       const value = EXPERIENCE_COPY[key];
       return Array.isArray(value) && value.length ? value : fallback;
@@ -609,40 +611,27 @@
     let rulesIntroRevealTimer = null;
 
     const RULES_GUIDE_BLOCKS = getExperienceCopy('rulesGuideBlocks', [
-      `
-        <p>この世界では、</p>
-        <p>人はひとつの役割だけで</p>
-        <p>生きているわけではない…。</p>
-      `,
-      `
-        <p>誰かを守る役割。</p>
-        <p>新しい道をひらく役割。</p>
-        <p>静かに観察する役割。</p>
-        <p>場をあたためる役割。</p>
-      `,
-      `
-        <p>おぬしは、これから</p>
-        <p>5つのカードを得るじゃろう。</p>
-      `,
-      `
-        <p>それは、おぬしの性格を</p>
-        <p>決めるものではない。</p>
-      `,
-      `
-        <p>これからの人生で、</p>
-        <p>どんな力を使っていきたいのかを</p>
-        <p>見つめるためのカードなのじゃよ。</p>
-      `
+      '<p>ようこそ、旅人よ。</p>',
+      '<p>この世界では、</p><p>人はひとつの役割【Role】だけで</p><p>生きているわけではない…。</p>',
+      '<p>ほれ、<br>お主も身に覚えがあるじゃろう？</p>',
+      '<p>そう、人は、場面のひとつひとつで</p><p>様々な役割を使っておるのじゃ。</p>',
+      '<p>誰かを守る役割。</p><p>新しい道をひらく役割。</p><p>静かに観察する役割。</p><p>場をあたためる役割</p><p>まさに、無数の役割じゃ…。</p>',
+      '<p>おぬしは、これから</p><p>5つのカードを得る。</p>',
+      '<p>それは、おぬしの性格を</p><p>決めるものではない。</p>',
+      '<p>これからの人生で、</p><p>どんな力を使っていきたいのかを</p><p>見つめるためのカードなのじゃよ。</p>'
     ]);
 
-    const RULES_GUIDE_SCREENS = getExperienceCopy('rulesGuideScreens', [RULES_GUIDE_BLOCKS]);
+    const RULES_GUIDE_SCREENS = getExperienceCopy('rulesGuideScreens', [
+      RULES_GUIDE_BLOCKS.slice(0, 5),
+      RULES_GUIDE_BLOCKS.slice(5)
+    ]);
 
     const RULES_DETAIL_BLOCKS = getExperienceCopy('rulesDetailBlocks', [
-      '<p>これから役割交換【RoleTRADE™】のルールを説明しますね。</p>',
+      '<p>わたしからは<br>ルールの説明をしますね。</p>',
       '<p>①持っていける役割カードは<br>　5枚だけです。</p>',
-      '<p>②最初に私が<br>　カードをお渡ししますね。</p>',
+      '<p>②最初に私が<br>　カードをお渡しします。</p>',
       '<p>③その後はここから出て<br>　旅の酒場で、ほかの旅人たちと<br>　役割カードを交換…。</p>',
-      '<p>④最後はこの部屋に戻ってきてくださいね。</p>',
+      '<p>④最後は<br>　この部屋に戻ってきてくださいね。</p>',
       '<p>これは、自分を見つめる<br>時間なんです。</p>'
     ]);
 
@@ -798,6 +787,199 @@
       `;
     }
 
+    const DEV_PAGE_LINKS = [
+      ['1', 'TOP'],
+      ['2-1', '導入文'],
+      ['2-2', 'リフレム1'],
+      ['2-3', 'リフレム2'],
+      ['2-4', 'ルール'],
+      ['3-1', '初期カード'],
+      ['3-2', 'カード確認'],
+      ['3-3', '確認後'],
+      ['4', 'ハルカ交換'],
+      ['5', '酒場へ'],
+      ['6', '道中'],
+      ['7', '旅人1'],
+      ['8', '旅人2'],
+      ['9', '旅人3'],
+      ['10', '旅人4'],
+      ['11', '酒場後'],
+      ['12-1', '帰還語り'],
+      ['12-2', '最後交換'],
+      ['13', '最終受取'],
+      ['14', '灯火'],
+      ['15', '第一選択'],
+      ['16', '第二選択'],
+      ['17', '結果']
+    ];
+
+    function getDevPageHref(page) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('dev', '1');
+      url.searchParams.set('page', page);
+      return url.toString();
+    }
+
+    function renderDevPageLinks() {
+      if (!IS_DEV_MODE) return '';
+      return '<div class="dev-page-jump-panel relative z-10 max-w-2xl mx-auto">' +
+        '<div class="dev-page-jump-title">開発用ページジャンプ</div>' +
+        '<div class="dev-page-jump-grid">' +
+        DEV_PAGE_LINKS.map(function(item) {
+          const page = item[0];
+          const label = item[1];
+          return '<a href="' + escapeAttribute(getDevPageHref(page)) + '" target="_blank" rel="noopener noreferrer" class="dev-page-jump-link">' +
+            '<span class="dev-page-jump-page">Page ' + page + '</span>' +
+            '<span class="dev-page-jump-label">' + label + '</span>' +
+          '</a>';
+        }).join('') +
+        '</div></div>';
+    }
+
+    function setupDevBaseState() {
+      clearResultDecisionTimers();
+      const hand = CARDS_DATA.slice(0, 5);
+      const shop = CARDS_DATA.slice(5, 11);
+      const deck = CARDS_DATA.slice(11);
+      state.hand = hand;
+      state.shop = shop;
+      state.deck = deck;
+      state.initialHandCardIds = hand.map(card => card.id);
+      state.initialShopCardIds = shop.map(card => card.id);
+      state.acquiredCardIds = shop.slice(0, 2).map(card => card.id);
+      state.releasedCardIds = [hand[3]?.id, hand[4]?.id].filter(Boolean);
+      state.travelerReleasedCardIds = [hand[2]?.id].filter(Boolean);
+      state.shopRounds = [1, FINAL_SHOP_ROUND];
+      state.round = 1;
+      state.selectedHandCard = null;
+      state.selectedShopCard = null;
+      state.tradeOfferCard = null;
+      state.tradeOfferCards = [];
+      state.requestedHandCard = null;
+      state.tradeConfirmOpen = false;
+      state.pendingTradeAction = null;
+      state.isExchanging = false;
+      state.isEntering = false;
+      state.waitingAfterTrade = false;
+      state.pendingAfterTrade = null;
+      state.afterTradeMessage = '';
+      state.tradeMessageVisibleChars = null;
+      state.finalShopGuideStep = 0;
+      state.shopConfirmDialogueStep = 0;
+      state.resultStep = 'SELECT_1';
+      state.primaryCard = null;
+      state.secondaryCard = null;
+      state.confirmingCard = null;
+      state.zoomedCard = null;
+      state.isConfirmModalClosing = false;
+      state.isResultConfirmSettling = false;
+      state.rulesExplanationPhase = 'guide';
+      state.rulesGuideScene = 0;
+      state.rulesExplanationStep = 99;
+      state.initialHandDialogueStep = 99;
+      state.initialHandReviewIndex = -1;
+      state.initialHandReviewArmed = false;
+      state.initialHandReviewGathering = false;
+      state.initialHandReviewReturning = false;
+      state.initialHandReviewComplete = false;
+      state.initialHandCollecting = false;
+      state.initialHandAnimated = true;
+      state.leaveShopDialogueStep = 99;
+      state.beforeTavernDialogueStep = 99;
+      state.farewellMessage = state.farewellMessage || '選んだ役割は、おぬしを縛る鎖ではない。必要なときに思い出す、小さな灯火じゃ。';
+      state.reflectionAnswers = state.reflectionAnswers || { primary: '', dissonance: '', future: '' };
+      return { hand, shop, deck };
+    }
+
+    function setupDevTravelerRound(round) {
+      const profile = TRADE_AVATAR_PROFILES[(round - 2) % TRADE_AVATAR_PROFILES.length];
+      const offerCount = getTravelerOfferCount(round);
+      const offerCards = state.deck.slice(0, offerCount);
+      state.round = round;
+      state.gameState = 'PLAYING';
+      state.tradeOfferCards = offerCards;
+      state.tradeOfferCard = offerCards[0] || state.deck[0];
+      state.requestedHandCard = isRequestedHandTravelerRound(round) ? state.hand[1] : null;
+      state.selectedHandCard = state.requestedHandCard || null;
+      state.selectedShopCard = null;
+      state.tradeAvatarImg = profile.src;
+      state.tradeVoice = profile.voice;
+      state.tradeTone = profile.tone || '';
+      const baseMessage = TRADE_MESSAGES[round] || getRandomTradeMessage(profile.voice, []);
+      state.tradeMessage = state.requestedHandCard
+        ? getRequestedHandTradeMessage(baseMessage, profile.voice, state.requestedHandCard)
+        : withTravelerOfferCue(baseMessage, profile.voice, offerCount);
+    }
+
+    function jumpToDevPage(page, useTransition = true) {
+      setupDevBaseState();
+      if (page === '1') {
+        state.gameState = 'START';
+      } else if (page === '2-1' || page === '2-2' || page === '2-3') {
+        state.gameState = 'RULES';
+        state.rulesExplanationPhase = 'guide';
+        state.rulesGuideScene = Math.max(0, parseInt(page.split('-')[1], 10) - 1);
+        state.rulesExplanationStep = 99;
+      } else if (page === '2-4') {
+        state.gameState = 'RULES';
+        state.rulesExplanationPhase = 'details';
+        state.rulesGuideScene = 0;
+        state.rulesExplanationStep = 99;
+      } else if (page === '3-1' || page === '3-2' || page === '3-3') {
+        state.gameState = 'INITIAL_HAND';
+        state.initialHandAnimated = true;
+        state.initialHandDialogueStep = 99;
+        if (page === '3-2') {
+          state.initialHandReviewArmed = true;
+          state.initialHandReviewIndex = 0;
+        } else if (page === '3-3') {
+          state.initialHandReviewComplete = true;
+        }
+      } else if (page === '4') {
+        state.gameState = 'PLAYING';
+        state.round = 1;
+      } else if (page === '5') {
+        state.gameState = 'LEAVE_SHOP_1';
+      } else if (page === '6') {
+        state.gameState = 'BEFORE_TAVERN';
+      } else if (['7', '8', '9', '10'].includes(page)) {
+        setupDevTravelerRound(parseInt(page, 10) - 5);
+      } else if (page === '11') {
+        state.gameState = 'AFTER_TAVERN';
+      } else if (page === '12-1') {
+        state.gameState = 'PLAYING';
+        state.round = FINAL_SHOP_ROUND;
+        state.finalShopGuideStep = 0;
+      } else if (page === '12-2') {
+        state.gameState = 'PLAYING';
+        state.round = FINAL_SHOP_ROUND;
+        state.finalShopGuideStep = 3;
+      } else if (page === '13') {
+        state.gameState = 'SHOP_CONFIRM';
+        state.shopConfirmDialogueStep = 0;
+      } else if (page === '14') {
+        state.gameState = 'SHOP_FAREWELL';
+      } else if (page === '15') {
+        state.gameState = 'RESULT';
+        state.resultStep = 'SELECT_1';
+      } else if (page === '16') {
+        state.gameState = 'RESULT';
+        state.resultStep = 'SELECT_2';
+        state.primaryCard = state.hand[0];
+      } else if (page === '17') {
+        state.gameState = 'RESULT';
+        state.resultStep = 'FINAL';
+        state.primaryCard = state.hand[0];
+        state.secondaryCard = state.hand[1];
+      }
+      if (useTransition) {
+        transitionState(() => {});
+      } else {
+        render();
+        window.scrollTo(0, 0);
+      }
+    }
+
     function renderStartScene() {
       return `
               <div class="start-scene-frame rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]">
@@ -938,6 +1120,8 @@
                   © 2026 ninin consulting＆counseling
                 </a>
               </div>
+
+              ${renderDevPageLinks()}
         `;
     }
 
@@ -952,6 +1136,12 @@
       const isInitialExchange = state.gameState === 'PLAYING' && state.round === 1;
       const isTwoCardTravelerOffer = state.gameState === 'PLAYING' && !isShopTime && isTwoCardTravelerRound(state.round);
       const isRequestedHandTraveler = state.gameState === 'PLAYING' && !isShopTime && !!state.requestedHandCard;
+      const isTavernScene = state.gameState === 'PLAYING' && !isShopTime && state.round >= 2 && state.round < FINAL_SHOP_ROUND;
+      const appFrameBackgroundImage = isTavernScene
+        ? `linear-gradient(rgba(232, 220, 196, 0.24), rgba(232, 220, 196, 0.58)), url('${BG_TRADE_IMG}')`
+        : `radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}`;
+      const appFrameBackgroundSize = isTavernScene ? 'cover, cover' : 'auto';
+      const appFrameBackgroundPosition = isTavernScene ? 'center center' : 'center center';
 
       // ▼▼ 事前に構築する HTML ▼▼
       let initialHandTopHTML = '';
@@ -1052,7 +1242,7 @@
       // ▼▼ メイン HTML 構築 ▼▼
       let html = `
         <div class="roletrade-app-frame ${layoutClass} min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-2.5 sm:pt-6 lg:pt-8" data-layout="${layoutMode}" data-page="${pageLabel}"
-             style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
+             style="background-color: #e8dcc4; background-image: ${appFrameBackgroundImage}; background-size: ${appFrameBackgroundSize}; background-position: ${appFrameBackgroundPosition}; background-attachment: ${isTavernScene ? 'fixed' : 'scroll'}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
       `;
@@ -1174,7 +1364,7 @@
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_JUNBI_IMG}" alt="役割の庭" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" />
+                  <img src="${ROLETRADE_SCENE_IMG}" alt="リフレムとハルカのいる部屋" class="w-full h-full object-cover opacity-[0.28] mix-blend-multiply" style="object-position: 56% center;" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
@@ -1265,15 +1455,17 @@
         let confirmHandBottomHTML = state.hand.slice(3, 5).map(card => {
           return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" }) + '</div>';
         }).join('');
-        const shopConfirmActionsHTML = isShopConfirmDialogueComplete ? `
+        const shopConfirmButtonStateClass = isShopConfirmDialogueComplete ? '' : 'opacity-45 grayscale cursor-not-allowed pointer-events-none';
+        const shopConfirmButtonDisabled = isShopConfirmDialogueComplete ? '' : 'disabled';
+        const shopConfirmActionsHTML = `
           <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full max-w-md">
-            <button data-action="confirm-journey-no" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[12px] sm:text-sm font-serif py-2.5 sm:py-3 px-5 sm:px-7 w-full sm:w-auto">
+            <button data-action="confirm-journey-no" ${shopConfirmButtonDisabled} class="wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[12px] sm:text-sm font-serif py-2.5 sm:py-3 px-5 sm:px-7 w-full sm:w-auto ${shopConfirmButtonStateClass}">
               <div class="wood-texture"></div>
               <span class="relative z-10 flex items-center justify-center">
                 ${getIcon('ChevronLeft', "w-4 h-4 mr-2")} もう一度見直す
               </span>
             </button>
-            <button data-action="confirm-journey-yes" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-[12px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-5 sm:px-7 w-full sm:w-auto">
+            <button data-action="confirm-journey-yes" ${shopConfirmButtonDisabled} class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-[12px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-5 sm:px-7 w-full sm:w-auto ${shopConfirmButtonStateClass}">
               <div class="wood-texture"></div>
               <span class="relative z-10 flex items-center justify-center">
                 この五枚を受け取る
@@ -1281,7 +1473,7 @@
               </span>
             </button>
           </div>
-        ` : '';
+        `;
 
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
@@ -1300,7 +1492,8 @@
 
                   <div class="character-dialogue-body relative z-20 p-4 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     ${renderProgressiveDialogueBlocks(SHOP_CONFIRM_DIALOGUE_BLOCKS, state.shopConfirmDialogueStep)}
-                    ${!isShopConfirmDialogueComplete ? '<button data-action="advance-shop-confirm-dialogue" class="manual-next-cursor" aria-label="次の言葉へ進む">▼</button>' : shopConfirmActionsHTML}
+                    ${!isShopConfirmDialogueComplete ? '<button data-action="advance-shop-confirm-dialogue" class="manual-next-cursor" aria-label="次の言葉へ進む">▼</button>' : ''}
+                    ${shopConfirmActionsHTML}
                   </div>
                 </div>
                 
@@ -1354,8 +1547,12 @@
 
       // ▼▼ シーン：PLAYING（メインエリア） ▼▼
       if (state.gameState === 'PLAYING') {
-        const playingBgImg = isShopTime && isFinalShopRound(state.round) ? BG_FINAL_SHOP_IMG : (isShopTime ? BG_JUNBI_IMG : BG_TRADE_IMG);
-        const playingBgPosition = isShopTime && isFinalShopRound(state.round) ? BG_FINAL_SHOP_GUIDE_POSITION : "center center";
+        const playingBgImg = isShopTime && isFinalShopRound(state.round)
+          ? BG_FINAL_SHOP_IMG
+          : (isShopTime ? ROLETRADE_SCENE_IMG : BG_TRADE_IMG);
+        const playingBgPosition = isShopTime && isFinalShopRound(state.round)
+          ? BG_FINAL_SHOP_GUIDE_POSITION
+          : (isShopTime ? "56% center" : "center center");
         html += `
               <div class="bg-[#f0e6d2]/95 rounded-sm shadow-[0_10px_30px_rgba(124,45,18,0.2)] border border-stone-400/80 min-h-[300px] sm:min-h-[340px] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
@@ -1379,7 +1576,7 @@
           const finalShopGuideStep = isFinalShopRound(state.round) ? (state.finalShopGuideStep || 0) : finalShopGuideMessages.length;
           const isFinalShopWaiting = isFinalShopRound(state.round) && finalShopGuideStep < finalShopGuideMessages.length;
           const guideMessage = isFinalShopRound(state.round)
-            ? finalShopGuideMessages[Math.min(finalShopGuideStep, finalShopGuideMessages.length - 1)]
+            ? (isFinalShopWaiting ? finalShopGuideMessages[finalShopGuideStep] : guide.message)
             : guide.message;
           if (isFinalShopWaiting) {
             const isFinalGuideCue = finalShopGuideStep >= finalShopGuideMessages.length - 1;
@@ -1600,7 +1797,7 @@
                       <span class="text-orange-700 text-lg">${state.resultStep === 'SELECT_1' ? '一番' : '二番目'}</span> に大事な役割としますか？
                     </p>
                     
-                    <div class="flex justify-center mb-6 scale-90 origin-top">
+                    <div class="result-confirm-card-wrap flex justify-center mb-6 scale-90 origin-top">
                       ${renderCardHTML(state.confirmingCard, { isReadOnly: true, customStyle: state.isResultConfirmSettling ? 'animate-finalDecisionGlow' : '' })}
                     </div>
 
@@ -1784,7 +1981,7 @@
                       ${getIcon('ChevronLeft', "w-4 h-4 mr-1")} 順位を選び直す
                     </button>
                     <button data-action="go-start" class="flex items-center text-stone-900 font-bold hover:text-orange-900 font-serif tracking-widest text-xs sm:text-sm transition-colors border-b border-transparent hover:border-orange-900 pb-1 drop-shadow-md">
-                      再び過去へ戻る
+                      もう一度やり直す
                     </button>
                   </div>
               `;
@@ -2052,7 +2249,10 @@
       if (!btn) return;
       const action = btn.dataset.action;
 
-      if (action === 'go-rules') {
+      if (action === 'dev-jump') {
+        if (!IS_DEV_MODE) return;
+        jumpToDevPage(btn.dataset.page);
+      } else if (action === 'go-rules') {
         openRulesScene();
       } else if (action === 'advance-rules') {
         advanceRulesExplanation();
@@ -2257,5 +2457,9 @@
     }
 
     // Initial render
-    render();
+    if (IS_DEV_MODE && DEV_INITIAL_PAGE) {
+      jumpToDevPage(DEV_INITIAL_PAGE, false);
+    } else {
+      render();
+    }
     preloadSceneImages();

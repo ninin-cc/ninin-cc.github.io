@@ -10,7 +10,7 @@
       { id: 8, name: '分析家', desc: '事実やデータを冷静に見つめ、論理的な答えを導く役割。', mode: 'KEEPER' },
       { id: 9, name: '設計者', desc: '物事の構造を理解し、再現性のある仕組みを作る役割。', mode: 'KEEPER' },
       { id: 10, name: '審判', desc: '公平な視点で物事を判断し、正しい道を示す役割。', mode: 'KEEPER' },
-      { id: 11, name: '記録係', desc: '過去の経験や事実を正確に残し、未来へ繋ぐ役割。', mode: 'KEEPER' },
+      { id: 11, name: '編纂者', desc: '過去の経験や事実を正確に残し、未来へ繋ぐ役割。', mode: 'KEEPER' },
       { id: 12, name: '職人', desc: '品質にこだわり、妥協なく物事を完成させる役割。', mode: 'KEEPER' },
       { id: 13, name: '養育者', desc: '他者の成長を温かく見守り、サポートする役割。', mode: 'NURTURE' },
       { id: 14, name: '調停者', desc: '人と人との間に入り、対立を和らげ調和をもたらす役割。', mode: 'NURTURE' },
@@ -24,7 +24,8 @@
       { id: 22, name: 'カメレオン', desc: '環境に合わせて自分を柔軟に変化させ、溶け込む役割。', mode: 'ADAPTER' },
       { id: 23, name: '慎重派', desc: '石橋を叩いて渡り、失敗のリスクを最小限に抑える役割。', mode: 'ADAPTER' },
       { id: 24, name: '探知機', desc: '場の空気や他者の機嫌を読み取り、摩擦を避ける役割。', mode: 'ADAPTER' },
-      { id: 25, name: '道化師', desc: '場が固まりすぎたとき、笑いや遊び心で空気をゆるめる役割。', mode: 'WONDER' }
+      { id: 25, name: '道化師', desc: '場が固まりすぎたとき、笑いや遊び心で空気をゆるめる役割。', mode: 'WONDER' },
+      { id: 26, name: '語り部', desc: '人の想いや歴史を語り継ぐ役割。', mode: 'NURTURE' }
     ];
 
     const MODE_COLORS = {

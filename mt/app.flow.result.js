@@ -62,7 +62,16 @@
       const decidedCard = state.confirmingCard;
       state.isResultConfirmSettling = true;
       state.isConfirmModalClosing = false;
-      render();
+      const confirmButton = document.querySelector('[data-action="confirm-yes"]');
+      const selectedCardEl = document.querySelector('.result-confirm-card-wrap > *');
+      if (confirmButton) confirmButton.disabled = true;
+      if (selectedCardEl) {
+        selectedCardEl.classList.remove('animate-finalDecisionGlow');
+        void selectedCardEl.offsetWidth;
+        selectedCardEl.classList.add('animate-finalDecisionGlow');
+      } else {
+        render();
+      }
 
       resultDecisionTimer = setTimeout(() => {
         resultDecisionTimer = null;
