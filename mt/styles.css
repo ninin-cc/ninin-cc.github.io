@@ -1498,3 +1498,44 @@
   .traveler-offer-stack-card-3-0 { transform: translateX(calc(-50% - 2.8rem)) rotate(-6deg); }
   .traveler-offer-stack-card-3-2 { transform: translateX(calc(-50% + 2.8rem)) rotate(6deg); }
 }
+
+
+/* Page 6: keep the route title and story text balanced on narrow screens. */
+.route-scene-title {
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .route-scene-title {
+    font-size: clamp(1.05rem, 5.4vw, 1.22rem) !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.45;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  .route-dialogue-panel {
+    text-wrap: pretty;
+  }
+
+  .route-dialogue-panel .rules-guide-block {
+    overflow-wrap: normal;
+    word-break: keep-all;
+    line-break: strict;
+  }
+
+  .route-dialogue-panel .rules-guide-block p {
+    display: inline;
+    white-space: normal;
+    text-wrap: pretty;
+  }
+
+  .route-dialogue-panel .rules-guide-block p + p::before {
+    content: " ";
+  }
+
+  .route-dialogue-panel .rules-guide-block div[class*="h-"] {
+    display: block;
+    height: 0.85rem;
+  }
+}

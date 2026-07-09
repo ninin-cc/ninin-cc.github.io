@@ -1197,7 +1197,7 @@
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
                 
-                <h2 class="text-xl sm:text-2xl font-serif font-extrabold mb-5 sm:mb-8 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-0 sm:mt-2">
+                <h2 class="route-scene-title text-xl sm:text-2xl font-serif font-extrabold mb-5 sm:mb-8 tracking-widest text-stone-900 magic-text-glow relative z-10 mt-0 sm:mt-2">
                   旅人たちの酒場へ
                 </h2>
                 
