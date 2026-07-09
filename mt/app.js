@@ -943,6 +943,10 @@
 
     function render() {
       const root = document.getElementById('root');
+      const layoutMode = typeof getRoleTradeLayoutMode === 'function' ? getRoleTradeLayoutMode() : 'desktop';
+      if (typeof syncRoleTradeLayoutMode === 'function') syncRoleTradeLayoutMode(layoutMode);
+      const layoutClass = layoutMode === 'mobile' ? 'layout-mobile' : 'layout-desktop';
+      const pageLabel = getPageLabel();
       const isShopTime = state.shopRounds.includes(state.round);
       const stageFadeClass = state.isTransitioning ? 'animate-fadeInStage' : '';
       const isInitialExchange = state.gameState === 'PLAYING' && state.round === 1;
@@ -1047,7 +1051,7 @@
 
       // ▼▼ メイン HTML 構築 ▼▼
       let html = `
-        <div class="min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-2.5 sm:pt-6 lg:pt-8"
+        <div class="roletrade-app-frame ${layoutClass} min-h-screen text-stone-900 font-sans flex justify-center transition-colors duration-1000 overflow-x-hidden relative pt-2.5 sm:pt-6 lg:pt-8" data-layout="${layoutMode}" data-page="${pageLabel}"
              style="background-color: #e8dcc4; background-image: radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}; box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.5)">
           
           ${MagicDustHTML}
@@ -1859,6 +1863,16 @@
         `;
       }
 
+      if (typeof applyRoleTradeRendererFrame === 'function') {
+        html = applyRoleTradeRendererFrame(html, {
+          layoutMode,
+          pageLabel,
+          gameState: state.gameState,
+          round: state.round,
+          state
+        });
+      }
+
       root.innerHTML = html;
       
       state.isTransitioning = false;
@@ -2237,6 +2251,10 @@
 
     // 起動時のIABチェック実行
     checkAppBrowser();
+
+    if (typeof setupRoleTradeLayout === 'function') {
+      setupRoleTradeLayout(renderSoon);
+    }
 
     // Initial render
     render();
