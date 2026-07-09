@@ -606,6 +606,7 @@
     })();
 
     let rulesAutoAdvanceTimer = null;
+    let rulesIntroRevealTimer = null;
 
     const RULES_GUIDE_BLOCKS = getExperienceCopy('rulesGuideBlocks', [
       `
@@ -1886,6 +1887,13 @@
       }
     }
 
+    function clearRulesIntroReveal() {
+      if (rulesIntroRevealTimer) {
+        clearTimeout(rulesIntroRevealTimer);
+        rulesIntroRevealTimer = null;
+      }
+    }
+
     function syncRulesExplanationDom() {
       if (state.gameState !== 'RULES') return;
 
@@ -1925,12 +1933,28 @@
       clearRulesAutoAdvance();
     }
 
+    function revealRulesIntroFirstBlock() {
+      clearRulesIntroReveal();
+      rulesIntroRevealTimer = setTimeout(() => {
+        rulesIntroRevealTimer = null;
+        if (
+          state.gameState === 'RULES' &&
+          state.rulesExplanationPhase === 'guide' &&
+          (state.rulesGuideScene || 0) === 0 &&
+          state.rulesExplanationStep < 0
+        ) {
+          setRulesExplanationStep(0);
+        }
+      }, 240);
+    }
+
     function openRulesScene() {
       transitionState(() => {
         state.rulesExplanationPhase = 'guide';
-        state.rulesExplanationStep = 0;
+        state.rulesExplanationStep = -1;
         state.rulesGuideScene = 0;
         state.gameState = 'RULES';
+        revealRulesIntroFirstBlock();
       });
     }
 
@@ -1941,6 +1965,7 @@
       }
 
       clearRulesAutoAdvance();
+      clearRulesIntroReveal();
       if (hasNextRulesGuideScene()) {
         transitionState(() => {
           state.rulesGuideScene = (state.rulesGuideScene || 0) + 1;

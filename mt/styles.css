@@ -1076,8 +1076,9 @@
   font-weight: 900 !important;
   letter-spacing: 0.02em;
   text-shadow: 0 1px 0 rgba(255, 250, 240, 0.38);
-  overflow-wrap: anywhere;
-  word-break: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: strict;
 }
 
 
@@ -1380,9 +1381,13 @@
 
 @media (max-width: 640px) {
   .roletrade-opening-statement {
-    font-size: 0.94rem;
+    font-size: clamp(0.78rem, 3.45vw, 0.94rem);
     line-height: 1.9;
-    white-space: normal;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    line-break: strict;
   }
 }
 
@@ -1407,6 +1412,9 @@
   margin: 0;
   font-weight: 800;
   text-shadow: 0 1px 0 rgba(255, 250, 240, 0.38);
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: strict;
 }
 
 .roletrade-opening-top-copy p + p {
