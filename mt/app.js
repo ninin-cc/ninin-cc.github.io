@@ -1449,10 +1449,13 @@
       // ▼▼ シーン：最後の武器屋の確認 ▼▼
       if (state.gameState === 'SHOP_CONFIRM') {
         const isShopConfirmDialogueComplete = state.shopConfirmDialogueStep >= SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1;
-        let confirmHandTopHTML = state.hand.slice(0, 3).map(card => {
+        const shopConfirmHand = state.pendingTradeAction === 'trade' && state.selectedHandCard && state.selectedShopCard
+          ? state.hand.map(card => card.id === state.selectedHandCard.id ? state.selectedShopCard : card)
+          : state.hand;
+        let confirmHandTopHTML = shopConfirmHand.slice(0, 3).map(card => {
           return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" }) + '</div>';
         }).join('');
-        let confirmHandBottomHTML = state.hand.slice(3, 5).map(card => {
+        let confirmHandBottomHTML = shopConfirmHand.slice(3, 5).map(card => {
           return '<div class="shrink-0 transition-transform duration-500">' + renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" }) + '</div>';
         }).join('');
         const shopConfirmButtonStateClass = isShopConfirmDialogueComplete ? '' : 'opacity-45 grayscale cursor-not-allowed pointer-events-none';
