@@ -13,7 +13,7 @@ const linkData = [
         avatar: { src: "./img/link/miyabi.webp" },
         title: "キャリアコンサルタント",
         tags: ["tabelab", "shinri"],
-        desc: "はじめまして、キャリアコンサルタントのみやびです。会社員、高校生の母として日々奮闘中。2級技能士や国家資格キャリアコンサルタントの受験対策、50代の転職記録などを発信。X | https://x.gd/j3PZ1　音声配信 | https://x.gd/VQl73",
+        desc: "はじめまして、キャリアコンサルタントのみやびです。会社員、高校生の母として日々奮闘中。2級技能士や国家資格キャリアコンサルタントの受験対策、50代の転職記録などを発信。X | https://x.gd/j3PZ1 音声配信 | https://x.gd/VQl73",
         links: { x: "https://x.gd/j3PZ1" }
     },
     {
@@ -65,7 +65,8 @@ const linkData = [
         tags: ["tabelab", "riesm"],
         desc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。",
         linkDesc: "2000年に社会人になり、早20年が経ちました。選んだ道は、福祉～心理です。福祉系大学を出た私じゃなくても、福祉・心理の仕事を続けてこれた事。資格取得に向けて行ったこと。分野や業界が違っても、人に携わる仕事をしている人とゆるく繋がれればいいなと思い、書き綴っています。",
-        ambassadorDesc: "自己理解が進むことで、物事の見方が拡がると思うので、多くの人に知ってもらいたいです。あなたの良さを一緒に見つけたいです。"
+        ambassadorDesc: "自己理解が進むことで、物事の見方が拡がると思うので、多くの人に知ってもらいたいです。あなたの良さを一緒に見つけたいです。",
+        links: { note: "https://note.com/makoron200x" }
     },
     {
         name: "だーやま｜書いて、語るひと",
@@ -78,7 +79,11 @@ const linkData = [
         tags: ["tabelab", "riesm"],
         desc: "自分から見える世界を、内側で起こることも含めて書くことで語っています。noteのほか、ワークショップやセッション、Podcastなどでも「語ることで見えてくる景色」を探求中。",
         ambassadorDesc: "自分のことを自分の言葉で語れるようになる。そのためにこんなに最適な「自分の読み解き方」があるなら、活かさない手はないですね。自分を知って生きやすくなれば余裕が生まれて周りにも思いやりをもてる。この「世界をよくする流れ」に賛同・参加します！",
-        applicationReason: "自分の言葉で自分を語れるようになる人を増やすのが私の使命なので。自分のことがわかれば生きやすくなって幸福度があがる。そのために自分の取扱説明書の精度をあげることはかなり有効だと思うので、RIESMが自己理解のインフラになるべく広めていく活動をしていきたいと思います。"
+        applicationReason: "自分の言葉で自分を語れるようになる人を増やすのが私の使命なので。自分のことがわかれば生きやすくなって幸福度があがる。そのために自分の取扱説明書の精度をあげることはかなり有効だと思うので、RIESMが自己理解のインフラになるべく広めていく活動をしていきたいと思います。",
+        links: { 
+            x: "https://x.com/Da_yama_Da33",
+            note: "https://note.com/d_yama33"
+        }
     },
     {
         name: "れい",
@@ -86,7 +91,7 @@ const linkData = [
         location: "オンライン中心",
         workshopCount: 0,
         avatar: { text: "れ", color: "trust" },
-        title: "🌈RIESM™認定者",
+        title: "🌈RIESM™アンバサダー",
         tags: ["riesm"],
         desc: "これからの活動も楽しみにしています。"
     },
@@ -96,7 +101,7 @@ const linkData = [
         location: "広島県",
         workshopCount: 0,
         avatar: { text: "り", color: "warm" },
-        title: "🌈RIESM™認定者",
+        title: "🌈RIESM™アンバサダー",
         tags: ["riesm"],
         desc: "安心して自分らしく働ける文化を作っていきたい。"
     },
@@ -141,7 +146,7 @@ const linkData = [
         qualifications: "国家資格キャリアコンサルタント / 2級技能士 キャリアコンサルティング技能士2級 / 1級技能士 キャリアコンサルティング技能士1級",
         links: { 
             note: "https://note.com/reboot_career",
-            x: "https://x.com/home",
+            x: "https://x.com/tedakee",
             linkedin: "https://www.linkedin.com/in/%E5%BC%98%E5%B9%B8-%E7%AB%B9%E5%B3%B6-bb50b3147/"
         }
     }
@@ -150,7 +155,7 @@ const linkData = [
 // 共通データの公開口です。
 // 各ページはここから必要な項目だけを選び、ページごとの表現で描画します。
 const linkDataMeta = {
-    version: "2026-07-06",
+    version: "2026-07-11",
     communities: {
         tabelab: { label: "たべラボ", href: "https://note.com/ninin2025/membership" },
         riesm: { label: "🌈RIESM™", href: "https://ninin-cc.github.io/guide.html" },
