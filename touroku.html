@@ -156,12 +156,25 @@
                   class="transition-all duration-300 ease-in-out max-h-[1200px] opacity-100 overflow-hidden"
                 >
                     <div class="p-5 pt-0 mt-2 border-t border-stone-100">
-                        <div class="mt-4 mb-3 flex items-center gap-2 text-sm">
-                            <span class="font-bold text-stone-500">種類：</span>
-                            <span class="font-bold text-emerald-600">RIESM™アンバサダー</span>
+                        <div class="mt-4 space-y-3">
+                            <div class="flex flex-wrap items-center gap-2 text-xs" id="riesm-type-filters" aria-label="認定種別フィルター">
+                                <span class="font-bold text-stone-500 mr-1">認定種別：</span>
+                                <button type="button" data-cert-filter="all" class="cert-filter-btn rounded-full border border-stone-300 bg-stone-800 px-3 py-1.5 font-bold text-white shadow-sm transition-colors">すべて</button>
+                                <button type="button" data-cert-filter="core" class="cert-filter-btn rounded-full border border-pink-200 bg-white px-3 py-1.5 font-bold text-pink-700 transition-colors hover:bg-pink-50">認定コア</button>
+                                <button type="button" data-cert-filter="navigator" class="cert-filter-btn rounded-full border border-sky-200 bg-white px-3 py-1.5 font-bold text-sky-700 transition-colors hover:bg-sky-50">認定ナビ</button>
+                                <button type="button" data-cert-filter="work" class="cert-filter-btn rounded-full border border-orange-200 bg-white px-3 py-1.5 font-bold text-orange-700 transition-colors hover:bg-orange-50">認定ワーク</button>
+                                <button type="button" data-cert-filter="ambassador" class="cert-filter-btn rounded-full border border-emerald-200 bg-white px-3 py-1.5 font-bold text-emerald-700 transition-colors hover:bg-emerald-50">アンバサダー</button>
+                            </div>
+                            <div class="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,1fr)_auto]">
+                                <label class="relative block">
+                                    <span class="sr-only">登録者検索</span>
+                                    <input id="riesm-member-search" type="search" class="w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-700 shadow-sm outline-none transition-colors placeholder:text-stone-400 focus:border-stone-400" placeholder="name・活動場所・コメントで検索">
+                                </label>
+                                <button type="button" id="riesm-number-sort" data-direction="desc" class="inline-flex items-center justify-center rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-stone-700 shadow-sm transition-colors hover:bg-stone-50">番号 ▼</button>
+                            </div>
                         </div>
                         <div class="mt-4 overflow-x-auto rounded-xl border border-stone-100">
-                            <table class="w-full min-w-[760px] text-left text-xs md:text-sm">
+                            <table class="w-full min-w-[800px] text-left text-xs md:text-sm">
                                 <thead class="bg-stone-50 text-stone-500">
                                     <tr>
                                         <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">番号</th>
@@ -172,7 +185,7 @@
                                     </tr>
                                 </thead>
                                 <!-- JSで動的にデータを挿入するtbody -->
-                                <tbody id="riesm-tbody" class="divide-y divide-stone-100 bg-white text-stone-600">
+                                <tbody id="riesm-tbody" class="divide-y divide-stone-100 bg-stone-50 text-stone-600">
                                     <tr>
                                         <td colspan="5" class="px-4 py-3 text-center text-stone-500">データを読み込んでいます...</td>
                                     </tr>
@@ -184,65 +197,76 @@
             </div>
         </div>
 
-        <!-- 資格一覧セクション（現在はリンクなし） -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 資格一覧セクション -->
+        <div class="space-y-4">
             
             <!-- RIESM™アンバサダー（無償） -->
             <div class="block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-emerald-500 shadow-sm">
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-emerald-500 shadow-sm flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
                     </div>
                     <div class="flex-grow">
                         <h2 class="text-lg font-bold">RIESM™アンバサダー<span class="text-sm font-normal text-stone-400 ml-1">（無償）</span></h2>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">
-                            RIESM™の理念に共感し、周囲へその価値を広げてくださる方
+                        <p class="text-sm text-stone-600 mt-2 leading-relaxed">
+                            RIESM™の理念に共感し、周囲へその価値を広げてくださる方。<br>
+                            無償でワークショップを開催できます。
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- RIESM™認定モードナビゲーター -->
+            <!-- RIESM™認定ワークナビゲーター -->
             <div class="block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-blue-500 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-orange-500 shadow-sm flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-6"/><path d="M7 18h10"/></svg>
                     </div>
                     <div class="flex-grow">
-                        <h2 class="text-lg font-bold text-blue-900">RIESM™認定<br class="sm:hidden"/>モードナビゲーター</h2>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">
-                            個人の【モード】を読み解き、人生のパイロットとしての自己理解をナビゲートする専門家
+                        <h2 class="text-lg font-bold text-orange-900">RIESM™認定<br class="sm:hidden"/>ワークナビゲーター</h2>
+                        <p class="text-sm text-stone-600 mt-2 leading-relaxed">
+                            モード理解をもとにした有償のワークショップを実施できます。主な活用場面は、チームビルディング、コミュニケーション改善、自己理解・他者理解ワークです。
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- RIESM™認定ロールナビゲーター -->
+            <!-- 🌈RIESM™認定ナビゲーター -->
             <div class="block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-amber-500 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-sky-600 shadow-sm flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 20v-6"/><path d="M6 20V10"/><path d="M18 20V4"/><path d="M4 20h16"/></svg>
                     </div>
                     <div class="flex-grow">
-                        <h2 class="text-lg font-bold text-amber-900">RIESM™認定<br class="sm:hidden"/>ロールナビゲーター</h2>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">
-                            組織や関係性の中での【役割（ロール）】に焦点を当て、心地よいコミュニケーションを支援する専門家
+                        <h2 class="text-lg font-bold text-sky-900">🌈RIESM™認定<br class="sm:hidden"/>ナビゲーター</h2>
+                        <p class="text-sm text-stone-600 mt-2 leading-relaxed">
+                            RIESM™アセスメントを利用した研修や個別セッションについては、<span class="font-bold text-stone-800">RIESM™認定ナビゲーターのみ</span>が実施できます。
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- RIESM™認定コアナビゲーター -->
+            <!-- 🌈RIESM™認定コアナビゲーター -->
             <div class="block w-full bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 rounded-xl text-white bg-pink-600 shadow-sm">
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-xl text-white bg-pink-600 shadow-sm flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>
                     </div>
                     <div class="flex-grow">
-                        <h2 class="text-lg font-bold text-pink-900">RIESM™認定<br class="sm:hidden"/>コアナビゲーター</h2>
-                        <p class="text-sm text-stone-400 mt-1 leading-snug">
-                            RIESM™の【確信（コア）】を理解し、深く根源的なレベルからナビゲートを行う上位資格保持者
-                        </p>
+                        <h2 class="text-lg font-bold text-pink-900">🌈RIESM™認定<br class="sm:hidden"/>コアナビゲーター</h2>
+                        <div class="text-sm text-stone-600 mt-2 leading-relaxed space-y-3">
+                            <p><span class="font-bold text-stone-800">時間と研鑽の積み重ねによって到達する場所</span>のようなものです。</p>
+                            <p>これは、認定費用を支払って取得するものというより、<span class="font-bold text-stone-800">時間と研鑽の積み重ねによって到達する場所</span>のようなものです。</p>
+                            <div class="space-y-1">
+                                <p>数多くの実施経験。</p>
+                                <p>フィードバックセッション。</p>
+                                <p>スーパーバイズ。</p>
+                                <p>実践内容の振り返り。</p>
+                                <p>RIESM™に関する論文や考察、note記事などの作成や発表。</p>
+                            </div>
+                            <p>そうした積み重ねをもとに、十分に熟達したナビゲーターに対して認定していくものです。いわば、RIESM™を深く理解し、現場で使い続け、実践知を言語化してきた方への<span class="font-bold text-stone-800">トロフィー</span>であり、<span class="font-bold text-stone-800">証</span>です。</p>
+                            <p>私自身も、RIESM™についてはまだまだ検証と学びの途中です。認定コアナビゲーターは、すぐに生まれるものではないと考えています。少なくとも数年単位で、実践、振り返り、発信、スーパーバイズ、ディスカッション、知見の蓄積を重ねた先に、ようやく見えてくるというような位置づけです。</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -272,40 +296,217 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sharedLinkData = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
-            if (sharedLinkData.length > 0) {
-                // linkdata.jsから「riesm」のタグを持つメンバーだけを抽出
-                const riesmMembers = sharedLinkData.filter(member => member.tags && member.tags.includes('riesm'));
-                const tbody = document.getElementById('riesm-tbody');
-                
-                if (tbody && riesmMembers.length > 0) {
-                    // 抽出したメンバーをテーブルの行（tr）として生成
-                    const html = riesmMembers.map(member => {
-                        // AMB-XXX のような番号を抽出
-                        let ambNumber = '-';
-                        if (member.certification) {
-                            const match = member.certification.match(/(AMB-\d{3})/);
-                            if (match) {
-                                ambNumber = match[1];
-                            }
-                        }
-                        
-                        const comment = member.ambassadorDesc || member.desc || '';
+            const tbody = document.getElementById('riesm-tbody');
+            const filterRoot = document.getElementById('riesm-type-filters');
+            const searchInput = document.getElementById('riesm-member-search');
+            const sortButton = document.getElementById('riesm-number-sort');
+            const filterButtons = filterRoot ? Array.from(filterRoot.querySelectorAll('[data-cert-filter]')) : [];
 
-                        return `
-                            <tr>
-                                <td class="px-4 py-3 font-bold tracking-wide text-stone-400 whitespace-nowrap">${ambNumber}</td>
-                                <td class="px-4 py-3 font-bold text-stone-700 whitespace-nowrap">${member.name}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">${member.location || '-'}</td>
-                                <td class="px-4 py-3 text-center whitespace-nowrap">${member.workshopCount !== undefined ? member.workshopCount : '-'}</td>
-                                <td class="px-4 py-3 leading-relaxed whitespace-pre-wrap">${comment}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                    tbody.innerHTML = html;
-                } else if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-3 text-center text-stone-500">現在、該当する登録者はいません。</td></tr>';
+            const certTypes = {
+                core: {
+                    label: '認定コア',
+                    order: 0,
+                    prefix: 'CORE',
+                    numberClass: 'text-pink-700',
+                    badgeClass: 'border-pink-200 bg-pink-50 text-pink-700',
+                    activeClass: 'border-pink-600 bg-pink-600 text-white'
+                },
+                navigator: {
+                    label: '認定ナビ',
+                    order: 1,
+                    prefix: 'NAV',
+                    numberClass: 'text-sky-700',
+                    badgeClass: 'border-sky-200 bg-sky-50 text-sky-700',
+                    activeClass: 'border-sky-600 bg-sky-600 text-white'
+                },
+                work: {
+                    label: '認定ワーク',
+                    order: 2,
+                    prefix: 'WORK',
+                    numberClass: 'text-orange-700',
+                    badgeClass: 'border-orange-200 bg-orange-50 text-orange-700',
+                    activeClass: 'border-orange-500 bg-orange-500 text-white'
+                },
+                ambassador: {
+                    label: 'アンバサダー',
+                    order: 3,
+                    prefix: 'AMB',
+                    numberClass: 'text-emerald-700',
+                    badgeClass: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+                    activeClass: 'border-emerald-600 bg-emerald-600 text-white'
                 }
+            };
+
+            let activeCertFilter = 'all';
+            let numberSortDirection = 'desc';
+
+            function escapeHtml(value) {
+                return String(value ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
             }
+
+            function normalizeSearch(value) {
+                return String(value ?? '').normalize('NFKC').toLowerCase();
+            }
+
+            function getCertificationSource(member) {
+                return [
+                    member.certification,
+                    member.certificationType,
+                    member.certificationNumber,
+                    member.riesmNumber,
+                    member.riesmRole,
+                    member.navigatorType,
+                    member.title,
+                    member.id
+                ].filter(Boolean).join(' ');
+            }
+
+            function getCertificationType(member) {
+                const source = getCertificationSource(member);
+                if (/CORE|コア/i.test(source)) return 'core';
+                if (/WORK|ワーク/i.test(source)) return 'work';
+                if (/NAV|認定ナビゲーター|ナビゲーター/i.test(source) && !/アンバサダー/i.test(source)) return 'navigator';
+                return 'ambassador';
+            }
+
+            function getRegistrationNumber(member) {
+                const source = getCertificationSource(member);
+                const match = source.match(/(?:CORE|NAV|WORK|AMB|R)-?(\d{3})|\b(\d{3})\b/i);
+                return match ? Number(match[1] || match[2] || 0) : 0;
+            }
+
+            function getRegistrationCode(member, type) {
+                const source = getCertificationSource(member);
+                const match = source.match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+                if (match) {
+                    const prefix = match[1].toUpperCase() === 'R' ? certTypes[type].prefix : match[1].toUpperCase();
+                    return prefix + '-' + match[2];
+                }
+                const number = getRegistrationNumber(member);
+                return number > 0 ? certTypes[type].prefix + '-' + String(number).padStart(3, '0') : '-';
+            }
+
+            function getRiesmMembers() {
+                return sharedLinkData
+                    .filter(member => member.tags && member.tags.includes('riesm'))
+                    .map(member => {
+                        const type = getCertificationType(member);
+                        const comment = member.ambassadorDesc || member.desc || '';
+                        return {
+                            ...member,
+                            certType: type,
+                            certConfig: certTypes[type],
+                            registrationNumber: getRegistrationNumber(member),
+                            registrationCode: getRegistrationCode(member, type),
+                            comment
+                        };
+                    });
+            }
+
+            function updateFilterButtons() {
+                filterButtons.forEach(button => {
+                    const filter = button.dataset.certFilter;
+                    const typeConfig = certTypes[filter];
+                    button.className = 'cert-filter-btn rounded-full border px-3 py-1.5 font-bold shadow-sm transition-colors';
+                    if (filter === activeCertFilter) {
+                        button.className += filter === 'all'
+                            ? ' border-stone-800 bg-stone-800 text-white'
+                            : ' ' + typeConfig.activeClass;
+                    } else {
+                        button.className += filter === 'all'
+                            ? ' border-stone-300 bg-white text-stone-600 hover:bg-stone-50'
+                            : ' ' + typeConfig.badgeClass + ' bg-white hover:bg-opacity-80';
+                    }
+                });
+            }
+
+            function renderRiesmMembers() {
+                if (!tbody) return;
+
+                const keyword = normalizeSearch(searchInput ? searchInput.value : '').trim();
+                const keywords = keyword ? keyword.split(/\s+/).filter(Boolean) : [];
+                const members = getRiesmMembers()
+                    .filter(member => activeCertFilter === 'all' || member.certType === activeCertFilter)
+                    .filter(member => {
+                        if (keywords.length === 0) return true;
+                        const haystack = normalizeSearch([
+                            member.name,
+                            member.location,
+                            member.comment
+                        ].join(' '));
+                        return keywords.every(word => haystack.includes(word));
+                    })
+                    .sort((a, b) => {
+                        const typeDiff = a.certConfig.order - b.certConfig.order;
+                        if (typeDiff !== 0) return typeDiff;
+                        const numberDiff = numberSortDirection === 'desc'
+                            ? b.registrationNumber - a.registrationNumber
+                            : a.registrationNumber - b.registrationNumber;
+                        if (numberDiff !== 0) return numberDiff;
+                        return String(a.name || '').localeCompare(String(b.name || ''), 'ja');
+                    });
+
+                if (sortButton) {
+                    sortButton.dataset.direction = numberSortDirection;
+                    sortButton.textContent = numberSortDirection === 'desc' ? '番号 ▼' : '番号 ▲';
+                    sortButton.setAttribute('aria-label', numberSortDirection === 'desc' ? '番号を降順で表示中' : '番号を昇順で表示中');
+                }
+                updateFilterButtons();
+
+                if (members.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-3 text-center text-stone-500">現在、該当する登録者はいません。</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = members.map((member, index) => {
+                    const location = member.location || '-';
+                    const workshopCount = member.workshopCount !== undefined ? member.workshopCount : '-';
+                    const licenseHref = 'license.html?' + encodeURIComponent(member.registrationCode.toLowerCase());
+                    const rowClass = index % 2 === 0
+                        ? 'bg-white hover:bg-emerald-50/60'
+                        : 'bg-stone-50/80 hover:bg-emerald-50/70';
+                    return `
+                        <tr class="${rowClass} transition-colors duration-150">
+                            <td class="px-4 py-4 align-top whitespace-nowrap">
+                                <a href="${licenseHref}" class="block font-bold tracking-wide underline-offset-4 transition-colors hover:underline ${member.certConfig.numberClass}">${escapeHtml(member.registrationCode)}</a>
+                                <a href="${licenseHref}" class="mt-1 inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold transition-colors hover:bg-white ${member.certConfig.badgeClass}">${escapeHtml(member.certConfig.label)}</a>
+                                <a href="${licenseHref}" class="mt-2 block text-[11px] font-bold text-stone-400 underline-offset-4 hover:text-stone-700 hover:underline">認定カード</a>
+                            </td>
+                            <td class="px-4 py-4 align-top font-bold text-stone-700 whitespace-nowrap">
+                                <a href="${licenseHref}" class="underline-offset-4 transition-colors hover:text-emerald-700 hover:underline">${escapeHtml(member.name)}</a>
+                            </td>
+                            <td class="px-4 py-4 align-top whitespace-nowrap">${escapeHtml(location)}</td>
+                            <td class="px-4 py-4 align-top text-center whitespace-nowrap">${escapeHtml(workshopCount)}</td>
+                            <td class="px-4 py-4 align-top leading-relaxed whitespace-pre-wrap">${escapeHtml(member.comment)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    activeCertFilter = button.dataset.certFilter || 'all';
+                    renderRiesmMembers();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', renderRiesmMembers);
+            }
+
+            if (sortButton) {
+                sortButton.addEventListener('click', () => {
+                    numberSortDirection = numberSortDirection === 'desc' ? 'asc' : 'desc';
+                    renderRiesmMembers();
+                });
+            }
+
+            renderRiesmMembers();
         });
     </script>
 

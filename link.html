@@ -841,6 +841,50 @@
                 white-space: nowrap;
             }
         }
+        .individual-link-page {
+            max-width: 480px;
+            padding-top: 2rem;
+        }
+
+        .individual-link-card {
+            display: block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--washi-border);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(67, 48, 28, 0.06);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .individual-link-card:hover,
+        .individual-link-card:focus-visible {
+            transform: translateY(-1px);
+            border-color: rgba(30, 102, 120, 0.32);
+            box-shadow: 0 12px 28px rgba(67, 48, 28, 0.1);
+            outline: none;
+        }
+
+        .individual-link-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--navy);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+
+        .individual-link-icon svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
     </style>
 </head>
 <body class="antialiased">
@@ -1012,6 +1056,181 @@
             
             // linkdata.js を唯一の大本データとして利用します
             const sharedLinkData = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+
+            function safeHtml(value = '') {
+                return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+            }
+
+            function normalizeMemberKey(value = '') {
+                return String(value)
+                    .normalize('NFKC')
+                    .toLowerCase()
+                    .replace(/^#|^\?/, '')
+                    .replace(/\.(webp|png|jpe?g|gif)$/i, '')
+                    .replace(/[^a-z0-9ぁ-んァ-ン一-龥ー]/g, '');
+            }
+
+            function getAvatarAlias(member) {
+                const src = member.avatar?.src || '';
+                const file = src.split('/').pop() || '';
+                return file.replace(/\.[^.]+$/, '');
+            }
+
+            function getCertificationCode(member) {
+                const source = [member.certification, member.certificationNumber, member.riesmNumber, member.id].filter(Boolean).join(' ');
+                const match = source.match(/\b(?:AMB|NAV|WORK|CORE|R)-?\d{3}\b/i);
+                return match ? match[0].toUpperCase().replace(/^(AMB|NAV|WORK|CORE|R)(\d)/, '$1-$2') : '';
+            }
+
+            function getManualAliases(member) {
+                const map = {
+                    'mango_pudding03': ['mango', 'mangopudding'],
+                    'キャリコンみやび': ['miyabi'],
+                    'ゆうり＠大学キャリアセンターの人': ['yuuri', 'yuri'],
+                    'けー。お花カウンセリング': ['kei', 'ke', 'ninin2024'],
+                    'こぐみ': ['kogumi'],
+                    'ぎっしー｜春日部キャリア部 部長': ['gissy', 'gisshi'],
+                    'あかり| 1on1で生きやすい世界に🌏': ['akari'],
+                    'ころころまころん＠心理福祉': ['maron', 'makoron', 'korokoro'],
+                    'だーやま｜書いて、語るひと': ['dayama', 'yamada', 'da-yama'],
+                    'れい': ['rei'],
+                    'りんこ': ['rinko', 'rinnko'],
+                    'まつだ⭐︎松田真弘': ['matsuda'],
+                    'コーチャ': ['kocha'],
+                    'SHIHO': ['shiho'],
+                    '竹島弘幸': ['takeshima']
+                };
+                return map[member.name] || [];
+            }
+
+            function getMemberAliases(member) {
+                const certificationCode = getCertificationCode(member);
+                return [
+                    member.name,
+                    member.name?.split(/[｜|]/)[0],
+                    getAvatarAlias(member),
+                    certificationCode,
+                    certificationCode.toLowerCase(),
+                    ...(getManualAliases(member))
+                ].filter(Boolean).map(normalizeMemberKey).filter(Boolean);
+            }
+
+            function getRequestedMemberKey() {
+                const url = new URL(window.location.href);
+                const ignoredKeys = new Set(['filter', 'f', 'view', 'category', 'cat', 'type', 'al', 'tb', 'ps', 'ri']);
+                const filterAliasesForMember = new Set(['al', 'all', 'tb', 'tabelab', 'ps', 'shinri', 'ri', 'riesm']);
+                for (const key of ['member', 'm', 'id', 'name', 'person', 'user']) {
+                    const value = url.searchParams.get(key);
+                    if (value) return normalizeMemberKey(value);
+                }
+                for (const [key, value] of url.searchParams.entries()) {
+                    if (ignoredKeys.has(normalizeMemberKey(key))) continue;
+                    const candidate = value || key;
+                    const normalized = normalizeMemberKey(candidate);
+                    if (normalized && !filterAliasesForMember.has(normalized)) return normalized;
+                }
+                const hash = normalizeMemberKey(url.hash.slice(1));
+                return filterAliasesForMember.has(hash) ? '' : hash;
+            }
+
+            function findRequestedMember() {
+                const requested = getRequestedMemberKey();
+                if (!requested) return null;
+                return sharedLinkData.find(member => {
+                    const aliases = getMemberAliases(member);
+                    const haystack = normalizeMemberKey([member.name, member.title, getCertificationCode(member)].filter(Boolean).join(' '));
+                    return aliases.includes(requested) || haystack.includes(requested);
+                }) || null;
+            }
+
+            function getIndividualLinkIcon(type) {
+                const icons = {
+                    note: 'n',
+                    web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg>',
+                    x: 'X',
+                    line: 'LINE',
+                    linkedin: 'in',
+                    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>',
+                    license: 'ID'
+                };
+                return icons[type] || '→';
+            }
+
+            function renderIndividualLinkCards(member) {
+                const links = member.links || {};
+                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram' };
+                const descriptions = {
+                    note: 'noteでの発信を見る',
+                    web: 'Webサイトを見る',
+                    x: 'Xでの発信を見る',
+                    line: 'LINE公式などを見る',
+                    linkedin: 'LinkedInプロフィールを見る',
+                    instagram: 'Instagramを見る'
+                };
+                const cards = ['note', 'web', 'x', 'line', 'linkedin', 'instagram']
+                    .filter(type => links[type])
+                    .map(type => `
+                        <a href="${safeHtml(links[type])}" target="_blank" rel="noopener noreferrer" class="individual-link-card">
+                            <div class="flex items-center gap-4">
+                                <span class="individual-link-icon">${getIndividualLinkIcon(type)}</span>
+                                <span class="min-w-0 flex-grow">
+                                    <span class="block text-[15px] font-black text-[var(--navy)]">${labels[type]}</span>
+                                    <span class="mt-1 block text-xs leading-snug text-[var(--muted)]">${descriptions[type]}</span>
+                                </span>
+                                <span class="text-stone-300" aria-hidden="true">→</span>
+                            </div>
+                        </a>
+                    `);
+                const certificationCode = getCertificationCode(member);
+                if (certificationCode) {
+                    cards.push(`
+                        <a href="license.html?${safeHtml(certificationCode.toLowerCase())}" class="individual-link-card">
+                            <div class="flex items-center gap-4">
+                                <span class="individual-link-icon">${getIndividualLinkIcon('license')}</span>
+                                <span class="min-w-0 flex-grow">
+                                    <span class="block text-[15px] font-black text-[var(--navy)]">認定カード</span>
+                                    <span class="mt-1 block text-xs leading-snug text-[var(--muted)]">${safeHtml(certificationCode)} のカードを表示</span>
+                                </span>
+                                <span class="text-stone-300" aria-hidden="true">→</span>
+                            </div>
+                        </a>
+                    `);
+                }
+                return cards.length ? cards.join('') : '<div class="individual-link-card text-center text-sm font-bold text-[var(--muted)]">公開リンクは準備中です</div>';
+            }
+
+            function renderIndividualMemberPage(member) {
+                const main = document.querySelector('main');
+                const memberDesc = member.linkDesc || member.desc || '';
+                const avatar = member.avatar?.src
+                    ? `<img src="${safeHtml(member.avatar.src)}" alt="${safeHtml(member.name)}のプロフィール画像" class="h-24 w-24 rounded-full border border-[var(--line)] bg-white object-cover shadow-sm">`
+                    : `<div class="flex h-24 w-24 items-center justify-center rounded-full border border-[var(--line)] bg-white text-3xl font-black text-[var(--trust)] shadow-sm">${safeHtml(member.avatar?.text || member.name.slice(0, 1))}</div>`;
+                document.title = `${member.name}｜つながるリンク集`;
+                main.className = 'individual-link-page w-full mx-auto px-4 pb-16';
+                main.innerHTML = `
+                    <section class="text-center">
+                        <a href="link.html" class="mb-5 inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-white/80 px-4 py-2 text-xs font-bold text-[var(--muted)] shadow-sm hover:text-[var(--navy)]">← リンク集へ戻る</a>
+                        <div class="mx-auto rounded-3xl border border-[var(--washi-border)] bg-white/80 p-6 shadow-sm">
+                            <div class="flex justify-center">${avatar}</div>
+                            <h1 class="mt-4 text-2xl font-black leading-tight text-[var(--navy)]">${safeHtml(member.name)}</h1>
+                            <p class="mt-2 text-sm font-bold leading-relaxed text-[var(--trust)]">${safeHtml(member.title || '')}</p>
+                            <div class="badges-wrap mt-4">${generateBadgesHTML(member.tags || [])}</div>
+                            <p class="mt-4 text-left text-sm leading-7 text-[#43505c]">${safeHtml(memberDesc)}</p>
+                            ${member.certification ? `<p class="member-certification mt-4">${safeHtml(member.certification)}</p>` : ''}
+                        </div>
+                    </section>
+                    <section class="mt-5 grid grid-cols-1 gap-3">
+                        ${renderIndividualLinkCards(member)}
+                    </section>
+                `;
+            }
+
+            const individualMember = findRequestedMember();
+            if (individualMember) {
+                renderIndividualMemberPage(individualMember);
+                return;
+            }
+
             grid.innerHTML = sharedLinkData.map((member, index) => {
                 const tagsHtml = generateBadgesHTML(member.tags || []);
                 const linksHtml = generateLinksHTML(member.links || {});
@@ -1036,7 +1255,7 @@
                     <article class="member-card" data-tags="${(member.tags || []).join(' ')}" id="member-card-${index}">
                         <div class="member-header flex items-center gap-4 mb-3">
                             ${avatarHtml}
-                            <h2 class="text-xl font-black text-[var(--navy)] leading-tight">${member.name}</h2>
+                            <h2 class="text-xl font-black text-[var(--navy)] leading-tight"><a href="link.html?${encodeURIComponent((getAvatarAlias(member) || getMemberAliases(member)[0] || String(index)).toLowerCase())}" class="hover:underline underline-offset-4">${member.name}</a></h2>
                         </div>
                         <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
                             ${member.title}

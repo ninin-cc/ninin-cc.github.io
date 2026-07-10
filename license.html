@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIESM™ 認定カード - 合同会社ninin</title>
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+    <script src="./js/linkdata.js"></script>
+    <style>
+        :root {
+            --paper: #fdfcf8;
+            --ink: #3f3a33;
+            --accent: #059669;
+            --gold: #b88a2c;
+        }
+        body {
+            min-height: 100vh;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--ink);
+            background-color: var(--paper);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(184, 138, 44, 0.08), transparent 28%),
+                radial-gradient(circle at 80% 12%, rgba(5, 150, 105, 0.08), transparent 26%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+        }
+        .mincho { font-family: 'Shippori Mincho', serif; }
+        .license-card {
+            position: relative;
+            overflow: hidden;
+            width: min(430px, calc(100vw - 2.5rem));
+            aspect-ratio: 55 / 91;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.97), rgba(253,250,241,0.98)),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fiber'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fiber)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+        .license-card::before {
+            content: "";
+            position: absolute;
+            inset: 18px;
+            border: 1px solid rgba(184, 138, 44, 0.42);
+            border-radius: 24px;
+            pointer-events: none;
+        }
+        .license-card::after {
+            content: "RIESM";
+            position: absolute;
+            left: 50%;
+            bottom: 7%;
+            transform: translateX(-50%) rotate(-90deg);
+            transform-origin: center;
+            font-family: 'Shippori Mincho', serif;
+            font-size: clamp(4.5rem, 24vw, 8.6rem);
+            line-height: 1;
+            color: rgba(5, 150, 105, 0.055);
+            letter-spacing: 0.08em;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .seal {
+            background:
+                radial-gradient(circle at center, rgba(255,255,255,0.28), transparent 36%),
+                linear-gradient(135deg, #d7ad45, #8f6419);
+        }
+        @media print {
+            body { background: #fff; }
+            .no-print { display: none !important; }
+            .license-card {
+                width: 55mm !important;
+                height: 91mm !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="flex min-h-screen flex-col items-center px-5 py-8">
+    <header class="no-print mb-6 flex w-full max-w-5xl items-center justify-between gap-4">
+        <a href="touroku.html" class="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/75 px-4 py-2 text-sm font-bold text-stone-600 shadow-sm transition-colors hover:bg-white">
+            <span aria-hidden="true">←</span>
+            <span>登録者名簿へ</span>
+        </a>
+        <a href="index.html" class="text-sm font-bold text-stone-400 transition-colors hover:text-stone-600">TOP</a>
+    </header>
+
+    <main class="flex w-full max-w-5xl flex-1 flex-col items-center justify-center">
+        <section id="license-output" class="w-full"></section>
+    </main>
+
+    <footer class="no-print mt-8 text-center text-xs leading-relaxed text-stone-400">
+        <p>合同会社ninin consulting ＆ counseling</p>
+        <p>© 2025 ninin LLC. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var members = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+            var output = document.getElementById('license-output');
+
+            var certTypes = {
+                core: { label: '認定コアナビゲーター', prefix: 'CORE', color: 'text-pink-700', badge: 'border-pink-200 bg-pink-50 text-pink-700', accent: '#be185d' },
+                navigator: { label: '認定ナビゲーター', prefix: 'NAV', color: 'text-sky-700', badge: 'border-sky-200 bg-sky-50 text-sky-700', accent: '#0369a1' },
+                work: { label: '認定ワークナビゲーター', prefix: 'WORK', color: 'text-orange-700', badge: 'border-orange-200 bg-orange-50 text-orange-700', accent: '#c2410c' },
+                ambassador: { label: 'アンバサダー', prefix: 'AMB', color: 'text-emerald-700', badge: 'border-emerald-200 bg-emerald-50 text-emerald-700', accent: '#059669' }
+            };
+
+            function escapeHtml(value) {
+                return String(value == null ? '' : value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function normalizeCode(value) {
+                return String(value || '')
+                    .trim()
+                    .replace(/^[?#]/, '')
+                    .split('&')[0]
+                    .split('=')[0]
+                    .replace(/_/g, '-')
+                    .toUpperCase();
+            }
+
+            function getRequestCode() {
+                var params = new URLSearchParams(window.location.search);
+                return normalizeCode(
+                    params.get('id') ||
+                    params.get('code') ||
+                    params.get('amb') ||
+                    Array.from(params.keys())[0] ||
+                    window.location.hash
+                );
+            }
+
+            function getCertificationSource(member) {
+                return [
+                    member.certification,
+                    member.certificationType,
+                    member.certificationNumber,
+                    member.riesmNumber,
+                    member.riesmRole,
+                    member.navigatorType,
+                    member.title,
+                    member.id
+                ].filter(Boolean).join(' ');
+            }
+
+            function getCertificationType(member) {
+                var source = getCertificationSource(member);
+                if (/CORE|コア/i.test(source)) return 'core';
+                if (/WORK|ワーク/i.test(source)) return 'work';
+                if (/NAV|認定ナビゲーター|ナビゲーター/i.test(source) && !/アンバサダー/i.test(source)) return 'navigator';
+                return 'ambassador';
+            }
+
+            function getRegistrationNumber(member) {
+                var match = getCertificationSource(member).match(/(?:CORE|NAV|WORK|AMB|R)-?(\d{3})|\b(\d{3})\b/i);
+                return match ? Number(match[1] || match[2] || 0) : 0;
+            }
+
+            function getRegistrationCode(member) {
+                var type = getCertificationType(member);
+                var match = getCertificationSource(member).match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+                if (match) {
+                    var prefix = match[1].toUpperCase() === 'R' ? certTypes[type].prefix : match[1].toUpperCase();
+                    return prefix + '-' + match[2];
+                }
+                var number = getRegistrationNumber(member);
+                return number > 0 ? certTypes[type].prefix + '-' + String(number).padStart(3, '0') : '';
+            }
+
+            function getCertifiedMembers() {
+                return members
+                    .filter(function (member) { return member.tags && member.tags.includes('riesm'); })
+                    .map(function (member) {
+                        var type = getCertificationType(member);
+                        return Object.assign({}, member, {
+                            certType: type,
+                            certConfig: certTypes[type],
+                            registrationCode: getRegistrationCode(member),
+                            registrationNumber: getRegistrationNumber(member),
+                            comment: member.ambassadorDesc || member.desc || ''
+                        });
+                    })
+                    .filter(function (member) { return member.registrationCode; })
+                    .sort(function (a, b) { return b.registrationNumber - a.registrationNumber; });
+            }
+
+            function renderAvatar(member) {
+                if (member.avatar && member.avatar.src) {
+                    return '<img src="' + escapeHtml(member.avatar.src) + '" alt="' + escapeHtml(member.name) + '" class="h-20 w-20 rounded-full border-4 border-white object-cover shadow-md">';
+                }
+                var text = member.avatar && member.avatar.text ? member.avatar.text : String(member.name || '?').slice(0, 1);
+                return '<div class="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-emerald-100 text-3xl font-black text-emerald-700 shadow-md">' + escapeHtml(text) + '</div>';
+            }
+
+            function clampText(value, maxLength) {
+                var text = String(value || '').replace(/\s+/g, ' ').trim();
+                return text.length > maxLength ? text.slice(0, maxLength - 1) + '…' : text;
+            }
+
+            function loadImage(src) {
+                return new Promise(function (resolve) {
+                    if (!src) {
+                        resolve(null);
+                        return;
+                    }
+                    var img = new Image();
+                    img.onload = function () { resolve(img); };
+                    img.onerror = function () { resolve(null); };
+                    img.src = src;
+                });
+            }
+
+            function roundRect(ctx, x, y, width, height, radius) {
+                var r = Math.min(radius, width / 2, height / 2);
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.arcTo(x + width, y, x + width, y + height, r);
+                ctx.arcTo(x + width, y + height, x, y + height, r);
+                ctx.arcTo(x, y + height, x, y, r);
+                ctx.arcTo(x, y, x + width, y, r);
+                ctx.closePath();
+            }
+
+            function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+                var chars = String(text || '').split('');
+                var line = '';
+                var lines = [];
+                chars.forEach(function (char) {
+                    var test = line + char;
+                    if (ctx.measureText(test).width > maxWidth && line) {
+                        lines.push(line);
+                        line = char;
+                    } else {
+                        line = test;
+                    }
+                });
+                if (line) lines.push(line);
+                lines.slice(0, maxLines).forEach(function (lineText, index) {
+                    if (index === maxLines - 1 && lines.length > maxLines) {
+                        while (ctx.measureText(lineText + '…').width > maxWidth && lineText.length > 0) {
+                            lineText = lineText.slice(0, -1);
+                        }
+                        lineText += '…';
+                    }
+                    ctx.fillText(lineText, x, y + index * lineHeight);
+                });
+            }
+
+            function drawBadge(ctx, text, x, y, color) {
+                ctx.font = '700 26px "Noto Sans JP", sans-serif';
+                var width = ctx.measureText(text).width + 40;
+                roundRect(ctx, x, y, width, 46, 23);
+                ctx.fillStyle = '#f0fdf4';
+                ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fillText(text, x + 20, y + 31);
+            }
+
+            async function downloadCardImage(member) {
+                if (!member) return;
+                var cfg = member.certConfig;
+                var width = 650;
+                var height = 1075;
+                var canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                var accent = cfg.accent || '#059669';
+
+                var bg = ctx.createLinearGradient(0, 0, width, height);
+                bg.addColorStop(0, '#fffdf7');
+                bg.addColorStop(1, '#f8f4e8');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.fillStyle = 'rgba(5, 150, 105, 0.05)';
+                ctx.save();
+                ctx.translate(width / 2, height - 220);
+                ctx.rotate(-Math.PI / 2);
+                ctx.font = '700 150px "Shippori Mincho", serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('RIESM', 0, 0);
+                ctx.restore();
+
+                ctx.strokeStyle = 'rgba(184, 138, 44, 0.55)';
+                ctx.lineWidth = 3;
+                roundRect(ctx, 34, 34, width - 68, height - 68, 34);
+                ctx.stroke();
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#9b8f7f';
+                ctx.font = '700 20px "Noto Sans JP", sans-serif';
+                ctx.fillText('RIESM™ CERTIFICATION CARD', 72, 92);
+
+                ctx.fillStyle = '#3f3a33';
+                ctx.font = '700 44px "Shippori Mincho", serif';
+                ctx.fillText('認定カード', 72, 152);
+
+                ctx.fillStyle = accent;
+                ctx.font = '900 52px "Noto Sans JP", sans-serif';
+                ctx.fillText(member.registrationCode, 72, 238);
+                drawBadge(ctx, cfg.label, 72, 260, accent);
+
+                var avatar = null;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(width / 2, 408, 74, 0, Math.PI * 2);
+                ctx.clip();
+                if (avatar) {
+                    var side = Math.min(avatar.naturalWidth || avatar.width, avatar.naturalHeight || avatar.height);
+                    var sx = ((avatar.naturalWidth || avatar.width) - side) / 2;
+                    var sy = ((avatar.naturalHeight || avatar.height) - side) / 2;
+                    ctx.drawImage(avatar, sx, sy, side, side, width / 2 - 74, 334, 148, 148);
+                } else {
+                    ctx.fillStyle = '#d1fae5';
+                    ctx.fillRect(width / 2 - 74, 334, 148, 148);
+                    ctx.fillStyle = accent;
+                    ctx.font = '900 60px "Noto Sans JP", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText((member.avatar && member.avatar.text) || String(member.name || '?').slice(0, 1), width / 2, 428);
+                }
+                ctx.restore();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.arc(width / 2, 408, 76, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#3f3a33';
+                ctx.font = '900 36px "Noto Sans JP", sans-serif';
+                drawWrappedText(ctx, member.name, 72, 545, width - 144, 45, 2);
+                ctx.fillStyle = '#6b6258';
+                ctx.font = '700 23px "Noto Sans JP", sans-serif';
+                drawWrappedText(ctx, member.title || cfg.label, 92, 648, width - 184, 32, 2);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#fffdf7';
+                roundRect(ctx, 72, 724, width - 144, 170, 24);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(5, 150, 105, 0.2)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = accent;
+                ctx.font = '700 19px "Noto Sans JP", sans-serif';
+                ctx.fillText('COMMENT', 102, 770);
+                ctx.fillStyle = '#4b443d';
+                ctx.font = '500 22px "Noto Sans JP", sans-serif';
+                drawWrappedText(ctx, clampText(member.comment, 92), 102, 815, width - 204, 32, 3);
+
+                ctx.fillStyle = '#8a8175';
+                ctx.font = '700 18px "Noto Sans JP", sans-serif';
+                ctx.fillText('活動場所: ' + (member.location || '-'), 72, 952);
+                ctx.fillText('Issued by ninin consulting & counseling', 72, 988);
+                ctx.fillStyle = accent;
+                ctx.font = '900 20px "Noto Sans JP", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('ACTIVE', width - 72, 988);
+
+                try {
+                    var link = document.createElement('a');
+                    link.download = member.registrationCode.toLowerCase() + '-riesm-card.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (error) {
+                    alert('画像の生成に失敗しました。ブラウザを変えてもう一度お試しください。');
+                }
+            }
+
+            window.downloadCardImage = downloadCardImage;
+
+            function renderLicense(member) {
+                var cfg = member.certConfig;
+                var issueLabel = member.registrationDate || member.certifiedAt || '認定データ登録中';
+                var organization = member.organization ? escapeHtml(member.organization) : '合同会社ninin consulting ＆ counseling';
+                window.currentLicenseMember = member;
+                document.title = member.registrationCode + ' ' + member.name + ' - RIESM™ 認定カード';
+                output.innerHTML =
+                    '<article id="business-card" class="license-card mx-auto rounded-[30px] border border-amber-200/70 p-7 shadow-2xl shadow-stone-300/40">' +
+                        '<div class="relative z-10 flex h-full flex-col">' +
+                            '<div>' +
+                                '<p class="text-[10px] font-bold uppercase tracking-[0.32em] text-stone-400">RIESM™ Certification Card</p>' +
+                                '<div class="mt-5 flex items-start justify-between gap-3">' +
+                                    '<div>' +
+                                        '<p class="text-xs font-bold text-stone-400">Registration No.</p>' +
+                                        '<p class="mt-1 text-3xl font-black tracking-wide ' + cfg.color + '">' + escapeHtml(member.registrationCode) + '</p>' +
+                                    '</div>' +
+                                    '<span class="mt-1 inline-flex rounded-full border px-3 py-1 text-[11px] font-bold ' + cfg.badge + '">' + escapeHtml(cfg.label) + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="mt-9 flex flex-col items-center text-center">' +
+                                renderAvatar(member) +
+                                '<p class="mt-5 text-xs font-bold text-stone-400">Name</p>' +
+                                '<h1 class="mt-1 text-2xl font-black leading-tight text-stone-800">' + escapeHtml(member.name) + '</h1>' +
+                                '<p class="mt-2 max-w-[18rem] text-sm font-bold leading-relaxed text-stone-500">' + escapeHtml(clampText(member.title || cfg.label, 34)) + '</p>' +
+                            '</div>' +
+                            '<div class="mt-7 grid gap-2">' +
+                                '<div class="rounded-2xl border border-stone-200/80 bg-white/70 px-4 py-3">' +
+                                    '<p class="text-[10px] font-bold text-stone-400">活動場所</p>' +
+                                    '<p class="mt-1 text-sm font-bold text-stone-700">' + escapeHtml(member.location || '-') + '</p>' +
+                                '</div>' +
+                                '<div class="rounded-2xl border border-stone-200/80 bg-white/70 px-4 py-3">' +
+                                    '<p class="text-[10px] font-bold text-stone-400">所属・活動名</p>' +
+                                    '<p class="mt-1 text-sm font-bold text-stone-700">' + organization + '</p>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">' +
+                                '<p class="text-[10px] font-bold tracking-[0.18em] text-emerald-700">COMMENT</p>' +
+                                '<p class="mt-2 text-xs leading-6 text-stone-700">' + escapeHtml(clampText(member.comment || 'コメント準備中です。', 72)) + '</p>' +
+                            '</div>' +
+                            '<div class="mt-auto flex items-end justify-between gap-4 border-t border-stone-200 pt-5">' +
+                                '<div>' +
+                                    '<p class="text-[10px] font-bold text-stone-400">Issued by</p>' +
+                                    '<p class="mt-1 text-xs font-bold leading-relaxed text-stone-700">合同会社ninin consulting ＆ counseling</p>' +
+                                    '<p class="mt-1 text-[10px] text-stone-400">' + escapeHtml(issueLabel) + '</p>' +
+                                '</div>' +
+                                '<div class="seal flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full text-center text-[9px] font-black leading-tight text-white shadow-md">ninin<br>RIESM</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</article>' +
+                    '<section class="mx-auto mt-5 w-full max-w-xl rounded-3xl border border-stone-200 bg-white/75 p-5 text-sm leading-7 text-stone-600 shadow-sm">' +
+                        '<p class="font-bold text-stone-700">活動範囲</p>' +
+                        '<p class="mt-1">' + (member.certType === 'ambassador' ? '無償のアプリ版ワークショップ' : '認定区分に準じる活動') + '</p>' +
+                        '<p class="mt-4 font-bold text-stone-700">コメント全文</p>' +
+                        '<p class="mt-1 whitespace-pre-wrap">' + escapeHtml(member.comment || 'コメント準備中です。') + '</p>' +
+                    '</section>' +
+                    '<div class="no-print mt-6 flex flex-wrap justify-center gap-3">' +
+                        '<button type="button" onclick="downloadCardImage(window.currentLicenseMember)" class="rounded-full bg-emerald-700 px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-emerald-600">画像DL</button>' +
+                        '<button type="button" onclick="window.print()" class="rounded-full bg-stone-800 px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-stone-700">印刷</button>' +
+                        '<a href="touroku.html" class="rounded-full border border-stone-200 bg-white px-5 py-2 text-sm font-bold text-stone-600 shadow-sm transition-colors hover:bg-stone-50">名簿へ戻る</a>' +
+                    '</div>';
+            }
+
+            function renderIndex(certifiedMembers, requestedCode) {
+                var message = requestedCode
+                    ? '<p class="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800">指定された認定番号が見つかりませんでした: ' + escapeHtml(requestedCode) + '</p>'
+                    : '<p class="mb-5 text-sm text-stone-500">認定番号を選択すると個別カードを表示します。</p>';
+                output.innerHTML =
+                    '<section class="mx-auto w-full max-w-2xl rounded-3xl border border-stone-200 bg-white/85 p-6 shadow-xl shadow-stone-200/50">' +
+                        '<h1 class="mincho text-2xl font-bold text-stone-800">RIESM™ 認定カード</h1>' +
+                        message +
+                        '<div class="grid gap-3">' +
+                            certifiedMembers.map(function (member) {
+                                return '<a href="license.html?' + encodeURIComponent(member.registrationCode.toLowerCase()) + '" class="flex items-center justify-between gap-4 rounded-2xl border border-stone-100 bg-stone-50 px-4 py-3 transition-colors hover:bg-emerald-50">' +
+                                    '<span><span class="block font-black ' + member.certConfig.color + '">' + escapeHtml(member.registrationCode) + '</span><span class="text-sm font-bold text-stone-700">' + escapeHtml(member.name) + '</span></span>' +
+                                    '<span class="text-sm font-bold text-stone-400">表示</span>' +
+                                '</a>';
+                            }).join('') +
+                        '</div>' +
+                    '</section>';
+            }
+
+            var certifiedMembers = getCertifiedMembers();
+            var requestedCode = getRequestCode();
+            var member = certifiedMembers.find(function (item) {
+                return normalizeCode(item.registrationCode) === requestedCode;
+            });
+
+            if (member) {
+                renderLicense(member);
+            } else {
+                renderIndex(certifiedMembers, requestedCode);
+            }
+        });
+    </script>
+</body>
+</html>
