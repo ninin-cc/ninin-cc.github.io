@@ -7,6 +7,7 @@
     <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
     <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
@@ -267,113 +268,41 @@
             }
 
             async function downloadCardImage(member) {
-                if (!member) return;
-                var cfg = member.certConfig;
-                var width = 650;
-                var height = 1075;
-                var canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                var ctx = canvas.getContext('2d');
-                var accent = cfg.accent || '#059669';
-
-                var bg = ctx.createLinearGradient(0, 0, width, height);
-                bg.addColorStop(0, '#fffdf7');
-                bg.addColorStop(1, '#f8f4e8');
-                ctx.fillStyle = bg;
-                ctx.fillRect(0, 0, width, height);
-
-                ctx.fillStyle = 'rgba(5, 150, 105, 0.05)';
-                ctx.save();
-                ctx.translate(width / 2, height - 220);
-                ctx.rotate(-Math.PI / 2);
-                ctx.font = '700 150px "Shippori Mincho", serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('RIESM', 0, 0);
-                ctx.restore();
-
-                ctx.strokeStyle = 'rgba(184, 138, 44, 0.55)';
-                ctx.lineWidth = 3;
-                roundRect(ctx, 34, 34, width - 68, height - 68, 34);
-                ctx.stroke();
-
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#9b8f7f';
-                ctx.font = '700 20px "Noto Sans JP", sans-serif';
-                ctx.fillText('RIESM™ CERTIFICATION CARD', 72, 92);
-
-                ctx.fillStyle = '#3f3a33';
-                ctx.font = '700 44px "Shippori Mincho", serif';
-                ctx.fillText('認定カード', 72, 152);
-
-                ctx.fillStyle = accent;
-                ctx.font = '900 52px "Noto Sans JP", sans-serif';
-                ctx.fillText(member.registrationCode, 72, 238);
-                drawBadge(ctx, cfg.label, 72, 260, accent);
-
-                var avatar = null;
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(width / 2, 408, 74, 0, Math.PI * 2);
-                ctx.clip();
-                if (avatar) {
-                    var side = Math.min(avatar.naturalWidth || avatar.width, avatar.naturalHeight || avatar.height);
-                    var sx = ((avatar.naturalWidth || avatar.width) - side) / 2;
-                    var sy = ((avatar.naturalHeight || avatar.height) - side) / 2;
-                    ctx.drawImage(avatar, sx, sy, side, side, width / 2 - 74, 334, 148, 148);
-                } else {
-                    ctx.fillStyle = '#d1fae5';
-                    ctx.fillRect(width / 2 - 74, 334, 148, 148);
-                    ctx.fillStyle = accent;
-                    ctx.font = '900 60px "Noto Sans JP", sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText((member.avatar && member.avatar.text) || String(member.name || '?').slice(0, 1), width / 2, 428);
+                var card = document.getElementById('business-card');
+                if (!member || !card) return;
+                if (typeof window.html2canvas !== 'function') {
+                    alert('画像DL機能を読み込み中です。少し待ってからもう一度お試しください。');
+                    return;
                 }
-                ctx.restore();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 8;
-                ctx.beginPath();
-                ctx.arc(width / 2, 408, 76, 0, Math.PI * 2);
-                ctx.stroke();
 
-                ctx.textAlign = 'center';
-                ctx.fillStyle = '#3f3a33';
-                ctx.font = '900 36px "Noto Sans JP", sans-serif';
-                drawWrappedText(ctx, member.name, 72, 545, width - 144, 45, 2);
-                ctx.fillStyle = '#6b6258';
-                ctx.font = '700 23px "Noto Sans JP", sans-serif';
-                drawWrappedText(ctx, member.title || cfg.label, 92, 648, width - 184, 32, 2);
-
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#fffdf7';
-                roundRect(ctx, 72, 724, width - 144, 170, 24);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(5, 150, 105, 0.2)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.fillStyle = accent;
-                ctx.font = '700 19px "Noto Sans JP", sans-serif';
-                ctx.fillText('COMMENT', 102, 770);
-                ctx.fillStyle = '#4b443d';
-                ctx.font = '500 22px "Noto Sans JP", sans-serif';
-                drawWrappedText(ctx, clampText(member.comment, 92), 102, 815, width - 204, 32, 3);
-
-                ctx.fillStyle = '#8a8175';
-                ctx.font = '700 18px "Noto Sans JP", sans-serif';
-                ctx.fillText('活動場所: ' + (member.location || '-'), 72, 952);
-                ctx.fillText('Issued by ninin consulting & counseling', 72, 988);
-                ctx.fillStyle = accent;
-                ctx.font = '900 20px "Noto Sans JP", sans-serif';
-                ctx.textAlign = 'right';
-                ctx.fillText('ACTIVE', width - 72, 988);
+                var originalTransition = card.style.transition;
+                card.style.transition = 'none';
+                card.classList.add('capturing-card');
 
                 try {
+                    await document.fonts.ready;
+                    var canvas = await window.html2canvas(card, {
+                        backgroundColor: null,
+                        scale: Math.max(2, window.devicePixelRatio || 1),
+                        useCORS: true,
+                        allowTaint: false,
+                        imageTimeout: 2000,
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: -window.scrollY,
+                        windowWidth: document.documentElement.scrollWidth,
+                        windowHeight: document.documentElement.scrollHeight
+                    });
                     var link = document.createElement('a');
                     link.download = member.registrationCode.toLowerCase() + '-riesm-card.png';
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 } catch (error) {
-                    alert('画像の生成に失敗しました。ブラウザを変えてもう一度お試しください。');
+                    console.error(error);
+                    alert('画像の生成に失敗しました。少し待ってからもう一度お試しください。');
+                } finally {
+                    card.classList.remove('capturing-card');
+                    card.style.transition = originalTransition;
                 }
             }
 
@@ -413,10 +342,6 @@
                                     '<p class="text-[10px] font-bold text-stone-400">所属・活動名</p>' +
                                     '<p class="mt-1 text-sm font-bold text-stone-700">' + organization + '</p>' +
                                 '</div>' +
-                            '</div>' +
-                            '<div class="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">' +
-                                '<p class="text-[10px] font-bold tracking-[0.18em] text-emerald-700">COMMENT</p>' +
-                                '<p class="mt-2 text-xs leading-6 text-stone-700">' + escapeHtml(clampText(member.comment || 'コメント準備中です。', 72)) + '</p>' +
                             '</div>' +
                             '<div class="mt-auto flex items-end justify-between gap-4 border-t border-stone-200 pt-5">' +
                                 '<div>' +
