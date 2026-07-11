@@ -88,21 +88,25 @@
         .toUpperCase();
     }
 
+    function getWorkshopLicenseAlias(value) {
+      const code = normalizeWorkshopLicenseCode(value);
+      const match = code.match(/(?:[A-Z]+)-?(\d{3,4})|\b(\d{3,4})\b/i);
+      return match ? match[1] || match[2] : '';
+    }
+
+    function getWorkshopLicenseAliasKey(value) {
+      const alias = getWorkshopLicenseAlias(value);
+      return alias ? String(Number(alias)) : '';
+    }
+
     function getWorkshopLicenseRequestCode() {
       const params = new URLSearchParams(window.location.search);
-      const rawAmbValue = params.get('amb');
-      if (/^\d{3}$/.test(String(rawAmbValue || '').trim())) {
-        return 'AMB-' + String(rawAmbValue).trim();
-      }
       const rawCode = params.get('id') ||
         params.get('code') ||
-        rawAmbValue ||
+        params.get('amb') ||
         Array.from(params.keys())[0] ||
         window.location.hash;
-      const code = normalizeWorkshopLicenseCode(rawCode);
-      return /^(CORE|NAV|WORK|AMB|R)-?\d{3}$/i.test(code)
-        ? code.replace(/^(CORE|NAV|WORK|AMB|R)(\d)/i, '$1-$2').replace(/^R-/i, 'AMB-')
-        : '';
+      return getWorkshopLicenseAlias(rawCode);
     }
 
     function getWorkshopLicenseSource(member) {
@@ -118,7 +122,7 @@
 
     function getWorkshopLicenseCode(member) {
       const source = getWorkshopLicenseSource(member);
-      const match = source.match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+      const match = source.match(/\b([A-Z]+)-?(\d{3,4})\b/i);
       if (!match) return '';
       const prefix = match[1].toUpperCase() === 'R' ? 'AMB' : match[1].toUpperCase();
       return prefix + '-' + match[2];
@@ -128,7 +132,7 @@
       const requestedCode = getWorkshopLicenseRequestCode();
       if (!requestedCode) return null;
       const members = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
-      return members.find((member) => normalizeWorkshopLicenseCode(getWorkshopLicenseCode(member)) === requestedCode) || null;
+      return members.find((member) => getWorkshopLicenseAliasKey(getWorkshopLicenseCode(member)) === getWorkshopLicenseAliasKey(requestedCode)) || null;
     }
 
     function getWorkshopLicenseAvatar(member) {
@@ -142,19 +146,26 @@
 
     function getWorkshopLicenseScopeHtml(code) {
       const prefix = String(code || '').split('-')[0].toUpperCase();
+      const chip = (text, tone) => '<span class="inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black ' + tone + '">' + text + '</span>';
       if (prefix === 'AMB') {
-        return '<span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-900/20 bg-emerald-50/90 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-900">✓無償実施</span><span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-stone-300/70 bg-white/70 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-stone-500">×有償実施</span>';
+        return chip('✓無償のみ', 'border-emerald-900/20 bg-emerald-50/90 text-emerald-900') + chip('×有償', 'border-stone-300/70 bg-white/70 text-stone-500');
       }
-      return '<span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-900/20 bg-emerald-50/90 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-900">実施範囲確認</span>';
+      if (prefix === 'RWN') {
+        return chip('✓有償WS', 'border-orange-900/20 bg-orange-50/90 text-orange-900') + chip('×コックピット', 'border-stone-300/70 bg-white/70 text-stone-500');
+      }
+      if (prefix === 'RCN' || prefix === 'RCC') {
+        return chip('✓有償WS', 'border-sky-900/20 bg-sky-50/90 text-sky-900') + chip('✓有償セッション', 'border-sky-900/20 bg-sky-50/90 text-sky-900');
+      }
+      return chip('実施範囲確認', 'border-emerald-900/20 bg-emerald-50/90 text-emerald-900');
     }
 
     function renderWorkshopLicenseCard() {
       const member = getWorkshopLicenseMember();
       if (!member) return '';
       const code = getWorkshopLicenseCode(member);
-      const href = '../touroku.html?' + encodeURIComponent(code.toLowerCase());
+      const href = '../touroku.html?' + encodeURIComponent(getWorkshopLicenseAlias(code));
       const label = String(member.certification || '🌈RIESM™認定カード').replace(/\s*\/\s*/g, ' / ');
-      const shortLabel = label.replace(/\s*\/\s*AMB-\d{3}/i, '');
+      const shortLabel = label.replace(/\s*\/\s*[A-Z]+-\d{3,4}/i, '');
       return `
                 <a href="${href}" target="_blank" rel="noopener noreferrer" class="workshop-license-card block mb-2 sm:mb-3 rounded-md border border-emerald-900/20 bg-[#fff8ea]/90 px-3 py-2 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#fffdf4] hover:shadow-md" style="background-image: ${PARCHMENT_TEXTURE}">
                   <div class="flex items-center gap-3">
