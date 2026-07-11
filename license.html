@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIESM™ 認定カード - 合同会社ninin</title>
+    <script>
+        (function () {
+            var targetLicensePath = 'touroku.html' + (window.location.search || window.location.hash || '');
+            window.location.replace(targetLicensePath);
+        })();
+    </script>
     <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
     <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -160,19 +166,19 @@
             }
 
             function getRegistrationNumber(member) {
-                var match = getCertificationSource(member).match(/(?:CORE|NAV|WORK|AMB|R)-?(\d{3})|\b(\d{3})\b/i);
+                var match = getCertificationSource(member).match(/(?:[A-Z]{1,4})-?(\d{3,4})|\b(\d{3,4})\b/i);
                 return match ? Number(match[1] || match[2] || 0) : 0;
             }
 
             function getRegistrationCode(member) {
                 var type = getCertificationType(member);
-                var match = getCertificationSource(member).match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+                var match = getCertificationSource(member).match(/\b([A-Z]{1,4})-?(\d{3,4})\b/i);
                 if (match) {
                     var prefix = match[1].toUpperCase() === 'R' ? certTypes[type].prefix : match[1].toUpperCase();
                     return prefix + '-' + match[2];
                 }
                 var number = getRegistrationNumber(member);
-                return number > 0 ? certTypes[type].prefix + '-' + String(number).padStart(3, '0') : '';
+                return number > 0 ? certTypes[type].prefix + '-' + String(number).padStart(4, '0') : '';
             }
 
             function getCertifiedMembers() {
@@ -376,7 +382,7 @@
                         message +
                         '<div class="grid gap-3">' +
                             certifiedMembers.map(function (member) {
-                                return '<a href="license.html?' + encodeURIComponent(member.registrationCode.toLowerCase()) + '" class="flex items-center justify-between gap-4 rounded-2xl border border-stone-100 bg-stone-50 px-4 py-3 transition-colors hover:bg-emerald-50">' +
+                                return '<a href="license.html?' + encodeURIComponent(getRegistrationAlias(member.registrationCode)) + '" class="flex items-center justify-between gap-4 rounded-2xl border border-stone-100 bg-stone-50 px-4 py-3 transition-colors hover:bg-emerald-50">' +
                                     '<span><span class="block font-black ' + member.certConfig.color + '">' + escapeHtml(member.registrationCode) + '</span><span class="text-sm font-bold text-stone-700">' + escapeHtml(member.name) + '</span></span>' +
                                     '<span class="text-sm font-bold text-stone-400">表示</span>' +
                                 '</a>';
@@ -388,7 +394,7 @@
             var certifiedMembers = getCertifiedMembers();
             var requestedCode = getRequestCode();
             var member = certifiedMembers.find(function (item) {
-                return normalizeCode(item.registrationCode) === requestedCode;
+                return getRegistrationAliasKey(item.registrationCode) === getRegistrationAliasKey(requestedCode);
             });
 
             if (member) {
