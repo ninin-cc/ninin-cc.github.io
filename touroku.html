@@ -83,6 +83,21 @@
                 radial-gradient(circle at center, rgba(255,255,255,0.28), transparent 36%),
                 linear-gradient(135deg, #d7ad45, #8f6419);
         }
+        .license-card-content {
+            position: relative;
+            padding-bottom: 7.1rem;
+        }
+        .license-card-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .license-issued-row {
+            margin-top: 0.72rem;
+            padding-top: 0.78rem;
+            border-top: 1px solid rgb(231 229 228);
+        }
         .license-social-links {
             display: flex;
             align-items: center;
@@ -382,8 +397,16 @@
                 padding: 0.14rem 0.38rem;
                 font-size: 0.5rem;
             }
-            .license-card .mt-auto.pt-5 {
-                padding-top: 0.58rem !important;
+            .license-card-content {
+                padding-bottom: 5.75rem;
+            }
+            .license-card-bottom {
+                bottom: 0;
+            }
+            .license-issued-row {
+                margin-top: 0.45rem !important;
+                padding-top: 0.52rem !important;
+                gap: 0.5rem !important;
             }
             .license-social-links {
                 gap: 0.28rem;
@@ -465,8 +488,12 @@
             .license-workshop-app-title {
                 font-size: 0.72rem;
             }
-            .license-card .mt-auto.pt-5 {
-                padding-top: 0.38rem !important;
+            .license-card-content {
+                padding-bottom: 4.95rem;
+            }
+            .license-issued-row {
+                margin-top: 0.34rem !important;
+                padding-top: 0.42rem !important;
             }
             .license-social-link {
                 width: 1.24rem;
@@ -1002,7 +1029,7 @@
                     '<main class="flex w-full max-w-5xl flex-1 flex-col items-center justify-center">' +
                         '<section class="w-full">' +
                             '<article id="business-card" class="license-card mx-auto rounded-[30px] border border-amber-200/70 p-7 shadow-2xl shadow-stone-300/40">' +
-                                '<div class="relative z-10 flex h-full flex-col">' +
+                                '<div class="license-card-content relative z-10 h-full">' +
                                     '<div>' +
                                         '<p class="text-[10px] font-bold uppercase tracking-[0.32em] text-stone-400">RIESM™ Certification Card</p>' +
                                         '<div class="mt-5 flex items-start justify-between gap-3">' +
@@ -1031,9 +1058,9 @@
                                             '<p class="license-workshop-app-title"><span>🌈RIESM™mini</span><span class="license-workshop-app-open">開く →</span></p>' +
                                         '</a>' +
                                     '</div>' +
-                                    '<div class="mt-auto pt-5">' +
+                                    '<div class="license-card-bottom">' +
                                         renderLicenseSocialLinks(member) +
-                                        '<div class="mt-3 flex items-end justify-between gap-4 border-t border-stone-200 pt-4">' +
+                                        '<div class="license-issued-row flex items-end justify-between gap-4">' +
                                             '<div>' +
                                                 '<p class="text-[10px] font-bold text-stone-400">Issued by</p>' +
                                                 '<p class="mt-1 text-xs font-bold leading-relaxed text-stone-700">合同会社ninin consulting ＆ counseling</p>' +
