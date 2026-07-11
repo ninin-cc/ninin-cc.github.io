@@ -23,6 +23,7 @@
   <title>RIESM™ mini</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../js/linkdata.js"></script>
   
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -143,6 +144,106 @@
     // ==========================================
     // データ定義 (全45問維持)
     // ==========================================
+    function normalizeWorkshopLicenseCode(value) {
+      return String(value || '')
+        .trim()
+        .replace(/^[?#]/, '')
+        .split('&')[0]
+        .split('=')[0]
+        .replace(/_/g, '-')
+        .toUpperCase();
+    }
+
+    function getWorkshopLicenseRequestCode() {
+      const params = new URLSearchParams(window.location.search);
+      const rawAmbValue = params.get('amb');
+      if (/^\d{3}$/.test(String(rawAmbValue || '').trim())) {
+        return 'AMB-' + String(rawAmbValue).trim();
+      }
+      const rawCode = params.get('id') ||
+        params.get('code') ||
+        rawAmbValue ||
+        Array.from(params.keys())[0] ||
+        window.location.hash;
+      const code = normalizeWorkshopLicenseCode(rawCode);
+      return /^(CORE|NAV|WORK|AMB|R)-?\d{3}$/i.test(code)
+        ? code.replace(/^(CORE|NAV|WORK|AMB|R)(\d)/i, '$1-$2').replace(/^R-/i, 'AMB-')
+        : '';
+    }
+
+    function getWorkshopLicenseSource(member) {
+      return [
+        member && member.certification,
+        member && member.certificationType,
+        member && member.certificationNumber,
+        member && member.riesmNumber,
+        member && member.riesmRole,
+        member && member.id
+      ].filter(Boolean).join(' ');
+    }
+
+    function getWorkshopLicenseCode(member) {
+      const source = getWorkshopLicenseSource(member);
+      const match = source.match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+      if (!match) return '';
+      const prefix = match[1].toUpperCase() === 'R' ? 'AMB' : match[1].toUpperCase();
+      return prefix + '-' + match[2];
+    }
+
+    function getWorkshopLicenseMember() {
+      const requestedCode = getWorkshopLicenseRequestCode();
+      if (!requestedCode) return null;
+      const members = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+      return members.find((member) => normalizeWorkshopLicenseCode(getWorkshopLicenseCode(member)) === requestedCode) || null;
+    }
+
+    function getWorkshopLicenseAvatar(member) {
+      if (member && member.avatar && member.avatar.src) {
+        const src = String(member.avatar.src).replace(/^\.\//, '../');
+        return <img src={src} alt={member.name + 'のプロフィール画像'} className="w-9 h-9 rounded-full object-cover border border-indigo-900/10 bg-white" />;
+      }
+      const text = member && member.avatar && member.avatar.text ? member.avatar.text : String((member && member.name) || '?').slice(0, 1);
+      return <div className="w-9 h-9 rounded-full border border-indigo-900/10 bg-white flex items-center justify-center text-indigo-800 font-black text-sm">{text}</div>;
+    }
+
+    function getWorkshopLicenseScope(code) {
+      const prefix = String(code || '').split('-')[0].toUpperCase();
+      if (prefix === 'AMB') {
+        return (
+          <>
+            <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-900/15 bg-emerald-50 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-800">✓無償実施</span>
+            <span className="inline-flex shrink-0 items-center rounded-full border border-slate-200 bg-white/80 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-slate-500">×有償実施</span>
+          </>
+        );
+      }
+      return <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-900/15 bg-emerald-50 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-800">実施範囲確認</span>;
+    }
+
+    function WorkshopLicenseCard() {
+      const member = getWorkshopLicenseMember();
+      if (!member) return null;
+      const code = getWorkshopLicenseCode(member);
+      const href = '../touroku.html?' + encodeURIComponent(code.toLowerCase());
+      const label = String(member.certification || '🌈RIESM™認定カード').replace(/\s*\/\s*/g, ' / ');
+      const shortLabel = label.replace(/\s*\/\s*AMB-\d{3}/i, '');
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="mt-3 block rounded-2xl border border-indigo-100 bg-white/90 px-3 py-2.5 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md">
+          <div className="flex items-center gap-3">
+            {getWorkshopLicenseAvatar(member)}
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] sm:text-[10px] font-black tracking-[0.16em] text-indigo-900/55">RIESM™ mini LICENSE</p>
+              <p className="mt-0.5 truncate text-xs sm:text-sm font-black text-slate-800">{member.name}</p>
+              <p className="mt-0.5 flex min-w-0 items-center gap-1.5 overflow-hidden text-[10px] sm:text-[11px] font-bold leading-snug text-indigo-900">
+                <span className="min-w-0 truncate">{shortLabel}</span>
+                {getWorkshopLicenseScope(code)}
+              </p>
+            </div>
+            <span className="shrink-0 rounded-full border border-indigo-900/10 bg-indigo-50 px-2 py-1 text-[9px] font-black text-indigo-900">{code}</span>
+          </div>
+        </a>
+      );
+    }
+
     const questionsPool = [
       { id: 1, group: 'A', text: "旅行の準備をする時、あなたは…", options: [ { text: "気分で決めたい", type: "W" }, { text: "事前にリストアップする", type: "K" }] },
       { id: 2, group: 'A', text: "新しいプロジェクトが立ち上がりました。最初の関心は？", options: [ { text: "新しい可能性や面白さ", type: "W" }, { text: "目的やスケジュールなどの手順", type: "K" }] },
@@ -579,6 +680,7 @@
                 }`}>
                   <span>いまの自分を観る</span>
                 </button>
+                <WorkshopLicenseCard />
               </div>
 
               {/* インフォメーションエリア */}
