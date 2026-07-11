@@ -2,6 +2,21 @@
 // 新しいメンバーを追加する場合は、この配列の中に { ... } のブロックを追加してください。
 const linkData = [
     {
+        name: "てつお",
+        certification: "🌈RIESM™認定ナビゲーター/RCN-0000",
+        location: "東京/オンライン",
+        workshopCount: 0,
+        avatar: { src: "./img/link/teten2.jpg" },
+        title: "RIESM™開発者",
+        tags: ["tabelab", "riesm", "shinri"],
+        desc: "私たちは、自分らしく生きていける社会 / 心理支援を「日本のあたり前」にしてゆきます\n合同会社ninin consulting ＆ counseling",
+        links: {
+            x: "https://x.com/ninin2025",
+            linkedin: "https://www.linkedin.com/in/ninin2025/",
+            note: "https://note.com/ninin2025/membership/join/"
+        }
+    },
+    {
         name: "mango_pudding03",
         avatar: { src: "./img/link/mango.jpg" },
         title: "キャリア相談 / 40代からの選び直し",
@@ -25,14 +40,17 @@ const linkData = [
     },
     {
         name: "けー。お花カウンセリング",
-        certification: "🌈RIESM™アンバサダー / AMB-001",
+        certification: "🌈RIESM™認定ナビゲーター/RCN-0001",
         location: "オンライン中心",
         workshopCount: 0,
         avatar: { src: "./img/link/kei.png" },
         title: "カウンセラー / フラワーカウンセリング",
         tags: ["tabelab", "shinri", "riesm"],
         desc: "カウンセラーの「けー。」です🌟 実は、華道の師範💛🌸 心のケアって大切。お花を取り入れた「フラワーカウンセリング」を考案中🤔 ninin2024でアカウントを持っていて、現役のカウンセラーもやっています。365日の花言葉【お花_ 癒しの心理学】も発信しています。",
-        links: { note: "https://note.com/ninin2024/n/n4d4751498466" }
+        links: { 
+            note: "https://note.com/ninin2024/n/n4d4751498466",
+            x: "https://x.com/ninin2024"
+        }
     },
     {
         name: "こぐみ",
@@ -57,7 +75,7 @@ const linkData = [
     },
     {
         name: "ころころまころん＠心理福祉",
-        certification: "🌈RIESM™アンバサダー / AMB-004",
+        certification: "🌈RIESM™アンバサダー / AMB-0004",
         location: "東京都",
         workshopCount: 0,
         avatar: { src: "./img/link/maron.webp" },
@@ -70,7 +88,7 @@ const linkData = [
     },
     {
         name: "だーやま｜書いて、語るひと",
-        certification: "🌈RIESM™アンバサダー / AMB-005",
+        certification: "🌈RIESM™アンバサダー / AMB-0005",
         location: "オンライン中心",
         organization: "オフィスカタライバ",
         workshopCount: 0,
@@ -87,7 +105,7 @@ const linkData = [
     },
     {
         name: "れい",
-        certification: "🌈RIESM™アンバサダー / AMB-002",
+        certification: "🌈RIESM™アンバサダー / AMB-9002",
         location: "オンライン中心",
         workshopCount: 0,
         avatar: { text: "れ", color: "trust" },
@@ -97,7 +115,7 @@ const linkData = [
     },
     {
         name: "りんこ",
-        certification: "🌈RIESM™アンバサダー / AMB-003",
+        certification: "🌈RIESM™アンバサダー / AMB-9003",
         location: "広島県",
         workshopCount: 0,
         avatar: { text: "り", color: "warm" },
@@ -152,6 +170,43 @@ const linkData = [
     }
 ];
 
+// RIESM™認定種別の基礎情報です。
+// URLエイリアスは prefix を除いた数字部分のみを使います。
+const riesmCertificationTypes = {
+    AMB: {
+        label: "RIESM™アンバサダー",
+        shortLabel: "アンバサダー",
+        scope: "無償実施のみ可",
+        canFreeWorkshop: true,
+        canPaidWorkshop: false,
+        canPaidCockpitSession: false
+    },
+    RWN: {
+        label: "RIESM™認定ワークナビゲーター",
+        shortLabel: "認定ワーク",
+        scope: "ワークショップの有償実施が可",
+        canFreeWorkshop: true,
+        canPaidWorkshop: true,
+        canPaidCockpitSession: false
+    },
+    RCN: {
+        label: "RIESM™認定ナビゲーター",
+        shortLabel: "認定ナビ",
+        scope: "ワークショップの有償実施及びRIESM™コックピットを用いた有償セッションやコーチング、研修の実施が可",
+        canFreeWorkshop: true,
+        canPaidWorkshop: true,
+        canPaidCockpitSession: true
+    },
+    RCC: {
+        label: "RIESM™認定コアナビゲーター",
+        shortLabel: "認定コア",
+        scope: "ワークショップの有償実施及びRIESM™コックピットを用いた有償セッションやコーチング、研修の実施が可",
+        canFreeWorkshop: true,
+        canPaidWorkshop: true,
+        canPaidCockpitSession: true
+    }
+};
+
 // 共通データの公開口です。
 // 各ページはここから必要な項目だけを選び、ページごとの表現で描画します。
 const linkDataMeta = {
@@ -161,9 +216,11 @@ const linkDataMeta = {
         riesm: { label: "🌈RIESM™", href: "https://ninin-cc.github.io/guide.html" },
         shinri: { label: "心理支援者の集い" }
     },
+    certificationTypes: riesmCertificationTypes,
     linkTypes: ["note", "web", "x", "line", "linkedin", "instagram"]
 };
 
 window.NININ_LINK_DATA = linkData;
 window.NININ_LINK_META = linkDataMeta;
+window.NININ_RIESM_CERTIFICATION_TYPES = riesmCertificationTypes;
 window.linkData = linkData;
