@@ -154,21 +154,25 @@
         .toUpperCase();
     }
 
+    function getWorkshopLicenseAlias(value) {
+      const code = normalizeWorkshopLicenseCode(value);
+      const match = code.match(/(?:[A-Z]+)-?(\d{3,4})|\b(\d{3,4})\b/i);
+      return match ? match[1] || match[2] : '';
+    }
+
+    function getWorkshopLicenseAliasKey(value) {
+      const alias = getWorkshopLicenseAlias(value);
+      return alias ? String(Number(alias)) : '';
+    }
+
     function getWorkshopLicenseRequestCode() {
       const params = new URLSearchParams(window.location.search);
-      const rawAmbValue = params.get('amb');
-      if (/^\d{3}$/.test(String(rawAmbValue || '').trim())) {
-        return 'AMB-' + String(rawAmbValue).trim();
-      }
       const rawCode = params.get('id') ||
         params.get('code') ||
-        rawAmbValue ||
+        params.get('amb') ||
         Array.from(params.keys())[0] ||
         window.location.hash;
-      const code = normalizeWorkshopLicenseCode(rawCode);
-      return /^(CORE|NAV|WORK|AMB|R)-?\d{3}$/i.test(code)
-        ? code.replace(/^(CORE|NAV|WORK|AMB|R)(\d)/i, '$1-$2').replace(/^R-/i, 'AMB-')
-        : '';
+      return getWorkshopLicenseAlias(rawCode);
     }
 
     function getWorkshopLicenseSource(member) {
@@ -184,7 +188,7 @@
 
     function getWorkshopLicenseCode(member) {
       const source = getWorkshopLicenseSource(member);
-      const match = source.match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+      const match = source.match(/\b([A-Z]+)-?(\d{3,4})\b/i);
       if (!match) return '';
       const prefix = match[1].toUpperCase() === 'R' ? 'AMB' : match[1].toUpperCase();
       return prefix + '-' + match[2];
@@ -194,7 +198,7 @@
       const requestedCode = getWorkshopLicenseRequestCode();
       if (!requestedCode) return null;
       const members = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
-      return members.find((member) => normalizeWorkshopLicenseCode(getWorkshopLicenseCode(member)) === requestedCode) || null;
+      return members.find((member) => getWorkshopLicenseAliasKey(getWorkshopLicenseCode(member)) === getWorkshopLicenseAliasKey(requestedCode)) || null;
     }
 
     function getWorkshopLicenseAvatar(member) {
@@ -206,26 +210,46 @@
       return <div className="w-9 h-9 rounded-full border border-indigo-900/10 bg-white flex items-center justify-center text-indigo-800 font-black text-sm">{text}</div>;
     }
 
+    function LicenseScopeChip({ children, tone }) {
+      return <span className={'inline-flex shrink-0 items-center rounded-full border px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black ' + tone}>{children}</span>;
+    }
+
     function getWorkshopLicenseScope(code) {
       const prefix = String(code || '').split('-')[0].toUpperCase();
       if (prefix === 'AMB') {
         return (
           <>
-            <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-900/15 bg-emerald-50 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-800">✓無償実施</span>
-            <span className="inline-flex shrink-0 items-center rounded-full border border-slate-200 bg-white/80 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-slate-500">×有償実施</span>
+            <LicenseScopeChip tone="border-emerald-900/15 bg-emerald-50 text-emerald-800">✓無償のみ</LicenseScopeChip>
+            <LicenseScopeChip tone="border-slate-200 bg-white/80 text-slate-500">×有償</LicenseScopeChip>
           </>
         );
       }
-      return <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-900/15 bg-emerald-50 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-800">実施範囲確認</span>;
+      if (prefix === 'RWN') {
+        return (
+          <>
+            <LicenseScopeChip tone="border-orange-900/15 bg-orange-50 text-orange-800">✓有償WS</LicenseScopeChip>
+            <LicenseScopeChip tone="border-slate-200 bg-white/80 text-slate-500">×コックピット</LicenseScopeChip>
+          </>
+        );
+      }
+      if (prefix === 'RCN' || prefix === 'RCC') {
+        return (
+          <>
+            <LicenseScopeChip tone="border-sky-900/15 bg-sky-50 text-sky-800">✓有償WS</LicenseScopeChip>
+            <LicenseScopeChip tone="border-sky-900/15 bg-sky-50 text-sky-800">✓有償セッション</LicenseScopeChip>
+          </>
+        );
+      }
+      return <LicenseScopeChip tone="border-emerald-900/15 bg-emerald-50 text-emerald-800">実施範囲確認</LicenseScopeChip>;
     }
 
     function WorkshopLicenseCard() {
       const member = getWorkshopLicenseMember();
       if (!member) return null;
       const code = getWorkshopLicenseCode(member);
-      const href = '../touroku.html?' + encodeURIComponent(code.toLowerCase());
+      const href = '../touroku.html?' + encodeURIComponent(getWorkshopLicenseAlias(code));
       const label = String(member.certification || '🌈RIESM™認定カード').replace(/\s*\/\s*/g, ' / ');
-      const shortLabel = label.replace(/\s*\/\s*AMB-\d{3}/i, '');
+      const shortLabel = label.replace(/\s*\/\s*[A-Z]+-\d{3,4}/i, '');
       return (
         <a href={href} target="_blank" rel="noopener noreferrer" className="mt-3 block rounded-2xl border border-indigo-100 bg-white/90 px-3 py-2.5 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md">
           <div className="flex items-center gap-3">
