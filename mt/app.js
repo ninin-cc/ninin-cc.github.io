@@ -69,6 +69,110 @@
     
     const CARD_BG_IMG = "https://ninin-cc.github.io/img/rt/card.jpg";
 
+    function escapeWorkshopLicenseHtml(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function normalizeWorkshopLicenseCode(value) {
+      return String(value || '')
+        .trim()
+        .replace(/^[?#]/, '')
+        .split('&')[0]
+        .split('=')[0]
+        .replace(/_/g, '-')
+        .toUpperCase();
+    }
+
+    function getWorkshopLicenseRequestCode() {
+      const params = new URLSearchParams(window.location.search);
+      const rawAmbValue = params.get('amb');
+      if (/^\d{3}$/.test(String(rawAmbValue || '').trim())) {
+        return 'AMB-' + String(rawAmbValue).trim();
+      }
+      const rawCode = params.get('id') ||
+        params.get('code') ||
+        rawAmbValue ||
+        Array.from(params.keys())[0] ||
+        window.location.hash;
+      const code = normalizeWorkshopLicenseCode(rawCode);
+      return /^(CORE|NAV|WORK|AMB|R)-?\d{3}$/i.test(code)
+        ? code.replace(/^(CORE|NAV|WORK|AMB|R)(\d)/i, '$1-$2').replace(/^R-/i, 'AMB-')
+        : '';
+    }
+
+    function getWorkshopLicenseSource(member) {
+      return [
+        member && member.certification,
+        member && member.certificationType,
+        member && member.certificationNumber,
+        member && member.riesmNumber,
+        member && member.riesmRole,
+        member && member.id
+      ].filter(Boolean).join(' ');
+    }
+
+    function getWorkshopLicenseCode(member) {
+      const source = getWorkshopLicenseSource(member);
+      const match = source.match(/\b(CORE|NAV|WORK|AMB|R)-?(\d{3})\b/i);
+      if (!match) return '';
+      const prefix = match[1].toUpperCase() === 'R' ? 'AMB' : match[1].toUpperCase();
+      return prefix + '-' + match[2];
+    }
+
+    function getWorkshopLicenseMember() {
+      const requestedCode = getWorkshopLicenseRequestCode();
+      if (!requestedCode) return null;
+      const members = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+      return members.find((member) => normalizeWorkshopLicenseCode(getWorkshopLicenseCode(member)) === requestedCode) || null;
+    }
+
+    function getWorkshopLicenseAvatar(member) {
+      if (member && member.avatar && member.avatar.src) {
+        const src = String(member.avatar.src).replace(/^\.\//, '../');
+        return '<img src="' + escapeWorkshopLicenseHtml(src) + '" alt="' + escapeWorkshopLicenseHtml(member.name) + 'のプロフィール画像" class="w-10 h-10 rounded-full object-cover border border-orange-900/20 bg-[#fff8ea]">';
+      }
+      const text = member && member.avatar && member.avatar.text ? member.avatar.text : String((member && member.name) || '?').slice(0, 1);
+      return '<div class="w-10 h-10 rounded-full border border-orange-900/20 bg-[#fff8ea] flex items-center justify-center text-orange-900 font-black text-base">' + escapeWorkshopLicenseHtml(text) + '</div>';
+    }
+
+    function getWorkshopLicenseScopeHtml(code) {
+      const prefix = String(code || '').split('-')[0].toUpperCase();
+      if (prefix === 'AMB') {
+        return '<span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-900/20 bg-emerald-50/90 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-900">✓無償実施</span><span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-stone-300/70 bg-white/70 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-stone-500">×有償実施</span>';
+      }
+      return '<span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-900/20 bg-emerald-50/90 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-black text-emerald-900">実施範囲確認</span>';
+    }
+
+    function renderWorkshopLicenseCard() {
+      const member = getWorkshopLicenseMember();
+      if (!member) return '';
+      const code = getWorkshopLicenseCode(member);
+      const href = '../touroku.html?' + encodeURIComponent(code.toLowerCase());
+      const label = String(member.certification || '🌈RIESM™認定カード').replace(/\s*\/\s*/g, ' / ');
+      const shortLabel = label.replace(/\s*\/\s*AMB-\d{3}/i, '');
+      return `
+                <a href="${href}" target="_blank" rel="noopener noreferrer" class="workshop-license-card block mb-2 sm:mb-3 rounded-md border border-emerald-900/20 bg-[#fff8ea]/90 px-3 py-2 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#fffdf4] hover:shadow-md" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div class="flex items-center gap-3">
+                    ${getWorkshopLicenseAvatar(member)}
+                    <div class="min-w-0 flex-1">
+                      <p class="text-[9px] sm:text-[10px] font-serif font-black tracking-[0.16em] text-emerald-900/70">RoleTRADE™ WORKSHOP LICENSE</p>
+                      <p class="mt-0.5 truncate text-xs sm:text-sm font-serif font-black text-stone-900">${escapeWorkshopLicenseHtml(member.name)}</p>
+                      <p class="mt-0.5 flex min-w-0 items-center gap-1.5 overflow-hidden text-[10px] sm:text-[11px] font-serif font-bold leading-snug text-emerald-900">
+                        <span class="min-w-0 truncate">${escapeWorkshopLicenseHtml(shortLabel)}</span>
+                        ${getWorkshopLicenseScopeHtml(code)}
+                      </p>
+                    </div>
+                    <span class="shrink-0 rounded-full border border-emerald-900/20 bg-white/70 px-2 py-1 text-[9px] font-serif font-black text-emerald-900">${escapeWorkshopLicenseHtml(code)}</span>
+                  </div>
+                </a>`;
+    }
+
+
     const BG_JUNBI_IMG = "https://ninin-cc.github.io/img/rt/junbi.jpg";
     const BG_TRADE_IMG = "https://ninin-cc.github.io/img/rt/bar.jpg"; 
     const BG_DOOR_IMG = "https://ninin-cc.github.io/img/rt/mon.jpg";
@@ -1030,6 +1134,8 @@
                   </span>
                 </button>
               </div>
+
+                ${renderWorkshopLicenseCard()}
 
                 <button data-action="toggle-trisetsu" class="flex items-center justify-between w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-[#f4ebd8]/90 hover:bg-[#e8dcc4] text-stone-800 font-serif font-bold text-xs sm:text-sm rounded-md border border-stone-400/50 shadow-sm transition-colors duration-300">
                   <div class="w-6 flex justify-start">
