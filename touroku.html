@@ -511,6 +511,51 @@
             }
         }
 
+        .license-card {
+            --license-card-x: 1.75rem;
+            --license-card-top: 1.55rem;
+            --license-card-bottom: 1.35rem;
+            --license-bottom-space: 7.25rem;
+            padding: 0 !important;
+        }
+        .license-card-content {
+            position: absolute !important;
+            z-index: 10;
+            top: var(--license-card-top);
+            right: var(--license-card-x);
+            bottom: var(--license-bottom-space);
+            left: var(--license-card-x);
+            height: auto !important;
+            min-height: 0;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .license-card-bottom {
+            position: absolute !important;
+            z-index: 20;
+            right: var(--license-card-x);
+            bottom: var(--license-card-bottom);
+            left: var(--license-card-x);
+        }
+
+        /* final two-layer card mobile variables */
+        @media (max-width: 480px) {
+            .license-card {
+                --license-card-x: 1rem;
+                --license-card-top: 1rem;
+                --license-card-bottom: 0.9rem;
+                --license-bottom-space: 5.85rem;
+            }
+        }
+        @media (max-width: 390px) {
+            .license-card {
+                --license-card-x: 0.86rem;
+                --license-card-top: 0.86rem;
+                --license-card-bottom: 0.78rem;
+                --license-bottom-space: 5.05rem;
+            }
+        }
+
         @media print {
             body { background: #fff; }
             .no-print { display: none !important; }
@@ -1058,7 +1103,8 @@
                                             '<p class="license-workshop-app-title"><span>🌈RIESM™mini</span><span class="license-workshop-app-open">開く →</span></p>' +
                                         '</a>' +
                                     '</div>' +
-                                    '<div class="license-card-bottom">' +
+                                '</div>' +
+                                '<div class="license-card-bottom">' +
                                         renderLicenseSocialLinks(member) +
                                         '<div class="license-issued-row flex items-end justify-between gap-4">' +
                                             '<div>' +
@@ -1068,7 +1114,6 @@
                                             '<div class="seal flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full text-center text-[9px] font-black leading-tight text-white shadow-md">ninin<br>RIESM</div>' +
                                         '</div>' +
                                     '</div>' +
-                                '</div>' +
                             '</article>' +
                             '<section class="mx-auto mt-5 w-full max-w-xl rounded-3xl border border-stone-200 bg-white/75 p-5 text-sm leading-7 text-stone-600 shadow-sm">' +
                                 '<p class="font-bold text-stone-700">活動範囲</p>' +
