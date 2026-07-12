@@ -1118,8 +1118,17 @@
                             '<section class="mx-auto mt-5 w-full max-w-xl rounded-3xl border border-stone-200 bg-white/75 p-5 text-sm leading-7 text-stone-600 shadow-sm">' +
                                 '<p class="font-bold text-stone-700">活動範囲</p>' +
                                 '<p class="mt-1">' + escapeHtml(getLicenseScopeText(member)) + '</p>' +
-                                '<p class="mt-4 font-bold text-stone-700">コメント全文</p>' +
-                                '<p class="mt-1 whitespace-pre-wrap">' + escapeHtml(member.comment || 'コメント準備中です。') + '</p>' +
+                                '<p class="mt-4 font-bold text-stone-700">ひとこと</p>' +
+                                '<p class="mt-1 whitespace-pre-wrap">' + escapeHtml(member.comment || 'コメント準備中です。') + '</p>' +                            '</section>' +
+                            '<section class="no-print mx-auto mt-4 w-full max-w-xl rounded-3xl border border-emerald-100 bg-emerald-50/75 p-5 text-left text-sm leading-7 text-emerald-950 shadow-sm">' +
+                                '<p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700/70">Resource Room</p>' +
+                                '<div class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">' +
+                                    '<div>' +
+                                        '<p class="text-base font-black text-emerald-950">RIESM™資料室</p>' +
+                                        '<p class="mt-1 text-xs font-bold leading-relaxed text-emerald-900/75">ガイドブックやテキスト、イベント開催時のフライヤーの例などを載せておく資料室です。</p>' +
+                                    '</div>' +
+                                    '<a href="./guide.html" class="inline-flex shrink-0 items-center justify-center rounded-full bg-emerald-700 px-5 py-2 text-sm font-black text-white shadow-sm transition-colors hover:bg-emerald-600">資料室を開く →</a>' +
+                                '</div>' +
                             '</section>' +
                             '<div class="no-print mt-6 flex flex-wrap justify-center gap-3">' +
                                 '<button type="button" onclick="downloadCardImage(window.currentLicenseMember)" class="rounded-full bg-emerald-700 px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-emerald-600">画像DL</button>' +
