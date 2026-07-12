@@ -61,7 +61,7 @@
     }
 
     function getTravelerOfferCue(voice, offerCount) {
-      const offerLabel = offerCount >= 3 ? '三つ' : (offerCount === 2 ? '二つ' : '一枚');
+      const offerLabel = offerCount >= 4 ? '四つ' : (offerCount === 3 ? '三つ' : (offerCount === 2 ? '二つ' : '一枚'));
       const isMultiCardOffer = offerCount > 1;
       if (voice === 'youngFemale') {
         return isMultiCardOffer

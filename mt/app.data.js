@@ -126,8 +126,28 @@
     };
     const REQUESTED_HAND_TRAVELER_ROUND = 5;
 
+    function getActiveJourneyConfig() {
+      const mode = window.ROLETRADE_ACTIVE_JOURNEY || 'first';
+      if (mode !== 'second') return null;
+      return window.ROLETRADE_SECOND_CONFIG || null;
+    }
+
     function getTravelerOfferCount(round) {
+      const journeyConfig = getActiveJourneyConfig();
+      if (journeyConfig && journeyConfig.travelerOfferCounts && journeyConfig.travelerOfferCounts[round]) {
+        return journeyConfig.travelerOfferCounts[round];
+      }
       return TRAVELER_OFFER_COUNTS[round] || 1;
+    }
+
+    function getTotalRounds() {
+      const journeyConfig = getActiveJourneyConfig();
+      return journeyConfig && journeyConfig.totalRounds ? journeyConfig.totalRounds : TOTAL_ROUNDS;
+    }
+
+    function getFinalShopRound() {
+      const journeyConfig = getActiveJourneyConfig();
+      return journeyConfig && journeyConfig.finalShopRound ? journeyConfig.finalShopRound : FINAL_SHOP_ROUND;
     }
 
     function isTwoCardTravelerRound(round) {
@@ -135,9 +155,18 @@
     }
 
     function isRequestedHandTravelerRound(round) {
+      const journeyConfig = getActiveJourneyConfig();
+      if (journeyConfig && journeyConfig.requestedHandTravelerRound) {
+        return round === journeyConfig.requestedHandTravelerRound;
+      }
       return round === REQUESTED_HAND_TRAVELER_ROUND;
     }
 
+    function isForcedHandTravelerRound(round) {
+      const journeyConfig = getActiveJourneyConfig();
+      return !!(journeyConfig && journeyConfig.forcedHandTravelerRound && round === journeyConfig.forcedHandTravelerRound);
+    }
+
     function isFinalShopRound(round) {
-      return round === FINAL_SHOP_ROUND;
+      return round === getFinalShopRound();
     }

@@ -6,9 +6,7 @@ window.ROLETRADE_COPY = {
     // Page 2: リフレムの導入
     rulesGuideScreens: [
       [
-        '<p class="roletrade-opening-statement">人は役割を通じて世界と接し、</p>',
-        '<p class="roletrade-opening-statement">その役割の引き受け方を変えることで、</p>',
-        '<p class="roletrade-opening-statement">世界との関わり方を変えることができる。</p>',
+        '<div class="roletrade-opening-statement"><p>人は役割を通じて世界と接し、</p><p>その役割の引き受け方を変えることで、</p><p>世界との関わり方を変えることができる。</p></div>',
         '<div class="roletrade-opening-top-copy"><p class="roletrade-opening-top-lead">ここはメンテーリア。<br>役割と物語が、人の未来を少しだけ変える世界。</p><p>あなたは今、これまでの記憶と経験を持ったまま、<br>もう一度、<span class="roletrade-opening-top-emphasis">18歳の自分</span>として旅立とうとしています。</p><p>けれど、<span class="roletrade-opening-top-emphasis">持っていける役割は5つだけ</span>。<br>あなたは、どんな役割を未来の自分に託しますか？</p></div>'
       ],
       [

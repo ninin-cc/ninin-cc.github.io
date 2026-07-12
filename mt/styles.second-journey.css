@@ -1,0 +1,527 @@
+.second-journey-door-host {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10lh;
+  padding: 0 0 18px;
+  pointer-events: auto;
+}
+
+.second-journey-door {
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(74, 49, 28, 0.68);
+  font-family: serif;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-decoration: none;
+  transition: color .25s ease;
+  pointer-events: auto;
+}
+
+.second-journey-door:focus-visible {
+  color: rgba(74, 49, 28, 0.95);
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.traveler-offer-stack.traveler-offer-stack-double-pairs {
+  width: min(21rem, 78vw);
+  height: 8rem;
+  position: relative;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card {
+  transition: transform .42s ease, filter .35s ease, opacity .35s ease;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
+  transform: translateX(calc(-50% - 5.1rem)) rotate(-5deg);
+  z-index: 1;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
+  transform: translateX(calc(-50% - 3.2rem)) rotate(4deg);
+  z-index: 2;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
+  transform: translateX(calc(-50% + 3.2rem)) rotate(-4deg);
+  z-index: 1;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
+  transform: translateX(calc(-50% + 5.1rem)) rotate(5deg);
+  z-index: 2;
+}
+
+.traveler-offer-stack-double-pairs .traveler-offer-stack-card.is-selected {
+  filter: drop-shadow(0 8px 15px rgba(120, 53, 15, .32));
+  z-index: 6;
+}
+
+@media (min-width: 640px) {
+  .traveler-offer-stack.traveler-offer-stack-double-pairs {
+    width: 24rem;
+    height: 9.4rem;
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
+    transform: translateX(calc(-50% - 6.2rem)) rotate(-5deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
+    transform: translateX(calc(-50% - 3.9rem)) rotate(4deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
+    transform: translateX(calc(-50% + 3.9rem)) rotate(-4deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
+    transform: translateX(calc(-50% + 6.2rem)) rotate(5deg);
+  }
+}
+
+@media (max-width: 380px) {
+  .traveler-offer-stack.traveler-offer-stack-double-pairs {
+    width: min(18.5rem, 84vw);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
+    transform: translateX(calc(-50% - 4.5rem)) rotate(-5deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
+    transform: translateX(calc(-50% - 2.8rem)) rotate(4deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
+    transform: translateX(calc(-50% + 2.8rem)) rotate(-4deg);
+  }
+
+  .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
+    transform: translateX(calc(-50% + 4.5rem)) rotate(5deg);
+  }
+}
+
+.second-door-glyph {
+  display: block;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.second-door-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(26, 18, 11, 0.45);
+  pointer-events: auto;
+}
+
+.second-door-modal,
+.second-panel,
+.second-trade-panel {
+  background: rgba(244, 235, 216, 0.88);
+  border: 1px solid rgba(92, 59, 31, 0.32);
+  box-shadow: 0 18px 48px rgba(40, 24, 12, 0.26), inset 0 0 22px rgba(255,255,255,0.34);
+  backdrop-filter: blur(3px);
+}
+
+.second-door-modal {
+  width: min(420px, 100%);
+  border-radius: 10px;
+  padding: 24px;
+  font-family: serif;
+  text-align: center;
+}
+
+.second-door-input {
+  width: 100%;
+  margin: 16px 0 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(92, 59, 31, 0.42);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.72);
+  text-align: center;
+  font-size: 18px;
+}
+
+.second-door-error {
+  margin: 0 0 10px;
+  color: #8a2d17;
+  font-weight: 700;
+}
+
+.second-journey-stage {
+  min-height: calc(100vh - 32px);
+}
+
+.second-panel {
+  max-width: 920px;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: clamp(22px, 4vw, 48px);
+  font-family: serif;
+}
+
+.second-intro-panel {
+  margin-top: clamp(28px, 8vh, 90px);
+}
+
+.second-guide-panel {
+  position: relative;
+  min-height: min(620px, calc(100vh - 76px));
+  max-width: 980px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(92, 59, 31, 0.32);
+  border-radius: 8px;
+  background: rgba(244, 235, 216, 0.88);
+  box-shadow: 0 18px 48px rgba(40, 24, 12, 0.26), inset 0 0 22px rgba(255,255,255,0.34);
+  animation: secondSceneFade .8s ease both;
+}
+
+.second-guide-image {
+  position: absolute;
+  inset: 0;
+  background-image: url("./roletrade_ichimaie.jpg");
+  background-size: cover;
+  opacity: .72;
+}
+
+.second-guide-refrem .second-guide-image {
+  background-position: 42% center;
+}
+
+.second-guide-haruka .second-guide-image {
+  background-position: 58% center;
+}
+
+.second-guide-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(244,235,216,.96) 0%, rgba(244,235,216,.9) 42%, rgba(244,235,216,.38) 72%, rgba(244,235,216,.18) 100%);
+}
+
+.second-guide-haruka .second-guide-scrim {
+  background: linear-gradient(90deg, rgba(244,235,216,.96) 0%, rgba(244,235,216,.88) 45%, rgba(244,235,216,.32) 72%, rgba(244,235,216,.16) 100%);
+}
+
+.second-guide-copy {
+  position: relative;
+  z-index: 2;
+  width: min(520px, 68%);
+  padding: clamp(28px, 5vw, 58px);
+  font-family: serif;
+}
+
+.second-guide-copy h1 {
+  font-size: clamp(23px, 3vw, 34px);
+  font-weight: 900;
+  margin: 0 0 18px;
+}
+
+@keyframes secondSceneFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.second-eyebrow,
+.second-page-label {
+  color: rgba(79, 50, 28, 0.58);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.second-page-label {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.second-panel h1,
+.second-trade-panel h1 {
+  font-size: clamp(23px, 3vw, 34px);
+  font-weight: 900;
+  font-family: serif;
+  margin: 0 0 18px;
+}
+
+.second-panel p,
+.second-prose p,
+.second-speech {
+  font-size: clamp(16px, 1.8vw, 21px);
+  line-height: 1.9;
+  font-family: serif;
+  font-weight: 700;
+}
+
+.second-inline-next,
+.second-primary-btn,
+.second-secondary-btn,
+.second-ghost-btn {
+  min-height: 44px;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-family: serif;
+  font-weight: 900;
+  letter-spacing: .12em;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+.second-inline-next,
+.second-primary-btn {
+  margin-top: 18px;
+  background: #4a2615;
+  color: #fff8e8;
+  border: 1px solid rgba(25, 12, 6, 0.7);
+}
+
+.second-secondary-btn,
+.second-ghost-btn {
+  background: rgba(255,255,255,0.32);
+  color: #3b2719;
+  border: 1px solid rgba(92, 59, 31, 0.44);
+}
+
+.second-primary-btn:disabled {
+  opacity: .38;
+  pointer-events: none;
+}
+
+.second-inline-next:hover,
+.second-primary-btn:hover,
+.second-secondary-btn:hover,
+.second-ghost-btn:hover {
+  transform: translateY(-1px);
+}
+
+.second-action-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.second-hand-grid,
+.second-offer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 128px));
+  gap: 16px;
+  justify-content: center;
+  align-items: end;
+  margin: 16px 0 24px;
+}
+
+.second-hand-grid-initial,
+.second-result-grid {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 132px));
+}
+
+.second-offer-grid-five,
+.second-offer-grid-six {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 128px));
+}
+
+.second-journey-card.role-card {
+  margin: 0 auto;
+}
+
+.second-card-button {
+  display: block;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0 auto;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.second-card-button:focus-visible {
+  outline: 3px solid rgba(181, 110, 37, 0.8);
+  outline-offset: 4px;
+}
+
+.second-card-picked {
+  outline: 3px solid rgba(181, 110, 37, 0.72);
+  outline-offset: 3px;
+}
+
+.second-trade-layout {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.second-character-card {
+  position: sticky;
+  top: 18px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(244, 235, 216, 0.72);
+  border: 1px solid rgba(92, 59, 31, 0.28);
+  box-shadow: 0 10px 26px rgba(40, 24, 12, 0.22);
+}
+
+.second-character-portrait {
+  height: 170px;
+  background-size: 270%;
+  background-position: 11% 58%;
+}
+
+.second-refrem-portrait {
+  background-size: 245%;
+  background-position: 42% 45%;
+}
+
+.second-character-meta {
+  padding: 9px;
+  text-align: center;
+  font-family: serif;
+  font-weight: 900;
+  background: rgba(255, 251, 240, 0.74);
+}
+
+.second-trade-panel {
+  border-radius: 10px;
+  padding: clamp(18px, 3vw, 34px);
+  overflow: visible;
+}
+
+.second-trade-panel h2 {
+  margin: 18px 0 8px;
+  font-family: serif;
+  font-size: 14px;
+  letter-spacing: .18em;
+  color: rgba(74, 49, 28, 0.72);
+  text-align: center;
+}
+
+.second-speech {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  margin: 0 0 12px;
+}
+
+.second-pass-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(92, 59, 31, 0.18);
+  border-bottom: 1px solid rgba(92, 59, 31, 0.18);
+  padding: 12px 0;
+  margin: 14px 0;
+}
+
+.second-pass-status,
+.second-selection-hint,
+.second-selection-summary {
+  font-family: serif;
+  font-weight: 800;
+  color: rgba(58, 37, 23, 0.76);
+}
+
+.second-selection-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.second-forced-card {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.second-speech-forced {
+  font-size: clamp(18px, 2.2vw, 26px);
+}
+
+.second-final-focus {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 20px;
+  padding: 14px;
+  border: 1px solid rgba(92, 59, 31, 0.24);
+  background: rgba(255,255,255,0.28);
+}
+
+@media (max-width: 720px) {
+  .second-journey-stage {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .second-trade-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .second-character-card {
+    position: relative;
+    top: auto;
+    width: min(132px, 42vw);
+    margin: 0 auto;
+  }
+
+  .second-character-portrait {
+    height: 132px;
+  }
+
+  .second-trade-panel,
+  .second-panel {
+    padding: 16px;
+  }
+
+  .second-guide-panel {
+    min-height: min(620px, calc(100vh - 42px));
+  }
+
+  .second-guide-copy {
+    width: 76%;
+    padding: 20px;
+  }
+
+  .second-guide-refrem .second-guide-image {
+    background-position: 44% center;
+  }
+
+  .second-guide-haruka .second-guide-image {
+    background-position: 62% center;
+  }
+
+  .second-hand-grid,
+  .second-offer-grid,
+  .second-hand-grid-initial,
+  .second-result-grid {
+    grid-template-columns: repeat(2, minmax(96px, 118px));
+    gap: 12px;
+  }
+
+  .second-offer-grid-six {
+    grid-template-columns: repeat(2, minmax(96px, 118px));
+  }
+
+  .second-pass-area {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

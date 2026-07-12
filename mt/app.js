@@ -1,7 +1,8 @@
-    // --- 体験調整設定 ---
+﻿    // --- 体験調整設定 ---
     // experience.config.js を先に読み込み、細かな待ち時間やセリフをここから上書きできるようにする。
-    const ROLETRADE_EXPERIENCE = window.ROLETRADE_EXPERIENCE || {};
-    const EXPERIENCE_TIMING = Object.assign({
+const ROLETRADE_EXPERIENCE = window.ROLETRADE_EXPERIENCE || {};
+window.ROLETRADE_ACTIVE_JOURNEY = window.ROLETRADE_ACTIVE_JOURNEY || 'first';
+const EXPERIENCE_TIMING = Object.assign({
       stageFadeOutMs: 1200,
       initialCardGatherMs: 1600,
       initialCardReviewAdvanceMs: 420,
@@ -11,7 +12,30 @@
       resultDecisionCloseMs: 620,
       exchangeSettleMs: 600
     }, ROLETRADE_EXPERIENCE.timing || {});
-    const EXPERIENCE_COPY = ROLETRADE_EXPERIENCE.copy || {};
+const EXPERIENCE_COPY = ROLETRADE_EXPERIENCE.copy || {};
+const SECOND_JOURNEY_COPY = window.ROLETRADE_SECOND_COPY || {};
+
+function getActiveSecondJourneyConfig() {
+  return window.ROLETRADE_SECOND_CONFIG || {};
+}
+
+function isSecondJourneyState() {
+  return window.ROLETRADE_ACTIVE_JOURNEY === 'second';
+}
+
+function isForcedTakeRound(round) {
+  return typeof isForcedHandTravelerRound === 'function' && isForcedHandTravelerRound(round);
+}
+
+function isSecondDoubleTradeRound(round) {
+  const config = getActiveSecondJourneyConfig();
+  return window.ROLETRADE_ACTIVE_JOURNEY === 'second' && config.doubleTradeRound === round;
+}
+
+function getSecondDoubleTradeCount() {
+  const config = getActiveSecondJourneyConfig();
+  return config.doubleTradeCount || 2;
+}
         const IS_DEV_MODE = new URLSearchParams(window.location.search).get('dev') === '1';
         const DEV_INITIAL_PAGE = IS_DEV_MODE ? new URLSearchParams(window.location.search).get('page') : '';
     function getExperienceCopy(key, fallback) {
@@ -251,6 +275,7 @@
 
     // --- State ---
     let state = {
+      journeyMode: 'first',
       gameState: 'START',
       round: 1,
       shopRounds: [],
@@ -259,6 +284,8 @@
       deck: [],
       selectedHandCard: null,
       selectedShopCard: null,
+      selectedHandCards: [],
+      selectedShopCards: [],
       tradeOfferCard: null,
       tradeOfferCards: [],
       requestedHandCard: null,
@@ -286,6 +313,13 @@
       isTransitioning: false,
       showTutorial: true,
       tradeConfirmOpen: false,
+      requestedTradeConfirmOpen: false,
+      requestedRefuseConfirmOpen: false,
+      secondPassConfirmOpen: false,
+      secondPassUsed: false,
+      forcedTakePhase: '',
+      forcedReplacementCandidates: [],
+      forcedTakenCard: null,
       resultStep: 'SELECT_1',
       primaryCard: null,
       secondaryCard: null,
@@ -334,7 +368,7 @@
         if (isFinalShopRound(state.round)) {
           return (state.finalShopGuideStep || 0) < 3 ? '12-1' : '12-2';
         }
-        if (state.round >= 2 && state.round < FINAL_SHOP_ROUND) return String(5 + state.round); // R2=7 ... R5=10
+        if (state.round >= 2 && state.round < getFinalShopRound()) return String(5 + state.round); // R2=7 ... R5=10
       }
       if (state.gameState === 'LEAVE_SHOP_1') return '5';
       if (state.gameState === 'BEFORE_TAVERN') return '6';
@@ -414,7 +448,10 @@
       return newArray;
     }
 
-    function startGame() {
+    function startGame(options = {}) {
+      const journeyMode = options.journeyMode || 'first';
+      state.journeyMode = journeyMode;
+      window.ROLETRADE_ACTIVE_JOURNEY = journeyMode;
       const allShuffled = shuffleArray([...CARDS_DATA]);
       state.hand = allShuffled.slice(0, 5);
       
@@ -429,10 +466,16 @@
       state.releasedCardIds = [];
       state.travelerReleasedCardIds = [];
       
-      state.shopRounds = [1, FINAL_SHOP_ROUND];
+      state.shopRounds = [1, getFinalShopRound()];
       state.round = 1;
       state.showTutorial = true; 
       state.tradeConfirmOpen = false;
+      state.requestedTradeConfirmOpen = false;
+      state.requestedRefuseConfirmOpen = false;
+      state.secondPassUsed = false;
+      state.forcedTakePhase = '';
+      state.forcedReplacementCandidates = [];
+      state.forcedTakenCard = null;
       state.resultStep = 'SELECT_1';
       state.primaryCard = null;
       state.secondaryCard = null;
@@ -445,6 +488,8 @@
       state.requestedHandCard = null;
       state.selectedHandCard = null;
       state.selectedShopCard = null;
+      state.selectedHandCards = [];
+      state.selectedShopCards = [];
       state.tradeAvatarImg = ''; 
       state.tradeMessage = ''; 
       state.tradeVoice = '';
@@ -736,7 +781,13 @@
       '<p>これからの人生で、</p><p>どんな力を使っていきたいのかを</p><p>見つめるためのカードなのじゃよ。</p>'
     ]);
 
+    const RULES_OPENING_SCREEN = getExperienceCopy('rulesOpeningScreen', [
+      '<div class="roletrade-opening-statement"><p>人は役割を通じて世界と接し、</p><p>その役割の引き受け方を変えることで、</p><p>世界との関わり方を変えることができる。</p></div>',
+      '<div class="roletrade-opening-top-copy"><p class="roletrade-opening-top-lead">ここはメンテーリア。<br/>役割と物語が、人の未来を少しだけ変える世界。</p><p>あなたは今、これまでの記憶と経験を持ったまま、<br/>もう一度、<span class="roletrade-opening-top-emphasis">18歳の自分</span>として旅立とうとしています。</p><p>けれど、<span class="roletrade-opening-top-emphasis">持っていける役割は5つだけ</span>。<br/>あなたは、どんな役割を未来の自分に託しますか？</p></div>'
+    ]);
+
     const RULES_GUIDE_SCREENS = getExperienceCopy('rulesGuideScreens', [
+      RULES_OPENING_SCREEN,
       RULES_GUIDE_BLOCKS.slice(0, 5),
       RULES_GUIDE_BLOCKS.slice(5)
     ]);
@@ -749,6 +800,17 @@
       '<p>④最後は<br>　この部屋に戻ってきてくださいね。</p>',
       '<p>これは、自分を見つめる<br>時間なんです。</p>'
     ]);
+
+    const SECOND_RULES_DETAIL_BLOCKS = [
+      '<p>わたしからは<br>二周目のルールを説明しますね。</p>',
+      '<p>①持っていける役割カードは<br>　5枚だけです。</p>',
+      '<p>②最初に私が<br>　カードをお渡しします。</p>',
+      '<p>③その後はここから出て<br>　旅の酒場で、ほかの旅人たちと<br>　役割カードを交換…。</p>',
+      '<p>④この旅では一度だけ、<br>　出会いを見送ることができます。</p>',
+      '<p>でも、どうしても避けられない<br>出会いもあります。</p>',
+      '<p>最後は<br>　この部屋に戻ってきてくださいね。</p>',
+      '<p>これは、自分を見つめる<br>時間なんです。</p>'
+    ];
 
     const INITIAL_HAND_DIALOGUE_BLOCKS = getExperienceCopy('initialHandDialogueBlocks', [
       '<p>これが、今のあなたに</p><p>最初に渡される</p><p>5つの役割です。</p>',
@@ -803,7 +865,9 @@
     }
 
     function getActiveRulesBlocks() {
-      return state.rulesExplanationPhase === 'details' ? RULES_DETAIL_BLOCKS : getCurrentRulesGuideBlocks();
+      return state.rulesExplanationPhase === 'details'
+        ? (state.journeyMode === 'second' ? SECOND_RULES_DETAIL_BLOCKS : RULES_DETAIL_BLOCKS)
+        : getCurrentRulesGuideBlocks();
     }
 
     function isRulesOpeningStatement() {
@@ -964,7 +1028,7 @@
       state.acquiredCardIds = shop.slice(0, 2).map(card => card.id);
       state.releasedCardIds = [hand[3]?.id, hand[4]?.id].filter(Boolean);
       state.travelerReleasedCardIds = [hand[2]?.id].filter(Boolean);
-      state.shopRounds = [1, FINAL_SHOP_ROUND];
+      state.shopRounds = [1, getFinalShopRound()];
       state.round = 1;
       state.selectedHandCard = null;
       state.selectedShopCard = null;
@@ -972,6 +1036,9 @@
       state.tradeOfferCards = [];
       state.requestedHandCard = null;
       state.tradeConfirmOpen = false;
+      state.requestedTradeConfirmOpen = false;
+      state.requestedRefuseConfirmOpen = false;
+      state.secondPassConfirmOpen = false;
       state.pendingTradeAction = null;
       state.isExchanging = false;
       state.isEntering = false;
@@ -1063,11 +1130,11 @@
         state.gameState = 'AFTER_TAVERN';
       } else if (page === '12-1') {
         state.gameState = 'PLAYING';
-        state.round = FINAL_SHOP_ROUND;
+        state.round = getFinalShopRound();
         state.finalShopGuideStep = 0;
       } else if (page === '12-2') {
         state.gameState = 'PLAYING';
-        state.round = FINAL_SHOP_ROUND;
+        state.round = getFinalShopRound();
         state.finalShopGuideStep = 3;
       } else if (page === '13') {
         state.gameState = 'SHOP_CONFIRM';
@@ -1252,8 +1319,13 @@
       const stageFadeClass = state.isTransitioning ? 'animate-fadeInStage' : '';
       const isInitialExchange = state.gameState === 'PLAYING' && state.round === 1;
       const isTwoCardTravelerOffer = state.gameState === 'PLAYING' && !isShopTime && isTwoCardTravelerRound(state.round);
+      const isSecondDoubleTrade = state.gameState === 'PLAYING' && !isShopTime && isSecondDoubleTradeRound(state.round);
+      const doubleTradeCount = getSecondDoubleTradeCount();
       const isRequestedHandTraveler = state.gameState === 'PLAYING' && !isShopTime && !!state.requestedHandCard;
-      const isTavernScene = state.gameState === 'PLAYING' && !isShopTime && state.round >= 2 && state.round < FINAL_SHOP_ROUND;
+      const isForcedTakeTraveler = state.gameState === 'PLAYING' && !isShopTime && isForcedTakeRound(state.round) && (!!state.requestedHandCard || state.forcedTakePhase === 'choose');
+      const isForcedReplacementChoosing = isForcedTakeTraveler && state.forcedTakePhase === 'choose';
+      const canSecondPassTrade = state.journeyMode === 'second' && state.gameState === 'PLAYING' && !isShopTime && !isForcedTakeTraveler && !state.secondPassUsed && state.round >= 2 && state.round < getFinalShopRound();
+      const isTavernScene = state.gameState === 'PLAYING' && !isShopTime && state.round >= 2 && state.round < getFinalShopRound();
       const appFrameBackgroundImage = isTavernScene
         ? `linear-gradient(rgba(232, 220, 196, 0.24), rgba(232, 220, 196, 0.58)), url('${BG_TRADE_IMG}')`
         : `radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.15) 0%, transparent 40%), radial-gradient(circle at 85% 90%, rgba(234, 179, 8, 0.12) 0%, transparent 40%), ${PARCHMENT_TEXTURE}`;
@@ -1287,15 +1359,27 @@
       let shopCardsTopHTML = '';
       let shopCardsBottomHTML = '';
       let travelerOfferCardsHTML = '';
+      let forcedReplacementCardsHTML = '';
       if (state.gameState === 'PLAYING' && isTwoCardTravelerOffer) {
         const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
         travelerOfferCardsHTML = offerCards.map((card, index) => {
-          const isSelected = state.selectedShopCard?.id === card.id;
+          const isSelected = isSecondDoubleTrade
+            ? (state.selectedShopCards || []).some(selectedCard => selectedCard.id === card.id)
+            : state.selectedShopCard?.id === card.id;
           let cStyle = "!w-[84px] !h-[119px] sm:!w-24 sm:!h-36 ";
           if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
           if (state.isEntering) cStyle += "animate-drop-in ";
           const stackClass = "traveler-offer-stack-card traveler-offer-stack-card-" + offerCards.length + "-" + index + " " + (isSelected ? "is-selected" : "");
           return '<div class="' + stackClass + '">' + renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle }) + '</div>';
+        }).join('');
+      }
+      if (state.gameState === 'PLAYING' && isForcedReplacementChoosing) {
+        forcedReplacementCardsHTML = (state.forcedReplacementCandidates || []).map(card => {
+          const isSelected = state.selectedShopCard?.id === card.id;
+          let cStyle = "sm:!w-24 sm:!h-36 ";
+          if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
+          if (state.isEntering) cStyle += "animate-drop-in ";
+          return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
         }).join('');
       }
       if (state.gameState === 'PLAYING' && isShopTime) {
@@ -1334,7 +1418,9 @@
       let dockCardsHTML = '';
       if (state.gameState === 'PLAYING') {
         dockCardsHTML = state.hand.map((card, index) => {
-          const isSelected = state.selectedHandCard?.id === card.id;
+          const isSelected = isSecondDoubleTrade
+            ? (state.selectedHandCards || []).some(selectedCard => selectedCard.id === card.id)
+            : state.selectedHandCard?.id === card.id;
           const isRequestedCard = state.requestedHandCard?.id === card.id;
           let edgeAdjustment = 'origin-bottom';
           const shouldLiftHandCard = isSelected && !isRequestedCard;
@@ -1681,7 +1767,7 @@
         `;
 
         if (isShopTime) {
-          const guide = GUIDE_MESSAGES[state.round] || (isFinalShopRound(state.round) ? GUIDE_MESSAGES[FINAL_SHOP_ROUND] || GUIDE_MESSAGES[7] || {
+          const guide = GUIDE_MESSAGES[state.round] || (isFinalShopRound(state.round) ? GUIDE_MESSAGES[getFinalShopRound()] || GUIDE_MESSAGES[7] || {
             name: "リフレム",
             place: "灯火の間",
             avatar: REFREM_AVATAR,
@@ -1752,7 +1838,7 @@
                         </div>
                         <div class="mt-1 sm:mt-2 text-center w-full">
                           <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] dialog-meta-top px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
-                            R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
+                            R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${getTotalRounds()}
                           </div>
                           <div class="flex items-center justify-center gap-0.5 font-bold text-[8px] sm:text-[10px] bg-[#e8dcc4] dialog-meta-bottom px-0.5 sm:px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm ${guide.color} leading-tight">
                             ${getIcon(guide.icon, "w-2.5 h-2.5 " + guide.color)} ${guide.place}
@@ -1788,7 +1874,7 @@
           `;
           }
         } else if (state.waitingAfterTrade) {
-          const travelerAfterTradeCueText = state.round >= FINAL_SHOP_ROUND - 1 ? '酒場から出る' : '次の旅人と話す';
+          const travelerAfterTradeCueText = state.round >= getFinalShopRound() - 1 ? '酒場から出る' : '次の旅人と話す';
           html += `
                   <div class="p-2 sm:p-5 relative z-10">
                     <div class="grid grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[6rem_minmax(0,1fr)] gap-x-3 sm:gap-x-4 max-w-[31rem] sm:max-w-[34rem] mx-auto w-full items-start">
@@ -1815,7 +1901,7 @@
                         </div>
                         <div class="mt-1 sm:mt-2 text-center w-full">
                           <div class="text-stone-700 tracking-widest text-[9px] sm:text-[10px] font-bold bg-[#f4ebd8] dialog-meta-top px-1 py-0.5 rounded-t-sm border-t border-x border-stone-400/60 shadow-sm leading-tight">
-                            R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${TOTAL_ROUNDS}
+                            R <span class="text-stone-900 font-extrabold text-[10px] sm:text-xs">${state.round}</span> / ${getTotalRounds()}
                           </div>
                           <div class="flex items-center justify-center gap-0.5 font-bold text-[9px] sm:text-[10px] bg-[#e8dcc4] dialog-meta-bottom px-1 py-1 rounded-b-sm border border-stone-400/60 shadow-sm text-blue-900 leading-tight">
                             ${getIcon('ArrowRightLeft', "w-2.5 h-2.5 text-blue-700")} 酒場
@@ -1826,13 +1912,19 @@
                       <div class="trade-dialogue-surface relative bg-[#f4ebd8] dialog-surface-translucent p-2.5 sm:p-3 rounded-md border border-stone-400/60 shadow-md min-w-0 flex flex-col items-center gap-2 sm:gap-2.5" style="background-image: ${PARCHMENT_TEXTURE}">
                         <div class="absolute top-4 sm:top-6 -left-[6px] w-3 h-3 bg-[#f4ebd8] dialog-tail-translucent border-l border-b border-stone-400/60 transform rotate-45"></div>
                         <p class="dialogue-text-unified requested-trade-message self-stretch text-[10.5px] sm:text-sm text-stone-900 font-serif font-bold leading-relaxed sm:leading-loose text-left">${state.tradeMessage || TRADE_MESSAGES[state.round]}</p>
-                        ${isRequestedHandTraveler ? '<div class="requested-trade-actions"><button type="button" data-action="accept-requested-trade" class="requested-trade-choice wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="requested-trade-choice wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : ''}
-                        <div class="w-full flex flex-col items-center pt-2 sm:pt-2.5 border-t border-stone-400/35 ${isTwoCardTravelerOffer ? '' : '-translate-x-14'}">
-                          ${isTwoCardTravelerOffer ? '<p class="selection-guide-label mb-1.5 sm:mb-2">ここから一つ選ぶ</p>' : '<p class="text-[9px] sm:text-xs font-serif tracking-widest text-stone-700 mb-1.5 sm:mb-2 font-bold">旅人からの提示</p>'}
-                          <div class="${isTwoCardTravelerOffer ? 'traveler-offer-stack' : 'flex justify-center gap-1.5 sm:gap-4 transform hover:scale-105 transition-transform duration-500'}">
-                            ${isTwoCardTravelerOffer ? travelerOfferCardsHTML : renderCardHTML(state.tradeOfferCard, { isReadOnly: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') })}
+                        ${isForcedTakeTraveler && state.forcedTakePhase !== 'choose'
+                          ? '<button type="button" data-action="' + (state.forcedTakePhase === 'selected' || state.forcedTakePhase === 'pulling' ? 'second-forced-pull' : 'second-forced-claim') + '" ' + (state.isExchanging ? 'disabled' : '') + ' class="dialogue-inline-next-cue self-start mt-2 ' + (state.isExchanging ? 'opacity-50 pointer-events-none' : '') + '" aria-label="強制取得を進める"><span>' + (state.forcedTakePhase === 'selected' || state.forcedTakePhase === 'pulling' ? '……' : 'それをもらうぜ') + '</span><span class="rules-next-play">▶</span></button>'
+                          : (!isForcedTakeTraveler && isRequestedHandTraveler ? '<div class="requested-trade-actions"><button type="button" data-action="accept-requested-trade" class="requested-trade-choice wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">応じる</span></button><button type="button" data-action="refuse-requested-trade" class="requested-trade-choice wood-btn wood-btn-light rounded-sm transition-all duration-300 text-[11px] sm:text-xs font-serif font-bold py-2 px-3"><div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">断る</span></button></div>' : '')}
+                        ${isForcedTakeTraveler && state.forcedTakePhase !== 'choose' ? '' : `
+                          <div class="w-full flex flex-col items-center pt-2 sm:pt-2.5 border-t border-stone-400/35 ${isTwoCardTravelerOffer || isForcedReplacementChoosing ? '' : '-translate-x-14'}">
+                            ${isForcedReplacementChoosing
+                              ? '<p class="selection-guide-label mb-1.5 sm:mb-2">代わりに受け取る役割を一つ選ぶ</p>'
+                              : (isSecondDoubleTrade ? '<p class="selection-guide-label mb-1.5 sm:mb-2">ここから二つ選ぶ</p>' : (isTwoCardTravelerOffer ? '<p class="selection-guide-label mb-1.5 sm:mb-2">ここから一つ選ぶ</p>' : '<p class="text-[9px] sm:text-xs font-serif tracking-widest text-stone-700 mb-1.5 sm:mb-2 font-bold">旅人からの提示</p>'))}
+                            <div class="${isForcedReplacementChoosing ? 'flex justify-center flex-wrap gap-1.5 sm:gap-4 w-full' : (isTwoCardTravelerOffer ? 'traveler-offer-stack ' + ((state.tradeOfferCards || []).length >= 4 ? 'traveler-offer-stack-double-pairs' : '') : 'flex justify-center gap-1.5 sm:gap-4 transform hover:scale-105 transition-transform duration-500')}">
+                              ${isForcedReplacementChoosing ? forcedReplacementCardsHTML : (isTwoCardTravelerOffer ? travelerOfferCardsHTML : renderCardHTML(state.tradeOfferCard, { isReadOnly: true, customStyle: 'sm:!w-24 sm:!h-36 ' + (state.isExchanging ? 'animate-fly-down ' : '') + (state.isEntering ? 'animate-drop-in' : '') }))}
+                            </div>
                           </div>
-                        </div>
+                        `}
                       </div>
                     </div>
                   </div>
@@ -1858,35 +1950,78 @@
           `;
         }
 
+        const isDoubleTradeConfirm = state.tradeConfirmOpen && isSecondDoubleTrade && (state.selectedShopCards || []).length >= doubleTradeCount && (state.selectedHandCards || []).length >= doubleTradeCount;
         const confirmReceiveCard = state.selectedShopCard || state.tradeOfferCard;
-        if (state.tradeConfirmOpen && state.selectedHandCard && confirmReceiveCard) {
+        const confirmReceiveCards = isDoubleTradeConfirm ? state.selectedShopCards.slice(0, doubleTradeCount) : [confirmReceiveCard].filter(Boolean);
+        const confirmReleaseCards = isDoubleTradeConfirm ? state.selectedHandCards.slice(0, doubleTradeCount) : [state.selectedHandCard].filter(Boolean);
+        const tradeConfirmCopy = window.RoleTradeTradeEngine
+          ? window.RoleTradeTradeEngine.getTradeConfirmCopy(state)
+          : { title: 'これでいいですか？', body: '選んだ2枚を交換します。', cancelLabel: '選び直す', submitLabel: '交換する' };
+        if (state.tradeConfirmOpen && (isDoubleTradeConfirm || (state.selectedHandCard && confirmReceiveCard))) {
           html += `
                   <div class="fixed inset-0 flex items-center justify-center p-4 bg-stone-950/65 backdrop-blur-sm animate-fadeInModal" style="z-index: 220;">
                     <div class="bg-[#f0e6d2] w-full max-w-lg rounded-sm shadow-2xl border border-orange-900/30 p-4 sm:p-6 text-center" style="background-image: ${PARCHMENT_TEXTURE}">
-                      <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-2 magic-text-glow">これでいいですか？</h3>
-                      <p class="text-xs sm:text-sm font-serif font-bold text-stone-700 mb-4">選んだ2枚を交換します。</p>
+                      <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-2 magic-text-glow">${tradeConfirmCopy.title}</h3>
+                      <p class="text-xs sm:text-sm font-serif font-bold text-stone-700 mb-4">${isDoubleTradeConfirm ? '選んだ4枚を、2枚ずつ交換します。' : tradeConfirmCopy.body}</p>
                       <div class="grid grid-cols-2 gap-3 sm:gap-5 items-start mb-5">
                         <div class="trade-card-direction-column trade-card-direction-column-receive flex flex-col items-center gap-2">
                           <p class="trade-card-direction-label trade-card-direction-label-receive text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-orange-800">受け取るカード▼</p>
-                          <div class="scale-[0.86] sm:scale-95 origin-top">
-                            ${renderCardHTML(confirmReceiveCard, { isReadOnly: true, customStyle: "shadow-lg" })}
-                          </div>
+                          ${confirmReceiveCards.map(card => '<div class="scale-[0.78] sm:scale-[0.86] origin-top -mb-5 sm:-mb-4">' + renderCardHTML(card, { isReadOnly: true, customStyle: "shadow-lg" }) + '</div>').join('')}
                         </div>
                         <div class="trade-card-direction-column trade-card-direction-column-release flex flex-col items-center gap-2">
                           <p class="trade-card-direction-label trade-card-direction-label-release text-[11px] sm:text-xs font-serif font-extrabold tracking-widest text-stone-700">▲手放すカード</p>
-                          <div class="scale-[0.86] sm:scale-95 origin-top">
-                            ${renderCardHTML(state.selectedHandCard, { isReadOnly: true, customStyle: "shadow-lg" })}
-                          </div>
+                          ${confirmReleaseCards.map(card => '<div class="scale-[0.78] sm:scale-[0.86] origin-top -mb-5 sm:-mb-4">' + renderCardHTML(card, { isReadOnly: true, customStyle: "shadow-lg" }) + '</div>').join('')}
                         </div>
                       </div>
                       <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                         <button data-action="cancel-trade-confirm" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full sm:w-auto">
                           <div class="wood-texture"></div>
-                          <span class="relative z-10 flex items-center justify-center">選び直す</span>
+                          <span class="relative z-10 flex items-center justify-center">${tradeConfirmCopy.cancelLabel}</span>
                         </button>
                         <button data-action="confirm-trade" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-6 w-full sm:w-auto">
                           <div class="wood-texture"></div>
-                          <span class="relative z-10 flex items-center justify-center">交換する</span>
+                          <span class="relative z-10 flex items-center justify-center">${tradeConfirmCopy.submitLabel}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+          `;
+        }
+
+        if (state.requestedRefuseConfirmOpen) {
+          html += `
+                  <div class="fixed inset-0 flex items-center justify-center p-4 bg-stone-950/65 backdrop-blur-sm animate-fadeInModal" style="z-index: 220;">
+                    <div class="bg-[#f0e6d2] w-full max-w-sm rounded-sm shadow-2xl border border-orange-900/30 p-5 sm:p-7 text-center" style="background-image: ${PARCHMENT_TEXTURE}">
+                      <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-5 magic-text-glow">ほんとにいいですか？</h3>
+                      <div class="flex flex-col gap-2 sm:gap-3 justify-center">
+                        <button data-action="cancel-requested-refuse-confirm" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full">
+                          <div class="wood-texture"></div>
+                          <span class="relative z-10 flex items-center justify-center">考え直す</span>
+                        </button>
+                        <button data-action="confirm-requested-refuse" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-6 w-full">
+                          <div class="wood-texture"></div>
+                          <span class="relative z-10 flex items-center justify-center">やはり断る</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+          `;
+        }
+
+        if (state.secondPassConfirmOpen) {
+          html += `
+                  <div class="fixed inset-0 flex items-center justify-center p-4 bg-stone-950/65 backdrop-blur-sm animate-fadeInModal" style="z-index: 220;">
+                    <div class="bg-[#f0e6d2] w-full max-w-sm rounded-sm shadow-2xl border border-orange-900/30 p-5 sm:p-7 text-center" style="background-image: ${PARCHMENT_TEXTURE}">
+                      <h3 class="text-lg sm:text-xl font-serif font-extrabold text-stone-900 mb-3 magic-text-glow">本当に見送りますか？</h3>
+                      <p class="text-xs sm:text-sm font-serif font-bold text-stone-700 mb-5 leading-loose">この旅で交換を見送れるのは一度だけです。</p>
+                      <div class="flex flex-col gap-2 sm:gap-3 justify-center">
+                        <button data-action="cancel-second-pass-confirm" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full">
+                          <div class="wood-texture"></div>
+                          <span class="relative z-10 flex items-center justify-center">考え直す</span>
+                        </button>
+                        <button data-action="confirm-second-pass" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-6 w-full">
+                          <div class="wood-texture"></div>
+                          <span class="relative z-10 flex items-center justify-center">見送る</span>
                         </button>
                       </div>
                     </div>
@@ -2139,28 +2274,55 @@
                     ` : ''}
                   </div>
           `;
-        } else if (isRequestedHandTraveler) {
-          exchangeBtnHTML = '';
-        } else {
-          const needsTravelerOfferSelection = isTwoCardTravelerOffer && !state.selectedShopCard;
+        } else if (isForcedReplacementChoosing) {
           exchangeBtnHTML = `
-                  <button data-action="trade-offer" ${!state.selectedHandCard || needsTravelerOfferSelection || state.isExchanging || state.waitingAfterTrade ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                  <button data-action="second-forced-replacement" ${!state.selectedShopCard || state.isExchanging || state.waitingAfterTrade ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
                     <div class="wood-texture"></div>
                     <span class="relative z-10 flex items-center justify-center">
                       ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
-                      ${state.isExchanging ? '入れ替え中...' : (isTwoCardTravelerOffer ? (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '提示と手札から1枚ずつ選ぶ') : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください'))}
+                      ${state.isExchanging ? '受け取り中...' : (state.selectedShopCard ? 'この役割を受け取る' : '受け取る役割を一つ選ぶ')}
                     </span>
                   </button>
           `;
+        } else if (isRequestedHandTraveler) {
+          exchangeBtnHTML = '';
+        } else {
+          const selectedOfferCount = isSecondDoubleTrade ? (state.selectedShopCards || []).length : (state.selectedShopCard ? 1 : 0);
+          const selectedHandCount = isSecondDoubleTrade ? (state.selectedHandCards || []).length : (state.selectedHandCard ? 1 : 0);
+          const needsTravelerOfferSelection = isSecondDoubleTrade
+            ? selectedOfferCount < doubleTradeCount
+            : isTwoCardTravelerOffer && !state.selectedShopCard;
+          const needsTravelerHandSelection = isSecondDoubleTrade
+            ? selectedHandCount < doubleTradeCount
+            : !state.selectedHandCard;
+          exchangeBtnHTML = `
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                    <button data-action="trade-offer" ${needsTravelerHandSelection || needsTravelerOfferSelection || state.isExchanging || state.waitingAfterTrade ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-10 ${state.isExchanging ? 'animate-magicAura' : ''}">
+                      <div class="wood-texture"></div>
+                      <span class="relative z-10 flex items-center justify-center">
+                        ${getIcon('RefreshCw', "w-4 h-4 mr-1.5 sm:mr-3 shrink-0 " + (state.isExchanging ? 'animate-spin' : ''))}
+                        ${state.isExchanging ? '入れ替え中...' : (isSecondDoubleTrade ? (selectedHandCount >= doubleTradeCount && selectedOfferCount >= doubleTradeCount ? '2枚を入れ替える' : '提示と手札から2枚ずつ選ぶ') : (isTwoCardTravelerOffer ? (state.selectedHandCard && state.selectedShopCard ? '役割を入れ替える' : '提示と手札から1枚ずつ選ぶ') : (state.selectedHandCard ? '選んだ手札を渡す' : '渡す手札を1枚選んでください')))}
+                      </span>
+                    </button>
+                    ${canSecondPassTrade ? `
+                      <button data-action="second-pass-trade" ${state.isExchanging || state.waitingAfterTrade ? 'disabled' : ''} class="w-full sm:w-auto wood-btn wood-btn-light rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-[11px] sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-8">
+                        <div class="wood-texture"></div>
+                        <span class="relative z-10 flex items-center justify-center">この交換を見送る</span>
+                      </button>
+                    ` : ''}
+                  </div>
+          `;
         }
 
-        const dockGuideHTML = (isInitialExchange || isTwoCardTravelerOffer) && state.selectedShopCard
+        const dockGuideHTML = isSecondDoubleTrade && (state.selectedShopCards || []).length > 0 && !isForcedReplacementChoosing
+          ? '<p class="selection-guide-label selection-guide-label-dock">交換するカードを二つ選ぶ</p>'
+          : (isInitialExchange || isTwoCardTravelerOffer) && state.selectedShopCard && !isForcedReplacementChoosing
           ? '<p class="selection-guide-label selection-guide-label-dock">交換するカードを一つ選ぶ</p>'
           : '';
 
         /* ▼▼ 変更箇所: ドックの背景色を明るくし、木目を活かす ▼▼ */
         html += `
-          <div id="dock-stage" class="fixed bottom-0 left-0 w-full shadow-[0_-10px_50px_rgba(0,0,0,0.6)] border-t-2 border-stone-800 z-50 ${stageFadeClass} ${state.tradeConfirmOpen ? 'opacity-0 pointer-events-none' : ''}" style="background-image: url('https://ninin-cc.github.io/img/rt/mokuzai.jpg'); background-size: cover; background-position: center bottom;">
+          <div id="dock-stage" class="fixed bottom-0 left-0 w-full shadow-[0_-10px_50px_rgba(0,0,0,0.6)] border-t-2 border-stone-800 z-50 ${stageFadeClass} ${state.tradeConfirmOpen || state.secondPassConfirmOpen ? 'opacity-0 pointer-events-none' : ''}" style="background-image: url('https://ninin-cc.github.io/img/rt/mokuzai.jpg'); background-size: cover; background-position: center bottom;">
             <div class="absolute inset-0 bg-[#281405]/30 pointer-events-none z-0"></div>
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8b5a2b] via-orange-900/50 to-[#8b5a2b] z-10"></div>
             
@@ -2198,6 +2360,7 @@
     }
 
     let sceneDialogueAutoAdvanceTimer = null;
+    const DIALOGUE_AUTO_ADVANCE_MS = 2500;
 
     function clearSceneDialogueAutoAdvance() {
       if (sceneDialogueAutoAdvanceTimer) {
@@ -2206,8 +2369,77 @@
       }
     }
 
+    function startInitialCardReview() {
+      if (state.gameState !== 'INITIAL_HAND' || !state.initialHandReviewArmed || state.initialHandReviewComplete || state.initialHandReviewGathering) return;
+      state.initialHandReviewGathering = true;
+      state.initialHandReviewReturning = false;
+      render();
+      setTimeout(() => {
+        if (state.gameState !== 'INITIAL_HAND') return;
+        state.initialHandReviewGathering = false;
+        state.initialHandReviewIndex = 0;
+        render();
+      }, EXPERIENCE_TIMING.initialCardGatherMs);
+    }
+
+    function advanceInitialCardReview() {
+      if (state.gameState !== 'INITIAL_HAND' || state.initialHandReviewReturning || state.initialHandReviewIndex < 0) return;
+      state.initialHandReviewReturning = true;
+      const isFinalInitialReviewCard = state.initialHandReviewIndex >= state.hand.length - 1;
+      render();
+      setTimeout(() => {
+        if (state.gameState !== 'INITIAL_HAND') return;
+        if (state.initialHandReviewIndex < state.hand.length - 1) {
+          state.initialHandReviewIndex += 1;
+          state.initialHandReviewReturning = false;
+        } else {
+          state.initialHandReviewIndex = -1;
+          state.initialHandReviewReturning = false;
+          state.initialHandReviewComplete = true;
+          state.initialHandPostReviewStep = 0;
+        }
+        render();
+      }, isFinalInitialReviewCard ? EXPERIENCE_TIMING.initialCardReviewFinalReturnMs : EXPERIENCE_TIMING.initialCardReviewAdvanceMs);
+    }
+
+    function getSceneDialogueAutoAdvanceAction() {
+      const pageLabel = getPageLabel();
+      if (pageLabel === '5' && state.gameState === 'LEAVE_SHOP_1' && state.leaveShopDialogueStep < LEAVE_SHOP_DIALOGUE_BLOCKS.length - 1) {
+        return advanceSceneDialogue;
+      }
+      if (pageLabel === '6' && state.gameState === 'BEFORE_TAVERN' && state.beforeTavernDialogueStep < BEFORE_TAVERN_DIALOGUE_BLOCKS.length - 1) {
+        return advanceSceneDialogue;
+      }
+      if (pageLabel === '3-2' && state.gameState === 'INITIAL_HAND') {
+        if (
+          state.initialHandReviewArmed &&
+          !state.initialHandReviewComplete &&
+          !state.initialHandReviewGathering &&
+          !state.initialHandReviewReturning &&
+          state.initialHandReviewIndex < 0
+        ) {
+          return startInitialCardReview;
+        }
+        if (
+          state.initialHandReviewIndex >= 0 &&
+          state.initialHandReviewIndex < state.hand.length - 1 &&
+          !state.initialHandReviewReturning
+        ) {
+          return advanceInitialCardReview;
+        }
+      }
+      return null;
+    }
+
     function scheduleSceneDialogueAutoAdvance() {
       clearSceneDialogueAutoAdvance();
+      const autoAction = getSceneDialogueAutoAdvanceAction();
+      if (!autoAction) return;
+      sceneDialogueAutoAdvanceTimer = setTimeout(() => {
+        sceneDialogueAutoAdvanceTimer = null;
+        const latestAction = getSceneDialogueAutoAdvanceAction();
+        if (latestAction) latestAction();
+      }, DIALOGUE_AUTO_ADVANCE_MS);
     }
 
     function advanceSceneDialogue() {
@@ -2275,10 +2507,20 @@
       const maxStep = getActiveRulesBlocks().length - 1;
       state.rulesExplanationStep = Math.max(0, Math.min(maxStep, nextStep));
       syncRulesExplanationDom();
+      scheduleRulesAutoAdvance();
     }
 
     function scheduleRulesAutoAdvance() {
       clearRulesAutoAdvance();
+      if (state.gameState !== 'RULES') return;
+      const autoAdvancePages = ['2-2', '2-3', '2-4'];
+      if (!autoAdvancePages.includes(getPageLabel()) || isRulesExplanationComplete()) return;
+      rulesAutoAdvanceTimer = setTimeout(() => {
+        rulesAutoAdvanceTimer = null;
+        if (state.gameState === 'RULES' && autoAdvancePages.includes(getPageLabel()) && !isRulesExplanationComplete()) {
+          advanceRulesExplanation();
+        }
+      }, DIALOGUE_AUTO_ADVANCE_MS);
     }
 
     function revealRulesIntroFirstBlock() {
@@ -2331,7 +2573,7 @@
         return;
       }
 
-      transitionState(() => { startGame(); });
+      transitionState(() => { startGame({ journeyMode: state.journeyMode || 'first' }); });
     }
 
     function beginInitialHandJourney() {
@@ -2373,40 +2615,17 @@
         if (!IS_DEV_MODE) return;
         jumpToDevPage(btn.dataset.page);
       } else if (action === 'go-rules') {
+        state.journeyMode = 'first';
+        window.ROLETRADE_ACTIVE_JOURNEY = 'first';
         openRulesScene();
       } else if (action === 'advance-rules') {
         advanceRulesExplanation();
       } else if (action === 'advance-scene-dialogue') {
         advanceSceneDialogue();
       } else if (action === 'start-initial-card-review') {
-        if (state.gameState !== 'INITIAL_HAND' || !state.initialHandReviewArmed || state.initialHandReviewComplete) return;
-        state.initialHandReviewGathering = true;
-        state.initialHandReviewReturning = false;
-        render();
-        setTimeout(() => {
-          if (state.gameState !== 'INITIAL_HAND') return;
-          state.initialHandReviewGathering = false;
-          state.initialHandReviewIndex = 0;
-          render();
-        }, EXPERIENCE_TIMING.initialCardGatherMs);
+        startInitialCardReview();
       } else if (action === 'advance-initial-card-review') {
-        if (state.gameState !== 'INITIAL_HAND' || state.initialHandReviewReturning) return;
-        state.initialHandReviewReturning = true;
-        const isFinalInitialReviewCard = state.initialHandReviewIndex >= state.hand.length - 1;
-        render();
-        setTimeout(() => {
-          if (state.gameState !== 'INITIAL_HAND') return;
-          if (state.initialHandReviewIndex < state.hand.length - 1) {
-            state.initialHandReviewIndex += 1;
-            state.initialHandReviewReturning = false;
-          } else {
-            state.initialHandReviewIndex = -1;
-            state.initialHandReviewReturning = false;
-            state.initialHandReviewComplete = true;
-            state.initialHandPostReviewStep = 0;
-          }
-          render();
-        }, isFinalInitialReviewCard ? EXPERIENCE_TIMING.initialCardReviewFinalReturnMs : EXPERIENCE_TIMING.initialCardReviewAdvanceMs);
+        advanceInitialCardReview();
       } else if (action === 'advance-final-shop-guide') {
         transitionState(() => {
           const guideLength = 3;
@@ -2420,7 +2639,11 @@
         render();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (action === 'go-start') {
-        transitionState(() => { state.gameState = 'START'; });
+        transitionState(() => {
+          state.journeyMode = 'first';
+          window.ROLETRADE_ACTIVE_JOURNEY = 'first';
+          state.gameState = 'START';
+        });
       } else if (action === 'start-game') {
         transitionState(() => { startGame(); });
       } else if (action === 'go-playing') {
@@ -2442,6 +2665,20 @@
         });
       } else if (action === 'select-hand') {
         if (state.waitingAfterTrade) return;
+        if (isForcedTakeRound(state.round) && state.forcedTakePhase === 'choose') return;
+        if (isSecondDoubleTradeRound(state.round)) {
+          const id = parseInt(btn.dataset.id);
+          const card = CARDS_BY_ID.get(id);
+          if (!card) return;
+          const current = state.selectedHandCards || [];
+          const exists = current.some(selectedCard => selectedCard.id === id);
+          state.selectedHandCards = exists
+            ? current.filter(selectedCard => selectedCard.id !== id)
+            : (current.length >= getSecondDoubleTradeCount() ? current : current.concat(card));
+          state.selectedHandCard = state.selectedHandCards[0] || null;
+          renderSoon();
+          return;
+        }
         if (state.requestedHandCard) {
           state.selectedHandCard = state.requestedHandCard;
           renderSoon();
@@ -2453,6 +2690,19 @@
         renderSoon();
       } else if (action === 'select-shop') {
         if (state.waitingAfterTrade) return;
+        if (isSecondDoubleTradeRound(state.round)) {
+          const id = parseInt(btn.dataset.id);
+          const card = CARDS_BY_ID.get(id);
+          if (!card) return;
+          const current = state.selectedShopCards || [];
+          const exists = current.some(selectedCard => selectedCard.id === id);
+          state.selectedShopCards = exists
+            ? current.filter(selectedCard => selectedCard.id !== id)
+            : (current.length >= getSecondDoubleTradeCount() ? current : current.concat(card));
+          state.selectedShopCard = state.selectedShopCards[0] || null;
+          renderSoon();
+          return;
+        }
         const id = parseInt(btn.dataset.id);
         const card = CARDS_BY_ID.get(id);
         state.selectedShopCard = (state.selectedShopCard?.id === id) ? null : card;
@@ -2462,7 +2712,20 @@
         state.tradeConfirmOpen = true;
         renderSoon();
       } else if (action === 'confirm-trade') {
+        if (state.requestedTradeConfirmOpen) {
+          if (window.RoleTradeTradeEngine) window.RoleTradeTradeEngine.resetTradeConfirm(state);
+          else {
+            state.tradeConfirmOpen = false;
+            state.requestedTradeConfirmOpen = false;
+          }
+          handleRequestedTravelerTrade();
+          return;
+        }
         state.tradeConfirmOpen = false;
+        if (isSecondDoubleTradeRound(state.round)) {
+          handleSecondDoubleTravelerTrade();
+          return;
+        }
         const isCurrentShopTime = state.shopRounds.includes(state.round);
         if (state.selectedShopCard && isCurrentShopTime) {
           if (isFinalShopRound(state.round)) {
@@ -2478,7 +2741,11 @@
           handleTrade();
         }
       } else if (action === 'cancel-trade-confirm') {
-        state.tradeConfirmOpen = false;
+        if (window.RoleTradeTradeEngine) window.RoleTradeTradeEngine.resetTradeConfirm(state);
+        else {
+          state.tradeConfirmOpen = false;
+          state.requestedTradeConfirmOpen = false;
+        }
         renderSoon();
       } else if (action === 'advance-shop-confirm-dialogue') {
         if (state.gameState !== 'SHOP_CONFIRM') return;
@@ -2488,15 +2755,56 @@
         if (state.waitingAfterTrade) return;
         state.tradeConfirmOpen = true;
         renderSoon();
+      } else if (action === 'second-forced-claim') {
+        handleSecondForcedTakeClaim();
+      } else if (action === 'second-forced-pull') {
+        handleSecondForcedTakePull();
+      } else if (action === 'second-forced-replacement') {
+        handleSecondForcedReplacement();
       } else if (action === 'accept-requested-trade') {
-        handleRequestedTravelerTrade();
+        const opened = window.RoleTradeTradeEngine
+          ? window.RoleTradeTradeEngine.openRequestedTradeConfirm(state)
+          : false;
+        if (!opened) {
+          if (!state.requestedHandCard || !state.tradeOfferCard || state.isExchanging || state.waitingAfterTrade) return;
+          state.selectedHandCard = state.requestedHandCard;
+          state.requestedTradeConfirmOpen = true;
+          state.tradeConfirmOpen = true;
+        }
+        renderSoon();
       } else if (action === 'refuse-requested-trade') {
+        if (!state.requestedHandCard || state.isExchanging || state.waitingAfterTrade) return;
+        state.requestedRefuseConfirmOpen = true;
+        renderSoon();
+      } else if (action === 'cancel-requested-refuse-confirm') {
+        state.requestedRefuseConfirmOpen = false;
+        renderSoon();
+      } else if (action === 'confirm-requested-refuse') {
+        state.requestedRefuseConfirmOpen = false;
         refuseRequestedTravelerTrade();
       } else if (action === 'continue-after-trade') {
         const pending = state.pendingAfterTrade;
         if (!pending) return;
         transitionState(() => {
           proceedToNextRound(pending.hand, pending.shop, pending.deck);
+        });
+      } else if (action === 'second-pass-trade') {
+        const currentIsShopTime = state.shopRounds.includes(state.round);
+        if (state.journeyMode !== 'second' || state.secondPassUsed || state.isExchanging || state.waitingAfterTrade || currentIsShopTime || isForcedTakeRound(state.round)) return;
+        state.secondPassConfirmOpen = true;
+        renderSoon();
+      } else if (action === 'cancel-second-pass-confirm') {
+        state.secondPassConfirmOpen = false;
+        renderSoon();
+      } else if (action === 'confirm-second-pass') {
+        const currentIsShopTime = state.shopRounds.includes(state.round);
+        if (state.journeyMode !== 'second' || state.secondPassUsed || state.isExchanging || state.waitingAfterTrade || currentIsShopTime || isForcedTakeRound(state.round)) return;
+        const passOfferIds = new Set((state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean)).map(card => card.id));
+        const nextDeckAfterPass = state.deck.filter(card => !passOfferIds.has(card.id));
+        transitionState(() => {
+          state.secondPassConfirmOpen = false;
+          state.secondPassUsed = true;
+          proceedToNextRound(state.hand, state.shop, nextDeckAfterPass);
         });
       } else if (action === 'skip-trade') {
         if (isFinalShopRound(state.round)) {
@@ -2569,6 +2877,22 @@
       }
     });
 
+    window.RoleTradeMainJourney = {
+      getMode() {
+        return state.journeyMode || 'first';
+      },
+      startSecondJourney() {
+        state.journeyMode = 'second';
+        window.ROLETRADE_ACTIVE_JOURNEY = 'second';
+        openRulesScene();
+      },
+      startFirstJourney() {
+        transitionState(() => {
+          startGame({ journeyMode: 'first' });
+        });
+      }
+    };
+
     // 起動時のIABチェック実行
     checkAppBrowser();
 
@@ -2583,3 +2907,4 @@
       render();
     }
     preloadSceneImages();
+

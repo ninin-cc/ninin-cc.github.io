@@ -7,6 +7,8 @@
       const isReadOnly = options.isReadOnly || false;
       const glow = options.glow || false;
       const customStyle = options.customStyle || '';
+      const hideFooter = options.hideFooter || false;
+      const hideModeMarks = options.hideModeMarks || window.ROLETRADE_ACTIVE_JOURNEY === 'second';
       
       const ModeIconName = MODE_ICON_NAMES[card.mode];
       
@@ -68,10 +70,10 @@
               </div>
             </div>
             <div class="role-card-desc text-[10px] sm:text-[11px] text-stone-800 font-extrabold flex-1 leading-tight sm:leading-relaxed font-serif mt-1 sm:mt-2 line-clamp-4 text-center px-0.5">${card.desc}</div>
-            <div class="role-card-footer text-[8px] sm:text-[9px] text-stone-600 font-serif tracking-widest mt-1 text-center font-bold flex justify-center items-center gap-0.5">
-              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
+            <div class="role-card-footer ${hideFooter ? 'hidden' : ''} text-[8px] sm:text-[9px] text-stone-600 font-serif tracking-widest mt-1 text-center font-bold flex justify-center items-center gap-0.5">
+              ${hideModeMarks ? '' : getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
               <span class="mt-[1px]">RIESM</span>
-              ${getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
+              ${hideModeMarks ? '' : getIcon(ModeIconName, "w-2.5 h-2.5 sm:w-3 sm:h-3 opacity-90 " + MODE_TEXT_COLORS[card.mode])}
             </div>
           </div>
         </${cardTag}>

@@ -1,4 +1,4 @@
-    function pushUniqueCardId(list, card) {
+﻿    function pushUniqueCardId(list, card) {
       if (!card || !Array.isArray(list)) return;
       const without = list.filter(id => id !== card.id);
       without.push(card.id);
@@ -147,11 +147,11 @@
       const releasedCard = state.selectedHandCard;
       const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
       const receivedCard = state.selectedShopCard || state.tradeOfferCard;
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const offeredIds = offerCards.map(card => card.id);
-      const unchosenOfferCards = offerCards.filter(card => card.id !== receivedCard.id);
-      const newDeck = state.deck.filter(card => !offeredIds.includes(card.id));
-      newDeck.push(...unchosenOfferCards, releasedCard);
+      const tradeResult = window.RoleTradeTradeEngine
+        ? window.RoleTradeTradeEngine.applyTravelerExchange({ hand: state.hand, deck: state.deck, offerCards, receivedCard, releasedCard })
+        : null;
+      const newHand = tradeResult ? tradeResult.hand : state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
+      const newDeck = tradeResult ? tradeResult.deck : state.deck;
 
       state.tradeConfirmOpen = false;
       state.isExchanging = true;
@@ -175,17 +175,67 @@
       }, EXPERIENCE_TIMING.exchangeSettleMs);
     }
 
+    function handleSecondDoubleTravelerTrade() {
+      const tradeCount = typeof getSecondDoubleTradeCount === 'function' ? getSecondDoubleTradeCount() : 2;
+      const releasedCards = (state.selectedHandCards || []).slice(0, tradeCount);
+      const receivedCards = (state.selectedShopCards || []).slice(0, tradeCount);
+      if (releasedCards.length < tradeCount || receivedCards.length < tradeCount || state.isExchanging || state.waitingAfterTrade) return;
+
+      const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : receivedCards;
+      const releasedIds = new Set(releasedCards.map(card => card.id));
+      const receivedIds = new Set(receivedCards.map(card => card.id));
+      const offeredIds = new Set(offerCards.map(card => card.id));
+      let receiveIndex = 0;
+      const newHand = state.hand.map(card => {
+        if (!releasedIds.has(card.id)) return card;
+        const nextCard = receivedCards[receiveIndex] || receivedCards[receivedCards.length - 1];
+        receiveIndex += 1;
+        return nextCard;
+      });
+      const newDeck = state.deck.filter(card => !offeredIds.has(card.id));
+      newDeck.push(...offerCards.filter(card => !receivedIds.has(card.id)));
+      newDeck.push(...releasedCards);
+
+      state.tradeConfirmOpen = false;
+      state.selectedHandCard = releasedCards[0] || null;
+      state.selectedShopCard = receivedCards[0] || null;
+      state.isExchanging = true;
+      render();
+
+      setTimeout(() => {
+        transitionState(() => {
+          state.hand = newHand;
+          state.deck = newDeck;
+          state.selectedHandCard = null;
+          state.selectedShopCard = null;
+          state.selectedHandCards = [];
+          state.selectedShopCards = [];
+          state.tradeOfferCard = null;
+          state.tradeOfferCards = [];
+          state.requestedHandCard = null;
+          state.isExchanging = false;
+          state.waitingAfterTrade = true;
+          releasedCards.forEach((card, index) => rememberTradeHistory(card, receivedCards[index], 'traveler'));
+          state.pendingAfterTrade = { hand: newHand, shop: state.shop, deck: newDeck, releasedCard: releasedCards[0], receivedCard: receivedCards[0], kind: 'traveler' };
+          state.afterTradeMessage = '二枚まとめての交換、悪くないな。少し重さが変わったはずだ。';
+        });
+      }, EXPERIENCE_TIMING.exchangeSettleMs);
+    }
+
     function handleRequestedTravelerTrade() {
       if (!state.requestedHandCard || !state.tradeOfferCard || state.isExchanging || state.waitingAfterTrade) return;
       const releasedCard = state.requestedHandCard;
       const receivedCard = state.tradeOfferCard;
       const offerCards = state.tradeOfferCards && state.tradeOfferCards.length ? state.tradeOfferCards : [state.tradeOfferCard].filter(Boolean);
-      const offeredIds = offerCards.map(card => card.id);
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const newDeck = state.deck.filter(card => !offeredIds.includes(card.id));
-      newDeck.push(releasedCard);
+      const tradeResult = window.RoleTradeTradeEngine
+        ? window.RoleTradeTradeEngine.applyTravelerExchange({ hand: state.hand, deck: state.deck, offerCards, receivedCard, releasedCard, keepUnchosenOffers: false })
+        : null;
+      const newHand = tradeResult ? tradeResult.hand : state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
+      const newDeck = tradeResult ? tradeResult.deck : state.deck;
 
       state.tradeConfirmOpen = false;
+      state.requestedTradeConfirmOpen = false;
+      state.requestedRefuseConfirmOpen = false;
       state.selectedHandCard = releasedCard;
       state.isExchanging = true;
       render();
@@ -214,16 +264,87 @@
         state.selectedHandCard = null;
         state.selectedShopCard = null;
         state.requestedHandCard = null;
+        state.requestedRefuseConfirmOpen = false;
         state.tradeMessage = 'そんなにその役割が必要なのかよ、じゃあ仕方ないか…。<br>じゃあ、どれなら交換してくれるんだ？';
       });
+    }
+
+    function handleSecondForcedTakeClaim() {
+      if (!state.requestedHandCard || state.isExchanging || state.waitingAfterTrade) return;
+      state.selectedHandCard = state.requestedHandCard;
+      state.forcedTakePhase = 'selected';
+      render();
+    }
+
+    function handleSecondForcedTakePull() {
+      if (!state.requestedHandCard || state.isExchanging || state.waitingAfterTrade) return;
+      const takenCard = state.requestedHandCard;
+      state.selectedHandCard = takenCard;
+      state.forcedTakenCard = takenCard;
+      state.forcedTakePhase = 'pulling';
+      state.isExchanging = true;
+      render();
+
+      setTimeout(() => {
+        transitionState(() => {
+          const replacementCount = (window.ROLETRADE_SECOND_CONFIG && window.ROLETRADE_SECOND_CONFIG.forcedReplacementCount) || 5;
+          const candidates = state.deck.slice(0, replacementCount);
+          const candidateIds = new Set(candidates.map(card => card.id));
+          state.hand = state.hand.filter(card => card.id !== takenCard.id);
+          state.deck = state.deck.filter(card => !candidateIds.has(card.id));
+          state.tradeOfferCards = candidates;
+          state.tradeOfferCard = candidates[0] || null;
+          state.forcedReplacementCandidates = candidates;
+          state.selectedHandCard = null;
+          state.selectedShopCard = null;
+          state.isExchanging = false;
+          state.forcedTakePhase = 'choose';
+          state.tradeMessage = '代わりに、この中から一枚持っていけ。';
+        });
+      }, EXPERIENCE_TIMING.exchangeSettleMs);
+    }
+
+    function handleSecondForcedReplacement() {
+      if (!state.forcedTakenCard || !state.selectedShopCard || state.isExchanging || state.waitingAfterTrade) return;
+      const releasedCard = state.forcedTakenCard;
+      const receivedCard = state.selectedShopCard;
+      const leftoverCandidates = (state.forcedReplacementCandidates || []).filter(card => card.id !== receivedCard.id);
+      const newHand = state.hand.concat(receivedCard).slice(0, 5);
+      const newDeck = state.deck.concat(leftoverCandidates);
+
+      state.isExchanging = true;
+      render();
+
+      setTimeout(() => {
+        transitionState(() => {
+          state.tradeOfferCard = null;
+          state.tradeOfferCards = [];
+          state.requestedHandCard = null;
+          state.forcedTakePhase = '';
+          state.forcedReplacementCandidates = [];
+          state.forcedTakenCard = null;
+          state.hand = newHand;
+          state.deck = newDeck;
+          state.selectedHandCard = null;
+          state.selectedShopCard = null;
+          state.isExchanging = false;
+          state.waitingAfterTrade = true;
+          rememberTradeHistory(releasedCard, receivedCard, 'traveler');
+          state.pendingAfterTrade = { hand: newHand, shop: state.shop, deck: newDeck, releasedCard, receivedCard, kind: 'traveler' };
+          state.afterTradeMessage = '……持っていく。代わりの役割も、ちゃんと連れていけよ。';
+        });
+      }, EXPERIENCE_TIMING.exchangeSettleMs);
     }
 
     function handleShopTrade() {
       if (!state.selectedHandCard || !state.selectedShopCard || state.isExchanging || state.waitingAfterTrade) return;
       const releasedCard = state.selectedHandCard;
       const receivedCard = state.selectedShopCard;
-      const newHand = state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
-      const newShop = state.shop.map(c => c.id === receivedCard.id ? releasedCard : c);
+      const tradeResult = window.RoleTradeTradeEngine
+        ? window.RoleTradeTradeEngine.applyShopExchange({ hand: state.hand, shop: state.shop, receivedCard, releasedCard })
+        : null;
+      const newHand = tradeResult ? tradeResult.hand : state.hand.map(c => c.id === releasedCard.id ? receivedCard : c);
+      const newShop = tradeResult ? tradeResult.shop : state.shop.map(c => c.id === receivedCard.id ? releasedCard : c);
 
       state.tradeConfirmOpen = false;
       state.isExchanging = true;
@@ -247,15 +368,23 @@
     function proceedToNextRound(newHand, newShop, newDeck) {
       state.selectedHandCard = null;
       state.selectedShopCard = null;
+      state.selectedHandCards = [];
+      state.selectedShopCards = [];
       state.tradeOfferCard = null;
       state.tradeOfferCards = [];
       state.requestedHandCard = null;
       state.tradeConfirmOpen = false;
+      state.requestedTradeConfirmOpen = false;
+      state.requestedRefuseConfirmOpen = false;
+      state.secondPassConfirmOpen = false;
+      state.forcedTakePhase = '';
+      state.forcedReplacementCandidates = [];
+      state.forcedTakenCard = null;
       state.waitingAfterTrade = false;
       state.pendingAfterTrade = null;
       state.afterTradeMessage = '';
 
-      if (state.round >= TOTAL_ROUNDS) {
+      if (state.round >= getTotalRounds()) {
         state.hand = newHand;
         state.resultStep = 'SELECT_1';
         state.gameState = 'RESULT';
@@ -288,10 +417,31 @@
           state.tradeMessage = state.requestedHandCard
             ? getRequestedHandTradeMessage(tradeEncounter.message, tradeEncounter.voice, state.requestedHandCard)
             : withTravelerOfferCue(tradeEncounter.message, tradeEncounter.voice, state.tradeOfferCards.length);
+          if (typeof isSecondDoubleTradeRound === 'function' && isSecondDoubleTradeRound(state.round)) {
+            if (tradeEncounter.voice === 'youngFemale') {
+              state.tradeMessage = 'この四枚の中から二枚と、あなたの手札から二枚を交換してほしいな。二枚ずつ選んでみて。';
+            } else if (tradeEncounter.voice === 'olderMale') {
+              state.tradeMessage = 'この四枚の中から二枚と、おぬしの手札から二枚を交換してくれ。二枚ずつ選ぶのじゃ。';
+            } else {
+              state.tradeMessage = 'この四枚の中から二枚と、君の手札から二枚を交換してくれ。二枚ずつ選んでくれ。';
+            }
+          }
           state.tradeVoice = tradeEncounter.voice;
           state.tradeTone = tradeEncounter.tone;
           state.usedTradeAvatarImgs = [...state.usedTradeAvatarImgs, tradeEncounter.avatarImg];
           state.usedTradeMessages = [...state.usedTradeMessages, tradeEncounter.message];
+
+          if (isForcedHandTravelerRound(state.round) && state.requestedHandCard) {
+            const copy = window.ROLETRADE_SECOND_COPY || {};
+            const forcedCopy = copy.forcedTraveler || {};
+            const requestedName = state.requestedHandCard.name || 'そのカード';
+            state.tradeOfferCards = [];
+            state.tradeOfferCard = null;
+            state.selectedHandCard = null;
+            state.selectedShopCard = null;
+            state.forcedTakePhase = 'claim';
+            state.tradeMessage = (forcedCopy.speechTemplate || '俺は、その《{{cardName}}》が欲しい。').replace('{{cardName}}', requestedName);
+          }
         }
 
         // ▼▼ ラウンド間でのシーン遷移 ▼▼
@@ -306,3 +456,4 @@
         }
       }
     }
+
