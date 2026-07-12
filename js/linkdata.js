@@ -7,13 +7,14 @@ const linkData = [
         location: "東京/オンライン",
         workshopCount: 0,
         avatar: { src: "./img/link/teten2.jpg" },
-        title: "RIESM™開発者",
+        title: "RIESM™/RoleTRADE™開発者",
         tags: ["tabelab", "riesm", "shinri"],
         desc: "私たちは、自分らしく生きていける社会 / 心理支援を「日本のあたり前」にしてゆきます\n合同会社ninin consulting ＆ counseling",
         links: {
             x: "https://x.com/ninin2025",
             linkedin: "https://www.linkedin.com/in/ninin2025/",
-            note: "https://note.com/ninin2025/membership/join/"
+            note: "https://note.com/ninin2025/membership/join/",
+            coconala: "https://coconala.com/services/4023109"
         }
     },
     {
@@ -21,7 +22,11 @@ const linkData = [
         avatar: { src: "./img/link/mango.jpg" },
         title: "キャリア相談 / 40代からの選び直し",
         tags: ["tabelab", "shinri"],
-        desc: "走り続けている間に、自分のことが見えなくなった人へ。キャリアも、子どもの進路も、働き方も。選ぶ前に、まず整理する。人材業界18年・国家資格キャリコン10年。副業で3年間、週末にキャリア相談を続けてきました。AIも使いながら、40代からの選び直しを考えています。"
+        desc: "走り続けている間に、自分のことが見えなくなった人へ。キャリアも、子どもの進路も、働き方も。選ぶ前に、まず整理する。人材業界18年・国家資格キャリコン10年。副業で3年間、週末にキャリア相談を続けてきました。AIも使いながら、40代からの選び直しを考えています。",
+        links: { 
+            note: "https://note.com/mangpudding03",
+            x: "https://x.com/mango_pudding03"
+        }
     },
     {
         name: "キャリコンみやび",
@@ -29,14 +34,21 @@ const linkData = [
         title: "キャリアコンサルタント",
         tags: ["tabelab", "shinri"],
         desc: "はじめまして、キャリアコンサルタントのみやびです。会社員、高校生の母として日々奮闘中。2級技能士や国家資格キャリアコンサルタントの受験対策、50代の転職記録などを発信。X | https://x.gd/j3PZ1 音声配信 | https://x.gd/VQl73",
-        links: { x: "https://x.gd/j3PZ1" }
+        links: { 
+            x: "https://x.com/myb_careerwave",
+            note: "https://note.com/cc_miya_be"
+        }
     },
     {
         name: "ゆうり＠大学キャリアセンターの人",
         avatar: { src: "./img/link/yuuri.webp" },
         title: "大学キャリアセンター / 学生支援",
         tags: ["tabelab"],
-        desc: "大学キャリアセンターで年間2000件くらい学生面談してた人。大手有名企業に絶対内定！みたいなテクニックは教えられません。後悔しない就活。6歳&1歳のママ。学生のキャリア支援をしたい方向きにKindle、note書きました。"
+        desc: "大学キャリアセンターで年間2000件くらい学生面談してた人。大手有名企業に絶対内定！みたいなテクニックは教えられません。後悔しない就活。6歳&1歳のママ。学生のキャリア支援をしたい方向きにKindle、note書きました。",
+        links: { 
+            note: "https://note.com/yuri_supp2",
+            x: "https://x.com/yuri2supp"
+        }
     },
     {
         name: "けー。お花カウンセリング",
@@ -57,21 +69,27 @@ const linkData = [
         avatar: { src: "./img/link/kogumi.webp" },
         title: "キャリアコンサルタント / 福祉系職員",
         tags: ["tabelab", "shinri"],
-        desc: "他人に支配され自分を置き去りにし続けた結婚生活。モラハラ夫から逃げるように家出し、約1年超の調停を経て離婚。徹底した見直しでストレス障害を2か月で克服。キャリアコンサルタント、栄養睡眠カウンセラー講座受講。最高の健康と自分軸で人生を再スタート。福祉系職員。"
+        desc: "他人に支配され自分を置き去りにし続けた結婚生活。モラハラ夫から逃げるように家出し、約1年超の調停を経て離婚。徹底した見直しでストレス障害を2か月で克服。キャリアコンサルタント、栄養睡眠カウンセラー講座受講。最高の健康と自分軸で人生を再スタート。福祉系職員。",
+        links: { note: "https://note.com/calm_bonobo1678" }
     },
     {
         name: "ぎっしー｜春日部キャリア部 部長",
         avatar: { src: "./img/link/gissy.webp" },
         title: "春日部キャリア部 部長",
         tags: ["tabelab"],
-        desc: "「このままでいいのかな？」春日部でキャリアに悩むあなたのためのコミュニティ「#春日部キャリア部」。毎週月曜、対話の場で強みを発見し、複業やスキルUPに挑戦しませんか？安心安全な場で仲間と共に一歩踏み出すあなたを全力で応援します。武里駅近くの「わたしの基地」で開催中。"
+        desc: "「このままでいいのかな？」春日部でキャリアに悩むあなたのためのコミュニティ「#春日部キャリア部」。毎週月曜、対話の場で強みを発見し、複業やスキルUPに挑戦しませんか？安心安全な場で仲間と共に一歩踏み出すあなたを全力で応援します。武里駅近くの「わたしの基地」で開催中。",
+        links: { 
+            note: "https://note.com/gissy0721",
+            x: "https://x.com/gissy0721"
+        }
     },
     {
         name: "あかり| 1on1で生きやすい世界に🌏",
         avatar: { src: "./img/link/akari.webp" },
         title: "傾聴1on1 / 産業カウンセラー / キャリアコンサルタント",
         tags: ["tabelab"],
-        desc: "傾聴1on1。どんな女性も明るく元気でいるために、こころのままに語れる場を週末限定で活動しています。産業カウンセラー×キャリアコンサルタント。小学生2人のワーママ。ママでありながら働くことの意義、自分らしく生きることも大切にしています。"
+        desc: "傾聴1on1。どんな女性も明るく元気でいるために、こころのままに語れる場を週末限定で活動しています。産業カウンセラー×キャリアコンサルタント。小学生2人のワーママ。ママでありながら働くことの意義、自分らしく生きることも大切にしています。",
+        links: { note: "https://note.com/aricona" }
     },
     {
         name: "ころころまころん＠心理福祉",
@@ -167,6 +185,14 @@ const linkData = [
             x: "https://x.com/tedakee",
             linkedin: "https://www.linkedin.com/in/%E5%BC%98%E5%B9%B8-%E7%AB%B9%E5%B3%B6-bb50b3147/"
         }
+    },
+    {
+        name: "篠田恵",
+        avatar: { src: "./img/link/shinoda.jpg" },
+        title: "社外キャリアコンサルタント / 1on1コーチ",
+        tags: ["tabelab", "shinri"],
+        desc: "キャリアに新たな選択肢を／社外1on1コーチ•キャリコン ／ルイ・ヴィトン5店舗 人材育成×目標達成×店舗運営→主婦→子育て支援→15年700名キャリア支援／日経xwomanアンバサダー／コラム連載中",
+        links: { note: "https://note.com/one_more_career" }
     }
 ];
 
@@ -210,14 +236,14 @@ const riesmCertificationTypes = {
 // 共通データの公開口です。
 // 各ページはここから必要な項目だけを選び、ページごとの表現で描画します。
 const linkDataMeta = {
-    version: "2026-07-11",
+    version: "2026-07-13",
     communities: {
         tabelab: { label: "たべラボ", href: "https://note.com/ninin2025/membership" },
         riesm: { label: "🌈RIESM™", href: "https://ninin-cc.github.io/guide.html" },
         shinri: { label: "心理支援者の集い" }
     },
     certificationTypes: riesmCertificationTypes,
-    linkTypes: ["note", "web", "x", "line", "linkedin", "instagram"]
+    linkTypes: ["note", "web", "x", "line", "linkedin", "instagram", "coconala"]
 };
 
 window.NININ_LINK_DATA = linkData;

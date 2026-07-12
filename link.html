@@ -636,6 +636,20 @@
             height: 1rem;
         }
 
+
+        .card-link-btn .link-icon-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-link-btn .coconala-logo {
+            width: 1.45rem;
+            height: 1.45rem;
+        }
+
         .card-link-btn:hover {
             background: var(--trust);
             border-color: var(--trust);
@@ -693,6 +707,12 @@
             color: #16845f;
         }
 
+        .card-link-btn:not(.is-empty).is-coconala {
+            background: #fff;
+            border-color: rgba(20, 28, 36, 0.12);
+            color: #111827;
+        }
+
         .card-link-btn:not(.is-empty).is-note:hover,
         .card-link-btn:not(.is-empty).is-x:hover {
             background: #222831;
@@ -718,6 +738,11 @@
             background: #ecfdf5;
             border-color: rgba(22, 132, 95, 0.48);
             color: #116b4e;
+        }
+
+        .card-link-btn:not(.is-empty).is-coconala:hover {
+            background: #f8fbff;
+            border-color: rgba(20, 28, 36, 0.2);
         }
 
         .profile-trigger {
@@ -964,6 +989,20 @@
             height: 1.25rem;
         }
 
+
+        .individual-link-icon .link-icon-img {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            object-fit: cover;
+            display: block;
+        }
+
+        .individual-link-icon .coconala-logo {
+            width: 2.1rem;
+            height: 2.1rem;
+        }
+
         .individual-link-icon.is-note,
         .individual-link-icon.is-x {
             background: #0b0f14;
@@ -989,6 +1028,12 @@
             background: #fff;
             border: 1px solid rgba(30, 102, 120, 0.34);
             color: #16845f;
+        }
+
+        .individual-link-icon.is-coconala {
+            background: #fff;
+            border: 1px solid rgba(20, 28, 36, 0.12);
+            color: #111827;
         }
 
     </style>
@@ -1132,28 +1177,26 @@
 
             function generateLinksHTML(userLinks = {}) {
                 const linkIcons = {
-                    note: 'n',
+                    note: '<img src="./img/link/note.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="note">',
                     web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg>',
-                    x: 'X',
+                    x: '<img src="./img/link/x.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="x" onerror="this.replaceWith(document.createTextNode(&quot;X&quot;))">',
                     line: 'LINE',
                     linkedin: 'in',
-                    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>'
+                    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>',
+                    coconala: '<img src="./img/link/coconala.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="coconala">'
                 };
-                const linkTypes = ['note', 'web', 'x', 'line', 'linkedin', 'instagram'];
-                const labels = {note:'note', web:'Web', x:'X', line:'LINE', linkedin:'LinkedIn', instagram:'Instagram'};
-                
-                return linkTypes.map(type => {
-                    const url = userLinks[type];
-                    const icon = linkIcons[type];
-                    const typeClass = ' is-' + type;
-                    const label = labels[type];
-                    
-                    if (url) {
-                        return `<a href="${url}" target="_blank" rel="noopener" class="card-link-btn${typeClass}" aria-label="${label}" title="${label}">${icon}</a>`;
-                    } else {
-                        return `<span class="card-link-btn is-empty${typeClass}" aria-disabled="true" aria-label="${label} 未設定" title="${label} 未設定">${icon}</span>`;
-                    }
-                }).join('');
+                const linkTypes = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'coconala'];
+                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', coconala: 'ココナラ' };
+
+                return linkTypes
+                    .filter(type => userLinks[type])
+                    .map(type => {
+                        const url = userLinks[type];
+                        const icon = linkIcons[type];
+                        const typeClass = ' is-' + type;
+                        const label = labels[type];
+                        return `<a href="${safeHtml(url)}" target="_blank" rel="noopener noreferrer" class="card-link-btn${typeClass}" aria-label="${label}" title="${label}">${icon}</a>`;
+                    }).join('');
             }
 
             // --- メンバーカードの動的生成 ---
@@ -1265,12 +1308,13 @@
 
             function getIndividualLinkIcon(type) {
                 const icons = {
-                    note: 'n',
+                    note: '<img src="./img/link/note.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="note">',
                     web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg>',
-                    x: 'X',
+                    x: '<img src="./img/link/x.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="x" onerror="this.replaceWith(document.createTextNode(&quot;X&quot;))">',
                     line: 'LINE',
                     linkedin: 'in',
                     instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>',
+                    coconala: '<img src="./img/link/coconala.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="coconala">',
                     license: 'ID'
                 };
                 return icons[type] || '→';
@@ -1278,16 +1322,17 @@
 
             function renderIndividualLinkCards(member) {
                 const links = member.links || {};
-                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram' };
+                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', coconala: 'ココナラ' };
                 const descriptions = {
                     note: 'noteでの発信を見る',
                     web: 'Webサイトを見る',
                     x: 'Xでの発信を見る',
                     line: 'LINE公式などを見る',
                     linkedin: 'LinkedInプロフィールを見る',
-                    instagram: 'Instagramを見る'
+                    instagram: 'Instagramを見る',
+                    coconala: 'ココナラのサービスを見る'
                 };
-                const cards = ['note', 'web', 'x', 'line', 'linkedin', 'instagram']
+                const cards = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'coconala']
                     .filter(type => links[type])
                     .map(type => `
                         <a href="${safeHtml(links[type])}" target="_blank" rel="noopener noreferrer" class="individual-link-card">
