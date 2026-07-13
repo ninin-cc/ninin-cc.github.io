@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Z1T35THNDV');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIESM™ 受検者専用ポータル | 合同会社ninin</title>
+    
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #fdfcf9;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="text-stone-800 min-h-screen flex flex-col items-center">
+
+    <!-- ヘッダー -->
+    <header class="w-full max-w-3xl pt-12 pb-6 px-6 text-center flex flex-col items-center fade-in">
+        <div class="mb-4 flex justify-center items-center">
+            <img src="https://ninin-cc.github.io/img/riesm.png" alt="RIESM™ logo" class="w-full max-w-[180px] h-auto object-contain">
+        </div>
+        
+        <span class="inline-block bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-sm">受検済みの方専用</span>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-stone-800">
+            コックピットを手にしたあなたへ
+        </h1>
+        <p class="text-sm md:text-base text-stone-600 leading-relaxed mb-6">
+            RIESM™の受検、お疲れ様でした。<br class="hidden md:block">
+            このページでは、お手元のレポート（コックピット）をより深く読み解き、<br class="hidden md:block">
+            日常の関係性やキャリアに活かしていくためのヒントをご案内します。
+        </p>
+        
+        <div class="w-full h-px bg-stone-200 mt-2 mb-2 max-w-md mx-auto"></div>
+    </header>
+
+    <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
+        
+        <!-- ========================================== -->
+        <!-- 1. コックピットの見方 -->
+        <!-- ========================================== -->
+        <section class="mb-16 scroll-mt-6" id="cockpit-guide">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold mr-3">1</div>
+                <h2 class="text-xl md:text-2xl font-bold text-stone-800">コックピットの見方</h2>
+            </div>
+            
+            <div class="glass-panel rounded-2xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center border-t-4 border-t-sky-400">
+                <div class="w-full md:w-1/2">
+                    <img src="https://ninin-cc.github.io/img/cockpit.png" alt="コックピット画像" class="w-full h-auto rounded-xl shadow-md border border-stone-200">
+                </div>
+                <div class="w-full md:w-1/2 space-y-4">
+                    <p class="text-sm text-stone-600 leading-relaxed font-medium">
+                        レポートの全体図は、あなたの「心の操縦席」です。<br>
+                        どこにエネルギーが注がれやすく、どこが少し動かしにくいのかが一目でわかります。
+                    </p>
+                    <ul class="space-y-3 text-sm text-stone-600">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-sky-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span><strong class="text-stone-800">高い数値の領域：</strong>あなたが自然に振る舞える、得意な役割です。強みとして意識的に活用しましょう。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <span><strong class="text-stone-800">低い数値の領域：</strong>使うと少し疲れやすい役割です。無理して使う必要はありません。得意な人に頼るのも一つの手です。</span>
+                        </li>
+                    </ul>
+                    <div class="bg-sky-50 p-3 rounded-lg border border-sky-100 mt-4 text-xs text-sky-800">
+                        💡 <strong>Point:</strong> 優劣ではありません。「いまの自分の状態」を客観視するためのツールです。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. モードの解説 -->
+        <!-- ========================================== -->
+        <section class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold mr-3">2</div>
+                <h2 class="text-xl md:text-2xl font-bold text-stone-800">モードの解説</h2>
+            </div>
+            
+            <p class="text-sm text-stone-600 mb-6 leading-relaxed px-2">
+                交流分析の考え方をベースにした、人との関わり方の「モード（状態）」です。<br>
+                私たちは状況に応じて、これらのモードを無意識に切り替えています。
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- モード1 -->
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="font-bold text-stone-800 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-red-400 mr-2"></span>
+                        理想やルールを重んじるモード
+                    </div>
+                    <p class="text-xs text-stone-500 leading-relaxed">
+                        べき・ねばならないといった価値観を強く持ち、秩序やルールを守る、あるいは他者を導こうとする際に働く心の状態です。（※解説文は仮です）
+                    </p>
+                </div>
+                <!-- モード2 -->
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="font-bold text-stone-800 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
+                        他者を思いやり、支援するモード
+                    </div>
+                    <p class="text-xs text-stone-500 leading-relaxed">
+                        相手の気持ちに寄り添い、お世話をしたり、励ましたりする優しさのエネルギーです。強すぎると過干渉になることもあります。
+                    </p>
+                </div>
+                <!-- モード3 -->
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="font-bold text-stone-800 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+                        事実に基づき、論理的に考えるモード
+                    </div>
+                    <p class="text-xs text-stone-500 leading-relaxed">
+                        感情に流されず、客観的なデータや事実をもとに物事を判断・処理しようとする、大人のような冷静な状態です。
+                    </p>
+                </div>
+                <!-- モード4 -->
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="font-bold text-stone-800 mb-2 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
+                        直感や感情を素直に表現するモード
+                    </div>
+                    <p class="text-xs text-stone-500 leading-relaxed">
+                        自由奔放で創造的、あるいは他者の顔色をうかがって協調するなど、子どもの頃から培われた感情的なエネルギーです。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. 興味の蛇口の解説 -->
+        <!-- ========================================== -->
+        <section class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold mr-3">3</div>
+                <h2 class="text-xl md:text-2xl font-bold text-stone-800">興味の蛇口の解説</h2>
+            </div>
+            
+            <p class="text-sm text-stone-600 mb-6 leading-relaxed px-2">
+                職業選択理論（ホランド理論）をベースにした、あなたが「何に対してエネルギー（興味）を注ぎやすいか」を示す6つの領域（蛇口）です。
+            </p>
+
+            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-stone-100">
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">🛠️</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">現実的・実践的（つくる・動かす）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">目に見える成果や、具体的な道具・機械を扱うことに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">🔬</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">研究的・探求的（調べる・考える）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">物事の仕組みを論理的に分析したり、深く探求したりすることに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">🎨</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">芸術的・創造的（表現する・生み出す）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">独創性や美しさを追求し、感情やアイデアを自由に表現することに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">🤝</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">社会的・支援的（助ける・教える）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">人々の成長を支援したり、悩みを聞いて解決に導くことに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">🚀</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">企業的・説得的（引っ張る・動かす）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">目標を達成するために他者を説得し、組織やプロジェクトをリードすることに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex items-start space-x-3">
+                        <div class="text-2xl">📋</div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 text-sm mb-1">慣習的・整理的（整える・管理する）</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">ルールやデータを正確に処理し、環境や仕組みをきちんと整えることに興味が湧きやすい傾向です。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. 関連ツール・アプリケーション -->
+        <!-- ========================================== -->
+        <section class="mb-16">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mr-3">4</div>
+                <h2 class="text-xl md:text-2xl font-bold text-stone-800">さらに活用するためのツール</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                
+                <!-- RIESM mini -->
+                <a href="#" class="group block bg-white rounded-2xl border-2 border-transparent hover:border-emerald-300 shadow-sm hover:shadow-md transition-all p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-16 h-16 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-stone-800 mb-2 flex items-center">
+                        RIESM™ mini
+                        <svg class="w-4 h-4 ml-1 text-stone-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </h3>
+                    <p class="text-sm text-stone-500 mb-4 leading-relaxed">
+                        日々のちょっとした振り返りや、特定の相手との関係性を手軽にチェックできる簡易版ツールです。
+                    </p>
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">ツールを開く</span>
+                </a>
+
+                <!-- RoleTRADE -->
+                <a href="#" class="group block bg-stone-800 rounded-2xl border-2 border-transparent hover:border-stone-500 shadow-sm hover:shadow-lg transition-all p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center">
+                        RoleTRADE
+                        <svg class="w-4 h-4 ml-1 text-stone-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </h3>
+                    <p class="text-sm text-stone-300 mb-4 leading-relaxed">
+                        役割（Role）を交換・共有しあう体験型ワーク。チームビルディングや相互理解のゲームとして活用できます。
+                    </p>
+                    <span class="text-xs font-bold text-stone-800 bg-white px-3 py-1.5 rounded-full">詳細を見る</span>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. 優待・セッション案内 -->
+        <!-- ========================================== -->
+        <div class="w-full h-px bg-stone-200 mt-12 mb-10 max-w-2xl mx-auto"></div>
+
+        <section class="mb-12">
+            <h2 class="text-xl font-bold text-stone-800 mb-6 text-center">大切な方にも、この体験を</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- 優待コード案内 -->
+                <div class="bg-pink-50 border border-pink-100 rounded-2xl p-6 relative">
+                    <div class="absolute -top-3 left-4 bg-pink-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider">
+                        受検者限定特典
+                    </div>
+                    <h3 class="font-bold text-stone-800 mb-3 mt-2 text-base">ご紹介優待コード</h3>
+                    <p class="text-sm text-stone-600 mb-4 leading-relaxed">
+                        あなたの大切なご家族、ご友人、職場の同僚の方にもRIESM™をご紹介ください。<br>
+                        以下のリンクからお申し込みいただくと、通常価格よりお得な<strong class="text-pink-600">3,000円（税込）</strong>でご受検いただけます。
+                    </p>
+                    <div class="bg-white border border-stone-200 rounded-lg p-3 text-center mb-4">
+                        <p class="text-xs text-stone-500 mb-1">ご紹介用URL（コピーして共有してください）</p>
+                        <input type="text" readonly value="https://ninin-cc.github.io/riesm_guide.html#plans" class="w-full bg-stone-50 text-stone-700 text-xs p-2 rounded border border-stone-200 text-center cursor-copy hover:bg-stone-100 transition-colors" onclick="this.select(); document.execCommand('copy'); alert('URLをコピーしました');">
+                    </div>
+                </div>
+
+                <!-- セッション案内 -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                    <h3 class="font-bold text-stone-800 mb-2 text-base">RIESM™セッション（50分）</h3>
+                    <div class="flex items-baseline space-x-2 mb-3">
+                        <span class="text-2xl font-black text-rose-600 tracking-tight">7,000<span class="text-lg">円</span></span>
+                        <span class="text-[10px] text-stone-400 font-medium">（税込 / 1回）</span>
+                    </div>
+                    <p class="text-xs text-stone-600 mb-5 leading-relaxed">
+                        プロのカウンセラーによるオンライン個別セッションです。<br>
+                        結果を読み解くだけでなく、対話を通してあなただけの強みや、これからの行動への気づきをサポートします。<br>
+                        心の定期メンテナンスとしてもご利用ください。
+                    </p>
+                    <a href="https://buy.stripe.com/bJe14mgthdxddJKfwu9Zm06" class="block w-full text-center bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 rounded-lg transition-all shadow-sm active:scale-95 text-sm">
+                        セッションを申し込む
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- トップへ戻るリンク -->
+        <div class="mb-12 text-center mt-12">
+            <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
+                <span>サイトトップへ戻る</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
+        <div class="text-xs text-stone-400 space-y-1 mb-3">
+            <p>合同会社ninin consulting ＆ counseling</p>
+            <p>法人番号 9011503006532</p>
+        </div>
+        <p class="text-xs text-stone-400 tracking-widest uppercase">
+            © 2025 ninin LLC. All Rights Reserved.
+        </p>
+    </footer>
+
+</body>
+</html>
