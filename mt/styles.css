@@ -2505,3 +2505,59 @@
 .exit-to-tavern-start {
   z-index: 9;
 }
+
+
+/* Page 5-2 mobile tap targets and entrance zoom refinement. */
+@media (max-width: 760px) {
+  .exit-to-tavern-hotspot-refrem {
+    left: 18%;
+    top: 10%;
+    width: 47%;
+    height: 78%;
+  }
+
+  .exit-to-tavern-hotspot-haruka {
+    left: 55%;
+    top: 13%;
+    width: 43%;
+    height: 74%;
+  }
+
+  @keyframes exitToTavernPan {
+    0% {
+      background-position: 55% center;
+      background-size: auto 100%;
+      filter: brightness(1.02) saturate(1.02);
+    }
+    64% {
+      background-position: 12% center;
+      background-size: auto 104%;
+      filter: brightness(1.04) saturate(1.05);
+    }
+    100% {
+      background-position: 0% center;
+      background-size: auto 128%;
+      filter: brightness(1.1) saturate(1.07);
+    }
+  }
+}
+
+@media (min-width: 761px) {
+  @keyframes exitToTavernPan {
+    0% {
+      background-position: 52% center;
+      background-size: auto 100%;
+      filter: brightness(1.02) saturate(1.02);
+    }
+    64% {
+      background-position: 14% center;
+      background-size: auto 104%;
+      filter: brightness(1.04) saturate(1.05);
+    }
+    100% {
+      background-position: 0% center;
+      background-size: auto 126%;
+      filter: brightness(1.1) saturate(1.07);
+    }
+  }
+}
