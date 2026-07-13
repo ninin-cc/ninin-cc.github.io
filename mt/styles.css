@@ -1,4 +1,4 @@
-    :root {
+﻿    :root {
       --rt-stage-fade-out-duration: 1.18s;
       --rt-stage-fade-in-duration: 1.32s;
       --rt-card-gather-duration: 1420ms;
@@ -1658,3 +1658,163 @@
   font-weight: 700;
   opacity: 0.78;
 }
+
+
+/* Page 4: Haruka's six cards as two loose three-card bundles. */
+.initial-shop-bundles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.initial-shop-bundle-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1.15rem, 5.2vw, 3.2rem);
+  width: 100%;
+}
+
+.initial-shop-bundle {
+  position: relative;
+  width: clamp(8.8rem, 40vw, 12.2rem);
+  height: clamp(7.3rem, 33vw, 10.2rem);
+  transform: translateZ(0);
+}
+
+.initial-shop-bundle-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition: transform 420ms ease, z-index 420ms ease, filter 420ms ease;
+}
+
+.initial-shop-bundle-card-0 { transform: translate(calc(-50% - 2.1rem), -50%) rotate(-7deg); z-index: 1; }
+.initial-shop-bundle-card-1 { transform: translate(-50%, calc(-50% - 0.22rem)) rotate(0deg); z-index: 2; }
+.initial-shop-bundle-card-2 { transform: translate(calc(-50% + 2.1rem), -50%) rotate(7deg); z-index: 3; }
+.initial-shop-bundle-card.is-selected { z-index: 30; filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.5)); }
+
+@media (min-width: 640px) {
+  .initial-shop-bundle-card-0 { transform: translate(calc(-50% - 2.75rem), -50%) rotate(-7deg); }
+  .initial-shop-bundle-card-2 { transform: translate(calc(-50% + 2.75rem), -50%) rotate(7deg); }
+}
+
+@media (max-width: 380px) {
+  .initial-shop-bundle-row { gap: 0.8rem; }
+  .initial-shop-bundle { width: 8.15rem; height: 6.9rem; }
+  .initial-shop-bundle-card-0 { transform: translate(calc(-50% - 1.72rem), -50%) rotate(-7deg); }
+  .initial-shop-bundle-card-2 { transform: translate(calc(-50% + 1.72rem), -50%) rotate(7deg); }
+}
+
+/* Page 5-2: move from Refrem and Haruka's room toward the left door. */
+.exit-to-tavern-scene {
+  min-height: min(72vh, 34rem);
+  background: #e8dcc4;
+}
+
+.exit-to-tavern-pan {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: 40% center;
+  background-size: 152% auto;
+  filter: brightness(1.02) saturate(1.02);
+  will-change: background-position, background-size, filter;
+}
+
+.exit-to-tavern-scene.is-moving .exit-to-tavern-pan {
+  animation: exitToTavernPan 7.2s cubic-bezier(0.18, 0.78, 0.16, 1) both;
+}
+
+.exit-to-tavern-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 16% 46%, rgba(255, 244, 210, 0.24), transparent 23%),
+    linear-gradient(90deg, rgba(232, 220, 196, 0.12), rgba(232, 220, 196, 0.34));
+  box-shadow: inset 0 0 120px rgba(67, 20, 7, 0.38);
+  pointer-events: none;
+}
+
+.exit-to-tavern-start {
+  position: absolute;
+  z-index: 4;
+  left: clamp(0.9rem, 6vw, 3rem);
+  top: clamp(10.5rem, 54%, 20rem);
+  width: min(13rem, 48vw);
+  box-shadow: 0 12px 26px rgba(67, 20, 7, 0.28);
+}
+
+.exit-to-tavern-scene.is-moving .exit-to-tavern-start {
+  opacity: 0;
+  transform: translateY(-0.35rem);
+  pointer-events: none;
+}
+
+.exit-to-tavern-caption {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.1rem, 4vw, 2rem);
+  width: min(88%, 32rem);
+  transform: translateX(-50%);
+  border: 1px solid rgba(87, 64, 43, 0.34);
+  background: rgba(244, 235, 216, 0.72);
+  box-shadow: 0 12px 34px rgba(67, 20, 7, 0.18);
+  padding: 0.75rem 1rem;
+  font-size: clamp(0.82rem, 2.8vw, 1.05rem);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.exit-to-tavern-scene.is-moving .exit-to-tavern-caption {
+  animation: none;
+}
+
+@keyframes exitToTavernPan {
+  0% {
+    background-position: 40% center;
+    background-size: 152% auto;
+    filter: brightness(1.02) saturate(1.02);
+  }
+  58% {
+    background-position: 27% center;
+    background-size: 145% auto;
+    filter: brightness(1.03) saturate(1.04);
+  }
+  100% {
+    background-position: 0% center;
+    background-size: 205% auto;
+    filter: brightness(1.08) saturate(1.06);
+  }
+}
+
+@keyframes exitToTavernCaption {
+  0%, 16% { opacity: 0; transform: translate(-50%, 0.35rem); }
+  32%, 82% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -0.25rem); }
+}
+
+@media (max-width: 640px) {
+  .exit-to-tavern-scene {
+    min-height: min(70vh, 30rem);
+  }
+
+  .exit-to-tavern-pan {
+    background-position: 31% center;
+    background-size: 205% auto;
+  }
+
+  .exit-to-tavern-start {
+    left: clamp(0.8rem, 4vw, 1.35rem);
+    top: 53%;
+    width: min(11.2rem, 45vw);
+  }
+
+  @keyframes exitToTavernPan {
+    0% { background-position: 31% center; background-size: 205% auto; filter: brightness(1.02) saturate(1.02); }
+    58% { background-position: 16% center; background-size: 168% auto; filter: brightness(1.03) saturate(1.04); }
+    100% { background-position: 0% center; background-size: 182% auto; filter: brightness(1.08) saturate(1.06); }
+  }
+}
+

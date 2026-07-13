@@ -267,6 +267,7 @@ function getSecondDoubleTradeCount() {
       'INITIAL_HAND',
       'RULES',
       'LEAVE_SHOP_1',
+      'EXIT_TO_TAVERN',
       'BEFORE_TAVERN',
       'AFTER_TAVERN',
       'SHOP_CONFIRM',
@@ -342,6 +343,7 @@ function getSecondDoubleTradeCount() {
       initialHandDialogueStep: 0,
       leaveShopDialogueStep: 0,
       beforeTavernDialogueStep: 0,
+      exitToTavernAnimating: false,
       finalShopGuideStep: 0,
       shopConfirmDialogueStep: 0
     };
@@ -371,6 +373,7 @@ function getSecondDoubleTradeCount() {
         if (state.round >= 2 && state.round < getFinalShopRound()) return String(5 + state.round); // R2=7 ... R5=10
       }
       if (state.gameState === 'LEAVE_SHOP_1') return '5';
+      if (state.gameState === 'EXIT_TO_TAVERN') return '5-2';
       if (state.gameState === 'BEFORE_TAVERN') return '6';
       if (state.gameState === 'AFTER_TAVERN') return '11';
       if (state.gameState === 'SHOP_CONFIRM') return '13';
@@ -407,6 +410,26 @@ function getSecondDoubleTradeCount() {
     }
 
     let transitionTimer = null;
+    let exitToTavernTimer = null;
+
+    function clearExitToTavernTimer() {
+      if (exitToTavernTimer) {
+        clearTimeout(exitToTavernTimer);
+        exitToTavernTimer = null;
+      }
+    }
+
+    function scheduleExitToTavernAdvance() {
+      clearExitToTavernTimer();
+      exitToTavernTimer = setTimeout(() => {
+        exitToTavernTimer = null;
+        if (state.gameState !== 'EXIT_TO_TAVERN' || !state.exitToTavernAnimating) return;
+        transitionState(() => {
+          state.beforeTavernDialogueStep = 0;
+          state.gameState = 'BEFORE_TAVERN';
+        });
+      }, 7200);
+    }
 
     function transitionState(callback) {
       if (transitionTimer) return;
@@ -977,6 +1000,7 @@ function getSecondDoubleTradeCount() {
       ['3-3', '確認後'],
       ['4', 'ハルカ交換'],
       ['5', '酒場へ'],
+      ['5-2', '出口へ'],
       ['6', '道中'],
       ['7', '旅人1'],
       ['8', '旅人2'],
@@ -1068,6 +1092,7 @@ function getSecondDoubleTradeCount() {
       state.initialHandAnimated = true;
       state.leaveShopDialogueStep = 99;
       state.beforeTavernDialogueStep = 99;
+      state.exitToTavernAnimating = false;
       state.farewellMessage = state.farewellMessage || '選んだ役割は、おぬしを縛る鎖ではない。必要なときに思い出す、小さな灯火じゃ。';
       state.reflectionAnswers = state.reflectionAnswers || { primary: '', dissonance: '', future: '' };
       return { hand, shop, deck };
@@ -1122,6 +1147,9 @@ function getSecondDoubleTradeCount() {
         state.round = 1;
       } else if (page === '5') {
         state.gameState = 'LEAVE_SHOP_1';
+      } else if (page === '5-2') {
+        state.gameState = 'EXIT_TO_TAVERN';
+        state.exitToTavernAnimating = false;
       } else if (page === '6') {
         state.gameState = 'BEFORE_TAVERN';
       } else if (['7', '8', '9', '10'].includes(page)) {
@@ -1382,6 +1410,16 @@ function getSecondDoubleTradeCount() {
           return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
         }).join('');
       }
+      function renderInitialShopBundle(cards, bundleIndex) {
+        return '<div class="initial-shop-bundle initial-shop-bundle-' + bundleIndex + '">' + cards.map((card, index) => {
+          const isSelected = state.selectedShopCard?.id === card.id;
+          let cStyle = "!w-[74px] !h-[105px] sm:!w-24 sm:!h-36 ";
+          if (state.isExchanging && isSelected) cStyle += "animate-fly-down ";
+          if (state.isEntering) cStyle += "animate-drop-in ";
+          return '<div class="initial-shop-bundle-card initial-shop-bundle-card-' + index + (isSelected ? ' is-selected' : '') + '">' + renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle }) + '</div>';
+        }).join('') + '</div>';
+      }
+
       if (state.gameState === 'PLAYING' && isShopTime) {
         const createShopCardWrapper = (card) => {
           const isSelected = state.selectedShopCard?.id === card.id;
@@ -1390,8 +1428,13 @@ function getSecondDoubleTradeCount() {
           if (state.isEntering) cStyle += "animate-drop-in ";
           return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
         };
-        shopCardsTopHTML = state.shop.slice(0, 3).map(createShopCardWrapper).join('');
-        shopCardsBottomHTML = state.shop.slice(3, 6).map(createShopCardWrapper).join('');
+        if (isInitialExchange) {
+          shopCardsTopHTML = renderInitialShopBundle(state.shop.slice(0, 3), 1);
+          shopCardsBottomHTML = renderInitialShopBundle(state.shop.slice(3, 6), 2);
+        } else {
+          shopCardsTopHTML = state.shop.slice(0, 3).map(createShopCardWrapper).join('');
+          shopCardsBottomHTML = state.shop.slice(3, 6).map(createShopCardWrapper).join('');
+        }
       }
 
       let resultHandTopHTML = '';
@@ -1587,6 +1630,21 @@ function getSecondDoubleTradeCount() {
                     }
                   </div>
                 </div>
+              </div>
+        `;
+      }
+
+      // ▼▼ シーン：酒場へ向かう出口 ▼▼
+      if (state.gameState === 'EXIT_TO_TAVERN') {
+        const exitMovingClass = state.exitToTavernAnimating ? ' is-moving' : '';
+        html += `
+              <div class="exit-to-tavern-scene${exitMovingClass} rounded-sm border border-stone-400/80 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
+                <div class="exit-to-tavern-pan" style="background-image: url('${ROLETRADE_SCENE_IMG}');" aria-hidden="true"></div>
+                <div class="exit-to-tavern-vignette" aria-hidden="true"></div>
+                <button type="button" data-action="start-exit-to-tavern" class="exit-to-tavern-start wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-7" ${state.exitToTavernAnimating ? 'disabled' : ''}>
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center">酒場に向かう<span class="rules-next-play ml-2">▶</span></span>
+                </button>
               </div>
         `;
       }
@@ -1860,15 +1918,24 @@ function getSecondDoubleTradeCount() {
                     </div>
 
                     ${isFinalShopWaiting ? '' : `
-                      <div class="flex flex-col items-center gap-2 sm:gap-4 w-full mb-4 sm:mb-8 relative z-10">
-                        ${isInitialExchange ? '<p class="selection-guide-label mb-0.5 sm:mb-1">ここから一つ選ぶ</p>' : ''}
-                        <div class="flex justify-center gap-1 sm:gap-4 w-full">
-                          ${shopCardsTopHTML}
+                      ${isInitialExchange ? `
+                        <div class="initial-shop-bundles w-full mb-4 sm:mb-8 relative z-10">
+                          <p class="selection-guide-label mb-1.5 sm:mb-3">ここから一つ選ぶ</p>
+                          <div class="initial-shop-bundle-row">
+                            ${shopCardsTopHTML}
+                            ${shopCardsBottomHTML}
+                          </div>
                         </div>
-                        <div class="flex justify-center gap-1 sm:gap-4 w-full">
-                          ${shopCardsBottomHTML}
+                      ` : `
+                        <div class="flex flex-col items-center gap-2 sm:gap-4 w-full mb-4 sm:mb-8 relative z-10">
+                          <div class="flex justify-center gap-1 sm:gap-4 w-full">
+                            ${shopCardsTopHTML}
+                          </div>
+                          <div class="flex justify-center gap-1 sm:gap-4 w-full">
+                            ${shopCardsBottomHTML}
+                          </div>
                         </div>
-                      </div>
+                      `}
                     `}
                   </div>
           `;
@@ -2660,9 +2727,14 @@ function getSecondDoubleTradeCount() {
       } else if (action === 'go-before-tavern') {
         if (state.leaveShopDialogueStep < LEAVE_SHOP_DIALOGUE_BLOCKS.length - 1) return;
         transitionState(() => {
-          state.beforeTavernDialogueStep = 0;
-          state.gameState = 'BEFORE_TAVERN';
+          state.exitToTavernAnimating = false;
+          state.gameState = 'EXIT_TO_TAVERN';
         });
+      } else if (action === 'start-exit-to-tavern') {
+        if (state.gameState !== 'EXIT_TO_TAVERN' || state.exitToTavernAnimating) return;
+        state.exitToTavernAnimating = true;
+        render();
+        scheduleExitToTavernAdvance();
       } else if (action === 'select-hand') {
         if (state.waitingAfterTrade) return;
         if (isForcedTakeRound(state.round) && state.forcedTakePhase === 'choose') return;
