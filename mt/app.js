@@ -81,6 +81,27 @@ function getSecondDoubleTradeCount() {
       return array[randomInt(array.length)];
     }
 
+    function chooseExitHotspotLine(speaker) {
+      const lines = speaker === 'haruka' ? EXIT_TO_TAVERN_HARUKA_LINES : EXIT_TO_TAVERN_REFREM_LINES;
+      if (!lines.length) return '';
+      state.exitHotspotClickCountBySpeaker = Object.assign({ refrem: 0, haruka: 0 }, state.exitHotspotClickCountBySpeaker || {});
+      state.exitHotspotUsedIndicesBySpeaker = Object.assign({ refrem: [], haruka: [] }, state.exitHotspotUsedIndicesBySpeaker || {});
+      const nextCount = (state.exitHotspotClickCountBySpeaker[speaker] || 0) + 1;
+      state.exitHotspotClickCountBySpeaker[speaker] = nextCount;
+
+      if (nextCount > 20) return nextCount % 2 === 1 ? '……。' : (lines[19] || lines[lines.length - 1]);
+      if (nextCount === 20) return lines[19] || lines[lines.length - 1];
+      if (nextCount === 19) return lines[18] || lines[lines.length - 1];
+
+      const randomPoolSize = Math.min(18, lines.length);
+      let used = state.exitHotspotUsedIndicesBySpeaker[speaker] || [];
+      if (used.length >= randomPoolSize) used = [];
+      const available = Array.from({ length: randomPoolSize }, (_, index) => index).filter(index => !used.includes(index));
+      const index = available[randomInt(available.length)];
+      state.exitHotspotUsedIndicesBySpeaker[speaker] = used.concat(index);
+      return lines[index];
+    }
+
     // --- 旅人・セリフ・背景設定は app.content.js へ分割 ---
 
     const FINAL_SHOP_GUIDE_INTRO = getExperienceText('finalShopGuideIntro', '<p>よくぞ戻ってきた。</p><div class="h-1.5 sm:h-2"></div><p>大切なのは</p><div class="h-1.5 sm:h-2"></div><p>おぬしが、なぜそれを残し、<br>今の自分に必要だと感じたのか……じゃな。</p>');
@@ -261,6 +282,57 @@ function getSecondDoubleTradeCount() {
       }
     }
 
+    const ROLETRADE_PROGRESS_STORAGE_KEY = 'riesm-roletrade-mentalia-progress-v1';
+    const ROLETRADE_PROGRESS_VERSION = 1;
+    const ROLETRADE_RESULT_HISTORY_STORAGE_KEY = 'riesm-roletrade-mentalia-result-history-v1';
+    const ROLETRADE_RESULT_HISTORY_VERSION = 1;
+
+    const EXIT_TO_TAVERN_REFREM_LINES = [
+      '気をつけて行ってくるのじゃぞ。',
+      'よき出会いを。',
+      '焦らず、ゆっくり進むのじゃ。',
+      'おぬしの心が選ぶものを、大切にな。',
+      'どの道にも、何かしらの意味がある。',
+      '迷うことも、旅の一部じゃよ。',
+      '答えを急ぐ必要はないのじゃ。',
+      '心の声を、よく聞いてみるのじゃぞ。',
+      '手放して初めて、見えるものもある。',
+      '選んだものだけが、答えとは限らぬぞ。',
+      '出会いは、時に自分を映す鏡となる。',
+      '何を選ぶかより、何を感じたかじゃ。',
+      '旅の終わりには、またここへ戻ってくるがよい。',
+      '失うことを、あまり恐れぬことじゃ。',
+      'おぬしが大切にしているものは、そう簡単には消えぬ。',
+      'ふむ……少し緊張しておるようじゃな。',
+      '心配せずとも、おぬしなら大丈夫じゃ。',
+      'わしの顔を見ても、答えは書いておらんぞ。',
+      '何度つついても、旅は始まらんぞい。',
+      'そろそろ出発せぬと、夜になってしまうぞ。'
+    ];
+
+    const EXIT_TO_TAVERN_HARUKA_LINES = [
+      '楽しんできてね！',
+      'いってらっしゃい！',
+      'どんな出会いがあるかな？',
+      '何を選ぶのか、楽しみだね！',
+      'あんまり考えすぎなくても大丈夫だよ。',
+      '最初に気になったものを選んでもいいんだよ。',
+      '迷ったら、今の気持ちを大切にしてね。',
+      'どんな選び方でも、間違いじゃないよ。',
+      'ちょっとドキドキしてる？',
+      'どうしたの？　何か心配がある？',
+      '大丈夫。ちゃんとここで待ってるからね。',
+      '旅人たちは、どんなカードを持ってくるんだろう。',
+      '思いがけない出会いがあるかもしれないね！',
+      '気になるものがあったら、よく見てみてね。',
+      '選べないときは、どっちが好きかより、どっちを残したいか考えてみて。',
+      '何かを手放すのって、少し寂しいよね。',
+      'でも、あとでまた出会えるかもしれないよ。',
+      'ふふっ、私のことが気になるの？',
+      'もう、くすぐったいよ！',
+      'そろそろ行かないと、日が暮れちゃうよ！'
+    ];
+
     const HEADER_HIDDEN_STATES = [
       'START',
       'PLAYING',
@@ -322,6 +394,8 @@ function getSecondDoubleTradeCount() {
       forcedReplacementCandidates: [],
       forcedTakenCard: null,
       resultStep: 'SELECT_1',
+      resultRecordId: null,
+      historyRecordView: null,
       primaryCard: null,
       secondaryCard: null,
       confirmingCard: null,
@@ -344,6 +418,13 @@ function getSecondDoubleTradeCount() {
       leaveShopDialogueStep: 0,
       beforeTavernDialogueStep: 0,
       exitToTavernAnimating: false,
+      exitDepartureCueVisible: false,
+      exitHotspotSpeaker: '',
+      exitHotspotMessage: '',
+      exitHotspotClickCountBySpeaker: { refrem: 0, haruka: 0 },
+      exitHotspotUsedIndicesBySpeaker: { refrem: [], haruka: [] },
+      exitHotspotLastIndexBySpeaker: { refrem: -1, haruka: -1 },
+      startResetConfirmOpen: false,
       finalShopGuideStep: 0,
       shopConfirmDialogueStep: 0
     };
@@ -351,6 +432,8 @@ function getSecondDoubleTradeCount() {
     // ▼▼ 各シーンのページラベルを算出する関数 ▼▼
     function getPageLabel() {
       if (state.gameState === 'START') return '1';
+      if (state.gameState === 'HISTORY') return '記録';
+      if (state.gameState === 'HISTORY_RESULT') return '記録-結果';
       if (state.gameState === 'RULES') {
         if (state.rulesExplanationPhase === 'details') return '2-4';
         return '2-' + ((state.rulesGuideScene || 0) + 1);
@@ -411,6 +494,14 @@ function getSecondDoubleTradeCount() {
 
     let transitionTimer = null;
     let exitToTavernTimer = null;
+    let exitDepartureTimer = null;
+
+    function clearExitDepartureTimer() {
+      if (exitDepartureTimer) {
+        clearTimeout(exitDepartureTimer);
+        exitDepartureTimer = null;
+      }
+    }
 
     function clearExitToTavernTimer() {
       if (exitToTavernTimer) {
@@ -458,6 +549,250 @@ function getSecondDoubleTradeCount() {
         window.scrollTo(0, 0);
         render();
       }, EXPERIENCE_TIMING.stageFadeOutMs);
+    }
+
+    function canUseProgressStorage() {
+      try {
+        const storage = window.localStorage;
+        const testKey = ROLETRADE_PROGRESS_STORAGE_KEY + ':test';
+        storage.setItem(testKey, '1');
+        storage.removeItem(testKey);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function readSavedJourneyProgress() {
+      if (!canUseProgressStorage()) return null;
+      try {
+        const raw = window.localStorage.getItem(ROLETRADE_PROGRESS_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || parsed.version !== ROLETRADE_PROGRESS_VERSION || !parsed.state) return null;
+        return parsed;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function hasSavedJourneyProgress() {
+      return !!readSavedJourneyProgress();
+    }
+
+    function clearSavedJourneyProgress() {
+      if (!canUseProgressStorage()) return;
+      try {
+        window.localStorage.removeItem(ROLETRADE_PROGRESS_STORAGE_KEY);
+      } catch (error) {}
+    }
+
+    function sanitizeJourneyProgressState() {
+      const snapshot = JSON.parse(JSON.stringify(state));
+      Object.assign(snapshot, {
+        isTransitioning: false,
+        isExchanging: false,
+        isEntering: false,
+        initialHandCollecting: false,
+        initialHandReviewGathering: false,
+        initialHandReviewReturning: false,
+        exitToTavernAnimating: false,
+        exitDepartureCueVisible: false,
+        tradeConfirmOpen: false,
+        requestedTradeConfirmOpen: false,
+        requestedRefuseConfirmOpen: false,
+        secondPassConfirmOpen: false,
+        startResetConfirmOpen: false,
+        confirmingCard: null,
+        zoomedCard: null,
+        isConfirmModalClosing: false,
+        isResultConfirmSettling: false,
+        isAppBrowser: false,
+        shareMessage: ''
+      });
+      return snapshot;
+    }
+
+    function saveJourneyProgress() {
+      if (IS_DEV_MODE || ['START', 'HISTORY', 'HISTORY_RESULT'].includes(state.gameState) || state.startResetConfirmOpen) return;
+      if (!canUseProgressStorage()) return;
+      try {
+        window.localStorage.setItem(ROLETRADE_PROGRESS_STORAGE_KEY, JSON.stringify({
+          version: ROLETRADE_PROGRESS_VERSION,
+          savedAt: Date.now(),
+          pageLabel: getPageLabel(),
+          state: sanitizeJourneyProgressState()
+        }));
+      } catch (error) {}
+    }
+
+    function reviveCardValue(value) {
+      if (Array.isArray(value)) return value.map(reviveCardValue);
+      if (value && typeof value === 'object') {
+        if (Object.prototype.hasOwnProperty.call(value, 'id')) {
+          const card = CARDS_BY_ID.get(Number(value.id));
+          if (card && Object.prototype.hasOwnProperty.call(value, 'name')) return card;
+        }
+        const revived = {};
+        Object.entries(value).forEach(([key, item]) => {
+          revived[key] = reviveCardValue(item);
+        });
+        return revived;
+      }
+      return value;
+    }
+
+    function restoreJourneyProgress() {
+      const saved = readSavedJourneyProgress();
+      if (!saved) return false;
+      clearResultDecisionTimers();
+      clearExitToTavernTimer();
+      clearSceneDialogueAutoAdvance();
+      if (typeof clearRulesAutoAdvance === 'function') clearRulesAutoAdvance();
+      const restored = reviveCardValue(saved.state);
+      Object.assign(state, restored, {
+        isTransitioning: false,
+        isExchanging: false,
+        isEntering: false,
+        initialHandCollecting: false,
+        initialHandReviewGathering: false,
+        initialHandReviewReturning: false,
+        exitToTavernAnimating: false,
+        exitDepartureCueVisible: false,
+        tradeConfirmOpen: false,
+        requestedTradeConfirmOpen: false,
+        requestedRefuseConfirmOpen: false,
+        secondPassConfirmOpen: false,
+        startResetConfirmOpen: false,
+        confirmingCard: null,
+        zoomedCard: null,
+        isConfirmModalClosing: false,
+        isResultConfirmSettling: false,
+        isAppBrowser: false,
+        shareMessage: ''
+      });
+      window.ROLETRADE_ACTIVE_JOURNEY = state.journeyMode || 'first';
+      render();
+      window.scrollTo(0, 0);
+      return true;
+    }
+
+
+    function readResultHistoryRecords() {
+      if (!canUseProgressStorage()) return [];
+      try {
+        const raw = window.localStorage.getItem(ROLETRADE_RESULT_HISTORY_STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!parsed || parsed.version !== ROLETRADE_RESULT_HISTORY_VERSION || !Array.isArray(parsed.records)) return [];
+        return parsed.records
+          .filter(record => record && record.id && Array.isArray(record.handIds))
+          .sort((a, b) => Number(b.completedAt || 0) - Number(a.completedAt || 0));
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeResultHistoryRecords(records) {
+      if (!canUseProgressStorage()) return;
+      try {
+        window.localStorage.setItem(ROLETRADE_RESULT_HISTORY_STORAGE_KEY, JSON.stringify({
+          version: ROLETRADE_RESULT_HISTORY_VERSION,
+          updatedAt: Date.now(),
+          records: records.sort((a, b) => Number(b.completedAt || 0) - Number(a.completedAt || 0))
+        }));
+      } catch (error) {}
+    }
+
+    function createResultRecordId() {
+      return 'result-' + Date.now().toString(36) + '-' + Math.floor(randomFloat() * 0x100000).toString(36);
+    }
+
+    function getHistoryCard(id) {
+      return CARDS_BY_ID.get(Number(id)) || null;
+    }
+
+    function buildResultHistoryRecord() {
+      if (state.gameState !== 'RESULT' || state.resultStep !== 'FINAL') return null;
+      if (!Array.isArray(state.hand) || state.hand.length !== 5 || !state.primaryCard || !state.secondaryCard) return null;
+      if (!state.resultRecordId) state.resultRecordId = createResultRecordId();
+      return {
+        id: state.resultRecordId,
+        completedAt: Date.now(),
+        journeyMode: state.journeyMode || 'first',
+        handIds: state.hand.map(card => card.id),
+        roles: state.hand.map(card => ({
+          id: card.id,
+          name: card.name,
+          desc: card.desc,
+          mode: card.mode
+        })),
+        primaryId: state.primaryCard.id,
+        secondaryId: state.secondaryCard.id,
+        reflectionAnswers: Object.assign({ primary: '', dissonance: '', future: '' }, state.reflectionAnswers || {})
+      };
+    }
+
+    function saveResultHistoryRecord() {
+      const record = buildResultHistoryRecord();
+      if (!record || !canUseProgressStorage()) return null;
+      const records = readResultHistoryRecords();
+      const index = records.findIndex(item => item.id === record.id);
+      if (index >= 0) records[index] = Object.assign({}, records[index], record);
+      else records.unshift(record);
+      writeResultHistoryRecords(records);
+      return record;
+    }
+
+    function getResultHistoryRecord(id) {
+      return readResultHistoryRecords().find(record => record.id === id) || null;
+    }
+
+    function formatResultHistoryDate(timestamp) {
+      if (!timestamp) return '日時不明';
+      try {
+        return new Intl.DateTimeFormat('ja-JP', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(new Date(timestamp));
+      } catch (error) {
+        return new Date(timestamp).toLocaleString();
+      }
+    }
+
+    function getResultHistoryQuestionData(record) {
+      const primary = getHistoryCard(record.primaryId);
+      const primaryName = primary?.name || record.roles?.find(role => role.id === record.primaryId)?.name || '';
+      return [
+        {
+          key: 'primary',
+          speaker: 'リフレムからの問い',
+          question: 'Q. なぜ、お主は【' + primaryName + '】を一番大切な役割として残したのじゃ？'
+        },
+        {
+          key: 'dissonance',
+          speaker: 'リフレムからの問い',
+          question: 'Q. そこに「自分らしくない」と感じるカードがあるなら、それでも残した理由はなんじゃろうな…？'
+        },
+        {
+          key: 'future',
+          speaker: 'ハルカからの問い',
+          question: 'Q. この5つの役割を持ったあなたは、これからどんな未来へ歩いていきたいですか？'
+        }
+      ];
+    }
+
+    function beginFreshJourney() {
+      clearSavedJourneyProgress();
+      clearResultDecisionTimers();
+      clearExitToTavernTimer();
+      state.startResetConfirmOpen = false;
+      state.journeyMode = 'first';
+      window.ROLETRADE_ACTIVE_JOURNEY = 'first';
+      openRulesScene();
     }
 
     function shuffleArray(array) {
@@ -536,6 +871,9 @@ function getSecondDoubleTradeCount() {
       state.shopConfirmDialogueStep = 0;
       state.initialHandCollecting = false;
       state.initialHandAnimated = false;
+      state.startResetConfirmOpen = false;
+      state.resultRecordId = null;
+      state.historyRecordView = null;
       
       state.gameState = 'INITIAL_HAND';
       state.shareMessage = '';
@@ -1191,6 +1529,7 @@ function getSecondDoubleTradeCount() {
     }
 
     function renderStartScene() {
+      const savedProgressExists = hasSavedJourneyProgress();
       return `
               <div class="start-scene-frame rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]">
                 <img src="${BG_START_MENTALIA}" alt="" aria-hidden="true" class="start-scene-image absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none">
@@ -1231,14 +1570,30 @@ function getSecondDoubleTradeCount() {
                 </div>
 
 
-              <div class="mt-2 sm:mt-2 mb-3 flex justify-center relative z-10 px-4 sm:px-0">
-                <button data-action="go-rules" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-xs sm:text-sm w-full sm:w-auto font-serif font-bold py-2.5 sm:py-3 px-7 sm:px-10 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105">
+              <div class="start-journey-actions mt-2 sm:mt-2 mb-3 relative z-10 px-4 sm:px-0">
+                <button data-action="start-fresh-journey" class="wood-btn wood-btn-dark rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-xs sm:text-sm w-full font-serif font-bold py-2.5 sm:py-3 px-5 sm:px-8 shadow-[0_5px_20px_rgba(0,0,0,0.4)] hover:scale-105">
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center text-stone-100">
-                    旅の説明を聞く
+                    最初から始める
                     ${getIcon('Play', "w-4 h-4 ml-3 group-hover:text-orange-400 transition-colors")}
                   </span>
                 </button>
+                <button data-action="continue-journey" ${savedProgressExists ? '' : 'disabled'} class="wood-btn wood-btn-light rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-xs sm:text-sm w-full font-serif font-bold py-2.5 sm:py-3 px-5 sm:px-8 shadow-[0_5px_16px_rgba(0,0,0,0.18)] ${savedProgressExists ? 'hover:scale-105' : 'opacity-45 grayscale cursor-not-allowed'}">
+                  <div class="wood-texture"></div>
+                  <span class="relative z-10 flex items-center justify-center">
+                    続きから始める
+                    ${getIcon('RefreshCw', "w-4 h-4 ml-3")}
+                  </span>
+                </button>
+                <button data-action="open-history" class="start-history-button rounded-sm transition-all duration-500 flex items-center justify-center tracking-widest text-xs sm:text-sm w-full font-serif font-bold py-2.5 sm:py-3 px-5 sm:px-8 shadow-[0_5px_16px_rgba(0,0,0,0.14)]">
+                  <span class="relative z-10 flex items-center justify-center">
+                    旅の記録を見る
+                    ${getIcon('ScrollText', "w-4 h-4 ml-3")}
+                  </span>
+                </button>
+                <p class="start-journey-save-note font-serif font-bold text-[10px] sm:text-xs text-stone-700/80 mt-2 text-center">
+                  ${savedProgressExists ? '前回の旅の記録があります。' : '続きの記録はまだありません。'}
+                </p>
               </div>
 
                 ${renderWorkshopLicenseCard()}
@@ -1337,6 +1692,90 @@ function getSecondDoubleTradeCount() {
         `;
     }
 
+
+    function renderHistoryScene() {
+      const records = readResultHistoryRecords();
+      const listHTML = records.length ? records.map(record => {
+        const roleNames = (record.roles && record.roles.length ? record.roles : record.handIds.map(id => {
+          const card = getHistoryCard(id);
+          return card ? { id: card.id, name: card.name } : { id, name: '不明な役割' };
+        }));
+        return '<button type="button" data-action="open-history-record" data-id="' + escapeAttribute(record.id) + '" class="result-history-item">' +
+          '<span class="result-history-date">' + escapeHTML(formatResultHistoryDate(record.completedAt)) + '</span>' +
+          '<span class="result-history-roles">' + roleNames.map(role => '<span>' + escapeHTML(role.name) + '</span>').join('') + '</span>' +
+          '<span class="result-history-open">結果を見る ▶</span>' +
+        '</button>';
+      }).join('') : '<div class="result-history-empty">まだ旅の記録はありません。<br>結果画面まで進むと、ここに5つの役割が残ります。</div>';
+
+      return `
+              <div class="result-history-scene max-w-2xl mx-auto relative z-10">
+                <div class="result-history-card" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <p class="result-history-kicker">RoleTRADE™ Mentalia</p>
+                  <h2>旅の記録</h2>
+                  <p class="result-history-lead">結果までたどり着いた旅を、実施日時の新しい順に残しています。</p>
+                  <div class="result-history-list">${listHTML}</div>
+                  <div class="result-history-actions">
+                    <button type="button" data-action="history-back-start" class="rules-back-link">TOPに戻る</button>
+                  </div>
+                </div>
+              </div>
+      `;
+    }
+
+    function renderHistoryResultScene() {
+      const record = state.historyRecordView || null;
+      if (!record) {
+        return `
+              <div class="result-history-scene max-w-2xl mx-auto relative z-10">
+                <div class="result-history-card" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <h2>記録が見つかりませんでした。</h2>
+                  <div class="result-history-actions">
+                    <button type="button" data-action="back-history-list" class="rules-back-link">旅の記録を見るへ戻る</button>
+                  </div>
+                </div>
+              </div>
+        `;
+      }
+      const cards = (record.handIds || []).map(id => getHistoryCard(id)).filter(Boolean);
+      const primary = getHistoryCard(record.primaryId);
+      const secondary = getHistoryCard(record.secondaryId);
+      const restCards = cards.filter(card => card.id !== record.primaryId && card.id !== record.secondaryId);
+      const answers = getResultHistoryQuestionData(record).map(item => {
+        return '<section class="result-history-question">' +
+          '<p class="speaker">' + escapeHTML(item.speaker) + '</p>' +
+          '<p class="question">' + escapeHTML(item.question) + '</p>' +
+          '<div class="answer">' + formatMultiline(record.reflectionAnswers?.[item.key] || '') + '</div>' +
+        '</section>';
+      }).join('');
+      return `
+              <div class="result-history-result max-w-3xl mx-auto relative z-10">
+                <div class="result-history-card result-history-result-card" style="background-image: ${PARCHMENT_TEXTURE}">
+                  <div class="result-history-topline">
+                    <button type="button" data-action="back-history-list" class="rules-back-link">旅の記録を見るへ戻る</button>
+                    <span>${escapeHTML(formatResultHistoryDate(record.completedAt))}</span>
+                  </div>
+                  <p class="result-history-kicker">保存された旅の結果</p>
+                  <h2>このとき残した5つの役割</h2>
+                  <div class="result-history-featured">
+                    ${primary ? '<div class="result-history-featured-card"><span>一番大切</span>' + renderCardHTML(primary, { isReadOnly: true, glow: true }) + '</div>' : ''}
+                    ${secondary ? '<div class="result-history-featured-card"><span>二番目</span>' + renderCardHTML(secondary, { isReadOnly: true, glow: true }) + '</div>' : ''}
+                  </div>
+                  <div class="result-history-rest">
+                    ${restCards.map(card => renderCardHTML(card, { isReadOnly: true, customStyle: "border-stone-400" })).join('')}
+                  </div>
+                  <div class="result-history-answer-block">
+                    ${answers}
+                  </div>
+                  <div class="result-history-actions">
+                    <button type="button" data-action="back-history-list" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5">
+                      <div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">旅の記録を見るへ戻る</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+      `;
+    }
+
     function render() {
       const root = document.getElementById('root');
       const layoutMode = typeof getRoleTradeLayoutMode === 'function' ? getRoleTradeLayoutMode() : 'desktop';
@@ -1346,6 +1785,7 @@ function getSecondDoubleTradeCount() {
       const isShopTime = state.shopRounds.includes(state.round);
       const stageFadeClass = state.isTransitioning ? 'animate-fadeInStage' : '';
       const isInitialExchange = state.gameState === 'PLAYING' && state.round === 1;
+      const useShopBundleLayout = isInitialExchange || (state.gameState === 'PLAYING' && isShopTime && isFinalShopRound(state.round));
       const isTwoCardTravelerOffer = state.gameState === 'PLAYING' && !isShopTime && isTwoCardTravelerRound(state.round);
       const isSecondDoubleTrade = state.gameState === 'PLAYING' && !isShopTime && isSecondDoubleTradeRound(state.round);
       const doubleTradeCount = getSecondDoubleTradeCount();
@@ -1428,7 +1868,7 @@ function getSecondDoubleTradeCount() {
           if (state.isEntering) cStyle += "animate-drop-in ";
           return renderCardHTML(card, { isSelected: isSelected, isShopCard: true, customStyle: cStyle });
         };
-        if (isInitialExchange) {
+        if (useShopBundleLayout) {
           shopCardsTopHTML = renderInitialShopBundle(state.shop.slice(0, 3), 1);
           shopCardsBottomHTML = renderInitialShopBundle(state.shop.slice(3, 6), 2);
         } else {
@@ -1536,6 +1976,33 @@ function getSecondDoubleTradeCount() {
 
       if (state.gameState === 'START') {
         html += renderStartScene();
+        if (state.startResetConfirmOpen) {
+          html += `
+            <div class="start-reset-confirm-modal fixed inset-0 z-[230] flex items-center justify-center bg-stone-950/65 p-4 backdrop-blur-sm animate-fadeInModal">
+              <div class="start-reset-confirm-card w-full max-w-md rounded-sm border border-orange-900/30 bg-[#f0e6d2] p-5 sm:p-7 text-center shadow-2xl" style="background-image: ${PARCHMENT_TEXTURE}">
+                <p class="text-[10px] sm:text-xs font-serif font-black tracking-[0.22em] text-orange-900/80">旅の記録</p>
+                <h2 class="mt-2 text-lg sm:text-xl font-serif font-extrabold text-stone-900 magic-text-glow">前回の記録が残っています。</h2>
+                <p class="mt-4 text-xs sm:text-sm font-serif font-bold leading-loose text-stone-800">このまま最初から始めると、保存されている旅の途中経過は消えます。<br>新しい旅として始めてよいですか？</p>
+                <div class="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
+                  <button type="button" data-action="cancel-start-fresh" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full sm:w-auto">
+                    <div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">戻る</span>
+                  </button>
+                  <button type="button" data-action="confirm-start-fresh" class="wood-btn wood-btn-dark rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full sm:w-auto">
+                    <div class="wood-texture"></div><span class="relative z-10 flex items-center justify-center">記録を消して始める</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (state.gameState === 'HISTORY') {
+        html += renderHistoryScene();
+      }
+
+      if (state.gameState === 'HISTORY_RESULT') {
+        html += renderHistoryResultScene();
       }
 
       if (state.gameState === 'RULES') {
@@ -1636,12 +2103,26 @@ function getSecondDoubleTradeCount() {
 
       // ▼▼ シーン：酒場へ向かう出口 ▼▼
       if (state.gameState === 'EXIT_TO_TAVERN') {
-        const exitMovingClass = state.exitToTavernAnimating ? ' is-moving' : '';
+        const exitMovingClass = state.exitToTavernAnimating ? ' is-moving' : (state.exitDepartureCueVisible ? ' is-departure-cue' : '');
         html += `
               <div class="exit-to-tavern-scene${exitMovingClass} rounded-sm border border-stone-400/80 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="exit-to-tavern-pan" style="background-image: url('${ROLETRADE_SCENE_IMG}');" aria-hidden="true"></div>
                 <div class="exit-to-tavern-vignette" aria-hidden="true"></div>
-                <button type="button" data-action="start-exit-to-tavern" class="exit-to-tavern-start wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-7" ${state.exitToTavernAnimating ? 'disabled' : ''}>
+                ${!state.exitToTavernAnimating && !state.exitDepartureCueVisible ? `
+                  <button type="button" data-action="exit-hotspot-dialogue" data-speaker="refrem" class="exit-to-tavern-hotspot exit-to-tavern-hotspot-refrem" aria-label="リフレムに話しかける"></button>
+                  <button type="button" data-action="exit-hotspot-dialogue" data-speaker="haruka" class="exit-to-tavern-hotspot exit-to-tavern-hotspot-haruka" aria-label="ハルカに話しかける"></button>
+                ` : ''}
+                ${state.exitHotspotMessage ? `
+                  <div class="exit-to-tavern-speech exit-to-tavern-speech-${state.exitHotspotSpeaker}" role="status" aria-live="polite">
+                    <span class="exit-to-tavern-speaker">${state.exitHotspotSpeaker === 'haruka' ? 'ハルカ' : 'リフレム'}</span>
+                    <span class="exit-to-tavern-line">${escapeHTML(state.exitHotspotMessage)}</span>
+                  </div>
+                ` : ''}
+                ${state.exitDepartureCueVisible ? `
+                  <div class="exit-to-tavern-departure-speech exit-to-tavern-departure-refrem" role="status"><span class="exit-to-tavern-speaker">リフレム</span><span class="exit-to-tavern-line">気を付けて行ってくるのじゃぞ。</span></div>
+                  <div class="exit-to-tavern-departure-speech exit-to-tavern-departure-haruka" role="status"><span class="exit-to-tavern-speaker">ハルカ</span><span class="exit-to-tavern-line">楽しんできてね♪</span></div>
+                ` : ''}
+                <button type="button" data-action="start-exit-to-tavern" class="exit-to-tavern-start wood-btn wood-btn-dark rounded-sm transition-all duration-300 flex items-center justify-center tracking-widest text-xs sm:text-sm font-serif font-bold py-2.5 sm:py-3 px-4 sm:px-7" ${state.exitToTavernAnimating || state.exitDepartureCueVisible ? 'disabled' : ''}>
                   <div class="wood-texture"></div>
                   <span class="relative z-10 flex items-center justify-center">酒場に向かう<span class="rules-next-play ml-2">▶</span></span>
                 </button>
@@ -1918,7 +2399,7 @@ function getSecondDoubleTradeCount() {
                     </div>
 
                     ${isFinalShopWaiting ? '' : `
-                      ${isInitialExchange ? `
+                      ${useShopBundleLayout ? `
                         <div class="initial-shop-bundles w-full mb-4 sm:mb-8 relative z-10">
                           <p class="selection-guide-label mb-1.5 sm:mb-3">ここから一つ選ぶ</p>
                           <div class="initial-shop-bundle-row">
@@ -2422,6 +2903,7 @@ function getSecondDoubleTradeCount() {
       root.innerHTML = html;
       
       state.isTransitioning = false;
+      saveJourneyProgress();
       scheduleRulesAutoAdvance();
       scheduleSceneDialogueAutoAdvance();
     }
@@ -2662,6 +3144,8 @@ function getSecondDoubleTradeCount() {
       if (!input) return;
       state.reflectionAnswers = state.reflectionAnswers || { primary: '', dissonance: '', future: '' };
       state.reflectionAnswers[input.dataset.reflectionKey] = input.value;
+      saveJourneyProgress();
+      saveResultHistoryRecord();
     });
 
     document.addEventListener('click', (e) => {
@@ -2685,6 +3169,33 @@ function getSecondDoubleTradeCount() {
         state.journeyMode = 'first';
         window.ROLETRADE_ACTIVE_JOURNEY = 'first';
         openRulesScene();
+      } else if (action === 'open-history') {
+        state.historyRecordView = null;
+        transitionState(() => { state.gameState = 'HISTORY'; });
+      } else if (action === 'history-back-start') {
+        state.historyRecordView = null;
+        transitionState(() => { state.gameState = 'START'; });
+      } else if (action === 'open-history-record') {
+        const record = getResultHistoryRecord(btn.dataset.id);
+        state.historyRecordView = record;
+        transitionState(() => { state.gameState = 'HISTORY_RESULT'; });
+      } else if (action === 'back-history-list') {
+        state.historyRecordView = null;
+        transitionState(() => { state.gameState = 'HISTORY'; });
+      } else if (action === 'start-fresh-journey') {
+        if (hasSavedJourneyProgress()) {
+          state.startResetConfirmOpen = true;
+          render();
+        } else {
+          beginFreshJourney();
+        }
+      } else if (action === 'cancel-start-fresh') {
+        state.startResetConfirmOpen = false;
+        render();
+      } else if (action === 'confirm-start-fresh') {
+        beginFreshJourney();
+      } else if (action === 'continue-journey') {
+        restoreJourneyProgress();
       } else if (action === 'advance-rules') {
         advanceRulesExplanation();
       } else if (action === 'advance-scene-dialogue') {
@@ -2727,14 +3238,34 @@ function getSecondDoubleTradeCount() {
       } else if (action === 'go-before-tavern') {
         if (state.leaveShopDialogueStep < LEAVE_SHOP_DIALOGUE_BLOCKS.length - 1) return;
         transitionState(() => {
+          clearExitDepartureTimer();
           state.exitToTavernAnimating = false;
+          state.exitDepartureCueVisible = false;
+          state.exitHotspotSpeaker = '';
+          state.exitHotspotMessage = '';
           state.gameState = 'EXIT_TO_TAVERN';
         });
       } else if (action === 'start-exit-to-tavern') {
-        if (state.gameState !== 'EXIT_TO_TAVERN' || state.exitToTavernAnimating) return;
-        state.exitToTavernAnimating = true;
+        if (state.gameState !== 'EXIT_TO_TAVERN' || state.exitToTavernAnimating || state.exitDepartureCueVisible) return;
+        clearExitDepartureTimer();
+        state.exitDepartureCueVisible = true;
+        state.exitHotspotSpeaker = '';
+        state.exitHotspotMessage = '';
         render();
-        scheduleExitToTavernAdvance();
+        exitDepartureTimer = setTimeout(() => {
+          exitDepartureTimer = null;
+          if (state.gameState !== 'EXIT_TO_TAVERN' || !state.exitDepartureCueVisible) return;
+          state.exitDepartureCueVisible = false;
+          state.exitToTavernAnimating = true;
+          render();
+          scheduleExitToTavernAdvance();
+        }, 1900);
+      } else if (action === 'exit-hotspot-dialogue') {
+        if (state.gameState !== 'EXIT_TO_TAVERN' || state.exitToTavernAnimating || state.exitDepartureCueVisible) return;
+        const speaker = btn.dataset.speaker === 'haruka' ? 'haruka' : 'refrem';
+        state.exitHotspotSpeaker = speaker;
+        state.exitHotspotMessage = chooseExitHotspotLine(speaker);
+        render();
       } else if (action === 'select-hand') {
         if (state.waitingAfterTrade) return;
         if (isForcedTakeRound(state.round) && state.forcedTakePhase === 'choose') return;

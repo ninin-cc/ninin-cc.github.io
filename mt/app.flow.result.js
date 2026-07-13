@@ -39,6 +39,7 @@
           state.isConfirmModalClosing = false;
           state.isResultConfirmSettling = false;
           state.resultStep = 'FINAL';
+          if (typeof saveResultHistoryRecord === 'function') saveResultHistoryRecord();
           render();
         }
       }, EXPERIENCE_TIMING.resultDecisionCloseMs);
