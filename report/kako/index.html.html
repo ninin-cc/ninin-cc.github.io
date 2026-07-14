@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIESM レポート生成アプリ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- Google Fonts: BIZ UDPGothic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        olive: '#827b00',
+                        accent: '#eab308'
+                    },
+                    fontFamily: {
+                        sans: ['"BIZ UDPGothic"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            color: #0D473B;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: 'BIZ UDPGothic', sans-serif;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 450px;
+            background-color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 10;
+            height: 100vh;
+            flex-shrink: 0;
+        }
+
+        .preview-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background-color: #e5e7eb;
+            height: 100vh;
+        }
+
+        /* A4 Page Styling */
+        .a4-wrapper {
+            width: 210mm;
+            min-height: 297mm;
+            height: auto;
+            background-color: white;
+            position: relative;
+            padding: 14mm 15mm 15mm;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 5mm #827b00, 0 10px 25px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            overflow: visible;
+            background-clip: padding-box;
+            page-break-inside: auto;
+            break-inside: auto;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .pdf-page-frame {
+            position: absolute;
+            left: 0;
+            width: 210mm;
+            height: 297mm;
+            border: 5mm solid #827b00;
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        .report-copyright {
+            position: absolute;
+            left: 6mm;
+            right: 6mm;
+            bottom: 1.35mm;
+            z-index: 60;
+            color: white;
+            font-size: 8px;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .pdf-export-page-copyright {
+            position: absolute;
+            left: 6mm;
+            right: 6mm;
+            color: white;
+            font-size: 8px;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            z-index: 60;
+            pointer-events: none;
+        }
+
+        .a4-wrapper:last-child {
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        .a4-wrapper h1,
+        .a4-wrapper h2,
+        .a4-wrapper h3,
+        .a4-wrapper img {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .cockpit-page {
+            height: 297mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            overflow: hidden;
+            page-break-before: always;
+            break-before: page;
+            page-break-after: always;
+            break-after: page;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .cockpit-page #cockpitDropZone {
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .cockpit-page #cockpitImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .bookend-page {
+            height: 297mm;
+            min-height: 297mm;
+            max-height: 297mm;
+            overflow: hidden;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .cover-page {
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .final-page {
+            page-break-before: always;
+            break-before: page;
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        .bookend-logo {
+            display: block;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .cover-nav-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: color 0.18s, background-color 0.18s, transform 0.18s;
+        }
+
+        .cover-nav-link:hover,
+        .cover-nav-link:focus-visible {
+            color: #0D473B;
+            background-color: rgba(141, 207, 85, 0.14);
+            outline: 1px solid rgba(141, 207, 85, 0.5);
+            transform: translateX(2px);
+        }
+
+        [id^="report-section-"],
+        #report-final-page {
+            scroll-margin-top: 20px;
+        }
+
+        .editable-report-code {
+            display: inline-block;
+            min-width: 12em;
+            padding: 0 0.2em;
+            border-radius: 3px;
+            outline: 1px dashed transparent;
+        }
+
+        .editable-report-code:hover,
+        .editable-report-code:focus {
+            background: #fffbd7;
+            outline-color: rgba(130, 123, 0, 0.55);
+        }
+        
+        /* Dotted border resembling the original design */
+        .a4-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 5mm;
+            left: 5mm;
+            right: 5mm;
+            bottom: 5mm;
+            border: 2px dotted #827b00;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Custom scrollbar for textarea */
+        textarea {
+            resize: vertical;
+        }
+
+        .ng-field-warning {
+            border-color: #dc2626 !important;
+            background-color: #fff7ed !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+        }
+
+        .ng-field-warning:focus {
+            border-color: #b91c1c !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+        }
+
+        .ng-word-highlight {
+            color: #7f1d1d;
+            background: #fde68a;
+            border-radius: 3px;
+            box-shadow: inset 0 -2px 0 #f97316;
+            padding: 0 1px;
+        }
+
+        .ng-result-card {
+            border-left: 4px solid #f97316;
+            background: white;
+        }
+
+        .ng-result-card[data-severity="high"] {
+            border-left-color: #dc2626;
+        }
+
+        .pdf-export-container .ng-word-highlight {
+            color: inherit !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .image-drop-zone {
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .image-drop-zone.is-dragging {
+            border-color: #827b00 !important;
+            background-color: #f7f6df !important;
+            box-shadow: 0 0 0 3px rgba(130, 123, 0, 0.18);
+        }
+        
+        /* Typography for parsed text */
+        .parsed-text {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 14px;
+            color: #0D473B;
+            background-color: #FAF9F4;
+            border-radius: 10px;
+            padding: 12px 14px;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: normal;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .report-paragraph,
+        .report-paragraph-gap,
+        .report-topic-block {
+            display: block;
+        }
+
+        .report-paragraph {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .report-topic-block {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .pdf-export-container .report-topic-block.pdf-topic-block-splittable {
+            break-inside: auto;
+            page-break-inside: auto;
+        }
+
+        .report-paragraph-gap {
+            height: 1.8em;
+        }
+
+        .parsed-text strong {
+            color: #0D473B !important;
+        }
+
+        .editable-report-text {
+            min-height: 1.8em;
+            border-radius: 10px;
+            cursor: text;
+            outline: 1px dashed transparent;
+            outline-offset: 4px;
+            transition: background-color 0.2s, outline-color 0.2s;
+        }
+
+        .editable-report-text:hover {
+            background-color: rgba(247, 246, 223, 0.5);
+            outline-color: rgba(130, 123, 0, 0.35);
+        }
+
+        .editable-report-text:focus {
+            background-color: #fffef0;
+            outline: 2px solid rgba(130, 123, 0, 0.7);
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+        
+        .pdf-export-container .a4-wrapper {
+            box-shadow: none;
+            overflow: hidden;
+            page-break-before: auto !important;
+            break-before: auto !important;
+            page-break-after: auto !important;
+            break-after: auto !important;
+        }
+
+        .pdf-export-container .report-copyright {
+            display: none;
+        }
+
+        .pdf-export-container {
+            gap: 0 !important;
+        }
+
+        .pdf-export-container .editable-report-text {
+            background-color: #FAF9F4 !important;
+            outline: none !important;
+        }
+
+        .pdf-export-container .a4-wrapper:not(.bookend-page):not(.cockpit-page) > .h-full {
+            height: auto !important;
+            min-height: calc(297mm - 29mm);
+            flex: none !important;
+        }
+
+        .pdf-export-container .a4-wrapper:not(.bookend-page):not(.cockpit-page) .flex-grow {
+            flex-grow: 0 !important;
+        }
+
+        .pdf-page-spacer {
+            display: block !important;
+            width: 100% !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            flex: 0 0 auto !important;
+        }
+
+        .pdf-export-container .editable-report-code {
+            background: transparent !important;
+            outline: none !important;
+        }
+
+        .pdf-export-container .cover-nav-link {
+            color: inherit !important;
+            background: transparent !important;
+            outline: none !important;
+            transform: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1 class="text-2xl font-bold mb-6 text-olive border-b-2 border-olive pb-2">レポート入力フォーム</h1>
+
+        <!-- Bulk Input Section -->
+        <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
+            <h2 class="text-md font-bold mb-2 text-blue-800 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
+                一括入力・自動分割
+            </h2>
+            <p class="text-[11px] text-blue-600 mb-3 leading-tight">レポートのテキストをまとめて貼り付けて「分割して反映」を押すと、下のフォームとプレビューに自動で振り分けられます。</p>
+            
+            <div class="flex flex-wrap gap-1.5 mb-2">
+                <button onclick="loadTemplate('toyota')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">トヨタさん例</button>
+                <button onclick="loadTemplate('katsumi')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">カツミさん例(相談入)</button>
+                <button onclick="loadTemplate('saki')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">サキさん例(新)</button>
+            </div>
+            
+            <textarea id="bulkInput" rows="6" class="w-full p-2 border border-blue-300 rounded text-sm mb-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-inner" placeholder="ここにレポートのテキスト全体を貼り付けてください..."></textarea>
+            
+            <button onclick="parseBulkText()" class="w-full bg-blue-600 text-white font-bold py-2 rounded shadow hover:bg-blue-700 hover:shadow-md transition duration-200 flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                各項目に分割して反映
+            </button>
+        </div>
+
+        <!-- NG wording checker -->
+        <div id="ngCheckerPanel" class="mb-6 rounded-xl border border-orange-200 bg-orange-50 p-4 shadow-sm">
+            <div class="flex items-center justify-between gap-3 mb-2">
+                <h2 class="text-md font-bold text-orange-900 flex items-center gap-2">
+                    <span aria-hidden="true">🛡️</span>
+                    NGワードチェッカー
+                </h2>
+                <span id="ngCheckerCount" class="hidden rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-bold text-white">0件</span>
+            </div>
+            <p class="text-[11px] leading-relaxed text-orange-800 mb-3">個性を断定・否定して見える表現を確認します。赤枠の入力項目と、右側本文の黄色マーカーが確認箇所です。</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="runNgWordCheck()" class="rounded-lg bg-orange-600 px-3 py-2 text-xs font-bold text-white shadow hover:bg-orange-700 transition">チェックする</button>
+                <button id="ngBatchFixButton" type="button" onclick="applyAllSafeNgFixes()" class="hidden rounded-lg bg-olive px-3 py-2 text-xs font-bold text-white shadow hover:bg-[#6b6500] transition">安全な候補を一括修正</button>
+            </div>
+            <div id="ngCheckerSummary" class="mt-3 hidden rounded-lg px-3 py-2 text-xs leading-relaxed"></div>
+            <div id="ngCheckerResults" class="mt-3 space-y-2"></div>
+        </div>
+
+        <h2 class="text-md font-bold mb-4 border-b pb-1 text-gray-700">個別データ微調整</h2>
+
+        <!-- Form Fields -->
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">コックピット画像</label>
+                <div id="cockpitSidebarDropZone" class="image-drop-zone border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-3 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="コックピット画像を選択、ドロップ、または貼り付け" data-image-drop-target="cockpit" oncontextmenu="this.focus()">
+                    <img id="cockpitSidebarPreview" src="./img/image5.png" alt="コックピット画像プレビュー" class="w-full h-36 object-contain pointer-events-none mb-2">
+                    <p class="text-[11px] text-gray-600 pointer-events-none">クリックして選択／画像をドロップ<br>右クリック → 貼り付け</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">ご案内ページ QRコード画像</label>
+                <div id="guideQrSidebarDropZone" class="image-drop-zone border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-3 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="ご案内ページのQRコード画像を選択、ドロップ、または貼り付け" data-image-drop-target="guide-qr" oncontextmenu="this.focus()">
+                    <img id="guideQrSidebarPreview" src="./img/riesmQR.png" alt="QRコード画像プレビュー" class="w-full h-32 object-contain pointer-events-none mb-2">
+                    <div class="guide-qr-placeholder hidden pointer-events-none text-gray-500 py-4">
+                        <div class="text-3xl mb-1">▦</div>
+                        <p class="text-[11px]">QRコード画像を添付</p>
+                    </div>
+                    <p class="text-[11px] text-gray-600 pointer-events-none">クリックして選択／画像をドロップ<br>右クリック → 貼り付け</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">受検者名</label>
+                <input type="text" id="inputName" class="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" value="サンプル 太郎" oninput="updatePreview()">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">レポート番号（招待コード）</label>
+                <input type="text" id="inputReportCode" class="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" value="nxx-2x-xxx-0x" oninput="updatePreview()">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">挨拶文 (イントロ)</label>
+                <textarea id="inputIntro" rows="3" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">1. コア・ポテンシャル</label>
+                <textarea id="inputPotential" rows="4" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">2-1. 取扱説明書 (部下の場合)</label>
+                <textarea id="inputSubordinate" rows="5" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">2-2. 取扱説明書 (上司・先輩の場合)</label>
+                <textarea id="inputBoss" rows="5" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">3. 葛藤と真面目さ</label>
+                <textarea id="inputConflict" rows="5" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">4. デジタル・モード</label>
+                <textarea id="inputDigital" rows="3" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">5. 今後のためのヒント</label>
+                <textarea id="inputHints" rows="4" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">6. パートナーとの接し方</label>
+                <textarea id="inputPartner" rows="4" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold mb-1 text-gray-700">7. 結びに (相談回答含む)</label>
+                <textarea id="inputConclusion" rows="6" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+            </div>
+        </div>
+        <div class="mt-8 mb-4 text-xs text-gray-400 text-center">
+            RIESM Report Generator v2.0
+        </div>
+    </div>
+
+    <div class="preview-area relative" id="previewContainer">
+        <!-- Floating PDF Button -->
+        <div class="fixed top-6 right-8 z-50">
+            <button onclick="generatePDF()" class="bg-olive hover:bg-[#6b6500] text-white font-bold py-3 px-6 rounded-full shadow-xl flex items-center gap-2 transition transform hover:scale-105 border border-white/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                PDFを出力する
+            </button>
+        </div>
+
+        <!-- Hidden file input for image upload -->
+        <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+
+        <!-- Wrapper for HTML2PDF -->
+        <div id="pdfContent" class="flex flex-col gap-[20px]">
+
+            <!-- Fixed Cover Page: from RIESM_ni25-125-01 -->
+            <div class="a4-wrapper bookend-page cover-page flex flex-col">
+                <div class="h-full flex flex-col items-center relative z-10 pt-[30mm]">
+                    <img src="./img/riesm-cover-logo.png" alt="RIESM ロゴ" class="bookend-logo w-[68mm] h-[31mm] mb-5">
+
+                    <h1 class="text-[31px] leading-tight font-bold text-black border-b-[3px] border-black pb-1 mb-8">アセスメントレポート</h1>
+
+                    <div class="w-[150mm] text-[15px] font-bold text-gray-700 leading-[1.7]">
+                        <a href="#report-guide-page" class="cover-nav-link flex items-baseline mb-1">
+                            <span>・<span class="text-[#8dcf55] underline underline-offset-2">RIESM受検された方へのご案内</span></span>
+                            <span class="flex-1 border-b-[3px] border-dotted border-gray-800 mx-2 translate-y-[-3px]"></span>
+                            <span class="text-[18px] text-black">2</span>
+                        </a>
+                        <div class="flex items-baseline">
+                            <span>・RIESM(リズム)<span class="text-[#8dcf55] underline underline-offset-2">パーソナリティ・分析レポート</span></span>
+                            <span class="flex-1 border-b-[3px] border-dotted border-gray-800 mx-2 translate-y-[-3px]"></span>
+                            <span class="text-[18px] text-black">3</span>
+                        </div>
+                        <div class="pl-5 text-gray-500 text-[14px] leading-[1.9]">
+                            <a href="#report-section-1" class="cover-nav-link">1. あなたのコア・ポテンシャル</a>
+                            <a href="#report-section-2" class="cover-nav-link">2. 職場・生活での取扱説明書(トリセツ)</a>
+                        </div>
+                        <p class="text-center text-[#306b2d] text-[14px] whitespace-nowrap my-3">～ お時間が無い時は 上記まででも RIESM を十分ご理解いただけます ～</p>
+                        <div class="pl-5 text-gray-500 text-[14px] leading-[1.9]">
+                            <a href="#report-section-3" class="cover-nav-link">3. コックピットから読み解く「葛藤」と「真面目さ」</a>
+                            <a href="#report-section-4" class="cover-nav-link">4. デジタル・モード</a>
+                            <a href="#report-section-5" class="cover-nav-link">5. 今後のためのヒント</a>
+                            <a href="#report-section-6" class="cover-nav-link">6. ご家族あるいはパートナー候補との接し方</a>
+                            <a href="#report-section-7" class="cover-nav-link">7. 結びに</a>
+                        </div>
+                        <a href="#report-final-page" class="cover-nav-link flex items-baseline mt-7 text-black">
+                            <span>・RIESM(リズム)の<span class="text-[#8dcf55] underline underline-offset-2">読み取り方</span>・ご優待コード</span>
+                            <span class="flex-1 border-b-[3px] border-dotted border-gray-800 mx-2 translate-y-[-3px]"></span>
+                            <span class="text-[18px]">巻末</span>
+                        </a>
+                    </div>
+
+                    <div class="mt-auto mb-[23mm] w-[130mm] border-2 border-[#f4b400] px-10 py-5 text-center text-[16px] leading-[2.1] font-bold text-[#827b00] shadow-[7px_7px_0_-5px_white,7px_7px_0_-3px_#f4b400]">
+                        <p>すべての個性は、生きるために必要だからこそ備わり、</p>
+                        <p>それぞれに優劣はありません。</p>
+                        <p>そして固定では無く、</p>
+                        <p>場面、状況に応じて変化していくものです。</p>
+                    </div>
+
+                    <div class="absolute bottom-[-7mm] text-center text-[8px] text-white whitespace-nowrap">
+                        ©ninin式 RIESM(Roll(Role)_Interest＆EgoStresscare Model)　AIでの学習、及びSNS/インターネット等への転載・公開を禁じます　お問合せ：info.ninin@gmail.com
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Page 2: Guidance for RIESM examinees -->
+            <div id="report-guide-page" class="a4-wrapper bookend-page guide-page flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    <div class="bg-olive text-white px-5 py-2 mb-10 shadow-sm">
+                        <h1 class="text-[24px] font-bold tracking-widest">RIESM受検された方へのご案内</h1>
+                    </div>
+
+                    <div class="px-[12mm] flex-grow flex flex-col items-center">
+                        <div class="w-full max-w-[142mm] text-center mb-8">
+                            <p class="text-[18px] leading-[1.9] font-bold text-[#0D473B]">診断結果をより深く理解し、日常で活かしていただくための<br>解説ページをご用意しています。</p>
+                        </div>
+
+                        <div class="w-full max-w-[142mm] rounded-2xl bg-[#FAF9F4] px-10 py-8 text-center shadow-sm mb-9">
+                            <p class="text-[12px] tracking-[0.22em] text-olive font-bold mb-3">RIESM 解説ページ</p>
+                            <h2 class="text-[23px] font-bold text-[#0D473B] mb-4">コックピットやモードの読み取り方</h2>
+                            <p class="text-[14px] leading-[1.9] text-[#0D473B] mb-5">コックピットの構造や各モードが表す意味を、ウェブページで詳しくご覧いただけます。</p>
+                            <a href="https://ninin-cc.github.io/riesm/index.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full bg-olive text-white font-bold text-[14px] px-8 py-3 shadow-md hover:bg-[#6b6500] transition">
+                                解説ページを開く
+                            </a>
+                            <p class="mt-4 text-[12px] text-gray-500 break-all">https://ninin-cc.github.io/riesm/index.html</p>
+                        </div>
+
+                        <div class="w-full max-w-[142mm] flex items-center justify-center gap-10">
+                            <div id="guideQrDropZone" class="image-drop-zone w-[54mm] h-[54mm] shrink-0 rounded-xl border-2 border-dashed border-olive/50 bg-white flex items-center justify-center text-center cursor-pointer overflow-hidden" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="解説ページのQRコード画像を選択、ドロップ、または貼り付け" data-image-drop-target="guide-qr" oncontextmenu="this.focus()">
+                                <img id="guideQrImage" src="./img/riesmQR.png" alt="解説ページのQRコード" class="w-full h-full object-contain p-2 pointer-events-none">
+                                <div class="guide-qr-placeholder hidden pointer-events-none text-olive/70 px-4">
+                                    <div class="text-5xl mb-3">▦</div>
+                                    <p class="text-[12px] font-bold leading-relaxed">QRコード画像<br>添付領域</p>
+                                </div>
+                            </div>
+                            <div class="max-w-[65mm] text-[#0D473B]">
+                                <h3 class="text-[17px] font-bold mb-3">スマートフォンからご覧になる方へ</h3>
+                                <p class="text-[13px] leading-[1.9]">このQRコードで解説ページへ飛ぶことができます。ブックマークなどして頂くと便利です。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page 1: Intro & Potential -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    <!-- Title Bar -->
+                    <div class="bg-olive text-white px-5 py-2 mb-6 shadow-sm">
+                        <h1 class="text-2xl font-bold tracking-widest">RIESM(リズム)パーソナリティ・分析レポート</h1>
+                    </div>
+
+                    <!-- Intro -->
+                    <div class="px-3 mb-10">
+                        <p class="parsed-text bind-intro"></p>
+                    </div>
+
+                    <!-- 1. Core Potential -->
+                    <div id="report-section-1" class="mb-4 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 flex items-baseline gap-2 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">1. あなたのコア・ポテンシャル</h2>
+                            <span class="text-[#fef08a] text-[9px] font-normal opacity-80 whitespace-nowrap">※レポートの後半にモードの読み取り方があります。</span>
+                        </div>
+                        
+                        <!-- Image Upload Area -->
+                        <div class="flex justify-center mb-6">
+                            <img src="./img/image2.png" alt="コア・ポテンシャル画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像1を選択'">
+                        </div>
+
+                        <div class="px-3">
+                            <p class="parsed-text bind-potential"></p>
+                        </div>
+                    </div>
+
+                    <!-- Copyright footer -->
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 2: Torisetsu -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    
+                    <div id="report-section-2" class="mb-6 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">2. 職場・生活での取扱説明書(トリセツ)</h2>
+                        </div>
+                        
+                        <!-- Subordinate -->
+                        <div class="mb-8">
+                            <h3 class="text-[17px] font-bold text-gray-800 mb-3 px-3">
+                                ① 🏢 あなたが「部下」の場合(上司へのメッセージ)
+                            </h3>
+                            <!-- Image Upload Area -->
+                            <div class="flex justify-center mb-4">
+                                <img src="./img/image4.png" alt="部下画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像2を選択'">
+                            </div>
+                            <div class="px-3">
+                                <p class="parsed-text bind-subordinate"></p>
+                            </div>
+                        </div>
+
+                        <!-- Boss -->
+                        <div class="torisetsu-boss-page" data-pdf-force-page="true">
+                            <div class="flex items-baseline gap-2 mb-3 px-3">
+                                <h3 class="text-[17px] font-bold text-gray-800">
+                                    ② 👔 あなたが「上司・先輩」の場合(部下との接し方)
+                                </h3>
+                                <span class="text-olive text-[9px] font-normal opacity-70 whitespace-nowrap">※レポートの後半にモードの読み取り方があります</span>
+                            </div>
+                            <!-- Image Upload Area -->
+                            <div class="flex justify-center mb-4">
+                                <img src="./img/image4.png" alt="上司画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像3を選択'">
+                            </div>
+                            <div class="px-3">
+                                <p class="parsed-text bind-boss"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 3: Cockpit (NEW) -->
+            <div class="a4-wrapper cockpit-page flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    <!-- Title Bar -->
+                    <div class="bg-olive text-white px-5 py-1.5 flex items-baseline justify-between mb-4 shrink-0 shadow-sm">
+                        <h2 class="text-[22px] font-bold tracking-widest">あなたのコックピット</h2>
+                        <span class="text-[#fef08a] text-[13px] tracking-wide font-medium">※レポートの後半にコックピットの読み取り方があります</span>
+                    </div>
+
+                    <!-- Image Upload Area (Full page) -->
+                    <div id="cockpitDropZone" class="image-drop-zone flex-grow flex justify-center items-center overflow-hidden py-2 bg-gray-50/50 rounded-lg" contenteditable="true" spellcheck="false" tabindex="0" aria-label="コックピット画像をドロップまたは貼り付け" data-image-drop-target="cockpit" oncontextmenu="this.focus()">
+                        <img id="cockpitImage" src="./img/image5.png" alt="コックピット画像" class="w-full h-full object-contain cursor-pointer transition-all hover:opacity-80 rounded border-2 border-transparent hover:border-dashed hover:border-olive" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/800x1050/f8fafc/827b00?text=クリックしてコックピット画像を選択(A4縦推奨)'">
+                    </div>
+                    
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 4: Conflict & Digital -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    
+                    <!-- 3. Conflict -->
+                    <div id="report-section-3" class="mb-8">
+                        <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">3. コックピットから読み解く「葛藤」と「真面目さ」</h2>
+                        </div>
+                        <!-- Image Upload Area -->
+                        <div class="flex justify-center mb-4">
+                            <img src="./img/image6.png" alt="葛藤画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像4を選択'">
+                        </div>
+                        <div class="px-3">
+                            <p class="parsed-text bind-conflict"></p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Digital Mode -->
+                    <div id="report-section-4" class="mb-4 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">4. デジタル・モード</h2>
+                        </div>
+                        <!-- Image Upload Area -->
+                        <div class="flex justify-center mb-4">
+                            <img src="./img/image7.png" alt="デジタル画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像5を選択'">
+                        </div>
+                        <div class="px-3">
+                            <p class="parsed-text bind-digital"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 5: Hints (always starts on a new A4 page) -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    
+                    <!-- 5. Hints -->
+                    <div id="report-section-5" class="mb-4 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 flex items-baseline gap-2 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">5. 💡 今後のためのヒント</h2>
+                            <span class="text-[#fef08a] text-[9px] font-normal opacity-80 whitespace-nowrap">巻末の【RIESM相手のモードの感じ方】をご参照ください。</span>
+                        </div>
+                        <!-- Image Upload Area -->
+                        <div class="flex justify-center mb-4">
+                            <img src="./img/image8.png" alt="ヒント画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像6を選択'">
+                        </div>
+                        <div class="px-3">
+                            <p class="parsed-text bind-hints"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 6: Partner (always starts on a new A4 page) -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+
+                    <!-- 6. Partner -->
+                    <div id="report-section-6" class="mb-4 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">6. ご家族あるいはパートナー候補との接し方 💞</h2>
+                        </div>
+                        <!-- Image Upload Area -->
+                        <div class="flex justify-center mb-4">
+                            <img src="./img/image9.png" alt="パートナー画像" class="h-44 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像7を選択'">
+                        </div>
+                        <div class="px-3">
+                            <p class="parsed-text bind-partner"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-2 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 7: Conclusion (always starts on a new A4 page) -->
+            <div class="a4-wrapper flex flex-col">
+                <div class="h-full flex flex-col pt-2 relative z-10">
+                    
+                    <!-- 7. Conclusion -->
+                    <div id="report-section-7" class="mb-6 flex-grow">
+                        <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
+                            <h2 class="text-[22px] font-bold tracking-widest">7. 結びに</h2>
+                        </div>
+                        <!-- Images Row -->
+                        <div class="flex justify-center gap-3 mb-6 h-36">
+                            <img src="./img/image10.png" alt="結び画像" class="h-full object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.05] rounded border border-transparent hover:border-gray-300 shadow-sm" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/600x200/f8fafc/827b00?text=結び画像'">
+                        </div>
+                        <div class="px-3">
+                            <p class="parsed-text bind-conclusion"></p>
+                        </div>
+                    </div>
+
+                    <!-- Footer message -->
+                    <div class="mt-4 px-6 py-5 bg-gray-50 border border-gray-200 rounded-lg text-center shadow-inner shrink-0">
+                        <p class="text-[13px] text-[#0D473B] leading-relaxed font-bold tracking-wide">
+                            繰り返しになりますが、【RIESMコックピット】は固定された評価ではありません。<br>
+                            これから歩んでいく“人生という物語”において、<br>
+                            あなたのリズムを刻むためのひとつの譜面として参考にしていただければ幸いです。
+                        </p>
+                    </div>
+
+                    <div class="mt-auto text-center text-[10px] text-gray-500 pt-3 shrink-0 border-t border-gray-100">
+                        ©ninin式RIESM(Roll_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Final Page: from RIESM_ni25-125-01 -->
+            <div id="report-final-page" class="a4-wrapper bookend-page final-page flex flex-col">
+                <div class="h-full flex flex-col items-center relative z-10 pt-[36mm] text-gray-600">
+                    <div class="w-[158mm] border-2 border-[#f4b400] px-8 py-6 text-center font-bold shadow-[7px_7px_0_-5px_white,7px_7px_0_-3px_#f4b400]">
+                        <h2 class="text-[25px] mb-4">【RIESM 憲章】</h2>
+                        <div class="text-[18px] leading-[1.85]">
+                            <p>すべての個性は、生きるために必要だからこそ備わり、</p>
+                            <p>それぞれに優劣はありません。</p>
+                            <p>そして固定ではなく、</p>
+                            <p>場面や状況に応じて変化していくものです。</p>
+                        </div>
+                    </div>
+
+                    <img src="./img/ninin-final-logo.png" alt="合同会社ninin ロゴとメッセージ" class="bookend-logo w-[58mm] h-[53mm] mt-[27mm]">
+
+                    <div class="mt-[18mm] text-[14px] leading-[2.5] text-black">
+                        <p>ご依頼ご相談はこちらまで➤ 📩 <a href="mailto:info.ninin@gmail.com" class="text-[#4f8392] underline underline-offset-2">info.ninin@gmail.com</a></p>
+                        <p>もしくはフォームで　➤ 📝 <a href="https://forms.gle/1jvZ7kmr98VryqtY6" target="_blank" rel="noopener" class="text-[#4f8392] underline underline-offset-2">【ninin 受付】googleフォーム</a></p>
+                    </div>
+
+                    <div class="mt-auto mb-[15mm] text-center text-[14px] leading-[1.9] text-black font-bold">
+                        <p>受検お申込みはこちら➤　<a href="https://ninin-cc.github.io/riesm.html" target="_blank" rel="noopener" class="text-[#4f8392] underline underline-offset-2">RIESM(リズム)受検のご案内</a></p>
+                        <p><span class="bg-yellow-300 px-1">【招待コード】</span> は<span id="finalReportCode" class="bind-report-code editable-report-code text-red-600" contenteditable="true" spellcheck="false" role="textbox" aria-label="招待コードを直接編集">nxx-2x-xxx-0x</span>です。ご友人にお伝えください。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="./img/pdf-image-data.js"></script>
+    <script src="./img/riesmQR-data.js"></script>
+    <script>
+        const REPORT_COPYRIGHT = '©ninin式RIESM™(Role_Interest & EgoStresscare Model) AIでの学習、及びSNS/インターネット等への転載・公開を禁じます';
+
+        function setupReportCopyrights() {
+            document.querySelectorAll('#pdfContent > .a4-wrapper').forEach(page => {
+                const existing = Array.from(page.querySelectorAll('div'))
+                    .find(element => element.textContent.trim().startsWith('©ninin式'));
+                const copyright = existing || document.createElement('div');
+                copyright.className = 'report-copyright';
+                copyright.textContent = REPORT_COPYRIGHT;
+                page.appendChild(copyright);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupReportCopyrights);
+
+        // --- Image Upload Logic ---
+        let currentImageTarget = null;
+
+        function triggerImageUpload(imgElement) {
+            currentImageTarget = imgElement;
+            document.getElementById('imageUploader').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && currentImageTarget) applyImageFile(file, currentImageTarget);
+            event.target.value = ''; // allow same file selection
+        }
+
+        function getImageDropGroup(target) {
+            if (!target) return '';
+            if (target.dataset?.imageDropTarget) return target.dataset.imageDropTarget;
+            if (target.id === 'cockpitImage' || target.id === 'cockpitSidebarPreview') return 'cockpit';
+            if (target.id === 'guideQrImage' || target.id === 'guideQrSidebarPreview') return 'guide-qr';
+            return '';
+        }
+
+        function getImageGroupTargets(group, fallbackTarget) {
+            if (group === 'cockpit') {
+                return [document.getElementById('cockpitImage'), document.getElementById('cockpitSidebarPreview')];
+            }
+            if (group === 'guide-qr') {
+                return [document.getElementById('guideQrImage'), document.getElementById('guideQrSidebarPreview')];
+            }
+            return [fallbackTarget];
+        }
+
+        function applyImageFile(file, target) {
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const group = getImageDropGroup(target);
+                const targets = getImageGroupTargets(group, target);
+
+                targets.filter(Boolean).forEach(img => {
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    img.classList.remove('border-gray-300', 'border-dashed', 'border-olive', 'border-transparent', 'border-2');
+                });
+                if (group === 'guide-qr') {
+                    document.querySelectorAll('[data-image-drop-target="guide-qr"] .guide-qr-placeholder')
+                        .forEach(placeholder => placeholder.classList.add('hidden'));
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function getClipboardImage(event) {
+            return Array.from(event.clipboardData?.items || [])
+                .find(item => item.type.startsWith('image/'))
+                ?.getAsFile();
+        }
+
+        function setupImageDropZones() {
+            document.querySelectorAll('[data-image-drop-target]').forEach(zone => {
+                zone.addEventListener('click', event => {
+                    const group = zone.dataset.imageDropTarget;
+                    const primaryTarget = group === 'cockpit'
+                        ? document.getElementById('cockpitImage')
+                        : document.getElementById('guideQrImage');
+                    if (primaryTarget && event.target.closest(`#${primaryTarget.id}`)) return;
+                    currentImageTarget = primaryTarget;
+                    document.getElementById('imageUploader').click();
+                });
+
+                zone.addEventListener('dragover', event => {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = 'copy';
+                    zone.classList.add('is-dragging');
+                });
+
+                zone.addEventListener('dragleave', event => {
+                    if (!zone.contains(event.relatedTarget)) zone.classList.remove('is-dragging');
+                });
+
+                zone.addEventListener('drop', event => {
+                    event.preventDefault();
+                    zone.classList.remove('is-dragging');
+                    const file = Array.from(event.dataTransfer.files).find(item => item.type.startsWith('image/'));
+                    if (file) applyImageFile(file, zone);
+                });
+
+                zone.addEventListener('paste', event => {
+                    event.preventDefault();
+                    const file = getClipboardImage(event);
+                    if (file) applyImageFile(file, zone);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupImageDropZones);
+
+        function setupCoverNavigation() {
+            document.querySelectorAll('.cover-nav-link[href^="#"]').forEach(link => {
+                link.addEventListener('click', event => {
+                    const target = document.querySelector(link.getAttribute('href'));
+                    if (!target) return;
+                    event.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupCoverNavigation);
+
+        // --- Templates ---
+        const templates = {
+            toyota: `📝 RIESM（リズム）パーソナリティ・分析レポート
+
+受検者： トヨタエイジ 様 担当カウンセラー： TETSUO
+
+トヨタエイジさん、こんにちは。このレポートは、トヨタエイジさんが「自分という乗り物」の構造を深く知り、心のコックピットをより快適に、そしてご機嫌に乗りこなすためのヒントとして作成いたしました。ご自身の素晴らしいポテンシャルを再確認し、より自分らしくラクに人生の航海を進めるための道標として、リラックスした温かい気持ちでお読みいただければ幸いです。
+
+1. あなたのコア・ポテンシャル
+
+トヨタエイジさんが「ラクに自分を動かせる領域」は、主に「支援、協働、貢献」といった社会とつながる蛇口、「達成、成果、突破」という企業的な蛇口、そして「表現、創造、独創」という創造的な蛇口から、非常に豊かで力強いエネルギーが溢れ出しています。
+
+その莫大なエネルギーが、現在最も大きく開いているフロントの【ワンダー（自由・発見・挑戦）】のモードへと勢いよく流れ込んでいます。さらに、二番目に大きく控えているスタンドの【ナーチャー（保護・調和）】のモードへも温かいエネルギーがたっぷりと注がれています。これにより、トヨタエイジさんは、新しいアイデアや未知への挑戦を心から楽しみながら周囲を巻き込む圧倒的な推進力と、同時に仲間への深い思いやりやサポートを自然に両立できる、非常に稀有で魅力的なポテンシャルを秘めています。情熱的でありながらも、人への温かさを忘れない素晴らしい心のエンジンを搭載されています。
+
+2. 職場・生活での取扱説明書（トリセツ）
+
+①🏢 あなたが「部下」の場合（上司へのメッセージ）
+
+・最強のポジション:
+トヨタエイジさんが最も自然に輝く役割は、【飛びぬけた】ムードメーカー役を筆頭に、【圧倒的な】イノベーター役、【主要な武器】となるクリエイター役、【非常に高い】サポーター役、そして【強みである】コーチ役です。
+
+・上司の方へのお願い:
+トヨタエイジさんには、細かい指示で枠にはめるよりも「自由」と「裁量」を渡し、その豊かなアイデアや思いつきをまずは大いに称賛してあげてください。彼が「面白そう！」と目を輝かせたとき、その純粋なエネルギーは組織の停滞した空気を打ち破る最強のエンジンとなります。
+
+注意点:
+緻密な計画の厳格な遂行や、決まった手順を絶対に変えないようなルール管理の役割を強要することは、彼のエネルギー枯渇を招く真の疲労ポイントとなるため、避けていただけるようお願いいたします。
+
+・それぞれのフロントモードへの手紙:
+ワンダーをフロントに持つ彼は、新しい世界に誰よりも早く一歩を踏み出す「最強のスターター」です。その「とりあえずやってみる」という姿勢が、新しい物語を始める原動力です。
+
+・アダプターの恐怖と適応:
+同時に、彼の心の奥（スタンド）にはアダプターの機能も備わっており、周囲の変化を察知して空気を読もうとする繊細なレーダーも持っています。そのため、威圧的な詰めや、丸投げで不安を煽るような指示は、彼の警戒レーダーを過剰に反応させてしまいます。安心感が保証された中でこそ、彼の本来の創造性が爆発します。
+
+・飲み会やランチ等の半プライベート状態での適切な関わり方:
+大人数でワイワイしたノリの良い場でも、「楽しそう！行こう！」と前向きに楽しむことができる方です。細かい段取りや目的を説明するよりも、純粋に「楽しい企画だから！」と勢いで誘っていただくのが、彼にとって最も心地よい関わり方となります。
+
+②👔 あなたが「上司・先輩」の場合（部下との接し方の自戒）
+
+部下への接し方:
+トヨタエイジさんの直感的でスピード感のある「面白そう！やってみよう！」という力強い動きは、時に慎重な部下を驚かせてしまったり、勢いだけで動いていると誤解させてしまうリスクが潜んでいるかもしれません。ご自身のワクワクする気持ちを少しだけ落ち着かせ（ブレスを置き）、相手のモードに合わせた以下の「クッション」を意識して伝えてみてください。
+
+・部下が【アダプター】フロントの場合：
+リスクや矛盾点に誰よりもよく気が付くがゆえの、部下の不安に優しく寄り添ってください。仕事上のリスクを一緒に排除する、もしくは「責任は持つから大丈夫」と手伝う姿勢を見せることに加え、「明確な指示（5W1H）」を出す重要性を伝えてください。彼らの慎重さがチームを事故から守ってくれていることへの、受容と感謝も忘れずに伝えてください。
+
+・部下が【ワンダー】フロントの場合：
+ご自身と同じように「自由」や「裁量」を求めています。彼らの突拍子もないアイデアや思いつきに対して、頭ごなしに否定せず、まずは大いに称賛を与える重要性を、ご自身の経験を例に挙げて伝えてみてください。共感し合える最高のバディになれるはずです。
+
+・部下が【キーパー】フロントの場合：
+彼らは「目的と意義」を何よりも大切にします。勢いで任せるのではなく、なぜそれが必要なのかを論理的に、例を挙げて伝えてください。部下の日々の実績や、大切にしている理論・信念を日ごろから把握し、彼らの計画性や合理性が組織にどれほど貢献しているかを、具体的な実例を持って丁寧に伝えてあげてください。
+
+・部下が【ナーチャー】フロントの場合：
+彼らは心のつながりを重視します。「感謝と存在承認・受容とやさしさ」を伝える重要性を、具体的なエピソードを交えて伝えてください。仕事の成果だけでなく、「あなたがいてくれて助かる」という存在そのものへの受容と感謝を定期的に伝えることが、彼らの最大の原動力となります。
+
+3. データから読み解く「葛藤」と「真面目さ」そして「不器用」と言えるほどのこだわり。
+
+①-1
+自由でいたい、新しいことを思い切り楽しみたいという力強い衝動（ワンダー）が前面にありながら、同時に周囲の仲間を大切に育みたい、空気を読んで和を保ちたいという優しい心（ナーチャー・アダプター）がすぐ後ろに控えています。自分の直感のままに駆け出したいけれど、誰かを置いてきぼりにして関係性を壊してしまうのではないかという、心優しい配慮ゆえの葛藤を日々抱えられているとみる事もできます。
+
+①-2 【振り返りのヒント】：
+自分が心から楽しむことよりも、周囲の笑顔や調和を優先して、無意識にアクセルを緩めてしまう瞬間はありませんか？
+
+②-1
+決められた手順を厳格に守ることや、緻密なルール管理を長く続けることは、トヨタエイジさんにとってエネルギーを大きく要する「真の疲労ポイント」です。しかしこれは、既存のルールに縛られず柔軟に動くことで、組織の硬直化を防ぎ、結果的に仲間を新しい視点と笑顔で「守る力」として働いているとリフレーミングできます。厳格さを持たないことで、チームに「余白」と「挑戦の機会」を提供しているのです。
+
+②-2 【振り返りのヒント】：
+細かい作業や厳しいルールを避けたくなるとき、あなたの心はもっと大きな「みんながワクワクするような未来」に向かっていたのではないでしょうか？
+
+③-1
+トヨタエイジさんの心のコックピットは、【モード切替は手動で行っている】状態です。つまり、無理にTPOに合わせて自分を偽り、自動的に顔を使い分けるような器用な真似はせず、常に裏表のない純粋な姿で世界と向き合っています。環境に合わせるためには多量のエネルギーを要し、時に不器用さに悩むこともあるかもしれませんが、その真っ直ぐで嘘のないエネルギーは、周囲に強烈な安心感と「この人は裏切らない」という深い信頼感を与えています。
+
+④-1
+あなたの内側では、直感やこれまでの経験知が高速で統合され、本当は深く思考しているにもかかわらず、その過程を飛ばして「これ面白そう！」と結論だけを明るく伝えるため、周囲からは「勢いだけ」「計画性がない」と誤解される苦しみを抱えているかもしれません。本当はみんなの事を考え、場を盛り上げようとしているのに、その思考の深さが「軽さ」として誤読されてしまう葛藤。私は、その誤解に耐えながらも、世界を明るく照らそうと笑顔で振る舞うあなたの健気な努力と優しさを、心から承認し、称賛いたします。
+
+⑤-1 【今の自分と、心の奥に眠る願い】
+今、世界と接しているフロントモード（ワンダー）と、心の奥底にあるセントラルモードのエネルギーは、美しいほどに一致しています。さらに、人を保護し受容する力も豊かに備わっています。今の環境に適応しようと、時にエネルギーを要する役割を必死にこなそうとする不器用なほどの真面目さがありますが、あなたの中に眠る「自由と楽しみ」を求める願いと、人への愛情は、そのままの姿で十分に素晴らしいものです。
+
+⑤-2 【振り返りのヒント】：
+心の奥底にある、少年のように無邪気で純粋な願いに、もう一度そっと耳を傾けてみませんか？
+
+4. デジタル・モード
+
+① トヨタエイジさんは、テキストコミュニケーションに対して【自然にできる】【得意意識がある】という豊かな適性をお持ちです。記録に残り、推敲できるテキストでのやり取りに、情緒的な安心感を感じやすい傾向があるかもしれません。
+
+② 一方で、トヨタエイジさんほどのテキストへの適応力を持っている人も少ないのが現状です。時には相手のデジタルモード（対面や電話を好む傾向）に合わせて、口頭でのフォローや対面での対応をしてゆくと、より豊かな人間関係を築くこともできそうです。
+
+5. 💡 今後のためのヒント
+
+① 「緻密な管理や定型業務は、無理せず得意な他者に任せる（頼る）ことで、あなたの創造性がさらに輝く道もあります。」
+
+② 【それでも今やらなければならないとすれば…】
+疲れてしまう事、例えば厳格なルールや手順に従う管理業務の中に【楽しめる部分】を見つけ出し、あなたのフロントモードである【ワンダー】を活かして「ライフハッカー役」として、いかに早く終わらせるかゲーム感覚で攻略するように心がけてください。仕事の内容ではなく「攻略すること」に興味をスライドさせることで、心がラクになります。
+
+③ ストレスケアのアドバイス
+ワンダーがフロントにあるあなたのケアには「楽しむこと」が一番です。創作活動やゲーム、皆ではしゃぐなど、理屈抜きで「ワクワクすること」に没頭してください。「生きている」と心から実感できる時間を意識的に確保することが、枯渇したコックピットのエネルギーを最も早く満たしてくれます。
+
+6. ♡パートナーあるいはパートナー候補との接し方♡
+
+パートナーとの関係においても、あなたの「面白そう！」というスピード感がカギになります。
+
+相手のフロントモードが【ワンダー傾向】であれば、一緒に新しい発見を思い切り楽しんでください。相手が【キーパー傾向】であれば、お金や計画などの細かい指摘を「私の夢が壊れないための、愛のガードレール」として温かく受け止めてみてください。相手が【ナーチャー傾向】であれば、ただ「あなたがいてくれて嬉しい」と感情を実況中継して安心させてあげてください。相手が【アダプター傾向】であれば、あなたの勢いに驚いてフリーズしないよう、「ゆっくりでいいよ」「安全だよ」と明確な言葉をかけてあげてください。
+
+原則として、ご自身の勢いで相手を圧倒してしまわないよう、会話の前に一呼吸（ブレス）を置き、相手のモードに合わせた受容と気遣いを持って接することが、愛を深める一番の秘訣です。
+
+7. 結びに
+
+トヨタエイジさん、あなたは人生の物語を力強くスタートさせる「最強のスターター」であり、周囲の世界を明るく彩る「太陽」のような存在です。
+
+あなたのその「根拠のない自信」や「とりあえずやってみる」という純粋な姿勢は、決していい加減なものではなく、停滞した空気を打ち破る極めて尊い能力です。周りの人々が時に慎重になったり、厳しいルールを提示してくるのは、あなたという「無垢な可能性」が傷つかないように、無意識のうちに守ろうとしてくれているからなのかもしれません。
+
+あなたには、自動で自分を偽る器用なオートパイロット機能はありません。しかし、だからこそ、常に「本当の自分」と共にあり、自分の心に嘘をつかずに世界と向き合えるという、何にも代えがたい美しさを持っています。どうか、その真っ直ぐな好奇心と純粋さを失わないでください。あなたが「楽しい！」と心から笑っている時、周りの人々のコックピットにも温かい明かりが灯ります。
+
+もし窮屈さを感じたら、大きく深呼吸（ブレス）をして、一番ワクワクする方へ堂々とハンドルを切ってください。トヨタエイジさんのこれからの航海が、虹色のワクワクと温かい笑顔で満たされることを、心より応援しております。`,
+
+            katsumi: `📝 RIESM（リズム）パーソナリティ・分析レポート
+
+受検者： カツミ ユウ 様 担当カウンセラー： TETSUO
+
+カツミさん、はじめまして。このレポートは、カツミさんご自身という「コックピット」をより快適に乗りこなすためのヒントとして作成いたしました。ご自身の心がどのような構造で動き、どのような時にエネルギーが湧き、あるいは消費されるのかを客観的に眺めることで、これからの航海がより豊かなものになることを願って、大切に綴らせていただきました。どうぞリラックスして、ご自身の人生の物語を紐解くようにお読みください。
+
+1. あなたのコア・ポテンシャル
+
+カツミさんのコックピットにおいて、最も豊かにエネルギーが湧き出ているのは「体験・体感・現実」を大切にする領域です。この豊かな源泉から、カツミさんの主要な武器である【アダプター（洞察・適応）】というフロントモード、そして【キーパー（信念・論理）】というスタンドモードへと、スムーズにエネルギーが流れています。
+
+周囲の状況を鋭く察知し、最適化を図る力と、ルールや手順を守り抜く責任感が融合しており、特に「オペレーター役」のような正確性と丁寧さが求められる領域では、【飛びぬけた】ポテンシャルを発揮されます。また、「守護者役」としても【非常に高い】力を持ち、自ら体を動かして規律や安全を守り抜くことが自然にできる方です。「フォロワー役」や「工芸職人役」といった、周囲の期待に応えつつ独自の完成度を高める役割にも【得意な自覚がある】はずです。カツミさんは、組織やチームが安全かつ正確に前進するための、静かで確実な推進力そのものです。
+
+2. 職場・生活での取扱説明書（トリセツ）
+
+①🏢 あなたが「部下」の場合（上司へのメッセージ）
+
+・上司の方へのお願い:
+カツミさんは、周囲の変化や期待を誰よりも敏感に察知し、チームの安全を守る高機能なレーダーを持っています。カツミさんが最も輝くのは、明確な指示と安全な枠組みがある環境です。「いつまでに」「何を」「どのように」行うべきか、5W1Hを明確にして伝えてあげてください。「失敗しても責任は取るから安心して進めてほしい」という言葉が、カツミさんの力を最大限に引き出します。
+
+・注意点:
+曖昧な指示や、「自由にやってみて」という丸投げは、カツミさんのエネルギーを過度に消耗させてしまいます。また、ノリや勢いだけで計画を変更することも、強いストレス要因となりますので避けていただくようお願いいたします。
+
+・それぞれのフロントモードへの手紙:
+カツミさんのその慎重さや控えめな態度は、決して消極性なわけではありません。荒れた海の下を静かに進む潜水艦のように、周囲の環境変化や人の感情の機微を瞬時にスキャンする「高機能なレーダー」を持っている証拠です。大切なものを守るための、極めて賢い適応戦略なのです。また、カツミさんは、目立つことや波風を立てることに、無意識の恐怖を感じやすい傾向があるかもしれません。そのため、周囲に同化し、期待に応えることで安全を確保しようと日々努力されています。
+
+・飲み会やランチ等の半プライベート状態での適切な関わり方:
+大人数でワイワイとしたノリが求められる場は、カツミさんのレーダーが処理過多になりやすいため、強い疲労を感じる傾向があるかもしれません。「強制ではない」という安全を保証し、断っても評価に響かない環境を作ることが大切です。もし参加される場合は、少人数に限定するか、あるいは「会計」などの明確な役割をお願いすることで、カツミさんはご自身のペースを守りやすくなります。
+
+②👔 あなたが「上司・先輩」の場合（部下との接し方）
+
+部下への接し方:
+カツミさんの「リスクを事前にはじき出し、ルールを重んじる」姿勢は、部下から見ると「少し慎重すぎる」「ルールに厳しい」と映ることもあるかもしれません。ご自身の安全第一のスタイルが、時に部下の自由な発想にブレーキをかけていないか、少しだけ客観視してみることも有効です。
+
+4つのモードに対して意識すべき「クッション」:
+
+・部下が【アダプター】フロントの場合:
+リスクや矛盾点に気が付くゆえの部下の不安に寄り添い、「明確な指示」を出すことが重要です。失敗しても守るという受容と感謝を忘れずに伝えてください。
+
+・部下が【ワンダー】フロントの場合:
+「自由」や「裁量」を渡し、思いつきやアイデアに対して、まずは称賛を与えることが大切です。「面白いね、とりあえず少し試してみようか」といった言葉が効果的です。（安全策をこっそり用意しておくとカツミさん自身も部下に自由と裁量を渡しやすくなります）
+
+・部下が【キーパー】フロントの場合:
+「目的と意義」を論理的に伝えることが重要です。部下の計画性や合理性が、いかに組織の安全に貢献しているかを、具体的な実例を持って丁寧に伝えてください。
+
+・部下が【ナーチャー】フロントの場合:
+「感謝と存在承認、受容とやさしさ」を伝えることが最重要です。「あなたがいてくれるおかげで、チームの空気が良くなっているよ」といった存在そのものへの感謝を忘れずに。
+
+3. コックピットから読み解く「葛藤」と「真面目さ」
+
+①-1
+カツミさんは、現実的で具体的な作業を好む一方で、人前で目立つことや、感情的な交流を前面に出すことに対しては、今はバックスで控えている状態です。これは、カツミさんが他者を大切に思っていないわけではなく、「決められたことを正確に遂行すること」こそが最大の誠意だと感じているからです。しかし、時にその真面目さが、ご自身の中で「もっと柔軟に対応すべきか」という葛藤を生んでいるとみる事もできます。
+
+①-2 【振り返りのヒント】:
+あなたが「完璧にこなさなければ」と感じる時、それは誰の笑顔を守るためでしょうか？
+
+②-1
+カツミさんにとって、他者の感情を深く汲み取りケアし続ける役割や、ルールなき自由な環境で常に新しいアイデアを出し続ける役割は、エネルギーの枯渇を招く真の疲労ポイントとなる傾向があるかもしれません。しかしこれは、カツミさんが「不確実なリスクから自分とチームを守ろうとしている」自己防衛の力でもあります。無理に感情を揺さぶられる場に出向かなくとも、確実な実務で周囲を支えることが、カツミさんなりの深い保護の形なのです。
+
+②-2 【振り返りのヒント】:
+あえて「枠」の中に留まることで、あなたが守り抜いてきた大切なものは何ですか？
+
+③-1
+カツミさんのコックピットは、【モード切替は手動で行っている】状態です。自動で器用に仮面を付け替えるのではなく、ご自身の真っ直ぐな状態をそのまま世界に出力されています。そのため、環境の変化に合わせてモードを切り替える際には、相応のエネルギーを要する傾向があるかもしれません。しかし、その「自動で調整しない」姿こそが、周囲から見て裏表のない強烈な信頼感と安心感を生み出しているのです。不器用なほどに誠実なその姿勢は、カツミさんの大きな魅力です。
+
+④-1
+カツミさんが空気を読み、場に波風を立てないよう静かにしている姿は、周囲から「意見がない」「ただ合わせているだけ」と誤解されることがあるかもしれません。しかし本当は、状況や相手の反応、リスクを高速でスキャンし、「今ここで最も摩擦の少ない選択」を懸命に選んでいるのです。自分の本音を心の奥に留めてでも、場の安全と調和を守ろうとするその見えない努力と優しさに、深い敬意を表します。
+
+⑤-1 【今の自分と、心の奥に眠る願い】
+今のカツミさんのフロントモードと、心の奥にあるセントラルモードは、とても美しく一致しています。これは、現在の環境において、ご自身の「周囲を察知し、安全に適応する」という本質的な強みを、無理なく素直に発揮できる健やかな状態であるとみる事もできます。
+
+⑤-2 【振り返りのヒント】:
+今、あなたが最も「安全で居心地が良い」と感じる瞬間は、どのような時ですか？
+
+4. デジタル・モード
+
+① デジタル環境において、カツミさんは記録に残り、誤解を避けることができるテキストコミュニケーション（チャットやメール）に深い情緒的安心感を持たれています。感情が読み取りにくいとされるテキストの世界でも、適切に意図を汲み取り、円滑な関係性を築くことが【自然にできる】方です。
+
+② アセスメント結果をもとにすると、カツミさんはテキストを中心としたデジタルツールへの適応が【非常に高い】です。一方で、カツミさんほどの適応力を持っている人も少ないのが現状です。時には相手のデジタルモード（例えば、細かなニュアンスを声で確認したいキーパーやナーチャーの方）に合わせて、対面や電話などの対応をしてゆくと、より豊かな人間関係を築くこともできそうです。
+
+5. 💡 今後のためのヒント
+
+① すべてを一人で完璧にこなそうとせず、時には感情のケアや雰囲気作りを、それが自然にできる他者に委ねることも、一つの豊かな道かもしれません。
+
+② 【それでも今やらなければならないとすれば…】
+もし、感情労働や対人ケアといった、カツミさんにとって疲れを感じやすい業務を行わなければならない時は、その中に【楽しめる部分】を見つけ出してください。例えば、その業務を「正確なマニュアルを作成する（キーパー・アダプターの特性を活かす）」作業に変換したり、「リスクを事前に排除するための調査」として捉え直すことで、カツミさんの得意なモードを活かすよう心がけてください。
+
+③ ストレスケアのアドバイス
+・アダプターフロントのケア:不安の原因を突き止め、物理的に安全で一人の空間を確保してください。規則正しい生活や、未確定な要素を「整備する」ことが心の安定に繋がります。
+・キーパーのケア:自分が正しいことをしているという実感を得るため、TODOリストを作成して実績を確認したり、歴史や科学の本を読んで知的な納得感を得ることが有効です。
+・ワンダーのケア:誰の目も気にせず、心から「生きている」と感じられる、小さな自由や楽しみを味わう時間を設けてください。
+・ナーチャーのケア:心から信頼できる人との関わりの中で、ただ「そこにいていいよ」と無条件に受容される心地よさを感じてください。
+
+6. ♡ご家族あるいはパートナー候補との接し方♡
+
+パートナーとの関係においても、相手のフロントモードを理解し、思いやりを持って接することが大切です。
+
+相手が【ワンダー傾向】であれば、その自由な発想やスピード感を否定せず、「楽しそうだね」と受け入れた上で、カツミさんの得意なリスク管理でそっとガードレールを作ってあげてください。
+相手が【キーパー傾向】であれば、感情論ではなく「私はこう思う」という論理的な対話と、互いの価値観へのリスペクトを心掛けてください。
+相手が【ナーチャー傾向】であれば、正論や解決策を提示する前に、まずは「大変だったね」と感情をハグし、無条件の共感を示すことが最大の愛情表現となります。
+相手が【アダプター傾向】であれば、カツミさんご自身と同じように、曖昧さを排除し、「私がついているから大丈夫だよ」という明確な安心感を伝えてあげてください。
+
+どのような相手であっても、カツミさんの持つ「相手を観察し、状況に合わせる」という優しい適応力は、素晴らしい関係を築く土台となります。
+
+7. 結びに
+
+※カツミさんからのご相談:
+"周囲からは業績や行動面で一定の評価をいただいているが、自分としては全く自信が持てない。優秀な上司や同僚、同期と比較しては自分の劣っている部分ばかりが目に付き、周囲の評価とのギャップに苦しんでいる。特に、2年連続で昇格面談に不合格だったことで劣等感が強まり、サポートしてくれている家族や職場の仲間の期待に応えられていない申し訳なさで一杯になる。不安は大きいですが、昇格には今後もチャレンジしていきたいと思っています。
+2026年7月付で営業系から共通系への異動となり、将来のキャリアのためのステップだと言い聞かせているものの、本意ではない異動だったため、心の中ではまだ戸惑いと不安が拭いきれていない。"
+
+カツミさん、日々の業務、そしてこれまでの挑戦、本当にお疲れ様です。
+昇格面談の結果や、周囲の優秀だとおもってらっしゃる方々との比較で、自信を失い、申し訳なさで一杯になってしまうそのお気持ち、痛いほど伝わってきます。カツミさんのコックピットは自分自身や周りをよくみる特性が強いからこそ、ご自身の純粋な思いや痛みが、そのまま心に響いているのだと思います。
+
+しかし、ここで一つ「リフレーミング（異なる角度からの見方）」をさせてください。
+この2026年7月の営業系から共通系への異動。ご本意ではなかったかもしれませんが、カツミさんのコックピットの構造を見ると、これは決して後退ではありません。むしろ、カツミさんが最も自然に、ラクに力を発揮できる「オペレーター役」や「守護者役」といった才能と、共通系（バックオフィスやサポート業務）の環境が、【完璧なまでに合致】しているとみる事もできるのです。
+
+営業系で求められがちな「ワンダー」や「エンタープライジング」の要素は、このコックピットを見る限りですが、カツミさんにとってエネルギーを要する領域でした。そこでの苦労は、決して能力の不足ではなく、単に「燃費の悪いエンジンの使い方」を強いられていたからだと推測されます。
+この異動は、カツミさんがご自身の本当の強み（正確性、適応力、規律を守る力）を存分に活かすための、人生の素晴らしい「伏線回収」の始まりであるとみる事もできます。
+
+カツミさんは、チームが迷い道に入り込まないようガードレールを設置し、嵐が来れば静かに窓を閉めてみんなを守る、静かなる守護者です。他の誰かと比べる必要はありません。その真っ直ぐで嘘のない生き方は、必ず周囲の深い信頼を集めます。
+
+まずは、深呼吸（ブレス）をして、新しい環境でのご自身の心の安全を確認することから始めてみてください。「慎重で誠実な私のおかげで、今日も世界は平和だった」と、ご自身を誇ってくださいね。カツミさんのこれからの航海が、確かな安心感で満たされることを、心より応援しております。`,
+
+            saki: `📝 RIESM（リズム）パーソナリティ・分析レポート
+
+受検者： サキ 様 担当カウンセラー： TETSUO
+
+サキさん、こんにちは。このレポートは、サキさんご自身という素晴らしい乗り物を快適に乗りこなし、他者との【より良い人間関係を築くためのアプローチ】として活用していただくための「コックピット説明書」です。ご自身の心の動きを俯瞰し、日々の生活をより豊かに、ご機嫌に過ごしていくためのヒントとして、リラックスして読んでみてくださいね。
+
+1. サキさんのコア・ポテンシャル
+
+サキさんの心の中では、「社会や他者と協働し、貢献したい」という願いと、「目標を達成し、成果を出したい」というエネルギーの蛇口から、【非常に高い】量のエネルギーが湧き出しています。
+
+その豊かなエネルギーは、主に「大切なものを信念と論理で守り導く」フロントのモード（キーパー）と、「自由に挑戦し、新しいものを発見する」スタンドのモード（ワンダー）、そして「周囲を保護し調和をもたらす」スタンドのモード（ナーチャー：保護・調和）へとスムーズに流れ込んでいます。サキさんは、チームや大切な人を守るための確固たる信念を持ちながらも、同時に新しい景色を見に行き、周囲を温かく包み込むことができる、非常に力強くバランスの取れたポテンシャルを秘めています。この「ラクに自分を動かせる領域」は、サキさんが人生を切り拓く大きな推進力です。
+
+2. 職場・生活での取扱説明書（トリセツ）
+
+①🏢 サキさんが「部下」の場合（上司へのメッセージ）
+
+・最強のポジション：
+組織を引っ張る【飛びぬけた】マネジャー役、集団を正しい方向へ導く【飛びぬけた】アクティビスト役、場を明るく照らす【主要な武器】であるムードメーカー役、新しい風を吹き込む【主要な武器】であるイノベーター役、そして周囲を支える【主要な武器】であるサポーター役が、サキさんが最も自然に輝けるポジションです。
+
+・上司の方へのお願い：
+サキさんに仕事を任せる際は、必ずその仕事の「目的」と「意義」を明確に伝えてあげてください。結果だけでなく、その行動がなぜ正しいのか、組織にどう貢献するのかを論理的に確認できる環境を用意し、サキさんの意見や新しいアイデアにはまず称賛を与えてあげてください。
+
+・注意点：
+曖昧な指示の丸投げや、感情論だけで物事を進めることは避けてください。また、単に波風を立てないように周囲に合わせるだけの役割（洞察・適応）や、目的のない定型作業を強要すると、サキさんの豊かなエネルギーが枯渇し、強いストレスを感じてしまう傾向があるかもしれません。
+
+・それぞれのフロントモードへの手紙：
+日々、正解のない世界の中で「正しさ」という灯台を探し求め、自分自身と大切な人たちが道に迷わないように懸命にハンドルを握り続けてくれているサキさん。その厳しさは、大切なものを守るための「防壁」であり、深い愛そのものです。どうか、その高い基準で自分自身を裁きすぎないでください。
+
+・アダプターの恐怖と適応：
+サキさんの心の中にある「洞察・適応」の機能は、今はバックスで静かに控えています。サキさんにとって、根拠のない無茶振りや曖昧な指示は、安心の枠組みを揺るがす恐怖に繋がる場合があります。「失敗しても責任は取るから」という命綱と、明確な地図をセットで渡されることで、サキさんは本来の実力を遺憾なく発揮できます。
+
+・社交・ランチの場での心の動き：
+サキさんは、飲み会やランチの場において、「その会の目的は何か」を無意識に大切にする傾向があります。突然のノリよりも、「プロジェクトのキックオフ」など開催する正当な理由がはっきりしている場であれば、喜んで参加し、ご自身の「楽しみたい」というモードを全開にしてその場を全力で楽しむことができます。
+
+②👔 サキさんが「上司・先輩」の場合（部下との接し方の自戒）
+
+サキさんの「正しい道へ導きたい」という強い信念や、「もっと面白くしよう」という勢いは、時に部下の目には「厳しすぎる」「展開が早すぎる」と映ることもあるかもしれません。それは愛ゆえの指導ですが、相手のモードに合わせたクッションを挟むことで、その愛情がより真っ直ぐに伝わります。
+
+・部下が【アダプター（洞察・適応）】フロントの場合：
+リスクや矛盾点に敏感に気づく部下の不安に寄り添ってあげてください。「思いつき」で指示を出すと相手は混乱してしまう傾向があるかもしれません。仕事上のリスクを一緒に排除し、「明確な指示」を出す重要性を意識してください。受容と感謝の言葉をセットにすることで、彼らは最強の実務担当者として安心感を得ます。
+
+・部下が【ワンダー】フロントの場合：
+彼らの自由な発想やアイデアに対して、まずは「面白そうだね！」と称賛を与えてあげてください。サキさんの論理的な視点（キーパー）でいきなり現実的な指摘をすると、彼らのモチベーションを削いでしまうとみる事もできます。適度な裁量を持たせ、彼らの勢いを承認することが大切です。
+
+・部下が【キーパー】フロントの場合：
+彼らには「目的と意義」を明確に伝えることが重要です。サキさん自身も大切にしている部分ですが、部下の計画性や合理性が組織にどのように貢献しているかを、具体的な実例をもって丁寧に伝えてあげてください。「あなたのあのデータ分析があったから助かった」など、事実に基づく称賛が彼らの自信に繋がります。
+
+・部下が【ナーチャー】フロントの場合：
+「感謝と存在承認・受容とやさしさ」を伝えることを最優先にしてください。理路整然としたフィードバックよりも、「あなたがいてくれて場の空気が良くなったよ、ありがとう」という感情に寄り添う言葉が、彼らのエネルギーとなります。
+
+3. データから読み解く「葛藤」と「真面目さ」そして「不器用」と言えるほどのこだわり
+
+①-1
+サキさんのコックピットは、【モード切替は手動で行っている】傾向があります。自動で自分を抑え込むフィルターが控えめな分、ご自身の本音や情熱をストレートに表現できるという素晴らしい才能をお持ちです。その裏表のない純粋な姿は、周囲に強い信頼感を与えますが、時に「もっとうまく立ち回れたら」とご自身で葛藤を抱えることもあるかもしれません。
+
+①-2【振り返りのヒント】：
+その真っ直ぐな言葉が、過去に誰かの迷いを断ち切り、救いとなった経験はありませんか？
+
+②-1
+決められた手順をただ黙々とこなすことや、波風を立てないように息を潜めることは、サキさんにとってエネルギーを要する【疲れを感じやすい】領域かもしれません。しかしそれは、ご自身の信念や「より良くしたい」という思いを守ろうとする力が強く働いているからこそ生じる現象とみる事もできます。
+
+②-2【振り返りのヒント】：
+あなたが「どうしても譲れない」と感じる時、本当は何を守ろうとしていますか？
+
+③-1
+サキさんは、モードを切り替えるために要するエネルギーが非常に【少量】で済むという素晴らしいポテンシャルをお持ちです。これは、無理に仮面を被ることなく、自然体で世界と接することができている証拠です。ご自身の感情や信念を抑え込みすぎず、TPOに合わせて手動で軽やかにスイッチを入れることができるため、心に「隠れた疲労」を溜め込みにくい、非常に健やかな状態を保ちやすいとみる事もできます。
+
+④-1
+サキさんの「チームを守りたい、正しく導きたい」という熱い思いは、時にその鋭さゆえに、周囲からは「厳しい人」「思いやりがない」と誤解されてしまう苦しみを抱えることがあるかもしれません。しかし、サキさんの内側には「間違いを防ぎ、後で皆が困らないようにしたい」という深い愛情があります。守ろうとする思いやりが冷たさとして誤読される葛藤は辛いものですが、その不器用なまでの真面目さは、すべて愛から生まれていることを、私は知っています。
+
+⑤-1【今の自分と、心の奥に眠る願い】
+サキさんが今一番前に出している「信念で守り抜く姿」と、心の奥にある「情熱をもって導き、対象を受容して保護したい」という願いは、非常に美しく一致しています。ご自身の価値観を偽ることなく、今の環境に全力で向き合い、純粋に適応しようとしているその健気な姿は、本当に素晴らしいものです。
+
+⑤-2【振り返りのヒント】：
+その豊かな情熱と受容の心で、これから誰の人生を彩っていきたいですか？
+
+4. デジタル・モード
+
+① サキさんは、オンラインやテキストを用いたデジタル環境においても、ご自身の感情や意図をスムーズに表現できる【高い】適応力をお持ちです。デジタルツールを「明確で便利な手段」として信頼し、リラックスして活用できる素晴らしい才能です。
+
+② 一方で、サキさんほどの適応力を持っている人も少ないのが現状です。テキストだけで意図を汲み取ることに不安を感じる方や、対面でないと安心できない方もいます。時には相手のデジタルモードに合わせて、あえて対面や電話などの対応をしてゆくと、より豊かで温かい人間関係を築くこともできそうです。
+
+5. 💡 今後のためのヒント
+
+① すべてを一人で抱え込み、完璧にこなそうとしなくても大丈夫です。定型作業や空気を読むことが求められる場面では、無理をせず、それが自然にできる仲間に頼って手放すという道もあります。
+
+②【それでも今やらなければならないとすれば…】
+疲れてしまう事、例えばマニュアル通りの細かな定型作業や事務処理などの中に【楽しめる部分】や【攻略法】を見つけ出し、サキさんの【自然にできる】モードである「工夫する力（ワンダー）」や「仕組みを改善する力（キーパー）」を活かすように心がけてみてください。仕事をゲーム感覚で捉え直すことで、エネルギーの消費を抑えられます。
+
+③ ストレスケアのアドバイス
+サキさんの心を癒すには、「自分の信念や計画が正しかった」と確認できる時間が必要です。一日を終えたとき、達成できたことをリスト化して確認したり、興味のある分野（科学や歴史など）のドキュメンタリーを見たりして、知的な探求心を満たしてあげてください。理屈抜きで「ワクワクする」時間を少し持つことも、コックピットを清らかなエネルギーで満たす最高のセルフケアになります。
+
+6. ♡ご家族あるいはパートナー候補との接し方💞
+
+大切なパートナーと接する際も、相手がどの領域を一番大切にしているかを観察してみてください。相手が楽しさを求める傾向（ワンダー）なら共に無邪気に笑い、論理や信念を重んじる傾向（キーパー）なら目的を共有し、調和を求める傾向（ナーチャー）ならそっと寄り添い、安心を求める傾向（アダプター）なら不安を取り除いてあげること。
+
+サキさんの中には、相手に良かれと思って「具体的な解決策」や「正論」をすぐに提示したくなる優しさがあるかもしれません。しかし、相手が求めているのは正解ではなく「心のハグ」であることも多いものです。サキさんの心の中にある「受容と気遣い（ナーチャー）」の力を少しだけ前に出して、「大変だったね」と感情を受け止める一呼吸を置くこと。相手のペースを尊重した思いやりのあるコミュニケーションを心がけることで、絆はより深く、強固なものになっていきます。
+
+7. 結びに
+
+サキさん、あなたのその嘘のない真っ直ぐな言葉や、大切なものを全力で守り抜こうとする強さは、周囲の人々にとってかけがえのない道標です。時に不器用になってしまう自分を責める必要はありません。その純粋なエネルギーこそが、サキさんの最大の魅力なのですから。
+
+人生で起こるさまざまな出来事や葛藤は、あとになって振り返れば、すべてがサキさんという豊かな物語を彩る大切な「伏線」となります。相互理解を深め、人生の意味を再認識する「伏線回収」を通して、サキさんがご自身の主観を俯瞰し、さらに自由に世界を羽ばたいていくことを心から信じています。これからも、サキさんらしく、ご機嫌に、そして誇り高く、人生という素晴らしい航海のプロセスを楽しんでいってくださいね。`
+        };
+
+        // --- Logic: Parser and formatter ---
+        function loadTemplate(type) {
+            document.getElementById('bulkInput').value = templates[type];
+        }
+
+        // --- Pure report parser: keep this block independent from the DOM for regression tests. ---
+        function parseReportText(rawText) {
+            const text = String(rawText || '').replace(/\r\n?/g, '\n');
+            const horizontalSpace = '[\\t ]*';
+            const heading = bodyPattern =>
+                `(?:^|\\n)${horizontalSpace}(?:#{1,6}${horizontalSpace})?(?:\\*{1,2}${horizontalSpace})?(?:【${horizontalSpace})?${bodyPattern}(?:${horizontalSpace}】)?(?:${horizontalSpace}\\*{1,2})?${horizontalSpace}(?=\\n|$)`;
+
+            const section1Heading = heading(`1[.．、]?${horizontalSpace}(?:あなた|[^\\n]{1,30}?)のコア[・･]?${horizontalSpace}ポテンシャル`);
+            const section2Heading = heading(`2[.．、]?${horizontalSpace}職場[・･]生活での取扱説明書(?:${horizontalSpace}[（(]トリセツ[）)])?`);
+            const reportSubjectPattern = '(?:あなた|[^「」\\n]{1,30}?さん)';
+            const subordinateHeading = heading(`(?:①|1[.．、)]?)?${horizontalSpace}(?:🏢${horizontalSpace})?${reportSubjectPattern}${horizontalSpace}が${horizontalSpace}[「『\"]?部下[」』\"]?の場合(?:${horizontalSpace}[（(]上司へのメッセージ[）)])?`);
+            const bossHeading = heading(`(?:②|2[.．、)]?)?${horizontalSpace}(?:👔${horizontalSpace})?${reportSubjectPattern}${horizontalSpace}が${horizontalSpace}[「『\"]?上司[・･]先輩[」』\"]?の場合(?:${horizontalSpace}[（(]部下との接し方(?:の自戒)?[）)])?`);
+            const section3Heading = heading(`3[.．、]?${horizontalSpace}(?:データ|コックピット)から読み解く[^\\n]*`);
+            const section4Heading = heading(`4[.．、]?${horizontalSpace}デジタル[・･]モード`);
+            const section5Heading = heading(`5[.．、]?${horizontalSpace}(?:💡${horizontalSpace})?今後のためのヒント`);
+            const partnerTitle = `6[.．、]?${horizontalSpace}(?:(?:♡|♥|💞)${horizontalSpace})?(?:(?:ご)?家族|パートナー(?:候補)?)(?:(?:あるいは|または|や|・)(?:パートナー(?:候補)?|(?:ご)?家族))?との接し方(?:${horizontalSpace}(?:♡|♥|💞))?`;
+            const section6Heading = heading(partnerTitle);
+            const section7Heading = heading(`7[.．、]?${horizontalSpace}結びに`);
+
+            const extractSection = (startPattern, endPattern) => {
+                const regex = new RegExp(`${startPattern}([\\s\\S]*?)(?=${endPattern}|$)`, 'iu');
+                const match = text.match(regex);
+                return match ? match[1].trim() : '';
+            };
+
+            const section1Match = new RegExp(section1Heading, 'iu').exec(text);
+            const preamble = section1Match ? text.slice(0, section1Match.index) : '';
+            const cleanPreambleLine = line => line
+                .trim()
+                .replace(/^#{1,6}[\t ]*/, '')
+                .replace(/^\*{1,2}[\t ]*/, '')
+                .replace(/[\t ]*\*{1,2}$/, '')
+                .trim();
+            const preambleLines = preamble.split('\n').map(cleanPreambleLine);
+
+            let name = '';
+            const labeledNameMatch = text.match(/受検者[\t ]*[：:][\t ]*([^\n]+?)[\t ]*様(?=[\t ]|$)/u);
+            if (labeledNameMatch) {
+                name = labeledNameMatch[1].trim();
+            } else {
+                const standaloneNameLine = preambleLines.find(line =>
+                    /^[^：:\n]{1,40}?[\t ]*様$/u.test(line) &&
+                    !/RIESM|担当カウンセラー/u.test(line)
+                );
+                const standaloneNameMatch = standaloneNameLine && standaloneNameLine.match(/^(.{1,40}?)[\t ]*様$/u);
+                if (standaloneNameMatch) name = standaloneNameMatch[1].trim();
+            }
+
+            const intro = preambleLines
+                .filter(line => line &&
+                    !/^(?:-{3,}|_{3,}|\*{3,})$/u.test(line) &&
+                    !/RIESM[（(]リズム[）)].*パーソナリティ[・･]分析レポート/u.test(line) &&
+                    !/^受検者[\t ]*[：:]/u.test(line) &&
+                    !/^担当カウンセラー[\t ]*[：:]/u.test(line) &&
+                    !(/^[^：:\n]{1,40}?[\t ]*様$/u.test(line) && !/[。．]/u.test(line))
+                )
+                .join('\n')
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+
+            const reportCodeMatch = text.match(/(?:レポート番号|招待コード)[\t ]*[：:]?[\t ]*([A-Za-z0-9-]+)/iu);
+            const hintsEndPattern = `(?:${section6Heading}|${section7Heading})`;
+
+            return {
+                name,
+                reportCode: reportCodeMatch ? reportCodeMatch[1].trim() : '',
+                intro,
+                potential: extractSection(section1Heading, section2Heading),
+                subordinate: extractSection(subordinateHeading, bossHeading),
+                boss: extractSection(bossHeading, section3Heading),
+                conflict: extractSection(section3Heading, section4Heading),
+                digital: extractSection(section4Heading, section5Heading),
+                hints: extractSection(section5Heading, hintsEndPattern),
+                partner: extractSection(section6Heading, section7Heading),
+                conclusion: extractSection(section7Heading, 'EOF_MARKER_IMPOSSIBLE_TO_MATCH')
+            };
+        }
+        // --- End pure report parser. ---
+
+        function parseBulkText() {
+            const text = document.getElementById('bulkInput').value;
+            if(!text.trim()) return;
+
+            const parsed = parseReportText(text);
+            if (parsed.name) document.getElementById('inputName').value = parsed.name;
+            if (parsed.reportCode) document.getElementById('inputReportCode').value = parsed.reportCode;
+
+            [
+                ['inputIntro', 'intro'],
+                ['inputPotential', 'potential'],
+                ['inputSubordinate', 'subordinate'],
+                ['inputBoss', 'boss'],
+                ['inputConflict', 'conflict'],
+                ['inputDigital', 'digital'],
+                ['inputHints', 'hints'],
+                ['inputPartner', 'partner'],
+                ['inputConclusion', 'conclusion']
+            ].forEach(([fieldId, key]) => {
+                document.getElementById(fieldId).value = parsed[key];
+            });
+
+            sanitizeSectionInputs();
+            updatePreview();
+
+            // Scroll to form fields
+            document.getElementById('inputName').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        const FIXED_REPORT_HEADING_PATTERNS = [
+            /^RIESM[（(]リズム[）)]パーソナリティ[・･]分析レポート$/u,
+            /^(?:1[.．、]?\s*)?(?:あなた|[^\s]+)のコア[・･]?ポテンシャル$/u,
+            /^(?:2[.．、]?\s*)?職場[・･]生活での取扱説明書[（(]トリセツ[）)]$/u,
+            /^①\s*🏢(?:\s*[（(]上司へのメッセージ[）)])?$/u,
+            /^(?:①|1[.．、)]?)?\s*🏢?\s*(?:あなた|[^\s「」]+さん)が「?部下」?の場合\s*[（(]上司へのメッセージ[）)]$/u,
+            /^[（(]上司へのメッセージ[）)]$/u,
+            /^②\s*👔(?:\s*[（(]部下との接し方[）)])?$/u,
+            /^(?:②|2[.．、)]?)?\s*👔?\s*(?:あなた|[^\s「」]+さん)が「?上司[・･]先輩」?の場合\s*[（(]部下との接し方(?:の自戒)?[）)]$/u,
+            /^[（(]部下との接し方[）)]$/u,
+            /^(?:3[.．、]?\s*)?(?:データ|コックピット)から読み解く「葛藤」と「真面目さ」(?:そして「不器用」と言えるほどのこだわり)?$/u,
+            /^(?:4[.．、]?\s*)?デジタル[・･]モード$/u,
+            /^(?:5[.．、]?\s*)?💡?\s*今後のためのヒント$/u,
+            /^(?:6[.．、]?\s*)?(?:(?:♡|♥|💞)\s*)?(?:(?:ご)?家族|パートナー(?:候補)?)(?:(?:あるいは|または|や|・)(?:パートナー(?:候補)?|(?:ご)?家族))?との接し方(?:\s*(?:♡|♥|💞))?$/u,
+            /^(?:7[.．、]?\s*)?結びに$/u,
+            /^(?:-{3,}|_{3,}|\*{3,})$/u,
+            /^※\s*レポートの後半に(?:モード|コックピット)の読み取り方があります[。．.]?$/u,
+            /^巻末の【RIESM相手のモードの感じ方】をご参照ください[。．.]?$/u
+        ];
+
+        function sanitizeSectionText(text) {
+            if (!text) return '';
+
+            return text
+                .replace(/\r\n?/g, '\n')
+                .split('\n')
+                .filter(line => {
+                    const normalized = line
+                        .trim()
+                        .replace(/^#{1,6}\s*/, '')
+                        .replace(/^\*{1,2}\s*/, '')
+                        .replace(/\s*\*{1,2}$/, '')
+                        .replace(/^【\s*/, '')
+                        .replace(/\s*】$/, '')
+                        .trim();
+                    return !FIXED_REPORT_HEADING_PATTERNS.some(pattern => pattern.test(normalized));
+                })
+                .join('\n')
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+        }
+
+        function sanitizeSectionInputs() {
+            [
+                'inputIntro',
+                'inputPotential',
+                'inputSubordinate',
+                'inputBoss',
+                'inputConflict',
+                'inputDigital',
+                'inputHints',
+                'inputPartner',
+                'inputConclusion'
+            ].forEach(id => {
+                const field = document.getElementById(id);
+                field.value = sanitizeSectionText(field.value);
+            });
+        }
+
+        function formatText(text) {
+            if (!text) return '';
+
+            const topicHeadingPattern = /^(?:[①②③④⑤⑥⑦⑧⑨⑩]|[1-9]\d*)[\t ]*[-－‐ー―][\t ]*\d+(?:[\t ]|$)/u;
+            const lines = text.replace(/\r\n?/g, '\n').split('\n');
+            const output = [];
+            let topicLines = null;
+
+            const formatLine = (line, isTopicHeading = false) => {
+                if (!line.trim().length) {
+                    return '<span class="report-paragraph-gap" aria-hidden="true"></span>';
+                }
+
+                let escapedLine = line
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                escapedLine = escapedLine.replace(/【(.*?)】/g, '<strong class="font-bold text-gray-900">【$1】</strong>');
+                escapedLine = escapedLine.replace(/・(.*?)(:|：)/g, '<strong class="font-bold text-gray-900 block mt-2">・$1$2</strong>');
+                escapedLine = escapedLine.replace(/^(※.+?からのご相談)(:|：)?/g, '<strong class="font-bold text-olive block mt-2">$1$2</strong>');
+                const headingClass = isTopicHeading ? ' report-topic-heading' : '';
+                return `<span class="report-paragraph${headingClass}">${escapedLine}</span>`;
+            };
+
+            const flushTopic = () => {
+                if (!topicLines) return;
+                output.push(`<span class="report-topic-block">${topicLines.join('')}</span>`);
+                topicLines = null;
+            };
+
+            lines.forEach(line => {
+                const isTopicHeading = topicHeadingPattern.test(line.trim());
+                if (isTopicHeading) {
+                    flushTopic();
+                    topicLines = [formatLine(line, true)];
+                } else if (topicLines) {
+                    topicLines.push(formatLine(line));
+                } else {
+                    output.push(formatLine(line));
+                }
+            });
+            flushTopic();
+
+            return output.join('');
+        }
+
+        function updatePreview() {
+            document.querySelector('.bind-intro').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputIntro').value));
+            document.querySelector('.bind-potential').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputPotential').value));
+            document.querySelector('.bind-subordinate').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputSubordinate').value));
+            document.querySelector('.bind-boss').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputBoss').value));
+            document.querySelector('.bind-conflict').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputConflict').value));
+            document.querySelector('.bind-digital').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputDigital').value));
+            document.querySelector('.bind-hints').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputHints').value));
+            document.querySelector('.bind-partner').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputPartner').value));
+            document.querySelector('.bind-conclusion').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputConclusion').value));
+            const reportCode = document.getElementById('finalReportCode');
+            if (reportCode && document.activeElement !== reportCode) {
+                reportCode.textContent = document.getElementById('inputReportCode').value.trim() || 'nxx-2x-xxx-0x';
+            }
+            scheduleNgWordCheck();
+        }
+
+        const EDITABLE_REPORT_FIELDS = [
+            ['.bind-intro', 'inputIntro', '挨拶文'],
+            ['.bind-potential', 'inputPotential', 'コア・ポテンシャル本文'],
+            ['.bind-subordinate', 'inputSubordinate', '部下の場合の本文'],
+            ['.bind-boss', 'inputBoss', '上司・先輩の場合の本文'],
+            ['.bind-conflict', 'inputConflict', '葛藤と真面目さの本文'],
+            ['.bind-digital', 'inputDigital', 'デジタル・モード本文'],
+            ['.bind-hints', 'inputHints', '今後のためのヒント本文'],
+            ['.bind-partner', 'inputPartner', 'パートナーとの接し方本文'],
+            ['.bind-conclusion', 'inputConclusion', '結びの本文']
+        ];
+
+        const NG_WORD_RULES = [
+            {
+                id: 'type-label',
+                label: 'タイプの断定',
+                severity: 'high',
+                pattern: /((?:(?:あなた|[^\s、。！？\n]{1,12}さん)は\s*)?)([^\s、。！？\n]{1,16})タイプです/g,
+                reason: '人を一つのタイプとして固定して見せる可能性があります。',
+                suggest: match => `${match[1]}${match[2]}という特徴が表れやすい傾向があります`,
+                autoFix: true
+            },
+            {
+                id: 'strong-weak',
+                label: '強弱による評価',
+                severity: 'review',
+                pattern: /弱い|(?<!力)強い/g,
+                reason: '強い・弱いは優劣として受け取られることがあります。前後の文脈をご確認ください。',
+                suggest: match => match[0] === '弱い' ? '控えめに表れる傾向がある' : '表れやすい傾向がある',
+                autoFix: false
+            },
+            {
+                id: 'none-label',
+                label: '「無い」という否定',
+                severity: 'review',
+                pattern: /([^\s、。！？\n]{1,12})が(?:無い|ない)(?:です)?/g,
+                reason: '資質そのものが存在しないように読めるため、表れ方として表現できるか確認します。',
+                validate: match => !/^(問題|必要|心配|支障|無理|差|優劣|間違い|影響|関係|理由|意味)$/.test(match[1]),
+                suggest: match => `${match[1]}が表れにくい傾向があります`,
+                autoFix: false
+            },
+            {
+                id: 'not-functioning',
+                label: '機能の否定',
+                severity: 'high',
+                pattern: /機能して(?:い)?ない(?:です)?/g,
+                reason: '個性が壊れている・働いていないという印象を与える可能性があります。',
+                suggest: () => '十分に活かされていない可能性があります',
+                autoFix: true
+            },
+            {
+                id: 'deficit',
+                label: '欠如・不足の表現',
+                severity: 'high',
+                pattern: /欠けている|不足している|劣っている/g,
+                reason: '欠陥や優劣として受け取られやすい表現です。',
+                suggest: match => match[0] === '劣っている' ? '異なる特徴が表れています' : '現在は表れ方が控えめです',
+                autoFix: false
+            },
+            {
+                id: 'unsuited',
+                label: '可能性の断定',
+                severity: 'review',
+                pattern: /向いていない|できない|出来ない|苦手(?:です)?/g,
+                reason: '可能性を閉じる断定に見えるため、負担や取り組みやすさの表現を検討します。',
+                suggest: match => /苦手/.test(match[0]) ? '負担を感じやすい傾向があります' : '取り組みにくさを感じることがあります',
+                autoFix: false
+            },
+            {
+                id: 'demeaning',
+                label: '否定的な評価語',
+                severity: 'high',
+                pattern: /ダメ|駄目|欠点|未熟|異常|正常ではない/g,
+                reason: '人格や個性を否定する評価として受け取られる可能性があります。',
+                suggest: match => match[0] === '欠点' ? '注意して扱いたい傾向' : '調整や配慮が役立つ特徴',
+                autoFix: match => match[0] === '欠点'
+            }
+        ];
+
+        let ngCheckerActive = false;
+        let currentNgFindings = [];
+        let ngCheckTimer = null;
+
+        function getNgFieldDefinitions() {
+            return EDITABLE_REPORT_FIELDS.map(([selector, inputId, label]) => ({ selector, inputId, label }));
+        }
+
+        function collectNgWordFindings() {
+            const findings = [];
+            getNgFieldDefinitions().forEach((field, fieldOrder) => {
+                const input = document.getElementById(field.inputId);
+                const text = input.value;
+                NG_WORD_RULES.forEach(rule => {
+                    const regex = new RegExp(rule.pattern.source, rule.pattern.flags);
+                    let match;
+                    while ((match = regex.exec(text)) !== null) {
+                        if (rule.validate && !rule.validate(match)) continue;
+                        const suggestion = rule.suggest(match);
+                        const autoFix = typeof rule.autoFix === 'function' ? rule.autoFix(match) : rule.autoFix;
+                        findings.push({
+                            fieldOrder,
+                            inputId: field.inputId,
+                            selector: field.selector,
+                            fieldLabel: field.label,
+                            start: match.index,
+                            end: match.index + match[0].length,
+                            matched: match[0],
+                            ruleId: rule.id,
+                            ruleLabel: rule.label,
+                            reason: rule.reason,
+                            severity: rule.severity,
+                            suggestion,
+                            autoFix: Boolean(autoFix)
+                        });
+                        if (match[0].length === 0) regex.lastIndex += 1;
+                    }
+                });
+            });
+            return findings.sort((a, b) => a.fieldOrder - b.fieldOrder || a.start - b.start || b.end - a.end);
+        }
+
+        function clearNgWordHighlights() {
+            document.querySelectorAll('mark.ng-word-highlight').forEach(mark => mark.replaceWith(document.createTextNode(mark.textContent)));
+            document.querySelectorAll('.editable-report-text').forEach(preview => preview.normalize());
+            getNgFieldDefinitions().forEach(({ inputId }) => {
+                const input = document.getElementById(inputId);
+                input.classList.remove('ng-field-warning');
+                input.removeAttribute('aria-invalid');
+            });
+        }
+
+        function escapeRegexText(text) {
+            return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function highlightTermsInPreview(preview, terms) {
+            const uniqueTerms = [...new Set(terms)].sort((a, b) => b.length - a.length);
+            if (!uniqueTerms.length) return;
+            const regex = new RegExp(uniqueTerms.map(escapeRegexText).join('|'), 'g');
+            const walker = document.createTreeWalker(preview, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(node => {
+                if (!node.nodeValue || node.parentElement.closest('mark.ng-word-highlight')) return;
+                regex.lastIndex = 0;
+                if (!regex.test(node.nodeValue)) return;
+                regex.lastIndex = 0;
+                const fragment = document.createDocumentFragment();
+                let cursor = 0;
+                for (const match of node.nodeValue.matchAll(regex)) {
+                    fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor, match.index)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'ng-word-highlight';
+                    mark.textContent = match[0];
+                    fragment.appendChild(mark);
+                    cursor = match.index + match[0].length;
+                }
+                fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor)));
+                node.replaceWith(fragment);
+            });
+        }
+
+        function applyNgHighlights(findings) {
+            const byField = new Map();
+            findings.forEach(finding => {
+                if (!byField.has(finding.inputId)) byField.set(finding.inputId, []);
+                byField.get(finding.inputId).push(finding);
+            });
+            byField.forEach((fieldFindings, inputId) => {
+                const input = document.getElementById(inputId);
+                input.classList.add('ng-field-warning');
+                input.setAttribute('aria-invalid', 'true');
+                const preview = document.querySelector(fieldFindings[0].selector);
+                if (document.activeElement !== preview) {
+                    highlightTermsInPreview(preview, fieldFindings.map(finding => finding.matched));
+                }
+            });
+        }
+
+        function createNgResultCard(finding, index) {
+            const card = document.createElement('div');
+            card.className = 'ng-result-card rounded-lg border border-orange-200 p-3 shadow-sm';
+            card.dataset.severity = finding.severity;
+
+            const header = document.createElement('div');
+            header.className = 'flex items-start justify-between gap-2 mb-2';
+            const title = document.createElement('div');
+            title.className = 'text-[12px] font-bold text-gray-800';
+            title.textContent = finding.fieldLabel;
+            const badge = document.createElement('span');
+            badge.className = finding.autoFix
+                ? 'shrink-0 rounded bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-800'
+                : 'shrink-0 rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800';
+            badge.textContent = finding.autoFix ? '一括修正可' : '文脈確認';
+            header.append(title, badge);
+
+            const matched = document.createElement('div');
+            matched.className = 'mb-2 rounded bg-red-50 px-2 py-1.5 text-[12px] text-red-900';
+            matched.textContent = `「${finding.matched}」— ${finding.ruleLabel}`;
+            const reason = document.createElement('p');
+            reason.className = 'text-[11px] leading-relaxed text-gray-600 mb-2';
+            reason.textContent = finding.reason;
+            const suggestion = document.createElement('p');
+            suggestion.className = 'rounded bg-[#f7f6df] px-2 py-1.5 text-[11px] leading-relaxed text-[#0D473B] mb-2';
+            suggestion.textContent = `提案：${finding.suggestion}`;
+
+            const actions = document.createElement('div');
+            actions.className = 'grid grid-cols-3 gap-1.5';
+            const inputButton = document.createElement('button');
+            inputButton.type = 'button';
+            inputButton.className = 'rounded border border-gray-300 bg-white px-2 py-1.5 text-[10px] font-bold text-gray-700 hover:bg-gray-50';
+            inputButton.textContent = '入力欄へ';
+            inputButton.onclick = () => focusNgFinding(index);
+            const previewButton = document.createElement('button');
+            previewButton.type = 'button';
+            previewButton.className = 'rounded border border-gray-300 bg-white px-2 py-1.5 text-[10px] font-bold text-gray-700 hover:bg-gray-50';
+            previewButton.textContent = '右側で確認';
+            previewButton.onclick = () => showNgFindingInPreview(index);
+            const applyButton = document.createElement('button');
+            applyButton.type = 'button';
+            applyButton.className = 'rounded bg-olive px-2 py-1.5 text-[10px] font-bold text-white hover:bg-[#6b6500]';
+            applyButton.textContent = '提案を反映';
+            applyButton.onclick = () => applyNgFix(index);
+            actions.append(inputButton, previewButton, applyButton);
+            card.append(header, matched, reason, suggestion, actions);
+            return card;
+        }
+
+        function renderNgWordResults(findings) {
+            const count = document.getElementById('ngCheckerCount');
+            const summary = document.getElementById('ngCheckerSummary');
+            const results = document.getElementById('ngCheckerResults');
+            const batchButton = document.getElementById('ngBatchFixButton');
+            results.replaceChildren();
+
+            if (!findings.length) {
+                count.classList.add('hidden');
+                batchButton.classList.add('hidden');
+                summary.className = 'mt-3 rounded-lg bg-green-100 px-3 py-2 text-xs leading-relaxed text-green-800';
+                summary.textContent = '否定的に見える表現は見つかりませんでした。';
+                return;
+            }
+
+            const fieldCount = new Set(findings.map(finding => finding.inputId)).size;
+            const safeCount = findings.filter(finding => finding.autoFix).length;
+            count.textContent = `${findings.length}件`;
+            count.classList.remove('hidden');
+            summary.className = 'mt-3 rounded-lg bg-orange-100 px-3 py-2 text-xs leading-relaxed text-orange-900';
+            summary.textContent = `${fieldCount}項目から${findings.length}件を検出しました。黄色マーカーは確認後、手修正または提案反映してください。`;
+            batchButton.textContent = `安全な候補を一括修正（${safeCount}件）`;
+            batchButton.classList.toggle('hidden', safeCount === 0);
+            findings.forEach((finding, index) => results.appendChild(createNgResultCard(finding, index)));
+        }
+
+        function runNgWordCheck() {
+            ngCheckerActive = true;
+            clearTimeout(ngCheckTimer);
+            clearNgWordHighlights();
+            currentNgFindings = collectNgWordFindings();
+            applyNgHighlights(currentNgFindings);
+            renderNgWordResults(currentNgFindings);
+            return currentNgFindings;
+        }
+
+        function scheduleNgWordCheck() {
+            if (!ngCheckerActive) return;
+            clearTimeout(ngCheckTimer);
+            ngCheckTimer = setTimeout(runNgWordCheck, 180);
+        }
+
+        function focusNgFinding(index) {
+            const finding = currentNgFindings[index];
+            if (!finding) return;
+            const input = document.getElementById(finding.inputId);
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                input.focus();
+                input.setSelectionRange(finding.start, finding.end);
+            }, 300);
+        }
+
+        function showNgFindingInPreview(index) {
+            const finding = currentNgFindings[index];
+            if (!finding) return;
+            const preview = document.querySelector(finding.selector);
+            preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function replaceNgFinding(finding) {
+            const input = document.getElementById(finding.inputId);
+            const current = input.value.slice(finding.start, finding.end);
+            if (current !== finding.matched) return false;
+            input.value = input.value.slice(0, finding.start) + finding.suggestion + input.value.slice(finding.end);
+            return true;
+        }
+
+        function applyNgFix(index) {
+            const finding = currentNgFindings[index];
+            if (!finding || !replaceNgFinding(finding)) {
+                runNgWordCheck();
+                return;
+            }
+            updatePreview();
+            runNgWordCheck();
+        }
+
+        function applyAllSafeNgFixes() {
+            const safeFindings = currentNgFindings.filter(finding => finding.autoFix);
+            const byField = new Map();
+            safeFindings.forEach(finding => {
+                if (!byField.has(finding.inputId)) byField.set(finding.inputId, []);
+                byField.get(finding.inputId).push(finding);
+            });
+            byField.forEach(findings => findings.sort((a, b) => b.start - a.start).forEach(replaceNgFinding));
+            updatePreview();
+            runNgWordCheck();
+        }
+
+        function editablePreviewToText(element) {
+            return element.innerText
+                .replace(/\u00a0/g, ' ')
+                .replace(/\r\n?/g, '\n')
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+        }
+
+        function insertPlainTextAtCursor(text) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.setStartAfter(node);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        function setupEditableReportText() {
+            EDITABLE_REPORT_FIELDS.forEach(([selector, inputId, label]) => {
+                const preview = document.querySelector(selector);
+                const input = document.getElementById(inputId);
+
+                preview.contentEditable = 'true';
+                preview.spellcheck = true;
+                preview.tabIndex = 0;
+                preview.classList.add('editable-report-text');
+                preview.setAttribute('role', 'textbox');
+                preview.setAttribute('aria-multiline', 'true');
+                preview.setAttribute('aria-label', `${label}を直接編集`);
+                preview.title = 'クリックして直接編集できます';
+
+                preview.addEventListener('input', () => {
+                    input.value = editablePreviewToText(preview);
+                    scheduleNgWordCheck();
+                });
+
+                preview.addEventListener('paste', event => {
+                    event.preventDefault();
+                    insertPlainTextAtCursor(event.clipboardData.getData('text/plain'));
+                    preview.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+
+                preview.addEventListener('blur', () => {
+                    const cleaned = sanitizeSectionText(editablePreviewToText(preview));
+                    input.value = cleaned;
+                    preview.innerHTML = formatText(cleaned);
+                    scheduleNgWordCheck();
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupEditableReportText);
+
+        function setupEditableReportCode() {
+            const preview = document.getElementById('finalReportCode');
+            const input = document.getElementById('inputReportCode');
+            if (!preview || !input) return;
+
+            preview.addEventListener('input', () => {
+                input.value = preview.innerText.replace(/\s+/g, '').trim();
+            });
+
+            preview.addEventListener('paste', event => {
+                event.preventDefault();
+                insertPlainTextAtCursor(event.clipboardData.getData('text/plain').replace(/\s+/g, ''));
+                preview.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+
+            preview.addEventListener('blur', () => {
+                const value = preview.innerText.replace(/\s+/g, '').trim() || 'nxx-2x-xxx-0x';
+                preview.textContent = value;
+                input.value = value;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupEditableReportCode);
+
+        // --- Logic: PDF Export ---
+        async function prepareImagesForPDF() {
+            const replacements = [];
+            const imageData = window.REPORT_IMAGE_DATA || {};
+
+            document.querySelectorAll('#pdfContent img').forEach(image => {
+                const originalSource = image.getAttribute('src');
+                const embeddedSource = imageData[originalSource];
+                if (!embeddedSource) return;
+
+                replacements.push({ image, originalSource });
+                image.src = embeddedSource;
+            });
+
+            await Promise.all(replacements.map(({ image }) => image.decode?.().catch(() => undefined)));
+            return () => replacements.forEach(({ image, originalSource }) => image.setAttribute('src', originalSource));
+        }
+
+        function insertPDFPageSpacer(target, heightPx) {
+            if (!target?.parentElement || heightPx <= 0.5) return;
+            const spacer = document.createElement(target.parentElement.matches('p') ? 'span' : 'div');
+            spacer.className = 'pdf-page-spacer';
+            spacer.setAttribute('aria-hidden', 'true');
+            spacer.style.height = `${Math.ceil(heightPx * 100) / 100}px`;
+            target.before(spacer);
+        }
+
+        function getPDFBreakTarget(element, usableHeight) {
+            const topicBlock = element.matches('.report-topic-block')
+                ? element
+                : element.closest('.report-topic-block');
+            if (topicBlock) {
+                if (topicBlock.getBoundingClientRect().height <= usableHeight) return topicBlock;
+                topicBlock.classList.add('pdf-topic-block-splittable');
+                if (element.matches('.report-topic-block')) return null;
+            }
+
+            if (element.matches('[data-pdf-force-page], .report-paragraph, .bg-olive, h3')) return element;
+            if (element.matches('img')) {
+                return element.closest('.flex.justify-center, .image-drop-zone') || element.parentElement || element;
+            }
+            return element;
+        }
+
+        function placePDFBlockInsideSafeArea(page, target, metrics) {
+            const { a4Height, safeTop, safeBottom } = metrics;
+            const tolerance = 1;
+            const position = () => {
+                const pageRect = page.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                const top = targetRect.top - pageRect.top;
+                const pageIndex = Math.max(0, Math.floor((top + tolerance) / a4Height));
+                return {
+                    pageIndex,
+                    localTop: top - (pageIndex * a4Height),
+                    height: targetRect.height
+                };
+            };
+
+            let current = position();
+            if (target.matches('[data-pdf-force-page]')) {
+                const alreadyAtPageStart = current.pageIndex > 0 && current.localTop <= safeTop + tolerance;
+                if (!alreadyAtPageStart) {
+                    insertPDFPageSpacer(target, a4Height - current.localTop + safeTop);
+                    current = position();
+                }
+            }
+
+            if (current.pageIndex > 0 && current.localTop < safeTop - tolerance) {
+                insertPDFPageSpacer(target, safeTop - current.localTop);
+                current = position();
+            }
+
+            const usableHeight = safeBottom - safeTop;
+            if (current.height <= usableHeight && current.localTop + current.height > safeBottom + tolerance) {
+                insertPDFPageSpacer(target, a4Height - current.localTop + safeTop);
+            }
+        }
+
+        function preparePageHeightsForPDF() {
+            const pages = Array.from(document.querySelectorAll('#pdfContent > .a4-wrapper'));
+            const referencePage = pages.find(page => page.classList.contains('bookend-page')) || pages[0];
+            const a4Height = referencePage.getBoundingClientRect().height;
+            const safeTop = a4Height * (14 / 297);
+            const safeBottom = a4Height * ((297 - 15) / 297);
+            const originalStyles = pages.map(page => ({
+                page,
+                height: page.style.height,
+                minHeight: page.style.minHeight,
+                maxHeight: page.style.maxHeight
+            }));
+
+            pages.forEach(page => {
+                if (!page.matches('.bookend-page, .cockpit-page')) {
+                    const targets = Array.from(page.querySelectorAll(
+                        '[data-pdf-force-page], .bg-olive, h3, img, .report-topic-block, .report-paragraph'
+                    ))
+                        .map(element => getPDFBreakTarget(element, safeBottom - safeTop))
+                        .filter((target, index, list) => target && list.indexOf(target) === index);
+
+                    targets.forEach(target => placePDFBlockInsideSafeArea(page, target, {
+                        a4Height,
+                        safeTop,
+                        safeBottom
+                    }));
+                }
+
+                const index = pages.indexOf(page);
+                const measuredHeight = Math.max(page.scrollHeight, page.getBoundingClientRect().height);
+                const a4PageCount = Math.max(1, Math.ceil((measuredHeight - 1) / a4Height));
+                const isLastWrapper = index === pages.length - 1;
+                const fixedHeight = index === pages.length - 1
+                    ? `calc(${a4PageCount * 297}mm - 2px)`
+                    : `${a4PageCount * 297}mm`;
+                page.style.height = fixedHeight;
+                page.style.minHeight = fixedHeight;
+                page.style.maxHeight = fixedHeight;
+
+                for (let pageIndex = 0; pageIndex < a4PageCount; pageIndex += 1) {
+                    const frame = document.createElement('div');
+                    frame.className = 'pdf-page-frame';
+                    frame.setAttribute('aria-hidden', 'true');
+                    frame.style.top = `${pageIndex * 297}mm`;
+                    if (isLastWrapper && pageIndex === a4PageCount - 1) {
+                        frame.style.height = 'calc(297mm - 2px)';
+                    }
+                    page.appendChild(frame);
+
+                }
+            });
+
+            return () => {
+                document.querySelectorAll('.pdf-page-frame').forEach(frame => frame.remove());
+                document.querySelectorAll('.pdf-page-spacer').forEach(spacer => spacer.remove());
+                document.querySelectorAll('.pdf-topic-block-splittable').forEach(block => block.classList.remove('pdf-topic-block-splittable'));
+                document.querySelectorAll('.pdf-export-page-copyright').forEach(copyright => copyright.remove());
+                originalStyles.forEach(({ page, height, minHeight, maxHeight }) => {
+                    page.style.height = height;
+                    page.style.minHeight = minHeight;
+                    page.style.maxHeight = maxHeight;
+                });
+            };
+        }
+
+        async function generatePDF() {
+            const element = document.getElementById('pdfContent');
+            const name = document.getElementById('inputName').value || 'Report';
+            const restoreImages = await prepareImagesForPDF();
+            element.classList.add('pdf-export-container');
+            const restorePageHeights = preparePageHeightsForPDF();
+
+            const opt = {
+                margin:       0,
+                filename:     `RIESM_Report_${name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: false, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'], avoid: ['.report-topic-block:not(.pdf-topic-block-splittable)', '.report-paragraph'] }
+            };
+
+            try {
+                const footerCanvas = document.createElement('canvas');
+                footerCanvas.width = 1600;
+                footerCanvas.height = 40;
+                const footerContext = footerCanvas.getContext('2d');
+                footerContext.fillStyle = '#827b00';
+                footerContext.fillRect(0, 0, footerCanvas.width, footerCanvas.height);
+                footerContext.fillStyle = '#ffffff';
+                footerContext.font = '20px "BIZ UDPGothic", sans-serif';
+                footerContext.textAlign = 'center';
+                footerContext.textBaseline = 'middle';
+                footerContext.fillText(REPORT_COPYRIGHT, footerCanvas.width / 2, footerCanvas.height / 2);
+                const footerImage = footerCanvas.toDataURL('image/png');
+
+                const worker = html2pdf().set(opt).from(element).toPdf();
+                const pdf = await worker.get('pdf');
+                const pageCount = pdf.internal.getNumberOfPages();
+                for (let pageNumber = 1; pageNumber <= pageCount; pageNumber += 1) {
+                    pdf.setPage(pageNumber);
+                    pdf.addImage(footerImage, 'PNG', 0, 292, 210, 5);
+                }
+                try {
+                    await pdf.save(opt.filename, { returnPromise: true });
+                } catch (saveError) {
+                    if (!(saveError instanceof Event)) throw saveError;
+                }
+            } finally {
+                element.classList.remove('pdf-export-container');
+                restorePageHeights();
+                restoreImages();
+            }
+        }
+
+        // Init
+        window.onload = function() {
+            updatePreview();
+        };
+    </script>
+</body>
+</html>
