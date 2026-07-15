@@ -298,15 +298,33 @@
     else enterTraveler((config.forcedTraveler || 3) + 1);
   }
 
+  function focusPasswordInput() {
+    const input = document.querySelector("[data-second-input='password']");
+    if (!input) return;
+    input.focus({ preventScroll: true });
+    try {
+      const length = input.value.length;
+      input.setSelectionRange(length, length);
+    } catch (error) {
+      // Some numeric keyboard implementations do not support selection ranges.
+    }
+  }
+
+  function schedulePasswordRefocus() {
+    if (!state().passwordOpen) return;
+    window.setTimeout(() => {
+      if (!state().passwordOpen) return;
+      const input = document.querySelector("[data-second-input='password']");
+      if (input && document.activeElement !== input) focusPasswordInput();
+    }, 90);
+  }
+
   function handleAction(action, target) {
     const data = state();
     if (action === "open-door") {
       ns.state.patch({ passwordOpen: true, passwordError: "" });
       render();
-      window.setTimeout(() => {
-        const input = document.querySelector("[data-second-input='password']");
-        if (input) input.focus();
-      }, 30);
+      window.setTimeout(focusPasswordInput, 30);
       return;
     }
     if (action === "close-door") {
@@ -436,6 +454,9 @@
     event.preventDefault();
     handleAction("submit-password", input);
   });
+
+  window.addEventListener("resize", schedulePasswordRefocus);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", schedulePasswordRefocus);
 
   ns.flow = { startSecondJourney, enterTraveler, enterRefrem, reset: ns.state.reset };
 })(window.RoleTradeSecondJourney = window.RoleTradeSecondJourney || {});

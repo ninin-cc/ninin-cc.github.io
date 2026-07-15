@@ -81,6 +81,17 @@ function getSecondDoubleTradeCount() {
       return array[randomInt(array.length)];
     }
 
+    function resetExitHotspotDialogueState() {
+      state.exitHotspotSpeaker = '';
+      state.exitHotspotMessage = '';
+      state.exitObjectHotspotKey = '';
+      state.exitObjectHotspotMessage = '';
+      state.exitScenePeekRight = false;
+      state.exitHotspotClickCountBySpeaker = { refrem: 0, haruka: 0 };
+      state.exitHotspotUsedIndicesBySpeaker = { refrem: [], haruka: [] };
+      state.exitHotspotLastIndexBySpeaker = { refrem: -1, haruka: -1 };
+    }
+
     function chooseExitHotspotLine(speaker) {
       const lines = speaker === 'haruka' ? EXIT_TO_TAVERN_HARUKA_LINES : EXIT_TO_TAVERN_REFREM_LINES;
       if (!lines.length) return '';
@@ -421,6 +432,9 @@ function getSecondDoubleTradeCount() {
       exitDepartureCueVisible: false,
       exitHotspotSpeaker: '',
       exitHotspotMessage: '',
+      exitObjectHotspotKey: '',
+      exitObjectHotspotMessage: '',
+      exitScenePeekRight: false,
       exitHotspotClickCountBySpeaker: { refrem: 0, haruka: 0 },
       exitHotspotUsedIndicesBySpeaker: { refrem: [], haruka: [] },
       exitHotspotLastIndexBySpeaker: { refrem: -1, haruka: -1 },
@@ -519,7 +533,7 @@ function getSecondDoubleTradeCount() {
           state.beforeTavernDialogueStep = 0;
           state.gameState = 'BEFORE_TAVERN';
         });
-      }, 7200);
+      }, 8800);
     }
 
     function transitionState(callback) {
@@ -563,6 +577,10 @@ function getSecondDoubleTradeCount() {
       }
     }
 
+    function isCompletedJourneyProgressState(progressState) {
+      return !!progressState && progressState.gameState === 'RESULT' && progressState.resultStep === 'FINAL';
+    }
+
     function readSavedJourneyProgress() {
       if (!canUseProgressStorage()) return null;
       try {
@@ -570,6 +588,10 @@ function getSecondDoubleTradeCount() {
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (!parsed || parsed.version !== ROLETRADE_PROGRESS_VERSION || !parsed.state) return null;
+        if (isCompletedJourneyProgressState(parsed.state)) {
+          window.localStorage.removeItem(ROLETRADE_PROGRESS_STORAGE_KEY);
+          return null;
+        }
         return parsed;
       } catch (error) {
         return null;
@@ -578,6 +600,40 @@ function getSecondDoubleTradeCount() {
 
     function hasSavedJourneyProgress() {
       return !!readSavedJourneyProgress();
+    }
+
+    function toFullWidthNumber(value) {
+      return String(value).replace(/[0-9]/g, char => '０１２３４５６７８９'[Number(char)]);
+    }
+
+    function getFinalShopRoundForProgress(progressState) {
+      if (progressState && Array.isArray(progressState.shopRounds) && progressState.shopRounds.length) {
+        const rounds = progressState.shopRounds.map(Number).filter(Number.isFinite);
+        if (rounds.length) return Math.max(...rounds);
+      }
+      return progressState && progressState.journeyMode === 'second' ? 7 : 6;
+    }
+
+    function getSavedJourneyProgressDescription(saved = readSavedJourneyProgress()) {
+      const progressState = saved?.state;
+      if (!progressState) return '';
+      const pageLabel = saved.pageLabel || '';
+      const gameState = progressState.gameState || '';
+      const round = Number(progressState.round || 0);
+      const finalShopRound = getFinalShopRoundForProgress(progressState);
+
+      if (gameState === 'RULES') return '旅の説明まで進んだ';
+      if (gameState === 'INITIAL_HAND') return '最初の5枚を受け取るところまで進んだ';
+      if (gameState === 'LEAVE_SHOP_1' || gameState === 'EXIT_TO_TAVERN' || gameState === 'BEFORE_TAVERN') return '酒場へ向かうところまで進んだ';
+      if (gameState === 'AFTER_TAVERN') return '酒場を後にしたところまで進んだ';
+      if (gameState === 'SHOP_CONFIRM' || gameState === 'SHOP_FAREWELL') return '最後の確認まで進んだ';
+      if (gameState === 'RESULT') return '大切な役割を選ぶところまで進んだ';
+      if (gameState === 'PLAYING') {
+        if (round === 1) return 'ハルカとの最初の交換まで進んだ';
+        if (round >= 2 && round < finalShopRound) return '旅人との交換' + toFullWidthNumber(round - 1) + 'まで進んだ';
+        if (round >= finalShopRound) return '最後の交換まで進んだ';
+      }
+      return pageLabel ? 'Page ' + pageLabel + 'まで進んだ' : '旅の途中まで進んだ';
     }
 
     function clearSavedJourneyProgress() {
@@ -615,6 +671,10 @@ function getSecondDoubleTradeCount() {
 
     function saveJourneyProgress() {
       if (IS_DEV_MODE || ['START', 'HISTORY', 'HISTORY_RESULT'].includes(state.gameState) || state.startResetConfirmOpen) return;
+      if (isCompletedJourneyProgressState(state)) {
+        clearSavedJourneyProgress();
+        return;
+      }
       if (!canUseProgressStorage()) return;
       try {
         window.localStorage.setItem(ROLETRADE_PROGRESS_STORAGE_KEY, JSON.stringify({
@@ -789,6 +849,7 @@ function getSecondDoubleTradeCount() {
       clearSavedJourneyProgress();
       clearResultDecisionTimers();
       clearExitToTavernTimer();
+      resetExitHotspotDialogueState();
       state.startResetConfirmOpen = false;
       state.journeyMode = 'first';
       window.ROLETRADE_ACTIVE_JOURNEY = 'first';
@@ -810,6 +871,7 @@ function getSecondDoubleTradeCount() {
       const journeyMode = options.journeyMode || 'first';
       state.journeyMode = journeyMode;
       window.ROLETRADE_ACTIVE_JOURNEY = journeyMode;
+      resetExitHotspotDialogueState();
       const allShuffled = shuffleArray([...CARDS_DATA]);
       state.hand = allShuffled.slice(0, 5);
       
@@ -1529,7 +1591,8 @@ function getSecondDoubleTradeCount() {
     }
 
     function renderStartScene() {
-      const savedProgressExists = hasSavedJourneyProgress();
+      const savedProgress = readSavedJourneyProgress();
+      const savedProgressExists = !!savedProgress;
       return `
               <div class="start-scene-frame rounded-md border border-stone-400/80 text-center max-w-2xl mx-auto shadow-[0_0_40px_rgba(124,45,18,0.3)] relative overflow-hidden flex flex-col justify-end min-h-[350px] sm:min-h-[450px]">
                 <img src="${BG_START_MENTALIA}" alt="" aria-hidden="true" class="start-scene-image absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none">
@@ -1592,7 +1655,7 @@ function getSecondDoubleTradeCount() {
                   </span>
                 </button>
                 <p class="start-journey-save-note font-serif font-bold text-[10px] sm:text-xs text-stone-700/80 mt-2 text-center">
-                  ${savedProgressExists ? '前回の旅の記録があります。' : '続きの記録はまだありません。'}
+                  ${savedProgressExists ? '前回の旅の途中経過があります。' : '続きの記録はまだありません。'}
                 </p>
               </div>
 
@@ -1981,7 +2044,7 @@ function getSecondDoubleTradeCount() {
             <div class="start-reset-confirm-modal fixed inset-0 z-[230] flex items-center justify-center bg-stone-950/65 p-4 backdrop-blur-sm animate-fadeInModal">
               <div class="start-reset-confirm-card w-full max-w-md rounded-sm border border-orange-900/30 bg-[#f0e6d2] p-5 sm:p-7 text-center shadow-2xl" style="background-image: ${PARCHMENT_TEXTURE}">
                 <p class="text-[10px] sm:text-xs font-serif font-black tracking-[0.22em] text-orange-900/80">旅の記録</p>
-                <h2 class="mt-2 text-lg sm:text-xl font-serif font-extrabold text-stone-900 magic-text-glow">前回の記録が残っています。</h2>
+                <h2 class="mt-2 text-lg sm:text-xl font-serif font-extrabold text-stone-900 magic-text-glow">前回の記録${getSavedJourneyProgressDescription() ? '(' + escapeHTML(getSavedJourneyProgressDescription()) + ')' : ''}が残っています。</h2>
                 <p class="mt-4 text-xs sm:text-sm font-serif font-bold leading-loose text-stone-800">このまま最初から始めると、保存されている旅の途中経過は消えます。<br>新しい旅として始めてよいですか？</p>
                 <div class="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
                   <button type="button" data-action="cancel-start-fresh" class="wood-btn wood-btn-light rounded-sm transition-all duration-300 text-xs sm:text-sm tracking-widest font-serif font-bold py-2.5 px-5 w-full sm:w-auto">
@@ -2104,13 +2167,28 @@ function getSecondDoubleTradeCount() {
       // ▼▼ シーン：酒場へ向かう出口 ▼▼
       if (state.gameState === 'EXIT_TO_TAVERN') {
         const exitMovingClass = state.exitToTavernAnimating ? ' is-moving' : (state.exitDepartureCueVisible ? ' is-departure-cue' : '');
+        const exitPeekClass = state.exitScenePeekRight && !state.exitToTavernAnimating ? ' is-peeking-right' : '';
+        const exitObjectClass = state.exitObjectHotspotKey ? ' has-exit-object-' + state.exitObjectHotspotKey : '';
         html += `
-              <div class="exit-to-tavern-scene${exitMovingClass} rounded-sm border border-stone-400/80 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
+              <div class="exit-to-tavern-scene${exitMovingClass}${exitPeekClass}${exitObjectClass} rounded-sm border border-stone-400/80 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="exit-to-tavern-pan" style="background-image: url('${ROLETRADE_SCENE_IMG}');" aria-hidden="true"></div>
                 <div class="exit-to-tavern-vignette" aria-hidden="true"></div>
                 ${!state.exitToTavernAnimating && !state.exitDepartureCueVisible ? `
+                  <button type="button" data-action="exit-object-hotspot" data-spot="crystal" class="exit-object-hotspot exit-object-hotspot-crystal" aria-label="水晶を眺める"></button>
+                  <button type="button" data-action="exit-object-hotspot" data-spot="books-left" class="exit-object-hotspot exit-object-hotspot-books-left" aria-label="古い本棚を見る"></button>
+                  <button type="button" data-action="exit-object-hotspot" data-spot="books-right" class="exit-object-hotspot exit-object-hotspot-books-right" aria-label="古い本を見る"></button>
+                  <button type="button" data-action="exit-object-hotspot" data-spot="cat" class="exit-object-hotspot exit-object-hotspot-cat" aria-label="猫を見る"></button>
+                  <button type="button" data-action="exit-object-hotspot" data-spot="right-edge" class="exit-object-hotspot exit-object-hotspot-right-edge" aria-label="部屋の右側を見る"></button>
                   <button type="button" data-action="exit-hotspot-dialogue" data-speaker="refrem" class="exit-to-tavern-hotspot exit-to-tavern-hotspot-refrem" aria-label="リフレムに話しかける"></button>
                   <button type="button" data-action="exit-hotspot-dialogue" data-speaker="haruka" class="exit-to-tavern-hotspot exit-to-tavern-hotspot-haruka" aria-label="ハルカに話しかける"></button>
+                ` : ''}
+                ${state.exitObjectHotspotKey === 'crystal' && !state.exitToTavernAnimating ? `
+                  <div class="exit-crystal-sparkle" aria-hidden="true"><span></span><span></span><span></span></div>
+                ` : ''}
+                ${state.exitObjectHotspotMessage ? `
+                  <div class="exit-to-tavern-object-note exit-to-tavern-object-note-${state.exitObjectHotspotKey}" role="status" aria-live="polite">
+                    <span class="exit-to-tavern-line">${escapeHTML(state.exitObjectHotspotMessage)}</span>
+                  </div>
                 ` : ''}
                 ${state.exitHotspotMessage ? `
                   <div class="exit-to-tavern-speech exit-to-tavern-speech-${state.exitHotspotSpeaker}" role="status" aria-live="polite">
@@ -2969,13 +3047,6 @@ function getSecondDoubleTradeCount() {
         ) {
           return startInitialCardReview;
         }
-        if (
-          state.initialHandReviewIndex >= 0 &&
-          state.initialHandReviewIndex < state.hand.length - 1 &&
-          !state.initialHandReviewReturning
-        ) {
-          return advanceInitialCardReview;
-        }
       }
       return null;
     }
@@ -3251,6 +3322,9 @@ function getSecondDoubleTradeCount() {
         state.exitDepartureCueVisible = true;
         state.exitHotspotSpeaker = '';
         state.exitHotspotMessage = '';
+        state.exitObjectHotspotKey = '';
+        state.exitObjectHotspotMessage = '';
+        state.exitScenePeekRight = false;
         render();
         exitDepartureTimer = setTimeout(() => {
           exitDepartureTimer = null;
@@ -3265,6 +3339,27 @@ function getSecondDoubleTradeCount() {
         const speaker = btn.dataset.speaker === 'haruka' ? 'haruka' : 'refrem';
         state.exitHotspotSpeaker = speaker;
         state.exitHotspotMessage = chooseExitHotspotLine(speaker);
+        state.exitObjectHotspotKey = '';
+        state.exitObjectHotspotMessage = '';
+        render();
+      } else if (action === 'exit-object-hotspot') {
+        if (state.gameState !== 'EXIT_TO_TAVERN' || state.exitToTavernAnimating || state.exitDepartureCueVisible) return;
+        const spot = btn.dataset.spot || '';
+        const objectMessages = {
+          crystal: '水晶がきらきら光っている…。',
+          'books-left': '古そうな本が並んでいる…。',
+          'books-right': '開きっぱなしの本に、見知らぬ文字が踊っている…。',
+          cat: 'ニャー',
+          'right-edge': state.exitScenePeekRight ? 'ふたりのいる場所へ視線を戻した…。' : '部屋の右側が、ゆっくり見えてきた…。'
+        };
+        if (!objectMessages[spot]) return;
+        state.exitHotspotSpeaker = '';
+        state.exitHotspotMessage = '';
+        if (spot === 'right-edge') {
+          state.exitScenePeekRight = !state.exitScenePeekRight;
+        }
+        state.exitObjectHotspotKey = spot;
+        state.exitObjectHotspotMessage = objectMessages[spot];
         render();
       } else if (action === 'select-hand') {
         if (state.waitingAfterTrade) return;
@@ -3487,6 +3582,7 @@ function getSecondDoubleTradeCount() {
       startSecondJourney() {
         state.journeyMode = 'second';
         window.ROLETRADE_ACTIVE_JOURNEY = 'second';
+        resetExitHotspotDialogueState();
         openRulesScene();
       },
       startFirstJourney() {

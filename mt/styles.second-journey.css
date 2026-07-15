@@ -3,10 +3,36 @@
   z-index: 20;
   width: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 0.35rem;
   margin-top: 10lh;
   padding: 0 0 18px;
   pointer-events: auto;
+}
+
+.second-house-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 4px 10px;
+  color: rgba(74, 49, 28, 0.74);
+  font-family: serif;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: color .25s ease, text-shadow .25s ease;
+}
+
+.second-house-link:hover,
+.second-house-link:focus-visible {
+  color: rgba(74, 49, 28, 0.98);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  outline: none;
+  text-shadow: 0 0 12px rgba(244, 207, 132, 0.72);
 }
 
 .second-journey-door {
@@ -43,22 +69,22 @@
 }
 
 .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
-  transform: translateX(calc(-50% - 5.1rem)) rotate(-5deg);
+  transform: translateX(calc(-50% - 5.55rem)) rotate(-4deg);
   z-index: 1;
 }
 
 .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
-  transform: translateX(calc(-50% - 3.2rem)) rotate(4deg);
+  transform: translateX(calc(-50% - 1.35rem)) rotate(2deg);
   z-index: 2;
 }
 
 .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
-  transform: translateX(calc(-50% + 3.2rem)) rotate(-4deg);
+  transform: translateX(calc(-50% + 1.35rem)) rotate(-2deg);
   z-index: 1;
 }
 
 .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
-  transform: translateX(calc(-50% + 5.1rem)) rotate(5deg);
+  transform: translateX(calc(-50% + 5.55rem)) rotate(4deg);
   z-index: 2;
 }
 
@@ -74,19 +100,19 @@
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
-    transform: translateX(calc(-50% - 6.2rem)) rotate(-5deg);
+    transform: translateX(calc(-50% - 6.45rem)) rotate(-4deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
-    transform: translateX(calc(-50% - 3.9rem)) rotate(4deg);
+    transform: translateX(calc(-50% - 1.65rem)) rotate(2deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
-    transform: translateX(calc(-50% + 3.9rem)) rotate(-4deg);
+    transform: translateX(calc(-50% + 1.65rem)) rotate(-2deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
-    transform: translateX(calc(-50% + 6.2rem)) rotate(5deg);
+    transform: translateX(calc(-50% + 6.45rem)) rotate(4deg);
   }
 }
 
@@ -96,19 +122,19 @@
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-0 {
-    transform: translateX(calc(-50% - 4.5rem)) rotate(-5deg);
+    transform: translateX(calc(-50% - 4.65rem)) rotate(-4deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-1 {
-    transform: translateX(calc(-50% - 2.8rem)) rotate(4deg);
+    transform: translateX(calc(-50% - 1.25rem)) rotate(2deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-2 {
-    transform: translateX(calc(-50% + 2.8rem)) rotate(-4deg);
+    transform: translateX(calc(-50% + 1.25rem)) rotate(-2deg);
   }
 
   .traveler-offer-stack-double-pairs .traveler-offer-stack-card-4-3 {
-    transform: translateX(calc(-50% + 4.5rem)) rotate(5deg);
+    transform: translateX(calc(-50% + 4.65rem)) rotate(4deg);
   }
 }
 

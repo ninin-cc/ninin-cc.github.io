@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>リフレムとハルカの家</title>
+  <style>
+    :root {
+      color: #2f2118;
+      background: #eadcc4;
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: clamp(14px, 3vw, 34px);
+      background:
+        radial-gradient(circle at 50% 24%, rgba(255,246,218,.64), rgba(225,197,157,.46) 38%, rgba(128,88,52,.32) 100%),
+        #eadcc4;
+    }
+    .house {
+      position: relative;
+      width: min(1120px, 100%);
+      aspect-ratio: 1916 / 832;
+      min-height: min(74vh, 560px);
+      overflow: hidden;
+      border: 1px solid rgba(82, 49, 25, .28);
+      box-shadow: 0 24px 70px rgba(70, 36, 16, .28);
+      background-image: linear-gradient(rgba(246,232,201,.12), rgba(96,54,27,.18)), url("./roletrade_ichimaie.jpg");
+      background-size: 150% auto;
+      background-position: 49% center;
+      transition: background-position 1800ms cubic-bezier(.2,.72,.18,1), background-size 1800ms cubic-bezier(.2,.72,.18,1);
+    }
+    .house.is-peeking-right {
+      background-position: 87% center;
+      background-size: 162% auto;
+    }
+    .veil {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 42%, rgba(255,244,217,.06), rgba(41,22,10,.22));
+      pointer-events: none;
+    }
+    .title {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      z-index: 4;
+      margin: 0;
+      padding: .55rem .75rem;
+      border: 1px solid rgba(92,59,31,.24);
+      border-radius: .35rem;
+      background: rgba(246, 236, 215, .72);
+      font-size: clamp(15px, 2vw, 24px);
+      letter-spacing: .08em;
+    }
+    .back {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      z-index: 5;
+      color: #3f2617;
+      background: rgba(246,236,215,.78);
+      border: 1px solid rgba(92,59,31,.26);
+      border-radius: .35rem;
+      padding: .45rem .75rem;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .spot {
+      position: absolute;
+      z-index: 5;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .spot:focus-visible {
+      outline: 2px solid rgba(249,115,22,.72);
+      outline-offset: 3px;
+      border-radius: 999px;
+    }
+    .spot-refrem { left: 33%; top: 17%; width: 18%; height: 68%; }
+    .spot-haruka { left: 55%; top: 25%; width: 14%; height: 58%; }
+    .spot-crystal { left: 25%; top: 52%; width: 10%; height: 18%; }
+    .spot-books-left { left: 5%; top: 17%; width: 22%; height: 25%; }
+    .spot-books-right { left: 72%; top: 12%; width: 18%; height: 31%; }
+    .spot-cat { left: 64%; top: 75%; width: 14%; height: 13%; }
+    .spot-right-edge { right: 0; top: 0; width: 9%; height: 100%; }
+    .note {
+      position: absolute;
+      z-index: 7;
+      max-width: min(22rem, calc(100% - 2rem));
+      padding: .72rem .9rem;
+      border: 1px solid rgba(87,64,43,.34);
+      border-radius: .4rem;
+      background: rgba(248, 240, 221, .88);
+      box-shadow: 0 14px 34px rgba(67,20,7,.24);
+      font-size: clamp(14px, 2.1vw, 20px);
+      line-height: 1.8;
+      white-space: normal;
+    }
+    .note .speaker {
+      display: block;
+      margin-bottom: .15rem;
+      color: #8b341b;
+      font-size: .78em;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    .note-refrem { left: 49%; top: 17%; }
+    .note-haruka { left: 26%; top: 38%; }
+    .note-crystal { left: 19%; top: 40%; }
+    .note-books-left { left: 6%; top: 10%; }
+    .note-books-right, .note-right-edge { right: 1rem; top: 1rem; }
+    .note-cat { left: 54%; top: 66%; max-width: 9rem; }
+    .sparkle {
+      position: absolute;
+      z-index: 6;
+      left: 28%;
+      top: 49%;
+      width: 5.4rem;
+      height: 5.4rem;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(255,245,180,.75));
+    }
+    .sparkle span {
+      position: absolute;
+      width: .55rem;
+      height: .55rem;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255,255,255,.98), rgba(253,224,71,.72) 42%, rgba(253,224,71,0) 72%);
+      animation: twinkle 1100ms ease-in-out infinite;
+    }
+    .sparkle span:nth-child(1) { left: 45%; top: 7%; }
+    .sparkle span:nth-child(2) { left: 18%; top: 43%; animation-delay: 220ms; }
+    .sparkle span:nth-child(3) { left: 69%; top: 52%; animation-delay: 430ms; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(.55); }
+      45% { opacity: 1; transform: scale(1.25); }
+    }
+    @media (max-width: 720px) {
+      body { padding: 0; }
+      .house {
+        width: 100vw;
+        min-height: 100vh;
+        border: 0;
+        background-size: auto 100%;
+        background-position: 48% center;
+      }
+      .house.is-peeking-right {
+        background-position: 86% center;
+        background-size: auto 108%;
+      }
+      .title { left: .65rem; top: .65rem; max-width: calc(100% - 6.5rem); }
+      .back { right: .65rem; top: .65rem; }
+      .spot-refrem { left: 16%; top: 14%; width: 31%; height: 72%; }
+      .spot-haruka { left: 58%; top: 22%; width: 25%; height: 62%; }
+      .spot-crystal { left: 25%; top: 56%; width: 20%; height: 16%; }
+      .spot-books-left { left: 0; top: 15%; width: 28%; height: 25%; }
+      .spot-books-right { left: 73%; top: 12%; width: 25%; height: 31%; }
+      .spot-cat { left: 64%; top: 76%; width: 22%; height: 13%; }
+      .spot-right-edge { width: 14%; }
+      .note { font-size: 15px; }
+      .note-refrem { left: 39%; top: 16%; }
+      .note-haruka { left: .75rem; top: 41%; }
+      .note-crystal,
+      .note-books-left,
+      .note-cat { left: .75rem; }
+      .note-books-right,
+      .note-right-edge { right: .75rem; top: 5rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="house" id="house" aria-label="リフレムとハルカの家">
+    <div class="veil"></div>
+    <h1 class="title">リフレムとハルカの家</h1>
+    <a class="back" href="./index.html">戻る</a>
+    <button class="spot spot-refrem" data-spot="refrem" aria-label="リフレムに話しかける"></button>
+    <button class="spot spot-haruka" data-spot="haruka" aria-label="ハルカに話しかける"></button>
+    <button class="spot spot-crystal" data-spot="crystal" aria-label="水晶を眺める"></button>
+    <button class="spot spot-books-left" data-spot="books-left" aria-label="古い本棚を見る"></button>
+    <button class="spot spot-books-right" data-spot="books-right" aria-label="開いた本を見る"></button>
+    <button class="spot spot-cat" data-spot="cat" aria-label="猫を見る"></button>
+    <button class="spot spot-right-edge" data-spot="right-edge" aria-label="部屋の右側を見る"></button>
+    <div class="note note-refrem" id="note"><span class="speaker">リフレム</span>よう来たのう。ここでは、急がず眺めていくとよい。</div>
+    <div class="sparkle" id="sparkle" hidden><span></span><span></span><span></span></div>
+  </main>
+  <script>
+    const frame = document.getElementById("house");
+    const note = document.getElementById("note");
+    const sparkle = document.getElementById("sparkle");
+    const messages = {
+      refrem: { speaker: "リフレム", text: "よう来たのう。ここでは、急がず眺めていくとよい。" },
+      haruka: { speaker: "ハルカ", text: "いらっしゃい！気になるものがあったら、そっと触れてみてね。" },
+      crystal: { text: "水晶がきらきら光っている…。" },
+      "books-left": { text: "古そうな本が並んでいる…。" },
+      "books-right": { text: "開きっぱなしの本に、見知らぬ文字が踊っている…。" },
+      cat: { text: "ニャー" }
+    };
+    function showNote(spot, data) {
+      note.className = "note note-" + spot;
+      note.innerHTML = (data.speaker ? '<span class="speaker">' + data.speaker + "</span>" : "") + data.text;
+      note.hidden = false;
+      sparkle.hidden = spot !== "crystal";
+    }
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-spot]");
+      if (!target) return;
+      const spot = target.dataset.spot;
+      if (spot === "right-edge") {
+        const peeking = frame.classList.toggle("is-peeking-right");
+        showNote("right-edge", { text: peeking ? "部屋の右側が、ゆっくり見えてきた…。" : "ふたりのいる場所へ視線を戻した…。" });
+        return;
+      }
+      const data = messages[spot];
+      if (data) showNote(spot, data);
+    });
+  </script>
+</body>
+</html>

@@ -558,11 +558,15 @@
       host.className = "second-journey-door-host";
       container.appendChild(host);
     }
+    const activePasswordInput = host.querySelector('[data-second-input="password"]');
+    if (ns.state.data.passwordOpen && activePasswordInput && document.activeElement === activePasswordInput) {
+      return;
+    }
     const modal = ns.state.data.passwordOpen ? `
       <div class="second-door-modal-backdrop" role="dialog" aria-modal="true" aria-label="${escapeHTML(copy.doorHint)}">
         <div class="second-door-modal">
           <p>${escapeHTML(copy.doorHint)}</p>
-          <input data-second-input="password" class="second-door-input" type="text" inputmode="numeric" autocomplete="off" placeholder="${escapeHTML(copy.passwordPlaceholder)}" value="${escapeHTML(ns.state.data.passwordValue)}">
+          <input data-second-input="password" class="second-door-input" type="tel" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="one-time-code" autocapitalize="off" placeholder="${escapeHTML(copy.passwordPlaceholder)}" value="${escapeHTML(ns.state.data.passwordValue)}">
           ${ns.state.data.passwordError ? '<p class="second-door-error">' + escapeHTML(ns.state.data.passwordError) + '</p>' : ""}
           <div class="second-action-row">
             <button type="button" class="second-secondary-btn" data-second-action="close-door">${escapeHTML(copy.passwordCancel)}</button>

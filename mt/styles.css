@@ -2561,3 +2561,487 @@
     }
   }
 }
+
+/* Card-frame based loose overlap for traveler offers and shop bundles. */
+.traveler-offer-stack {
+  --offer-card-w: 84px;
+  --offer-spread-2: 2.45rem;
+  --offer-spread-3: 4.7rem;
+  --offer-pair-inner: 1.2rem;
+  --offer-pair-outer: 4.9rem;
+  width: min(100%, 15.75rem);
+  height: 8.25rem;
+}
+
+.traveler-offer-stack-card-2-0 { transform: translateX(calc(-50% - var(--offer-spread-2))) rotate(-3deg); z-index: 1; }
+.traveler-offer-stack-card-2-1 { transform: translateX(calc(-50% + var(--offer-spread-2))) rotate(3deg); z-index: 2; }
+.traveler-offer-stack-card-3-0 { transform: translateX(calc(-50% - var(--offer-spread-3))) rotate(-4deg); z-index: 1; }
+.traveler-offer-stack-card-3-1 { transform: translateX(-50%) rotate(0deg); z-index: 2; }
+.traveler-offer-stack-card-3-2 { transform: translateX(calc(-50% + var(--offer-spread-3))) rotate(4deg); z-index: 3; }
+
+.traveler-offer-stack-double-pairs {
+  --offer-pair-inner: 1.2rem;
+  --offer-pair-outer: 4.9rem;
+}
+
+.traveler-offer-stack-card-4-0 { transform: translateX(calc(-50% - var(--offer-pair-outer))) rotate(-4deg); z-index: 1; }
+.traveler-offer-stack-card-4-1 { transform: translateX(calc(-50% - var(--offer-pair-inner))) rotate(2deg); z-index: 2; }
+.traveler-offer-stack-card-4-2 { transform: translateX(calc(-50% + var(--offer-pair-inner))) rotate(-2deg); z-index: 3; }
+.traveler-offer-stack-card-4-3 { transform: translateX(calc(-50% + var(--offer-pair-outer))) rotate(4deg); z-index: 4; }
+
+.traveler-offer-stack-card.is-selected {
+  z-index: 30;
+  transform: translateX(-50%) translateY(-0.35rem) scale(1.08) rotate(0deg);
+  filter: drop-shadow(0 0 14px rgba(249, 115, 22, 0.58));
+}
+
+.initial-shop-bundle {
+  --bundle-card-w: 74px;
+  --bundle-spread: 3.2rem;
+  width: clamp(9.4rem, 42vw, 12.8rem);
+  height: clamp(7.45rem, 33vw, 10.2rem);
+}
+
+.initial-shop-bundle-card-0 { transform: translate(calc(-50% - var(--bundle-spread)), -50%) rotate(-5deg); z-index: 1; }
+.initial-shop-bundle-card-1 { transform: translate(-50%, calc(-50% - 0.22rem)) rotate(0deg); z-index: 2; }
+.initial-shop-bundle-card-2 { transform: translate(calc(-50% + var(--bundle-spread)), -50%) rotate(5deg); z-index: 3; }
+
+@media (min-width: 640px) {
+  .traveler-offer-stack {
+    --offer-card-w: 96px;
+    --offer-spread-2: 2.75rem;
+    --offer-spread-3: 5.25rem;
+    width: 19rem;
+    height: 9.75rem;
+  }
+
+  .traveler-offer-stack-double-pairs {
+    --offer-pair-inner: 1.45rem;
+    --offer-pair-outer: 5.9rem;
+  }
+
+  .initial-shop-bundle {
+    --bundle-card-w: 96px;
+    --bundle-spread: 3.55rem;
+    width: clamp(10.8rem, 28vw, 13.25rem);
+  }
+}
+
+@media (max-width: 380px) {
+  .traveler-offer-stack {
+    --offer-card-w: 84px;
+    --offer-spread-2: 2.25rem;
+    --offer-spread-3: 4.05rem;
+    width: min(100%, 14.5rem);
+  }
+
+  .traveler-offer-stack-double-pairs {
+    --offer-pair-inner: 1.15rem;
+    --offer-pair-outer: 4.35rem;
+  }
+
+  .initial-shop-bundle {
+    --bundle-spread: 2.72rem;
+    width: 8.85rem;
+  }
+}
+
+/* Page 5-2 character speech placement refinement. */
+.exit-to-tavern-speech {
+  max-width: calc(100% - 1.5rem);
+}
+
+.exit-to-tavern-speech-refrem {
+  left: 49%;
+  right: auto;
+  top: 1.1rem;
+  width: min(17rem, 39vw);
+}
+
+.exit-to-tavern-speech-refrem::before {
+  left: -0.42rem;
+  right: auto;
+  top: 2.15rem;
+  bottom: auto;
+  transform: rotate(45deg);
+}
+
+.exit-to-tavern-speech-haruka {
+  left: 27%;
+  right: auto;
+  top: clamp(8rem, 34%, 12rem);
+  width: min(16.5rem, 41vw);
+}
+
+.exit-to-tavern-speech-haruka::before {
+  left: auto;
+  right: -0.42rem;
+  top: 1.45rem;
+  bottom: auto;
+  transform: rotate(225deg);
+}
+
+@media (max-width: 760px) {
+  .exit-to-tavern-speech {
+    max-width: calc(100% - 1.25rem);
+  }
+
+  .exit-to-tavern-speech-refrem {
+    left: 43%;
+    right: auto;
+    top: 1.35rem;
+    width: min(13.4rem, 53vw);
+  }
+
+  .exit-to-tavern-speech-refrem::before {
+    left: -0.38rem;
+    right: auto;
+    top: 2rem;
+    bottom: auto;
+    transform: rotate(45deg);
+  }
+
+  .exit-to-tavern-speech-haruka {
+    left: 0.75rem;
+    right: auto;
+    top: clamp(8rem, 31%, 10.75rem);
+    width: min(14.4rem, 60vw);
+  }
+
+  .exit-to-tavern-speech-haruka::before {
+    left: auto;
+    right: -0.38rem;
+    top: 1.35rem;
+    bottom: auto;
+    transform: rotate(225deg);
+  }
+}
+
+
+/* Page 5-2 departure Refrem speech alignment. */
+.exit-to-tavern-departure-refrem {
+  left: 49%;
+  right: auto;
+  top: 1.1rem;
+  width: min(17rem, 39vw);
+}
+
+.exit-to-tavern-departure-refrem::before {
+  left: -0.42rem;
+  right: auto;
+  top: 2.15rem;
+  bottom: auto;
+  transform: rotate(45deg);
+}
+
+@media (max-width: 760px) {
+  .exit-to-tavern-departure-refrem {
+    left: 43%;
+    right: auto;
+    top: 1.35rem;
+    width: min(13.4rem, 53vw);
+  }
+
+  .exit-to-tavern-departure-refrem::before {
+    left: -0.38rem;
+    right: auto;
+    top: 2rem;
+    bottom: auto;
+    transform: rotate(45deg);
+  }
+}
+
+
+/* Page 5-2 left-door exit zoom and fade refinement. */
+.exit-to-tavern-scene.is-moving .exit-to-tavern-pan {
+  animation: exitToTavernPan 8.8s cubic-bezier(0.18, 0.78, 0.16, 1) both;
+}
+
+.exit-to-tavern-pan {
+  will-change: background-position, background-size, filter, opacity;
+}
+
+@keyframes exitToTavernPan {
+  0% {
+    background-position: 52% center;
+    background-size: auto 100%;
+    filter: brightness(1.02) saturate(1.02);
+    opacity: 1;
+  }
+  48% {
+    background-position: 12% center;
+    background-size: auto 108%;
+    filter: brightness(1.04) saturate(1.05);
+    opacity: 1;
+  }
+  78% {
+    background-position: 0% center;
+    background-size: auto 138%;
+    filter: brightness(1.08) saturate(1.08);
+    opacity: 0.94;
+  }
+  100% {
+    background-position: 0% center;
+    background-size: auto 168%;
+    filter: brightness(1.18) saturate(1.08) blur(1.4px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  @keyframes exitToTavernPan {
+    0% {
+      background-position: 55% center;
+      background-size: auto 100%;
+      filter: brightness(1.02) saturate(1.02);
+      opacity: 1;
+    }
+    48% {
+      background-position: 10% center;
+      background-size: auto 108%;
+      filter: brightness(1.04) saturate(1.05);
+      opacity: 1;
+    }
+    78% {
+      background-position: 0% center;
+      background-size: auto 138%;
+      filter: brightness(1.08) saturate(1.08);
+      opacity: 0.94;
+    }
+    100% {
+      background-position: 0% center;
+      background-size: auto 168%;
+      filter: brightness(1.18) saturate(1.08) blur(1.4px);
+      opacity: 0;
+    }
+  }
+}
+
+
+/* Page 5-2 room object gimmicks. */
+.exit-to-tavern-pan {
+  transition:
+    background-position 1450ms cubic-bezier(0.2, 0.72, 0.18, 1),
+    background-size 1450ms cubic-bezier(0.2, 0.72, 0.18, 1),
+    filter 1450ms ease,
+    opacity 420ms ease;
+}
+
+.exit-to-tavern-scene.is-peeking-right .exit-to-tavern-pan {
+  background-position: 100% center;
+  background-size: auto 100%;
+  filter: brightness(1.05) saturate(1.06);
+}
+
+.exit-object-hotspot {
+  position: absolute;
+  z-index: 7;
+  display: block;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exit-object-hotspot:focus-visible {
+  outline: 2px solid rgba(249, 115, 22, 0.72);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.exit-object-hotspot-crystal {
+  left: 24%;
+  top: 52%;
+  width: 14%;
+  height: 18%;
+}
+
+.exit-object-hotspot-books-left {
+  left: 5%;
+  top: 18%;
+  width: 24%;
+  height: 24%;
+}
+
+.exit-object-hotspot-books-right {
+  left: 74%;
+  top: 13%;
+  width: 19%;
+  height: 31%;
+}
+
+.exit-object-hotspot-cat {
+  left: 65%;
+  top: 76%;
+  width: 15%;
+  height: 13%;
+}
+
+.exit-object-hotspot-right-edge {
+  right: 0;
+  top: 0;
+  width: 9%;
+  height: 100%;
+}
+
+.exit-to-tavern-object-note {
+  position: absolute;
+  z-index: 8;
+  width: min(15rem, 42vw);
+  padding: 0.62rem 0.78rem;
+  border: 1px solid rgba(87, 64, 43, 0.35);
+  border-radius: 0.35rem;
+  background: rgba(244, 235, 216, 0.88);
+  box-shadow: 0 12px 30px rgba(67, 20, 7, 0.22);
+  color: #2f2418;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  text-align: left;
+  animation: exitHotspotSpeechIn 360ms ease both;
+  pointer-events: none;
+}
+
+.exit-to-tavern-object-note-crystal {
+  left: 18%;
+  top: 41%;
+}
+
+.exit-to-tavern-object-note-books-left {
+  left: 7%;
+  top: 11%;
+}
+
+.exit-to-tavern-object-note-books-right {
+  right: 5%;
+  top: 14%;
+}
+
+.exit-to-tavern-object-note-cat {
+  left: 53%;
+  top: 67%;
+  width: min(8.2rem, 30vw);
+}
+
+.exit-to-tavern-object-note-right-edge {
+  right: 1rem;
+  top: 1rem;
+}
+
+.exit-crystal-sparkle {
+  position: absolute;
+  z-index: 8;
+  left: 28%;
+  top: 50%;
+  width: 5.4rem;
+  height: 5.4rem;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(255, 245, 180, 0.75));
+}
+
+.exit-crystal-sparkle span {
+  position: absolute;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.98), rgba(253,224,71,0.72) 42%, rgba(253,224,71,0) 72%);
+  animation: exitCrystalTwinkle 1100ms ease-in-out infinite;
+}
+
+.exit-crystal-sparkle span:nth-child(1) {
+  left: 45%;
+  top: 7%;
+}
+
+.exit-crystal-sparkle span:nth-child(2) {
+  left: 18%;
+  top: 43%;
+  animation-delay: 220ms;
+}
+
+.exit-crystal-sparkle span:nth-child(3) {
+  left: 69%;
+  top: 52%;
+  animation-delay: 430ms;
+}
+
+@keyframes exitCrystalTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0.55); }
+  45% { opacity: 1; transform: scale(1.25); }
+}
+
+@media (max-width: 760px) {
+  .exit-object-hotspot-crystal {
+    left: 20%;
+    top: 51%;
+    width: 19%;
+    height: 16%;
+  }
+
+  .exit-object-hotspot-books-left {
+    left: 0;
+    top: 15%;
+    width: 28%;
+    height: 24%;
+  }
+
+  .exit-object-hotspot-books-right {
+    left: 74%;
+    top: 12%;
+    width: 23%;
+    height: 31%;
+  }
+
+  .exit-object-hotspot-cat {
+    left: 65%;
+    top: 75%;
+    width: 20%;
+    height: 13%;
+  }
+
+  .exit-object-hotspot-right-edge {
+    width: 13%;
+  }
+
+  .exit-to-tavern-object-note {
+    width: min(13.8rem, 64vw);
+    max-width: calc(100% - 1.25rem);
+  }
+
+  .exit-to-tavern-object-note-crystal {
+    left: 0.75rem;
+    top: 42%;
+  }
+
+  .exit-to-tavern-object-note-books-left {
+    left: 0.75rem;
+    top: 8%;
+  }
+
+  .exit-to-tavern-object-note-books-right,
+  .exit-to-tavern-object-note-right-edge {
+    right: 0.75rem;
+    top: 1rem;
+  }
+
+  .exit-to-tavern-object-note-cat {
+    left: 0.75rem;
+    top: 66%;
+    width: min(8rem, 40vw);
+  }
+
+  .exit-crystal-sparkle {
+    left: 23%;
+    top: 49%;
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+}
+
+
+/* Page 5-2 sealed object gimmicks.
+   Character dialogue hotspots stay active; only room-object gimmicks are hidden here. */
+.exit-object-hotspot,
+.exit-to-tavern-object-note,
+.exit-crystal-sparkle {
+  display: none !important;
+  pointer-events: none !important;
+}
