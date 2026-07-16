@@ -62,177 +62,141 @@
         </p>
         
         <div class="w-full h-px bg-stone-200 mt-2 mb-2 max-w-md mx-auto"></div>
+
+        <nav class="mt-5 flex max-w-2xl flex-wrap justify-center gap-2 text-xs font-bold" aria-label="RIESM用語解説メニュー">
+            <a href="#term-cockpit" class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-sky-700 hover:bg-sky-100">コックピット</a>
+            <a href="#term-modes" class="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-rose-700 hover:bg-rose-100">4つのモード</a>
+            <a href="#term-interest-faucet" class="rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-orange-700 hover:bg-orange-100">興味の蛇口</a>
+            <a href="#term-digital-mode" class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-700 hover:bg-emerald-100">デジタル・モード</a>
+        </nav>
     </header>
 
     <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
         
-        <!-- ========================================== -->
-        <!-- 1. コックピットの見方 -->
-        <!-- ========================================== -->
-        <section class="mb-16 scroll-mt-6" id="cockpit-guide">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold mr-3">1</div>
-                <h2 class="text-xl md:text-2xl font-bold text-stone-800">コックピットの見方</h2>
+        <span id="cockpit-guide" class="block scroll-mt-6" aria-hidden="true"></span>
+        <section class="mb-16 scroll-mt-6" id="term-cockpit">
+            <div class="mb-6 flex items-center">
+                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 font-bold text-sky-600">1</div>
+                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">コックピットの見方</h2>
             </div>
-            
-            <div class="glass-panel rounded-2xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center border-t-4 border-t-sky-400">
-                <div class="w-full md:w-1/2">
-                    <img src="https://ninin-cc.github.io/img/cockpit.png" alt="コックピット画像" class="w-full h-auto rounded-xl shadow-md border border-stone-200">
-                </div>
-                <div class="w-full md:w-1/2 space-y-4">
-                    <p class="text-sm text-stone-600 leading-relaxed font-medium">
-                        レポートの全体図は、あなたの「心の操縦席」です。<br>
-                        どこにエネルギーが注がれやすく、どこが少し動かしにくいのかが一目でわかります。
-                    </p>
-                    <ul class="space-y-3 text-sm text-stone-600">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-sky-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span><strong class="text-stone-800">高い数値の領域：</strong>あなたが自然に振る舞える、得意な役割です。強みとして意識的に活用しましょう。</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            <span><strong class="text-stone-800">低い数値の領域：</strong>使うと少し疲れやすい役割です。無理して使う必要はありません。得意な人に頼るのも一つの手です。</span>
-                        </li>
-                    </ul>
-                    <div class="bg-sky-50 p-3 rounded-lg border border-sky-100 mt-4 text-xs text-sky-800">
-                        💡 <strong>Point:</strong> 優劣ではありません。「いまの自分の状態」を客観視するためのツールです。
+
+            <div class="glass-panel rounded-2xl border-t-4 border-t-sky-400 p-6 shadow-sm md:p-8">
+                <img src="./img/riesm-cockpit-guide.png" alt="RIESMコックピットの各部と役割の読み取り方" class="mb-6 h-auto w-full rounded-xl border border-stone-200 bg-white shadow-sm">
+                <div class="grid gap-5 text-sm leading-relaxed text-stone-600 md:grid-cols-2">
+                    <div>
+                        <h3 class="mb-2 font-bold text-stone-800">心のエネルギーの流れを一枚で見る</h3>
+                        <p>コックピットは、6種類の「興味の蛇口」から生まれるエネルギーを、4つのモードや24の役割でどのように使いやすいかを表した全体図です。</p>
                     </div>
+                    <div>
+                        <h3 class="mb-2 font-bold text-stone-800">タイプを決めつける診断ではありません</h3>
+                        <p>数値は優劣や「できる・できない」を示すものではなく、現在その役割をどのくらい自然に使いやすいか、使うとどのくらい疲れやすいかを読むための目安です。</p>
+                    </div>
+                </div>
+                <div class="mt-6 rounded-xl border border-sky-100 bg-sky-50 p-4 text-xs leading-relaxed text-sky-900">
+                    <strong>読み取りの要点：</strong> 興味の蛇口は比較的安定した傾向ですが、年単位で変わることがあります。4つのモードは、環境・役割・疲労やストレスの影響をより受けやすく、今の状態に応じて動きます。
+                </div>
+                <img src="./img/riesm-role-gradient.png" alt="役割を使うときの疲れやすさから自然にできるまでの目安" class="mt-6 h-auto w-full rounded-lg border border-stone-200 bg-white">
+            </div>
+        </section>
+
+        <section class="mb-16 scroll-mt-6" id="term-modes">
+            <div class="mb-6 flex items-center">
+                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 font-bold text-rose-600">2</div>
+                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">4つのモード</h2>
+            </div>
+            <p class="mb-6 px-2 text-sm leading-relaxed text-stone-600">4つのモードは、心のエネルギーを外の世界でどのように使いやすいかを表します。どのモードも生きていくために必要な働きであり、優劣はありません。</p>
+            <img src="./img/riesm-four-modes.png" alt="ワンダー、キーパー、ナーチャー、アダプターの4つのモード" class="mb-6 h-auto w-full rounded-2xl border border-stone-200 bg-white shadow-sm">
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <article id="term-wonder" class="scroll-mt-6 rounded-xl border border-amber-200 bg-white p-5 shadow-sm">
+                    <h3 class="mb-2 font-bold text-amber-700">ワンダー｜楽しみたい</h3>
+                    <p class="text-xs leading-relaxed text-stone-600">自由・発見・挑戦へ向かうモード。面白さを見つけ、まず試してみる軽やかさや、新しい可能性を広げる力として表れます。</p>
+                </article>
+                <article id="term-keeper" class="scroll-mt-6 rounded-xl border border-blue-200 bg-white p-5 shadow-sm">
+                    <h3 class="mb-2 font-bold text-blue-700">キーパー｜守りたい・守らせたい</h3>
+                    <p class="text-xs leading-relaxed text-stone-600">信念・論理・規律を大切にするモード。筋道を立て、基準や約束を守り、物事を確かな形に整える力として表れます。</p>
+                </article>
+                <article id="term-nurturer" class="scroll-mt-6 rounded-xl border border-pink-200 bg-white p-5 shadow-sm">
+                    <h3 class="mb-2 font-bold text-pink-700">ナーチャー｜育みたい・受容されたい</h3>
+                    <p class="text-xs leading-relaxed text-stone-600">保護・調和へ向かうモード。人や物事を育み、相手の気持ちを受け止め、安心できる関係や場をつくる力として表れます。</p>
+                </article>
+                <article id="term-adapter" class="scroll-mt-6 rounded-xl border border-slate-300 bg-white p-5 shadow-sm">
+                    <h3 class="mb-2 font-bold text-slate-700">アダプター｜安心したい・させてほしい</h3>
+                    <p class="text-xs leading-relaxed text-stone-600">洞察・適応へ向かうモード。状況や相手をよく見て、安全を確かめながら、その場に合う振る舞いを選ぶ力として表れます。</p>
+                </article>
+            </div>
+
+            <div class="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm md:p-8">
+                <img src="./img/riesm-front-modes.png" alt="フロントを中心に4つのモードを使って外の世界と関わるイメージ" class="mb-6 h-auto w-full rounded-xl border border-stone-100">
+                <div class="grid gap-3 md:grid-cols-3">
+                    <div id="term-front" class="scroll-mt-6 rounded-xl bg-sky-50 p-4">
+                        <h3 class="mb-1 text-sm font-bold text-sky-800">フロント</h3>
+                        <p class="text-xs leading-relaxed text-stone-600">現在もっとも使いやすく、外の世界との関わりで前面に出やすいモードです。</p>
+                    </div>
+                    <div id="term-stand" class="scroll-mt-6 rounded-xl bg-emerald-50 p-4">
+                        <h3 class="mb-1 text-sm font-bold text-emerald-800">スタンド</h3>
+                        <p class="text-xs leading-relaxed text-stone-600">自分の平均に近く、必要な場面で比較的使いやすい待機中のモードです。</p>
+                    </div>
+                    <div id="term-backs" class="scroll-mt-6 rounded-xl bg-violet-50 p-4">
+                        <h3 class="mb-1 text-sm font-bold text-violet-800">バックス</h3>
+                        <p class="text-xs leading-relaxed text-stone-600">使えないモードではありません。今は使う際に、より意識やエネルギーが必要になりやすい位置です。</p>
+                    </div>
+                </div>
+                <div id="term-autobalancer" class="mt-5 scroll-mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-950">
+                    <strong>オートバランサー：</strong> 状況に合わせてモードを自動的に切り替え、バランスを取ろうとする働きです。元気でストレスが少なく、心に余裕があるほど、フロント以外のモードも使いやすくなります。自分のフロントが満たされる行動は、ストレスを下げる助けになります。
                 </div>
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- 2. モードの解説 -->
-        <!-- ========================================== -->
-        <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold mr-3">2</div>
-                <h2 class="text-xl md:text-2xl font-bold text-stone-800">モードの解説</h2>
+        <section class="mb-16 scroll-mt-6" id="term-interest-faucet">
+            <div class="mb-6 flex items-center">
+                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600">3</div>
+                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">興味の蛇口</h2>
             </div>
-            
-            <p class="text-sm text-stone-600 mb-6 leading-relaxed px-2">
-                交流分析の考え方をベースにした、人との関わり方の「モード（状態）」です。<br>
-                私たちは状況に応じて、これらのモードを無意識に切り替えています。
-            </p>
+            <p class="mb-6 px-2 text-sm leading-relaxed text-stone-600">興味の蛇口は、「何に心が動き、どのような活動へエネルギーを注ぎやすいか」を6つの領域で捉えたものです。蛇口の大きさは能力の有無ではなく、興味の向きやエネルギーの湧きやすさを表します。</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- モード1 -->
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="font-bold text-stone-800 mb-2 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-red-400 mr-2"></span>
-                        理想やルールを重んじるモード
-                    </div>
-                    <p class="text-xs text-stone-500 leading-relaxed">
-                        べき・ねばならないといった価値観を強く持ち、秩序やルールを守る、あるいは他者を導こうとする際に働く心の状態です。（※解説文は仮です）
-                    </p>
+            <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+                <div class="grid grid-cols-1 divide-y divide-stone-100 md:grid-cols-2 md:divide-x md:divide-y-0">
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🛠️</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">現実的｜体験・体感・拡張現実</h3><p class="text-xs leading-relaxed text-stone-500">身体を動かす、道具を扱う、現場で確かめるなど、行動を通して世界を感じることへの興味です。</p></div></div>
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🔬</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">研究的｜探究・学習・好奇心</h3><p class="text-xs leading-relaxed text-stone-500">仕組みや原理を調べ、考え、理解を深めることへの興味です。</p></div></div>
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🎨</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">芸術的｜表現・創造・独創</h3><p class="text-xs leading-relaxed text-stone-500">枠を越えて、感性やアイデアを自分らしい形で表現することへの興味です。</p></div></div>
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🤝</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">社会的｜支援・協働・貢献</h3><p class="text-xs leading-relaxed text-stone-500">人を支え、協力し、誰かや社会の役に立つことへの興味です。</p></div></div>
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🚀</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">企業的｜影響・達成・突破</h3><p class="text-xs leading-relaxed text-stone-500">目標を掲げ、働きかけ、成果や変化を生み出すことへの興味です。</p></div></div>
+                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">📋</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">慣習的｜ルール・枠組・整合</h3><p class="text-xs leading-relaxed text-stone-500">手順や基準に沿って、情報や環境を正確に整えることへの興味です。</p></div></div>
                 </div>
-                <!-- モード2 -->
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="font-bold text-stone-800 mb-2 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
-                        他者を思いやり、支援するモード
-                    </div>
-                    <p class="text-xs text-stone-500 leading-relaxed">
-                        相手の気持ちに寄り添い、お世話をしたり、励ましたりする優しさのエネルギーです。強すぎると過干渉になることもあります。
-                    </p>
-                </div>
-                <!-- モード3 -->
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="font-bold text-stone-800 mb-2 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
-                        事実に基づき、論理的に考えるモード
-                    </div>
-                    <p class="text-xs text-stone-500 leading-relaxed">
-                        感情に流されず、客観的なデータや事実をもとに物事を判断・処理しようとする、大人のような冷静な状態です。
-                    </p>
-                </div>
-                <!-- モード4 -->
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="font-bold text-stone-800 mb-2 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
-                        直感や感情を素直に表現するモード
-                    </div>
-                    <p class="text-xs text-stone-500 leading-relaxed">
-                        自由奔放で創造的、あるいは他者の顔色をうかがって協調するなど、子どもの頃から培われた感情的なエネルギーです。
-                    </p>
-                </div>
+            </div>
+            <div class="mt-5 rounded-xl border border-orange-100 bg-orange-50 p-4 text-xs leading-relaxed text-orange-950">
+                <strong>理論背景：</strong> 興味の捉え方はジョン・L・ホランドの興味・職業選択に関する心理学（RIASEC）を、モードの捉え方はエリック・バーンの交流分析を参考にしています。RIESM™では、現代の生活・職場・デジタル環境に合わせたアプローチとして構成しています。
+            </div>
+        </section>
+
+        <section class="mb-16 scroll-mt-6" id="term-digital-mode">
+            <div class="mb-6 flex items-center">
+                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-600">4</div>
+                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">デジタル・モード</h2>
+            </div>
+            <div class="glass-panel rounded-2xl border-t-4 border-t-emerald-400 p-6 shadow-sm md:p-8">
+                <img src="./img/riesm-digital-mode.png" alt="テキスト、オンライン、デジタル全般の得意意識や疲れやすさを表すデジタル・モード" class="mb-6 h-auto w-full rounded-xl border border-stone-200 bg-white">
+                <p class="text-sm leading-relaxed text-stone-600">デジタル・モードは、テキストコミュニケーション、オンラインでの関わり、デジタル全般に対する<strong class="text-stone-800">得意意識や疲れやすさ</strong>を読み取る参考グラフです。技術的に「できる・できない」を判定するものではなく、現在の主観的な安心感や負担感を表します。固定値ではなく、経験・環境・その時の状態によって変わります。</p>
+            </div>
+
+            <div id="riesm-principles" class="mt-8 scroll-mt-6 rounded-2xl bg-stone-800 p-6 text-white shadow-sm md:p-8">
+                <h3 class="mb-4 text-lg font-bold">RIESM™を読むときの原則</h3>
+                <ul class="space-y-3 text-sm leading-relaxed text-stone-200">
+                    <li>・すべての個性は、生きていくために必要があって身についたものです。</li>
+                    <li>・モードや興味の大小に、良い・悪い、優れている・劣っているという序列はありません。</li>
+                    <li>・結果は人を固定するラベルではなく、環境や状況によって変化する「今の状態」を読むための手がかりです。</li>
+                    <li>・相手のフロントが受け取りやすい言葉を選ぶと、互いの違いを尊重したコミュニケーションにつながります。</li>
+                </ul>
             </div>
         </section>
 
         <!-- ========================================== -->
-        <!-- 3. 興味の蛇口の解説 -->
+        <!-- 5. 関連ツール・アプリケーション -->
         <!-- ========================================== -->
         <section class="mb-16">
             <div class="flex items-center mb-6">
-                <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold mr-3">3</div>
-                <h2 class="text-xl md:text-2xl font-bold text-stone-800">興味の蛇口の解説</h2>
-            </div>
-            
-            <p class="text-sm text-stone-600 mb-6 leading-relaxed px-2">
-                職業選択理論（ホランド理論）をベースにした、あなたが「何に対してエネルギー（興味）を注ぎやすいか」を示す6つの領域（蛇口）です。
-            </p>
-
-            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-stone-100">
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">🛠️</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">現実的・実践的（つくる・動かす）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">目に見える成果や、具体的な道具・機械を扱うことに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">🔬</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">研究的・探求的（調べる・考える）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">物事の仕組みを論理的に分析したり、深く探求したりすることに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">🎨</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">芸術的・創造的（表現する・生み出す）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">独創性や美しさを追求し、感情やアイデアを自由に表現することに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">🤝</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">社会的・支援的（助ける・教える）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">人々の成長を支援したり、悩みを聞いて解決に導くことに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">🚀</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">企業的・説得的（引っ張る・動かす）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">目標を達成するために他者を説得し、組織やプロジェクトをリードすることに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-                    
-                    <div class="p-5 flex items-start space-x-3">
-                        <div class="text-2xl">📋</div>
-                        <div>
-                            <h3 class="font-bold text-stone-800 text-sm mb-1">慣習的・整理的（整える・管理する）</h3>
-                            <p class="text-xs text-stone-500 leading-relaxed">ルールやデータを正確に処理し、環境や仕組みをきちんと整えることに興味が湧きやすい傾向です。</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================================== -->
-        <!-- 4. 関連ツール・アプリケーション -->
-        <!-- ========================================== -->
-        <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mr-3">4</div>
+                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mr-3">5</div>
                 <h2 class="text-xl md:text-2xl font-bold text-stone-800">さらに活用するためのツール</h2>
             </div>
 
@@ -272,7 +236,7 @@
         </section>
 
         <!-- ========================================== -->
-        <!-- 5. 優待・セッション案内 -->
+        <!-- 6. 優待・セッション案内 -->
         <!-- ========================================== -->
         <div class="w-full h-px bg-stone-200 mt-12 mb-10 max-w-2xl mx-auto"></div>
 
