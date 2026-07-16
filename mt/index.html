@@ -3,7 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RIESM™ RoleTRADE Mentalia</title>
+  <title>RIESM™ RoleTRADE™ Mentalia</title>
+
+  <!-- LINE内蔵ブラウザ対策: 外部ブラウザ（Safari/Chrome）で開くように促す -->
+  <script>
+    (function () {
+      var ua = navigator.userAgent || "";
+      if (/Line/i.test(ua) && window.location.search.indexOf("openExternalBrowser=1") === -1) {
+        var separator = window.location.href.indexOf("?") === -1 ? "?" : "&";
+        window.location.href = window.location.href + separator + "openExternalBrowser=1";
+      }
+    })();
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-Z1T35THNDV");
+  </script>
 
   <!-- Tailwind CSS runtime, vendored to avoid CDN availability risk -->
   <script src="./vendor/tailwindcss-cdn.js"></script>
