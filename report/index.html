@@ -55,6 +55,46 @@
             flex-shrink: 0;
         }
 
+        .quick-input-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(118px, 0.9fr);
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .quick-cockpit-card {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+        }
+
+        #cockpitSidebarDropZone {
+            display: flex;
+            min-height: 156px;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #cockpitSidebarPreview {
+            max-width: 100%;
+            max-height: 146px;
+            object-fit: contain;
+        }
+
+        .parse-field-error {
+            border-color: #dc2626 !important;
+            background-color: #fff1f2 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16) !important;
+        }
+
+        .parse-field-warning {
+            border-color: #d97706 !important;
+            background-color: #fffbeb !important;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.14) !important;
+        }
+
         .preview-area {
             flex-grow: 1;
             overflow-y: auto;
@@ -186,6 +226,21 @@
             display: block;
             max-width: 100%;
             object-fit: contain;
+        }
+
+        .cover-report-title {
+            margin-bottom: 2mm !important;
+        }
+
+        .cover-report-identity {
+            min-height: 1.5em;
+            margin-bottom: 7mm;
+            color: #0D473B;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            line-height: 1.5;
+            text-align: center;
         }
 
         .cover-nav-link {
@@ -359,6 +414,78 @@
             page-break-inside: avoid;
         }
 
+        .report-topic-block.report-topic-leading-gap {
+            margin-top: 1.8em;
+        }
+
+        .report-small-title,
+        .report-small-title strong {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .reflection-card {
+            position: relative;
+            width: calc(100% - 10mm);
+            max-width: 145mm;
+            margin: 5mm auto;
+            padding: 5mm 7mm 5.5mm;
+            box-sizing: border-box;
+            border: 1px solid rgba(130, 123, 0, 0.32);
+            border-radius: 14px;
+            background: linear-gradient(145deg, #fffdf5 0%, #f3f7ee 100%);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 4px 14px rgba(13, 71, 59, 0.08);
+            text-align: left;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .reflection-card-heading {
+            margin-bottom: 3mm;
+            color: #0D473B;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .reflection-card-heading::before,
+        .reflection-card-heading::after {
+            color: #827b00;
+            font-size: 0.8em;
+            font-weight: 400;
+        }
+
+        .reflection-card-heading::before {
+            content: '◇';
+            margin-right: 0.75em;
+        }
+
+        .reflection-card-heading::after {
+            content: '◇';
+            margin-left: 0.75em;
+        }
+
+        .reflection-source-key {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            color: transparent;
+            font-size: 0;
+            line-height: 0;
+        }
+
+        .reflection-card .reflection-card-heading + .report-paragraph-gap {
+            height: 0;
+        }
+
+        .reflection-card .report-paragraph:not(.reflection-card-heading) {
+            line-height: 1.95;
+            text-align: left;
+        }
+
         .pdf-export-container .report-topic-block.pdf-topic-block-splittable {
             break-inside: auto;
             page-break-inside: auto;
@@ -370,6 +497,25 @@
 
         .parsed-text strong {
             color: #0D473B !important;
+        }
+
+        .report-term-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .report-term-link-first {
+            color: #2563eb !important;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.18em;
+        }
+
+        .report-term-link:focus-visible {
+            border-radius: 2px;
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
         }
 
         .core-potential-visuals {
@@ -400,9 +546,19 @@
 
         .core-person-image {
             display: block;
-            width: 100%;
-            height: 34mm;
             object-fit: contain;
+        }
+
+        .report-square-illustration {
+            display: block;
+            width: 26mm !important;
+            height: 26mm !important;
+            min-width: 26mm;
+            max-width: 26mm !important;
+            min-height: 26mm;
+            max-height: 26mm !important;
+            object-fit: contain;
+            flex: 0 0 auto;
         }
 
         .core-modes-card {
@@ -465,6 +621,28 @@
             background-color: transparent;
         }
 
+        .core-method-note {
+            margin: 4mm 3mm 0;
+            padding: 3mm 4mm;
+            border-left: 2px solid rgba(130, 123, 0, 0.48);
+            border-radius: 8px;
+            background-color: #f6f7f1;
+            color: #3f5f58;
+            font-size: 10px;
+            line-height: 1.8;
+            break-inside: avoid;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .core-method-note-title {
+            margin-bottom: 1mm;
+            color: #827b00;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
         .core-part-placeholder {
             display: flex;
             min-height: 18mm;
@@ -474,6 +652,144 @@
             font-size: 9px;
             line-height: 1.7;
             text-align: center;
+        }
+
+        .report-graph-card {
+            margin: 0 3mm 5mm;
+            padding: 3mm 4mm;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #fffef9 0%, #FAF9F4 100%);
+            box-shadow: 0 4px 14px rgba(13, 71, 59, 0.08);
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .report-graph-placeholder {
+            display: flex;
+            min-height: 18mm;
+            align-items: center;
+            justify-content: center;
+            color: #77744f;
+            font-size: 9px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .report-modes-graph,
+        .report-digital-graph {
+            display: block;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .report-modes-graph {
+            max-height: 32mm;
+        }
+
+        .report-digital-graph {
+            max-height: 24mm;
+        }
+
+        .conflict-person-figure {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            margin: 4mm 0 1mm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .conflict-person-card,
+        .digital-person-card {
+            display: flex;
+            width: 32mm;
+            min-width: 32mm;
+            align-items: center;
+            justify-content: center;
+            padding: 3mm;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 3px 12px rgba(13, 71, 59, 0.07);
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .digital-mode-body-layout {
+            display: flow-root;
+            margin: 0 3mm;
+            padding: 4mm;
+            border-radius: 12px;
+            background-color: #FAF9F4;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .digital-person-card {
+            float: left;
+            margin: 0 4mm 3mm 0;
+        }
+
+        .digital-mode-copy {
+            min-width: 0;
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+        }
+
+        .torisetsu-body-layout {
+            display: flow-root;
+            margin: 0 3mm;
+            padding: 4mm;
+            border-radius: 12px;
+            background-color: #FAF9F4;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .torisetsu-person-card {
+            display: flex;
+            float: right;
+            width: 32mm;
+            min-width: 32mm;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0 3mm 4mm;
+            padding: 3mm;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 3px 12px rgba(13, 71, 59, 0.07);
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .torisetsu-person-card--left {
+            float: left;
+            margin: 0 4mm 3mm 0;
+        }
+
+        .torisetsu-mirrored-visual {
+            display: block;
+            width: 26mm;
+            height: 26mm;
+            transform: scaleX(-1);
+            transform-origin: center;
+        }
+
+        .torisetsu-copy {
+            min-width: 0;
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+        }
+
+        .core-part-placeholder.hidden,
+        .core-modes-image.hidden,
+        .core-faucet-image.hidden,
+        .report-graph-placeholder.hidden,
+        .report-modes-graph.hidden,
+        .report-digital-graph.hidden {
+            display: none !important;
         }
 
         .editable-report-text {
@@ -502,8 +818,7 @@
             font-family: inherit;
         }
         
-        .pdf-export-container .a4-wrapper {
-            box-shadow: none;
+        .pdf-page-layout .a4-wrapper {
             overflow: hidden;
             page-break-before: auto !important;
             break-before: auto !important;
@@ -511,11 +826,98 @@
             break-after: auto !important;
         }
 
+        .pdf-export-container .a4-wrapper {
+            box-shadow: none;
+        }
+
+        .pdf-preview-container .pdf-page-frame {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .pdf-preview-container .pdf-page-frame.pdf-blank-page-frame {
+            pointer-events: auto;
+        }
+
+        .pdf-blank-page-delete-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translate(-50%, -50%);
+            padding: 12px 20px;
+            border: 1px solid #fecaca;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.96);
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.4;
+            white-space: nowrap;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 8px 24px rgba(127, 29, 29, 0.16);
+        }
+
+        .pdf-blank-page-delete-button:hover {
+            border-color: #fca5a5;
+            background: #fef2f2;
+            transform: translate(-50%, -50%) scale(1.03);
+        }
+
+        .pdf-blank-page-delete-button:focus-visible {
+            outline: 3px solid rgba(220, 38, 38, 0.28);
+            outline-offset: 4px;
+        }
+
+        .pdf-export-container .pdf-blank-page-delete-button {
+            display: none !important;
+        }
+
+        .manual-break-mode [data-page-break-key] {
+            cursor: pointer;
+            outline: 1px dashed rgba(130, 123, 0, 0.28);
+            outline-offset: 3px;
+        }
+
+        .manual-break-mode [data-page-break-key]:hover {
+            outline: 3px solid rgba(245, 158, 11, 0.78);
+            background-color: rgba(254, 243, 199, 0.62);
+        }
+
+        .manual-page-break {
+            position: relative;
+        }
+
+        .pdf-preview-container .manual-page-break::before {
+            content: "ここから次ページ";
+            position: absolute;
+            top: -12px;
+            left: 0;
+            z-index: 80;
+            padding: 1px 8px;
+            border-radius: 999px;
+            background-color: #f59e0b;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1.6;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 2px 7px rgba(120, 53, 15, 0.24);
+        }
+
+        .pdf-export-container .manual-page-break::before {
+            display: none !important;
+        }
+
         .pdf-export-container .report-copyright {
             display: none;
         }
 
-        .pdf-export-container {
+        .pdf-page-layout {
             gap: 0 !important;
         }
 
@@ -524,14 +926,38 @@
             outline: none !important;
         }
 
-        .pdf-export-container .a4-wrapper:not(.bookend-page):not(.cockpit-page) > .h-full {
+        .pdf-export-container .digital-mode-copy {
+            background-color: transparent !important;
+        }
+
+        .pdf-export-container .torisetsu-copy {
+            background-color: transparent !important;
+        }
+
+        .pdf-page-layout .a4-wrapper:not(.bookend-page):not(.cockpit-page) > .h-full {
             height: auto !important;
             min-height: calc(297mm - 29mm);
             flex: none !important;
         }
 
-        .pdf-export-container .a4-wrapper:not(.bookend-page):not(.cockpit-page) .flex-grow {
+        .pdf-page-layout .a4-wrapper:not(.bookend-page):not(.cockpit-page) .flex-grow {
             flex-grow: 0 !important;
+        }
+
+        .pdf-page-layout .parsed-text.pdf-page-panel-source {
+            background-color: transparent !important;
+        }
+
+        .pdf-page-text-panel {
+            position: absolute;
+            z-index: 5;
+            box-sizing: border-box;
+            border: 0;
+            border-radius: 10px;
+            background-color: #FAF9F4;
+            pointer-events: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .pdf-page-spacer {
@@ -616,31 +1042,51 @@
     <div class="sidebar">
         <h1 class="text-2xl font-bold mb-6 text-olive border-b-2 border-olive pb-2">レポート入力フォーム</h1>
 
-        <!-- Bulk Input Section -->
-        <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
-            <h2 class="text-md font-bold mb-2 text-blue-800 flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <!-- Quick paste: report text and cockpit image -->
+        <div class="quick-input-grid mb-6">
+        <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 shadow-sm">
+            <h2 class="text-sm font-bold mb-2 text-blue-800 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                 </svg>
                 一括入力・自動分割
             </h2>
-            <p class="text-[11px] text-blue-600 mb-3 leading-tight">レポートのテキストをまとめて貼り付けて「分割して反映」を押すと、下のフォームとプレビューに自動で振り分けられます。</p>
-            
-            <div class="flex flex-wrap gap-1.5 mb-2">
-                <button onclick="loadTemplate('toyota')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">トヨタさん例</button>
-                <button onclick="loadTemplate('katsumi')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">カツミさん例(相談入)</button>
-                <button onclick="loadTemplate('saki')" class="text-[10px] font-medium bg-white text-gray-600 border border-gray-300 px-2 py-1 rounded hover:bg-gray-100 transition shadow-sm">サキさん例(新)</button>
+            <div class="flex flex-wrap gap-1 mb-2">
+                <button onclick="loadTemplate('toyota')" class="text-[9px] font-medium bg-white text-gray-600 border border-gray-300 px-1.5 py-1 rounded hover:bg-gray-100 transition shadow-sm">トヨタ例</button>
+                <button onclick="loadTemplate('katsumi')" class="text-[9px] font-medium bg-white text-gray-600 border border-gray-300 px-1.5 py-1 rounded hover:bg-gray-100 transition shadow-sm">カツミ例</button>
+                <button onclick="loadTemplate('saki')" class="text-[9px] font-medium bg-white text-gray-600 border border-gray-300 px-1.5 py-1 rounded hover:bg-gray-100 transition shadow-sm">サキ例</button>
             </div>
             
-            <textarea id="bulkInput" rows="6" class="w-full p-2 border border-blue-300 rounded text-sm mb-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-inner" placeholder="ここにレポートのテキスト全体を貼り付けてください..."></textarea>
+            <textarea id="bulkInput" rows="4" class="w-full p-2 border border-blue-300 rounded text-[11px] leading-relaxed mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-inner" placeholder="レポート全文を貼り付け"></textarea>
             
-            <button onclick="parseBulkText()" class="w-full bg-blue-600 text-white font-bold py-2 rounded shadow hover:bg-blue-700 hover:shadow-md transition duration-200 flex justify-center items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button onclick="parseBulkText()" class="w-full bg-blue-600 text-white text-[11px] font-bold py-2 rounded shadow hover:bg-blue-700 hover:shadow-md transition duration-200 flex justify-center items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
-                各項目に分割して反映
+                分割して反映
             </button>
         </div>
+
+        <div class="quick-cockpit-card rounded-lg border border-olive/25 bg-[#FAF9F4] p-3 shadow-sm">
+            <h2 class="mb-2 text-center text-[11px] font-bold leading-tight text-olive">コックピット画像</h2>
+            <div id="cockpitSidebarDropZone" class="image-drop-zone rounded-lg border-2 border-dashed border-olive/40 bg-white p-2 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="コックピット画像を選択、ドロップ、または貼り付け" data-image-drop-target="cockpit" oncontextmenu="this.focus()">
+                <img id="cockpitSidebarPreview" alt="貼り付けたコックピット画像のサムネイル" class="hidden pointer-events-none">
+                <p id="cockpitSidebarPlaceholder" class="text-[13px] font-bold leading-relaxed text-olive pointer-events-none">ここに張り付け</p>
+            </div>
+            <p id="cockpitProcessingStatus" class="hidden mt-2 text-[9px] leading-relaxed text-gray-500"></p>
+        </div>
+        </div>
+
+        <section id="parseValidationPanel" class="mb-6 hidden rounded-xl border-2 p-4 shadow-sm" aria-live="assertive" aria-atomic="true">
+            <div class="flex items-start gap-3">
+                <span id="parseValidationIcon" class="text-xl leading-none" aria-hidden="true">⚠️</span>
+                <div class="min-w-0 flex-1">
+                    <h2 id="parseValidationHeading" class="text-sm font-bold">自動分割結果を確認してください</h2>
+                    <p id="parseValidationSummary" class="mt-1 text-[11px] leading-relaxed"></p>
+                </div>
+            </div>
+            <div id="parseValidationResults" class="mt-3 space-y-2"></div>
+        </section>
 
         <!-- NG wording checker -->
         <div id="ngCheckerPanel" class="mb-6 rounded-xl border border-orange-200 bg-orange-50 p-4 shadow-sm">
@@ -666,39 +1112,39 @@
         <!-- Form Fields -->
         <div class="space-y-5">
             <div>
-                <label class="block text-sm font-bold mb-1 text-gray-700">コックピット画像</label>
-                <div id="cockpitSidebarDropZone" class="image-drop-zone border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-3 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="コックピット画像を選択、ドロップ、または貼り付け" data-image-drop-target="cockpit" oncontextmenu="this.focus()">
-                    <img id="cockpitSidebarPreview" src="./img/image5.png" alt="コックピット画像プレビュー" class="w-full h-36 object-contain pointer-events-none mb-2">
-                    <p class="text-[11px] text-gray-600 pointer-events-none">クリックして選択／画像をドロップ<br>右クリック → 貼り付け</p>
-                </div>
-                <p id="cockpitProcessingStatus" class="mt-2 text-[11px] leading-relaxed text-gray-500">画像を貼り付けると、外周を整えた全体画像・4モードグラフ・興味の蛇口・デジタルモードグラフを自動生成します。</p>
-                <div id="cockpitCropPreviews" class="hidden mt-3 space-y-2">
-                    <div class="rounded-lg border border-gray-200 bg-white p-2">
-                        <p class="mb-1 text-[10px] font-bold text-gray-600">4つのモードグラフ</p>
-                        <img id="cockpitModesPreview" alt="4つのモードグラフの自動切り出しプレビュー" class="w-full max-h-24 object-contain pointer-events-none">
+                <div class="rounded-lg border border-olive/20 bg-[#faf9f4] p-3">
+                    <label for="cockpitExportFolderName" class="block text-[11px] font-bold text-gray-700">レポートデータの保存ルート</label>
+                    <p class="mt-1 text-[10px] leading-relaxed text-gray-500">選択したフォルダを記憶し、その中に会員番号のフォルダを作成して、修正後テキスト・改ページ指定・切り出し画像を保存します。読み込み時も、この保存ルートから会員番号フォルダを選択できます。</p>
+                    <div class="mt-2 flex gap-2">
+                        <input type="text" id="cockpitExportFolderName" class="min-w-0 flex-1 rounded border border-gray-300 bg-white px-2 py-1.5 text-[11px] text-gray-700" placeholder="保存ルートを選択してください" readonly aria-describedby="cockpitExportDirectoryStatus">
+                        <button id="cockpitExportDirectoryButton" type="button" onclick="chooseCockpitExportDirectory()" class="shrink-0 rounded bg-olive px-3 py-1.5 text-[11px] font-bold text-white hover:bg-[#6b6500]">選択・更新</button>
                     </div>
-                    <div class="rounded-lg border border-gray-200 bg-white p-2">
-                        <p class="mb-1 text-[10px] font-bold text-gray-600">興味の蛇口</p>
-                        <img id="cockpitFaucetPreview" alt="興味の蛇口の自動切り出しプレビュー" class="mx-auto w-full max-h-56 object-contain pointer-events-none">
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <button id="cockpitExportSaveNowButton" type="button" onclick="saveCurrentReportPackage()" class="rounded border border-olive/30 bg-white px-3 py-1.5 text-[10px] font-bold text-olive disabled:cursor-not-allowed disabled:opacity-40" disabled>現在の内容を保存</button>
+                        <button id="reportPackageLoadButton" type="button" onclick="chooseReportPackageToLoad()" title="記憶した保存ルートから会員番号フォルダを選択" class="rounded border border-sky-300 bg-sky-50 px-3 py-1.5 text-[10px] font-bold text-sky-800">会員フォルダを読み込む</button>
+                        <button id="cockpitExportReconnectButton" type="button" onclick="reconnectCockpitExportDirectory()" class="hidden rounded border border-amber-300 bg-amber-50 px-3 py-1.5 text-[10px] font-bold text-amber-800">保存先へ再接続</button>
                     </div>
-                    <div class="rounded-lg border border-gray-200 bg-white p-2">
-                        <p class="mb-1 text-[10px] font-bold text-gray-600">デジタル・モードグラフ</p>
-                        <img id="cockpitDigitalPreview" alt="デジタル・モードグラフの自動切り出しプレビュー" class="w-full max-h-20 object-contain pointer-events-none">
-                    </div>
+                    <p id="cockpitExportDirectoryStatus" class="mt-2 text-[10px] leading-relaxed text-gray-500">保存先はまだ選択されていません。</p>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-bold mb-1 text-gray-700">ご案内ページ QRコード画像</label>
-                <div id="guideQrSidebarDropZone" class="image-drop-zone border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-3 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="ご案内ページのQRコード画像を選択、ドロップ、または貼り付け" data-image-drop-target="guide-qr" oncontextmenu="this.focus()">
-                    <img id="guideQrSidebarPreview" src="./img/riesmQR.png" alt="QRコード画像プレビュー" class="w-full h-32 object-contain pointer-events-none mb-2">
-                    <div class="guide-qr-placeholder hidden pointer-events-none text-gray-500 py-4">
-                        <div class="text-3xl mb-1">▦</div>
-                        <p class="text-[11px]">QRコード画像を添付</p>
+            <details id="guideQrSidebarAccordion" class="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <summary class="cursor-pointer select-none px-3 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-olive">
+                    ご案内ページ QRコード画像
+                    <span class="ml-1 text-[10px] font-normal text-gray-400">（通常は変更不要）</span>
+                </summary>
+                <div class="border-t border-gray-100 p-3">
+                    <p class="mb-2 text-[10px] leading-relaxed text-gray-500">QRコードを差し替える場合のみ、下の領域へ画像を貼り付けてください。</p>
+                    <div id="guideQrSidebarDropZone" class="image-drop-zone border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-3 text-center cursor-pointer" contenteditable="true" spellcheck="false" tabindex="0" role="button" aria-label="ご案内ページのQRコード画像を選択、ドロップ、または貼り付け" data-image-drop-target="guide-qr" oncontextmenu="this.focus()">
+                        <img id="guideQrSidebarPreview" src="./img/riesmQR.png" alt="QRコード画像プレビュー" class="w-full h-32 object-contain pointer-events-none mb-2">
+                        <div class="guide-qr-placeholder hidden pointer-events-none text-gray-500 py-4">
+                            <div class="text-3xl mb-1">▦</div>
+                            <p class="text-[11px]">QRコード画像を添付</p>
+                        </div>
+                        <p class="text-[11px] text-gray-600 pointer-events-none">クリックして選択／画像をドロップ<br>右クリック → 貼り付け</p>
                     </div>
-                    <p class="text-[11px] text-gray-600 pointer-events-none">クリックして選択／画像をドロップ<br>右クリック → 貼り付け</p>
                 </div>
-            </div>
+            </details>
 
             <div>
                 <label class="block text-sm font-bold mb-1 text-gray-700">受検者名</label>
@@ -706,13 +1152,13 @@
             </div>
 
             <div>
-                <label class="block text-sm font-bold mb-1 text-gray-700">レポート番号（招待コード）</label>
-                <input type="text" id="inputReportCode" class="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" value="nxx-2x-xxx-0x" oninput="updatePreview()">
+                <label class="block text-sm font-bold mb-1 text-gray-700">会員番号</label>
+                <input type="text" id="inputReportCode" class="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" value="co26-003" oninput="updatePreview()">
             </div>
             
             <div>
-                <label class="block text-sm font-bold mb-1 text-gray-700">挨拶文 (イントロ)</label>
-                <textarea id="inputIntro" rows="3" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
+                <label class="block text-sm font-bold mb-1 text-gray-700">挨拶文（固定文を自動生成・必要に応じて編集可）</label>
+                <textarea id="inputIntro" rows="6" class="w-full p-2 border border-gray-300 rounded shadow-sm text-sm focus:ring-2 focus:ring-olive focus:border-olive outline-none" oninput="updatePreview()"></textarea>
             </div>
 
             <div>
@@ -762,13 +1208,26 @@
 
     <div class="preview-area relative" id="previewContainer">
         <!-- Floating PDF Button -->
-        <div class="fixed top-6 right-8 z-50">
-            <button onclick="generatePDF()" class="bg-olive hover:bg-[#6b6500] text-white font-bold py-3 px-6 rounded-full shadow-xl flex items-center gap-2 transition transform hover:scale-105 border border-white/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                PDFを出力する
-            </button>
+        <div class="fixed top-6 right-8 z-50 flex flex-col items-end gap-2">
+            <div class="flex flex-wrap items-center justify-end gap-2">
+                <button id="manualPageBreakButton" type="button" onclick="toggleManualPageBreakMode()" aria-pressed="false" class="bg-white hover:bg-amber-50 text-olive font-bold py-2.5 px-4 rounded-full shadow-xl flex items-center gap-2 transition border border-olive/30">
+                    <span aria-hidden="true">↳</span>
+                    改ページ調整
+                </button>
+                <button id="clearManualPageBreaksButton" type="button" onclick="clearManualPageBreaks()" class="hidden bg-white hover:bg-red-50 text-red-700 font-bold py-2.5 px-4 rounded-full shadow-xl transition border border-red-200">
+                    指定を全解除
+                </button>
+                <button onclick="generatePDF()" class="bg-olive hover:bg-[#6b6500] text-white font-bold py-3 px-6 rounded-full shadow-xl flex items-center gap-2 transition transform hover:scale-105 border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    PDFを出力する
+                </button>
+            </div>
+            <div id="manualPageBreakHelp" class="hidden max-w-[420px] rounded-xl bg-amber-50/95 px-4 py-2 text-[11px] leading-relaxed text-amber-900 shadow-lg border border-amber-200">
+                次ページへ送りたい段落をクリックしてください。同じ段落を再クリックすると解除できます。
+            </div>
+            <div id="pdfPageActionStatus" role="status" aria-live="polite" class="hidden max-w-[420px] rounded-xl bg-white/95 px-4 py-2 text-[11px] font-bold leading-relaxed text-[#0D473B] shadow-lg border border-[#0D473B]/20"></div>
         </div>
 
         <!-- Hidden file input for image upload -->
@@ -782,7 +1241,8 @@
                 <div class="h-full flex flex-col items-center relative z-10 pt-[30mm]">
                     <img src="./img/riesm-cover-logo.png" alt="RIESM ロゴ" class="bookend-logo w-[68mm] h-[31mm] mb-5">
 
-                    <h1 class="text-[31px] leading-tight font-bold text-black border-b-[3px] border-black pb-1 mb-8">アセスメントレポート</h1>
+                    <h1 class="cover-report-title text-[31px] leading-tight font-bold text-black border-b-[3px] border-black pb-1">アセスメントレポート</h1>
+                    <p id="coverReportIdentity" class="cover-report-identity" aria-label="会員番号と受検者名"></p>
 
                     <div class="w-[150mm] text-[15px] font-bold text-gray-700 leading-[1.7]">
                         <a href="#report-guide-page" class="cover-nav-link flex items-baseline mb-1">
@@ -892,7 +1352,7 @@
                         
                         <div class="core-potential-visuals">
                             <div class="core-person-card">
-                                <img id="corePotentialPersonImage" src="./img/image2.png" alt="コア・ポテンシャルを表す女性画像" class="core-person-image cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/320x320/faf9f4/827b00?text=コア・ポテンシャル'">
+                                <img id="corePotentialPersonImage" src="./img/image2.png" alt="コア・ポテンシャルを表す女性画像" class="core-person-image report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/320x320/faf9f4/827b00?text=コア・ポテンシャル'">
                             </div>
                             <div class="core-modes-card">
                                 <p class="core-visual-label">あなたの「4つのモード」とオートバランサー</p>
@@ -909,6 +1369,11 @@
                             </div>
                             <p class="parsed-text bind-potential core-potential-copy"></p>
                         </div>
+
+                        <aside class="core-method-note" aria-label="RIESMの考え方">
+                            <p class="core-method-note-title">RIESM™の考え方</p>
+                            <p>RIESM™では、私たちの心の力の一つである「興味のエネルギー」を「6種類の蛇口」として整理し、それらを活用しやすい傾向を「4つのモード」として捉えます。この考え方は、エリック・バーンの交流分析と、ジョン・L・ホランドの興味・職業選択に関する心理学を参考に、現代の生活・職場環境に合わせたアプローチとして構成しています。</p>
+                        </aside>
                     </div>
 
                     <!-- Copyright footer -->
@@ -932,12 +1397,11 @@
                             <h3 class="text-[17px] font-bold text-gray-800 mb-3 px-3">
                                 ① 🏢 あなたが「部下」の場合(上司へのメッセージ)
                             </h3>
-                            <!-- Image Upload Area -->
-                            <div class="flex justify-center mb-4">
-                                <img src="./img/image4.png" alt="部下画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像2を選択'">
-                            </div>
-                            <div class="px-3">
-                                <p class="parsed-text bind-subordinate"></p>
+                            <div class="torisetsu-body-layout">
+                                <div class="torisetsu-person-card">
+                                    <img id="subordinatePersonImage" src="./img/image4.png" alt="部下の場合を表す女性画像" class="report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/320x320/faf9f4/827b00?text=部下の場合'">
+                                </div>
+                                <p class="parsed-text bind-subordinate torisetsu-copy"></p>
                             </div>
                         </div>
 
@@ -949,12 +1413,13 @@
                                 </h3>
                                 <span class="text-olive text-[9px] font-normal opacity-70 whitespace-nowrap">※レポートの後半にモードの読み取り方があります</span>
                             </div>
-                            <!-- Image Upload Area -->
-                            <div class="flex justify-center mb-4">
-                                <img src="./img/image4.png" alt="上司画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像3を選択'">
-                            </div>
-                            <div class="px-3">
-                                <p class="parsed-text bind-boss"></p>
+                            <div class="torisetsu-body-layout">
+                                <div class="torisetsu-person-card torisetsu-person-card--left">
+                                    <div class="torisetsu-mirrored-visual">
+                                        <img id="bossPersonImage" src="./img/image4.png" alt="上司・先輩の場合を表す女性画像" class="report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/320x320/faf9f4/827b00?text=上司・先輩の場合'">
+                                    </div>
+                                </div>
+                                <p class="parsed-text bind-boss torisetsu-copy"></p>
                             </div>
                         </div>
                     </div>
@@ -994,26 +1459,29 @@
                         <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
                             <h2 class="text-[22px] font-bold tracking-widest">3. コックピットから読み解く「葛藤」と「真面目さ」</h2>
                         </div>
-                        <!-- Image Upload Area -->
-                        <div class="flex justify-center mb-4">
-                            <img id="modesGraphImage" src="./img/image6.png" alt="4つのモードグラフ" class="w-full max-w-[155mm] max-h-44 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/900x280/f8fafc/827b00?text=4つのモードグラフ'">
+                        <div class="report-graph-card">
+                            <div id="modesGraphPlaceholder" class="report-graph-placeholder cursor-pointer" onclick="triggerImageUpload(document.getElementById('modesGraphImage'))">コックピット画像から<br>4つのモードグラフを準備しています…</div>
+                            <img id="modesGraphImage" alt="4つのモードグラフ" class="report-modes-graph hidden cursor-pointer transition-all hover:opacity-75" onclick="triggerImageUpload(this)">
                         </div>
                         <div class="px-3">
-                            <p class="parsed-text bind-conflict"></p>
+                            <div class="parsed-text bind-conflict"></div>
                         </div>
                     </div>
 
                     <!-- 4. Digital Mode -->
-                    <div id="report-section-4" class="mb-4 flex-grow">
+                    <div id="report-section-4" class="mb-4 flex-grow" data-pdf-force-page="true">
                         <div class="bg-olive text-white px-5 py-1.5 mb-6 shadow-sm">
                             <h2 class="text-[22px] font-bold tracking-widest">4. デジタル・モード</h2>
                         </div>
-                        <!-- Image Upload Area -->
-                        <div class="flex justify-center mb-4">
-                            <img id="digitalModeImage" src="./img/image7.png" alt="デジタル・モードグラフ" class="w-full max-w-[155mm] max-h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/1000x120/f8fafc/827b00?text=デジタル・モードグラフ'">
+                        <div class="report-graph-card">
+                            <div id="digitalModePlaceholder" class="report-graph-placeholder cursor-pointer" onclick="triggerImageUpload(document.getElementById('digitalModeImage'))">コックピット画像から<br>デジタル・モードグラフを準備しています…</div>
+                            <img id="digitalModeImage" alt="デジタル・モードグラフ" class="report-digital-graph hidden cursor-pointer transition-all hover:opacity-75" onclick="triggerImageUpload(this)">
                         </div>
-                        <div class="px-3">
-                            <p class="parsed-text bind-digital"></p>
+                        <div class="digital-mode-body-layout">
+                            <div class="digital-person-card">
+                                <img id="digitalPersonImage" src="./img/image7.png" alt="デジタル・モードを表す女性画像" class="report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/320x320/faf9f4/827b00?text=デジタル・モード'">
+                            </div>
+                            <p class="parsed-text bind-digital digital-mode-copy"></p>
                         </div>
                     </div>
 
@@ -1035,7 +1503,7 @@
                         </div>
                         <!-- Image Upload Area -->
                         <div class="flex justify-center mb-4">
-                            <img src="./img/image8.png" alt="ヒント画像" class="h-40 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像6を選択'">
+                            <img src="./img/image8.png" alt="ヒント画像" class="report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像6を選択'">
                         </div>
                         <div class="px-3">
                             <p class="parsed-text bind-hints"></p>
@@ -1059,7 +1527,7 @@
                         </div>
                         <!-- Image Upload Area -->
                         <div class="flex justify-center mb-4">
-                            <img src="./img/image9.png" alt="パートナー画像" class="h-44 object-contain cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像7を選択'">
+                            <img src="./img/image9.png" alt="パートナー画像" class="report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02] rounded border border-transparent hover:border-gray-300" onclick="triggerImageUpload(this)" onerror="this.src='https://placehold.co/400x300/f8fafc/827b00?text=クリックして画像7を選択'">
                         </div>
                         <div class="px-3">
                             <p class="parsed-text bind-partner"></p>
@@ -1166,6 +1634,582 @@
         // --- Image Upload Logic ---
         let currentImageTarget = null;
         let processedCockpitImages = { full: '', modes: '', faucet: '', digital: '' };
+        let cockpitExportDirectoryHandle = null;
+        let activeMemberDirectoryHandle = null;
+        let activeMemberDirectoryCode = '';
+        let reportDataAutoSaveTimer = 0;
+        let reportDataLoadInProgress = false;
+
+        const COCKPIT_EXPORT_DB_NAME = 'riesm-report-settings';
+        const COCKPIT_EXPORT_DB_STORE = 'directory-handles';
+        const COCKPIT_EXPORT_DIRECTORY_KEY = 'cockpit-export-directory';
+        const COCKPIT_EXPORT_DIRECTORY_LABEL_KEY = 'riesm-cockpit-export-directory-label';
+        const REPORT_PACKAGE_DATA_FILE = 'RIESM_report-data.json';
+        const REPORT_PACKAGE_IMAGE_FILES = Object.freeze({
+            full: 'image_01_コックピット全体.png',
+            modes: 'image_02_4つのモード.png',
+            faucet: 'image_03_興味の蛇口.png',
+            digital: 'image_04_デジタルモード.png'
+        });
+        const REPORT_PACKAGE_TEXT_FIELDS = Object.freeze([
+            ['intro', 'inputIntro', 'text_01_挨拶文.txt', '挨拶文'],
+            ['potential', 'inputPotential', 'text_02_コア・ポテンシャル.txt', '1. あなたのコア・ポテンシャル'],
+            ['subordinate', 'inputSubordinate', 'text_03_部下の場合.txt', '2-1. 取扱説明書（部下の場合）'],
+            ['boss', 'inputBoss', 'text_04_上司・先輩の場合.txt', '2-2. 取扱説明書（上司・先輩の場合）'],
+            ['conflict', 'inputConflict', 'text_05_葛藤と真面目さ.txt', '3. 葛藤と真面目さ'],
+            ['digital', 'inputDigital', 'text_06_デジタル・モード.txt', '4. デジタル・モード'],
+            ['hints', 'inputHints', 'text_07_今後のためのヒント.txt', '5. 今後のためのヒント'],
+            ['partner', 'inputPartner', 'text_08_パートナーとの接し方.txt', '6. ご家族あるいはパートナー候補との接し方'],
+            ['conclusion', 'inputConclusion', 'text_09_結びに.txt', '7. 結びに']
+        ]);
+
+        function hasProcessedCockpitImages(processed = processedCockpitImages) {
+            return Boolean(processed?.full && processed?.modes && processed?.faucet && processed?.digital);
+        }
+
+        function setCockpitExportDirectoryStatus(message, tone = 'neutral') {
+            const status = document.getElementById('cockpitExportDirectoryStatus');
+            if (!status) return;
+            status.textContent = message;
+            status.classList.remove('text-gray-500', 'text-emerald-700', 'text-amber-800', 'text-red-600', 'font-bold');
+            const toneClasses = {
+                success: ['text-emerald-700', 'font-bold'],
+                warning: ['text-amber-800'],
+                error: ['text-red-600'],
+                neutral: ['text-gray-500']
+            };
+            status.classList.add(...(toneClasses[tone] || toneClasses.neutral));
+        }
+
+        function updateCockpitExportDirectoryUI(permission = 'none') {
+            const nameInput = document.getElementById('cockpitExportFolderName');
+            const chooseButton = document.getElementById('cockpitExportDirectoryButton');
+            const reconnectButton = document.getElementById('cockpitExportReconnectButton');
+            const saveButton = document.getElementById('cockpitExportSaveNowButton');
+            const rememberedLabel = localStorage.getItem(COCKPIT_EXPORT_DIRECTORY_LABEL_KEY) || '';
+
+            const availableHandle = cockpitExportDirectoryHandle || activeMemberDirectoryHandle;
+            if (nameInput) nameInput.value = cockpitExportDirectoryHandle?.name || (activeMemberDirectoryHandle ? `${activeMemberDirectoryHandle.name}（会員フォルダ）` : rememberedLabel);
+            if (chooseButton) chooseButton.textContent = cockpitExportDirectoryHandle ? '保存先を更新' : 'フォルダを選択';
+            reconnectButton?.classList.toggle('hidden', !availableHandle || permission === 'granted');
+            if (saveButton) saveButton.disabled = !availableHandle;
+        }
+
+        function openCockpitExportSettingsDB() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) {
+                    reject(new Error('このブラウザーでは保存先の記憶を利用できません。'));
+                    return;
+                }
+                const request = indexedDB.open(COCKPIT_EXPORT_DB_NAME, 1);
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains(COCKPIT_EXPORT_DB_STORE)) {
+                        db.createObjectStore(COCKPIT_EXPORT_DB_STORE);
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('保存先設定を開けませんでした。'));
+            });
+        }
+
+        async function rememberCockpitExportDirectory(handle) {
+            const db = await openCockpitExportSettingsDB();
+            try {
+                await new Promise((resolve, reject) => {
+                    const transaction = db.transaction(COCKPIT_EXPORT_DB_STORE, 'readwrite');
+                    transaction.objectStore(COCKPIT_EXPORT_DB_STORE).put(handle, COCKPIT_EXPORT_DIRECTORY_KEY);
+                    transaction.oncomplete = () => resolve();
+                    transaction.onerror = () => reject(transaction.error || new Error('保存先を記憶できませんでした。'));
+                    transaction.onabort = () => reject(transaction.error || new Error('保存先の記憶が中断されました。'));
+                });
+            } finally {
+                db.close();
+            }
+            localStorage.setItem(COCKPIT_EXPORT_DIRECTORY_LABEL_KEY, handle.name || '選択済みフォルダ');
+        }
+
+        async function loadRememberedCockpitExportDirectory() {
+            const db = await openCockpitExportSettingsDB();
+            try {
+                return await new Promise((resolve, reject) => {
+                    const request = db.transaction(COCKPIT_EXPORT_DB_STORE, 'readonly')
+                        .objectStore(COCKPIT_EXPORT_DB_STORE)
+                        .get(COCKPIT_EXPORT_DIRECTORY_KEY);
+                    request.onsuccess = () => resolve(request.result || null);
+                    request.onerror = () => reject(request.error || new Error('記憶した保存先を読み込めませんでした。'));
+                });
+            } finally {
+                db.close();
+            }
+        }
+
+        async function getCockpitExportDirectoryPermission(handle, requestPermission = false) {
+            if (!handle) return 'none';
+            if (typeof handle.queryPermission !== 'function') return 'granted';
+            let permission = await handle.queryPermission({ mode: 'readwrite' });
+            if (permission !== 'granted' && requestPermission && typeof handle.requestPermission === 'function') {
+                permission = await handle.requestPermission({ mode: 'readwrite' });
+            }
+            return permission;
+        }
+
+        function sanitizeCockpitExportFilenamePart(value, fallback) {
+            const cleaned = String(value || '')
+                .trim()
+                .replace(/[<>:"/\\|?*\u0000-\u001F]/g, '')
+                .replace(/[.\s]+$/g, '');
+            return cleaned || fallback;
+        }
+
+        function buildCockpitExportBaseName() {
+            const reportCode = sanitizeCockpitExportFilenamePart(
+                document.getElementById('inputReportCode')?.value,
+                'ni25-xxx'
+            ).replace(/^RIESM[_\s-]*/i, '') || 'ni25-xxx';
+            const name = sanitizeCockpitExportFilenamePart(
+                document.getElementById('inputName')?.value,
+                '氏名'
+            ).replace(/様$/u, '') || '氏名';
+            return `RIESM_${reportCode}_${name}様`;
+        }
+
+        function getCurrentMemberCode() {
+            return sanitizeCockpitExportFilenamePart(
+                document.getElementById('inputReportCode')?.value,
+                '会員番号未設定'
+            ).replace(/^RIESM[_\s-]*/i, '') || '会員番号未設定';
+        }
+
+        async function getCurrentMemberDirectoryHandle(create = true) {
+            const memberCode = getCurrentMemberCode();
+            if (activeMemberDirectoryHandle && activeMemberDirectoryCode === memberCode) {
+                return activeMemberDirectoryHandle;
+            }
+            if (!cockpitExportDirectoryHandle) return null;
+            const memberDirectory = await cockpitExportDirectoryHandle.getDirectoryHandle(memberCode, { create });
+            activeMemberDirectoryHandle = memberDirectory;
+            activeMemberDirectoryCode = memberCode;
+            return memberDirectory;
+        }
+
+        function buildReportPackageData() {
+            const fields = {};
+            const name = document.getElementById('inputName')?.value || '';
+            REPORT_PACKAGE_TEXT_FIELDS.forEach(([key, inputId]) => {
+                const value = document.getElementById(inputId)?.value || '';
+                fields[key] = key === 'subordinate' || key === 'boss'
+                    ? sanitizeSectionText(value)
+                    : value;
+            });
+            return {
+                format: 'RIESM-report-package',
+                version: 1,
+                savedAt: new Date().toISOString(),
+                reportCode: document.getElementById('inputReportCode')?.value || '',
+                name,
+                fields,
+                manualPageBreakKeys: Array.from(manualPageBreakKeys)
+            };
+        }
+
+        function buildReadableReportText(packageData) {
+            const lines = [
+                'RIESM（リズム）パーソナリティ・分析レポート',
+                `会員番号：${packageData.reportCode}`,
+                `受検者：${packageData.name} 様`,
+                ''
+            ];
+            REPORT_PACKAGE_TEXT_FIELDS.forEach(([key, , , label]) => {
+                lines.push(`【${label}】`, packageData.fields[key] || '', '');
+            });
+            return lines.join('\n').trimEnd() + '\n';
+        }
+
+        function dataURLToBlob(dataURL) {
+            const [header, encoded = ''] = String(dataURL || '').split(',', 2);
+            const mimeType = header.match(/^data:([^;,]+)/i)?.[1] || 'image/png';
+            const binary = header.includes(';base64') ? atob(encoded) : decodeURIComponent(encoded);
+            const bytes = new Uint8Array(binary.length);
+            for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+            return new Blob([bytes], { type: mimeType });
+        }
+
+        async function writeBlobFile(directoryHandle, filename, blob) {
+            const fileHandle = await directoryHandle.getFileHandle(filename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        }
+
+        async function writeCockpitImageFile(directoryHandle, filename, dataURL) {
+            await writeBlobFile(directoryHandle, filename, dataURLToBlob(dataURL));
+        }
+
+        async function writeTextFile(directoryHandle, filename, text, type = 'text/plain;charset=utf-8') {
+            await writeBlobFile(directoryHandle, filename, new Blob([text], { type }));
+        }
+
+        async function readTextFile(directoryHandle, filename) {
+            const fileHandle = await directoryHandle.getFileHandle(filename);
+            return (await fileHandle.getFile()).text();
+        }
+
+        async function readImageFileAsDataURL(directoryHandle, filename) {
+            const fileHandle = await directoryHandle.getFileHandle(filename);
+            const file = await fileHandle.getFile();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error || new Error(`${filename}を読み込めませんでした。`));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function resolveWritableMemberDirectory(requestPermission = false, create = true) {
+            const memberCode = getCurrentMemberCode();
+            const permissionHandle = activeMemberDirectoryHandle && activeMemberDirectoryCode === memberCode
+                ? activeMemberDirectoryHandle
+                : cockpitExportDirectoryHandle;
+            if (!permissionHandle) return { directory: null, permission: 'none' };
+            const permission = await getCockpitExportDirectoryPermission(permissionHandle, requestPermission);
+            if (permission !== 'granted') return { directory: null, permission };
+            return {
+                directory: await getCurrentMemberDirectoryHandle(create),
+                permission
+            };
+        }
+
+        async function saveProcessedCockpitImages(processed = processedCockpitImages, options = {}) {
+            const { requestPermission = false, automatic = false, quiet = false } = options;
+            if (!hasProcessedCockpitImages(processed)) {
+                if (!quiet) setCockpitExportDirectoryStatus('画像はまだありません。テキストデータのみ保存できます。', 'warning');
+                return false;
+            }
+            if (!cockpitExportDirectoryHandle && !activeMemberDirectoryHandle) {
+                if (!quiet) setCockpitExportDirectoryStatus('4画像を生成しました。保存ルートを選択すると、会員番号フォルダへ保存できます。', 'warning');
+                updateCockpitExportDirectoryUI('none');
+                return false;
+            }
+
+            try {
+                const { directory, permission } = await resolveWritableMemberDirectory(requestPermission, true);
+                updateCockpitExportDirectoryUI(permission);
+                if (permission !== 'granted' || !directory) {
+                    setCockpitExportDirectoryStatus('保存先への書き込み許可が必要です。「保存先へ再接続」を押してください。', 'warning');
+                    return false;
+                }
+
+                const files = Object.entries(REPORT_PACKAGE_IMAGE_FILES)
+                    .map(([key, filename]) => [filename, processed[key]]);
+                if (!quiet) setCockpitExportDirectoryStatus(`${directory.name}へ4画像を保存しています…`, 'neutral');
+                for (const [filename, dataURL] of files) {
+                    await writeCockpitImageFile(directory, filename, dataURL);
+                }
+                if (!quiet) setCockpitExportDirectoryStatus(`${directory.name}へ4画像を保存しました。`, 'success');
+                updateCockpitExportDirectoryUI('granted');
+                return true;
+            } catch (error) {
+                const prefix = automatic ? '自動保存' : '保存';
+                if (!quiet) setCockpitExportDirectoryStatus(`${prefix}できませんでした。保存先を選び直すか、再接続してください。`, 'error');
+                updateCockpitExportDirectoryUI('prompt');
+                return false;
+            }
+        }
+
+        async function saveReportTextPackage(options = {}) {
+            const { requestPermission = false, automatic = false, quiet = false } = options;
+            try {
+                const { directory, permission } = await resolveWritableMemberDirectory(requestPermission, true);
+                updateCockpitExportDirectoryUI(permission);
+                if (permission !== 'granted' || !directory) {
+                    if (!quiet) setCockpitExportDirectoryStatus('保存先への書き込み許可が必要です。「保存先へ再接続」を押してください。', 'warning');
+                    return false;
+                }
+
+                const packageData = buildReportPackageData();
+                if (!quiet) setCockpitExportDirectoryStatus(`${directory.name}へ修正後テキストを保存しています…`, 'neutral');
+                await writeTextFile(
+                    directory,
+                    REPORT_PACKAGE_DATA_FILE,
+                    JSON.stringify(packageData, null, 2) + '\n',
+                    'application/json;charset=utf-8'
+                );
+                await writeTextFile(directory, 'RIESM_全文.txt', buildReadableReportText(packageData));
+                for (const [key, , filename, label] of REPORT_PACKAGE_TEXT_FIELDS) {
+                    await writeTextFile(directory, filename, `【${label}】\n${packageData.fields[key] || ''}\n`);
+                }
+                if (!quiet) setCockpitExportDirectoryStatus(`${directory.name}へ修正後テキストを保存しました。`, 'success');
+                updateCockpitExportDirectoryUI('granted');
+                return true;
+            } catch (error) {
+                if (!quiet) setCockpitExportDirectoryStatus(`${automatic ? '自動保存' : '保存'}できませんでした。保存先を確認してください。`, 'error');
+                return false;
+            }
+        }
+
+        async function saveCurrentReportPackage(options = {}) {
+            const { requestPermission = true, automatic = false } = options;
+            const textSaved = await saveReportTextPackage({ requestPermission, automatic, quiet: true });
+            const imagesSaved = hasProcessedCockpitImages()
+                ? await saveProcessedCockpitImages(processedCockpitImages, { requestPermission: false, automatic, quiet: true })
+                : false;
+            if (textSaved) {
+                const directory = await getCurrentMemberDirectoryHandle(true);
+                setCockpitExportDirectoryStatus(
+                    imagesSaved
+                        ? `${directory.name}へテキスト・改ページ指定・4画像を保存しました。`
+                        : `${directory.name}へテキストと改ページ指定を保存しました。`,
+                    'success'
+                );
+            } else if (!automatic) {
+                setCockpitExportDirectoryStatus('保存できませんでした。保存先の選択または再接続を確認してください。', 'error');
+            }
+            return textSaved;
+        }
+
+        function scheduleReportDataAutoSave(delay = 900) {
+            if (reportDataLoadInProgress || (!cockpitExportDirectoryHandle && !activeMemberDirectoryHandle)) return;
+            clearTimeout(reportDataAutoSaveTimer);
+            reportDataAutoSaveTimer = window.setTimeout(() => {
+                reportDataAutoSaveTimer = 0;
+                saveReportTextPackage({ requestPermission: false, automatic: true, quiet: true });
+            }, delay);
+        }
+
+        async function chooseCockpitExportDirectory() {
+            if (typeof window.showDirectoryPicker !== 'function') {
+                setCockpitExportDirectoryStatus('このブラウザーではフォルダへの自動保存を利用できません。最新版のEdgeまたはChromeで開いてください。', 'error');
+                return;
+            }
+            try {
+                const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                cockpitExportDirectoryHandle = handle;
+                activeMemberDirectoryHandle = null;
+                activeMemberDirectoryCode = '';
+                let remembered = true;
+                try {
+                    await rememberCockpitExportDirectory(handle);
+                } catch (error) {
+                    remembered = false;
+                    localStorage.setItem(COCKPIT_EXPORT_DIRECTORY_LABEL_KEY, handle.name || '選択済みフォルダ');
+                }
+                updateCockpitExportDirectoryUI('granted');
+                setCockpitExportDirectoryStatus(
+                    remembered
+                        ? `${handle.name}を保存ルートとして記憶しました。会員番号フォルダへ保存します。`
+                        : `${handle.name}を今回の保存ルートに設定しました。ブラウザー終了後は再選択が必要です。`,
+                    remembered ? 'success' : 'warning'
+                );
+                await saveCurrentReportPackage({ requestPermission: false });
+            } catch (error) {
+                if (error?.name === 'AbortError') return;
+                setCockpitExportDirectoryStatus('保存先フォルダを選択できませんでした。', 'error');
+            }
+        }
+
+        async function reconnectCockpitExportDirectory() {
+            const memberCode = getCurrentMemberCode();
+            const permissionHandle = activeMemberDirectoryHandle && activeMemberDirectoryCode === memberCode
+                ? activeMemberDirectoryHandle
+                : cockpitExportDirectoryHandle;
+            if (!permissionHandle) {
+                await chooseCockpitExportDirectory();
+                return;
+            }
+            const permission = await getCockpitExportDirectoryPermission(permissionHandle, true);
+            updateCockpitExportDirectoryUI(permission);
+            if (permission === 'granted') {
+                setCockpitExportDirectoryStatus(`${permissionHandle.name}へ再接続しました。`, 'success');
+                await saveCurrentReportPackage({ requestPermission: false });
+            } else {
+                setCockpitExportDirectoryStatus('保存先への書き込みが許可されませんでした。保存先を更新してください。', 'warning');
+            }
+        }
+
+        async function saveCurrentCockpitImages() {
+            await saveCurrentReportPackage({ requestPermission: true });
+        }
+
+        async function directoryContainsReportPackage(directoryHandle) {
+            try {
+                await directoryHandle.getFileHandle(REPORT_PACKAGE_DATA_FILE);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function resolveSelectedReportPackageDirectory(selectedDirectory) {
+            if (await directoryContainsReportPackage(selectedDirectory)) {
+                return { memberDirectory: selectedDirectory, rootDirectory: null };
+            }
+
+            const currentCode = getCurrentMemberCode();
+            try {
+                const currentMemberDirectory = await selectedDirectory.getDirectoryHandle(currentCode);
+                if (await directoryContainsReportPackage(currentMemberDirectory)) {
+                    return { memberDirectory: currentMemberDirectory, rootDirectory: selectedDirectory };
+                }
+            } catch (error) {
+                // The current member code may differ from the saved package. Search one level below.
+            }
+
+            const candidates = [];
+            if (typeof selectedDirectory.values === 'function') {
+                for await (const entry of selectedDirectory.values()) {
+                    if (entry.kind !== 'directory') continue;
+                    if (await directoryContainsReportPackage(entry)) candidates.push(entry);
+                    if (candidates.length > 1) break;
+                }
+            }
+            if (candidates.length === 1) {
+                return { memberDirectory: candidates[0], rootDirectory: selectedDirectory };
+            }
+            if (candidates.length > 1) {
+                throw new Error('複数の会員フォルダがあります。読み込みたい会員番号のフォルダを直接選択してください。');
+            }
+            throw new Error(`${REPORT_PACKAGE_DATA_FILE}が見つかりません。`);
+        }
+
+        async function loadReportPackageImages(directoryHandle) {
+            const loaded = {};
+            for (const [key, filename] of Object.entries(REPORT_PACKAGE_IMAGE_FILES)) {
+                try {
+                    loaded[key] = await readImageFileAsDataURL(directoryHandle, filename);
+                } catch (error) {
+                    loaded[key] = '';
+                }
+            }
+            return loaded;
+        }
+
+        async function applyLoadedReportPackage(packageData, memberDirectory) {
+            reportDataLoadInProgress = true;
+            clearTimeout(reportDataAutoSaveTimer);
+            reportDataAutoSaveTimer = 0;
+            try {
+                document.getElementById('inputReportCode').value = packageData.reportCode || memberDirectory.name || '';
+                document.getElementById('inputName').value = packageData.name || '';
+                REPORT_PACKAGE_TEXT_FIELDS.forEach(([key, inputId]) => {
+                    document.getElementById(inputId).value = packageData.fields?.[key] || '';
+                });
+                lastAutoGeneratedIntro = buildFixedReportIntro(packageData.name || '');
+                manualPageBreakKeys.clear();
+                (packageData.manualPageBreakKeys || []).forEach(key => manualPageBreakKeys.add(String(key)));
+                updatePreview();
+
+                const loadedImages = await loadReportPackageImages(memberDirectory);
+                if (hasProcessedCockpitImages(loadedImages)) {
+                    await applyProcessedCockpitImages(loadedImages, { autoSave: false, loaded: true });
+                    return true;
+                } else {
+                    processedCockpitImages = loadedImages;
+                    const processingStatus = document.getElementById('cockpitProcessingStatus');
+                    if (processingStatus) {
+                        processingStatus.classList.remove('hidden');
+                        processingStatus.textContent = '文章のみ読み込みました。';
+                    }
+                    return false;
+                }
+            } finally {
+                reportDataLoadInProgress = false;
+            }
+        }
+
+        function getReportPackageDirectoryPickerOptions() {
+            const options = { mode: 'readwrite' };
+            if (cockpitExportDirectoryHandle?.kind === 'directory') {
+                options.startIn = cockpitExportDirectoryHandle;
+            }
+            return options;
+        }
+
+        async function openReportPackageDirectoryPicker() {
+            const options = getReportPackageDirectoryPickerOptions();
+            try {
+                return await window.showDirectoryPicker(options);
+            } catch (error) {
+                if (options.startIn && error?.name === 'TypeError') {
+                    return window.showDirectoryPicker({ mode: 'readwrite' });
+                }
+                throw error;
+            }
+        }
+
+        async function chooseReportPackageToLoad() {
+            if (typeof window.showDirectoryPicker !== 'function') {
+                setCockpitExportDirectoryStatus('このブラウザーではフォルダからの読み込みを利用できません。最新版のEdgeまたはChromeで開いてください。', 'error');
+                return;
+            }
+            try {
+                const selectedDirectory = await openReportPackageDirectoryPicker();
+                const { memberDirectory, rootDirectory } = await resolveSelectedReportPackageDirectory(selectedDirectory);
+                const packageData = JSON.parse(await readTextFile(memberDirectory, REPORT_PACKAGE_DATA_FILE));
+                if (!packageData || packageData.format !== 'RIESM-report-package') {
+                    throw new Error('RIESMレポート用の保存データではありません。');
+                }
+
+                if (rootDirectory) {
+                    cockpitExportDirectoryHandle = rootDirectory;
+                    try {
+                        await rememberCockpitExportDirectory(rootDirectory);
+                    } catch (error) {
+                        localStorage.setItem(COCKPIT_EXPORT_DIRECTORY_LABEL_KEY, rootDirectory.name || '選択済みフォルダ');
+                    }
+                }
+                activeMemberDirectoryHandle = memberDirectory;
+                activeMemberDirectoryCode = sanitizeCockpitExportFilenamePart(packageData.reportCode, memberDirectory.name)
+                    .replace(/^RIESM[_\s-]*/i, '') || memberDirectory.name;
+                const imagesLoaded = await applyLoadedReportPackage(packageData, memberDirectory);
+                activeMemberDirectoryCode = getCurrentMemberCode();
+                updateCockpitExportDirectoryUI('granted');
+                setCockpitExportDirectoryStatus(
+                    imagesLoaded
+                        ? `${memberDirectory.name}から文章・改ページ指定・4画像を読み込みました。`
+                        : `${memberDirectory.name}から文章と改ページ指定を読み込みました。`,
+                    'success'
+                );
+            } catch (error) {
+                if (error?.name === 'AbortError') return;
+                setCockpitExportDirectoryStatus(error?.message || '会員フォルダを読み込めませんでした。', 'error');
+            }
+        }
+
+        async function initializeCockpitExportDirectory() {
+            const rememberedLabel = localStorage.getItem(COCKPIT_EXPORT_DIRECTORY_LABEL_KEY) || '';
+            if (rememberedLabel) {
+                const nameInput = document.getElementById('cockpitExportFolderName');
+                if (nameInput) nameInput.value = rememberedLabel;
+            }
+            try {
+                cockpitExportDirectoryHandle = await loadRememberedCockpitExportDirectory();
+            } catch (error) {
+                cockpitExportDirectoryHandle = null;
+            }
+
+            if (!cockpitExportDirectoryHandle) {
+                updateCockpitExportDirectoryUI('none');
+                setCockpitExportDirectoryStatus(
+                    rememberedLabel
+                        ? '前回の保存ルート名を表示しています。フォルダを選び直してください。'
+                        : '保存ルートはまだ選択されていません。',
+                    rememberedLabel ? 'warning' : 'neutral'
+                );
+                return;
+            }
+
+            const permission = await getCockpitExportDirectoryPermission(cockpitExportDirectoryHandle, false);
+            updateCockpitExportDirectoryUI(permission);
+            setCockpitExportDirectoryStatus(
+                permission === 'granted'
+                    ? `${cockpitExportDirectoryHandle.name}を保存ルートとして利用します。会員番号フォルダへ自動保存します。`
+                    : `${cockpitExportDirectoryHandle.name}を保存ルートとして記憶しています。自動保存前に再接続してください。`,
+                permission === 'granted' ? 'success' : 'warning'
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeCockpitExportDirectory);
 
         // Calibrated from the supplied RIESM cockpit sheet after its outer frame
         // is detected. Ratios keep the crops stable when the source resolution changes.
@@ -1292,6 +2336,17 @@
             if (image.id === 'coreFaucetImage') {
                 document.getElementById('coreFaucetPlaceholder')?.classList.add('hidden');
             }
+            if (image.id === 'modesGraphImage') {
+                document.getElementById('modesGraphPlaceholder')?.classList.add('hidden');
+            }
+            if (image.id === 'digitalModeImage') {
+                document.getElementById('digitalModePlaceholder')?.classList.add('hidden');
+            }
+            if (image.id === 'cockpitSidebarPreview') {
+                document.getElementById('cockpitSidebarPlaceholder')?.classList.add('hidden');
+            }
+            const decodePromise = image.decode ? image.decode().catch(() => undefined) : Promise.resolve();
+            decodePromise.finally(() => schedulePDFPreviewLayout());
         }
 
         function applyCorePotentialParts(processed) {
@@ -1303,33 +2358,46 @@
             const source = document.getElementById('cockpitImage')?.getAttribute('src');
             if (!source) return;
             try {
-                applyCorePotentialParts(await createCockpitDerivedImages(source));
+                const processed = await createCockpitDerivedImages(source);
+                applyCorePotentialParts(processed);
+                setImageSource(document.getElementById('modesGraphImage'), processed.modes);
+                setImageSource(document.getElementById('digitalModeImage'), processed.digital);
             } catch (error) {
                 const modesPlaceholder = document.getElementById('coreModesPlaceholder');
                 const faucetPlaceholder = document.getElementById('coreFaucetPlaceholder');
+                const conflictGraphPlaceholder = document.getElementById('modesGraphPlaceholder');
+                const digitalGraphPlaceholder = document.getElementById('digitalModePlaceholder');
                 if (modesPlaceholder) modesPlaceholder.innerHTML = 'コックピット画像を貼り付けると<br>モードグラフが表示されます';
                 if (faucetPlaceholder) faucetPlaceholder.innerHTML = 'コックピット画像を貼り付けると<br>興味の蛇口が表示されます';
+                if (conflictGraphPlaceholder) conflictGraphPlaceholder.innerHTML = 'コックピット画像を貼り付けると<br>4つのモードグラフが表示されます';
+                if (digitalGraphPlaceholder) digitalGraphPlaceholder.innerHTML = 'コックピット画像を貼り付けると<br>デジタル・モードグラフが表示されます';
             }
         }
 
-        function applyProcessedCockpitImages(processed) {
+        async function applyProcessedCockpitImages(processed, options = {}) {
+            const { autoSave = true, loaded = false } = options;
             processedCockpitImages = processed;
             applyCorePotentialParts(processed);
             [document.getElementById('cockpitImage'), document.getElementById('cockpitSidebarPreview')]
                 .forEach(image => setImageSource(image, processed.full));
-            [document.getElementById('modesGraphImage'), document.getElementById('cockpitModesPreview')]
-                .forEach(image => setImageSource(image, processed.modes));
-            setImageSource(document.getElementById('cockpitFaucetPreview'), processed.faucet);
-            [document.getElementById('digitalModeImage'), document.getElementById('cockpitDigitalPreview')]
-                .forEach(image => setImageSource(image, processed.digital));
-
-            document.getElementById('cockpitCropPreviews')?.classList.remove('hidden');
+            setImageSource(document.getElementById('modesGraphImage'), processed.modes);
+            setImageSource(document.getElementById('digitalModeImage'), processed.digital);
             const status = document.getElementById('cockpitProcessingStatus');
             if (status) {
-                const [fullWidth, fullHeight] = processed.dimensions.full;
-                status.textContent = `4画像を生成しました（余白除去後：${fullWidth}×${fullHeight}px）。4モード・興味の蛇口・デジタルモードを部品として保持しています。`;
+                status.classList.remove('hidden');
+                status.textContent = loaded
+                    ? '会員画像を読み込みました。'
+                    : '貼り付け・自動切り出し完了';
                 status.classList.remove('text-gray-500', 'text-red-600');
                 status.classList.add('text-emerald-700', 'font-bold');
+            }
+            updateCockpitExportDirectoryUI('granted');
+            if (autoSave) {
+                if (cockpitExportDirectoryHandle || activeMemberDirectoryHandle) {
+                    await saveCurrentReportPackage({ requestPermission: false, automatic: true });
+                } else {
+                    setCockpitExportDirectoryStatus('4画像を生成しました。保存ルートを選択すると、会員番号フォルダへまとめて保存できます。', 'warning');
+                }
             }
         }
 
@@ -1377,12 +2445,13 @@
                 if (group === 'cockpit') {
                     const status = document.getElementById('cockpitProcessingStatus');
                     if (status) {
+                        status.classList.remove('hidden');
                         status.textContent = '画像の外周を解析し、4画像を生成しています…';
                         status.classList.remove('text-red-600', 'text-emerald-700', 'font-bold');
                         status.classList.add('text-gray-500');
                     }
                     try {
-                        applyProcessedCockpitImages(await createCockpitDerivedImages(e.target.result));
+                        await applyProcessedCockpitImages(await createCockpitDerivedImages(e.target.result));
                     } catch (error) {
                         getImageGroupTargets(group, target).filter(Boolean)
                             .forEach(image => setImageSource(image, e.target.result));
@@ -1813,10 +2882,11 @@
         function parseReportText(rawText) {
             const text = String(rawText || '').replace(/\r\n?/g, '\n');
             const horizontalSpace = '[\\t ]*';
+            const memberNumberLabel = '(?:会員番号|レポート番号|招待コード)';
             const heading = bodyPattern =>
                 `(?:^|\\n)${horizontalSpace}(?:#{1,6}${horizontalSpace})?(?:\\*{1,2}${horizontalSpace})?(?:【${horizontalSpace})?${bodyPattern}(?:${horizontalSpace}】)?(?:${horizontalSpace}\\*{1,2})?${horizontalSpace}(?=\\n|$)`;
 
-            const section1Heading = heading(`1[.．、]?${horizontalSpace}(?:あなた|[^\\n]{1,30}?)のコア[・･]?${horizontalSpace}ポテンシャル`);
+            const section1Heading = heading(`1[.．、]?${horizontalSpace}(?:あなた|[^\\n]{1,30}?)のコア[・･]?${horizontalSpace}ポテンシャル(?:${horizontalSpace}[：:]${horizontalSpace}[^\\n]+)?`);
             const section2Heading = heading(`2[.．、]?${horizontalSpace}職場[・･]生活での取扱説明書(?:${horizontalSpace}[（(]トリセツ[）)])?`);
             const reportSubjectPattern = '(?:あなた|[^「」\\n]{1,30}?さん)';
             const subordinateHeading = heading(`(?:①|1[.．、)]?)?${horizontalSpace}(?:🏢${horizontalSpace})?${reportSubjectPattern}${horizontalSpace}が${horizontalSpace}[「『\"]?部下[」』\"]?の場合(?:${horizontalSpace}[（(]上司へのメッセージ[）)])?`);
@@ -1839,13 +2909,18 @@
             const cleanPreambleLine = line => line
                 .trim()
                 .replace(/^#{1,6}[\t ]*/, '')
-                .replace(/^\*{1,2}[\t ]*/, '')
-                .replace(/[\t ]*\*{1,2}$/, '')
+                .replace(/\*{1,2}/g, '')
                 .trim();
-            const preambleLines = preamble.split('\n').map(cleanPreambleLine);
+            const memberNumberPrefix = new RegExp(`^${memberNumberLabel}[\\t ]*[：:]?[\\t ]*[A-Za-z0-9-]+[\\t ]*`, 'iu');
+            const metadataPreambleLines = preamble
+                .split('\n')
+                .map(cleanPreambleLine);
+            const preambleLines = metadataPreambleLines
+                .map(line => line.replace(memberNumberPrefix, '').trim());
 
             let name = '';
-            const labeledNameMatch = text.match(/受検者[\t ]*[：:][\t ]*([^\n]+?)[\t ]*様(?=[\t ]|$)/u);
+            const metadataPreambleText = metadataPreambleLines.join('\n');
+            const labeledNameMatch = metadataPreambleText.match(/受検者[\t ]*[：:][\t ]*([^\n]+?)[\t ]*様(?=[\t \n]|$)/u);
             if (labeledNameMatch) {
                 name = labeledNameMatch[1].trim();
             } else {
@@ -1869,7 +2944,7 @@
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
 
-            const reportCodeMatch = text.match(/(?:レポート番号|招待コード)[\t ]*[：:]?[\t ]*([A-Za-z0-9-]+)/iu);
+            const reportCodeMatch = metadataPreambleText.match(new RegExp(`${memberNumberLabel}[\\t ]*[：:]?[\\t ]*([A-Za-z0-9-]+)`, 'iu'));
             const hintsEndPattern = `(?:${section6Heading}|${section7Heading})`;
 
             return {
@@ -1888,16 +2963,107 @@
         }
         // --- End pure report parser. ---
 
+        const PARSE_VALIDATION_FIELDS = Object.freeze([
+            { inputId: 'inputPotential', label: '1. あなたのコア・ポテンシャル', minimum: 80 },
+            { inputId: 'inputSubordinate', label: '2-1. 取扱説明書（部下の場合）', minimum: 100 },
+            { inputId: 'inputBoss', label: '2-2. 取扱説明書（上司・先輩の場合）', minimum: 100 },
+            { inputId: 'inputConflict', label: '3. 葛藤と真面目さ', minimum: 100 },
+            { inputId: 'inputDigital', label: '4. デジタル・モード', minimum: 60 },
+            { inputId: 'inputHints', label: '5. 今後のためのヒント', minimum: 80 },
+            { inputId: 'inputPartner', label: '6. ご家族・パートナーとの接し方', minimum: 80 },
+            { inputId: 'inputConclusion', label: '7. 結びに', minimum: 80 }
+        ]);
+        let parseValidationActive = false;
+
+        function getEffectiveCharacterCount(value) {
+            return String(value || '').replace(/[\s　]/gu, '').length;
+        }
+
+        function collectParseValidationIssues() {
+            return PARSE_VALIDATION_FIELDS.flatMap(definition => {
+                const input = document.getElementById(definition.inputId);
+                const count = getEffectiveCharacterCount(input?.value);
+                if (count === 0) return [{ ...definition, count, severity: 'error' }];
+                if (count < definition.minimum) return [{ ...definition, count, severity: 'warning' }];
+                return [];
+            });
+        }
+
+        function focusParseValidationField(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            window.setTimeout(() => input.focus(), 300);
+        }
+
+        function validateParsedSections({ scrollToPanel = false } = {}) {
+            if (!parseValidationActive) return [];
+
+            const panel = document.getElementById('parseValidationPanel');
+            const icon = document.getElementById('parseValidationIcon');
+            const heading = document.getElementById('parseValidationHeading');
+            const summary = document.getElementById('parseValidationSummary');
+            const results = document.getElementById('parseValidationResults');
+            const issues = collectParseValidationIssues();
+
+            PARSE_VALIDATION_FIELDS.forEach(({ inputId }) => {
+                const input = document.getElementById(inputId);
+                input?.classList.remove('parse-field-error', 'parse-field-warning');
+                if (input?.dataset.parseValidation === 'true') {
+                    input.removeAttribute('aria-invalid');
+                    delete input.dataset.parseValidation;
+                }
+            });
+            results.replaceChildren();
+            panel.classList.remove('hidden', 'border-red-400', 'bg-red-50', 'text-red-950', 'border-emerald-300', 'bg-emerald-50', 'text-emerald-950');
+
+            if (!issues.length) {
+                panel.classList.add('border-emerald-300', 'bg-emerald-50', 'text-emerald-950');
+                icon.textContent = '✓';
+                heading.textContent = '自動分割：全8項目を確認しました';
+                summary.textContent = '空欄や極端に短い項目は見つかりませんでした。内容を目視確認して仕上げてください。';
+            } else {
+                const emptyCount = issues.filter(issue => issue.severity === 'error').length;
+                const shortCount = issues.length - emptyCount;
+                panel.classList.add('border-red-400', 'bg-red-50', 'text-red-950');
+                icon.textContent = '⚠️';
+                heading.textContent = '自動分割エラーの可能性があります';
+                summary.textContent = `要確認は${issues.length}項目です（空欄 ${emptyCount}件／文字数不足 ${shortCount}件）。見出し表記の違いなどで、正しく分割できなかった可能性があります。`;
+
+                issues.forEach(issue => {
+                    const input = document.getElementById(issue.inputId);
+                    input?.classList.add(issue.severity === 'error' ? 'parse-field-error' : 'parse-field-warning');
+                    input?.setAttribute('aria-invalid', 'true');
+                    if (input) input.dataset.parseValidation = 'true';
+
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = issue.severity === 'error'
+                        ? 'flex w-full items-center justify-between gap-3 rounded-lg border border-red-300 bg-white px-3 py-2 text-left text-[11px] font-bold text-red-800 hover:bg-red-100'
+                        : 'flex w-full items-center justify-between gap-3 rounded-lg border border-amber-300 bg-white px-3 py-2 text-left text-[11px] font-bold text-amber-900 hover:bg-amber-100';
+                    const state = issue.severity === 'error'
+                        ? '空欄です'
+                        : `${issue.count}文字（目安 ${issue.minimum}文字以上）`;
+                    button.innerHTML = `<span>${issue.severity === 'error' ? '×' : '△'} ${issue.label}</span><span class="shrink-0">${state} →</span>`;
+                    button.addEventListener('click', () => focusParseValidationField(issue.inputId));
+                    results.appendChild(button);
+                });
+            }
+
+            if (scrollToPanel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return issues;
+        }
+
         function parseBulkText() {
             const text = document.getElementById('bulkInput').value;
             if(!text.trim()) return;
 
             const parsed = parseReportText(text);
             if (parsed.name) document.getElementById('inputName').value = parsed.name;
-            if (parsed.reportCode) document.getElementById('inputReportCode').value = parsed.reportCode;
+            document.getElementById('inputReportCode').value = parsed.reportCode;
+            syncFixedReportIntro(true);
 
             [
-                ['inputIntro', 'intro'],
                 ['inputPotential', 'potential'],
                 ['inputSubordinate', 'subordinate'],
                 ['inputBoss', 'boss'],
@@ -1912,14 +3078,13 @@
 
             sanitizeSectionInputs();
             updatePreview();
-
-            // Scroll to form fields
-            document.getElementById('inputName').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            parseValidationActive = true;
+            validateParsedSections({ scrollToPanel: true });
         }
 
         const FIXED_REPORT_HEADING_PATTERNS = [
             /^RIESM[（(]リズム[）)]パーソナリティ[・･]分析レポート$/u,
-            /^(?:1[.．、]?\s*)?(?:あなた|[^\s]+)のコア[・･]?ポテンシャル$/u,
+            /^(?:1[.．、]?\s*)?(?:あなた|[^\s]+)のコア[・･]?ポテンシャル(?:\s*[：:].+)?$/u,
             /^(?:2[.．、]?\s*)?職場[・･]生活での取扱説明書[（(]トリセツ[）)]$/u,
             /^①\s*🏢(?:\s*[（(]上司へのメッセージ[）)])?$/u,
             /^(?:①|1[.．、)]?)?\s*🏢?\s*(?:あなた|[^\s「」]+さん)が「?部下」?の場合\s*[（(]上司へのメッセージ[）)]$/u,
@@ -1937,12 +3102,21 @@
             /^巻末の【RIESM相手のモードの感じ方】をご参照ください[。．.]?$/u
         ];
 
+        const REPORT_MEMBER_NUMBER_PATTERN = /(?:会員番号|レポート番号|招待コード)\s*[：:]?\s*[A-Za-z0-9-]+/giu;
+
         function sanitizeSectionText(text) {
             if (!text) return '';
 
             return text
                 .replace(/\r\n?/g, '\n')
                 .split('\n')
+                .map(line => line
+                    .replace(REPORT_MEMBER_NUMBER_PATTERN, '')
+                    .replace(/^\s*#{1,6}\s*/, '')
+                    .replace(/^\s*>\s?/, '')
+                    .replace(/^\s*[-*+]\s+/, '・')
+                    .replace(/\*{1,2}/g, '')
+                    .trimEnd())
                 .filter(line => {
                     const normalized = line
                         .trim()
@@ -1955,6 +3129,8 @@
                     return !FIXED_REPORT_HEADING_PATTERNS.some(pattern => pattern.test(normalized));
                 })
                 .join('\n')
+                .replace(/^(\s*・\s*)アダプターの恐怖と適応(?:について)?(?=\s*(?:[：:]|$))/gmu, '$1アダプターの適応について')
+                .replace(/^(\s*・\s*)ワンダー\s*[・･]?\s*フロントへの手紙(?:\s*[（(]\s*上司の方へ\s*[）)])?(?=\s*(?:[：:]|$))/gmu, '$1実はこんな人かもしれません')
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
         }
@@ -1979,22 +3155,42 @@
         function formatText(text) {
             if (!text) return '';
 
-            const topicHeadingPattern = /^(?:[①②③④⑤⑥⑦⑧⑨⑩]|[1-9]\d*)[\t ]*[-－‐ー―][\t ]*\d+(?:[\t ]|$)/u;
+            const topicHeadingPattern = /^(?:[①②③④⑤⑥⑦⑧⑨⑩]|[1-9]\d*)[\t ]*[-－‐ー―][\t ]*\d+(?=[\t ]|【|\[|振り返りのヒント|$)/u;
+            const reflectionHeadingPattern = /^([①②⑤]|[125])[\t ]*[-－‐ー―][\t ]*2[\t ]*(?:\*{1,2}[\t ]*)?(?:【|\[)?[\t ]*振り返りのヒント/u;
+            const reflectionNumberMap = { '1': '①', '2': '②', '5': '⑤' };
             const lines = text.replace(/\r\n?/g, '\n').split('\n');
             const output = [];
             let topicLines = null;
+            let topicReflectionKey = '';
+            let topicNeedsLeadingGap = false;
 
-            const formatLine = (line, isTopicHeading = false) => {
+            const getReflectionKey = line => {
+                const match = line.trim().match(reflectionHeadingPattern);
+                if (!match) return '';
+                const number = reflectionNumberMap[match[1]] || match[1];
+                return `${number}-2`;
+            };
+
+            const formatLine = (line, isTopicHeading = false, reflectionKey = '') => {
                 if (!line.trim().length) {
                     return '<span class="report-paragraph-gap" aria-hidden="true"></span>';
                 }
 
+                if (reflectionKey) {
+                    return `<span class="report-paragraph report-topic-heading reflection-card-heading" contenteditable="false"><span class="reflection-source-key" aria-hidden="true">${reflectionKey} </span><strong>振り返りのヒント</strong></span>`;
+                }
+
+                const trimmedLine = line.trim();
+                const isStandaloneSmallTitle = /^・\s*[^。！？：:\n]{1,60}$/u.test(trimmedLine);
                 let escapedLine = line
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;');
+                if (isStandaloneSmallTitle) {
+                    return `<span class="report-paragraph report-small-title"><strong>${escapedLine.trim()}</strong></span>`;
+                }
                 escapedLine = escapedLine.replace(/【(.*?)】/g, '<strong class="font-bold text-gray-900">【$1】</strong>');
-                escapedLine = escapedLine.replace(/・(.*?)(:|：)/g, '<strong class="font-bold text-gray-900 block mt-2">・$1$2</strong>');
+                escapedLine = escapedLine.replace(/・(.*?)(:|：)/g, '<strong class="report-small-title font-bold text-gray-900 block mt-2">・$1$2</strong>');
                 escapedLine = escapedLine.replace(/^(※.+?からのご相談)(:|：)?/g, '<strong class="font-bold text-olive block mt-2">$1$2</strong>');
                 const headingClass = isTopicHeading ? ' report-topic-heading' : '';
                 return `<span class="report-paragraph${headingClass}">${escapedLine}</span>`;
@@ -2002,15 +3198,25 @@
 
             const flushTopic = () => {
                 if (!topicLines) return;
-                output.push(`<span class="report-topic-block">${topicLines.join('')}</span>`);
+                const reflectionClass = topicReflectionKey ? ' reflection-card' : '';
+                const leadingGapClass = topicNeedsLeadingGap ? ' report-topic-leading-gap' : '';
+                const reflectionData = topicReflectionKey ? ` data-reflection-key="${topicReflectionKey}"` : '';
+                output.push(`<span class="report-topic-block${reflectionClass}${leadingGapClass}"${reflectionData}>${topicLines.join('')}</span>`);
                 topicLines = null;
+                topicReflectionKey = '';
+                topicNeedsLeadingGap = false;
             };
 
-            lines.forEach(line => {
-                const isTopicHeading = topicHeadingPattern.test(line.trim());
+            lines.forEach((line, lineIndex) => {
+                const reflectionKey = getReflectionKey(line);
+                const isTopicHeading = Boolean(reflectionKey) || topicHeadingPattern.test(line.trim());
                 if (isTopicHeading) {
+                    const hasPreviousContent = Boolean(topicLines) || output.length > 0;
+                    const alreadyHasBlankLine = lineIndex > 0 && !lines[lineIndex - 1].trim().length;
                     flushTopic();
-                    topicLines = [formatLine(line, true)];
+                    topicReflectionKey = reflectionKey;
+                    topicNeedsLeadingGap = hasPreviousContent && !alreadyHasBlankLine;
+                    topicLines = [formatLine(line, true, reflectionKey)];
                 } else if (topicLines) {
                     topicLines.push(formatLine(line));
                 } else {
@@ -2022,17 +3228,205 @@
             return output.join('');
         }
 
+        const REPORT_TERM_DEFINITIONS = Object.freeze([
+            { key: 'principles', anchor: 'riesm-principles', aliases: ['RIESM™の原則', 'RIESMの原則'] },
+            { key: 'digital-mode', anchor: 'term-digital-mode', aliases: ['デジタル・モード', 'デジタルモード'] },
+            { key: 'autobalancer', anchor: 'term-autobalancer', aliases: ['オートバランサー', 'オートパイロット', '自動切換え', '自動切り替え'] },
+            { key: 'interest-faucet', anchor: 'term-interest-faucet', aliases: ['興味のエネルギー', '興味の蛇口', '6種類の蛇口'] },
+            { key: 'nurturer', anchor: 'term-nurturer', aliases: ['ナーチャー'] },
+            { key: 'adapter', anchor: 'term-adapter', aliases: ['アダプター'] },
+            { key: 'wonder', anchor: 'term-wonder', aliases: ['ワンダー'] },
+            { key: 'keeper', anchor: 'term-keeper', aliases: ['キーパー'] },
+            { key: 'cockpit', anchor: 'term-cockpit', aliases: ['コックピット'] },
+            { key: 'front', anchor: 'term-front', aliases: ['フロント'] },
+            { key: 'stand', anchor: 'term-stand', aliases: ['スタンド'] },
+            { key: 'backs', anchor: 'term-backs', aliases: ['バックス', 'バック'] },
+            { key: 'modes', anchor: 'term-modes', aliases: ['4つのモード', 'モード'] }
+        ]);
+        const REPORT_TERM_ALIAS_MAP = new Map(
+            REPORT_TERM_DEFINITIONS.flatMap(definition => definition.aliases.map(alias => [alias, definition]))
+        );
+        const REPORT_TERM_PATTERN = new RegExp(
+            [...REPORT_TERM_ALIAS_MAP.keys()]
+                .sort((a, b) => b.length - a.length)
+                .map(text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+                .join('|'),
+            'gu'
+        );
+
+        function unwrapReportTermLinks() {
+            document.querySelectorAll('a.report-term-link').forEach(link => link.replaceWith(document.createTextNode(link.textContent || '')));
+            document.querySelectorAll('.parsed-text, .core-method-note').forEach(container => container.normalize());
+        }
+
+        function applyReportTermLinks() {
+            unwrapReportTermLinks();
+            const seenTerms = new Set();
+            const containers = Array.from(document.querySelectorAll('.parsed-text, .core-method-note p:not(.core-method-note-title)'));
+
+            containers.forEach(container => {
+                const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+                    acceptNode(node) {
+                        if (!node.nodeValue?.trim()) return NodeFilter.FILTER_REJECT;
+                        if (node.parentElement?.closest('a, script, style, [aria-hidden="true"]')) return NodeFilter.FILTER_REJECT;
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                });
+                const nodes = [];
+                while (walker.nextNode()) nodes.push(walker.currentNode);
+
+                nodes.forEach(node => {
+                    REPORT_TERM_PATTERN.lastIndex = 0;
+                    if (!REPORT_TERM_PATTERN.test(node.nodeValue)) return;
+                    REPORT_TERM_PATTERN.lastIndex = 0;
+
+                    const fragment = document.createDocumentFragment();
+                    let cursor = 0;
+                    for (const match of node.nodeValue.matchAll(REPORT_TERM_PATTERN)) {
+                        fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor, match.index)));
+                        const definition = REPORT_TERM_ALIAS_MAP.get(match[0]);
+                        const link = document.createElement('a');
+                        const isFirstOccurrence = !seenTerms.has(definition.key);
+                        link.className = `report-term-link${isFirstOccurrence ? ' report-term-link-first' : ''}`;
+                        link.href = `https://ninin-cc.github.io/riesm/index.html#${definition.anchor}`;
+                        link.target = '_blank';
+                        link.rel = 'noopener';
+                        link.textContent = match[0];
+                        link.title = `${match[0]}の説明を開く`;
+                        link.dataset.riesmTerm = definition.key;
+                        fragment.appendChild(link);
+                        seenTerms.add(definition.key);
+                        cursor = match.index + match[0].length;
+                    }
+                    fragment.appendChild(document.createTextNode(node.nodeValue.slice(cursor)));
+                    node.replaceWith(fragment);
+                });
+            });
+        }
+
+        let conflictPersonImageSource = './img/image6.png';
+
+        function rememberConflictPersonImageSource() {
+            const image = document.getElementById('conflictPersonImage');
+            const source = image?.getAttribute('src');
+            if (source) conflictPersonImageSource = source;
+        }
+
+        function createConflictPersonFigure() {
+            const figure = document.createElement('div');
+            figure.id = 'conflictPersonFigure';
+            figure.className = 'conflict-person-figure';
+            figure.dataset.reportDecoration = 'conflict-person-illustration';
+            figure.contentEditable = 'false';
+            figure.setAttribute('aria-label', '葛藤と真面目さを表す女性画像');
+
+            const card = document.createElement('div');
+            card.className = 'conflict-person-card';
+
+            const image = document.createElement('img');
+            image.id = 'conflictPersonImage';
+            image.src = conflictPersonImageSource;
+            image.alt = '葛藤と真面目さを表す女性画像';
+            image.className = 'report-square-illustration cursor-pointer transition-all hover:opacity-70 hover:scale-[1.02]';
+            image.addEventListener('click', () => triggerImageUpload(image));
+            image.addEventListener('error', () => {
+                image.src = 'https://placehold.co/320x320/faf9f4/827b00?text=葛藤と真面目さ';
+            }, { once: true });
+
+            card.appendChild(image);
+            figure.appendChild(card);
+            return figure;
+        }
+
+        function placeConflictPersonIllustration() {
+            const container = document.querySelector('.bind-conflict');
+            if (!container) return;
+
+            document.getElementById('conflictPersonFigure')?.remove();
+            const reflectionTarget = container.querySelector('.reflection-card[data-reflection-key="②-2"]');
+            const conflictContinuationTarget = Array.from(container.querySelectorAll('.report-topic-block'))
+                .find(block => {
+                    const heading = block.querySelector('.report-topic-heading')?.textContent.trim() || '';
+                    return /^(?:③|3)\s*[-－‐ー―]\s*1(?:\s|【|\[|$)/u.test(heading);
+                });
+            const figure = createConflictPersonFigure();
+
+            if (conflictContinuationTarget) {
+                figure.dataset.pdfForcePage = 'true';
+                figure.dataset.conflictContinuationStart = 'true';
+                conflictContinuationTarget.before(figure);
+            } else if (reflectionTarget) {
+                reflectionTarget.after(figure);
+            } else {
+                container.appendChild(figure);
+            }
+        }
+
+        function updateCoverReportIdentity() {
+            const code = String(document.getElementById('inputReportCode')?.value || '')
+                .trim()
+                .replace(/^(?:会員番号|レポート番号|招待コード)\s*[：:]?\s*/iu, '')
+                .trim();
+            const name = String(document.getElementById('inputName')?.value || '')
+                .trim()
+                .replace(/^受検者\s*[：:]?\s*/u, '')
+                .replace(/\s*様\s*$/u, '')
+                .trim();
+            const identity = [code, name ? `${name}様` : ''].filter(Boolean).join('　');
+            const coverIdentity = document.getElementById('coverReportIdentity');
+            if (coverIdentity) coverIdentity.textContent = identity;
+        }
+
+        function getReportRecipientName(nameValue) {
+            const cleanedName = String(nameValue || '')
+                .trim()
+                .replace(/^受検者\s*[：:]?\s*/u, '')
+                .replace(/\s*様\s*$/u, '')
+                .trim();
+            if (!cleanedName) return '〇〇';
+
+            const nameParts = cleanedName.split(/[\s　]+/u).filter(Boolean);
+            return nameParts.length >= 2 ? nameParts[0] : cleanedName;
+        }
+
+        function buildFixedReportIntro(nameValue) {
+            const recipientName = getReportRecipientName(nameValue);
+            return `${recipientName}さん、こんにちは。このレポートは、ご自身の「心のコックピット」の構造を知り、人生という旅をより快適に、ご機嫌に乗りこなしていただくための「取扱説明書」です。占いでも、性格を決めつけるものでもありません。${recipientName}さんがこれまで生きてきた軌跡であり、今この瞬間の「自然な状態」を映し出したものです。どうか、ひとつのヒントとして、リラックスして読んでください。`;
+        }
+
+        let lastAutoGeneratedIntro = '';
+
+        function syncFixedReportIntro(force = false) {
+            const introField = document.getElementById('inputIntro');
+            const generatedIntro = buildFixedReportIntro(document.getElementById('inputName')?.value || '');
+            if (!introField) return generatedIntro;
+
+            const mayReplace = force || !introField.value.trim() || introField.value === lastAutoGeneratedIntro;
+            if (mayReplace) introField.value = generatedIntro;
+            lastAutoGeneratedIntro = generatedIntro;
+            return introField.value;
+        }
+
         function updatePreview() {
-            document.querySelector('.bind-intro').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputIntro').value));
+            updateCoverReportIdentity();
+            const introText = syncFixedReportIntro();
+            document.querySelector('.bind-intro').innerHTML = formatText(sanitizeSectionText(introText));
             document.querySelector('.bind-potential').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputPotential').value));
             document.querySelector('.bind-subordinate').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputSubordinate').value));
             document.querySelector('.bind-boss').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputBoss').value));
+            rememberConflictPersonImageSource();
             document.querySelector('.bind-conflict').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputConflict').value));
+            placeConflictPersonIllustration();
             document.querySelector('.bind-digital').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputDigital').value));
             document.querySelector('.bind-hints').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputHints').value));
             document.querySelector('.bind-partner').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputPartner').value));
             document.querySelector('.bind-conclusion').innerHTML = formatText(sanitizeSectionText(document.getElementById('inputConclusion').value));
+            applyReportTermLinks();
+            assignManualPageBreakTargets();
+            schedulePDFPreviewLayout();
+            scheduleReportDataAutoSave();
             scheduleNgWordCheck();
+            validateParsedSections();
         }
 
         const EDITABLE_REPORT_FIELDS = [
@@ -2046,6 +3440,108 @@
             ['.bind-partner', 'inputPartner', 'パートナーとの接し方本文'],
             ['.bind-conclusion', 'inputConclusion', '結びの本文']
         ];
+
+        const manualPageBreakKeys = new Set();
+        let manualPageBreakMode = false;
+
+        function setManualPageBreakState(element, enabled) {
+            if (!element) return;
+            if (enabled) {
+                element.classList.add('manual-page-break');
+                element.dataset.manualPageBreak = 'true';
+                element.dataset.pdfForcePage = 'true';
+                return;
+            }
+
+            element.classList.remove('manual-page-break');
+            if (element.dataset.manualPageBreak === 'true') {
+                delete element.dataset.manualPageBreak;
+                delete element.dataset.pdfForcePage;
+            }
+        }
+
+        function assignManualPageBreakTargets() {
+            EDITABLE_REPORT_FIELDS.forEach(([selector, inputId]) => {
+                const preview = document.querySelector(selector);
+                if (!preview) return;
+                const blocks = Array.from(preview.children)
+                    .filter(element => element.matches('.report-paragraph, .report-topic-block'));
+
+                blocks.forEach((block, index) => {
+                    const key = `${inputId}:${index}`;
+                    block.dataset.pageBreakKey = key;
+                    setManualPageBreakState(block, manualPageBreakKeys.has(key));
+                });
+            });
+            updateManualPageBreakControls();
+        }
+
+        function updateManualPageBreakControls() {
+            const button = document.getElementById('manualPageBreakButton');
+            const clearButton = document.getElementById('clearManualPageBreaksButton');
+            const help = document.getElementById('manualPageBreakHelp');
+            const count = manualPageBreakKeys.size;
+
+            if (button) {
+                button.setAttribute('aria-pressed', String(manualPageBreakMode));
+                button.classList.toggle('bg-amber-400', manualPageBreakMode);
+                button.classList.toggle('text-amber-950', manualPageBreakMode);
+                button.classList.toggle('bg-white', !manualPageBreakMode);
+                button.innerHTML = `<span aria-hidden="true">↳</span>${manualPageBreakMode ? '段落を選択中' : '改ページ調整'}`;
+            }
+            clearButton?.classList.toggle('hidden', count === 0);
+            if (help) {
+                help.classList.toggle('hidden', !manualPageBreakMode);
+                help.textContent = count
+                    ? `次ページへ送りたい段落をクリックしてください。現在${count}か所を指定中です。同じ段落を再クリックすると解除できます。`
+                    : '次ページへ送りたい段落をクリックしてください。同じ段落を再クリックすると解除できます。';
+            }
+        }
+
+        function setManualPageBreakMode(enabled) {
+            manualPageBreakMode = Boolean(enabled);
+            document.getElementById('pdfContent')?.classList.toggle('manual-break-mode', manualPageBreakMode);
+            updateManualPageBreakControls();
+        }
+
+        function toggleManualPageBreakMode() {
+            setManualPageBreakMode(!manualPageBreakMode);
+        }
+
+        function clearManualPageBreaks() {
+            manualPageBreakKeys.clear();
+            document.querySelectorAll('[data-manual-page-break="true"]')
+                .forEach(element => setManualPageBreakState(element, false));
+            updateManualPageBreakControls();
+            schedulePDFPreviewLayout(0);
+            scheduleReportDataAutoSave(0);
+        }
+
+        function setupManualPageBreakControls() {
+            const content = document.getElementById('pdfContent');
+            if (!content) return;
+            content.addEventListener('click', event => {
+                if (!manualPageBreakMode) return;
+                const target = event.target.closest('[data-page-break-key]');
+                if (!target || !content.contains(target)) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+                const key = target.dataset.pageBreakKey;
+                if (manualPageBreakKeys.has(key)) {
+                    manualPageBreakKeys.delete(key);
+                    setManualPageBreakState(target, false);
+                } else {
+                    manualPageBreakKeys.add(key);
+                    setManualPageBreakState(target, true);
+                }
+                updateManualPageBreakControls();
+                schedulePDFPreviewLayout(0);
+                scheduleReportDataAutoSave(0);
+            }, true);
+        }
+
+        document.addEventListener('DOMContentLoaded', setupManualPageBreakControls);
 
         const NG_WORD_RULES = [
             {
@@ -2070,9 +3566,14 @@
                 pattern: /弱い|(?<!力)強い/g,
                 reason: '強い・弱いは優劣として受け取られることがあります。前後の文脈をご確認ください。',
                 suggest: match => match[0] === '弱い' ? '控えめに表れる傾向がある' : '表れやすい傾向がある',
+                validate: match => {
+                    if (match[0] !== '強い') return true;
+                    const followingText = match.input.slice(match.index + match[0].length);
+                    return !/^(?:ストレス|疲労)/u.test(followingText);
+                },
                 guide: {
                     target: '「弱い」「強い」',
-                    logic: '「力強い」に含まれる「強い」は除外し、それ以外の強弱表現を確認します。能力の優劣なのか、単なる強度の説明なのかは人が文脈を判断します。',
+                    logic: '「力強い」に含まれる「強い」と、状態の強度を示す「強いストレス」「強い疲労」は除外し、それ以外の強弱表現を確認します。能力の優劣なのか、単なる強度の説明なのかは人が文脈を判断します。',
                     example: '弱い → 控えめに表れる傾向がある',
                     batch: '文脈確認のため一括修正しない'
                 },
@@ -2483,7 +3984,12 @@
         }
 
         function editablePreviewToText(element) {
-            return element.innerText
+            const decorations = Array.from(element.querySelectorAll('[data-report-decoration]'));
+            const decorationVisibility = decorations.map(decoration => decoration.hidden);
+            decorations.forEach(decoration => { decoration.hidden = true; });
+            const text = element.innerText;
+            decorations.forEach((decoration, index) => { decoration.hidden = decorationVisibility[index]; });
+            return text
                 .replace(/\u00a0/g, ' ')
                 .replace(/\r\n?/g, '\n')
                 .replace(/\n{3,}/g, '\n\n')
@@ -2519,6 +4025,10 @@
 
                 preview.addEventListener('input', () => {
                     input.value = editablePreviewToText(preview);
+                    validateParsedSections();
+                    assignManualPageBreakTargets();
+                    schedulePDFPreviewLayout();
+                    scheduleReportDataAutoSave();
                     scheduleNgWordCheck();
                 });
 
@@ -2529,9 +4039,15 @@
                 });
 
                 preview.addEventListener('blur', () => {
+                    if (selector === '.bind-conflict') rememberConflictPersonImageSource();
                     const cleaned = sanitizeSectionText(editablePreviewToText(preview));
                     input.value = cleaned;
                     preview.innerHTML = formatText(cleaned);
+                    if (selector === '.bind-conflict') placeConflictPersonIllustration();
+                    applyReportTermLinks();
+                    assignManualPageBreakTargets();
+                    schedulePDFPreviewLayout(0);
+                    scheduleReportDataAutoSave(0);
                     scheduleNgWordCheck();
                 });
             });
@@ -2540,6 +4056,47 @@
         document.addEventListener('DOMContentLoaded', setupEditableReportText);
 
         // --- Logic: PDF Export ---
+        let restorePreparedPageLayout = null;
+        let pdfPreviewLayoutTimer = 0;
+        let pdfGenerationInProgress = false;
+        let pdfPageActionStatusTimer = 0;
+
+        function cancelPDFPreviewLayout() {
+            if (!pdfPreviewLayoutTimer) return;
+            clearTimeout(pdfPreviewLayoutTimer);
+            pdfPreviewLayoutTimer = 0;
+        }
+
+        function clearPreparedPageLayout() {
+            if (!restorePreparedPageLayout) return;
+            const restore = restorePreparedPageLayout;
+            restorePreparedPageLayout = null;
+            restore();
+        }
+
+        function applyPreparedPageLayout() {
+            cancelPDFPreviewLayout();
+            clearPreparedPageLayout();
+            const content = document.getElementById('pdfContent');
+            if (!content) return;
+            content.classList.add('pdf-page-layout');
+            restorePreparedPageLayout = preparePageHeightsForPDF();
+        }
+
+        function schedulePDFPreviewLayout(delay = 90) {
+            if (pdfGenerationInProgress) return;
+            cancelPDFPreviewLayout();
+            pdfPreviewLayoutTimer = window.setTimeout(() => {
+                pdfPreviewLayoutTimer = 0;
+                window.requestAnimationFrame(() => {
+                    if (pdfGenerationInProgress) return;
+                    const content = document.getElementById('pdfContent');
+                    content?.classList.add('pdf-preview-container');
+                    applyPreparedPageLayout();
+                });
+            }, Math.max(0, delay));
+        }
+
         async function prepareImagesForPDF() {
             const replacements = [];
             const imageData = window.REPORT_IMAGE_DATA || {};
@@ -2564,6 +4121,217 @@
             spacer.setAttribute('aria-hidden', 'true');
             spacer.style.height = `${Math.ceil(heightPx * 100) / 100}px`;
             target.before(spacer);
+        }
+
+        function getPDFMeaningfulElements(page) {
+            return Array.from(page.querySelectorAll('h1, h2, h3, p, .report-paragraph, img'))
+                .filter(element => {
+                    if (element.classList.contains('parsed-text')) return false;
+                    if (element.closest('.pdf-page-frame') || element.classList.contains('hidden')) return false;
+                    const rect = element.getBoundingClientRect();
+                    const style = window.getComputedStyle(element);
+                    return rect.width > 1 && rect.height > 1 && style.display !== 'none' && style.visibility !== 'hidden';
+                });
+        }
+
+        function hasPDFMeaningfulContentBeforeTarget(page, target, current, metrics) {
+            const { a4Height, safeTop } = metrics;
+            const pageRect = page.getBoundingClientRect();
+            const pageStart = current.pageIndex * a4Height;
+            const safePageStart = pageStart + safeTop;
+            const targetTop = target.getBoundingClientRect().top - pageRect.top;
+            const tolerance = 1;
+
+            return getPDFMeaningfulElements(page).some(element => {
+                if (element === target || target.contains(element)) return false;
+                const rect = element.getBoundingClientRect();
+                const top = rect.top - pageRect.top;
+                const bottom = rect.bottom - pageRect.top;
+                return bottom > safePageStart + tolerance && top < targetTop - tolerance;
+            });
+        }
+
+        function isPDFPageBlank(page, pageIndex, a4Height) {
+            const pageRect = page.getBoundingClientRect();
+            const pageTop = pageIndex * a4Height;
+            const pageBottom = pageTop + a4Height;
+            const tolerance = 2;
+            return !getPDFMeaningfulElements(page).some(element => {
+                const rect = element.getBoundingClientRect();
+                const top = rect.top - pageRect.top;
+                const bottom = rect.bottom - pageRect.top;
+                return bottom > pageTop + tolerance && top < pageBottom - tolerance;
+            });
+        }
+
+        function getBlankPDFPageRecords() {
+            const wrappers = Array.from(document.querySelectorAll('#pdfContent > .a4-wrapper'));
+            const referencePage = wrappers.find(page => page.classList.contains('bookend-page')) || wrappers[0];
+            const a4Height = referencePage?.getBoundingClientRect().height || 0;
+            if (!a4Height) return [];
+
+            const records = [];
+            wrappers.forEach((page, wrapperIndex) => {
+                if (page.matches('.bookend-page, .cockpit-page')) return;
+                const frames = Array.from(page.querySelectorAll(':scope > .pdf-page-frame'));
+                frames.forEach((frame, pageIndex) => {
+                    if (isPDFPageBlank(page, pageIndex, a4Height)) {
+                        records.push({ page, frame, wrapperIndex, pageIndex, a4Height });
+                    }
+                });
+            });
+            return records;
+        }
+
+        function decorateParsedTextPagePanels(pages, metrics) {
+            const { a4Height, safeTop, safeBottom } = metrics;
+            const sourceSelector = [
+                '.parsed-text:not(.core-potential-copy):not(.torisetsu-copy):not(.digital-mode-copy)'
+            ].join('');
+
+            pages.forEach(page => {
+                const pageRect = page.getBoundingClientRect();
+                page.querySelectorAll(sourceSelector).forEach((source, sourceIndex) => {
+                    const sourceRect = source.getBoundingClientRect();
+                    const style = window.getComputedStyle(source);
+                    const paddingTop = Number.parseFloat(style.paddingTop) || 0;
+                    const paddingBottom = Number.parseFloat(style.paddingBottom) || 0;
+                    const contentElements = Array.from(source.children).filter(element => {
+                        if (element.matches('.report-paragraph-gap, .pdf-page-spacer')) return false;
+                        const rect = element.getBoundingClientRect();
+                        const elementStyle = window.getComputedStyle(element);
+                        return rect.width > 1 && rect.height > 1 && elementStyle.display !== 'none' && elementStyle.visibility !== 'hidden';
+                    });
+                    if (!contentElements.length) return;
+
+                    source.classList.add('pdf-page-panel-source');
+                    const firstPageIndex = Math.max(0, Math.floor((sourceRect.top - pageRect.top) / a4Height));
+                    const lastContentBottom = Math.max(...contentElements.map(element => element.getBoundingClientRect().bottom));
+                    const lastPageIndex = Math.max(firstPageIndex, Math.floor((lastContentBottom - pageRect.top - 1) / a4Height));
+
+                    for (let pageIndex = firstPageIndex; pageIndex <= lastPageIndex; pageIndex += 1) {
+                        const pageTop = pageIndex * a4Height;
+                        const pageBottom = pageTop + a4Height;
+                        const elementsOnPage = contentElements.filter(element => {
+                            const rect = element.getBoundingClientRect();
+                            const top = rect.top - pageRect.top;
+                            const bottom = rect.bottom - pageRect.top;
+                            return bottom > pageTop + 1 && top < pageBottom - 1;
+                        });
+                        if (!elementsOnPage.length) continue;
+
+                        const contentTop = Math.min(...elementsOnPage.map(element => element.getBoundingClientRect().top - pageRect.top));
+                        const contentBottom = Math.max(...elementsOnPage.map(element => element.getBoundingClientRect().bottom - pageRect.top));
+                        const panelTop = Math.max(pageTop + safeTop, contentTop - paddingTop);
+                        const panelBottom = Math.min(pageTop + safeBottom, contentBottom + paddingBottom);
+                        if (panelBottom <= panelTop + 1) continue;
+
+                        const panel = document.createElement('div');
+                        panel.className = 'pdf-page-text-panel';
+                        panel.setAttribute('aria-hidden', 'true');
+                        panel.dataset.pagePanelSource = `${source.className}:${sourceIndex}`;
+                        panel.style.left = `${sourceRect.left - pageRect.left}px`;
+                        panel.style.top = `${panelTop}px`;
+                        panel.style.width = `${sourceRect.width}px`;
+                        panel.style.height = `${panelBottom - panelTop}px`;
+                        page.appendChild(panel);
+                    }
+                });
+            });
+        }
+
+        function showPDFPageActionStatus(message, tone = 'success') {
+            const status = document.getElementById('pdfPageActionStatus');
+            if (!status) return;
+            clearTimeout(pdfPageActionStatusTimer);
+            status.textContent = message;
+            status.classList.remove('hidden', 'border-red-200', 'text-red-700', 'border-[#0D473B]/20', 'text-[#0D473B]');
+            if (tone === 'error') {
+                status.classList.add('border-red-200', 'text-red-700');
+            } else {
+                status.classList.add('border-[#0D473B]/20', 'text-[#0D473B]');
+            }
+            pdfPageActionStatusTimer = window.setTimeout(() => status.classList.add('hidden'), 4200);
+        }
+
+        function removeBlankPDFPage(wrapperIndex, pageIndex) {
+            const blankPages = getBlankPDFPageRecords();
+            const targetBlankPage = blankPages.find(record => (
+                record.wrapperIndex === wrapperIndex && record.pageIndex === pageIndex
+            ));
+            if (!targetBlankPage) {
+                showPDFPageActionStatus('このページは再計算済みです。', 'error');
+                return;
+            }
+
+            setManualPageBreakMode(false);
+            const manualKeysToRemove = new Set();
+            const gapsToRemove = new Set();
+            [targetBlankPage].forEach(({ page, pageIndex: blankPageIndex, a4Height }) => {
+                const pageRect = page.getBoundingClientRect();
+                const pageTop = blankPageIndex * a4Height;
+                const pageBottom = pageTop + a4Height;
+                const forcedTargets = Array.from(page.querySelectorAll('[data-manual-page-break="true"]'))
+                    .sort((left, right) => left.getBoundingClientRect().top - right.getBoundingClientRect().top);
+                const nextTarget = forcedTargets.find(target => {
+                    const top = target.getBoundingClientRect().top - pageRect.top;
+                    return top >= pageBottom - 2;
+                });
+                if (nextTarget?.dataset.pageBreakKey) manualKeysToRemove.add(nextTarget.dataset.pageBreakKey);
+
+                page.querySelectorAll('.report-paragraph-gap').forEach(gap => {
+                    const rect = gap.getBoundingClientRect();
+                    const top = rect.top - pageRect.top;
+                    const bottom = rect.bottom - pageRect.top;
+                    if (bottom > pageTop + 2 && top < pageBottom - 2) gapsToRemove.add(gap);
+                });
+            });
+
+            manualKeysToRemove.forEach(key => manualPageBreakKeys.delete(key));
+            gapsToRemove.forEach(gap => gap.remove());
+            clearPreparedPageLayout();
+            EDITABLE_REPORT_FIELDS.forEach(([selector, inputId]) => {
+                const preview = document.querySelector(selector);
+                const input = document.getElementById(inputId);
+                if (!preview || !input) return;
+                input.value = sanitizeSectionText(editablePreviewToText(preview));
+            });
+            updatePreview();
+
+            window.setTimeout(() => {
+                const remaining = getBlankPDFPageRecords();
+                const stillBlank = remaining.some(record => (
+                    record.wrapperIndex === wrapperIndex && record.pageIndex === pageIndex
+                ));
+                if (!stillBlank) {
+                    showPDFPageActionStatus('白紙ページを削除しました。本文は削除していません。');
+                } else {
+                    showPDFPageActionStatus('白紙ページを再計算しました。残る場合は「指定を全解除」もお試しください。', 'error');
+                }
+            }, 180);
+        }
+
+        function decorateBlankPDFPages() {
+            const content = document.getElementById('pdfContent');
+            if (!content?.classList.contains('pdf-preview-container')) return;
+
+            getBlankPDFPageRecords().forEach(({ frame, wrapperIndex, pageIndex }) => {
+                frame.classList.add('pdf-blank-page-frame');
+                frame.removeAttribute('aria-hidden');
+                frame.setAttribute('aria-label', `白紙ページ ${pageIndex + 1}`);
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'pdf-blank-page-delete-button';
+                button.setAttribute('aria-label', 'この白紙ページを削除');
+                button.innerHTML = '<span aria-hidden="true">✕</span><span>この白紙ページを削除</span>';
+                button.addEventListener('click', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    removeBlankPDFPage(wrapperIndex, pageIndex);
+                });
+                frame.appendChild(button);
+            });
         }
 
         function getPDFBreakTarget(element, usableHeight) {
@@ -2600,8 +4368,9 @@
 
             let current = position();
             if (target.matches('[data-pdf-force-page]')) {
-                const alreadyAtPageStart = current.pageIndex > 0 && current.localTop <= safeTop + tolerance;
-                if (!alreadyAtPageStart) {
+                const alreadyAtPageStart = current.localTop <= safeTop + tolerance;
+                const hasContentBefore = hasPDFMeaningfulContentBeforeTarget(page, target, current, metrics);
+                if (!alreadyAtPageStart && hasContentBefore) {
                     insertPDFPageSpacer(target, a4Height - current.localTop + safeTop);
                     current = position();
                 }
@@ -2647,8 +4416,15 @@
                 }
 
                 const index = pages.indexOf(page);
-                const measuredHeight = Math.max(page.scrollHeight, page.getBoundingClientRect().height);
-                const a4PageCount = Math.max(1, Math.ceil((measuredHeight - 1) / a4Height));
+                const pageRect = page.getBoundingClientRect();
+                const measuredHeight = Math.max(page.scrollHeight, pageRect.height);
+                const measuredA4PageCount = Math.max(1, Math.ceil((measuredHeight - 1) / a4Height));
+                const meaningfulBottom = getPDFMeaningfulElements(page).reduce((maximum, element) => {
+                    const bottom = element.getBoundingClientRect().bottom - pageRect.top;
+                    return Math.max(maximum, bottom);
+                }, 0);
+                const meaningfulA4PageCount = Math.max(1, Math.ceil((meaningfulBottom - 1) / a4Height));
+                const a4PageCount = Math.min(measuredA4PageCount, meaningfulA4PageCount);
                 const isLastWrapper = index === pages.length - 1;
                 const fixedHeight = index === pages.length - 1
                     ? `calc(${a4PageCount * 297}mm - 2px)`
@@ -2670,8 +4446,13 @@
                 }
             });
 
+            decorateParsedTextPagePanels(pages, { a4Height, safeTop, safeBottom });
+            decorateBlankPDFPages();
+
             return () => {
                 document.querySelectorAll('.pdf-page-frame').forEach(frame => frame.remove());
+                document.querySelectorAll('.pdf-page-text-panel').forEach(panel => panel.remove());
+                document.querySelectorAll('.pdf-page-panel-source').forEach(source => source.classList.remove('pdf-page-panel-source'));
                 document.querySelectorAll('.pdf-page-spacer').forEach(spacer => spacer.remove());
                 document.querySelectorAll('.pdf-topic-block-splittable').forEach(block => block.classList.remove('pdf-topic-block-splittable'));
                 document.querySelectorAll('.pdf-export-page-copyright').forEach(copyright => copyright.remove());
@@ -2703,20 +4484,26 @@
             const name = document.getElementById('inputName').value || 'Report';
             const reportCode = document.getElementById('inputReportCode').value;
             const pdfFilename = buildReportPDFFilename(reportCode, name);
-            const restoreImages = await prepareImagesForPDF();
-            element.classList.add('pdf-export-container');
-            const restorePageHeights = preparePageHeightsForPDF();
-
-            const opt = {
-                margin:       0,
-                filename:     pdfFilename,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: false, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['css', 'legacy'], avoid: ['.report-topic-block:not(.pdf-topic-block-splittable)', '.report-paragraph'] }
-            };
-
+            let restoreImages = () => {};
+            setManualPageBreakMode(false);
+            pdfGenerationInProgress = true;
+            cancelPDFPreviewLayout();
             try {
+                restoreImages = await prepareImagesForPDF();
+                element.classList.remove('pdf-preview-container');
+                element.classList.add('pdf-page-layout', 'pdf-export-container');
+                applyPreparedPageLayout();
+                await new Promise(resolve => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+
+                const opt = {
+                    margin:       0,
+                    filename:     pdfFilename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: false, letterRendering: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak:    { mode: ['css', 'legacy'], avoid: ['.report-topic-block:not(.pdf-topic-block-splittable)', '.report-paragraph'] }
+                };
+
                 const footerCanvas = document.createElement('canvas');
                 footerCanvas.width = 1600;
                 footerCanvas.height = 40;
@@ -2744,14 +4531,19 @@
                 }
             } finally {
                 element.classList.remove('pdf-export-container');
-                restorePageHeights();
+                element.classList.add('pdf-preview-container');
+                clearPreparedPageLayout();
                 restoreImages();
+                pdfGenerationInProgress = false;
+                schedulePDFPreviewLayout(0);
             }
         }
 
         // Init
         window.onload = function() {
+            document.getElementById('pdfContent')?.classList.add('pdf-page-layout', 'pdf-preview-container');
             updatePreview();
+            document.fonts?.ready.then(() => schedulePDFPreviewLayout(0));
         };
     </script>
 </body>
