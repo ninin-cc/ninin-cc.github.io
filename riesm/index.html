@@ -1,305 +1,419 @@
 <!DOCTYPE html>
-<html lang="ja" class="scroll-smooth">
+<html lang="ja">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-Z1T35THNDV');
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Z1T35THNDV');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIESM™ 受検者専用ポータル | 合同会社ninin</title>
-    
-    <!-- ファビコンの設定 -->
+    <meta name="description" content="RIESM™のモード、フロント、バックス、スタンド、興味の蛇口、コックピット、デジタル・モードを画像と短い文章で解説します。">
+    <title>RIESM™ 解説・ご案内ページ | ninin</title>
     <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://ninin-cc.github.io/img/ninin.png">
-
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
     <style>
+        :root {
+            --ink: #123b5b;
+            --text: #283a36;
+            --muted: #64716d;
+            --paper: #fffef9;
+            --line: #d9e5e0;
+            --accent: #2f7d5c;
+            --wonder: #f2a400;
+            --keeper: #183b5b;
+            --nurturer: #d77fbd;
+            --adapter: #65bdda;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #fdfcf9;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            margin: 0;
+            color: var(--text);
+            font-family: "BIZ UDPGothic", "Yu Gothic", "YuGothic", sans-serif;
+            background:
+                radial-gradient(circle at 12% 3%, rgba(202, 238, 251, .55), transparent 25rem),
+                radial-gradient(circle at 88% 8%, rgba(255, 226, 178, .42), transparent 25rem),
+                #f7f7f2;
+            line-height: 1.85;
         }
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
+        a, a:visited { color: inherit; text-decoration: none !important; }
+        img { max-width: 100%; }
+        button { font: inherit; }
+        .site-header {
+            width: min(1060px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 54px 0 30px;
+            text-align: center;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .site-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            color: var(--ink);
+            font-size: clamp(28px, 5vw, 54px);
+            font-weight: 900;
+            letter-spacing: .04em;
         }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        .site-mark small { font-size: .32em; letter-spacing: .12em; }
+        .site-header h1 { margin: 0; color: #263733; font-size: clamp(21px, 3vw, 32px); }
+        .site-header > p { max-width: 700px; margin: 12px auto 0; color: var(--muted); font-size: 14px; }
+        .contents {
+            margin-top: 28px;
+            padding: 18px;
+            border: 1px solid rgba(47, 125, 92, .18);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .86);
+            box-shadow: 0 15px 36px rgba(31, 65, 54, .08);
+            text-align: left;
+        }
+        .contents-header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        .contents-header h2 { margin: 0; color: var(--ink); font-size: 18px; }
+        .contents-header span { color: #89938f; font-size: 10px; }
+        .contents ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+        .contents a {
+            display: flex;
+            min-height: 54px;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 11px;
+            border: 1px solid #e1e9e6;
+            border-radius: 12px;
+            background: #fbfdfc;
+            color: #35504a;
+            font-size: 12px;
+            font-weight: 700;
+            transition: transform .18s ease, border-color .18s ease, background .18s ease;
+        }
+        .contents a:hover, .contents a:focus-visible { transform: translateY(-2px); border-color: #8fb8a9; background: #fff; outline: none; }
+        .contents-number { display: grid; width: 26px; height: 26px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; font-size: 10px; }
+        main { width: min(1060px, calc(100% - 32px)); margin: 0 auto; padding: 10px 0 80px; }
+        .guide-section {
+            scroll-margin-top: 18px;
+            margin: 0 0 26px;
+            padding: clamp(18px, 3vw, 30px);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .93);
+            box-shadow: 0 15px 35px rgba(36, 58, 51, .07);
+        }
+        .section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+        .section-heading span { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #eaf3ef; color: var(--accent); font-size: 13px; font-weight: 900; }
+        .section-heading h2 { margin: 0; color: var(--ink); font-size: clamp(20px, 2.7vw, 29px); line-height: 1.35; }
+        .guide-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.15fr); align-items: center; gap: clamp(18px, 4vw, 38px); }
+        .guide-section:nth-of-type(even) .guide-visual { order: 2; }
+        .guide-copy {
+            position: relative;
+            padding: 20px 22px;
+            border: 1px solid #e7dfca;
+            border-radius: 16px;
+            background:
+                linear-gradient(90deg, transparent 0 27px, rgba(213, 115, 104, .14) 27px 28px, transparent 28px),
+                repeating-linear-gradient(180deg, #fffefb 0 29px, #e8ece7 29px 30px);
+            color: #334641;
+            box-shadow: 5px 6px 16px rgba(73, 61, 42, .07);
+            font-size: 14px;
+        }
+        .guide-copy h3 { margin: 0 0 10px; color: #815c2e; font-size: 16px; line-height: 1.5; }
+        .guide-copy p { margin: 0 0 11px; }
+        .guide-copy p:last-child { margin-bottom: 0; }
+        .guide-copy strong { color: var(--ink); }
+        .guide-visual { margin: 0; }
+        .zoom-image-button {
+            display: block;
+            width: 100%;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+            border-radius: 16px;
+            background: #fff;
+            cursor: zoom-in;
+            box-shadow: 0 9px 24px rgba(26, 50, 43, .12);
+        }
+        .zoom-image-button img { display: block; width: 100%; height: auto; }
+        .guide-visual figcaption { margin-top: 8px; color: #7a8782; font-size: 10px; text-align: center; }
+        .compact-points { display: grid; gap: 7px; margin: 13px 0 0; padding: 0; list-style: none; }
+        .compact-points li { position: relative; padding-left: 17px; }
+        .compact-points li::before { content: "●"; position: absolute; left: 0; color: #74a68e; font-size: 8px; top: .55em; }
+        .mode-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+        .mode-card { scroll-margin-top: 18px; padding: 14px; border: 1px solid; border-radius: 14px; background: #fff; }
+        .mode-card h3 { margin: 0 0 6px; font-size: 14px; line-height: 1.45; }
+        .mode-card p { margin: 0; color: #68736f; font-size: 11px; line-height: 1.7; }
+        .mode-card--wonder { border-color: #f5d481; } .mode-card--wonder h3 { color: #b97200; }
+        .mode-card--keeper { border-color: #a9bfd2; } .mode-card--keeper h3 { color: var(--keeper); }
+        .mode-card--nurturer { border-color: #e8b7d7; } .mode-card--nurturer h3 { color: #b54f90; }
+        .mode-card--adapter { border-color: #afd9e7; } .mode-card--adapter h3 { color: #347f9b; }
+        .sub-note { scroll-margin-top: 18px; margin-top: 16px; padding: 14px 16px; border-left: 4px solid #8ead9e; border-radius: 10px; background: #f5faf7; color: #466158; font-size: 12px; }
+        .sub-note strong { color: var(--ink); }
+        .site-footer { padding: 36px 16px 50px; color: #6c7773; font-size: 11px; text-align: center; }
+        .site-footer a { display: inline-flex; margin-bottom: 12px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; }
+        .image-modal {
+            width: min(94vw, 1240px);
+            max-width: none;
+            padding: 0;
+            border: 0;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .35);
+        }
+        .image-modal::backdrop { background: rgba(7, 22, 18, .78); backdrop-filter: blur(5px); }
+        .image-modal-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #e3e8e6; }
+        .image-modal-bar strong { color: var(--ink); font-size: 13px; }
+        .image-modal-bar button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #d7dfdc; border-radius: 50%; background: #f5f7f6; color: #1d4a3d; font-size: 21px; cursor: pointer; }
+        .image-modal img { display: block; width: 100%; max-height: calc(90vh - 62px); object-fit: contain; background: #fff; }
+        @media (max-width: 800px) {
+            .contents ol { grid-template-columns: repeat(2, 1fr); }
+            .guide-layout { grid-template-columns: 1fr; }
+            .guide-section:nth-of-type(even) .guide-visual { order: initial; }
+            .mode-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+            .site-header, main { width: min(100% - 20px, 1060px); }
+            .contents ol { grid-template-columns: 1fr; }
+            .mode-cards { grid-template-columns: 1fr; }
+            .guide-copy { padding: 17px 17px 17px 20px; font-size: 13px; }
         }
     </style>
 </head>
-<body class="text-stone-800 min-h-screen flex flex-col items-center">
-
-    <!-- ヘッダー -->
-    <header class="w-full max-w-3xl pt-12 pb-6 px-6 text-center flex flex-col items-center fade-in">
-        <div class="mb-4 flex justify-center items-center">
-            <img src="https://ninin-cc.github.io/img/riesm.png" alt="RIESM™ logo" class="w-full max-w-[180px] h-auto object-contain">
-        </div>
-        
-        <span class="inline-block bg-stone-800 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-sm">受検済みの方専用</span>
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-stone-800">
-            コックピットを手にしたあなたへ
-        </h1>
-        <p class="text-sm md:text-base text-stone-600 leading-relaxed mb-6">
-            RIESM™の受検、お疲れ様でした。<br class="hidden md:block">
-            このページでは、お手元のレポート（コックピット）をより深く読み解き、<br class="hidden md:block">
-            日常の関係性やキャリアに活かしていくためのヒントをご案内します。
-        </p>
-        
-        <div class="w-full h-px bg-stone-200 mt-2 mb-2 max-w-md mx-auto"></div>
-
-        <nav class="mt-5 flex max-w-2xl flex-wrap justify-center gap-2 text-xs font-bold" aria-label="RIESM用語解説メニュー">
-            <a href="#term-cockpit" class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-sky-700 hover:bg-sky-100">コックピット</a>
-            <a href="#term-modes" class="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-rose-700 hover:bg-rose-100">4つのモード</a>
-            <a href="#term-interest-faucet" class="rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-orange-700 hover:bg-orange-100">興味の蛇口</a>
-            <a href="#term-digital-mode" class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-700 hover:bg-emerald-100">デジタル・モード</a>
+<body>
+    <header class="site-header">
+        <div class="site-mark" aria-label="RIESM リズム">RIESM™ <small>リズム</small></div>
+        <h1>受検された方への解説・ご案内</h1>
+        <p>レポートに登場する用語を、短い文章と画像で順番に確認できます。画像を押すと大きく表示されます。</p>
+        <nav class="contents" aria-label="ページ内目次">
+            <div class="contents-header"><h2>目次</h2><span>項目を選ぶと説明へ移動します</span></div>
+            <ol>
+                <li><a href="#about-riesm"><span class="contents-number">1</span>RIESMとは</a></li>
+                <li><a href="#term-modes"><span class="contents-number">2</span>モード｜心の元気の使い方</a></li>
+                <li><a href="#term-mode-order"><span class="contents-number">3</span>フロントから順に外界と接する</a></li>
+                <li><a href="#term-front"><span class="contents-number">4</span>フロントとは</a></li>
+                <li><a href="#term-backs"><span class="contents-number">5</span>バックスとは</a></li>
+                <li><a href="#term-stand"><span class="contents-number">6</span>スタンドとは</a></li>
+                <li><a href="#term-interest-faucet"><span class="contents-number">7</span>興味の蛇口</a></li>
+                <li><a href="#term-cockpit"><span class="contents-number">8</span>コックピットの説明</a></li>
+                <li><a href="#term-digital-mode"><span class="contents-number">9</span>デジタル・モード</a></li>
+            </ol>
         </nav>
     </header>
 
-    <main class="w-full max-w-4xl px-6 flex-grow fade-in" style="animation-delay: 0.1s;">
-        
-        <span id="cockpit-guide" class="block scroll-mt-6" aria-hidden="true"></span>
-        <section class="mb-16 scroll-mt-6" id="term-cockpit">
-            <div class="mb-6 flex items-center">
-                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 font-bold text-sky-600">1</div>
-                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">コックピットの見方</h2>
-            </div>
-
-            <div class="glass-panel rounded-2xl border-t-4 border-t-sky-400 p-6 shadow-sm md:p-8">
-                <img src="./img/riesm-cockpit-guide.png" alt="RIESMコックピットの各部と役割の読み取り方" class="mb-6 h-auto w-full rounded-xl border border-stone-200 bg-white shadow-sm">
-                <div class="grid gap-5 text-sm leading-relaxed text-stone-600 md:grid-cols-2">
-                    <div>
-                        <h3 class="mb-2 font-bold text-stone-800">心のエネルギーの流れを一枚で見る</h3>
-                        <p>コックピットは、6種類の「興味の蛇口」から生まれるエネルギーを、4つのモードや24の役割でどのように使いやすいかを表した全体図です。</p>
-                    </div>
-                    <div>
-                        <h3 class="mb-2 font-bold text-stone-800">タイプを決めつける診断ではありません</h3>
-                        <p>数値は優劣や「できる・できない」を示すものではなく、現在その役割をどのくらい自然に使いやすいか、使うとどのくらい疲れやすいかを読むための目安です。</p>
-                    </div>
-                </div>
-                <div class="mt-6 rounded-xl border border-sky-100 bg-sky-50 p-4 text-xs leading-relaxed text-sky-900">
-                    <strong>読み取りの要点：</strong> 興味の蛇口は比較的安定した傾向ですが、年単位で変わることがあります。4つのモードは、環境・役割・疲労やストレスの影響をより受けやすく、今の状態に応じて動きます。
-                </div>
-                <img src="./img/riesm-role-gradient.png" alt="役割を使うときの疲れやすさから自然にできるまでの目安" class="mt-6 h-auto w-full rounded-lg border border-stone-200 bg-white">
-            </div>
-        </section>
-
-        <section class="mb-16 scroll-mt-6" id="term-modes">
-            <div class="mb-6 flex items-center">
-                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 font-bold text-rose-600">2</div>
-                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">4つのモード</h2>
-            </div>
-            <p class="mb-6 px-2 text-sm leading-relaxed text-stone-600">4つのモードは、心のエネルギーを外の世界でどのように使いやすいかを表します。どのモードも生きていくために必要な働きであり、優劣はありません。</p>
-            <img src="./img/riesm-four-modes.png" alt="ワンダー、キーパー、ナーチャー、アダプターの4つのモード" class="mb-6 h-auto w-full rounded-2xl border border-stone-200 bg-white shadow-sm">
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <article id="term-wonder" class="scroll-mt-6 rounded-xl border border-amber-200 bg-white p-5 shadow-sm">
-                    <h3 class="mb-2 font-bold text-amber-700">ワンダー｜楽しみたい</h3>
-                    <p class="text-xs leading-relaxed text-stone-600">自由・発見・挑戦へ向かうモード。面白さを見つけ、まず試してみる軽やかさや、新しい可能性を広げる力として表れます。</p>
-                </article>
-                <article id="term-keeper" class="scroll-mt-6 rounded-xl border border-blue-200 bg-white p-5 shadow-sm">
-                    <h3 class="mb-2 font-bold text-blue-700">キーパー｜守りたい・守らせたい</h3>
-                    <p class="text-xs leading-relaxed text-stone-600">信念・論理・規律を大切にするモード。筋道を立て、基準や約束を守り、物事を確かな形に整える力として表れます。</p>
-                </article>
-                <article id="term-nurturer" class="scroll-mt-6 rounded-xl border border-pink-200 bg-white p-5 shadow-sm">
-                    <h3 class="mb-2 font-bold text-pink-700">ナーチャー｜育みたい・受容されたい</h3>
-                    <p class="text-xs leading-relaxed text-stone-600">保護・調和へ向かうモード。人や物事を育み、相手の気持ちを受け止め、安心できる関係や場をつくる力として表れます。</p>
-                </article>
-                <article id="term-adapter" class="scroll-mt-6 rounded-xl border border-slate-300 bg-white p-5 shadow-sm">
-                    <h3 class="mb-2 font-bold text-slate-700">アダプター｜安心したい・させてほしい</h3>
-                    <p class="text-xs leading-relaxed text-stone-600">洞察・適応へ向かうモード。状況や相手をよく見て、安全を確かめながら、その場に合う振る舞いを選ぶ力として表れます。</p>
-                </article>
-            </div>
-
-            <div class="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm md:p-8">
-                <img src="./img/riesm-front-modes.png" alt="フロントを中心に4つのモードを使って外の世界と関わるイメージ" class="mb-6 h-auto w-full rounded-xl border border-stone-100">
-                <div class="grid gap-3 md:grid-cols-3">
-                    <div id="term-front" class="scroll-mt-6 rounded-xl bg-sky-50 p-4">
-                        <h3 class="mb-1 text-sm font-bold text-sky-800">フロント</h3>
-                        <p class="text-xs leading-relaxed text-stone-600">現在もっとも使いやすく、外の世界との関わりで前面に出やすいモードです。</p>
-                    </div>
-                    <div id="term-stand" class="scroll-mt-6 rounded-xl bg-emerald-50 p-4">
-                        <h3 class="mb-1 text-sm font-bold text-emerald-800">スタンド</h3>
-                        <p class="text-xs leading-relaxed text-stone-600">自分の平均に近く、必要な場面で比較的使いやすい待機中のモードです。</p>
-                    </div>
-                    <div id="term-backs" class="scroll-mt-6 rounded-xl bg-violet-50 p-4">
-                        <h3 class="mb-1 text-sm font-bold text-violet-800">バックス</h3>
-                        <p class="text-xs leading-relaxed text-stone-600">使えないモードではありません。今は使う際に、より意識やエネルギーが必要になりやすい位置です。</p>
-                    </div>
-                </div>
-                <div id="term-autobalancer" class="mt-5 scroll-mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-950">
-                    <strong>オートバランサー：</strong> 状況に合わせてモードを自動的に切り替え、バランスを取ろうとする働きです。元気でストレスが少なく、心に余裕があるほど、フロント以外のモードも使いやすくなります。自分のフロントが満たされる行動は、ストレスを下げる助けになります。
+    <main>
+        <section id="about-riesm" class="guide-section">
+            <div class="section-heading"><span>01</span><h2>RIESM™とは</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="RIESM™とは">
+                        <img src="./img/riesm-preface-visual.png" alt="RIESMとは何かと、RIESMを構成する5つの視点の説明">
+                    </button>
+                    <figcaption>画像を押すと拡大できます</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>人をひとつのタイプへ当てはめるものではありません</h3>
+                    <p>RIESM™は、<strong>役割・興味・モード・ストレスへの反応・ものの見方</strong>をまとめて捉えるモデルです。</p>
+                    <p>受検する方を「パイロット」と呼びます。現在地を知り、進む方向を選ぶのはパイロットであるあなた自身です。</p>
                 </div>
             </div>
         </section>
 
-        <section class="mb-16 scroll-mt-6" id="term-interest-faucet">
-            <div class="mb-6 flex items-center">
-                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600">3</div>
-                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">興味の蛇口</h2>
-            </div>
-            <p class="mb-6 px-2 text-sm leading-relaxed text-stone-600">興味の蛇口は、「何に心が動き、どのような活動へエネルギーを注ぎやすいか」を6つの領域で捉えたものです。蛇口の大きさは能力の有無ではなく、興味の向きやエネルギーの湧きやすさを表します。</p>
-
-            <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-                <div class="grid grid-cols-1 divide-y divide-stone-100 md:grid-cols-2 md:divide-x md:divide-y-0">
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🛠️</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">現実的｜体験・体感・拡張現実</h3><p class="text-xs leading-relaxed text-stone-500">身体を動かす、道具を扱う、現場で確かめるなど、行動を通して世界を感じることへの興味です。</p></div></div>
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🔬</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">研究的｜探究・学習・好奇心</h3><p class="text-xs leading-relaxed text-stone-500">仕組みや原理を調べ、考え、理解を深めることへの興味です。</p></div></div>
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🎨</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">芸術的｜表現・創造・独創</h3><p class="text-xs leading-relaxed text-stone-500">枠を越えて、感性やアイデアを自分らしい形で表現することへの興味です。</p></div></div>
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🤝</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">社会的｜支援・協働・貢献</h3><p class="text-xs leading-relaxed text-stone-500">人を支え、協力し、誰かや社会の役に立つことへの興味です。</p></div></div>
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">🚀</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">企業的｜影響・達成・突破</h3><p class="text-xs leading-relaxed text-stone-500">目標を掲げ、働きかけ、成果や変化を生み出すことへの興味です。</p></div></div>
-                    <div class="flex items-start space-x-3 p-5"><div class="text-2xl">📋</div><div><h3 class="mb-1 text-sm font-bold text-stone-800">慣習的｜ルール・枠組・整合</h3><p class="text-xs leading-relaxed text-stone-500">手順や基準に沿って、情報や環境を正確に整えることへの興味です。</p></div></div>
+        <section id="term-modes" class="guide-section">
+            <div class="section-heading"><span>02</span><h2>モード｜心の元気の使い方</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="4つのモード">
+                        <img src="./img/riesm-mode-energy-guide.png" alt="4つのモードは互いに増減し、もっとも大きなモードがフロントに出やすいことの説明">
+                    </button>
+                    <figcaption>4つのモードには優劣がなく、状況によって変化します</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>4つは、どれも必要な心の働きです</h3>
+                    <p>ワンダー、キーパー、ナーチャー、アダプターは、その時々で増減します。大きく表れているところが、今使いやすいモードです。</p>
+                    <ul class="compact-points">
+                        <li>各モードに「良い・悪い」はありません。</li>
+                        <li>傾向はありつつも、比較的短い期間でも動きます。</li>
+                        <li id="term-autobalancer">状況に合わせて自動的に切り替える働きを「オートバランサー」と呼びます。</li>
+                    </ul>
                 </div>
             </div>
-            <div class="mt-5 rounded-xl border border-orange-100 bg-orange-50 p-4 text-xs leading-relaxed text-orange-950">
-                <strong>理論背景：</strong> 興味の捉え方はジョン・L・ホランドの興味・職業選択に関する心理学（RIASEC）を、モードの捉え方はエリック・バーンの交流分析を参考にしています。RIESM™では、現代の生活・職場・デジタル環境に合わせたアプローチとして構成しています。
+            <div class="mode-cards" aria-label="4つのモードの説明">
+                <article id="term-wonder" class="mode-card mode-card--wonder"><h3>😆 ワンダー｜楽しみたい</h3><p>自由・発見・挑戦へ向かい、面白さや新しい可能性を広げます。</p></article>
+                <article id="term-keeper" class="mode-card mode-card--keeper"><h3>🤔 キーパー｜守りたい</h3><p>信念・論理・規律を大切にし、物事を確かな形へ整えます。</p></article>
+                <article id="term-nurturer" class="mode-card mode-card--nurturer"><h3>😊 ナーチャー｜育みたい</h3><p>人や物事を育み、気持ちを受け止め、安心できる場をつくります。</p></article>
+                <article id="term-adapter" class="mode-card mode-card--adapter"><h3>🧐 アダプター｜安心したい</h3><p>状況をよく見て安全を確かめ、その場に合う振る舞いを選びます。</p></article>
             </div>
+            <div id="term-breath" class="sub-note"><strong>ブレス：</strong>「自分の今のモードは何かな？」と、一呼吸おいて感じてみる短いワークです。</div>
+            <div id="riesm-principles" class="sub-note"><strong>大切な原則：</strong>モードの大小は優劣ではありません。固定された評価でもなく、環境・役割・体調によって変化します。</div>
         </section>
 
-        <section class="mb-16 scroll-mt-6" id="term-digital-mode">
-            <div class="mb-6 flex items-center">
-                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-600">4</div>
-                <h2 class="text-xl font-bold text-stone-800 md:text-2xl">デジタル・モード</h2>
-            </div>
-            <div class="glass-panel rounded-2xl border-t-4 border-t-emerald-400 p-6 shadow-sm md:p-8">
-                <img src="./img/riesm-digital-mode.png" alt="テキスト、オンライン、デジタル全般の得意意識や疲れやすさを表すデジタル・モード" class="mb-6 h-auto w-full rounded-xl border border-stone-200 bg-white">
-                <p class="text-sm leading-relaxed text-stone-600">デジタル・モードは、テキストコミュニケーション、オンラインでの関わり、デジタル全般に対する<strong class="text-stone-800">得意意識や疲れやすさ</strong>を読み取る参考グラフです。技術的に「できる・できない」を判定するものではなく、現在の主観的な安心感や負担感を表します。固定値ではなく、経験・環境・その時の状態によって変わります。</p>
-            </div>
-
-            <div id="riesm-principles" class="mt-8 scroll-mt-6 rounded-2xl bg-stone-800 p-6 text-white shadow-sm md:p-8">
-                <h3 class="mb-4 text-lg font-bold">RIESM™を読むときの原則</h3>
-                <ul class="space-y-3 text-sm leading-relaxed text-stone-200">
-                    <li>・すべての個性は、生きていくために必要があって身についたものです。</li>
-                    <li>・モードや興味の大小に、良い・悪い、優れている・劣っているという序列はありません。</li>
-                    <li>・結果は人を固定するラベルではなく、環境や状況によって変化する「今の状態」を読むための手がかりです。</li>
-                    <li>・相手のフロントが受け取りやすい言葉を選ぶと、互いの違いを尊重したコミュニケーションにつながります。</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- ========================================== -->
-        <!-- 5. 関連ツール・アプリケーション -->
-        <!-- ========================================== -->
-        <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mr-3">5</div>
-                <h2 class="text-xl md:text-2xl font-bold text-stone-800">さらに活用するためのツール</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                
-                <!-- RIESM mini -->
-                <a href="#" class="group block bg-white rounded-2xl border-2 border-transparent hover:border-emerald-300 shadow-sm hover:shadow-md transition-all p-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <svg class="w-16 h-16 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-stone-800 mb-2 flex items-center">
-                        RIESM™ mini
-                        <svg class="w-4 h-4 ml-1 text-stone-400 group-hover:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </h3>
-                    <p class="text-sm text-stone-500 mb-4 leading-relaxed">
-                        日々のちょっとした振り返りや、特定の相手との関係性を手軽にチェックできる簡易版ツールです。
-                    </p>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">ツールを開く</span>
-                </a>
-
-                <!-- RoleTRADE -->
-                <a href="#" class="group block bg-stone-800 rounded-2xl border-2 border-transparent hover:border-stone-500 shadow-sm hover:shadow-lg transition-all p-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-white mb-2 flex items-center">
-                        RoleTRADE
-                        <svg class="w-4 h-4 ml-1 text-stone-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </h3>
-                    <p class="text-sm text-stone-300 mb-4 leading-relaxed">
-                        役割（Role）を交換・共有しあう体験型ワーク。チームビルディングや相互理解のゲームとして活用できます。
-                    </p>
-                    <span class="text-xs font-bold text-stone-800 bg-white px-3 py-1.5 rounded-full">詳細を見る</span>
-                </a>
-
-            </div>
-        </section>
-
-        <!-- ========================================== -->
-        <!-- 6. 優待・セッション案内 -->
-        <!-- ========================================== -->
-        <div class="w-full h-px bg-stone-200 mt-12 mb-10 max-w-2xl mx-auto"></div>
-
-        <section class="mb-12">
-            <h2 class="text-xl font-bold text-stone-800 mb-6 text-center">大切な方にも、この体験を</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- 優待コード案内 -->
-                <div class="bg-pink-50 border border-pink-100 rounded-2xl p-6 relative">
-                    <div class="absolute -top-3 left-4 bg-pink-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider">
-                        受検者限定特典
-                    </div>
-                    <h3 class="font-bold text-stone-800 mb-3 mt-2 text-base">ご紹介優待コード</h3>
-                    <p class="text-sm text-stone-600 mb-4 leading-relaxed">
-                        あなたの大切なご家族、ご友人、職場の同僚の方にもRIESM™をご紹介ください。<br>
-                        以下のリンクからお申し込みいただくと、通常価格よりお得な<strong class="text-pink-600">3,000円（税込）</strong>でご受検いただけます。
-                    </p>
-                    <div class="bg-white border border-stone-200 rounded-lg p-3 text-center mb-4">
-                        <p class="text-xs text-stone-500 mb-1">ご紹介用URL（コピーして共有してください）</p>
-                        <input type="text" readonly value="https://ninin-cc.github.io/riesm_guide.html#plans" class="w-full bg-stone-50 text-stone-700 text-xs p-2 rounded border border-stone-200 text-center cursor-copy hover:bg-stone-100 transition-colors" onclick="this.select(); document.execCommand('copy'); alert('URLをコピーしました');">
-                    </div>
+        <section id="term-mode-order" class="guide-section">
+            <div class="section-heading"><span>03</span><h2>フロントから順に外界と接する</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="フロント・スタンド・バックスの位置関係">
+                        <img src="./img/riesm-front-guide.png" alt="フロント、スタンド、バックスの位置関係と外界との接点の説明">
+                    </button>
+                    <figcaption>最初に世界へ触れる接点が「フロント」です</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>私たちは、フロントの大きいところから順に外界と接します</h3>
+                    <p>前面に出やすい<strong>フロント</strong>、そのそばで支える<strong>スタンド</strong>、内側に控える<strong>バックス</strong>を、状況に応じて使いながら外の世界と接しています。</p>
+                    <p>これは「強い性格」の順番ではありません。今、世界へ触れるときに使いやすい順番です。</p>
                 </div>
-
-                <!-- セッション案内 -->
-                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-stone-800 mb-2 text-base">RIESM™セッション（50分）</h3>
-                    <div class="flex items-baseline space-x-2 mb-3">
-                        <span class="text-2xl font-black text-rose-600 tracking-tight">7,000<span class="text-lg">円</span></span>
-                        <span class="text-[10px] text-stone-400 font-medium">（税込 / 1回）</span>
-                    </div>
-                    <p class="text-xs text-stone-600 mb-5 leading-relaxed">
-                        プロのカウンセラーによるオンライン個別セッションです。<br>
-                        結果を読み解くだけでなく、対話を通してあなただけの強みや、これからの行動への気づきをサポートします。<br>
-                        心の定期メンテナンスとしてもご利用ください。
-                    </p>
-                    <a href="https://buy.stripe.com/bJe14mgthdxddJKfwu9Zm06" class="block w-full text-center bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 rounded-lg transition-all shadow-sm active:scale-95 text-sm">
-                        セッションを申し込む
-                    </a>
-                </div>
-
             </div>
         </section>
 
-        <!-- トップへ戻るリンク -->
-        <div class="mb-12 text-center mt-12">
-            <a href="index.html" class="inline-flex items-center space-x-2 text-stone-400 hover:text-stone-600 transition-colors py-2 px-4 text-sm font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
-                <span>サイトトップへ戻る</span>
-            </a>
-        </div>
+        <section id="term-front" class="guide-section">
+            <div class="section-heading"><span>04</span><h2>フロントとは</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="フロントとは">
+                        <img src="./img/riesm-front-definition-guide.png" alt="フロントは世界と接するとき前面に出やすく、環境によって変化する基本的なモードであることの説明">
+                    </button>
+                    <figcaption>その人らしさと、環境による変化の両方を見ます</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>表情や話し方から感じ取りやすい、基本的なモード</h3>
+                    <p>フロントは、その人が世界と接するとき、前面に出やすいモードです。固定された性格ではなく、状況や環境によって変化します。</p>
+                    <p>たとえば異動や転職の直後は、いつも明るい人でも安全を確かめるアダプターが前へ出ることがあります。</p>
+                    <p id="term-front-observation"><strong>やってみましょう：</strong>身近な人は、今どのモードがフロントに出ているように感じますか。その人らしさと環境の両方を想像してみましょう。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="term-backs" class="guide-section">
+            <div class="section-heading"><span>05</span><h2>バックスとは</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="バックスとは">
+                        <img src="./img/riesm-backs-guide.png" alt="バックスはその人の内側にあり、環境や役割によって前面へ現れるモードであることの説明">
+                    </button>
+                    <figcaption>見えにくいだけで、使えない・存在しないという意味ではありません</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>内側にあり、普段は前面に出にくいモード</h3>
+                    <p>バックスは、その人の中にありながら、普段は表から見えにくいモードです。</p>
+                    <p>環境、役割、相手との関係が変わると前へ出ることがあります。普段見えない可能性にも目を向けてみましょう。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="term-stand" class="guide-section">
+            <div class="section-heading"><span>06</span><h2>スタンドとは</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="スタンドとは">
+                        <img src="./img/riesm-stand-guide.png" alt="スタンドがフロントを支え、必要に応じて入れ替わることの説明">
+                    </button>
+                    <figcaption>フロントのすぐそばで、行動や判断を支えます</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>必要な場面ですぐ前へ出やすい、待機中のモード</h3>
+                    <p>スタンドは、普段から使っていて、フロントのそばで行動や判断を支えるモードです。</p>
+                    <p>話題、相手、求められる役割が変わると、フロントと入れ替わることもあります。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="term-interest-faucet" class="guide-section">
+            <div class="section-heading"><span>07</span><h2>興味の蛇口</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="興味の力・6つの蛇口">
+                        <img src="./img/interest-faucet-guide.png" alt="現実的、慣習的、社会的、研究的、企業的、芸術的の6つの興味の蛇口の説明">
+                    </button>
+                    <figcaption>何へ自然に関心が向き、エネルギーが湧きやすいかを見ます</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>人は、興味のあるところから心の元気を取り出します</h3>
+                    <p>興味の蛇口は、<strong>体験・ルール・支援・探究・影響・表現</strong>の6方向から、どこへ自然に関心が向くのかを捉えます。</p>
+                    <p>蛇口の開き方は能力の優劣ではありません。経験、環境、注力することによって変化します。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="term-cockpit" class="guide-section">
+            <div class="section-heading"><span>08</span><h2>コックピットの説明</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="RIESMコックピット">
+                        <img src="./img/riesm-cockpit-guide.png" alt="RIESMコックピットの各部と読み取り方の説明">
+                    </button>
+                    <figcaption>興味、モード、役割、疲れやすさを一枚で見ます</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>心のエネルギーの流れを、一枚の地図にしたもの</h3>
+                    <p>コックピットは、6つの興味の蛇口から生まれるエネルギーを、4つのモードや24の役割でどう使いやすいかを表します。</p>
+                    <p>タイプを決める診断ではありません。今の自分を理解し、自然な役割と疲れやすい役割を見分けるための地図です。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="term-digital-mode" class="guide-section">
+            <div class="section-heading"><span>09</span><h2>デジタル・モード</h2></div>
+            <div class="guide-layout">
+                <figure class="guide-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="デジタル・モード">
+                        <img src="./img/riesm-digital-mode.png" alt="テキスト、オンライン、デジタル全般への得意意識や疲れやすさを表すデジタル・モードの説明">
+                    </button>
+                    <figcaption>できる・できないではなく、本人の得意意識や好みです</figcaption>
+                </figure>
+                <div class="guide-copy">
+                    <h3>デジタルでのコミュニケーションの好み</h3>
+                    <p>テキスト、オンライン会議、デジタル全般について、本人がどう感じているかを捉えます。</p>
+                    <p>「チャットだけでなく電話もほしい」「オンラインも良いけれど対面が安心」など、お互いの好みを気遣うことも思いやりのひとつです。</p>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- フッター -->
-    <footer class="w-full py-8 px-6 text-center border-t border-stone-100 bg-white mt-auto">
-        <div class="text-xs text-stone-400 space-y-1 mb-3">
-            <p>合同会社ninin consulting ＆ counseling</p>
-            <p>法人番号 9011503006532</p>
-        </div>
-        <p class="text-xs text-stone-400 tracking-widest uppercase">
-            © 2025 ninin LLC. All Rights Reserved.
-        </p>
+    <footer class="site-footer">
+        <a href="https://ninin-cc.github.io/riesm/index.html">この解説ページの先頭へ戻る</a>
+        <div>©ninin式 RIESM™　AIでの学習、及びSNS／インターネット等への転載・公開を禁じます。</div>
     </footer>
 
+    <dialog id="guideImageModal" class="image-modal" aria-labelledby="guideImageModalTitle">
+        <div class="image-modal-bar">
+            <strong id="guideImageModalTitle">説明画像</strong>
+            <button id="guideImageModalClose" type="button" aria-label="拡大画像を閉じる">×</button>
+        </div>
+        <img id="guideImageModalImage" alt="">
+    </dialog>
+
+    <script>
+        (() => {
+            const modal = document.getElementById('guideImageModal');
+            const modalImage = document.getElementById('guideImageModalImage');
+            const modalTitle = document.getElementById('guideImageModalTitle');
+            const closeButton = document.getElementById('guideImageModalClose');
+            let previousFocus = null;
+
+            function closeModal() {
+                if (!modal?.open) return;
+                modal.close();
+                previousFocus?.focus?.();
+            }
+
+            document.querySelectorAll('.zoom-image-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const image = button.querySelector('img');
+                    if (!image || !modal) return;
+                    previousFocus = button;
+                    modalImage.src = image.currentSrc || image.src;
+                    modalImage.alt = image.alt || '';
+                    modalTitle.textContent = button.dataset.zoomTitle || image.alt || '説明画像';
+                    modal.showModal();
+                    closeButton.focus();
+                });
+            });
+            closeButton?.addEventListener('click', closeModal);
+            modal?.addEventListener('click', event => {
+                const rect = modal.getBoundingClientRect();
+                const outside = event.clientX < rect.left || event.clientX > rect.right
+                    || event.clientY < rect.top || event.clientY > rect.bottom;
+                if (outside) closeModal();
+            });
+        })();
+    </script>
 </body>
 </html>
