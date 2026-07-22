@@ -148,6 +148,11 @@
         .mode-card--adapter { border-color: #afd9e7; } .mode-card--adapter h3 { color: #347f9b; }
         .sub-note { scroll-margin-top: 18px; margin-top: 16px; padding: 14px 16px; border-left: 4px solid #8ead9e; border-radius: 10px; background: #f5faf7; color: #466158; font-size: 12px; }
         .sub-note strong { color: var(--ink); }
+        .breath-note { padding: 16px; }
+        .breath-note p { margin: 0; }
+        .breath-visual { margin: 13px 0 0; }
+        .breath-visual .zoom-image-button { border-radius: 14px; box-shadow: 0 7px 20px rgba(26, 50, 43, .1); }
+        .breath-visual figcaption { margin-top: 7px; color: #7a8782; font-size: 10px; text-align: center; }
         .site-footer { padding: 36px 16px 50px; color: #6c7773; font-size: 11px; text-align: center; }
         .site-footer a { display: inline-flex; margin-bottom: 12px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; }
         .image-modal {
@@ -242,7 +247,15 @@
                 <article id="term-nurturer" class="mode-card mode-card--nurturer"><h3>😊 ナーチャー｜育みたい</h3><p>人や物事を育み、気持ちを受け止め、安心できる場をつくります。</p></article>
                 <article id="term-adapter" class="mode-card mode-card--adapter"><h3>🧐 アダプター｜安心したい</h3><p>状況をよく見て安全を確かめ、その場に合う振る舞いを選びます。</p></article>
             </div>
-            <div id="term-breath" class="sub-note"><strong>ブレス：</strong>「自分の今のモードは何かな？」と、一呼吸おいて感じてみる短いワークです。</div>
+            <div id="term-breath" class="sub-note breath-note">
+                <p><strong>ブレス：</strong>「自分の今のモードは何かな？」と、一呼吸おいて感じてみる短いワークです。</p>
+                <figure class="breath-visual">
+                    <button class="zoom-image-button" type="button" data-zoom-title="ブレス｜いつでもどこでも一呼吸">
+                        <img src="./img/riesm-breath-guide.png" alt="疲れた時や自分らしくないと感じた時に、自分の今のモードを感じてみるブレスの説明">
+                    </button>
+                    <figcaption>画像を押すと拡大できます</figcaption>
+                </figure>
+            </div>
             <div id="riesm-principles" class="sub-note"><strong>大切な原則：</strong>モードの大小は優劣ではありません。固定された評価でもなく、環境・役割・体調によって変化します。</div>
         </section>
 
