@@ -24,6 +24,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="../js/linkdata.js"></script>
+  <script src="../report/img/riesmQR-data.js"></script>
   
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -69,60 +70,105 @@
     .riesm-mini-mode-card {
       --mode-frame: #ffc000;
       position: relative;
+      width: 100%;
+      aspect-ratio: 91 / 55;
+      box-sizing: border-box;
+      container-type: inline-size;
       overflow: hidden;
-      border: 10px solid var(--mode-frame);
-      border-radius: 24px;
-      background: #fffdf8;
+      border: 0;
+      border-radius: 0;
+      background: var(--mode-frame);
       box-shadow: 0 12px 26px rgba(24, 59, 91, 0.12);
       color: #183c34;
       font-family: "BIZ UDPGothic", "Yu Gothic", "Meiryo", sans-serif;
     }
+    .riesm-mini-mode-card::after {
+      content: "";
+      position: absolute;
+      inset: 1.7cqw;
+      z-index: 0;
+      border-radius: 3.8cqw;
+      background: #fffdf8;
+      pointer-events: none;
+    }
     .riesm-mini-mode-card::before {
       content: "";
       position: absolute;
-      inset: 7px;
+      inset: 2.15cqw;
+      z-index: 4;
       border: 2px solid var(--mode-frame);
-      border-radius: 15px;
+      border-radius: 3.35cqw;
       pointer-events: none;
     }
     .riesm-mini-mode-card__inner {
-      position: relative;
+      position: absolute;
+      inset: 0;
       z-index: 1;
-      padding: 20px 22px 16px;
+      box-sizing: border-box;
+      padding: 3.55cqw 4.2cqw 10.7cqw;
     }
     .riesm-mini-mode-card__brand {
       color: #66736e;
-      font-size: 10px;
+      font-size: clamp(6.5px, 1.9cqw, 10px);
       font-weight: 700;
       letter-spacing: .02em;
     }
     .riesm-mini-mode-card__name {
-      margin: 3px 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 6.2cqw;
+      margin: .25cqw 0 1.15cqw;
+      padding: .45cqw 12.5cqw .65cqw;
+      box-sizing: border-box;
       color: #0d473b;
-      font-size: clamp(18px, 5vw, 25px);
+      font-size: clamp(15px, 4.6cqw, 23px);
       font-weight: 700;
-      line-height: 1.15;
+      line-height: 1.35;
       text-align: center;
+      white-space: nowrap;
+    }
+    .riesm-mini-mode-card__qr {
+      position: absolute;
+      top: 2.55cqw;
+      right: 3.05cqw;
+      z-index: 2;
+      width: 16.5cqw;
+    }
+    .riesm-mini-mode-card__qr img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      margin: 0;
+      object-fit: contain;
     }
     .riesm-mini-mode-card__heading {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin: 0 2px 6px;
+      position: relative;
+      display: block;
+      margin: 2.9cqw .4cqw 1cqw;
     }
     .riesm-mini-mode-card__heading strong {
-      font-size: 18px;
+      font-size: clamp(12px, 3.5cqw, 18px);
       line-height: 1;
     }
-    .riesm-mini-mode-card__heading span,
+    .riesm-mini-mode-card__front,
     .riesm-mini-mode-card__back {
       color: #64716c;
-      font-size: 10px;
+      font-size: clamp(6.5px, 1.9cqw, 10px);
       font-weight: 700;
+    }
+    .riesm-mini-mode-card__front {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 5;
+      line-height: 1;
+      white-space: nowrap;
     }
     .riesm-mini-mode-card__graph {
       position: relative;
-      padding-top: 9px;
+      padding-top: 1.8cqw;
     }
     .riesm-mini-mode-card__average-arrow {
       position: absolute;
@@ -132,26 +178,26 @@
       width: 0;
       height: 0;
       transform: translateX(-50%);
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 11px solid #8bc34a;
+      border-left: clamp(4px, 1.35cqw, 7px) solid transparent;
+      border-right: clamp(4px, 1.35cqw, 7px) solid transparent;
+      border-top: clamp(7px, 2.15cqw, 11px) solid #8bc34a;
     }
     .riesm-mini-mode-card__row {
       display: grid;
-      grid-template-columns: 82px minmax(0, 1fr);
+      grid-template-columns: 16cqw minmax(0, 1fr);
       align-items: center;
-      gap: 8px;
-      min-height: 37px;
+      gap: 1.55cqw;
+      min-height: 6.45cqw;
       border-bottom: 1px solid #dde4e0;
     }
     .riesm-mini-mode-card__label {
-      font-size: 13px;
+      font-size: clamp(8.5px, 2.55cqw, 13px);
       font-weight: 700;
       white-space: nowrap;
     }
     .riesm-mini-mode-card__track {
       position: relative;
-      height: 23px;
+      height: 4.5cqw;
       overflow: hidden;
       border-radius: 10px;
       background: #eef1ef;
@@ -163,8 +209,8 @@
     .riesm-mini-mode-card__guide {
       position: absolute;
       left: var(--average-position);
-      top: 46px;
-      bottom: 25px;
+      top: 9cqw;
+      bottom: 4.8cqw;
       z-index: 0;
       width: 2px;
       transform: translateX(-50%);
@@ -177,36 +223,110 @@
       pointer-events: none;
     }
     .riesm-mini-mode-card__back {
-      margin: 3px 0 0;
+      margin: .55cqw 0 0;
       text-align: right;
     }
+    .riesm-mini-mode-card__back--left {
+      text-align: right;
+    }
+    .riesm-mini-mode-card__footer {
+      position: absolute;
+      left: 4.2cqw;
+      right: 4.2cqw;
+      bottom: 4.25cqw;
+      z-index: 2;
+    }
     .riesm-mini-mode-card__creed {
-      margin: 7px 1px 0;
+      margin: 0 .2cqw;
       color: #263b35;
-      font-size: 8px;
-      line-height: 1.35;
+      font-size: clamp(5.2px, 1.55cqw, 8px);
+      line-height: 1.3;
       white-space: nowrap;
     }
     .riesm-mini-mode-card__copyright {
-      margin-top: 3px;
-      color: #66736e;
-      font-size: 7px;
+      position: absolute;
+      right: 2.1cqw;
+      bottom: .95cqw;
+      z-index: 5;
+      color: #fff;
+      font-size: clamp(4.8px, 1.35cqw, 7px);
       font-weight: 700;
+      line-height: 1.15;
       text-align: right;
+      white-space: nowrap;
+    }
+    .riesm-mini-mode-card-tools {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #dbe5e1;
+      border-radius: 14px;
+      background: #f8fbfa;
+    }
+    .riesm-mini-mode-card-tools__row {
+      display: flex;
+      gap: 8px;
+    }
+    .riesm-mini-mode-card-tools input {
+      min-width: 0;
+      flex: 1;
+      border: 1px solid #b9c9c3;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      color: #183c34;
+      font-size: 14px;
+      outline: none;
+    }
+    .riesm-mini-mode-card-tools input:focus {
+      border-color: #0d6b59;
+      box-shadow: 0 0 0 3px rgba(13, 107, 89, .12);
+    }
+    .riesm-mini-mode-card-tools button {
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .riesm-mini-mode-card-tools button:active {
+      transform: scale(.98);
+    }
+    .riesm-mini-mode-card-tools__apply {
+      background: #0d6b59;
+      color: #fff;
+    }
+    .riesm-mini-mode-card-tools__save {
+      width: 100%;
+      margin-top: 9px;
+      background: #183b5b;
+      color: #fff;
+    }
+    .riesm-mini-mode-card-tools button:disabled {
+      cursor: wait;
+      opacity: .58;
     }
     @media (max-width: 390px) {
-      .riesm-mini-mode-card {
-        border-width: 8px;
+      .riesm-mini-mode-card-tools__row {
+        flex-direction: column;
       }
-      .riesm-mini-mode-card__inner {
-        padding: 18px 16px 13px;
-      }
-      .riesm-mini-mode-card__row {
-        grid-template-columns: 72px minmax(0, 1fr);
-      }
-      .riesm-mini-mode-card__creed {
-        font-size: 6.5px;
-      }
+    }
+    .riesm-history-blocks {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+      flex: none;
+    }
+    .riesm-history-block {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .08);
+    }
+    .riesm-guide-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
     }
   </style>
 </head>
@@ -274,8 +394,20 @@
       N: Object.freeze({ label: 'ナーチャー', color: '#D98BCF', frame: '#F2CFEE' }),
       A: Object.freeze({ label: 'アダプター', color: '#69C7E8', frame: '#CAEEFB' })
     });
+    // report/img/qr_rm_charcoal_real.svg の33×33モジュールを、そのまま
+    // data URL化する。ローカルSVG参照によるcanvas汚染を避け、画像保存にも含める。
+    const RIESM_MINI_QR_MATRIX = '000000000000000000000000000000000/000000000000000000000000000000000/000000000000000000000000000000000/000000000000000000000000000000000/000011111110110111111011111110000/000010000010111000000010000010000/000010111010110110100010111010000/000010111010111001101010111010000/000010111010010100110010111010000/000010000010111011101010000010000/000011111110101010101011111110000/000000000000001000101000000000000/000011001110001000000001011110000/000010010000100101011000110100000/000011111011111110110110111000000/000011101001010010001001101100000/000000001010100110000111011110000/000011111001111110111000100100000/000000000011000110010011111000000/000000101001010010010111101100000/000011111111010110011111111000000/000000000000111101001000100000000/000011111110010110101010100000000/000010000010101100111000111110000/000010111010110110001111111100000/000010111010000101101111001110000/000010111010010101000110010100000/000010000010110010010111111100000/000011111110111110110110001110000/000000000000000000000000000000000/000000000000000000000000000000000/000000000000000000000000000000000/000000000000000000000000000000000';
+    const RIESM_MINI_QR_DATA_URL = (() => {
+      const modules = RIESM_MINI_QR_MATRIX.split('/').flatMap((row, y) =>
+        Array.from(row, (cell, x) =>
+          cell === '1' ? `<rect x="${x}" y="${y}" width="1" height="1"/>` : ''
+        )
+      ).join('');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" shape-rendering="crispEdges"><rect width="33" height="33" fill="#fff"/><g fill="#36454F">${modules}</g></svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    })();
 
-    function buildMiniModeCardRows(scores = {}) {
+    function buildMiniModeCardRows(scores = {}, orderMode = 'score') {
       const sourceOrder = ['W', 'K', 'N', 'A'];
       const rows = sourceOrder.map((type, sourceIndex) => ({
         type,
@@ -284,19 +416,25 @@
         ...MINI_MODE_CARD_META[type]
       }));
       const total = rows.reduce((sum, row) => sum + row.raw, 0);
-      return rows
-        .map(row => ({
+      const normalizedRows = rows.map(row => ({
           ...row,
           scaleMaximum: 40,
           percentage: total > 0
             ? Math.min(40, Math.round((row.raw / total) * 100))
             : 0
-        }))
-        .sort((a, b) => b.raw - a.raw || a.sourceIndex - b.sourceIndex);
+        }));
+      return orderMode === 'fixed'
+        ? normalizedRows
+        : normalizedRows.sort((a, b) => b.raw - a.raw || a.sourceIndex - b.sourceIndex);
     }
 
-    function MiniModeBalanceCard({ scores, frontType }) {
-      const rows = buildMiniModeCardRows(scores);
+    function MiniModeBalanceCard({
+      scores,
+      frontType,
+      displayName = '今のモードバランス',
+      orderMode = 'score'
+    }) {
+      const rows = buildMiniModeCardRows(scores, orderMode);
       const displayed = rows.map(row => row.percentage);
       const average = displayed.length
         ? displayed.reduce((sum, value) => sum + value, 0) / displayed.length
@@ -306,18 +444,25 @@
 
       return (
         <div
+          id="riesm-mini-mode-card"
           className="riesm-mini-mode-card"
           style={{ '--mode-frame': frame, '--average-position': averagePosition }}
-          aria-label="今のモードバランス"
+          aria-label={`${displayName}のモードバランス`}
         >
           <div className="riesm-mini-mode-card__inner">
             <div className="riesm-mini-mode-card__brand">RIESM™ PERSONAL MODE CARD</div>
-            <div className="riesm-mini-mode-card__name">今のモードバランス</div>
+            <div className="riesm-mini-mode-card__qr">
+              <img
+                src={RIESM_MINI_QR_DATA_URL}
+                alt="RIESM QR"
+              />
+            </div>
+            <div className="riesm-mini-mode-card__name">{displayName}</div>
             <div className="riesm-mini-mode-card__heading">
               <strong>4つのモード</strong>
-              <span>フロント側</span>
             </div>
             <div className="riesm-mini-mode-card__graph">
+              <div className="riesm-mini-mode-card__front">フロント側</div>
               <div className="riesm-mini-mode-card__average-arrow" aria-hidden="true"></div>
               <div className="riesm-mini-mode-card__guide" aria-hidden="true"></div>
               {rows.map(row => (
@@ -337,10 +482,14 @@
                 </div>
               ))}
             </div>
-            <div className="riesm-mini-mode-card__back">バックス側</div>
-            <div className="riesm-mini-mode-card__creed">
-              <div>すべての個性は、生きるために必要だからこそ備わり、それぞれに優劣はありません。</div>
-              <div>そして固定では無く、場面、状況に応じて変化していくものです。</div>
+            <div className="riesm-mini-mode-card__back">
+              バックス側
+            </div>
+            <div className="riesm-mini-mode-card__footer">
+              <div className="riesm-mini-mode-card__creed">
+                <div>すべての個性は、生きるために必要だからこそ備わり、それぞれに優劣はありません。</div>
+                <div>そして固定では無く、場面、状況に応じて変化していくものです。</div>
+              </div>
             </div>
             <div className="riesm-mini-mode-card__copyright">©2025 ninin consulting＆counseling</div>
           </div>
@@ -349,6 +498,170 @@
     }
     window.RiesmMiniModeBalanceCard = MiniModeBalanceCard;
     window.buildRiesmMiniModeCardRows = buildMiniModeCardRows;
+
+    const MINI_HISTORY_STORAGE_KEY = 'riesmMiniResultHistoryV1';
+    const MINI_HISTORY_LIMIT = 100;
+
+    function readMiniResultHistory() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(MINI_HISTORY_STORAGE_KEY) || '[]');
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .filter(entry =>
+            entry &&
+            Number.isFinite(Number(entry.createdAt)) &&
+            entry.scores &&
+            ['W', 'K', 'N', 'A'].every(type => Number.isFinite(Number(entry.scores[type])))
+          )
+          .slice(0, MINI_HISTORY_LIMIT);
+      } catch (error) {
+        console.warn('RIESM miniの履歴を読み込めませんでした。', error);
+        return [];
+      }
+    }
+
+    function storeMiniResultHistory(entry) {
+      const next = [entry, ...readMiniResultHistory()]
+        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+        .slice(0, MINI_HISTORY_LIMIT);
+      try {
+        localStorage.setItem(MINI_HISTORY_STORAGE_KEY, JSON.stringify(next));
+      } catch (error) {
+        console.warn('RIESM miniの履歴を保存できませんでした。', error);
+      }
+      return next;
+    }
+
+    function formatMiniHistoryDate(timestamp) {
+      const parts = new Intl.DateTimeFormat('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).formatToParts(new Date(timestamp));
+      const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      const weekday = new Intl.DateTimeFormat('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        weekday: 'short'
+      }).format(new Date(timestamp));
+      return `${values.year}/${values.month}/${values.day} ${weekday}曜日 ${values.hour}:${values.minute}`;
+    }
+
+    function getMiniHistoryModeOrder(scores = {}) {
+      return ['W', 'K', 'N', 'A']
+        .map((type, index) => ({ type, index, value: Math.max(0, Number(scores[type]) || 0) }))
+        .sort((a, b) => a.value - b.value || b.index - a.index)
+        .map(item => item.type);
+    }
+
+    function formatMiniHistoryGraphDate(timestamp) {
+      const parts = new Intl.DateTimeFormat('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(new Date(timestamp));
+      const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return `${values.year}/${values.month}/${values.day}`;
+    }
+
+    function getMiniHistoryPercentages(scores = {}) {
+      const values = Object.fromEntries(
+        ['W', 'K', 'N', 'A'].map(type => [type, Math.max(0, Number(scores[type]) || 0)])
+      );
+      const total = Object.values(values).reduce((sum, value) => sum + value, 0);
+      if (total <= 0) return { W: 0, K: 0, N: 0, A: 0 };
+      return Object.fromEntries(
+        Object.entries(values).map(([type, value]) => [type, (value / total) * 100])
+      );
+    }
+
+    function MiniHistoryTrendGraph({ entries }) {
+      const history = entries.slice(0, MINI_HISTORY_LIMIT);
+      const width = 680;
+      const labelWidth = 126;
+      const plotLeft = 148;
+      const plotRight = 654;
+      const top = 58;
+      const rowHeight = 35;
+      const bottom = 30;
+      const height = Math.max(220, top + Math.max(1, history.length - 1) * rowHeight + bottom);
+      const xForPercent = (value) => {
+        const clamped = Math.max(-10, Math.min(40, Number(value) || 0));
+        return plotLeft + ((clamped + 10) / 50) * (plotRight - plotLeft);
+      };
+      const gridValues = [-10, 0, 10, 20, 30, 40];
+      const modeTypes = ['W', 'K', 'N', 'A'];
+
+      return (
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+          <svg
+            className="block h-auto min-w-[620px] w-full"
+            viewBox={`0 0 ${width} ${height}`}
+            role="img"
+            aria-label="直近を上、過去を下に並べた4モードの割合の変化グラフ"
+          >
+            <text x={plotLeft} y="21" fill="#64748b" fontSize="12" fontWeight="700">バックス側</text>
+            <text x={plotRight} y="21" fill="#64748b" fontSize="12" fontWeight="700" textAnchor="end">フロント側</text>
+            <line x1={labelWidth} y1="32" x2={labelWidth} y2={height - 12} stroke="#cbd5e1" strokeWidth="1" />
+
+            {gridValues.map(value => (
+              <line
+                key={value}
+                x1={xForPercent(value)}
+                y1="32"
+                x2={xForPercent(value)}
+                y2={height - 12}
+                stroke={value === 0 ? '#cbd5e1' : '#e2e8f0'}
+                strokeWidth={value === 0 ? '1.4' : '1'}
+              />
+            ))}
+
+            {history.map((entry, index) => {
+              const y = top + index * rowHeight;
+              return (
+                <g key={entry.id}>
+                  <text x="6" y={y + 4} fill="#334155" fontSize="12" fontWeight="700">
+                    {formatMiniHistoryGraphDate(entry.createdAt)}
+                  </text>
+                  <line x1={labelWidth} y1={y + 12} x2={plotRight} y2={y + 12} stroke="#f1f5f9" strokeWidth="1" />
+                </g>
+              );
+            })}
+
+            {modeTypes.map(type => {
+              const points = history.map((entry, index) => {
+                const percentages = getMiniHistoryPercentages(entry.scores);
+                return `${xForPercent(percentages[type])},${top + index * rowHeight}`;
+              }).join(' ');
+              if (!points) return null;
+              return (
+                <polyline
+                  key={type}
+                  points={points}
+                  fill="none"
+                  stroke={MINI_MODE_CARD_META[type].color}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              );
+            })}
+          </svg>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] font-bold text-slate-600">
+            {modeTypes.map(type => (
+              <span key={type} className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: MINI_MODE_CARD_META[type].color }}></span>
+                {MINI_MODE_CARD_META[type].label}
+              </span>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
     const ExternalLinkIcon = () => (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
@@ -495,11 +808,44 @@
 
 
     function WorkshopGuideModal({ onClose }) {
+      const [previewImage, setPreviewImage] = useState(null);
       const modeItems = [
         { label: 'ワンダー', text: '自由・発見・挑戦を担当するモード' },
         { label: 'キーパー', text: '正しさ・信念・秩序を守るモード' },
         { label: 'ナーチャー', text: '自他を受容し、育もうとするモード' },
         { label: 'アダプター', text: '周囲を観察し、安心や安全を確かめるモード' }
+      ];
+      const guideImages = [
+        {
+          src: '../riesm/img/riesm-preface-visual.png',
+          title: 'RIESM™とは',
+          alt: 'RIESMとは何かと、RIESMを構成する5つの視点の説明'
+        },
+        {
+          src: '../riesm/img/riesm-mode-energy-guide.png',
+          title: 'モード｜心の元気の使い方',
+          alt: '4つのモードの増減と心の元気の使い方の説明'
+        },
+        {
+          src: '../riesm/img/riesm-front-guide.png',
+          title: '外界と接する順番',
+          alt: 'フロント、スタンド、バックスの位置関係と外界との接点の説明'
+        },
+        {
+          src: '../riesm/img/riesm-front-definition-guide.png',
+          title: 'フロントとは',
+          alt: 'フロントは世界と接するとき前面に出やすく環境によって変化するモードであることの説明'
+        },
+        {
+          src: '../riesm/img/riesm-stand-guide.png',
+          title: 'スタンドとは',
+          alt: 'スタンドがフロントを支え必要に応じて入れ替わることの説明'
+        },
+        {
+          src: '../riesm/img/riesm-backs-guide.png',
+          title: 'バックスとは',
+          alt: 'バックスは内側にあり環境や役割によって前面へ現れるモードであることの説明'
+        }
       ];
 
       const prohibitedItems = [
@@ -511,13 +857,13 @@
         'モードに優劣をつけ、「良い・悪い」「強い・弱い」と評価する'
       ];
 
-      const sectionClass = 'rounded-2xl border border-indigo-100 bg-white/82 p-4 sm:p-5 shadow-sm';
+      const sectionClass = 'rounded-2xl border border-amber-100 bg-[#fffdf8] p-4 sm:p-5 shadow-sm';
       const sectionTitleClass = 'mb-3 flex items-center gap-3 text-base sm:text-lg font-black text-slate-900';
 
       return (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/45 px-3 py-4 sm:px-6 sm:py-8 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="ワークショップで使う時のトリセツ">
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-white via-indigo-50/35 to-emerald-50/40 shadow-2xl">
-            <div className="sticky top-0 z-10 border-b border-indigo-100 bg-white/95 px-5 py-4 text-left backdrop-blur sm:px-7 sm:py-5">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-3xl border border-amber-100 bg-[#fff8e8] shadow-2xl">
+            <div className="sticky top-0 z-10 border-b border-amber-100 bg-[#fffaf0] px-5 py-4 text-left sm:px-7 sm:py-5">
               <p className="text-[10px] sm:text-xs font-black tracking-[0.24em] text-indigo-500">WORKSHOP GUIDE</p>
               <div className="mt-1 flex items-start justify-between gap-4">
                 <h2 className="text-xl sm:text-2xl font-black leading-snug text-slate-900">
@@ -531,9 +877,9 @@
               </div>
             </div>
 
-            <div className="max-h-[calc(92vh-138px)] overflow-y-auto px-4 py-5 text-left text-[13px] leading-7 text-slate-700 sm:px-7 sm:py-6 sm:text-sm">
+            <div className="max-h-[calc(92vh-138px)] overflow-y-auto bg-[#fff8e8] px-4 py-5 text-left text-[13px] leading-7 text-slate-700 sm:px-7 sm:py-6 sm:text-sm">
               <div className="space-y-5">
-                <div className="rounded-2xl border border-indigo-100 bg-white/88 p-4 sm:p-5 shadow-sm">
+                <div className="rounded-2xl border border-amber-100 bg-[#fffdf8] p-4 sm:p-5 shadow-sm">
                   <p className="font-bold text-slate-900">このページは、RIESM™ miniアプリを、モード理解とコミュニケーションのワークとして安全に活用するための説明書です。</p>
                 </div>
 
@@ -544,7 +890,7 @@
                   <p className="font-black text-emerald-900">詳細➤<a href="https://note.com/ninin2025/n/n2eaed311ebca" target="_blank" rel="noopener noreferrer" className="break-all underline decoration-emerald-700 underline-offset-4">https://note.com/ninin2025/n/n2eaed311ebca</a></p>
                 </div>
 
-                <div className="rounded-2xl border border-indigo-100 bg-white/82 p-4 sm:p-5 shadow-sm space-y-3">
+                <div className="rounded-2xl border border-amber-100 bg-[#fffdf8] p-4 sm:p-5 shadow-sm space-y-3">
                   <p>RIESM™ miniは、「今の自分」に近い言葉を選ぶことで、現在のモードバランスを観るためのアプリです。</p>
                   <p>研修・ワークショップ・対話の場で使用する場合には、モードの意味や結果の扱い方を理解したうえで、参加者が安心して話せる場をつくることが大切です。</p>
                   <p className="font-black text-indigo-900">RIESM™は、人を分類したり、性格を決めつけたりするための診断ではありません。</p>
@@ -640,13 +986,157 @@
                   <p className="mt-3">モードは人を固定するための名前ではありません。</p>
                   <p className="mt-3">今の自分と相手を少し丁寧に観察し、安心・受容・納得のある関係から、自然な挑戦や対話を生み出すための枠組みです。</p>
                 </section>
+
+                <section className={sectionClass}>
+                  <h3 className={sectionTitleClass}><span className="text-indigo-500">9.</span>画像で確認するRIESM™</h3>
+                  <p className="mb-4">画像をタップすると、大きく表示できます。</p>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {guideImages.map((image) => (
+                      <button
+                        key={image.src}
+                        type="button"
+                        onClick={() => setPreviewImage(image)}
+                        className="overflow-hidden rounded-2xl border border-amber-100 bg-white p-2 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                      >
+                        <img className="riesm-guide-image" src={image.src} alt={image.alt} loading="lazy" />
+                        <span className="block px-2 pb-1 pt-2 text-sm font-black text-slate-800">{image.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
               </div>
 
-              <div className="sticky bottom-0 -mx-4 mt-5 border-t border-indigo-100 bg-white/95 px-4 py-4 text-center backdrop-blur sm:-mx-7 sm:px-7">
+              <div className="sticky bottom-0 -mx-4 mt-5 border-t border-amber-100 bg-[#fffaf0] px-4 py-4 text-center sm:-mx-7 sm:px-7">
                 <button type="button" onClick={onClose} className="w-full rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-indigo-900/15 transition hover:bg-indigo-700 sm:w-auto sm:min-w-48">
                   トリセツを閉じる
                 </button>
               </div>
+            </div>
+          </div>
+          {previewImage && (
+            <div
+              className="fixed inset-0 z-[95] flex items-center justify-center bg-slate-950/85 p-3 sm:p-8"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${previewImage.title}の拡大画像`}
+              onClick={() => setPreviewImage(null)}
+            >
+              <button
+                type="button"
+                className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white text-2xl font-black text-slate-700 shadow-lg"
+                onClick={() => setPreviewImage(null)}
+                aria-label="拡大画像を閉じる"
+              >
+                ×
+              </button>
+              <img
+                src={previewImage.src}
+                alt={previewImage.alt}
+                className="max-h-[92vh] max-w-[96vw] rounded-xl bg-white object-contain shadow-2xl"
+                onClick={(event) => event.stopPropagation()}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function ResultHistoryModal({ entries, onClose }) {
+      const [selectedId, setSelectedId] = useState(entries[0]?.id || null);
+      const [activeTab, setActiveTab] = useState('list');
+      const selected = entries.find(entry => entry.id === selectedId) || entries[0] || null;
+
+      return (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/50 px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-8" role="dialog" aria-modal="true" aria-label="前回までの結果">
+          <div className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-emerald-100 bg-[#fffdf8] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-emerald-100 px-5 py-4 sm:px-7">
+              <div className="text-left">
+                <p className="text-[10px] font-black tracking-[0.2em] text-emerald-600">LOCAL HISTORY</p>
+                <h2 className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">前回までの結果</h2>
+              </div>
+              <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-black text-slate-500 shadow-sm" aria-label="履歴を閉じる">×</button>
+            </div>
+
+            <div className="overflow-y-auto px-4 py-5 sm:px-7">
+              <p className="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-left text-xs font-bold leading-relaxed text-amber-950 sm:text-sm">
+                ※履歴はサーバーではなく、この端末のブラウザ内だけに保存されています。実施したスマホやPCでのみ過去の結果を確認できます。
+              </p>
+
+              <div className="mb-4 grid grid-cols-2 rounded-xl bg-slate-100 p-1" role="tablist" aria-label="履歴の表示方法">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === 'list'}
+                  onClick={() => setActiveTab('list')}
+                  className={`rounded-lg px-3 py-2 text-sm font-black transition ${
+                    activeTab === 'list' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500'
+                  }`}
+                >
+                  一覧表示
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === 'graph'}
+                  onClick={() => setActiveTab('graph')}
+                  className={`rounded-lg px-3 py-2 text-sm font-black transition ${
+                    activeTab === 'graph' ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500'
+                  }`}
+                >
+                  変化グラフ
+                </button>
+              </div>
+
+              {entries.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-white px-5 py-10 text-center text-sm font-bold text-slate-500">
+                  まだ保存された結果はありません。
+                </div>
+              ) : activeTab === 'graph' ? (
+                <MiniHistoryTrendGraph entries={entries} />
+              ) : (
+                <>
+                  <div className="grid gap-2">
+                    {entries.map(entry => {
+                      const modeOrder = getMiniHistoryModeOrder(entry.scores);
+                      return (
+                        <button
+                          key={entry.id}
+                          type="button"
+                          onClick={() => setSelectedId(entry.id)}
+                          className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition ${
+                            selected?.id === entry.id
+                              ? 'border-emerald-400 bg-emerald-50 shadow-sm'
+                              : 'border-slate-200 bg-white hover:border-emerald-200 hover:bg-emerald-50/40'
+                          }`}
+                        >
+                          <span className="riesm-history-blocks" aria-label="左からバックス側、右がフロント側の4モード">
+                            {modeOrder.map(type => (
+                              <span
+                                key={type}
+                                className="riesm-history-block"
+                                style={{ backgroundColor: MINI_MODE_CARD_META[type].color }}
+                              ></span>
+                            ))}
+                          </span>
+                          <span className="min-w-0 flex-1 text-xs font-black text-slate-700 sm:text-sm">
+                            ｜{formatMiniHistoryDate(entry.createdAt)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {selected && (
+                    <div className="mt-5">
+                      <MiniModeBalanceCard
+                        scores={selected.scores}
+                        frontType={selected.resultType?.front || getMiniHistoryModeOrder(selected.scores).slice(-1)[0]}
+                        displayName="この時のモードバランス"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -798,8 +1288,13 @@
       const [resultType, setResultType] = useState(null);
       const [resultScores, setResultScores] = useState(null);
       const [isSharing, setIsSharing] = useState(false);
+      const [isSavingModeCard, setIsSavingModeCard] = useState(false);
+      const [modeCardName, setModeCardName] = useState('今のモードバランス');
+      const [modeCardNameInput, setModeCardNameInput] = useState('');
       const [toastMessage, setToastMessage] = useState('');
       const [showWorkshopGuide, setShowWorkshopGuide] = useState(false);
+      const [showResultHistory, setShowResultHistory] = useState(false);
+      const [resultHistory, setResultHistory] = useState(() => readMiniResultHistory());
       
       // モード切替 (TOPページのみで変更)
       const [colorMode, setColorMode] = useState('natural');
@@ -850,6 +1345,8 @@
         setAnswers([]);
         setResultType(null);
         setResultScores(null);
+        setModeCardName('今のモードバランス');
+        setModeCardNameInput('');
         setSelectedChoiceIndex(null);
         setTempSelectedChoiceIndex(null);
         setIsPractice(false);
@@ -863,6 +1360,8 @@
         setAnswers([]);
         setResultType(null);
         setResultScores(null);
+        setModeCardName('今のモードバランス');
+        setModeCardNameInput('');
         setSelectedChoiceIndex(null);
         setTempSelectedChoiceIndex(null);
         setIsPractice(true);
@@ -951,14 +1450,75 @@
           }
         }
 
-        setResultScores(scores);
         const detailIndex = Math.floor(Math.random() * 3);
-        setResultType({ front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex });
+        const nextResultType = { front: front, second: secondType, back: minType, isDouble: isDouble, frontKey: frontKey, detailIndex: detailIndex };
+        setResultScores(scores);
+        setResultType(nextResultType);
+        const createdAt = Date.now();
+        setResultHistory(storeMiniResultHistory({
+          id: `${createdAt}-${Math.random().toString(36).slice(2, 9)}`,
+          createdAt,
+          scores,
+          resultType: nextResultType
+        }));
       };
 
       const showToast = (message) => {
         setToastMessage(message);
         setTimeout(() => setToastMessage(''), 5000);
+      };
+
+      const handleApplyModeCardName = () => {
+        const normalizedName = modeCardNameInput
+          .replace(/[\r\n\t]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!normalizedName) {
+          showToast('お名前を入力してください。');
+          return;
+        }
+        setModeCardName(normalizedName);
+        showToast('カードのお名前を変更しました。');
+      };
+
+      const handleSaveModeCard = async () => {
+        const element = document.getElementById('riesm-mini-mode-card');
+        if (!element || !window.html2canvas) {
+          showToast('エラー：カード画像の生成に失敗しました。');
+          return;
+        }
+
+        setIsSavingModeCard(true);
+        try {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const canvas = await window.html2canvas(element, {
+            scale: 3,
+            useCORS: true,
+            backgroundColor: '#fffdf8',
+            logging: false
+          });
+          const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob(value => value ? resolve(value) : reject(new Error('PNG変換に失敗しました。')), 'image/png');
+          });
+          const safeName = modeCardName
+            .replace(/[\\/:*?"<>|]/g, '_')
+            .replace(/\s+/g, '_')
+            .slice(0, 60) || '今のモードバランス';
+          const objectUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = objectUrl;
+          link.download = `RIESM_ModeCard_${safeName}.png`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+          showToast('パーソナルモードカードを画像で保存しました。');
+        } catch (error) {
+          console.error('ModeCard save failed:', error);
+          showToast('エラー：カード画像の生成に失敗しました。もう一度お試しください。');
+        } finally {
+          setIsSavingModeCard(false);
+        }
       };
 
       const handleShare = async () => {
@@ -1045,8 +1605,8 @@
 
               {/* ▼ タイトルロゴ（画像の色・配置に統一） ▼ */}
               <div className="relative z-10 mb-6 flex items-center justify-center gap-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-none items-center justify-center transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <span className="text-3xl sm:text-4xl">🌈</span>
+                <div className="flex flex-none items-center justify-center">
+                  <span className="text-4xl sm:text-5xl">🌈</span>
                 </div>
                 <h1 className="text-left text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">RIESM™ mini</h1>
               </div>
@@ -1090,6 +1650,16 @@
                     : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
                 }`}>
                   <span>いまの自分を観る</span>
+                </button>
+                <button onClick={() => {
+                  setResultHistory(readMiniResultHistory());
+                  setShowResultHistory(true);
+                }} className={`w-full py-4 px-6 rounded-xl font-bold text-base sm:text-lg transition-all shadow-md hover:shadow-lg active:scale-[0.98] flex justify-center items-center gap-2 ${
+                  colorMode === 'colorful'
+                    ? 'bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90'
+                    : 'bg-gradient-to-r from-emerald-400 to-lime-400 text-emerald-950 hover:opacity-90'
+                }`}>
+                  <span>前回までの結果を観る</span>
                 </button>
                 <WorkshopLicenseCard />
                 <button type="button" onClick={() => setShowWorkshopGuide(true)} className="w-full rounded-2xl border border-indigo-100 bg-indigo-50/80 px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-md">
@@ -1141,6 +1711,7 @@
               </div>
             </div>
             {showWorkshopGuide && <WorkshopGuideModal onClose={() => setShowWorkshopGuide(false)} />}
+            {showResultHistory && <ResultHistoryModal entries={resultHistory} onClose={() => setShowResultHistory(false)} />}
           </div>
         );
       }
@@ -1213,7 +1784,11 @@
                   </div>
                   
                   <div className="p-5 sm:p-8 pb-3 sm:pb-4">
-                    <MiniModeBalanceCard scores={resultScores} frontType={resultType.front} />
+                    <MiniModeBalanceCard
+                      scores={resultScores}
+                      frontType={resultType.front}
+                      displayName={modeCardName}
+                    />
                     {/* ウォーターマーク（キャプチャ時のみ表示） */}
                     <div id="capture-watermark" style={{ display: 'none' }} className="text-center mt-6 pb-2">
                       <p className="text-xs font-bold text-slate-500 mb-2">
@@ -1228,6 +1803,43 @@
                 {/* --- ▲▲▲ ここまでキャプチャ範囲 ▲▲▲ --- */}
 
                 {/* --- ▼▼▼ ここからキャプチャしない範囲 (Web画面のみ) ▼▼▼ --- */}
+                <div className="px-5 pt-4 sm:px-8" data-html2canvas-ignore="true">
+                  <p className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-center text-xs font-bold leading-relaxed text-amber-950 sm:text-sm">
+                    このアプリをワークショップで使う時のトリセツは、TOPページにございます。
+                  </p>
+                </div>
+                <div className="px-5 sm:px-8" data-html2canvas-ignore="true">
+                  <div className="riesm-mini-mode-card-tools">
+                    <div className="riesm-mini-mode-card-tools__row">
+                      <input
+                        type="text"
+                        value={modeCardNameInput}
+                        onChange={(event) => setModeCardNameInput(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') handleApplyModeCardName();
+                        }}
+                        placeholder="カードに表示するお名前"
+                        maxLength="40"
+                        aria-label="カードに表示するお名前"
+                      />
+                      <button
+                        type="button"
+                        className="riesm-mini-mode-card-tools__apply"
+                        onClick={handleApplyModeCardName}
+                      >
+                        決定
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="riesm-mini-mode-card-tools__save"
+                      onClick={handleSaveModeCard}
+                      disabled={isSavingModeCard}
+                    >
+                      {isSavingModeCard ? 'カード画像を作成中...' : 'カードを画像で保存'}
+                    </button>
+                  </div>
+                </div>
                 <div className="px-5 sm:px-8 pb-0" data-html2canvas-ignore="true">
                   <div className={`rounded-2xl p-5 sm:p-7 mb-5 border border-white shadow-sm ${t.cardBg}`}>
                     <p className={`leading-relaxed text-[14px] sm:text-base font-medium whitespace-pre-line ${t.text}`}>
