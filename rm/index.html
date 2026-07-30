@@ -109,7 +109,7 @@
     }
     .riesm-mini-mode-card__brand {
       color: #66736e;
-      font-size: clamp(6.5px, 1.9cqw, 10px);
+      font-size: 1.9cqw;
       font-weight: 700;
       letter-spacing: .02em;
     }
@@ -122,7 +122,7 @@
       padding: .45cqw 12.5cqw .65cqw;
       box-sizing: border-box;
       color: #0d473b;
-      font-size: clamp(15px, 4.6cqw, 23px);
+      font-size: 4.6cqw;
       font-weight: 700;
       line-height: 1.35;
       text-align: center;
@@ -147,20 +147,22 @@
       position: relative;
       display: block;
       margin: 2.9cqw .4cqw 1cqw;
+      font-size: 0;
+      line-height: 0;
     }
     .riesm-mini-mode-card__heading strong {
-      font-size: clamp(12px, 3.5cqw, 18px);
+      font-size: 3.5cqw;
       line-height: 1;
     }
     .riesm-mini-mode-card__front,
     .riesm-mini-mode-card__back {
       color: #64716c;
-      font-size: clamp(6.5px, 1.9cqw, 10px);
+      font-size: 1.9cqw;
       font-weight: 700;
     }
     .riesm-mini-mode-card__front {
       position: absolute;
-      top: 0;
+      top: -.65cqw;
       right: 0;
       z-index: 5;
       line-height: 1;
@@ -178,9 +180,9 @@
       width: 0;
       height: 0;
       transform: translateX(-50%);
-      border-left: clamp(4px, 1.35cqw, 7px) solid transparent;
-      border-right: clamp(4px, 1.35cqw, 7px) solid transparent;
-      border-top: clamp(7px, 2.15cqw, 11px) solid #8bc34a;
+      border-left: 1.35cqw solid transparent;
+      border-right: 1.35cqw solid transparent;
+      border-top: 2.15cqw solid #8bc34a;
     }
     .riesm-mini-mode-card__row {
       display: grid;
@@ -191,7 +193,7 @@
       border-bottom: 1px solid #dde4e0;
     }
     .riesm-mini-mode-card__label {
-      font-size: clamp(8.5px, 2.55cqw, 13px);
+      font-size: 2.55cqw;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -233,15 +235,18 @@
       position: absolute;
       left: 4.2cqw;
       right: 4.2cqw;
-      bottom: 4.25cqw;
+      bottom: 3.45cqw;
       z-index: 2;
     }
     .riesm-mini-mode-card__creed {
       margin: 0 .2cqw;
       color: #263b35;
-      font-size: clamp(5.2px, 1.55cqw, 8px);
+      font-size: 1.55cqw;
       line-height: 1.3;
       white-space: nowrap;
+    }
+    .riesm-mini-mode-card__creed > div + div {
+      margin-top: .15cqw;
     }
     .riesm-mini-mode-card__copyright {
       position: absolute;
@@ -249,7 +254,7 @@
       bottom: .95cqw;
       z-index: 5;
       color: #fff;
-      font-size: clamp(4.8px, 1.35cqw, 7px);
+      font-size: 1.35cqw;
       font-weight: 700;
       line-height: 1.15;
       text-align: right;
@@ -501,6 +506,12 @@
 
     const MINI_HISTORY_STORAGE_KEY = 'riesmMiniResultHistoryV1';
     const MINI_HISTORY_LIMIT = 100;
+    const MINI_HISTORY_URL_PARAM = 'rmh';
+    const MINI_HISTORY_URL_VERSION = '2';
+    const MINI_HISTORY_LEGACY_URL_VERSION = '1';
+    const MINI_HISTORY_SCORE_SCALE = 10;
+    const MINI_HISTORY_CRYPTO_CONTEXT = 'RIESM-mini-history-url-v2';
+    let miniHistoryCryptoKeyPromise = null;
 
     function readMiniResultHistory() {
       try {
@@ -530,6 +541,254 @@
         console.warn('RIESM miniの履歴を保存できませんでした。', error);
       }
       return next;
+    }
+
+    function getMiniHistoryEntryKey(entry) {
+      const second = Math.floor(Number(entry.createdAt) / 1000);
+      const scoreKey = ['W', 'K', 'N', 'A']
+        .map(type => Math.round((Math.max(0, Number(entry.scores?.[type])) || 0) * MINI_HISTORY_SCORE_SCALE))
+        .join('-');
+      return `${second}:${scoreKey}`;
+    }
+
+    function mergeMiniResultHistory(importedEntries, localEntries = readMiniResultHistory()) {
+      const merged = [];
+      const seen = new Set();
+      [...importedEntries, ...localEntries]
+        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+        .forEach(entry => {
+          const key = getMiniHistoryEntryKey(entry);
+          if (seen.has(key) || merged.length >= MINI_HISTORY_LIMIT) return;
+          seen.add(key);
+          merged.push(entry);
+        });
+      return merged;
+    }
+
+    function serializeMiniResultHistory(entries) {
+      const history = entries
+        .filter(entry =>
+          entry &&
+          Number.isFinite(Number(entry.createdAt)) &&
+          entry.scores &&
+          ['W', 'K', 'N', 'A'].every(type => Number.isFinite(Number(entry.scores[type])))
+        )
+        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+        .slice(0, MINI_HISTORY_LIMIT);
+      if (!history.length) return '';
+
+      let previousSecond = null;
+      const rows = history.map((entry, index) => {
+        const currentSecond = Math.floor(Number(entry.createdAt) / 1000);
+        const timeValue = index === 0
+          ? currentSecond
+          : Math.max(0, previousSecond - currentSecond);
+        previousSecond = currentSecond;
+        const values = [
+          timeValue,
+          ...['W', 'K', 'N', 'A'].map(type =>
+            Math.round(Math.max(0, Number(entry.scores[type]) || 0) * MINI_HISTORY_SCORE_SCALE)
+          )
+        ];
+        return values.map(value => value.toString(36)).join('.');
+      });
+      return rows.join('~');
+    }
+
+    function compressMiniHistoryText(text) {
+      if (!text) return new Uint8Array();
+      const dictionary = new Map();
+      const codes = [];
+      let nextCode = 256;
+      let current = '';
+
+      for (const character of text) {
+        const combined = current + character;
+        if ((combined.length === 1 && combined.charCodeAt(0) < 256) || dictionary.has(combined)) {
+          current = combined;
+          continue;
+        }
+        codes.push(current.length === 1 ? current.charCodeAt(0) : dictionary.get(current));
+        if (nextCode <= 0xffff) dictionary.set(combined, nextCode++);
+        current = character;
+      }
+      if (current) {
+        codes.push(current.length === 1 ? current.charCodeAt(0) : dictionary.get(current));
+      }
+
+      const bytes = new Uint8Array(codes.length * 2);
+      codes.forEach((code, index) => {
+        bytes[index * 2] = (code >> 8) & 0xff;
+        bytes[index * 2 + 1] = code & 0xff;
+      });
+      return bytes;
+    }
+
+    function decompressMiniHistoryText(bytes) {
+      if (!(bytes instanceof Uint8Array) || bytes.length % 2 !== 0) {
+        throw new Error('履歴URLの圧縮データが壊れています。');
+      }
+      if (!bytes.length) return '';
+
+      const codes = [];
+      for (let index = 0; index < bytes.length; index += 2) {
+        codes.push((bytes[index] << 8) | bytes[index + 1]);
+      }
+
+      const dictionary = new Map();
+      let nextCode = 256;
+      let current = String.fromCharCode(codes[0]);
+      let result = current;
+
+      for (let index = 1; index < codes.length; index += 1) {
+        const code = codes[index];
+        let entry;
+        if (code < 256) {
+          entry = String.fromCharCode(code);
+        } else if (dictionary.has(code)) {
+          entry = dictionary.get(code);
+        } else if (code === nextCode) {
+          entry = current + current[0];
+        } else {
+          throw new Error('履歴URLの圧縮データを展開できませんでした。');
+        }
+        result += entry;
+        if (nextCode <= 0xffff) dictionary.set(nextCode++, current + entry[0]);
+        current = entry;
+      }
+      return result;
+    }
+
+    function miniHistoryBytesToBase64Url(bytes) {
+      let binary = '';
+      bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+      return btoa(binary)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
+    }
+
+    function miniHistoryBase64UrlToBytes(value) {
+      const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+      const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+      const binary = atob(padded);
+      return Uint8Array.from(binary, character => character.charCodeAt(0));
+    }
+
+    async function getMiniHistoryCryptoKey() {
+      if (!window.crypto?.subtle) {
+        throw new Error('このブラウザは履歴URLの暗号化に対応していません。');
+      }
+      if (!miniHistoryCryptoKeyPromise) {
+        miniHistoryCryptoKeyPromise = window.crypto.subtle
+          .digest('SHA-256', new TextEncoder().encode(MINI_HISTORY_CRYPTO_CONTEXT))
+          .then(keyBytes => window.crypto.subtle.importKey(
+            'raw',
+            keyBytes,
+            { name: 'AES-GCM' },
+            false,
+            ['encrypt', 'decrypt']
+          ));
+      }
+      return miniHistoryCryptoKeyPromise;
+    }
+
+    async function encodeMiniResultHistory(entries) {
+      const serialized = serializeMiniResultHistory(entries);
+      if (!serialized) return '';
+
+      const compressed = compressMiniHistoryText(serialized);
+      const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      const key = await getMiniHistoryCryptoKey();
+      const encrypted = new Uint8Array(await window.crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        compressed
+      ));
+      return [
+        MINI_HISTORY_URL_VERSION,
+        miniHistoryBytesToBase64Url(iv),
+        miniHistoryBytesToBase64Url(encrypted)
+      ].join('~');
+    }
+
+    function deserializeMiniResultHistory(serialized) {
+      if (typeof serialized !== 'string' || !serialized.trim()) return [];
+      const parts = serialized.trim().split('~');
+      let previousSecond = null;
+      return parts.slice(0, MINI_HISTORY_LIMIT).map((row, index) => {
+        const values = row.split('.').map(value => parseInt(value, 36));
+        if (
+          values.length !== 5 ||
+          values.some(value => !Number.isFinite(value) || value < 0)
+        ) {
+          throw new Error('履歴URLのデータを読み取れませんでした。');
+        }
+        const currentSecond = index === 0
+          ? values[0]
+          : previousSecond - values[0];
+        if (!Number.isFinite(currentSecond) || currentSecond <= 0) {
+          throw new Error('履歴URLの日時を読み取れませんでした。');
+        }
+        previousSecond = currentSecond;
+        const scores = Object.fromEntries(
+          ['W', 'K', 'N', 'A'].map((type, scoreIndex) => [
+            type,
+            values[scoreIndex + 1] / MINI_HISTORY_SCORE_SCALE
+          ])
+        );
+        return {
+          id: `url-${currentSecond}-${values.slice(1).join('-')}`,
+          createdAt: currentSecond * 1000,
+          scores
+        };
+      });
+    }
+
+    async function decodeMiniResultHistory(payload) {
+      if (typeof payload !== 'string' || !payload.trim()) return [];
+      const parts = payload.trim().split('~');
+      const version = parts.shift();
+
+      if (version === MINI_HISTORY_LEGACY_URL_VERSION) {
+        return deserializeMiniResultHistory(parts.join('~'));
+      }
+      if (version !== MINI_HISTORY_URL_VERSION || parts.length !== 2) {
+        throw new Error('対応していない履歴URLです。');
+      }
+
+      const iv = miniHistoryBase64UrlToBytes(parts[0]);
+      const encrypted = miniHistoryBase64UrlToBytes(parts[1]);
+      if (iv.length !== 12 || encrypted.length < 17 || encrypted.length > 50000) {
+        throw new Error('履歴URLの暗号化データが壊れています。');
+      }
+      const key = await getMiniHistoryCryptoKey();
+      const decrypted = new Uint8Array(await window.crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encrypted
+      ));
+      return deserializeMiniResultHistory(decompressMiniHistoryText(decrypted));
+    }
+
+    function initializeMiniResultHistory() {
+      return readMiniResultHistory();
+    }
+
+    async function importMiniResultHistoryFromUrl() {
+      const localEntries = readMiniResultHistory();
+      try {
+        const url = new URL(window.location.href);
+        const payload = url.searchParams.get(MINI_HISTORY_URL_PARAM);
+        if (!payload) return localEntries;
+        const importedEntries = await decodeMiniResultHistory(payload);
+        const merged = mergeMiniResultHistory(importedEntries, localEntries);
+        localStorage.setItem(MINI_HISTORY_STORAGE_KEY, JSON.stringify(merged));
+        return merged;
+      } catch (error) {
+        console.warn('URLに保存されたRIESM miniの履歴を復元できませんでした。', error);
+        return localEntries;
+      }
     }
 
     function formatMiniHistoryDate(timestamp) {
@@ -861,16 +1120,12 @@
       const sectionTitleClass = 'mb-3 flex items-center gap-3 text-base sm:text-lg font-black text-slate-900';
 
       return (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/45 px-3 py-4 sm:px-6 sm:py-8 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="ワークショップで使う時のトリセツ">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/45 px-3 py-4 sm:px-6 sm:py-8 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="このアプリを「ワークショップ」で使うときのトリセツ">
           <div className="max-h-[92vh] w-full max-w-2xl overflow-hidden rounded-3xl border border-amber-100 bg-[#fff8e8] shadow-2xl">
             <div className="sticky top-0 z-10 border-b border-amber-100 bg-[#fffaf0] px-5 py-4 text-left sm:px-7 sm:py-5">
               <p className="text-[10px] sm:text-xs font-black tracking-[0.24em] text-indigo-500">WORKSHOP GUIDE</p>
               <div className="mt-1 flex items-start justify-between gap-4">
-                <h2 className="text-xl sm:text-2xl font-black leading-snug text-slate-900">
-                  <span className="block">このアプリを</span>
-                  <span className="block">「ワークショップ」で</span>
-                  <span className="block">使う時のトリセツ</span>
-                </h2>
+                <h2 className="text-xl sm:text-2xl font-black leading-snug text-slate-900">このアプリを「ワークショップ」で使うときのトリセツ</h2>
                 <button type="button" onClick={onClose} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-black text-slate-500 shadow-sm transition hover:bg-slate-50" aria-label="トリセツを閉じる">
                   ×
                 </button>
@@ -1059,7 +1314,7 @@
 
             <div className="overflow-y-auto px-4 py-5 sm:px-7">
               <p className="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-left text-xs font-bold leading-relaxed text-amber-950 sm:text-sm">
-                ※履歴はサーバーではなく、この端末のブラウザ内だけに保存されています。実施したスマホやPCでのみ過去の結果を確認できます。
+                ※履歴は通常、この端末のブラウザ内だけに保存されます。TOPの「URLで保存・ブラウザ移動」で、別のブラウザへ過去100件まで移せます。
               </p>
 
               <div className="mb-4 grid grid-cols-2 rounded-xl bg-slate-100 p-1" role="tablist" aria-label="履歴の表示方法">
@@ -1294,7 +1549,9 @@
       const [toastMessage, setToastMessage] = useState('');
       const [showWorkshopGuide, setShowWorkshopGuide] = useState(false);
       const [showResultHistory, setShowResultHistory] = useState(false);
-      const [resultHistory, setResultHistory] = useState(() => readMiniResultHistory());
+      const [resultHistory, setResultHistory] = useState(() => initializeMiniResultHistory());
+      const [historyTransferUrl, setHistoryTransferUrl] = useState('');
+      const [isCreatingHistoryTransferUrl, setIsCreatingHistoryTransferUrl] = useState(false);
       
       // モード切替 (TOPページのみで変更)
       const [colorMode, setColorMode] = useState('natural');
@@ -1315,6 +1572,14 @@
           setTempSelectedChoiceIndex(null);
         }
       }, [currentIndex, started, resultType, isPractice]);
+
+      useEffect(() => {
+        let isActive = true;
+        importMiniResultHistoryFromUrl().then(importedHistory => {
+          if (isActive) setResultHistory(importedHistory);
+        });
+        return () => { isActive = false; };
+      }, []);
 
       const shuffleArray = (array) => {
         const newArray = [...array];
@@ -1468,6 +1733,52 @@
         setTimeout(() => setToastMessage(''), 5000);
       };
 
+      const copyTextToClipboard = async (text) => {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        const copied = document.execCommand('copy');
+        textArea.remove();
+        if (!copied) throw new Error('コピーに失敗しました。');
+      };
+
+      const handleCreateHistoryTransferUrl = async () => {
+        setIsCreatingHistoryTransferUrl(true);
+        try {
+          const history = mergeMiniResultHistory(resultHistory, readMiniResultHistory());
+          const payload = await encodeMiniResultHistory(history);
+          if (!payload) {
+            showToast('保存できる結果がまだありません。先に「いまの自分を観る」を実施してください。');
+            return;
+          }
+
+          const url = new URL(window.location.href);
+          url.searchParams.set(MINI_HISTORY_URL_PARAM, payload);
+          const transferUrl = url.toString();
+          setHistoryTransferUrl(transferUrl);
+          try {
+            await copyTextToClipboard(transferUrl);
+            showToast(`過去${history.length}件の履歴を圧縮・暗号化したURLをコピーしました。`);
+          } catch (copyError) {
+            console.warn('履歴URLを自動コピーできませんでした。', copyError);
+            showToast('URLを作成しました。表示されたURLをコピーして保存してください。');
+          }
+        } catch (error) {
+          console.warn('履歴URLを作成できませんでした。', error);
+          showToast('履歴URLを作成できませんでした。このブラウザの暗号化機能をご確認ください。');
+        } finally {
+          setIsCreatingHistoryTransferUrl(false);
+        }
+      };
+
       const handleApplyModeCardName = () => {
         const normalizedName = modeCardNameInput
           .replace(/[\r\n\t]+/g, ' ')
@@ -1489,13 +1800,43 @@
         }
 
         setIsSavingModeCard(true);
+        let exportHost = null;
         try {
           await new Promise(resolve => setTimeout(resolve, 100));
-          const canvas = await window.html2canvas(element, {
+
+          // Always render from the same reference width. Rendering the responsive
+          // on-screen element directly makes the downloaded PNG depend on the
+          // phone/PC viewport and can change text wrapping and vertical rhythm.
+          exportHost = document.createElement('div');
+          exportHost.setAttribute('aria-hidden', 'true');
+          Object.assign(exportHost.style, {
+            position: 'fixed',
+            left: '-10000px',
+            top: '0',
+            width: '455px',
+            height: 'auto',
+            pointerEvents: 'none'
+          });
+          const exportCard = element.cloneNode(true);
+          exportCard.removeAttribute('id');
+          exportCard.style.width = '455px';
+          exportHost.appendChild(exportCard);
+          document.body.appendChild(exportHost);
+
+          if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+          }
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+          const canvas = await window.html2canvas(exportCard, {
             scale: 3,
             useCORS: true,
             backgroundColor: '#fffdf8',
-            logging: false
+            logging: false,
+            width: 455,
+            height: 275,
+            windowWidth: 455,
+            windowHeight: 275
           });
           const blob = await new Promise((resolve, reject) => {
             canvas.toBlob(value => value ? resolve(value) : reject(new Error('PNG変換に失敗しました。')), 'image/png');
@@ -1517,6 +1858,7 @@
           console.error('ModeCard save failed:', error);
           showToast('エラー：カード画像の生成に失敗しました。もう一度お試しください。');
         } finally {
+          if (exportHost) exportHost.remove();
           setIsSavingModeCard(false);
         }
       };
@@ -1661,10 +2003,54 @@
                 }`}>
                   <span>前回までの結果を観る</span>
                 </button>
+                <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3 shadow-sm">
+                  <button
+                    type="button"
+                    onClick={handleCreateHistoryTransferUrl}
+                    disabled={isCreatingHistoryTransferUrl}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/60 hover:text-emerald-900 active:scale-[0.99] disabled:cursor-wait disabled:opacity-60 sm:text-base"
+                  >
+                    <span aria-hidden="true">🔗</span>
+                    <span>{isCreatingHistoryTransferUrl ? 'URLを作成中...' : 'URLで保存・ブラウザ移動'}</span>
+                  </button>
+                  <p className="mt-2 px-1 text-left text-[11px] leading-relaxed text-slate-500 sm:text-xs">
+                    過去100件までの履歴を圧縮・暗号化してURLに保存します。別のブラウザでURLを開くと履歴を復元できます。
+                  </p>
+                  {historyTransferUrl && (
+                    <div className="mt-3">
+                      <label htmlFor="history-transfer-url" className="mb-1 block text-left text-[11px] font-bold text-emerald-800">
+                        履歴を含む保存用URL
+                      </label>
+                      <textarea
+                        id="history-transfer-url"
+                        readOnly
+                        value={historyTransferUrl}
+                        onFocus={event => event.currentTarget.select()}
+                        rows="3"
+                        className="w-full resize-none rounded-xl border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-[10px] leading-relaxed text-slate-700 outline-none focus:border-emerald-400 sm:text-xs"
+                        aria-label="履歴を含む保存用URL"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await copyTextToClipboard(historyTransferUrl);
+                            showToast('保存用URLをコピーしました。');
+                          } catch (error) {
+                            showToast('自動コピーできませんでした。URL欄を選択してコピーしてください。');
+                          }
+                        }}
+                        className="mt-2 w-full rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
+                      >
+                        URLをもう一度コピー
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <WorkshopLicenseCard />
                 <button type="button" onClick={() => setShowWorkshopGuide(true)} className="w-full rounded-2xl border border-indigo-100 bg-indigo-50/80 px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-50 hover:shadow-md">
                   <span className="block text-[10px] font-black tracking-[0.18em] text-indigo-500">WORKSHOP GUIDE</span>
-                  <span className="mt-1 block text-sm sm:text-base font-black leading-relaxed text-indigo-950">このアプリを<br className="sm:hidden" />「ワークショップ」で使う時のトリセツ</span>
+                  <span className="mt-1 block text-sm sm:text-base font-black leading-relaxed text-indigo-950">このアプリを「ワークショップ」で使うときのトリセツ</span>
                 </button>
               </div>
 
@@ -1805,7 +2191,7 @@
                 {/* --- ▼▼▼ ここからキャプチャしない範囲 (Web画面のみ) ▼▼▼ --- */}
                 <div className="px-5 pt-4 sm:px-8" data-html2canvas-ignore="true">
                   <p className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-center text-xs font-bold leading-relaxed text-amber-950 sm:text-sm">
-                    このアプリをワークショップで使う時のトリセツは、TOPページにございます。
+                    このアプリを「ワークショップ」で使うときのトリセツは、TOPページにございます。
                   </p>
                 </div>
                 <div className="px-5 sm:px-8" data-html2canvas-ignore="true">
