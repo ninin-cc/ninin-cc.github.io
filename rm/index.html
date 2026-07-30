@@ -1552,6 +1552,7 @@
       const [resultHistory, setResultHistory] = useState(() => initializeMiniResultHistory());
       const [historyTransferUrl, setHistoryTransferUrl] = useState('');
       const [isCreatingHistoryTransferUrl, setIsCreatingHistoryTransferUrl] = useState(false);
+      const [historyTransferCopyState, setHistoryTransferCopyState] = useState('idle');
       
       // モード切替 (TOPページのみで変更)
       const [colorMode, setColorMode] = useState('natural');
@@ -1752,10 +1753,12 @@
 
       const handleCreateHistoryTransferUrl = async () => {
         setIsCreatingHistoryTransferUrl(true);
+        setHistoryTransferCopyState('creating');
         try {
           const history = mergeMiniResultHistory(resultHistory, readMiniResultHistory());
           const payload = await encodeMiniResultHistory(history);
           if (!payload) {
+            setHistoryTransferCopyState('idle');
             showToast('保存できる結果がまだありません。先に「いまの自分を観る」を実施してください。');
             return;
           }
@@ -1766,13 +1769,16 @@
           setHistoryTransferUrl(transferUrl);
           try {
             await copyTextToClipboard(transferUrl);
+            setHistoryTransferCopyState('copied');
             showToast(`過去${history.length}件の履歴を圧縮・暗号化したURLをコピーしました。`);
           } catch (copyError) {
             console.warn('履歴URLを自動コピーできませんでした。', copyError);
+            setHistoryTransferCopyState('ready');
             showToast('URLを作成しました。表示されたURLをコピーして保存してください。');
           }
         } catch (error) {
           console.warn('履歴URLを作成できませんでした。', error);
+          setHistoryTransferCopyState('error');
           showToast('履歴URLを作成できませんでした。このブラウザの暗号化機能をご確認ください。');
         } finally {
           setIsCreatingHistoryTransferUrl(false);
@@ -2008,18 +2014,43 @@
                     type="button"
                     onClick={handleCreateHistoryTransferUrl}
                     disabled={isCreatingHistoryTransferUrl}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/60 hover:text-emerald-900 active:scale-[0.99] disabled:cursor-wait disabled:opacity-60 sm:text-base"
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-bold shadow-sm transition active:scale-[0.99] disabled:cursor-wait disabled:opacity-60 sm:text-base ${
+                      historyTransferCopyState === 'copied'
+                        ? 'border-emerald-300 bg-emerald-100 text-emerald-900'
+                        : 'border-emerald-300 bg-emerald-50 text-emerald-900 hover:border-emerald-400 hover:bg-emerald-100'
+                    }`}
                   >
                     <span aria-hidden="true">🔗</span>
-                    <span>{isCreatingHistoryTransferUrl ? 'URLを作成中...' : 'URLで保存・ブラウザ移動'}</span>
+                    <span className="flex flex-col items-center leading-tight">
+                      <span>URLで保存・ブラウザ移動</span>
+                      <span className="mt-1 text-[10px] font-bold text-emerald-700 sm:text-xs">
+                        {isCreatingHistoryTransferUrl
+                          ? 'URLを作成してコピー中...'
+                          : historyTransferCopyState === 'copied'
+                            ? '✅コピーされました'
+                            : 'ここを押すとURLがコピーされます'}
+                      </span>
+                    </span>
                   </button>
                   <p className="mt-2 px-1 text-left text-[11px] leading-relaxed text-slate-500 sm:text-xs">
                     過去100件までの履歴を圧縮・暗号化してURLに保存します。別のブラウザでURLを開くと履歴を復元できます。
                   </p>
+                  <div aria-live="polite" role="status">
+                    {historyTransferCopyState === 'ready' && (
+                      <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-left text-xs font-bold leading-relaxed text-amber-950 sm:text-sm">
+                        URLは作成できました。自動コピーはできなかったため、下の「このURLをコピー」を押してください。
+                      </p>
+                    )}
+                    {historyTransferCopyState === 'error' && (
+                      <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-left text-xs font-bold leading-relaxed text-red-900 sm:text-sm">
+                        URLを作成できませんでした。ブラウザを更新して、もう一度お試しください。
+                      </p>
+                    )}
+                  </div>
                   {historyTransferUrl && (
                     <div className="mt-3">
                       <label htmlFor="history-transfer-url" className="mb-1 block text-left text-[11px] font-bold text-emerald-800">
-                        履歴を含む保存用URL
+                        {historyTransferCopyState === 'copied' ? 'コピー済みの保存用URL' : '履歴を含む保存用URL'}
                       </label>
                       <textarea
                         id="history-transfer-url"
@@ -2035,14 +2066,16 @@
                         onClick={async () => {
                           try {
                             await copyTextToClipboard(historyTransferUrl);
+                            setHistoryTransferCopyState('copied');
                             showToast('保存用URLをコピーしました。');
                           } catch (error) {
+                            setHistoryTransferCopyState('ready');
                             showToast('自動コピーできませんでした。URL欄を選択してコピーしてください。');
                           }
                         }}
                         className="mt-2 w-full rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
                       >
-                        URLをもう一度コピー
+                        {historyTransferCopyState === 'copied' ? 'このURLをもう一度コピー' : 'このURLをコピー'}
                       </button>
                     </div>
                   )}
