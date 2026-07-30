@@ -1078,7 +1078,7 @@ function getSecondDoubleTradeCount() {
             .pdf-report .footer { margin-top: 14px; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #6b5a46; }
           </style>
           <h1>RoleTRADE™ Mentalia</h1>
-          <p class="subtitle">これがあなたが18歳の自分に持たせる「5つの役割」です。</p>
+          <p class="subtitle">これがあなたが選んだ「5つの役割」です。</p>
           <div class="section-title">選んだRole</div>
           <div class="roles">${selectedRoles}</div>
           <div class="section-title">リフレムとハルカからの問い</div>
@@ -1730,7 +1730,7 @@ function getSecondDoubleTradeCount() {
                       <h4 class="font-bold text-stone-900 mb-2 flex items-center"><span class="text-orange-700 mr-2 text-base">7.</span>理論の背景「役割」について</h4>
                       <p>RIESM™ RoleTRADEは、交流分析とRIASECを背景にしながら、RIESM™の「立場―機能―役割―行動」という考え方を取り入れています。ここでいう役割とは、上司・部下・親などの社会的な立場ではなく、その立場で求められる機能を果たすために、自分の内側から使うことのできる自己資源です。</p>
                       <p>たとえば、上司という立場で「部下の成長を支える」という機能を果たす場合でも、コーチ役で伴走する、守護者役で組織と部下を守る、ナレッジ・ギバー役で知識を伝えるなど、実現の仕方は一つではありません。</p>
-                      <p>本ワークでは、役割を受け取り、手放し、選び直す体験を通して、自分が使いたい役割、手放しにくい役割、これから使ってみたい役割を見つめます。これは人を固定的に分類する診断ではなく、<span class="font-extrabold text-orange-900">機能は果たす。型は選べる。</span>という役割の自由を体験するためのワークです。</p>
+                      <p>本ワークでは、役割を受け取り、手放し、選び直す体験を通して、自分が使いやすい役割、手放しにくい役割、これから使ってみたい役割を見つめます。これは人を固定的に分類する診断ではなく、<span class="font-extrabold text-orange-900">機能は果たす。型は選べる。</span>という役割の自由を体験するためのワークです。</p>
                       <p class="pt-2 border-t border-stone-400/40 text-[10px] sm:text-[11px] leading-relaxed">
                         ※<a href="https://note.com/ninin2025/n/nfa28721f3cc1" target="_blank" rel="noopener noreferrer" class="font-bold text-orange-900 underline decoration-orange-700 underline-offset-2">社会的機能と役割資源の分離｜RIESM™における「立場-機能-役割-行動」モデルの理論的試論</a>
                       </p>
@@ -2758,7 +2758,7 @@ function getSecondDoubleTradeCount() {
                     </div>
                     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
-                    <p class="text-stone-800 mb-10 sm:mb-12 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが18歳の自分に持たせる<br class="sm:hidden" />「5つの役割」です。</p>
+                    <p class="text-stone-800 mb-10 sm:mb-12 font-serif text-sm sm:text-base font-bold w-full text-center relative z-10">これがあなたが選んだ「5つの役割」です。</p>
                     
                     <div class="flex flex-col items-center w-full mt-2 mb-2 relative z-10">
                       
