@@ -327,6 +327,29 @@
       border-radius: 4px;
       box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .08);
     }
+    .riesm-history-trend {
+      overflow-x: hidden;
+    }
+    .riesm-history-trend__svg {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      height: auto;
+    }
+    @media (max-width: 639px) {
+      .riesm-history-trend__svg {
+        height: var(--trend-height);
+      }
+    }
+    @media (min-width: 640px) {
+      .riesm-history-trend {
+        overflow-x: auto;
+      }
+      .riesm-history-trend__svg {
+        min-width: 620px;
+      }
+    }
     .riesm-guide-image {
       display: block;
       width: 100%;
@@ -856,10 +879,12 @@
       const modeTypes = ['W', 'K', 'N', 'A'];
 
       return (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="riesm-history-trend rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
           <svg
-            className="block h-auto min-w-[620px] w-full"
+            className="riesm-history-trend__svg"
+            style={{ '--trend-height': `${height}px` }}
             viewBox={`0 0 ${width} ${height}`}
+            preserveAspectRatio="none"
             role="img"
             aria-label="直近を上、過去を下に並べた4モードの割合の変化グラフ"
           >
