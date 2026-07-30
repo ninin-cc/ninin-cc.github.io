@@ -129,7 +129,7 @@
       confirmPass: "見送って次へ進む",
       cancel: "戻る",
       nextTraveler: "次の旅人へ",
-      toRefrem: "灯火の間へ戻る",
+      toRefrem: "暖炉の前へ戻る",
       toResult: "最後の選択へ",
       decide: "決定する"
     }

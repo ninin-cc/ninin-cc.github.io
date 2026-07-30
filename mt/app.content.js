@@ -149,7 +149,7 @@
       },
       7: {
         name: "リフレム",
-        place: "灯火の間",
+        place: "暖炉の前",
         avatar: REFREM_AVATAR,
         avatarPosition: REFREM_CROP_POSITION,
         avatarZoom: 2.25,

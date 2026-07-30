@@ -331,7 +331,7 @@
       avatar: state.tradeAvatarImg || travelerProfile(1).avatar,
       position: "center center"
     });
-    const cue = state.afterTradeNextTravelerIndex >= 4 ? "灯火の間へ戻る" : "次の旅人と話す";
+    const cue = state.afterTradeNextTravelerIndex >= 4 ? "暖炉の前へ戻る" : "次の旅人と話す";
     return sceneShell(`
       <div class="bg-[#f0e6d2]/80 backdrop-blur-sm rounded-sm border border-stone-400/80 shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-0">
         <div class="absolute inset-0 z-0 pointer-events-none">

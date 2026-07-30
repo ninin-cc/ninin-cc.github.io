@@ -1368,7 +1368,10 @@ function getSecondDoubleTradeCount() {
     function renderRulesActions() {
       return `
                 <div class="rules-back-link-wrap relative z-10">
-                  <button data-action="go-start" class="rules-back-link">
+                  <button type="button" data-action="previous-rules-page" class="rules-back-link">
+                    前のページに戻る
+                  </button>
+                  <button type="button" data-action="go-start" class="rules-back-link">
                     タイトルに戻る
                   </button>
                 </div>
@@ -1410,7 +1413,7 @@ function getSecondDoubleTradeCount() {
       ['12-1', '帰還語り'],
       ['12-2', '最後交換'],
       ['13', '最終受取'],
-      ['14', '灯火'],
+      ['14', '暖炉の前'],
       ['15', '第一選択'],
       ['16', '第二選択'],
       ['17', '結果']
@@ -1541,6 +1544,7 @@ function getSecondDoubleTradeCount() {
           state.initialHandReviewIndex = 0;
         } else if (page === '3-3') {
           state.initialHandReviewComplete = true;
+          state.initialHandPostReviewStep = INITIAL_HAND_POST_REVIEW_BLOCKS.length - 1;
         }
       } else if (page === '4') {
         state.gameState = 'PLAYING';
@@ -1566,7 +1570,7 @@ function getSecondDoubleTradeCount() {
         state.finalShopGuideStep = 3;
       } else if (page === '13') {
         state.gameState = 'SHOP_CONFIRM';
-        state.shopConfirmDialogueStep = 0;
+        state.shopConfirmDialogueStep = SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1;
       } else if (page === '14') {
         state.gameState = 'SHOP_FAREWELL';
       } else if (page === '15') {
@@ -1673,7 +1677,7 @@ function getSecondDoubleTradeCount() {
                   </div>
                 </button>
                 
-                <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isTrisetsuOpen ? 'max-h-[2000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}">
+                <div class="overflow-hidden transition-all duration-500 ease-in-out ${state.isTrisetsuOpen ? 'max-h-[4000px] opacity-100 mt-2' : 'max-h-0 opacity-0'}">
                   <div class="bg-[#f0e6d2]/95 backdrop-blur-sm p-3 sm:p-5 rounded-md border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.05)] text-left font-serif text-[11px] sm:text-xs text-stone-800 leading-relaxed space-y-4" style="background-image: ${PARCHMENT_TEXTURE}">
                     <p class="font-bold text-xs sm:text-sm border-b border-stone-400/50 pb-2 text-stone-900">このページは、RoleTRADE™を自己理解ワークとして安全に活用するための説明書です。</p>
                     <div class="bg-[#fff8ea]/75 p-3 rounded-sm border border-orange-900/20 space-y-3">
@@ -1722,9 +1726,14 @@ function getSecondDoubleTradeCount() {
                       <p>ワーク実施者は、参加者の選択を評価・解釈しすぎない。<br>「なぜそれを選んだのですか？」よりも、<br><span class="font-bold text-orange-900 block mt-2 p-2 bg-[#f4ebd8] rounded border border-orange-900/20">「そのカードを残したとき、どんな感じがしましたか？」</span>のように、本人の内省を中心に進める。</p>
                     </div>
 
-                    <div class="bg-[#e8dcc4]/50 p-3 rounded-sm border border-stone-300/50">
+                    <div class="bg-[#e8dcc4]/50 p-3 rounded-sm border border-stone-300/50 space-y-3">
                       <h4 class="font-bold text-stone-900 mb-2 flex items-center"><span class="text-orange-700 mr-2 text-base">7.</span>理論の背景「役割」について</h4>
-                      <p>RIESM™ RoleTRADEは、交流分析とRIASECという自己理解・キャリア理解の考え方を背景にしています。交流分析は、人が場面によって異なる役割や反応を見せることに注目する理論です。RIASECは、興味・関心の方向性から、自分に合う活動や働き方を考える理論です。<br>本ワークでは、これらをもとに、固定的な性格診断ではなく「今の自分が使いたい役割」を見つめます。</p>
+                      <p>RIESM™ RoleTRADEは、交流分析とRIASECを背景にしながら、RIESM™の「立場―機能―役割―行動」という考え方を取り入れています。ここでいう役割とは、上司・部下・親などの社会的な立場ではなく、その立場で求められる機能を果たすために、自分の内側から使うことのできる自己資源です。</p>
+                      <p>たとえば、上司という立場で「部下の成長を支える」という機能を果たす場合でも、コーチ役で伴走する、守護者役で組織と部下を守る、ナレッジ・ギバー役で知識を伝えるなど、実現の仕方は一つではありません。</p>
+                      <p>本ワークでは、役割を受け取り、手放し、選び直す体験を通して、自分が使いたい役割、手放しにくい役割、これから使ってみたい役割を見つめます。これは人を固定的に分類する診断ではなく、<span class="font-extrabold text-orange-900">機能は果たす。型は選べる。</span>という役割の自由を体験するためのワークです。</p>
+                      <p class="pt-2 border-t border-stone-400/40 text-[10px] sm:text-[11px] leading-relaxed">
+                        ※<a href="https://note.com/ninin2025/n/nfa28721f3cc1" target="_blank" rel="noopener noreferrer" class="font-bold text-orange-900 underline decoration-orange-700 underline-offset-2">社会的機能と役割資源の分離｜RIESM™における「立場-機能-役割-行動」モデルの理論的試論</a>
+                      </p>
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-stone-400/50 text-center flex justify-center">
@@ -2074,7 +2083,7 @@ function getSecondDoubleTradeCount() {
 
       if (state.gameState === 'INITIAL_HAND') {
         const isInitialHandDialogueComplete = state.initialHandDialogueStep >= INITIAL_HAND_DIALOGUE_BLOCKS.length - 1;
-        const isInitialHandPostReviewComplete = state.initialHandReviewComplete && state.initialHandPostReviewStep >= INITIAL_HAND_POST_REVIEW_BLOCKS.length - 1;
+        const isInitialHandPostReviewComplete = state.initialHandReviewComplete;
         const isInitialHandReady = isInitialHandDialogueComplete && state.initialHandReviewComplete && isInitialHandPostReviewComplete;
         const isInitialHandReviewWaiting = isInitialHandDialogueComplete && state.initialHandReviewArmed && !state.initialHandReviewComplete && state.initialHandReviewIndex < 0 && !state.initialHandReviewGathering;
         const initialReviewCard = state.initialHandReviewIndex >= 0 ? state.hand[state.initialHandReviewIndex] : null;
@@ -2101,11 +2110,10 @@ function getSecondDoubleTradeCount() {
 
                   <div class="character-dialogue-body relative z-20 p-3 sm:p-8 w-[50%] max-w-[190px] sm:w-[66%] sm:max-w-none ml-4 sm:ml-8 mr-auto space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
                     ${state.initialHandReviewComplete
-                      ? renderProgressiveDialogueBlocks(INITIAL_HAND_POST_REVIEW_BLOCKS, state.initialHandPostReviewStep)
+                      ? renderProgressiveDialogueBlocks(INITIAL_HAND_POST_REVIEW_BLOCKS, INITIAL_HAND_POST_REVIEW_BLOCKS.length - 1)
                       : renderProgressiveDialogueBlocks(INITIAL_HAND_DIALOGUE_BLOCKS, state.initialHandDialogueStep)
                     }
                     ${!state.initialHandReviewComplete && state.initialHandDialogueStep < INITIAL_HAND_DIALOGUE_BLOCKS.length - 1 ? '<button data-action="advance-scene-dialogue" class="manual-next-cursor" aria-label="次の言葉へ進む">▼</button>' : ''}
-                    ${state.initialHandReviewComplete && state.initialHandPostReviewStep < INITIAL_HAND_POST_REVIEW_BLOCKS.length - 1 ? '<button data-action="advance-scene-dialogue" class="manual-next-cursor" aria-label="次の言葉へ進む">▼</button>' : ''}
                     ${isInitialHandReviewWaiting ? '<button type="button" data-action="start-initial-card-review" class="dialogue-inline-next-cue" aria-label="カードを確認する"><span>カードを確認する</span><span class="rules-next-play">▶</span></button>' : ''}
                     ${isInitialHandReady ? '<button type="button" data-action="go-playing" class="dialogue-inline-next-cue mt-4" aria-label="' + getExperienceText('startInitialExchangeLabel', 'ハルカと最初の交換へ') + '"><span>' + getExperienceText('startInitialExchangeLabel', 'ハルカと最初の交換へ') + '</span><span class="rules-next-play">▶</span></button>' : ''}
                     <br/><br/><br/><br/><br/><br/>
@@ -2268,7 +2276,7 @@ function getSecondDoubleTradeCount() {
 
       // ▼▼ シーン：最後の武器屋の確認 ▼▼
       if (state.gameState === 'SHOP_CONFIRM') {
-        const isShopConfirmDialogueComplete = state.shopConfirmDialogueStep >= SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1;
+        const isShopConfirmDialogueComplete = true;
         const shopConfirmHand = state.pendingTradeAction === 'trade' && state.selectedHandCard && state.selectedShopCard
           ? state.hand.map(card => card.id === state.selectedHandCard.id ? state.selectedShopCard : card)
           : state.hand;
@@ -2301,7 +2309,7 @@ function getSecondDoubleTradeCount() {
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_FINAL_SHOP_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
+                  <img src="${BG_FINAL_SHOP_IMG}" alt="暖炉の前" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
@@ -2314,8 +2322,7 @@ function getSecondDoubleTradeCount() {
                   <div class="absolute inset-0 dialog-wash-translucent bg-gradient-to-r from-[#e8dcc4] 48%, rgba(232, 220, 196, 0.82) 68%, transparent 100% z-10 pointer-events-none"></div>
 
                   <div class="character-dialogue-body relative z-20 p-4 sm:p-8 w-[95%] sm:w-[66%] space-y-1.5 sm:space-y-2 text-stone-900 font-extrabold drop-shadow-sm text-glow-soft">
-                    ${renderProgressiveDialogueBlocks(SHOP_CONFIRM_DIALOGUE_BLOCKS, state.shopConfirmDialogueStep)}
-                    ${!isShopConfirmDialogueComplete ? '<button data-action="advance-shop-confirm-dialogue" class="manual-next-cursor" aria-label="次の言葉へ進む">▼</button>' : ''}
+                    ${renderProgressiveDialogueBlocks(SHOP_CONFIRM_DIALOGUE_BLOCKS, SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1)}
                     ${shopConfirmActionsHTML}
                   </div>
                 </div>
@@ -2338,7 +2345,7 @@ function getSecondDoubleTradeCount() {
         html += `
               <div class="bg-[#f0e6d2]/95 backdrop-blur-md rounded-sm border border-stone-400/80 px-4 py-5 sm:p-8 md:p-12 text-center shadow-[0_10px_40px_rgba(124,45,18,0.3)] relative overflow-hidden mt-0 sm:mt-4">
                 <div class="absolute inset-0 z-0 pointer-events-none">
-                  <img src="${BG_FINAL_SHOP_IMG}" alt="灯火の間" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
+                  <img src="${BG_FINAL_SHOP_IMG}" alt="暖炉の前" class="w-full h-full object-cover opacity-[0.25] mix-blend-multiply" style="object-position: ${BG_FINAL_SHOP_POSITION}; transform: scale(${BG_FINAL_SHOP_ZOOM}); transform-origin: ${BG_FINAL_SHOP_POSITION};" />
                 </div>
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-orange-500/60 to-transparent"></div>
 
@@ -2386,7 +2393,7 @@ function getSecondDoubleTradeCount() {
         if (isShopTime) {
           const guide = GUIDE_MESSAGES[state.round] || (isFinalShopRound(state.round) ? GUIDE_MESSAGES[getFinalShopRound()] || GUIDE_MESSAGES[7] || {
             name: "リフレム",
-            place: "灯火の間",
+            place: "暖炉の前",
             avatar: REFREM_AVATAR,
             avatarPosition: REFREM_CROP_POSITION,
             avatarZoom: 2.25,
@@ -2399,10 +2406,9 @@ function getSecondDoubleTradeCount() {
           const finalShopGuideStep = isFinalShopRound(state.round) ? (state.finalShopGuideStep || 0) : finalShopGuideMessages.length;
           const isFinalShopWaiting = isFinalShopRound(state.round) && finalShopGuideStep < finalShopGuideMessages.length;
           const guideMessage = isFinalShopRound(state.round)
-            ? (isFinalShopWaiting ? finalShopGuideMessages[finalShopGuideStep] : guide.message)
+            ? (isFinalShopWaiting ? finalShopGuideMessages.join('') : guide.message)
             : guide.message;
           if (isFinalShopWaiting) {
-            const isFinalGuideCue = finalShopGuideStep >= finalShopGuideMessages.length - 1;
             html += `
                   <div class="p-2 sm:p-8 relative z-10">
                     <div class="max-w-2xl mx-auto">
@@ -2410,7 +2416,7 @@ function getSecondDoubleTradeCount() {
                         <div class="absolute inset-0 z-0 pointer-events-none">
                           <img src="${ROLETRADE_SCENE_IMG}" alt="リフレムとハルカのいる部屋" class="w-full h-full object-cover opacity-[0.28] mix-blend-multiply" style="object-position: 52% center;" />
                         </div>
-                        <button type="button" data-action="advance-final-shop-guide" aria-label="リフレムの言葉を次へ進める" class="relative block w-full text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
+                        <button type="button" data-action="advance-final-shop-guide" aria-label="交換画面へ進む" class="relative block w-full text-left text-xs sm:text-sm md:text-base leading-relaxed font-serif font-medium rounded-sm border border-stone-400/50 shadow-[inset_0_0_15px_rgba(0,0,0,0.1)] z-10 overflow-hidden bg-[#e8dcc4] dialog-panel-translucent h-[455px] sm:h-[594px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-800 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0e6d2] transition-colors duration-300" style="background-image: ${PARCHMENT_TEXTURE}">
                           <div class="absolute left-0 top-0 bottom-0 w-[48%] sm:w-[42%] z-0" style="mask-image: linear-gradient(to right, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);">
                             <img src="${REFREM_AVATAR}" alt="リフレム" class="w-full h-full object-cover" style="object-position: ${REFREM_CROP_POSITION};" />
                           </div>
@@ -2419,10 +2425,15 @@ function getSecondDoubleTradeCount() {
                             <div class="space-y-2 sm:space-y-3">
                               ${guideMessage}
                             </div>
-                            <p class="rules-next-cue ${isFinalGuideCue ? 'rules-next-cue-final' : ''}" aria-label="${isFinalGuideCue ? '次へ進む' : '次の言葉へ進む'}">
-                              ${isFinalGuideCue ? '<span class="rules-next-text">次へ</span><span class="rules-next-play">▶</span>' : '<span class="rules-next-arrow">▼</span>'}
+                            <p class="rules-next-cue rules-next-cue-final" aria-label="次へ進む">
+                              <span class="rules-next-text">次へ</span><span class="rules-next-play">▶</span>
                             </p>
                           </div>
+                        </button>
+                      </div>
+                      <div class="rules-back-link-wrap relative z-10">
+                        <button type="button" data-action="previous-final-shop-guide" class="rules-back-link">
+                          前のページに戻る
                         </button>
                       </div>
                     </div>
@@ -2728,6 +2739,13 @@ function getSecondDoubleTradeCount() {
 
                   </div>
                 </div>
+                ${state.resultStep === 'SELECT_1' ? `
+                  <div class="rules-back-link-wrap relative z-10">
+                    <button type="button" data-action="previous-result-page" class="rules-back-link">
+                      前のページに戻る
+                    </button>
+                  </div>
+                ` : ''}
           `;
         } else {
           const freqMode = getMostFrequentMode();
@@ -2831,8 +2849,42 @@ function getSecondDoubleTradeCount() {
                     <div class="real-tavern-message-inner">
                       <p class="real-tavern-kicker">ここからは、現実の酒場へ</p>
                       <h3>互いの物語を語り合う時間です。</h3>
-                      <p>さあ、ここからは現実の酒場での時間です。これから出会う旅人たちに、あなたがなぜそのカードを残したのか伝えてみてください。</p>
-                      <p>そして、他の旅人たちがなぜその役割を選んだのか、そのわけにも耳を傾けてみましょう。互いの物語を語り合うことで、新しい関係性の扉が開くはずです。</p>
+                      <p>さあ、ここからは現実の酒場（ワークショップ）での時間です。これから出会う旅人たちに、あなたがなぜそのカードを残したのか伝えてみてください。</p>
+                      <p>そして、他の旅人たちがなぜその役割を選んだのか、そのわけにも耳を傾けてみましょう。そしてどうしていきたいか、どう感じたかなど、物語を語り合うことで、お互いに新しい扉が開くはずです。</p>
+                    </div>
+                  </section>
+
+                  <div class="reality-question-bridge relative z-10" aria-hidden="true">
+                    <span>▼</span>
+                  </div>
+
+                  <section class="reality-question-card relative z-10 max-w-2xl mx-auto text-left font-serif" aria-labelledby="reality-question-title">
+                    <div class="reality-question-card-inner">
+                      <p class="reality-question-kicker">物語から、日々の営みへ</p>
+                      <h3 id="reality-question-title">現実への問い</h3>
+                      <p class="reality-question-intro">
+                        これは、ワークショップで語る、あるいは一人で考える問いとなります。<br />
+                        ゆっくりと考えてみてくださいね。
+                      </p>
+                      <p class="reality-question-prompt">
+                        <span>これら5つの役割で、</span>
+                        今の「立場」で求められる「機能」を果たすとしたら、<br />
+                        あなたは、どんな使い方ができそうですか？<br />
+                        また、どんな使い方をしてみたいですか？
+                      </p>
+                      <dl class="reality-question-context">
+                        <div>
+                          <dt>立場</dt>
+                          <dd>上司・部下・リーダー・教師・先輩・後輩・親・子・パートナー・友人・地域やコミュニティ内での立場など</dd>
+                        </div>
+                        <div>
+                          <dt>機能</dt>
+                          <dd>成果達成・先導・支援・ルール整備・環境整備・育成・保護・養育・協力・現状打破・新しい視点・成長・フォローなど</dd>
+                        </div>
+                      </dl>
+                      <div class="reality-question-action">
+                        <p>その役割を使うとしたら、明日どんな行動を一つ起こしたいですか？</p>
+                      </div>
                     </div>
                   </section>
 
@@ -3023,7 +3075,7 @@ function getSecondDoubleTradeCount() {
           state.initialHandReviewIndex = -1;
           state.initialHandReviewReturning = false;
           state.initialHandReviewComplete = true;
-          state.initialHandPostReviewStep = 0;
+          state.initialHandPostReviewStep = INITIAL_HAND_POST_REVIEW_BLOCKS.length - 1;
         }
         render();
       }, isFinalInitialReviewCard ? EXPERIENCE_TIMING.initialCardReviewFinalReturnMs : EXPERIENCE_TIMING.initialCardReviewAdvanceMs);
@@ -3036,17 +3088,6 @@ function getSecondDoubleTradeCount() {
       }
       if (pageLabel === '6' && state.gameState === 'BEFORE_TAVERN' && state.beforeTavernDialogueStep < BEFORE_TAVERN_DIALOGUE_BLOCKS.length - 1) {
         return advanceSceneDialogue;
-      }
-      if (pageLabel === '3-2' && state.gameState === 'INITIAL_HAND') {
-        if (
-          state.initialHandReviewArmed &&
-          !state.initialHandReviewComplete &&
-          !state.initialHandReviewGathering &&
-          !state.initialHandReviewReturning &&
-          state.initialHandReviewIndex < 0
-        ) {
-          return startInitialCardReview;
-        }
       }
       return null;
     }
@@ -3168,6 +3209,36 @@ function getSecondDoubleTradeCount() {
       });
     }
 
+    function goToPreviousRulesPage() {
+      if (state.gameState !== 'RULES') return;
+
+      clearRulesAutoAdvance();
+      clearRulesIntroReveal();
+
+      if (state.rulesExplanationPhase === 'details') {
+        transitionState(() => {
+          state.rulesExplanationPhase = 'guide';
+          state.rulesGuideScene = Math.max(0, RULES_GUIDE_SCREENS.length - 1);
+          state.rulesExplanationStep = getActiveRulesBlocks().length - 1;
+        });
+        return;
+      }
+
+      if ((state.rulesGuideScene || 0) > 0) {
+        transitionState(() => {
+          state.rulesGuideScene = Math.max(0, (state.rulesGuideScene || 0) - 1);
+          state.rulesExplanationStep = getActiveRulesBlocks().length - 1;
+        });
+        return;
+      }
+
+      transitionState(() => {
+        state.journeyMode = 'first';
+        window.ROLETRADE_ACTIVE_JOURNEY = 'first';
+        state.gameState = 'START';
+      });
+    }
+
     function advanceRulesExplanation() {
       if (!isRulesExplanationComplete()) {
         setRulesExplanationStep(state.rulesExplanationStep + 1);
@@ -3269,6 +3340,8 @@ function getSecondDoubleTradeCount() {
         restoreJourneyProgress();
       } else if (action === 'advance-rules') {
         advanceRulesExplanation();
+      } else if (action === 'previous-rules-page') {
+        goToPreviousRulesPage();
       } else if (action === 'advance-scene-dialogue') {
         advanceSceneDialogue();
       } else if (action === 'start-initial-card-review') {
@@ -3278,7 +3351,12 @@ function getSecondDoubleTradeCount() {
       } else if (action === 'advance-final-shop-guide') {
         transitionState(() => {
           const guideLength = 3;
-          state.finalShopGuideStep = Math.min((state.finalShopGuideStep || 0) + 1, guideLength);
+          state.finalShopGuideStep = guideLength;
+        });
+      } else if (action === 'previous-final-shop-guide') {
+        if (getPageLabel() !== '12-1') return;
+        transitionState(() => {
+          state.gameState = 'AFTER_TAVERN';
         });
       } else if (action === 'toggle-trisetsu') {
         state.isTrisetsuOpen = !state.isTrisetsuOpen;
@@ -3429,7 +3507,7 @@ function getSecondDoubleTradeCount() {
           if (isFinalShopRound(state.round)) {
             state.pendingTradeAction = 'trade';
             transitionState(() => {
-              state.shopConfirmDialogueStep = 0;
+              state.shopConfirmDialogueStep = SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1;
               state.gameState = 'SHOP_CONFIRM';
             });
           } else {
@@ -3508,7 +3586,7 @@ function getSecondDoubleTradeCount() {
         if (isFinalShopRound(state.round)) {
           state.pendingTradeAction = 'skip';
           transitionState(() => {
-            state.shopConfirmDialogueStep = 0;
+            state.shopConfirmDialogueStep = SHOP_CONFIRM_DIALOGUE_BLOCKS.length - 1;
             state.gameState = 'SHOP_CONFIRM';
           });
         } else {
@@ -3545,6 +3623,14 @@ function getSecondDoubleTradeCount() {
         transitionState(() => {
           state.resultStep = 'SELECT_1';
           state.gameState = 'RESULT';
+        });
+      } else if (action === 'previous-result-page') {
+        if (state.gameState !== 'RESULT' || state.resultStep !== 'SELECT_1') return;
+        transitionState(() => {
+          state.confirmingCard = null;
+          state.isConfirmModalClosing = false;
+          state.isResultConfirmSettling = false;
+          state.gameState = 'SHOP_FAREWELL';
         });
       } else if (action === 'select-result') {
         const id = parseInt(btn.dataset.id);
