@@ -337,16 +337,18 @@
       min-width: 0;
       height: auto;
     }
-    @media (max-width: 639px) {
-      .riesm-history-trend__svg {
-        height: var(--trend-height);
-      }
+    .riesm-history-trend__svg--desktop {
+      display: none;
     }
     @media (min-width: 640px) {
       .riesm-history-trend {
         overflow-x: auto;
       }
-      .riesm-history-trend__svg {
+      .riesm-history-trend__svg--mobile {
+        display: none;
+      }
+      .riesm-history-trend__svg--desktop {
+        display: block;
         min-width: 620px;
       }
     }
@@ -863,33 +865,37 @@
 
     function MiniHistoryTrendGraph({ entries }) {
       const history = entries.slice(0, MINI_HISTORY_LIMIT);
-      const width = 680;
-      const labelWidth = 126;
-      const plotLeft = 148;
-      const plotRight = 654;
       const top = 58;
       const rowHeight = 35;
       const bottom = 30;
       const height = Math.max(220, top + Math.max(1, history.length - 1) * rowHeight + bottom);
-      const xForPercent = (value) => {
-        const clamped = Math.max(-10, Math.min(40, Number(value) || 0));
-        return plotLeft + ((clamped + 10) / 50) * (plotRight - plotLeft);
-      };
       const gridValues = [-10, 0, 10, 20, 30, 40];
       const modeTypes = ['W', 'K', 'N', 'A'];
 
-      return (
-        <div className="riesm-history-trend rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+      const renderTrendSvg = ({
+        width,
+        labelWidth,
+        plotLeft,
+        plotRight,
+        dateFontSize,
+        headingFontSize,
+        className
+      }) => {
+        const xForPercent = (value) => {
+          const clamped = Math.max(-10, Math.min(40, Number(value) || 0));
+          return plotLeft + ((clamped + 10) / 50) * (plotRight - plotLeft);
+        };
+
+        return (
           <svg
-            className="riesm-history-trend__svg"
-            style={{ '--trend-height': `${height}px` }}
+            className={`riesm-history-trend__svg ${className}`}
             viewBox={`0 0 ${width} ${height}`}
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMidYMin meet"
             role="img"
             aria-label="直近を上、過去を下に並べた4モードの割合の変化グラフ"
           >
-            <text x={plotLeft} y="21" fill="#64748b" fontSize="12" fontWeight="700">バックス側</text>
-            <text x={plotRight} y="21" fill="#64748b" fontSize="12" fontWeight="700" textAnchor="end">フロント側</text>
+            <text x={plotLeft} y="21" fill="#64748b" fontSize={headingFontSize} fontWeight="700">バックス側</text>
+            <text x={plotRight} y="21" fill="#64748b" fontSize={headingFontSize} fontWeight="700" textAnchor="end">フロント側</text>
             <line x1={labelWidth} y1="32" x2={labelWidth} y2={height - 12} stroke="#cbd5e1" strokeWidth="1" />
 
             {gridValues.map(value => (
@@ -908,7 +914,7 @@
               const y = top + index * rowHeight;
               return (
                 <g key={entry.id}>
-                  <text x="6" y={y + 4} fill="#334155" fontSize="12" fontWeight="700">
+                  <text x="4" y={y + 4} fill="#334155" fontSize={dateFontSize} fontWeight="700">
                     {formatMiniHistoryGraphDate(entry.createdAt)}
                   </text>
                   <line x1={labelWidth} y1={y + 12} x2={plotRight} y2={y + 12} stroke="#f1f5f9" strokeWidth="1" />
@@ -935,7 +941,30 @@
               );
             })}
           </svg>
-          <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] font-bold text-slate-600">
+        );
+      };
+
+      return (
+        <div className="riesm-history-trend rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+          {renderTrendSvg({
+            width: 360,
+            labelWidth: 74,
+            plotLeft: 88,
+            plotRight: 348,
+            dateFontSize: 9.5,
+            headingFontSize: 10.5,
+            className: 'riesm-history-trend__svg--mobile'
+          })}
+          {renderTrendSvg({
+            width: 680,
+            labelWidth: 126,
+            plotLeft: 148,
+            plotRight: 654,
+            dateFontSize: 12,
+            headingFontSize: 12,
+            className: 'riesm-history-trend__svg--desktop'
+          })}
+          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 px-4 text-[11px] font-bold text-slate-600 sm:flex sm:flex-wrap sm:justify-center sm:px-0">
             {modeTypes.map(type => (
               <span key={type} className="inline-flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: MINI_MODE_CARD_META[type].color }}></span>
