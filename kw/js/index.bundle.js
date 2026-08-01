@@ -38,6 +38,127 @@ const CONTACT_CONFIG = {
   ctaLabel: 'nininカウンセリングルームへ向かう'
 };
 
+function getReferralRequestValue() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id') ||
+    params.get('code') ||
+    params.get('ref') ||
+    params.get('amb') ||
+    Array.from(params.keys())[0] ||
+    window.location.hash;
+}
+
+function getReferralAliasFromValue(value) {
+  return String(value || '')
+    .replace(/^[?#]/, '')
+    .split('&')[0]
+    .split('=')[0]
+    .replace(/_/g, '-')
+    .toUpperCase()
+    .match(/(?:[A-Z]{1,4})-?(\d{3,4})|\b(\d{3,4})\b/i)?.slice(1).find(Boolean) || '';
+}
+
+function getReferralAliasKey(value) {
+  const alias = getReferralAliasFromValue(value);
+  return alias ? String(Number(alias)) : '';
+}
+
+function getReferralRequestAlias() {
+  return getReferralAliasFromValue(getReferralRequestValue());
+}
+
+function normalizeReferralNoteID(value) {
+  const normalized = String(value || '')
+    .trim()
+    .replace(/^[?#@]/, '')
+    .split('&')[0]
+    .split('=')[0]
+    .toLowerCase();
+  return /^[a-z0-9_-]+$/i.test(normalized) ? normalized : '';
+}
+
+function isExcludedReferralAlias(alias) {
+  return /^9\d{3}$/.test(String(alias || ''));
+}
+
+function getReferralSource(member) {
+  return [
+    member.certification,
+    member.certificationType,
+    member.certificationNumber,
+    member.riesmNumber,
+    member.riesmRole,
+    member.navigatorType,
+    member.title,
+    member.id
+  ].filter(Boolean).join(' ');
+}
+
+function getReferralMemberAlias(member) {
+  return getReferralAliasFromValue(getReferralSource(member));
+}
+
+function getReferralMemberNoteID(member) {
+  if (member && member.noteID) return normalizeReferralNoteID(member.noteID);
+  const noteUrl = member && member.links && member.links.note;
+  const match = String(noteUrl || '').match(/^https?:\/\/(?:www\.)?note\.com\/([^/?#]+)/i);
+  return match ? normalizeReferralNoteID(match[1]) : '';
+}
+
+function isPaidConsultationReferralAllowed(member) {
+  const tags = Array.isArray(member?.tags) ? member.tags : [];
+  return tags.includes('tabelab');
+}
+
+function getReferralPrimaryLink(member) {
+  const links = member?.links || {};
+  return member?.consultationUrl || links.consultation || '';
+}
+
+function resolveReferralMember() {
+  const requestValue = getReferralRequestValue();
+  const members = window.NININ_LINK_DATA || window.linkData || [];
+  const requestedNoteID = normalizeReferralNoteID(requestValue);
+  const noteMember = requestedNoteID ? members.find(item =>
+    isPaidConsultationReferralAllowed(item) && getReferralMemberNoteID(item) === requestedNoteID
+  ) : null;
+  if (noteMember) {
+    return { member: noteMember, matchType: 'noteID', noteID: requestedNoteID, alias: getReferralMemberAlias(noteMember) };
+  }
+
+  const alias = getReferralRequestAlias();
+  if (!alias || isExcludedReferralAlias(alias)) return null;
+  const certificationMember = members.find(item => getReferralAliasKey(getReferralMemberAlias(item)) === getReferralAliasKey(alias));
+  if (!certificationMember || !isPaidConsultationReferralAllowed(certificationMember)) return null;
+  return { member: certificationMember, matchType: 'certification', noteID: getReferralMemberNoteID(certificationMember), alias };
+}
+
+function applyMemberReferralContactConfig() {
+  const referral = resolveReferralMember();
+  if (!referral) return;
+  const { member, matchType, noteID, alias } = referral;
+
+  const cardUrl = alias ? '../touroku.html?' + encodeURIComponent(alias) : '';
+  const profileUrl = matchType === 'noteID' && noteID ? '../link.html?' + encodeURIComponent(noteID) : cardUrl;
+  const memberPageUrl = noteID ? '../link.html?' + encodeURIComponent(noteID) : profileUrl;
+  const primaryUrl = getReferralPrimaryLink(member) || memberPageUrl || CONTACT_CONFIG.consultationUrl;
+  const sourceLabel = member.certification || 'たべラボメンバー';
+  Object.assign(CONTACT_CONFIG, {
+    consultationName: member.name || CONTACT_CONFIG.consultationName,
+    consultationUrl: primaryUrl,
+    consultationDescription: member.linkDesc || member.ambassadorDesc || member.desc || CONTACT_CONFIG.consultationDescription,
+    profileText: member.certification
+      ? sourceLabel + '。たべラボメンバーとして、この相談アプリで相談先として表示されています。'
+      : 'たべラボメンバーとして、この相談アプリで相談先として表示されています。',
+    profileUrl,
+    profileLinkLabel: matchType === 'noteID' ? 'プロフィール' : '認定カード / プロフィール',
+    ctaLabel: (member.name || CONTACT_CONFIG.consultationName) + 'へ向かう'
+  });
+}
+
+applyMemberReferralContactConfig();
+
+
 // 著作表記リンク先。相談先を変えてもここは ninin HP のままにします。
 const NININ_HOME_URL = 'https://ninin-cc.github.io/';
 
@@ -1015,7 +1136,13 @@ const App = () => {
         React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "bg-opacity-100 border-yellow-500 shadow-2xl" }, /*#__PURE__*/
         React.createElement(DialogBox, {
           charConfig: CONFIG.char1,
-          text: `${CONTACT_CONFIG.popupLeadText}\n\nもしよければ、【 ${CONTACT_CONFIG.consultationName} 】で、あなたの話をゆっくり聞かせてください。` }
+          text: /*#__PURE__*/
+          React.createElement(React.Fragment, null,
+          CONTACT_CONFIG.popupLeadText,
+          '\n\n…そうですね。\nどうでしょう？私が知っている【 ', /*#__PURE__*/
+          React.createElement("strong", { className: "font-bold" }, CONTACT_CONFIG.consultationName),
+          ' 】で、よかったらゆっくりお話ししてみては――'
+          ) }
         ), /*#__PURE__*/
         React.createElement("div", { className: "flex flex-col gap-3 mt-6" }, /*#__PURE__*/
         React.createElement("a", {
