@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="./js/linkdata.js"></script> <!-- 外部データファイルの読み込み -->
+    <script src="./js/linkdata.js?v=20260801"></script> <!-- 外部データファイルの読み込み -->
     <style>
         :root {
             color-scheme: light;
@@ -969,6 +969,17 @@
             outline: none;
         }
 
+        .individual-link-card.is-tabelab-app {
+            border-color: rgba(182, 107, 69, 0.3);
+            background: linear-gradient(135deg, rgba(255, 250, 245, 0.96), rgba(255, 255, 255, 0.92));
+        }
+
+        .individual-link-card.is-tabelab-app:hover,
+        .individual-link-card.is-tabelab-app:focus-visible {
+            border-color: rgba(182, 107, 69, 0.55);
+            box-shadow: 0 12px 28px rgba(182, 107, 69, 0.14);
+        }
+
         .individual-link-icon {
             width: 3rem;
             height: 3rem;
@@ -1028,6 +1039,21 @@
             background: #fff;
             border: 1px solid rgba(30, 102, 120, 0.34);
             color: #16845f;
+        }
+
+        .individual-link-icon.is-tabelab-app {
+            background: linear-gradient(135deg, #b66b45, #8c452b);
+            color: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.35rem;
+        }
+
+        .individual-link-icon.is-tabelab-app.is-weather {
+            background: linear-gradient(135deg, #d69a2d, #9b6420);
+        }
+
+        .individual-link-icon.is-tabelab-app.is-career-room {
+            background: linear-gradient(135deg, #52749b, #304c72);
         }
 
         .individual-link-icon.is-coconala {
@@ -1183,10 +1209,14 @@
                     line: 'LINE',
                     linkedin: 'in',
                     instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>',
+                    facebook: 'f',
+                    discord: 'D',
+                    email: '@',
+                    other: '→',
                     coconala: '<img src="./img/link/coconala.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="coconala">'
                 };
-                const linkTypes = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'coconala'];
-                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', coconala: 'ココナラ' };
+                const linkTypes = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'facebook', 'discord', 'email', 'other', 'coconala'];
+                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', facebook: 'Facebook', discord: 'Discord', email: 'メール', other: 'その他', coconala: 'ココナラ' };
 
                 return linkTypes
                     .filter(type => userLinks[type])
@@ -1209,6 +1239,13 @@
                 return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
             }
 
+            function renderMemberDescriptionHTML(member) {
+                const description = safeHtml(member.linkDesc || member.desc || '');
+                if (!member.profileRegistrationUrl) return description;
+                const registrationLink = `<a href="${safeHtml(member.profileRegistrationUrl)}" target="_blank" rel="noopener noreferrer" class="font-black text-[var(--warm)] underline underline-offset-4 hover:text-[var(--navy)]">こちら</a>`;
+                return description.replace('こちら', registrationLink);
+            }
+
             function normalizeMemberKey(value = '') {
                 return String(value)
                     .normalize('NFKC')
@@ -1222,6 +1259,13 @@
                 const src = member.avatar?.src || '';
                 const file = src.split('/').pop() || '';
                 return file.replace(/\.[^.]+$/, '');
+            }
+
+            function getMemberNoteID(member) {
+                if (member.noteID) return String(member.noteID).trim();
+                const noteUrl = member.links?.note || '';
+                const match = String(noteUrl).match(/^https?:\/\/(?:www\.)?note\.com\/([^/?#]+)/i);
+                return match ? match[1] : '';
             }
 
             function getCertificationCode(member) {
@@ -1271,11 +1315,20 @@
                 return [
                     member.name,
                     member.name?.split(/[｜|]/)[0],
+                    getMemberNoteID(member),
+                    member.tabelabMemberId,
                     getAvatarAlias(member),
                     certificationCode,
                     certificationCode.toLowerCase(),
                     ...(getManualAliases(member))
                 ].filter(Boolean).map(normalizeMemberKey).filter(Boolean);
+            }
+
+            function getMemberPageAlias(member, index) {
+                const isTabelabMember = Array.isArray(member.tags) && member.tags.includes('tabelab');
+                const noteID = getMemberNoteID(member);
+                if (isTabelabMember && noteID) return noteID;
+                return (getAvatarAlias(member) || getMemberAliases(member)[0] || String(index)).toLowerCase();
             }
 
             function getRequestedMemberKey() {
@@ -1314,6 +1367,10 @@
                     line: 'LINE',
                     linkedin: 'in',
                     instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>',
+                    facebook: 'f',
+                    discord: 'D',
+                    email: '@',
+                    other: '→',
                     coconala: '<img src="./img/link/coconala.jpg" alt="" class="link-icon-img" loading="lazy" decoding="async" data-icon="coconala">',
                     license: 'ID'
                 };
@@ -1322,7 +1379,7 @@
 
             function renderIndividualLinkCards(member) {
                 const links = member.links || {};
-                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', coconala: 'ココナラ' };
+                const labels = { note: 'note', web: 'Web', x: 'X', line: 'LINE', linkedin: 'LinkedIn', instagram: 'Instagram', facebook: 'Facebook', discord: 'Discord', email: 'メール', other: 'その他', coconala: 'ココナラ' };
                 const descriptions = {
                     note: 'noteでの発信を見る',
                     web: 'Webサイトを見る',
@@ -1330,9 +1387,13 @@
                     line: 'LINE公式などを見る',
                     linkedin: 'LinkedInプロフィールを見る',
                     instagram: 'Instagramを見る',
+                    facebook: 'Facebookを見る',
+                    discord: 'Discordを見る',
+                    email: 'メールを送る',
+                    other: 'その他のリンクを見る',
                     coconala: 'ココナラのサービスを見る'
                 };
-                const cards = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'coconala']
+                const cards = ['note', 'web', 'x', 'line', 'linkedin', 'instagram', 'facebook', 'discord', 'email', 'other', 'coconala']
                     .filter(type => links[type])
                     .map(type => `
                         <a href="${safeHtml(links[type])}" target="_blank" rel="noopener noreferrer" class="individual-link-card">
@@ -1364,9 +1425,54 @@
                 return cards.length ? cards.join('') : '<div class="individual-link-card text-center text-sm font-bold text-[var(--muted)]">公開リンクは準備中です</div>';
             }
 
+            function renderTabelabAppCards(member) {
+                const isTabelabMember = Array.isArray(member.tags) && member.tags.includes('tabelab');
+                const noteID = getMemberNoteID(member);
+                if (!isTabelabMember || !noteID) return '';
+                const encodedNoteID = encodeURIComponent(noteID);
+                const apps = [
+                    {
+                        href: `./kw/index.html?${encodedNoteID}`,
+                        icon: '☀',
+                        iconClass: ' is-weather',
+                        title: '心の天気™',
+                        description: '喫茶RIESMで、今の心の天気を見つめる'
+                    },
+                    {
+                        href: `./ca/index.html?${encodedNoteID}`,
+                        icon: '⚓',
+                        iconClass: '',
+                        title: '心の錨を観る魔法™',
+                        description: 'キャリアアンカーで自分の大切な軸を見てみましょう'
+                    },
+                    {
+                        href: `./cr/index.html?${encodedNoteID}`,
+                        icon: '🧭',
+                        iconClass: ' is-career-room',
+                        title: '心の錨を見つめる時間™',
+                        description: 'キャリアアンカーで自分の大切な軸を見てみましょう'
+                    }
+                ];
+                return `
+                    <section class="mt-5 grid grid-cols-1 gap-3" aria-label="たべラボメンバー向けアプリ">
+                        ${apps.map(app => `
+                            <a href="${safeHtml(app.href)}" class="individual-link-card is-tabelab-app">
+                                <div class="flex items-center gap-4">
+                                    <span class="individual-link-icon is-tabelab-app${app.iconClass}" aria-hidden="true">${app.icon}</span>
+                                    <span class="min-w-0 flex-grow">
+                                        <span class="block text-[15px] font-black text-[var(--navy)]">${safeHtml(app.title)}</span>
+                                        <span class="mt-1 block text-xs leading-snug text-[var(--muted)]">${safeHtml(app.description)}</span>
+                                    </span>
+                                    <span class="text-stone-300" aria-hidden="true">→</span>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </section>
+                `;
+            }
+
             function renderIndividualMemberPage(member) {
                 const main = document.querySelector('main');
-                const memberDesc = member.linkDesc || member.desc || '';
                 const avatar = member.avatar?.src
                     ? `<img src="${safeHtml(member.avatar.src)}" alt="${safeHtml(member.name)}のプロフィール画像" class="h-24 w-24 rounded-full border border-[var(--line)] bg-white object-cover shadow-sm">`
                     : `<div class="flex h-24 w-24 items-center justify-center rounded-full border border-[var(--line)] bg-white text-3xl font-black text-[var(--trust)] shadow-sm">${safeHtml(member.avatar?.text || member.name.slice(0, 1))}</div>`;
@@ -1380,10 +1486,11 @@
                             <h1 class="mt-4 text-2xl font-black leading-tight text-[var(--navy)]">${safeHtml(member.name)}</h1>
                             <p class="mt-2 text-sm font-bold leading-relaxed text-[var(--trust)]">${safeHtml(member.title || '')}</p>
                             <div class="badges-wrap mt-4">${generateBadgesHTML(member.tags || [])}</div>
-                            <p class="mt-4 text-left text-sm leading-7 text-[#43505c]">${safeHtml(memberDesc)}</p>
+                            <p class="mt-4 text-left text-sm leading-7 text-[#43505c]">${renderMemberDescriptionHTML(member)}</p>
                             ${renderCertificationHTML(member, 'mt-4')}
                         </div>
                     </section>
+                    ${renderTabelabAppCards(member)}
                     <section class="mt-5 grid grid-cols-1 gap-3">
                         ${renderIndividualLinkCards(member)}
                     </section>
@@ -1399,7 +1506,7 @@
             grid.innerHTML = sharedLinkData.map((member, index) => {
                 const tagsHtml = generateBadgesHTML(member.tags || []);
                 const linksHtml = generateLinksHTML(member.links || {});
-                const memberDesc = member.linkDesc || member.desc || '';
+                const memberDescHtml = renderMemberDescriptionHTML(member);
                 
                 let avatarHtml = '';
                 if (member.avatar.src) {
@@ -1420,7 +1527,7 @@
                     <article class="member-card" data-tags="${(member.tags || []).join(' ')}" id="member-card-${index}">
                         <div class="member-header flex items-center gap-4 mb-3">
                             ${avatarHtml}
-                            <h2 class="text-xl font-black text-[var(--navy)] leading-tight"><a href="link.html?${encodeURIComponent((getAvatarAlias(member) || getMemberAliases(member)[0] || String(index)).toLowerCase())}" class="hover:underline underline-offset-4">${member.name}</a></h2>
+                            <h2 class="text-xl font-black text-[var(--navy)] leading-tight"><a href="link.html?${encodeURIComponent(getMemberPageAlias(member, index))}" class="hover:underline underline-offset-4">${member.name}</a></h2>
                         </div>
                         <div class="member-title text-[0.85rem] font-bold text-[var(--trust)] mb-2">
                             ${member.title}
@@ -1429,7 +1536,7 @@
                             ${tagsHtml}
                         </div>
                         <p class="member-desc text-[0.9rem] text-[#43505c] leading-relaxed mb-4 mt-2">
-                            ${memberDesc}
+                            ${memberDescHtml}
                         </p>
                         ${qualHtml}
                         <div class="member-card-footer">
