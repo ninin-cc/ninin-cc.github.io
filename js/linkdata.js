@@ -196,6 +196,110 @@ const linkData = [
     }
 ];
 
+// たべラボの会員管理CSVから取り込むデータです。
+// CSVの「会員No」を tabelabMemberId として扱います。
+// 既存プロフィールに同じ情報がある場合は変更せず、空いている項目だけを補完します。
+const tabelabMemberRows = [
+    { memberNo: "1", noteID: "ninin2024", name: "けー。お花×カウンセリング", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: false },
+    { memberNo: "2", noteID: "light_dog4955", name: "勉強ねこ＠キャリアコンサルタント", plan: "基本プラン【第2期メンバー】初月無料", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "3", noteID: "mangpudding03", name: "mango_pudding03", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "4", noteID: "cc_miya_be", name: "キャリコンみやび", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "5", noteID: "yuri_supp2", name: "ゆうり＠大学キャリアセンターの人", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "6", noteID: "calm_bonobo1678", name: "こぐみ", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "7", noteID: "hahy87410", name: "あきこ", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: false },
+    { memberNo: "8", noteID: "gissy0721", name: "ぎっしー｜春日部キャリア部 部長", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "9", noteID: "aricona", name: "あかり| 1on1で生きやすい世界に?", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "10", noteID: "makoron200x", name: "ころころまころん＠心理福祉", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "11", noteID: "like_toad9348", name: "YK", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: false },
+    { memberNo: "13", noteID: "d_yama33", name: "だーやま｜書いて、語るひと", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "15", noteID: "smilestepcafe", name: "まこ＠Smile Step キャリアカフェ", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "16", noteID: "mute_clover4203", name: "ゲスト", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "18", noteID: "ponocareer", name: "サキ｜キャリアのかかりつけ", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "@PONOcareer", instagram: "", other: "", publicMember: true },
+    { memberNo: "19", noteID: "siii_career", name: "SHIHO", plan: "基本プラン【初期メンバー限定】", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true },
+    { memberNo: "20", noteID: "megumi_shinoda", name: "元ルイ・ヴィトン マネージャー|キャリアコンサルタント|篠田恵", plan: "基本プラン【第2期メンバー】初月無料", email: "", discord: "", facebook: "", x: "", instagram: "", other: "", publicMember: true }
+];
+
+function normalizeTabelabMatchValue(value) {
+    return String(value || "")
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/[^a-z0-9ぁ-んァ-ン一-龥ー]/g, "");
+}
+
+function getNoteIDFromLink(member) {
+    const noteUrl = member.links && member.links.note;
+    if (!noteUrl) return "";
+    const match = String(noteUrl).match(/^https?:\/\/(?:www\.)?note\.com\/([^/?#]+)/i);
+    return match ? match[1] : "";
+}
+
+function findTabelabProfile(row) {
+    const rowNoteID = normalizeTabelabMatchValue(row.noteID);
+    const rowName = normalizeTabelabMatchValue(row.name);
+    return linkData.find(member => {
+        const memberNoteID = normalizeTabelabMatchValue(member.noteID || getNoteIDFromLink(member));
+        if (rowNoteID && memberNoteID === rowNoteID) return true;
+        const memberName = normalizeTabelabMatchValue(member.name);
+        return Boolean(memberName && rowName && (memberName === rowName || memberName.includes(rowName) || rowName.includes(memberName)));
+    });
+}
+
+function setIfMissing(target, key, value) {
+    if ((target[key] === undefined || target[key] === null || target[key] === "") && value !== "") {
+        target[key] = value;
+    }
+}
+
+function getSocialUrl(service, value) {
+    if (!value) return "";
+    if (/^https?:\/\//i.test(value)) return value;
+    const account = String(value).replace(/^@/, "");
+    const origins = {
+        x: "https://x.com/",
+        facebook: "https://www.facebook.com/",
+        instagram: "https://www.instagram.com/"
+    };
+    return origins[service] ? origins[service] + account : "";
+}
+
+tabelabMemberRows.forEach(row => {
+    let member = findTabelabProfile(row);
+    if (!member) {
+        member = {
+            name: row.name,
+            avatar: { text: String(row.name || row.noteID).slice(0, 1), color: "warm" },
+            title: "たべラボメンバー",
+            tags: ["tabelab"],
+            desc: "プロフィール登録は無料です。こちらからご登録ください✨",
+            profileRegistrationUrl: "https://forms.gle/nYzphLH471EyTyww5",
+            links: {}
+        };
+        linkData.push(member);
+    }
+
+    if (!Array.isArray(member.tags)) member.tags = [];
+    if (!member.tags.includes("tabelab")) member.tags.push("tabelab");
+    if (!member.avatar) member.avatar = { text: String(member.name || row.noteID).slice(0, 1), color: "warm" };
+    if (!member.links) member.links = {};
+
+    setIfMissing(member, "tabelabMemberId", row.memberNo);
+    setIfMissing(member, "noteID", row.noteID);
+    setIfMissing(member, "tabelabPlan", row.plan);
+    if (member.tabelabPublicMember === undefined) member.tabelabPublicMember = row.publicMember;
+    setIfMissing(member, "email", row.email);
+    setIfMissing(member, "discord", row.discord);
+    setIfMissing(member, "facebook", row.facebook);
+    setIfMissing(member, "instagram", row.instagram);
+    setIfMissing(member, "tabelabOther", row.other);
+    setIfMissing(member.links, "note", row.noteID ? "https://note.com/" + row.noteID : "");
+    setIfMissing(member.links, "email", row.email ? "mailto:" + row.email : "");
+    setIfMissing(member.links, "discord", getSocialUrl("discord", row.discord));
+    setIfMissing(member.links, "facebook", getSocialUrl("facebook", row.facebook));
+    setIfMissing(member.links, "x", getSocialUrl("x", row.x));
+    setIfMissing(member.links, "instagram", getSocialUrl("instagram", row.instagram));
+    setIfMissing(member.links, "other", getSocialUrl("other", row.other));
+});
+
 // RIESM™認定種別の基礎情報です。
 // URLエイリアスは prefix を除いた数字部分のみを使います。
 const riesmCertificationTypes = {
@@ -236,17 +340,18 @@ const riesmCertificationTypes = {
 // 共通データの公開口です。
 // 各ページはここから必要な項目だけを選び、ページごとの表現で描画します。
 const linkDataMeta = {
-    version: "2026-07-13",
+    version: "2026-08-01",
     communities: {
         tabelab: { label: "たべラボ", href: "https://note.com/ninin2025/membership" },
         riesm: { label: "🌈RIESM™", href: "https://ninin-cc.github.io/guide.html" },
         shinri: { label: "心理支援者の集い" }
     },
     certificationTypes: riesmCertificationTypes,
-    linkTypes: ["note", "web", "x", "line", "linkedin", "instagram", "coconala"]
+    linkTypes: ["note", "web", "x", "line", "linkedin", "instagram", "facebook", "discord", "email", "other", "coconala"]
 };
 
 window.NININ_LINK_DATA = linkData;
 window.NININ_LINK_META = linkDataMeta;
+window.NININ_TABELAB_MEMBER_ROWS = tabelabMemberRows;
 window.NININ_RIESM_CERTIFICATION_TYPES = riesmCertificationTypes;
 window.linkData = linkData;
