@@ -174,6 +174,15 @@ const CONTACT_CONFIG = {
   profileLinkLabel: '自己紹介ページ'
 };
 
+const SAMPLE_REFERRAL_MEMBER = Object.freeze({
+  isSample: true,
+  name: 'サンプルカウンセリングルーム',
+  noteID: 'sample',
+  tags: ['tabelab'],
+  desc: 'サンプルカウンセリングルームでは、仕事や人間関係、これからの生き方について、安心してお話しいただける時間を大切にしています。まだ言葉にならない気持ちも、無理に整理しなくて大丈夫です。今のあなたのペースに合わせて、これからの一歩を一緒に考えていきます。',
+  consultationUrl: '../link.html?sample'
+});
+
 
 
 function getReferralRequestValue() {
@@ -257,6 +266,9 @@ function resolveReferralMember() {
   const requestValue = getReferralRequestValue();
   const members = window.NININ_LINK_DATA || window.linkData || [];
   const requestedNoteID = normalizeReferralNoteID(requestValue);
+  if (requestedNoteID === 'sample') {
+    return { member: SAMPLE_REFERRAL_MEMBER, matchType: 'noteID', noteID: 'sample', alias: '' };
+  }
   const noteMember = requestedNoteID ? members.find(item =>
     isPaidConsultationReferralAllowed(item) && getReferralMemberNoteID(item) === requestedNoteID
   ) : null;
