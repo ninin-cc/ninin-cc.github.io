@@ -38,6 +38,15 @@ const CONTACT_CONFIG = {
   ctaLabel: 'nininカウンセリングルームへ向かう'
 };
 
+const SAMPLE_REFERRAL_MEMBER = Object.freeze({
+  isSample: true,
+  name: 'サンプルカウンセリングルーム',
+  noteID: 'sample',
+  tags: ['tabelab'],
+  desc: 'サンプルカウンセリングルームでは、仕事や人間関係、これからの生き方について、安心してお話しいただける時間を大切にしています。まだ言葉にならない気持ちも、無理に整理しなくて大丈夫です。今のあなたのペースに合わせて、これからの一歩を一緒に考えていきます。',
+  consultationUrl: '../link.html?sample'
+});
+
 function getReferralRequestValue() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id') ||
@@ -127,6 +136,9 @@ function resolveReferralMember() {
   const requestValue = getReferralRequestValue();
   const members = window.NININ_LINK_DATA || window.linkData || [];
   const requestedNoteID = normalizeReferralNoteID(requestValue);
+  if (requestedNoteID === 'sample') {
+    return { member: SAMPLE_REFERRAL_MEMBER, matchType: 'noteID', noteID: 'sample', alias: '' };
+  }
   const noteMember = requestedNoteID ? members.find(item =>
     isPaidConsultationReferralAllowed(item) && getReferralMemberNoteID(item) === requestedNoteID
   ) : null;
@@ -998,10 +1010,8 @@ const App = () => {
       React.createElement("i", { className: "fa-solid fa-camera" }), " \u3042\u3068\u3067\u898B\u8FD4\u3059"
       ), /*#__PURE__*/
 
-      React.createElement("a", {
-        href: CONTACT_CONFIG.consultationUrl,
-        target: "_blank",
-        rel: "noopener noreferrer",
+      React.createElement("button", {
+        onClick: () => openPopup('talk'),
         className: "rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]" }, /*#__PURE__*/
 
       React.createElement("i", { className: "fa-solid fa-comments" }), " ", CONTACT_CONFIG.resultButtonLabel
@@ -1139,9 +1149,9 @@ const App = () => {
 
     if (popupType === 'talk') {
       return /*#__PURE__*/(
-        React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm" }, /*#__PURE__*/
-        React.createElement("div", { className: "w-full max-w-lg" }, /*#__PURE__*/
-        React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "bg-opacity-100 border-yellow-500 shadow-2xl" }, /*#__PURE__*/
+        React.createElement("div", { className: "translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in" }, /*#__PURE__*/
+        React.createElement("div", { className: "min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6" }, /*#__PURE__*/
+        React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "translucent-popup-window talk-popup-window border-yellow-500 shadow-2xl" }, /*#__PURE__*/
         React.createElement(DialogBox, {
           charConfig: CONFIG.char1,
           text: /*#__PURE__*/
