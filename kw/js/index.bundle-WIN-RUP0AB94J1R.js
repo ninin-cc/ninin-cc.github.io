@@ -38,15 +38,6 @@ const CONTACT_CONFIG = {
   ctaLabel: 'nininカウンセリングルームへ向かう'
 };
 
-const SAMPLE_REFERRAL_MEMBER = Object.freeze({
-  isSample: true,
-  name: 'サンプルカウンセリングルーム',
-  noteID: 'sample',
-  tags: ['tabelab'],
-  desc: 'サンプルカウンセリングルームでは、仕事や人間関係、これからの生き方について、安心してお話しいただける時間を大切にしています。まだ言葉にならない気持ちも、無理に整理しなくて大丈夫です。今のあなたのペースに合わせて、これからの一歩を一緒に考えていきます。',
-  consultationUrl: '../link.html?sample'
-});
-
 function getReferralRequestValue() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id') ||
@@ -124,21 +115,10 @@ function getReferralPrimaryLink(member) {
   return member?.consultationUrl || links.consultation || '';
 }
 
-function getReferralIntroduction(member) {
-  return member?.consultationDescription ||
-    member?.linkDesc ||
-    member?.ambassadorDesc ||
-    member?.desc ||
-    '';
-}
-
 function resolveReferralMember() {
   const requestValue = getReferralRequestValue();
   const members = window.NININ_LINK_DATA || window.linkData || [];
   const requestedNoteID = normalizeReferralNoteID(requestValue);
-  if (requestedNoteID === 'sample') {
-    return { member: SAMPLE_REFERRAL_MEMBER, matchType: 'noteID', noteID: 'sample', alias: '' };
-  }
   const noteMember = requestedNoteID ? members.find(item =>
     isPaidConsultationReferralAllowed(item) && getReferralMemberNoteID(item) === requestedNoteID
   ) : null;
@@ -166,7 +146,7 @@ function applyMemberReferralContactConfig() {
   Object.assign(CONTACT_CONFIG, {
     consultationName: member.name || CONTACT_CONFIG.consultationName,
     consultationUrl: primaryUrl,
-    consultationDescription: getReferralIntroduction(member),
+    consultationDescription: member.linkDesc || member.ambassadorDesc || member.desc || CONTACT_CONFIG.consultationDescription,
     profileText: member.certification
       ? sourceLabel + '。たべラボメンバーとして、この相談アプリで相談先として表示されています。'
       : 'たべラボメンバーとして、この相談アプリで相談先として表示されています。',
@@ -592,88 +572,30 @@ const App = () => {
   const openPopup = (type) => setPopupType(type);
   const closePopup = () => setPopupType('none');
 
-  const captureResultCanvas = () => {
+  const handleSaveImage = () => {
     const element = document.getElementById('result-capture-area');
-    if (!element) return Promise.reject(new Error('保存対象が見つかりません。'));
+    if (!element) return;
     window.scrollTo(0, 0);
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        html2canvas(element, {
-          backgroundColor: '#f8eac2', // 明るいクラフトノートの色
-          scale: 3, // 解像度を上げてさらに高画質・鮮明に
-          useCORS: true,
-          allowTaint: true,
-          logging: false
-        }).then(resolve).catch(reject);
-      }, 300);
-    });
-  };
-
-  const handleSaveImage = () => {
-    captureResultCanvas().then((canvas) => {
+    setTimeout(() => {
+      html2canvas(element, {
+        backgroundColor: '#f8eac2', // 明るいクラフトノートの色
+        scale: 3, // 解像度を上げてさらに高画質・鮮明に
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then((canvas) => {
         const link = document.createElement('a');
         link.download = 'kokoro_weather_result.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
         closePopup();
       }).catch((err) => {
-      console.error('画像保存エラー', err);
-      alert('画像の保存に失敗しました。');
-      closePopup();
-    });
-  };
-
-  const handleSavePdf = () => {
-    captureResultCanvas().then((canvas) => {
-      if (!window.jspdf || !window.jspdf.jsPDF) {
-        throw new Error('jsPDFが読み込まれていません。');
-      }
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 8;
-      const imageWidth = pageWidth - margin * 2;
-      const availableHeight = pageHeight - margin * 2;
-      const pixelsPerPage = Math.max(1, Math.floor(availableHeight * canvas.width / imageWidth));
-      let sourceTop = 0;
-      let pageIndex = 0;
-
-      while (sourceTop < canvas.height) {
-        const sliceHeight = Math.min(pixelsPerPage, canvas.height - sourceTop);
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = sliceHeight;
-        const context = pageCanvas.getContext('2d');
-        context.fillStyle = '#f8eac2';
-        context.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        context.drawImage(
-          canvas,
-          0,
-          sourceTop,
-          canvas.width,
-          sliceHeight,
-          0,
-          0,
-          canvas.width,
-          sliceHeight
-        );
-
-        if (pageIndex > 0) pdf.addPage();
-        const imageHeight = sliceHeight * imageWidth / canvas.width;
-        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, imageWidth, imageHeight);
-        sourceTop += sliceHeight;
-        pageIndex += 1;
-      }
-
-      pdf.save('kokoro_weather_result.pdf');
-      closePopup();
-    }).catch((err) => {
-      console.error('PDF保存エラー', err);
-      alert('PDFの保存に失敗しました。');
-    });
+        console.error('画像保存エラー', err);
+        alert('画像の保存に失敗しました。');
+        closePopup();
+      });
+    }, 300);
   };
 
   // --- 各画面のレンダリング ---
@@ -1068,18 +990,13 @@ const App = () => {
       React.createElement("i", { className: "fa-solid fa-camera" }), " \u3042\u3068\u3067\u898B\u8FD4\u3059"
       ), /*#__PURE__*/
 
-      React.createElement("button", {
-        onClick: () => openPopup('talk'),
+      React.createElement("a", {
+        href: CONTACT_CONFIG.consultationUrl,
+        target: "_blank",
+        rel: "noopener noreferrer",
         className: "rpg-button w-full md:w-auto px-8 py-3 text-base bg-yellow-900 border-yellow-500 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.2)]" }, /*#__PURE__*/
 
       React.createElement("i", { className: "fa-solid fa-comments" }), " ", CONTACT_CONFIG.resultButtonLabel
-      ), /*#__PURE__*/
-
-      React.createElement("button", {
-        onClick: handleSavePdf,
-        className: "rpg-button w-full md:w-auto px-8 py-3 text-base bg-amber-900 border-amber-400 font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.2)]" }, /*#__PURE__*/
-
-      React.createElement("i", { className: "fa-solid fa-file-pdf" }), " PDFで保存"
       )
       ), /*#__PURE__*/
 
@@ -1214,9 +1131,9 @@ const App = () => {
 
     if (popupType === 'talk') {
       return /*#__PURE__*/(
-        React.createElement("div", { className: "translucent-popup-overlay fixed inset-0 z-50 overflow-y-auto p-4 animate-fade-in" }, /*#__PURE__*/
-        React.createElement("div", { className: "min-h-full w-full max-w-lg mx-auto flex items-start justify-center py-6" }, /*#__PURE__*/
-        React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "translucent-popup-window talk-popup-window border-yellow-500 shadow-2xl" }, /*#__PURE__*/
+        React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fade-in backdrop-blur-sm" }, /*#__PURE__*/
+        React.createElement("div", { className: "w-full max-w-lg" }, /*#__PURE__*/
+        React.createElement(WindowBox, { title: CONTACT_CONFIG.popupTitle, iconName: "fa-solid fa-mug-hot", className: "bg-opacity-100 border-yellow-500 shadow-2xl" }, /*#__PURE__*/
         React.createElement(DialogBox, {
           charConfig: CONFIG.char1,
           text: /*#__PURE__*/
@@ -1238,9 +1155,9 @@ const App = () => {
         ), /*#__PURE__*/
         CONTACT_CONFIG.consultationDescription && /*#__PURE__*/
         React.createElement("div", {
-          className: "letter-note relative mt-5 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]" }, /*#__PURE__*/
+          className: "letter-note relative mt-3 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]" }, /*#__PURE__*/
 
-        React.createElement("div", { className: "absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow" }, "📝紹介状"
+        React.createElement("div", { className: "absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow" }, "紹介状"
         ), /*#__PURE__*/
         React.createElement("p", { className: "text-[12px] leading-7 font-medium" },
         CONTACT_CONFIG.consultationDescription
@@ -1264,13 +1181,6 @@ const App = () => {
           className: "rpg-button bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-400" },
         "\u4ECA\u306F\u9589\u3058\u308B"
 
-        ), /*#__PURE__*/
-        React.createElement("button", {
-          onClick: handleSavePdf,
-          className: "rpg-button bg-amber-900 border-amber-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2" }, /*#__PURE__*/
-
-        React.createElement("i", { className: "fa-solid fa-file-pdf" }), " PDF\u3067\u4FDD\u5B58"
-
         )
         )
         )
@@ -1290,12 +1200,6 @@ const App = () => {
           text: /*#__PURE__*/React.createElement("span", null, "\u3044\u3044\u3067\u3059\u306D\uFF01", /*#__PURE__*/React.createElement("br", null), "\u3054\u81EA\u8EAB\u306E\u300E\u3053\u3053\u308D\u306E\u5929\u6C17\u3068\u5F79\u5272\u300F\u3092\u753B\u50CF\u3067\u4FDD\u5B58\u3057\u307E\u3057\u3087\u3046\u304B\uFF1F", /*#__PURE__*/React.createElement("br", null), "\u3042\u3068\u3067\u3086\u3063\u304F\u308A\u898B\u8FD4\u3057\u3066\u3001\u81EA\u5206\u3068\u5BFE\u8A71\u3059\u308B\u30D2\u30F3\u30C8\u306B\u3057\u3066\u304F\u3060\u3055\u3044\u306D\uFF01") }
         ), /*#__PURE__*/
         React.createElement("div", { className: "flex flex-col gap-3 mt-6" }, /*#__PURE__*/
-        React.createElement("button", {
-          onClick: handleSavePdf,
-          className: "rpg-button bg-amber-900 border-amber-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2" }, /*#__PURE__*/
-
-        React.createElement("i", { className: "fa-solid fa-file-pdf" }), " PDF\u3067\u4FDD\u5B58"
-        ), /*#__PURE__*/
         React.createElement("button", {
           onClick: handleSaveImage,
           className: "rpg-button bg-blue-900 border-blue-400 text-white hover:bg-white hover:text-black flex items-center justify-center gap-2" }, /*#__PURE__*/
