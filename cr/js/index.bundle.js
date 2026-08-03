@@ -803,6 +803,7 @@ const App = () => {
   const captureResultPages = () => {
     const pageElements = Array.from(document.querySelectorAll('.result-export-page'));
     if (pageElements.length === 0) return Promise.reject(new Error('保存対象が見つかりません。'));
+    if (typeof window.html2canvas !== 'function') return Promise.reject(new Error('PDF変換ライブラリ（html2canvas）を読み込めませんでした。'));
 
     // スマホなどで上部が切れないように、一度トップへスクロールする
     window.scrollTo(0, 0);
@@ -811,12 +812,15 @@ const App = () => {
       setTimeout(async () => {
         try {
           const captureScale = 2;
-          const pages = await Promise.all(pageElements.map(async (element) => {
+          const pages = [];
+          for (const element of pageElements) {
             const pageRect = element.getBoundingClientRect();
-            let canvas = await html2canvas(element, {
+            let canvas = await window.html2canvas(element, {
               backgroundColor: '#fffaf0',
               scale: captureScale,
-              useCORS: true
+              useCORS: true,
+              allowTaint: false,
+              logging: false
             });
 
             const expectedWidth = Math.round(pageRect.width * captureScale);
@@ -845,8 +849,8 @@ const App = () => {
               };
             });
 
-            return { canvas, linkRects };
-          }));
+            pages.push({ canvas, linkRects });
+          }
           resolve(pages);
         } catch (err) {
           reject(err);
@@ -913,7 +917,8 @@ const App = () => {
     }).
     catch((err) => {
       console.error('PDF保存エラー', err);
-      alert('PDFの保存に失敗しました。');
+      const reason = err && err.message ? `\n\n原因: ${err.message}` : '';
+      alert(`PDFの保存に失敗しました。${reason}`);
     });
   };
 

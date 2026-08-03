@@ -595,15 +595,16 @@ const App = () => {
   const captureResultCanvas = () => {
     const element = document.getElementById('result-capture-area');
     if (!element) return Promise.reject(new Error('保存対象が見つかりません。'));
+    if (typeof window.html2canvas !== 'function') return Promise.reject(new Error('PDF変換ライブラリ（html2canvas）を読み込めませんでした。'));
     window.scrollTo(0, 0);
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        html2canvas(element, {
+        window.html2canvas(element, {
           backgroundColor: '#f8eac2', // 明るいクラフトノートの色
-          scale: 3, // 解像度を上げてさらに高画質・鮮明に
+          scale: 2, // PDF化時の画質を保ちつつ、メモリ不足を防ぐ
           useCORS: true,
-          allowTaint: true,
+          allowTaint: false,
           logging: false
         }).then(resolve).catch(reject);
       }, 300);
@@ -672,7 +673,8 @@ const App = () => {
       closePopup();
     }).catch((err) => {
       console.error('PDF保存エラー', err);
-      alert('PDFの保存に失敗しました。');
+      const reason = err && err.message ? `\n\n原因: ${err.message}` : '';
+      alert(`PDFの保存に失敗しました。${reason}`);
     });
   };
 
@@ -827,41 +829,42 @@ const App = () => {
 
     let weatherText = "";
     let weatherIcon = "";
-    let weatherImageUrl = "";
+    const weatherImageUrl = "./img/tenki2.jpg";
+    let weatherImagePosition = "0% center";
 
     // 7択(最大60点)のスコアに応じた天気と背景画像の判定（8段階）
     if (totalScore >= 52) {
       weatherText = "激しい雨（嵐のようかもしれません）";
       weatherIcon = "fa-cloud-bolt"; // 雷雨
-      weatherImageUrl = "https://images.unsplash.com/photo-1428592953211-077101b2021b?q=80&w=800&auto=format&fit=crop"; // 嵐・雷
+      weatherImagePosition = "100% center"; // 嵐・雷
     } else if (totalScore >= 45) {
       weatherText = "雨（本降りです）";
       weatherIcon = "fa-cloud-showers-heavy"; // 強い雨
-      weatherImageUrl = "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=800&auto=format&fit=crop"; // 本降りの雨
+      weatherImagePosition = "85.714% center"; // 本降りの雨
     } else if (totalScore >= 38) {
       weatherText = "雨まじりのくもり";
       weatherIcon = "fa-cloud-showers-water"; // 雨
-      weatherImageUrl = "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?q=80&w=800&auto=format&fit=crop"; // 雨の窓滴
+      weatherImagePosition = "71.429% center"; // 雨の窓滴
     } else if (totalScore >= 30) {
       weatherText = "くもり（一時 雨）";
       weatherIcon = "fa-cloud-rain"; // パラつく雨
-      weatherImageUrl = "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?q=80&w=800&auto=format&fit=crop"; // 雨が降りそうな曇り
+      weatherImagePosition = "57.143% center"; // 雨が降りそうな曇り
     } else if (totalScore >= 22) {
       weatherText = "くもり";
       weatherIcon = "fa-cloud"; // 曇り
-      weatherImageUrl = "https://images.unsplash.com/photo-1499956827185-0d63ee78a910?q=80&w=800&auto=format&fit=crop"; // 厚い雲
+      weatherImagePosition = "42.857% center"; // 厚い雲
     } else if (totalScore >= 14) {
       weatherText = "くもり（ときどき 晴れ）";
       weatherIcon = "fa-cloud-sun"; // 雲と太陽
-      weatherImageUrl = "https://images.unsplash.com/photo-1534088568595-a066f410cbda?q=80&w=800&auto=format&fit=crop"; // 雲間からの光
+      weatherImagePosition = "28.571% center"; // 雲間からの光
     } else if (totalScore >= 7) {
       weatherText = "晴れ（ときどき くもり）";
       weatherIcon = "fa-cloud-sun"; // 雲と太陽
-      weatherImageUrl = "https://images.unsplash.com/photo-1601297183305-6df142704ea2?q=80&w=800&auto=format&fit=crop"; // 晴れの中に少し雲
+      weatherImagePosition = "14.286% center"; // 晴れの中に少し雲
     } else {
       weatherText = "快晴（穏やかな空です）";
       weatherIcon = "fa-sun"; // 太陽
-      weatherImageUrl = "https://images.unsplash.com/photo-1529153549247-9ea822f6d0a7?q=80&w=800&auto=format&fit=crop"; // 雲ひとつない青空
+      weatherImagePosition = "0% center"; // 雲ひとつない青空
     }
 
     // 局地的な天気の追加と気遣いメッセージの生成
@@ -967,11 +970,16 @@ const App = () => {
       React.createElement("i", { className: "fa-solid fa-cloud-sun text-[#5c3620]" }), " \u5FC3\u306E\u5929\u6C17"
       ), /*#__PURE__*/
       React.createElement("div", { className: "relative flex flex-col items-center justify-center p-6 md:p-10 rounded-xl shadow-md border border-[#5c3620]/10 overflow-hidden min-h-[140px] md:min-h-[180px]" }, /*#__PURE__*/
-      React.createElement("img", {
-        src: weatherImageUrl,
-        crossOrigin: "anonymous",
-        alt: "\u5FC3\u306E\u5929\u6C17",
-        className: "absolute inset-0 w-full h-full object-cover" }
+      React.createElement("div", {
+        role: "img",
+        "aria-label": "\u5FC3\u306E\u5929\u6C17",
+        className: "absolute inset-0 w-full h-full",
+        style: {
+          backgroundImage: `url('${weatherImageUrl}')`,
+          backgroundSize: "800% 100%",
+          backgroundPosition: weatherImagePosition,
+          backgroundRepeat: "no-repeat"
+        } }
       ), /*#__PURE__*/
       React.createElement("div", { className: "absolute inset-0 bg-black bg-opacity-30" }), /*#__PURE__*/
 

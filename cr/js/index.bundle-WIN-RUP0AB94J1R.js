@@ -165,13 +165,135 @@ const STORY_LINES = [
 // 別サービスとして展開するときは、主にこのブロックを手で変更してください。
 // profileText / profileUrl / profileLinkLabel は空欄のままなら保存レポートや紹介文枠に表示されません。
 const CONTACT_CONFIG = {
-  consultationName: 'PONOキャリアサポート',
-  consultationUrl: 'https://coconala.com/users/6004201',
-  consultationDescription: '国家資格キャリアコンサルタントとして、一人ひとりの「自分らしい働き方」を大切にしています。金融機関での勤務経験やキャリア教育活動を活かし、転職・仕事・働き方の悩みに寄り添いながら、一歩踏み出すお手伝いをしています。',
+  consultationName: 'nininキャリアルーム',
+  consultationUrl: 'https://ninin-cc.github.io/',
+  consultationDescription: '副業、独立、セカンドキャリアについてのご相談を得意とする男性カウンセラーと、レジリエンスや一次予防を専門とする女性カウンセラーが在籍。どちらも相談者さまを尊重するスタイルです。\nまた、自分が自然にできる役割、疲れる役割を知り、今後のキャリアに活かすアセスメント【RIESM™】も好評です。',
   profileText: '',
-  profileUrl: 'https://note.com/ponocareer/portal',
+  profileUrl: 'https://note.com/ninin2025/n/n236a6f29ad63',
   profileLinkLabel: '自己紹介ページ'
 };
+
+
+function getReferralRequestValue() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id') ||
+    params.get('code') ||
+    params.get('ref') ||
+    params.get('amb') ||
+    Array.from(params.keys())[0] ||
+    window.location.hash;
+}
+
+function getReferralAliasFromValue(value) {
+  return String(value || '')
+    .replace(/^[?#]/, '')
+    .split('&')[0]
+    .split('=')[0]
+    .replace(/_/g, '-')
+    .toUpperCase()
+    .match(/(?:[A-Z]{1,4})-?(\d{3,4})|\b(\d{3,4})\b/i)?.slice(1).find(Boolean) || '';
+}
+
+function getReferralAliasKey(value) {
+  const alias = getReferralAliasFromValue(value);
+  return alias ? String(Number(alias)) : '';
+}
+
+function getReferralRequestAlias() {
+  return getReferralAliasFromValue(getReferralRequestValue());
+}
+
+function normalizeReferralNoteID(value) {
+  const normalized = String(value || '')
+    .trim()
+    .replace(/^[?#@]/, '')
+    .split('&')[0]
+    .split('=')[0]
+    .toLowerCase();
+  return /^[a-z0-9_-]+$/i.test(normalized) ? normalized : '';
+}
+
+function isExcludedReferralAlias(alias) {
+  return /^9\d{3}$/.test(String(alias || ''));
+}
+
+function getReferralSource(member) {
+  return [
+    member.certification,
+    member.certificationType,
+    member.certificationNumber,
+    member.riesmNumber,
+    member.riesmRole,
+    member.navigatorType,
+    member.title,
+    member.id
+  ].filter(Boolean).join(' ');
+}
+
+function getReferralMemberAlias(member) {
+  return getReferralAliasFromValue(getReferralSource(member));
+}
+
+function getReferralMemberNoteID(member) {
+  if (member && member.noteID) return normalizeReferralNoteID(member.noteID);
+  const noteUrl = member && member.links && member.links.note;
+  const match = String(noteUrl || '').match(/^https?:\/\/(?:www\.)?note\.com\/([^/?#]+)/i);
+  return match ? normalizeReferralNoteID(match[1]) : '';
+}
+
+function isPaidConsultationReferralAllowed(member) {
+  const tags = Array.isArray(member?.tags) ? member.tags : [];
+  return tags.includes('tabelab');
+}
+
+function getReferralPrimaryLink(member) {
+  const links = member?.links || {};
+  return member?.consultationUrl || links.consultation || '';
+}
+
+function resolveReferralMember() {
+  const requestValue = getReferralRequestValue();
+  const members = window.NININ_LINK_DATA || window.linkData || [];
+  const requestedNoteID = normalizeReferralNoteID(requestValue);
+  const noteMember = requestedNoteID ? members.find(item =>
+    isPaidConsultationReferralAllowed(item) && getReferralMemberNoteID(item) === requestedNoteID
+  ) : null;
+  if (noteMember) {
+    return { member: noteMember, matchType: 'noteID', noteID: requestedNoteID, alias: getReferralMemberAlias(noteMember) };
+  }
+
+  const alias = getReferralRequestAlias();
+  if (!alias || isExcludedReferralAlias(alias)) return null;
+  const certificationMember = members.find(item => getReferralAliasKey(getReferralMemberAlias(item)) === getReferralAliasKey(alias));
+  if (!certificationMember || !isPaidConsultationReferralAllowed(certificationMember)) return null;
+  return { member: certificationMember, matchType: 'certification', noteID: getReferralMemberNoteID(certificationMember), alias };
+}
+
+function applyMemberReferralContactConfig() {
+  const referral = resolveReferralMember();
+  if (!referral) return;
+  const { member, matchType, noteID, alias } = referral;
+
+  const cardUrl = alias ? '../touroku.html?' + encodeURIComponent(alias) : '';
+  const profileUrl = matchType === 'noteID' && noteID ? '../link.html?' + encodeURIComponent(noteID) : cardUrl;
+  const memberPageUrl = noteID ? '../link.html?' + encodeURIComponent(noteID) : profileUrl;
+  const primaryUrl = getReferralPrimaryLink(member) || memberPageUrl || CONTACT_CONFIG.consultationUrl;
+  const sourceLabel = member.certification || 'たべラボメンバー';
+  Object.assign(CONTACT_CONFIG, {
+    consultationName: member.name || CONTACT_CONFIG.consultationName,
+    consultationUrl: primaryUrl,
+    consultationDescription: member.linkDesc || member.ambassadorDesc || member.desc || CONTACT_CONFIG.consultationDescription,
+    profileText: member.certification
+      ? sourceLabel + '。たべラボメンバーとして、この相談アプリで相談先として表示されています。'
+      : 'たべラボメンバーとして、この相談アプリで相談先として表示されています。',
+    profileUrl,
+    profileLinkLabel: matchType === 'noteID' ? 'プロフィール' : '認定カード / プロフィール',
+    ctaLabel: (member.name || CONTACT_CONFIG.consultationName) + 'へ向かう'
+  });
+}
+
+applyMemberReferralContactConfig();
+
 // PDF/画像レポート最下部の著作表記リンク先。相談先を変えてもここは ninin HP のままにします。
 const NININ_HOME_URL = 'https://ninin-cc.github.io/';
 const STORY_CHOICES_APP_NOTE = 'アプリの設問で選択していただいたセリフですが、完全に一致というわけではないと思います。（ …ここは…ちょっと違うな… ）そのような違和感を大事にしてください。その部分に線を引くとまた違った思いが浮かんできたりします。';
@@ -669,7 +791,6 @@ const App = () => {
   const captureResultPages = () => {
     const pageElements = Array.from(document.querySelectorAll('.result-export-page'));
     if (pageElements.length === 0) return Promise.reject(new Error('保存対象が見つかりません。'));
-    if (typeof window.html2canvas !== 'function') return Promise.reject(new Error('PDF変換ライブラリ（html2canvas）を読み込めませんでした。'));
 
     // スマホなどで上部が切れないように、一度トップへスクロールする
     window.scrollTo(0, 0);
@@ -678,15 +799,12 @@ const App = () => {
       setTimeout(async () => {
         try {
           const captureScale = 2;
-          const pages = [];
-          for (const element of pageElements) {
+          const pages = await Promise.all(pageElements.map(async (element) => {
             const pageRect = element.getBoundingClientRect();
-            let canvas = await window.html2canvas(element, {
+            let canvas = await html2canvas(element, {
               backgroundColor: '#fffaf0',
               scale: captureScale,
-              useCORS: true,
-              allowTaint: false,
-              logging: false
+              useCORS: true
             });
 
             const expectedWidth = Math.round(pageRect.width * captureScale);
@@ -715,8 +833,8 @@ const App = () => {
               };
             });
 
-            pages.push({ canvas, linkRects });
-          }
+            return { canvas, linkRects };
+          }));
           resolve(pages);
         } catch (err) {
           reject(err);
@@ -783,8 +901,7 @@ const App = () => {
     }).
     catch((err) => {
       console.error('PDF保存エラー', err);
-      const reason = err && err.message ? `\n\n原因: ${err.message}` : '';
-      alert(`PDFの保存に失敗しました。${reason}`);
+      alert('PDFの保存に失敗しました。');
     });
   };
 
