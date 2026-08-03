@@ -37,7 +37,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Yomogi&display=swap');
     body { 
       margin: 0; padding: 0; background: #000; color: #f3f4f6; overflow-x: hidden; 
       -webkit-font-smoothing: antialiased;
@@ -87,6 +87,18 @@
         inset 0 1px 0 rgba(255, 232, 176, 0.25),
         inset 0 -2px 0 rgba(45, 22, 8, 0.55),
         0 2px 0 #3a1d0c !important;
+    }
+
+    .letter-note {
+      font-family: 'Yomogi', 'Noto Sans JP', sans-serif;
+      color: #2d1b10;
+      background-color: #fffffd;
+      background-image:
+        linear-gradient(90deg, transparent 0, transparent 34px, rgba(170, 70, 65, 0.12) 35px, transparent 36px),
+        repeating-linear-gradient(178deg, transparent 0, transparent 27px, rgba(92, 72, 48, 0.16) 28px, transparent 29px);
+      box-shadow:
+        inset 0 0 18px rgba(120, 90, 60, 0.10),
+        0 6px 14px rgba(0, 0, 0, 0.18);
     }
 
     .dialog-note {
@@ -190,6 +202,6 @@
   <div id="root" class="relative z-10 w-full max-w-2xl mx-auto p-4 md:p-6 min-h-screen flex flex-col overflow-hidden"></div>
   <script src="../js/linkdata.js?v=20260801"></script>
 
-  <script src="./js/index.bundle.js?v=20260801-tabelab-profile-return"></script>
+  <script src="./js/index.bundle.js?v=20260804-letter-note"></script>
 </body>
 </html>
