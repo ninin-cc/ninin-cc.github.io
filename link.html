@@ -970,14 +970,105 @@
         }
 
         .individual-link-card.is-tabelab-app {
-            border-color: rgba(182, 107, 69, 0.3);
-            background: linear-gradient(135deg, rgba(255, 250, 245, 0.96), rgba(255, 255, 255, 0.92));
+            position: relative;
+            isolation: isolate;
+            min-height: 108px;
+            overflow: hidden;
+            border-color: rgba(255, 255, 255, 0.5);
+            background-color: #243649;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            box-shadow: 0 10px 24px rgba(35, 29, 23, 0.18);
+            --app-shade-start: rgba(12, 24, 37, 0.82);
+            --app-shade-middle: rgba(18, 31, 43, 0.68);
+            --app-shade-end: rgba(18, 31, 43, 0.32);
+            --app-shade-hover-start: rgba(12, 24, 37, 0.75);
+            --app-shade-hover-middle: rgba(18, 31, 43, 0.58);
+            --app-shade-hover-end: rgba(18, 31, 43, 0.22);
+        }
+
+        .individual-link-card.is-tabelab-app::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(90deg, var(--app-shade-start) 0%, var(--app-shade-middle) 62%, var(--app-shade-end) 100%);
+            transition: background 0.18s ease;
+        }
+
+        .individual-link-card.is-tabelab-app::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(115deg, rgba(255, 255, 255, 0.14), transparent 42%);
+            pointer-events: none;
+        }
+
+        .individual-link-card.is-tabelab-app.is-weather-app {
+            background-image: url('./kw/img/tenki.jpg');
+            background-position: left center;
+            background-size: 195% auto;
+            --app-shade-start: rgba(20, 56, 82, 0.62);
+            --app-shade-middle: rgba(22, 54, 76, 0.40);
+            --app-shade-end: rgba(31, 65, 86, 0.12);
+            --app-shade-hover-start: rgba(20, 56, 82, 0.54);
+            --app-shade-hover-middle: rgba(22, 54, 76, 0.32);
+            --app-shade-hover-end: rgba(31, 65, 86, 0.06);
+        }
+
+        .individual-link-card.is-tabelab-app.is-magic-app {
+            background-image: url('./cq/img/sakaba.jpg');
+            background-position: 50% 48%;
+            --app-shade-start: rgba(56, 29, 14, 0.70);
+            --app-shade-middle: rgba(66, 35, 17, 0.50);
+            --app-shade-end: rgba(75, 40, 20, 0.14);
+            --app-shade-hover-start: rgba(56, 29, 14, 0.61);
+            --app-shade-hover-middle: rgba(66, 35, 17, 0.40);
+            --app-shade-hover-end: rgba(75, 40, 20, 0.07);
+        }
+
+        .individual-link-card.is-tabelab-app.is-cafe-app {
+            background-image: url('./cr/img/cafeei.jpg');
+            background-position: 56% 48%;
+            --app-shade-start: rgba(42, 34, 23, 0.68);
+            --app-shade-middle: rgba(48, 39, 27, 0.46);
+            --app-shade-end: rgba(43, 50, 34, 0.12);
+            --app-shade-hover-start: rgba(42, 34, 23, 0.59);
+            --app-shade-hover-middle: rgba(48, 39, 27, 0.36);
+            --app-shade-hover-end: rgba(43, 50, 34, 0.06);
         }
 
         .individual-link-card.is-tabelab-app:hover,
         .individual-link-card.is-tabelab-app:focus-visible {
-            border-color: rgba(182, 107, 69, 0.55);
-            box-shadow: 0 12px 28px rgba(182, 107, 69, 0.14);
+            border-color: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 14px 30px rgba(35, 29, 23, 0.25);
+        }
+
+        .individual-link-card.is-tabelab-app:hover::before,
+        .individual-link-card.is-tabelab-app:focus-visible::before {
+            background: linear-gradient(90deg, var(--app-shade-hover-start) 0%, var(--app-shade-hover-middle) 62%, var(--app-shade-hover-end) 100%);
+        }
+
+        .individual-link-card.is-tabelab-app .tabelab-app-content {
+            min-height: 74px;
+        }
+
+        .individual-link-card.is-tabelab-app .tabelab-app-title {
+            color: #fffdf8;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.72);
+        }
+
+        .individual-link-card.is-tabelab-app .tabelab-app-description {
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.78);
+        }
+
+        .individual-link-card.is-tabelab-app .tabelab-app-arrow {
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 1.25rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.72);
         }
 
         .individual-link-icon {
@@ -1042,18 +1133,21 @@
         }
 
         .individual-link-icon.is-tabelab-app {
-            background: linear-gradient(135deg, #b66b45, #8c452b);
+            background: rgba(63, 32, 19, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.46);
             color: #fff;
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 1.35rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(4px);
         }
 
         .individual-link-icon.is-tabelab-app.is-weather {
-            background: linear-gradient(135deg, #d69a2d, #9b6420);
+            background: rgba(177, 117, 23, 0.86);
         }
 
         .individual-link-icon.is-tabelab-app.is-career-room {
-            background: linear-gradient(135deg, #52749b, #304c72);
+            background: rgba(45, 75, 111, 0.86);
         }
 
         .individual-link-icon.is-coconala {
@@ -1234,6 +1328,16 @@
             
             // linkdata.js を唯一の大本データとして利用します
             const sharedLinkData = window.NININ_LINK_DATA || (typeof linkData !== 'undefined' ? linkData : []);
+            const sampleMember = Object.freeze({
+                isSample: true,
+                name: 'サンプルカウンセリングルーム',
+                title: 'こころと仕事のことを、ゆっくり話せる場所',
+                noteID: 'sample',
+                tags: ['tabelab'],
+                avatar: { text: 'S' },
+                desc: 'サンプルカウンセリングルームでは、仕事や人間関係、これからの生き方について、安心してお話しいただける時間を大切にしています。まだ言葉にならない気持ちも、無理に整理しなくて大丈夫です。今のあなたのペースに合わせて、これからの一歩を一緒に考えていきます。',
+                links: { note: 'https://note.com/' }
+            });
 
             function safeHtml(value = '') {
                 return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
@@ -1352,6 +1456,7 @@
             function findRequestedMember() {
                 const requested = getRequestedMemberKey();
                 if (!requested) return null;
+                if (requested === 'sample') return sampleMember;
                 return sharedLinkData.find(member => {
                     const aliases = getMemberAliases(member);
                     const haystack = normalizeMemberKey([member.name, member.title, getCertificationCode(member)].filter(Boolean).join(' '));
@@ -1435,6 +1540,7 @@
                         href: `./kw/index.html?${encodedNoteID}`,
                         icon: '☀',
                         iconClass: ' is-weather',
+                        cardClass: ' is-weather-app',
                         title: '心の天気™',
                         description: '喫茶RIESMで、今の心の天気を見つめる'
                     },
@@ -1442,6 +1548,7 @@
                         href: `./ca/index.html?${encodedNoteID}`,
                         icon: '⚓',
                         iconClass: '',
+                        cardClass: ' is-magic-app',
                         title: '心の錨を観る魔法™',
                         description: 'キャリアアンカーで自分の大切な軸を見てみましょう'
                     },
@@ -1449,6 +1556,7 @@
                         href: `./cr/index.html?${encodedNoteID}`,
                         icon: '🧭',
                         iconClass: ' is-career-room',
+                        cardClass: ' is-cafe-app',
                         title: '心の錨を見つめる時間™',
                         description: 'キャリアアンカーで自分の大切な軸を見てみましょう'
                     }
@@ -1456,14 +1564,14 @@
                 return `
                     <section class="mt-5 grid grid-cols-1 gap-3" aria-label="たべラボメンバー向けアプリ">
                         ${apps.map(app => `
-                            <a href="${safeHtml(app.href)}" class="individual-link-card is-tabelab-app">
-                                <div class="flex items-center gap-4">
+                            <a href="${safeHtml(app.href)}" class="individual-link-card is-tabelab-app${app.cardClass}">
+                                <div class="tabelab-app-content flex items-center gap-4">
                                     <span class="individual-link-icon is-tabelab-app${app.iconClass}" aria-hidden="true">${app.icon}</span>
                                     <span class="min-w-0 flex-grow">
-                                        <span class="block text-[15px] font-black text-[var(--navy)]">${safeHtml(app.title)}</span>
-                                        <span class="mt-1 block text-xs leading-snug text-[var(--muted)]">${safeHtml(app.description)}</span>
+                                        <span class="tabelab-app-title block text-[15px] font-black">${safeHtml(app.title)}</span>
+                                        <span class="tabelab-app-description mt-1 block text-xs leading-snug">${safeHtml(app.description)}</span>
                                     </span>
-                                    <span class="text-stone-300" aria-hidden="true">→</span>
+                                    <span class="tabelab-app-arrow" aria-hidden="true">→</span>
                                 </div>
                             </a>
                         `).join('')}
@@ -1482,6 +1590,7 @@
                     <section class="text-center">
                         <a href="link.html" class="mb-5 inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-white/80 px-4 py-2 text-xs font-bold text-[var(--muted)] shadow-sm hover:text-[var(--navy)]">← リンク集へ戻る</a>
                         <div class="mx-auto rounded-3xl border border-[var(--washi-border)] bg-white/80 p-6 shadow-sm">
+                            ${member.isSample ? '<div class="mb-4"><span class="inline-flex rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-[10px] font-black tracking-widest text-amber-700">DEMO｜サンプル画面</span></div>' : ''}
                             <div class="flex justify-center">${avatar}</div>
                             <h1 class="mt-4 text-2xl font-black leading-tight text-[var(--navy)]">${safeHtml(member.name)}</h1>
                             <p class="mt-2 text-sm font-bold leading-relaxed text-[var(--trust)]">${safeHtml(member.title || '')}</p>
