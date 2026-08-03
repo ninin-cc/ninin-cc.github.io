@@ -115,6 +115,14 @@ function getReferralPrimaryLink(member) {
   return member?.consultationUrl || links.consultation || '';
 }
 
+function getReferralIntroduction(member) {
+  return member?.consultationDescription ||
+    member?.linkDesc ||
+    member?.ambassadorDesc ||
+    member?.desc ||
+    '';
+}
+
 function resolveReferralMember() {
   const requestValue = getReferralRequestValue();
   const members = window.NININ_LINK_DATA || window.linkData || [];
@@ -146,7 +154,7 @@ function applyMemberReferralContactConfig() {
   Object.assign(CONTACT_CONFIG, {
     consultationName: member.name || CONTACT_CONFIG.consultationName,
     consultationUrl: primaryUrl,
-    consultationDescription: member.linkDesc || member.ambassadorDesc || member.desc || CONTACT_CONFIG.consultationDescription,
+    consultationDescription: getReferralIntroduction(member),
     profileText: member.certification
       ? sourceLabel + '。たべラボメンバーとして、この相談アプリで相談先として表示されています。'
       : 'たべラボメンバーとして、この相談アプリで相談先として表示されています。',
@@ -1155,9 +1163,9 @@ const App = () => {
         ), /*#__PURE__*/
         CONTACT_CONFIG.consultationDescription && /*#__PURE__*/
         React.createElement("div", {
-          className: "letter-note relative mt-3 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]" }, /*#__PURE__*/
+          className: "letter-note relative mt-5 rounded-sm border border-stone-300 px-4 pb-4 pt-6 text-[#2d1b10]" }, /*#__PURE__*/
 
-        React.createElement("div", { className: "absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow" }, "紹介状"
+        React.createElement("div", { className: "absolute -top-3 left-3 rounded-sm border border-stone-400 bg-white px-3 py-1 text-[11px] font-bold tracking-wider text-[#5b3518] shadow" }, "📝紹介状"
         ), /*#__PURE__*/
         React.createElement("p", { className: "text-[12px] leading-7 font-medium" },
         CONTACT_CONFIG.consultationDescription
