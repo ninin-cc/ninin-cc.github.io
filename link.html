@@ -1334,7 +1334,7 @@
                 title: 'こころと仕事のことを、ゆっくり話せる場所',
                 noteID: 'sample',
                 tags: ['tabelab'],
-                avatar: { text: 'S' },
+                avatar: { src: './kw/img/cafeei.jpg', objectPosition: '28% 43%' },
                 desc: 'サンプルカウンセリングルームでは、仕事や人間関係、これからの生き方について、安心してお話しいただける時間を大切にしています。まだ言葉にならない気持ちも、無理に整理しなくて大丈夫です。今のあなたのペースに合わせて、これからの一歩を一緒に考えていきます。',
                 links: { note: 'https://note.com/' }
             });
@@ -1582,7 +1582,7 @@
             function renderIndividualMemberPage(member) {
                 const main = document.querySelector('main');
                 const avatar = member.avatar?.src
-                    ? `<img src="${safeHtml(member.avatar.src)}" alt="${safeHtml(member.name)}のプロフィール画像" class="h-24 w-24 rounded-full border border-[var(--line)] bg-white object-cover shadow-sm">`
+                    ? `<img src="${safeHtml(member.avatar.src)}" alt="${safeHtml(member.name)}のプロフィール画像" class="h-24 w-24 rounded-full border border-[var(--line)] bg-white object-cover shadow-sm" style="object-position:${safeHtml(member.avatar.objectPosition || '50% 50%')}">`
                     : `<div class="flex h-24 w-24 items-center justify-center rounded-full border border-[var(--line)] bg-white text-3xl font-black text-[var(--trust)] shadow-sm">${safeHtml(member.avatar?.text || member.name.slice(0, 1))}</div>`;
                 document.title = `${member.name}｜つながるリンク集`;
                 main.className = 'individual-link-page w-full mx-auto px-4 pb-16';
