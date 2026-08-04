@@ -470,6 +470,7 @@ const App = () => {
   const [shuffledQuestions, setShuffledQuestions] = useState(generateQuestions);
 
   const [results, setResults] = useState(null);
+  const [isSampleResult, setIsSampleResult] = useState(false);
   const [popupType, setPopupType] = useState('none');
   const [animationKey, setAnimationKey] = useState(0);
   const [tempSelectedVal, setTempSelectedVal] = useState(null);
@@ -539,6 +540,7 @@ const App = () => {
   };
 
   const calculateResult = (finalScores) => {
+    setIsSampleResult(false);
     setStep('calculating');
 
     // スコア順にソートして上位を抽出
@@ -572,6 +574,26 @@ const App = () => {
     }, 1500);
   };
 
+  const goToSampleResult = () => {
+    const finalScores = { silent: 2, burden: 4, conform: 3, overthink: 5, suppress: 2, blame: 1, restless: 3, unclear: 2, loss: 1, endure: 4 };
+    const sorted = Object.entries(finalScores).sort((a, b) => b[1] - a[1]);
+    const top3 = sorted.slice(0, 3).map((item) => item[0]);
+    const totalScore = Object.values(finalScores).reduce((sum, val) => sum + val, 0);
+    const categoryScores = { relation: 0, thought: 0, energy: 0 };
+    Object.entries(finalScores).forEach(([key, score]) => {
+      categoryScores[WEATHER_DATA[key].category] += score;
+    });
+
+    setScores(finalScores);
+    setScoreHistory([]);
+    setResults({ top3, totalScore, finalScores, categoryScores });
+    setIsSampleResult(true);
+    setPopupType('none');
+    setTempSelectedVal(null);
+    setStep('result');
+    window.scrollTo(0, 0);
+  };
+
   const resetApp = () => {
     if (window.confirm('最初からやり直しますか？')) {
       setStep('intro');
@@ -579,6 +601,7 @@ const App = () => {
       setScores({ silent: 0, burden: 0, conform: 0, overthink: 0, suppress: 0, blame: 0, restless: 0, unclear: 0, loss: 0, endure: 0 });
       setScoreHistory([]);
       setResults(null);
+      setIsSampleResult(false);
       setPopupType('none');
       setTempSelectedVal(null);
 
@@ -593,13 +616,20 @@ const App = () => {
   const closePopup = () => setPopupType('none');
 
   const captureResultCanvas = () => {
-    const element = document.getElementById('result-capture-area');
-    if (!element) return Promise.reject(new Error('保存対象が見つかりません。'));
+    let element = document.getElementById('result-capture-area');
+    if (!element && !results) {
+      goToSampleResult();
+    }
     if (typeof window.html2canvas !== 'function') return Promise.reject(new Error('PDF変換ライブラリ（html2canvas）を読み込めませんでした。'));
     window.scrollTo(0, 0);
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        element = document.getElementById('result-capture-area');
+        if (!element) {
+          reject(new Error('サンプル結果を含む保存対象を生成できませんでした。'));
+          return;
+        }
         window.html2canvas(element, {
           backgroundColor: '#f8eac2', // 明るいクラフトノートの色
           scale: 2, // PDF化時の画質を保ちつつ、メモリ不足を防ぐ
@@ -607,7 +637,7 @@ const App = () => {
           allowTaint: false,
           logging: false
         }).then(resolve).catch(reject);
-      }, 300);
+      }, 600);
     });
   };
 
@@ -959,6 +989,10 @@ const App = () => {
 
 
       React.createElement("div", { id: "result-capture-area", className: "w-full flex flex-col gap-6 py-6 px-2 md:px-4 rounded-xl" }, /*#__PURE__*/
+
+      isSampleResult && /*#__PURE__*/
+      React.createElement("div", { className: "rounded-lg border-2 border-yellow-500 bg-yellow-950/90 px-4 py-3 text-center font-bold text-yellow-100 shadow-lg" }, "\u3010\u30B5\u30F3\u30D7\u30EB\u7D50\u679C\u3011\u672A\u56DE\u7B54\u6642\u306E\u30C0\u30DF\u30FC\u30C7\u30FC\u30BF\u3067\u3059\u3002\u5B9F\u969B\u306E\u7D50\u679C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+      ), /*#__PURE__*/
 
 
       React.createElement("div", { className: "w-full dialog-note border-2 border-amber-600 shadow-xl animate-fade-in relative m-0" }, /*#__PURE__*/

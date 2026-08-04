@@ -516,6 +516,7 @@ const App = () => {
   const [selectedMinusBonus, setSelectedMinusBonus] = useState(null); // シーン2用（1つ選択）
 
   const [results, setResults] = useState(null);
+  const [isSampleResult, setIsSampleResult] = useState(false);
   const [randomImages, setRandomImages] = useState({}); // ボーナス画面用ランダム画像マップ
   const [popupType, setPopupType] = useState('none'); // 'none', 'talk', 'save', 'about', 'start', 'notYet'
   const [animationKey, setAnimationKey] = useState(0); // ページめくりアニメーション用キー
@@ -736,6 +737,7 @@ const App = () => {
   };
 
   const calculateResult = () => {
+    setIsSampleResult(false);
     setStep('calculating');
     setStoryChoicesOpen(false);
 
@@ -769,6 +771,7 @@ const App = () => {
     setSelectedBonus(['TF', 'GM']);
     setSelectedMinusBonus('LS');
     setResults({ top3: ['TF', 'GM', 'CH'], bottom1: 'LS', finalScores });
+    setIsSampleResult(true);
     setPopupType('none');
     setStoryChoicesOpen(false);
     setTempSelectedVal(null);
@@ -789,6 +792,7 @@ const App = () => {
       setSelectedMinusBonus(null);
       setRandomImages({});
       setResults(null);
+      setIsSampleResult(false);
       setPopupType('none');
       setTempSelectedVal(null);
       setStoryChoicesOpen(false); // アコーディオンも閉じる
@@ -803,8 +807,10 @@ const App = () => {
   const closePopup = () => setPopupType('none');
 
   const captureResultPages = () => {
-    const pageElements = Array.from(document.querySelectorAll('.result-export-page'));
-    if (pageElements.length === 0) return Promise.reject(new Error('保存対象が見つかりません。'));
+    let pageElements = Array.from(document.querySelectorAll('.result-export-page'));
+    if (pageElements.length === 0 && !results) {
+      goToDevResult();
+    }
     if (typeof window.html2canvas !== 'function') return Promise.reject(new Error('PDF変換ライブラリ（html2canvas）を読み込めませんでした。'));
 
     // スマホなどで上部が切れないように、一度トップへスクロールする
@@ -813,6 +819,8 @@ const App = () => {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
+          pageElements = Array.from(document.querySelectorAll('.result-export-page'));
+          if (pageElements.length === 0) throw new Error('サンプル結果を含む保存対象を生成できませんでした。');
           const captureScale = 2;
           const pages = [];
           for (const element of pageElements) {
@@ -857,7 +865,7 @@ const App = () => {
         } catch (err) {
           reject(err);
         }
-      }, 300);
+      }, 600);
     });
   };
 
@@ -1443,6 +1451,9 @@ const App = () => {
 
 
       React.createElement("div", { id: "result-capture-area", className: "w-full space-y-6 pt-4 pb-4 px-2" }, /*#__PURE__*/
+      isSampleResult && /*#__PURE__*/
+      React.createElement("div", { className: "rounded-lg border-2 border-yellow-400 bg-yellow-950/90 px-4 py-3 text-center font-bold text-yellow-100 shadow-lg" }, "\u203B\u3053\u308C\u306F\u672A\u56DE\u7B54\u6642\u306B\u4F5C\u6210\u3057\u305F\u30B5\u30F3\u30D7\u30EB\u7D50\u679C\u3067\u3059\u3002\u5B9F\u969B\u306E\u8A3A\u65AD\u7D50\u679C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+      ), /*#__PURE__*/
       React.createElement(DialogBox, {
         charConfig: CONFIG.char1,
         text: `ふむ…見えたぞ。お主のキャリアの錨、そして手放してもよい場面や役割じゃ。\nしっかりと目に焼き付けるがよい。` }
@@ -1548,6 +1559,9 @@ const App = () => {
       React.createElement("p", { style: { margin: 0, fontSize: '18px', fontWeight: 700, color: '#8b5a2b' } }, CONFIG.appTitlePre), /*#__PURE__*/
       React.createElement("h1", { style: { margin: '6px 0 8px', fontSize: '34px', lineHeight: 1.35, color: '#2d1b10' } }, "\u5FC3\u306E\u9328\u3092\u89B3\u308B\u9B54\u6CD5 \u7D50\u679C\u30EC\u30DD\u30FC\u30C8"
 
+      ), /*#__PURE__*/
+      isSampleResult && /*#__PURE__*/
+      React.createElement("p", { style: { margin: '8px 0', padding: '8px 12px', border: '2px solid #b45309', borderRadius: '8px', background: '#fffbeb', color: '#92400e', fontSize: '17px', fontWeight: 700 } }, "\u3010\u30B5\u30F3\u30D7\u30EB\u7D50\u679C\u3011\u672A\u56DE\u7B54\u6642\u306E\u30C0\u30DF\u30FC\u30C7\u30FC\u30BF\u3067\u3059\u3002"
       ), /*#__PURE__*/
       React.createElement("p", { style: { margin: 0, fontSize: '16px', color: '#5f3a20' } }, CONFIG.appSubtitle)
       ), /*#__PURE__*/
