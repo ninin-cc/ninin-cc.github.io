@@ -859,7 +859,7 @@ const App = () => {
 
     let weatherText = "";
     let weatherIcon = "";
-    const weatherImageUrl = "./img/tenki2.jpg";
+    const weatherImageUrl = "./img/tenki.jpg";
     let weatherImagePosition = "0% center";
 
     // 7択(最大60点)のスコアに応じた天気と背景画像の判定（8段階）
