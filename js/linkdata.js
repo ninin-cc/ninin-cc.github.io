@@ -123,7 +123,7 @@ const linkData = [
     },
     {
         name: "のりひろ",
-        certification: "🌈RIESM™アンバサダー / AMB-0006",
+        certification: "🌈RIESM™アンバサダー / AMB-9006",
         location: "埼玉県",
         organization: "ドコモCS",
         workshopCount: 0,
