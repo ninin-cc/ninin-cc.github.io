@@ -122,6 +122,19 @@ const linkData = [
         }
     },
     {
+        name: "のりひろ",
+        certification: "🌈RIESM™アンバサダー / AMB-0006",
+        location: "埼玉県",
+        organization: "ドコモCS",
+        workshopCount: 0,
+        avatar: { text: "の", color: "trust" },
+        title: "🌈RIESM™アンバサダー",
+        tags: ["riesm"],
+        desc: "自分の特性を知ることは、働きやすさの第一歩だと思っています。RIESMを通じて、自分らしく力を発揮できる人とチームを増やしていきたいです。",
+        ambassadorDesc: "自分の特性を知ることは、働きやすさの第一歩だと思っています。RIESMを通じて、自分らしく力を発揮できる人とチームを増やしていきたいです。",
+        applicationReason: "職場のチーム内でRIESMを実施し、その結果より働きやすい職場/環境になれればよいと思い登録しました。"
+    },
+    {
         name: "れい",
         certification: "🌈RIESM™アンバサダー / AMB-9002",
         location: "オンライン中心",
