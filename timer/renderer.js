@@ -24,6 +24,15 @@
   const extensionQuestion = document.getElementById('extension-question');
   const extensionYesButton = document.getElementById('btn-extension-yes');
   const extensionNoButton = document.getElementById('btn-extension-no');
+  const tutorialButton = document.getElementById('btn-tutorial');
+  const tutorialOverlay = document.getElementById('tutorial-overlay');
+  const tutorialProgress = document.getElementById('tutorial-progress');
+  const tutorialTitle = document.getElementById('tutorial-title');
+  const tutorialDescription = document.getElementById('tutorial-description');
+  const tutorialInstruction = document.getElementById('tutorial-instruction');
+  const tutorialBackButton = document.getElementById('btn-tutorial-back');
+  const tutorialNextButton = document.getElementById('btn-tutorial-next');
+  const tutorialCloseButton = document.getElementById('btn-tutorial-close');
   const overlayStatus = document.getElementById('overlay-status');
   const breakDisplay = document.getElementById('break-display');
   const breakTitle = document.getElementById('break-title');
@@ -59,6 +68,11 @@
   let breakStartedAt = null;
   let breakTicker = null;
   let pendingAddSeconds = 0;
+  let tutorialIndex = 0;
+  let tutorialTarget = null;
+  let tutorialStepComplete = false;
+  let tutorialPhase = null;
+  let tutorialSavedState = null;
   const addHistory = [];
   const storageKeys = {
     topPaneHeight: 'workshopTimer.topPaneHeight',
@@ -66,6 +80,96 @@
   };
 
   body.classList.add(isElectron ? 'electron-mode' : 'browser-mode');
+
+  const tutorialSteps = [
+    {
+      title: 'まず、画面の役割を知る',
+      description: '左は現在時刻、右はタイマー表示、下は操作エリアです。実際にボタンを押しながら、基本操作を順番に練習します。',
+      instruction: '練習中の内容は、終了すると元の状態へ戻ります。'
+    },
+    {
+      title: 'プリセットで1分を選ぶ',
+      description: 'よく使う時間はPRESETからワンクリックで設定できます。まずは実際に1分を選んでみましょう。',
+      instruction: '「1分」を押してください',
+      selector: '.preset-group',
+      action: 'preset-60',
+      setup: 'empty-countdown'
+    },
+    {
+      title: 'タイマーを開始する',
+      description: '設定した1分をカウントダウンします。開始すると、終了予定時刻とアナログ時計の時間範囲も表示されます。',
+      instruction: '「タイマー開始」を押してください',
+      selector: '#btn-toggle-play',
+      action: 'timer-start',
+      setup: 'ready-countdown'
+    },
+    {
+      title: '実行中の表示を見る',
+      description: '数字は残り時間です。左時計の色付き範囲が実行時間、太い線が終了位置、上の時刻が終了予定です。',
+      instruction: '表示を確認したら「次へ」を押します',
+      selector: '#left-clock-wrap',
+      setup: 'running-countdown'
+    },
+    {
+      title: 'タイマーを一時停止する',
+      description: '実行中は同じボタンが「タイマー停止」に変わります。リセットは確定した時間へ戻し、クリアは0にします。',
+      instruction: '「タイマー停止」を押してください',
+      selector: '#btn-toggle-play',
+      action: 'timer-stop',
+      setup: 'running-countdown'
+    },
+    {
+      title: '停止中のADDを試す',
+      description: '停止中のADDは、表示中の時間へそのまま加算します。＋3で増やしたあと、左端の↶で元に戻してみましょう。',
+      instruction: 'まず「＋3」を押してください',
+      selector: '.add-group',
+      action: 'add-stopped',
+      setup: 'ready-countdown',
+      phase: 'add'
+    },
+    {
+      title: '実行中のADDで延長する',
+      description: '実行中にADDを押すと確認画面が開きます。開始、＋3、YESの順に操作して、残り時間と終了位置が延びる様子を見てみましょう。',
+      instruction: 'まず「タイマー開始」を押してください',
+      selector: '#btn-toggle-play',
+      action: 'add-running',
+      setup: 'ready-countdown',
+      phase: 'start'
+    },
+    {
+      title: '時間を細かく設定する',
+      description: 'TIMER欄では時・分・秒を選べます。選択内容はすぐ大きな表示へ反映され、「セット」でリセット時の基準時間として確定します。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '.duration-group',
+      setup: 'empty-countdown'
+    },
+    {
+      title: '休憩終了時刻を表示する',
+      description: 'BREAKで再開時刻を選び、休憩開始を押します。時計には休憩範囲と再開位置が表示され、設定時刻になると自動で解除されます。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '.break-group'
+    },
+    {
+      title: 'ストップウォッチを使う',
+      description: 'ストップウォッチは0から1/100秒単位で計測します。計測中は見間違いを防ぐため、アナログ時計の秒針が一時的に消えます。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '#btn-stopwatch'
+    },
+    {
+      title: '表示を見やすく整える',
+      description: isElectron
+        ? '左時計、背景時計、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
+        : '左時計、背景時計、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
+      instruction: '設定を確認したら「次へ」を押します',
+      selector: '.compact-utility-row'
+    },
+    {
+      title: '表示サイズを調整して完了',
+      description: '横バーで表示部の高さ、時計の間にある縦バーでアナログ時計の幅を調整できます。「完了」で練習前の状態へ戻ります。',
+      instruction: 'これで基本操作は完了です',
+      selector: '#resizer'
+    }
+  ];
 
   function readStoredNumber(key) {
     try {
@@ -184,6 +288,279 @@
   function hideExtensionConfirmation() {
     extensionConfirm.hidden = true;
     pendingAddSeconds = 0;
+  }
+
+  function clearTutorialTarget() {
+    if (tutorialTarget) tutorialTarget.classList.remove('tutorial-target');
+    tutorialTarget = null;
+  }
+
+  function captureTutorialState() {
+    const now = Date.now();
+    const frozenRemainingMs = isRunning && timerMode === 'countdown'
+      ? Math.max(0, endAt - now)
+      : remainingMs;
+    const frozenStopwatchMs = isRunning && timerMode === 'stopwatch'
+      ? Math.max(0, now - stopwatchStartedAt)
+      : stopwatchElapsedMs;
+    return {
+      timerMode,
+      remainingMs: frozenRemainingMs,
+      stopwatchElapsedMs: frozenStopwatchMs,
+      lastSetSeconds,
+      isRunning,
+      hasEnded,
+      countdownElapsedMs: countdownStartedAt ? Math.max(0, now - countdownStartedAt.getTime()) : 0,
+      addHistory: [...addHistory],
+      manualValues: [selHour.value, selMin.value, selSec.value],
+      breakValues: [selBreakHour.value, selBreakMin.value],
+      isBreakMode,
+      breakRemainingMs: breakTarget ? Math.max(1000, breakTarget.getTime() - now) : 0,
+      breakElapsedMs: breakStartedAt ? Math.max(0, now - breakStartedAt.getTime()) : 0
+    };
+  }
+
+  function prepareTutorialDemo() {
+    stopTicker();
+    stopBreakTicker();
+    hideExtensionConfirmation();
+    isRunning = false;
+    isBreakMode = false;
+    breakTarget = null;
+    breakStartedAt = null;
+    timerMode = 'countdown';
+    remainingMs = 0;
+    stopwatchElapsedMs = 0;
+    lastSetSeconds = 0;
+    endAt = 0;
+    countdownStartedAt = null;
+    hasEnded = false;
+    clearAddHistory();
+    syncManualSelectors(0);
+    startBreakButton.textContent = '休憩開始';
+    startBreakButton.classList.remove('break-stop');
+    renderTimer();
+  }
+
+  function restoreTutorialState() {
+    const saved = tutorialSavedState;
+    tutorialSavedState = null;
+    if (!saved) return;
+
+    stopTicker();
+    stopBreakTicker();
+    hideExtensionConfirmation();
+    timerMode = saved.timerMode;
+    remainingMs = saved.remainingMs;
+    stopwatchElapsedMs = saved.stopwatchElapsedMs;
+    lastSetSeconds = saved.lastSetSeconds;
+    hasEnded = saved.hasEnded;
+    isRunning = false;
+    isBreakMode = false;
+    breakTarget = null;
+    breakStartedAt = null;
+    addHistory.length = 0;
+    addHistory.push(...saved.addHistory);
+    [selHour.value, selMin.value, selSec.value] = saved.manualValues;
+    [selBreakHour.value, selBreakMin.value] = saved.breakValues;
+
+    if (saved.isBreakMode) {
+      const now = Date.now();
+      isBreakMode = true;
+      breakStartedAt = new Date(now - saved.breakElapsedMs);
+      breakTarget = new Date(now + saved.breakRemainingMs);
+      breakTicker = window.setInterval(updateBreakDisplay, 1000);
+      renderBreakDisplay();
+      return;
+    }
+
+    if (saved.isRunning) {
+      isRunning = true;
+      if (saved.timerMode === 'stopwatch') {
+        stopwatchStartedAt = Date.now() - saved.stopwatchElapsedMs;
+        ticker = window.setInterval(tick, 10);
+      } else {
+        countdownStartedAt = new Date(Date.now() - saved.countdownElapsedMs);
+        endAt = Date.now() + saved.remainingMs;
+        ticker = window.setInterval(tick, 100);
+      }
+    } else {
+      countdownStartedAt = saved.countdownElapsedMs > 0
+        ? new Date(Date.now() - saved.countdownElapsedMs)
+        : null;
+    }
+    renderTimer();
+  }
+
+  function positionTutorialCard(target) {
+    tutorialOverlay.classList.remove('is-centered', 'card-top', 'card-bottom');
+    if (!target) {
+      tutorialOverlay.classList.add('is-centered');
+      return;
+    }
+    const rect = target.getBoundingClientRect();
+    tutorialOverlay.classList.add(rect.top + (rect.height / 2) > window.innerHeight / 2 ? 'card-top' : 'card-bottom');
+  }
+
+  function setTutorialTarget(selector) {
+    clearTutorialTarget();
+    const target = selector ? document.querySelector(selector) : null;
+    const targetVisible = target && target.getClientRects().length > 0;
+    if (targetVisible) {
+      tutorialTarget = target;
+      tutorialTarget.classList.add('tutorial-target');
+      tutorialTarget.scrollIntoView({ block: 'center', inline: 'nearest' });
+    }
+    window.requestAnimationFrame(() => positionTutorialCard(targetVisible ? target : null));
+  }
+
+  function applyTutorialSetup(setup) {
+    if (setup === 'empty-countdown') {
+      setTime(0);
+      return;
+    }
+    if (setup === 'ready-countdown') {
+      setTime(60);
+      return;
+    }
+    if (setup === 'running-countdown' && !(timerMode === 'countdown' && isRunning)) {
+      setTime(60);
+      startTimer();
+    }
+  }
+
+  function setTutorialInstruction(message, success = false) {
+    tutorialInstruction.textContent = message;
+    tutorialInstruction.classList.toggle('is-success', success);
+  }
+
+  function completeTutorialStep(message, selector = null) {
+    tutorialStepComplete = true;
+    tutorialNextButton.disabled = false;
+    setTutorialInstruction(message, true);
+    if (selector) setTutorialTarget(selector);
+    tutorialNextButton.focus();
+  }
+
+  function renderTutorialStep() {
+    clearTutorialTarget();
+    const step = tutorialSteps[tutorialIndex];
+    tutorialStepComplete = !step.action;
+    tutorialPhase = step.phase ?? null;
+    applyTutorialSetup(step.setup);
+    tutorialProgress.textContent = `${tutorialIndex + 1} / ${tutorialSteps.length}`;
+    tutorialTitle.textContent = step.title;
+    tutorialDescription.textContent = step.description;
+    setTutorialInstruction(step.instruction ?? '「次へ」で進みます');
+    tutorialBackButton.disabled = tutorialIndex === 0;
+    tutorialNextButton.disabled = !tutorialStepComplete;
+    tutorialNextButton.textContent = tutorialIndex === tutorialSteps.length - 1 ? '完了' : '次へ';
+    setTutorialTarget(step.selector);
+  }
+
+  function openTutorial() {
+    if (!tutorialOverlay.hidden) return;
+    tutorialSavedState = captureTutorialState();
+    prepareTutorialDemo();
+    tutorialIndex = 0;
+    tutorialOverlay.hidden = false;
+    body.classList.add('tutorial-active');
+    renderTutorialStep();
+    tutorialNextButton.focus();
+  }
+
+  function closeTutorial() {
+    clearTutorialTarget();
+    tutorialOverlay.hidden = true;
+    body.classList.remove('tutorial-active');
+    restoreTutorialState();
+    tutorialButton.focus();
+  }
+
+  function rejectTutorialAction(event, message) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setTutorialInstruction(message);
+  }
+
+  function guardTutorialAction(event) {
+    if (tutorialOverlay.hidden) return;
+    const step = tutorialSteps[tutorialIndex];
+    const button = event.target.closest('button');
+    if (!button || !step.action) return;
+
+    if (step.action === 'preset-60' && button.matches('.btn-preset') && button.dataset.time !== '60') {
+      rejectTutorialAction(event, '練習では「1分」を押してください');
+      return;
+    }
+
+    if (step.action === 'add-stopped' && button.closest('.add-group')) {
+      if (tutorialPhase === 'add' && (!button.matches('.btn-add') || button.dataset.add !== '180')) {
+        rejectTutorialAction(event, '練習では「＋3」を押してください');
+      } else if (tutorialPhase === 'undo' && button !== undoAddButton) {
+        rejectTutorialAction(event, '左端の「↶」を押してください');
+      }
+      return;
+    }
+
+    if (step.action === 'add-running' && tutorialPhase === 'add' && button.closest('.add-group')) {
+      if (!button.matches('.btn-add') || button.dataset.add !== '180') {
+        rejectTutorialAction(event, '練習では「＋3」を押してください');
+      }
+      return;
+    }
+
+    if (step.action === 'add-running' && tutorialPhase === 'confirm' && button === extensionNoButton) {
+      rejectTutorialAction(event, '延長の変化を見るため「YES」を押してください');
+    }
+  }
+
+  function handleTutorialAction(event) {
+    if (tutorialOverlay.hidden) return;
+    const step = tutorialSteps[tutorialIndex];
+    const button = event.target.closest('button');
+    if (!button || tutorialStepComplete) return;
+
+    if (step.action === 'preset-60' && button.matches('.btn-preset[data-time="60"]')) {
+      completeTutorialStep('できました。大きな表示とTIMER欄が01:00に変わりました。', '#timer-stage');
+      return;
+    }
+
+    if (step.action === 'timer-start' && button === playButton && timerMode === 'countdown' && isRunning) {
+      completeTutorialStep('開始しました。数字、終了予定時刻、時計の色付き範囲を確認してください。', '#left-clock-wrap');
+      return;
+    }
+
+    if (step.action === 'timer-stop' && button === playButton && timerMode === 'countdown' && !isRunning) {
+      completeTutorialStep('停止しました。もう一度押せば続きから再開できます。', '#btn-toggle-play');
+      return;
+    }
+
+    if (step.action === 'add-stopped') {
+      if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="180"]')) {
+        tutorialPhase = 'undo';
+        setTutorialInstruction('01:00から04:00になりました。次に左端の「↶」を押してください', true);
+        setTutorialTarget('.add-group');
+      } else if (tutorialPhase === 'undo' && button === undoAddButton) {
+        completeTutorialStep('元の01:00へ戻りました。↶は直前の追加だけを取り消します。', '#timer-stage');
+      }
+      return;
+    }
+
+    if (step.action === 'add-running') {
+      if (tutorialPhase === 'start' && button === playButton && timerMode === 'countdown' && isRunning) {
+        tutorialPhase = 'add';
+        setTutorialInstruction('タイマーが動きました。次に「＋3」を押してください', true);
+        setTutorialTarget('.add-group');
+      } else if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="180"]') && !extensionConfirm.hidden) {
+        tutorialPhase = 'confirm';
+        setTutorialInstruction('確認画面が出ました。「YES」を押してください');
+        setTutorialTarget('#timer-stage');
+      } else if (tutorialPhase === 'confirm' && button === extensionYesButton && extensionConfirm.hidden) {
+        tutorialPhase = 'done';
+        completeTutorialStep('延長できました。残り時間、終了予定時刻、時計の終了位置が3分ぶん延びています。', '#left-clock-wrap');
+      }
+    }
   }
 
   function renderTimer() {
@@ -707,6 +1084,8 @@
     }
   }
 
+  document.addEventListener('click', guardTutorialAction, true);
+
   playButton.addEventListener('click', toggleTimer);
   stopwatchButton.addEventListener('click', toggleStopwatch);
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
@@ -729,6 +1108,31 @@
   });
 
   extensionNoButton.addEventListener('click', hideExtensionConfirmation);
+
+  tutorialButton.addEventListener('click', openTutorial);
+  tutorialCloseButton.addEventListener('click', closeTutorial);
+  tutorialBackButton.addEventListener('click', () => {
+    if (tutorialIndex <= 0) return;
+    tutorialIndex -= 1;
+    renderTutorialStep();
+  });
+  tutorialNextButton.addEventListener('click', () => {
+    if (!tutorialStepComplete) return;
+    if (tutorialIndex >= tutorialSteps.length - 1) {
+      closeTutorial();
+      return;
+    }
+    tutorialIndex += 1;
+    renderTutorialStep();
+  });
+
+  document.addEventListener('click', handleTutorialAction);
+
+  document.addEventListener('keydown', (event) => {
+    if (tutorialOverlay.hidden || event.key !== 'Escape') return;
+    event.preventDefault();
+    closeTutorial();
+  });
 
   [selHour, selMin, selSec].forEach((select) => {
     select.addEventListener('input', previewManualTime);
