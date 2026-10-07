@@ -1,0 +1,43 @@
+{
+  "name": "workshop-timer-overlay",
+  "version": "1.0.0",
+  "description": "PowerPointの上に重ねて使える透明なワークショップタイマー",
+  "author": "ninin",
+  "main": "main.js",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "start": "electron .",
+    "pack:win": "electron-builder --win dir",
+    "dist:win": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "jp.ninin.workshop-timer-overlay",
+    "productName": "Workshop Timer Overlay",
+    "asar": true,
+    "files": [
+      "index.html",
+      "styles.css",
+      "renderer.js",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "Workshop-Timer-Overlay-${version}-${arch}.${ext}"
+    }
+  }
+}

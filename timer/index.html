@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>ワークショップタイマー</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+  <div id="app" class="app-shell">
+    <header id="titlebar" class="titlebar electron-only" aria-label="ウインドウ操作">
+      <div class="drag-region">
+        <span class="app-mark">◷</span>
+        <span>Workshop Timer Overlay</span>
+        <span id="overlay-status" class="status-chip">最前面・操作可能</span>
+      </div>
+      <div class="window-actions no-drag">
+        <button id="btn-pin" class="icon-button is-active" type="button" title="最前面表示を切り替え">固定</button>
+        <button id="btn-window-fullscreen" class="icon-button" type="button" title="全画面表示を切り替え">全画面</button>
+        <button id="btn-minimize" class="icon-button" type="button" title="最小化">―</button>
+        <button id="btn-close" class="icon-button danger" type="button" title="終了">×</button>
+      </div>
+    </header>
+
+    <main id="top-pane" class="top-pane">
+      <aside id="left-clock-wrap" class="left-clock-wrap" aria-label="現在時刻">
+        <svg class="clock-svg" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="47" class="clock-face"></circle>
+          <g id="left-clock-marks" class="clock-marks"></g>
+          <line id="left-hand-hour" x1="50" y1="50" x2="50" y2="27" class="clock-hand hour"></line>
+          <line id="left-hand-minute" x1="50" y1="50" x2="50" y2="15" class="clock-hand minute"></line>
+          <line id="left-hand-second" x1="50" y1="52" x2="50" y2="10" class="clock-hand second"></line>
+          <circle cx="50" cy="50" r="2.6" class="clock-pin"></circle>
+        </svg>
+      </aside>
+
+      <section id="timer-stage" class="timer-stage" aria-label="カウントダウンタイマー">
+        <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="47" class="clock-face"></circle>
+          <g id="bg-clock-marks" class="clock-marks"></g>
+          <line id="bg-hand-hour" x1="50" y1="50" x2="50" y2="28" class="clock-hand hour"></line>
+          <line id="bg-hand-minute" x1="50" y1="50" x2="50" y2="16" class="clock-hand minute"></line>
+          <line id="bg-hand-second" x1="50" y1="52" x2="50" y2="11" class="clock-hand second"></line>
+          <circle cx="50" cy="50" r="2" class="clock-pin"></circle>
+        </svg>
+
+        <svg class="digital-svg" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="digital-text">
+          <text id="digital-text" x="50%" y="53%" dominant-baseline="middle" text-anchor="middle">00:00</text>
+        </svg>
+        <div id="click-through-hint" class="click-through-hint electron-only" hidden>
+          クリック透過中 — Ctrl + Shift + T で操作に戻る
+        </div>
+      </section>
+    </main>
+
+    <div id="resizer" class="resizer" role="separator" aria-label="表示領域の高さを変更" aria-orientation="horizontal">
+      <span></span><span></span><span></span>
+    </div>
+
+    <section id="controls" class="controls" aria-label="タイマー操作">
+      <div class="browser-note browser-only">
+        ブラウザ版です。PowerPointが透ける透明表示にはWindows版アプリを使用してください。
+      </div>
+
+      <div class="control-row main-controls">
+        <span class="row-label">MAIN</span>
+        <div class="button-grid three">
+          <button id="btn-toggle-play" class="button primary" type="button">▶ スタート</button>
+          <button id="btn-reset" class="button warning" type="button">リセット</button>
+          <button id="btn-clear" class="button danger" type="button">クリア</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <span class="row-label">PRESET</span>
+        <div class="button-grid five">
+          <button class="button subtle btn-preset" type="button" data-time="60">1分</button>
+          <button class="button subtle btn-preset" type="button" data-time="180">3分</button>
+          <button class="button subtle btn-preset" type="button" data-time="300">5分</button>
+          <button class="button subtle btn-preset" type="button" data-time="600">10分</button>
+          <button class="button subtle btn-preset" type="button" data-time="900">15分</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <span class="row-label">ADD</span>
+        <div class="button-grid three">
+          <button class="button add btn-add" type="button" data-add="60">＋1分</button>
+          <button class="button add btn-add" type="button" data-add="120">＋2分</button>
+          <button class="button add btn-add" type="button" data-add="600">＋10分</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <span class="row-label">MANUAL</span>
+        <div class="manual-controls">
+          <label><select id="sel-hour" aria-label="時間"></select><span>時</span></label>
+          <label><select id="sel-min" aria-label="分"></select><span>分</span></label>
+          <label><select id="sel-sec" aria-label="秒"></select><span>秒</span></label>
+          <button id="btn-set-manual" class="button manual" type="button">セット</button>
+        </div>
+      </div>
+
+      <div class="utility-row">
+        <label class="check-control"><input id="chk-leftclock" type="checkbox" checked> 左時計</label>
+        <label class="check-control"><input id="chk-bgclock" type="checkbox" checked> 背景時計</label>
+        <label class="check-control"><input id="chk-theme" type="checkbox" checked> ダークUI</label>
+        <label class="range-control">背景時計
+          <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
+        </label>
+        <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
+        <button id="btn-hide-controls" class="button compact electron-only" type="button">操作パネルを隠す</button>
+        <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過を開始</button>
+      </div>
+
+      <p class="shortcut-help electron-only">
+        Ctrl＋Shift＋Space: 開始/停止　 T: クリック透過　 H: パネル　 R: リセット　 F: 全画面　 Q: 終了
+      </p>
+    </section>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
