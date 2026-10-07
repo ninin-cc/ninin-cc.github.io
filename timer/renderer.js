@@ -43,6 +43,7 @@
   const pomodoroCycleLabel = document.getElementById('pomodoro-cycle-label');
   const pomodoroPhaseText = document.getElementById('pomodoro-phase');
   const pomodoroTaskDisplay = document.getElementById('pomodoro-task-display');
+  const pomodoroMinuteBlocks = document.getElementById('pomodoro-minute-blocks');
   const pomodoroCycles = document.getElementById('pomodoro-cycles');
   const pomodoroMessage = document.getElementById('pomodoro-message');
   const pomodoroEndButton = document.getElementById('btn-pomodoro-end');
@@ -601,6 +602,25 @@
     return `${pomodoroLongBreakMinutes}分休憩を始める`;
   }
 
+  function renderPomodoroMinuteBlocks() {
+    if (!isPomodoroMode) {
+      pomodoroMinuteBlocks.replaceChildren();
+      return;
+    }
+    const totalMinutes = pomodoroDurationSeconds() / 60;
+    const remainingMinutes = pomodoroAwaitingStart
+      ? totalMinutes
+      : Math.min(totalMinutes, Math.max(0, Math.ceil(remainingMs / 60000)));
+    pomodoroMinuteBlocks.replaceChildren();
+    pomodoroMinuteBlocks.setAttribute('aria-label', `残り約${remainingMinutes}分（全${totalMinutes}ブロック）`);
+    for (let index = 0; index < totalMinutes; index += 1) {
+      const block = document.createElement('span');
+      block.className = 'pomodoro-minute-block';
+      block.classList.toggle('is-empty', index >= remainingMinutes);
+      pomodoroMinuteBlocks.appendChild(block);
+    }
+  }
+
   function updatePomodoroUi() {
     pomodoroSetup.hidden = isPomodoroMode;
     pomodoroSession.hidden = !isPomodoroMode;
@@ -611,6 +631,7 @@
       pomodoroButton.textContent = '🍅 ポモドーロテクニックモード';
       pomodoroCycleLabel.textContent = '集中と休憩のサイクル';
       pomodoroStartButton.textContent = '🍅 25分集中を始める';
+      renderPomodoroMinuteBlocks();
       return;
     }
 
@@ -622,6 +643,7 @@
     pomodoroPhaseText.textContent = pomodoroPhaseLabel();
     pomodoroTaskDisplay.hidden = !pomodoroTask;
     pomodoroTaskDisplay.textContent = pomodoroTask;
+    renderPomodoroMinuteBlocks();
     pomodoroMessage.textContent = pomodoroStatusMessage;
 
     pomodoroCycles.replaceChildren();
@@ -668,7 +690,6 @@
     isPomodoroMode = true;
     setTime(pomodoroDurationSeconds());
     startTimer();
-    closePomodoro();
     updatePomodoroUi();
   }
 
@@ -676,10 +697,9 @@
     pomodoroAwaitingStart = false;
     pomodoroStatusMessage = pomodoroPhase === 'focus'
       ? 'この25分は、選んだタスクだけに集中しましょう。'
-      : '作業から手を離して、しっかり脳を休ませましょう。';
+    : '作業から手を離して、しっかり脳を休ませましょう。';
     setTime(pomodoroDurationSeconds());
     startTimer();
-    closePomodoro();
     updatePomodoroUi();
   }
 
@@ -702,7 +722,6 @@
     pomodoroStatusMessage = pomodoroPhase === 'focus'
       ? '集中を再開しました。'
       : '休憩を再開しました。';
-    closePomodoro();
     updatePomodoroUi();
   }
 
