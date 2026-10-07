@@ -617,6 +617,10 @@
       const block = document.createElement('span');
       block.className = 'pomodoro-minute-block';
       block.classList.toggle('is-empty', index >= remainingMinutes);
+      block.classList.toggle(
+        'is-next',
+        isRunning && timerMode === 'countdown' && remainingMinutes > 0 && index === remainingMinutes - 1
+      );
       pomodoroMinuteBlocks.appendChild(block);
     }
   }
