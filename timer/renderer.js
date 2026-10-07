@@ -183,8 +183,8 @@
     {
       title: '表示を見やすく整える',
       description: isElectron
-        ? '左時計、背景時計、デジタル時計、数字文字盤、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
-        : '左時計、背景時計、デジタル時計、数字文字盤、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
+        ? '左時計、背景時計、文字盤、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
+        : '左時計、背景時計、文字盤、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
       instruction: '設定を確認したら「次へ」を押します',
       selector: '.compact-utility-row'
     },
@@ -1497,10 +1497,6 @@
 
   document.getElementById('chk-bgclock').addEventListener('change', (event) => {
     bgClock.hidden = !event.target.checked;
-  });
-
-  document.getElementById('chk-digital').addEventListener('change', (event) => {
-    body.classList.toggle('digital-hidden', !event.target.checked);
   });
 
   document.getElementById('chk-clocknumbers').addEventListener('change', (event) => {
