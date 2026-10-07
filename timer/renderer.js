@@ -98,6 +98,7 @@
   let pomodoroTask = '';
   let pomodoroLongBreakMinutes = 20;
   let pomodoroStatusMessage = '';
+  let pomodoroBlockCount = 0;
   const addHistory = [];
   const storageKeys = {
     topPaneHeight: 'workshopTimer.topPaneHeight',
@@ -605,24 +606,30 @@
   function renderPomodoroMinuteBlocks() {
     if (!isPomodoroMode) {
       pomodoroMinuteBlocks.replaceChildren();
+      pomodoroBlockCount = 0;
       return;
     }
     const totalMinutes = pomodoroDurationSeconds() / 60;
     const remainingMinutes = pomodoroAwaitingStart
       ? totalMinutes
       : Math.min(totalMinutes, Math.max(0, Math.ceil(remainingMs / 60000)));
-    pomodoroMinuteBlocks.replaceChildren();
+    if (pomodoroBlockCount !== totalMinutes) {
+      pomodoroMinuteBlocks.replaceChildren();
+      for (let index = 0; index < totalMinutes; index += 1) {
+        const block = document.createElement('span');
+        block.className = 'pomodoro-minute-block';
+        pomodoroMinuteBlocks.appendChild(block);
+      }
+      pomodoroBlockCount = totalMinutes;
+    }
     pomodoroMinuteBlocks.setAttribute('aria-label', `残り約${remainingMinutes}分（全${totalMinutes}ブロック）`);
-    for (let index = 0; index < totalMinutes; index += 1) {
-      const block = document.createElement('span');
-      block.className = 'pomodoro-minute-block';
+    Array.from(pomodoroMinuteBlocks.children).forEach((block, index) => {
       block.classList.toggle('is-empty', index >= remainingMinutes);
       block.classList.toggle(
         'is-next',
         isRunning && timerMode === 'countdown' && remainingMinutes > 0 && index === remainingMinutes - 1
       );
-      pomodoroMinuteBlocks.appendChild(block);
-    }
+    });
   }
 
   function updatePomodoroUi() {

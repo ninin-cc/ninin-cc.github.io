@@ -1415,7 +1415,8 @@ body.controls-hidden .tutorial-launch {
 }
 
 .pomodoro-minute-block.is-next {
-  animation: pomodoro-next-pulse 2.8s ease-in-out infinite;
+  animation: pomodoro-next-pulse 4s ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
 @keyframes pomodoro-next-pulse {
@@ -1426,8 +1427,8 @@ body.controls-hidden .tutorial-launch {
   }
 
   50% {
-    opacity: 0.38;
-    transform: scale(0.96);
+    opacity: 0.18;
+    transform: scale(0.95);
   }
 }
 
