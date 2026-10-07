@@ -7,7 +7,7 @@
   <title>ワークショップタイマー</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-theme="dark">
+<body data-theme="light">
   <div id="app" class="app-shell">
     <header id="titlebar" class="titlebar electron-only" aria-label="ウインドウ操作">
       <div class="drag-region">
@@ -27,13 +27,31 @@
       <aside id="left-clock-wrap" class="left-clock-wrap" aria-label="現在時刻">
         <svg class="clock-svg" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
+          <g id="left-break-visual" class="break-clock-visual">
+            <circle id="left-break-full" cx="50" cy="50" r="43" class="break-clock-full"></circle>
+            <path id="left-break-sector" class="break-clock-sector"></path>
+            <line id="left-break-end" class="break-clock-end"></line>
+            <g id="left-break-badge" class="break-clock-badge">
+              <rect x="27" y="72" width="46" height="12" rx="6"></rect>
+              <text id="left-break-duration" x="50" y="80" text-anchor="middle">1時間</text>
+            </g>
+          </g>
           <g id="left-clock-marks" class="clock-marks"></g>
           <line id="left-hand-hour" x1="50" y1="50" x2="50" y2="27" class="clock-hand hour"></line>
           <line id="left-hand-minute" x1="50" y1="50" x2="50" y2="15" class="clock-hand minute"></line>
           <line id="left-hand-second" x1="50" y1="52" x2="50" y2="10" class="clock-hand second"></line>
           <circle cx="50" cy="50" r="2.6" class="clock-pin"></circle>
         </svg>
+
+        <div id="timer-end-display" class="timer-end-display" role="status" hidden>
+          <span id="timer-end-time" class="timer-end-time">13:20:45</span>
+          <span class="timer-end-label">終了</span>
+        </div>
       </aside>
+
+      <div id="clock-resizer" class="clock-resizer" role="separator" aria-label="アナログ時計とデジタル表示の幅を変更" aria-orientation="vertical">
+        <span></span><span></span><span></span>
+      </div>
 
       <section id="timer-stage" class="timer-stage" aria-label="カウントダウンタイマー">
         <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
@@ -48,6 +66,19 @@
         <svg class="digital-svg" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="digital-text">
           <text id="digital-text" x="50%" y="53%" dominant-baseline="middle" text-anchor="middle">00:00</text>
         </svg>
+
+        <div id="extension-confirm" class="extension-confirm" role="dialog" aria-modal="true" aria-labelledby="extension-question" hidden>
+          <p id="extension-question" class="extension-question">＋3分 延長しますか？</p>
+          <div class="extension-actions">
+            <button id="btn-extension-yes" class="button extension-yes" type="button">YES</button>
+            <button id="btn-extension-no" class="button extension-no" type="button">NO</button>
+          </div>
+        </div>
+
+        <div id="break-display" class="break-display" role="status" aria-live="polite" hidden>
+          <span id="break-title" class="break-title">休憩中</span>
+          <span id="break-resume-text" class="break-resume-text">13:20 再開</span>
+        </div>
         <div id="click-through-hint" class="click-through-hint electron-only" hidden>
           クリック透過中 — Ctrl + Shift + T で操作に戻る
         </div>
@@ -59,64 +90,87 @@
     </div>
 
     <section id="controls" class="controls" aria-label="タイマー操作">
-      <div class="browser-note browser-only">
-        ブラウザ版です。PowerPointが透ける透明表示にはWindows版アプリを使用してください。
-      </div>
-
       <div class="control-row main-controls">
         <span class="row-label">MAIN</span>
-        <div class="button-grid three">
-          <button id="btn-toggle-play" class="button primary" type="button">▶ スタート</button>
+        <div class="button-grid four">
+          <button id="btn-toggle-play" class="button primary" type="button">▶ タイマー開始</button>
+          <button id="btn-stopwatch" class="button stopwatch" type="button">⏱ ストップウォッチ開始</button>
           <button id="btn-reset" class="button warning" type="button">リセット</button>
           <button id="btn-clear" class="button danger" type="button">クリア</button>
         </div>
       </div>
 
-      <div class="control-row">
-        <span class="row-label">PRESET</span>
-        <div class="button-grid five">
-          <button class="button subtle btn-preset" type="button" data-time="60">1分</button>
-          <button class="button subtle btn-preset" type="button" data-time="180">3分</button>
-          <button class="button subtle btn-preset" type="button" data-time="300">5分</button>
-          <button class="button subtle btn-preset" type="button" data-time="600">10分</button>
-          <button class="button subtle btn-preset" type="button" data-time="900">15分</button>
-        </div>
+      <div class="settings-content">
+          <div class="compact-row quick-settings-row">
+            <div class="compact-group preset-group">
+              <span class="compact-label">PRESET</span>
+              <div class="segmented-control">
+                <button class="button segment subtle btn-preset" type="button" data-time="60">1分</button>
+                <button class="button segment subtle btn-preset" type="button" data-time="180">3分</button>
+                <button class="button segment subtle btn-preset" type="button" data-time="300">5分</button>
+                <button class="button segment subtle btn-preset" type="button" data-time="360">6分</button>
+                <button class="button segment subtle btn-preset" type="button" data-time="600">10分</button>
+                <button class="button segment subtle btn-preset" type="button" data-time="900">15分</button>
+              </div>
+            </div>
+
+            <div class="compact-group add-group">
+              <span class="compact-label">ADD</span>
+              <div class="segmented-control">
+                <button id="btn-undo-add" class="button segment undo" type="button" title="直前の時間追加を戻す" aria-label="直前の時間追加を戻す" disabled>↶</button>
+                <button class="button segment add btn-add" type="button" data-add="60">＋1</button>
+                <button class="button segment add btn-add" type="button" data-add="120">＋2</button>
+                <button class="button segment add btn-add" type="button" data-add="180">＋3</button>
+                <button class="button segment add btn-add" type="button" data-add="600">＋10</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="compact-row time-settings-row">
+            <div class="compact-group duration-group">
+              <span class="compact-label">TIMER</span>
+              <div class="compact-time-input" aria-label="タイマー時間">
+                <label><select id="sel-hour" aria-label="時間"></select></label>
+                <span class="time-colon">:</span>
+                <label><select id="sel-min" aria-label="分"></select></label>
+                <span class="time-colon">:</span>
+                <label><select id="sel-sec" aria-label="秒"></select></label>
+              </div>
+              <button id="btn-set-manual" class="button compact-action set-button" type="button">セット</button>
+            </div>
+
+            <div class="compact-group break-group">
+              <span class="compact-label">BREAK</span>
+              <div class="compact-time-input" aria-label="休憩終了時刻">
+                <label><select id="sel-break-hour" aria-label="再開する時"></select></label>
+                <span class="time-colon">:</span>
+                <label><select id="sel-break-min" aria-label="再開する分"></select></label>
+              </div>
+              <button id="btn-start-break" class="button compact-action break-start" type="button">休憩開始</button>
+            </div>
+          </div>
+
+          <div class="utility-row compact-utility-row">
+            <span class="compact-label">VIEW</span>
+            <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
+            <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
+            <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
+            <label class="range-control compact-range">背景濃さ
+              <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
+            </label>
+            <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
+            <button id="btn-hide-controls" class="button compact electron-only" type="button">パネルを隠す</button>
+            <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過</button>
+          </div>
+
+          <p class="shortcut-help electron-only">
+            Ctrl＋Shift＋Space: タイマー開始/停止　 T: クリック透過　 H: パネル　 R: リセット　 F: 全画面　 Q: 終了
+          </p>
       </div>
 
-      <div class="control-row">
-        <span class="row-label">ADD</span>
-        <div class="button-grid three">
-          <button class="button add btn-add" type="button" data-add="60">＋1分</button>
-          <button class="button add btn-add" type="button" data-add="120">＋2分</button>
-          <button class="button add btn-add" type="button" data-add="600">＋10分</button>
-        </div>
-      </div>
-
-      <div class="control-row">
-        <span class="row-label">MANUAL</span>
-        <div class="manual-controls">
-          <label><select id="sel-hour" aria-label="時間"></select><span>時</span></label>
-          <label><select id="sel-min" aria-label="分"></select><span>分</span></label>
-          <label><select id="sel-sec" aria-label="秒"></select><span>秒</span></label>
-          <button id="btn-set-manual" class="button manual" type="button">セット</button>
-        </div>
-      </div>
-
-      <div class="utility-row">
-        <label class="check-control"><input id="chk-leftclock" type="checkbox" checked> 左時計</label>
-        <label class="check-control"><input id="chk-bgclock" type="checkbox" checked> 背景時計</label>
-        <label class="check-control"><input id="chk-theme" type="checkbox" checked> ダークUI</label>
-        <label class="range-control">背景時計
-          <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
-        </label>
-        <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
-        <button id="btn-hide-controls" class="button compact electron-only" type="button">操作パネルを隠す</button>
-        <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過を開始</button>
-      </div>
-
-      <p class="shortcut-help electron-only">
-        Ctrl＋Shift＋Space: 開始/停止　 T: クリック透過　 H: パネル　 R: リセット　 F: 全画面　 Q: 終了
-      </p>
+      <footer class="copyright">
+        <a href="https://ninin-cc.github.io/i/" target="_blank" rel="noopener noreferrer">© 2026 ninin LLC. All Rights Reserved.</a>
+      </footer>
     </section>
   </div>
 

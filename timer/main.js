@@ -1,7 +1,9 @@
 'use strict';
 
 const path = require('node:path');
-const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, shell } = require('electron');
+
+const NININ_URL = 'https://ninin-cc.github.io/i/';
 
 let mainWindow = null;
 const overlayState = {
@@ -81,7 +83,12 @@ function createWindow() {
   mainWindow.setMenuBarVisibility(false);
   mainWindow.loadFile('index.html');
 
-  mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url === NININ_URL) {
+      void shell.openExternal(url).catch((error) => console.error('リンクを開けませんでした', error));
+    }
+    return { action: 'deny' };
+  });
   mainWindow.webContents.on('will-navigate', (event, targetUrl) => {
     if (targetUrl !== mainWindow.webContents.getURL()) event.preventDefault();
   });
@@ -99,6 +106,12 @@ function createWindow() {
 ipcMain.handle('overlay:get-state', () => stateSnapshot());
 ipcMain.handle('overlay:set-click-through', (_event, enabled) => setClickThrough(enabled));
 ipcMain.handle('overlay:set-always-on-top', (_event, enabled) => setAlwaysOnTop(enabled));
+ipcMain.handle('overlay:set-minimum-height', (_event, height) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return 300;
+  const safeHeight = Math.min(1400, Math.max(180, Math.round(Number(height) || 300)));
+  mainWindow.setMinimumSize(520, safeHeight);
+  return safeHeight;
+});
 ipcMain.handle('overlay:toggle-fullscreen', () => {
   if (!mainWindow || mainWindow.isDestroyed()) return false;
   const nextValue = !mainWindow.isFullScreen();
