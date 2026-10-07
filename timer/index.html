@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
   <title>ワークショップタイマー</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="analytics.js"></script>
 </head>
 <body data-theme="light">
   <div id="app" class="app-shell">
@@ -31,22 +32,20 @@
             <circle id="left-break-full" cx="50" cy="50" r="43" class="break-clock-full"></circle>
             <path id="left-break-sector" class="break-clock-sector"></path>
             <line id="left-break-end" class="break-clock-end"></line>
+            <text id="left-break-end-label" class="break-clock-end-label" text-anchor="middle">終了</text>
             <g id="left-break-badge" class="break-clock-badge">
               <rect x="27" y="72" width="46" height="12" rx="6"></rect>
               <text id="left-break-duration" x="50" y="80" text-anchor="middle">1時間</text>
             </g>
           </g>
           <g id="left-clock-marks" class="clock-marks"></g>
+          <g id="left-clock-numbers" class="clock-numbers"></g>
           <line id="left-hand-hour" x1="50" y1="50" x2="50" y2="27" class="clock-hand hour"></line>
           <line id="left-hand-minute" x1="50" y1="50" x2="50" y2="15" class="clock-hand minute"></line>
           <line id="left-hand-second" x1="50" y1="52" x2="50" y2="10" class="clock-hand second"></line>
           <circle cx="50" cy="50" r="2.6" class="clock-pin"></circle>
         </svg>
 
-        <div id="timer-end-display" class="timer-end-display" role="status" hidden>
-          <span id="timer-end-time" class="timer-end-time">13:20:45</span>
-          <span class="timer-end-label">終了</span>
-        </div>
       </aside>
 
       <div id="clock-resizer" class="clock-resizer" role="separator" aria-label="アナログ時計とデジタル表示の幅を変更" aria-orientation="vertical">
@@ -57,6 +56,7 @@
         <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
           <g id="bg-clock-marks" class="clock-marks"></g>
+          <g id="bg-clock-numbers" class="clock-numbers"></g>
           <line id="bg-hand-hour" x1="50" y1="50" x2="50" y2="28" class="clock-hand hour"></line>
           <line id="bg-hand-minute" x1="50" y1="50" x2="50" y2="16" class="clock-hand minute"></line>
           <line id="bg-hand-second" x1="50" y1="52" x2="50" y2="11" class="clock-hand second"></line>
@@ -94,9 +94,9 @@
         <span class="row-label">MAIN</span>
         <div class="button-grid four">
           <button id="btn-toggle-play" class="button primary" type="button">▶ タイマー開始</button>
-          <button id="btn-stopwatch" class="button stopwatch" type="button">⏱ ストップウォッチ開始</button>
           <button id="btn-reset" class="button warning" type="button">リセット</button>
           <button id="btn-clear" class="button danger" type="button">クリア</button>
+          <button id="btn-stopwatch" class="button stopwatch" type="button">⏱ ストップウォッチ開始</button>
         </div>
       </div>
 
@@ -147,6 +147,12 @@
                 <label><select id="sel-break-min" aria-label="再開する分"></select></label>
               </div>
               <button id="btn-start-break" class="button compact-action break-start" type="button">休憩開始</button>
+              <div class="break-quick-buttons" aria-label="休憩時刻のクイック設定">
+                <button id="btn-break-10" class="button break-quick" type="button">10分</button>
+                <button id="btn-break-60" class="button break-quick" type="button">60分</button>
+                <button id="btn-break-plus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分後へ">＋1</button>
+                <button id="btn-break-minus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分前へ">−1</button>
+              </div>
             </div>
           </div>
 
@@ -154,6 +160,8 @@
             <span class="compact-label">VIEW</span>
             <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
             <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
+            <label class="toggle-chip"><input id="chk-digital" type="checkbox" checked><span>デジタル時計</span></label>
+            <label class="toggle-chip"><input id="chk-clocknumbers" type="checkbox"><span>数字文字盤</span></label>
             <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
             <label class="range-control compact-range">背景濃さ
               <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
@@ -170,11 +178,72 @@
 
       <footer class="copyright">
         <a href="https://ninin-cc.github.io/i/" target="_blank" rel="noopener noreferrer">© 2026 ninin LLC. All Rights Reserved.</a>
+        <span class="copyright-separator" aria-hidden="true">｜</span>
+        <a href="https://note.com/ninin2025/membership/join" target="_blank" rel="noopener noreferrer">© たべラボ</a>
       </footer>
     </section>
   </div>
 
-  <button id="btn-tutorial" class="tutorial-launch" type="button" aria-haspopup="dialog">？ チュートリアル</button>
+  <button id="btn-pomodoro" class="pomodoro-launch" type="button" aria-haspopup="dialog">🍅 ポモドーロテクニックモード</button>
+  <button id="btn-tutorial" class="tutorial-launch" type="button" aria-haspopup="dialog">チュートリアル</button>
+
+  <div id="pomodoro-overlay" class="pomodoro-overlay" role="dialog" aria-modal="true" aria-labelledby="pomodoro-title" hidden>
+    <section class="pomodoro-card">
+      <button id="btn-pomodoro-close" class="tutorial-close" type="button" aria-label="ポモドーロ画面を閉じる">×</button>
+      <div class="pomodoro-heading">
+        <span class="pomodoro-mode-label">POMODORO</span>
+        <span id="pomodoro-cycle-label" class="pomodoro-cycle-label">集中と休憩のサイクル</span>
+      </div>
+      <h2 id="pomodoro-title">🍅 ポモドーロテクニック</h2>
+
+      <div id="pomodoro-setup">
+        <div class="pomodoro-start-panel">
+          <label class="pomodoro-field" for="pomodoro-task">
+            <span>今回集中するタスク <small>（任意）</small></span>
+            <input id="pomodoro-task" type="text" maxlength="80" autocomplete="off" placeholder="未入力でも開始できます">
+          </label>
+          <div class="pomodoro-options">
+            <label class="pomodoro-field" for="pomodoro-long-break">
+              <span>4回後の長い休憩</span>
+              <select id="pomodoro-long-break">
+                <option value="15">15分</option>
+                <option value="20" selected>20分</option>
+                <option value="30">30分</option>
+              </select>
+            </label>
+            <button id="btn-pomodoro-start" class="button pomodoro-primary" type="button">🍅 25分集中を始める</button>
+          </div>
+        </div>
+
+        <div class="pomodoro-explanation">
+          <p class="pomodoro-description">
+            短時間の集中と休憩を繰り返し、生産性を高める時間管理術です。1980年代にイタリアのフランチェスコ・シリロが考案しました。「ポモドーロ」はイタリア語でトマト。愛用していたトマト型キッチンタイマーが名前の由来です。
+          </p>
+          <p class="pomodoro-benefit">
+            集中力が切れる前に休憩を挟むことで脳の疲労（バーンアウト）を防ぎ、「あと10分」という適度な時間意識が作業効率を自然に引き上げます。
+          </p>
+          <ol class="pomodoro-flow" aria-label="ポモドーロの進め方">
+            <li><strong>1</strong><span>タスクを決める<br>（任意）</span></li>
+            <li><strong>25</strong><span>分間<br>集中する</span></li>
+            <li><strong>5</strong><span>分間<br>休憩する</span></li>
+            <li><strong>4</strong><span>回後に<br>長く休む</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div id="pomodoro-session" class="pomodoro-session" hidden>
+        <p id="pomodoro-phase" class="pomodoro-phase">集中 1 / 4</p>
+        <p id="pomodoro-task-display" class="pomodoro-task-display"></p>
+        <div id="pomodoro-cycles" class="pomodoro-cycles" aria-label="完了した集中回数"></div>
+        <p id="pomodoro-message" class="pomodoro-message" aria-live="polite"></p>
+      </div>
+
+      <div id="pomodoro-session-actions" class="pomodoro-actions" hidden>
+        <button id="btn-pomodoro-end" class="button pomodoro-end" type="button">モード終了</button>
+        <button id="btn-pomodoro-primary" class="button pomodoro-primary" type="button">25分集中を始める</button>
+      </div>
+    </section>
+  </div>
 
   <div id="tutorial-overlay" class="tutorial-overlay is-centered" role="dialog" aria-modal="true" aria-labelledby="tutorial-title" hidden>
     <section id="tutorial-card" class="tutorial-card">

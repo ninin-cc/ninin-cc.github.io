@@ -18,8 +18,6 @@
   const playButton = document.getElementById('btn-toggle-play');
   const stopwatchButton = document.getElementById('btn-stopwatch');
   const undoAddButton = document.getElementById('btn-undo-add');
-  const timerEndDisplay = document.getElementById('timer-end-display');
-  const timerEndTime = document.getElementById('timer-end-time');
   const extensionConfirm = document.getElementById('extension-confirm');
   const extensionQuestion = document.getElementById('extension-question');
   const extensionYesButton = document.getElementById('btn-extension-yes');
@@ -33,6 +31,22 @@
   const tutorialBackButton = document.getElementById('btn-tutorial-back');
   const tutorialNextButton = document.getElementById('btn-tutorial-next');
   const tutorialCloseButton = document.getElementById('btn-tutorial-close');
+  const pomodoroButton = document.getElementById('btn-pomodoro');
+  const pomodoroOverlay = document.getElementById('pomodoro-overlay');
+  const pomodoroCloseButton = document.getElementById('btn-pomodoro-close');
+  const pomodoroSetup = document.getElementById('pomodoro-setup');
+  const pomodoroSession = document.getElementById('pomodoro-session');
+  const pomodoroTaskInput = document.getElementById('pomodoro-task');
+  const pomodoroLongBreakSelect = document.getElementById('pomodoro-long-break');
+  const pomodoroStartButton = document.getElementById('btn-pomodoro-start');
+  const pomodoroSessionActions = document.getElementById('pomodoro-session-actions');
+  const pomodoroCycleLabel = document.getElementById('pomodoro-cycle-label');
+  const pomodoroPhaseText = document.getElementById('pomodoro-phase');
+  const pomodoroTaskDisplay = document.getElementById('pomodoro-task-display');
+  const pomodoroCycles = document.getElementById('pomodoro-cycles');
+  const pomodoroMessage = document.getElementById('pomodoro-message');
+  const pomodoroEndButton = document.getElementById('btn-pomodoro-end');
+  const pomodoroPrimaryButton = document.getElementById('btn-pomodoro-primary');
   const overlayStatus = document.getElementById('overlay-status');
   const breakDisplay = document.getElementById('break-display');
   const breakTitle = document.getElementById('break-title');
@@ -41,6 +55,7 @@
   const breakClockFull = document.getElementById('left-break-full');
   const breakClockSector = document.getElementById('left-break-sector');
   const breakClockEnd = document.getElementById('left-break-end');
+  const breakClockEndLabel = document.getElementById('left-break-end-label');
   const breakClockBadge = document.getElementById('left-break-badge');
   const breakClockDuration = document.getElementById('left-break-duration');
   const selBreakHour = document.getElementById('sel-break-hour');
@@ -67,12 +82,21 @@
   let breakTarget = null;
   let breakStartedAt = null;
   let breakTicker = null;
+  let breakPresetTarget = null;
+  let clockPreviewMode = null;
   let pendingAddSeconds = 0;
   let tutorialIndex = 0;
   let tutorialTarget = null;
   let tutorialStepComplete = false;
   let tutorialPhase = null;
   let tutorialSavedState = null;
+  let isPomodoroMode = false;
+  let pomodoroPhase = 'focus';
+  let pomodoroCompleted = 0;
+  let pomodoroAwaitingStart = false;
+  let pomodoroTask = '';
+  let pomodoroLongBreakMinutes = 20;
+  let pomodoroStatusMessage = '';
   const addHistory = [];
   const storageKeys = {
     topPaneHeight: 'workshopTimer.topPaneHeight',
@@ -97,7 +121,7 @@
     },
     {
       title: 'タイマーを開始する',
-      description: '設定した1分をカウントダウンします。開始すると、終了予定時刻とアナログ時計の時間範囲も表示されます。',
+      description: '設定した1分をカウントダウンします。開始すると、アナログ時計に時間の範囲と終了位置も表示されます。',
       instruction: '「タイマー開始」を押してください',
       selector: '#btn-toggle-play',
       action: 'timer-start',
@@ -105,7 +129,7 @@
     },
     {
       title: '実行中の表示を見る',
-      description: '数字は残り時間です。左時計の色付き範囲が実行時間、太い線が終了位置、上の時刻が終了予定です。',
+      description: '数字は残り時間です。左時計の色付き範囲が実行時間、オレンジの太線と横の「終了」が終了位置です。',
       instruction: '表示を確認したら「次へ」を押します',
       selector: '#left-clock-wrap',
       setup: 'running-countdown'
@@ -138,14 +162,14 @@
     },
     {
       title: '時間を細かく設定する',
-      description: 'TIMER欄では時・分・秒を選べます。選択内容はすぐ大きな表示へ反映され、「セット」でリセット時の基準時間として確定します。',
+      description: 'TIMER欄では時・分・秒を選べます。選択内容は大きな数字と左時計の「終了」位置へすぐ反映され、「セット」で基準時間として確定します。',
       instruction: '場所を確認したら「次へ」を押します',
       selector: '.duration-group',
       setup: 'empty-countdown'
     },
     {
       title: '休憩終了時刻を表示する',
-      description: 'BREAKで再開時刻を選び、休憩開始を押します。時計には休憩範囲と再開位置が表示され、設定時刻になると自動で解除されます。',
+      description: 'BREAKは時刻選択のほか、10分・60分で現在からの時間を設定し、＋1・−1で微調整できます。左時計の「再開」位置へすぐ反映されます。',
       instruction: '場所を確認したら「次へ」を押します',
       selector: '.break-group'
     },
@@ -158,8 +182,8 @@
     {
       title: '表示を見やすく整える',
       description: isElectron
-        ? '左時計、背景時計、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
-        : '左時計、背景時計、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
+        ? '左時計、背景時計、デジタル時計、数字文字盤、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
+        : '左時計、背景時計、デジタル時計、数字文字盤、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
       instruction: '設定を確認したら「次へ」を押します',
       selector: '.compact-utility-row'
     },
@@ -273,18 +297,6 @@
     return hours > 0 ? `${String(hours).padStart(2, '0')}:${tail}` : tail;
   }
 
-  function formatTimerEndTime(timestamp) {
-    const target = new Date(timestamp);
-    const now = new Date();
-    const nextDay = target.getFullYear() !== now.getFullYear()
-      || target.getMonth() !== now.getMonth()
-      || target.getDate() !== now.getDate();
-    const time = [target.getHours(), target.getMinutes(), target.getSeconds()]
-      .map((value) => String(value).padStart(2, '0'))
-      .join(':');
-    return `${nextDay ? '翌日 ' : ''}${time}`;
-  }
-
   function hideExtensionConfirmation() {
     extensionConfirm.hidden = true;
     pendingAddSeconds = 0;
@@ -314,6 +326,8 @@
       addHistory: [...addHistory],
       manualValues: [selHour.value, selMin.value, selSec.value],
       breakValues: [selBreakHour.value, selBreakMin.value],
+      breakPresetRemainingMs: breakPresetTarget ? Math.max(1000, breakPresetTarget.getTime() - now) : 0,
+      clockPreviewMode,
       isBreakMode,
       breakRemainingMs: breakTarget ? Math.max(1000, breakTarget.getTime() - now) : 0,
       breakElapsedMs: breakStartedAt ? Math.max(0, now - breakStartedAt.getTime()) : 0
@@ -328,6 +342,8 @@
     isBreakMode = false;
     breakTarget = null;
     breakStartedAt = null;
+    breakPresetTarget = null;
+    clockPreviewMode = null;
     timerMode = 'countdown';
     remainingMs = 0;
     stopwatchElapsedMs = 0;
@@ -359,6 +375,10 @@
     isBreakMode = false;
     breakTarget = null;
     breakStartedAt = null;
+    breakPresetTarget = saved.breakPresetRemainingMs > 0
+      ? new Date(Date.now() + saved.breakPresetRemainingMs)
+      : null;
+    clockPreviewMode = saved.clockPreviewMode;
     addHistory.length = 0;
     addHistory.push(...saved.addHistory);
     [selHour.value, selMin.value, selSec.value] = saved.manualValues;
@@ -527,7 +547,7 @@
     }
 
     if (step.action === 'timer-start' && button === playButton && timerMode === 'countdown' && isRunning) {
-      completeTutorialStep('開始しました。数字、終了予定時刻、時計の色付き範囲を確認してください。', '#left-clock-wrap');
+      completeTutorialStep('開始しました。数字、時計の色付き範囲、オレンジ線横の「終了」を確認してください。', '#left-clock-wrap');
       return;
     }
 
@@ -558,9 +578,174 @@
         setTutorialTarget('#timer-stage');
       } else if (tutorialPhase === 'confirm' && button === extensionYesButton && extensionConfirm.hidden) {
         tutorialPhase = 'done';
-        completeTutorialStep('延長できました。残り時間、終了予定時刻、時計の終了位置が3分ぶん延びています。', '#left-clock-wrap');
+        completeTutorialStep('延長できました。残り時間と、時計の「終了」位置が3分ぶん延びています。', '#left-clock-wrap');
       }
     }
+  }
+
+  function pomodoroDurationSeconds() {
+    if (pomodoroPhase === 'focus') return 25 * 60;
+    if (pomodoroPhase === 'short-break') return 5 * 60;
+    return pomodoroLongBreakMinutes * 60;
+  }
+
+  function pomodoroPhaseLabel() {
+    if (pomodoroPhase === 'focus') return `集中 ${Math.min(pomodoroCompleted + 1, 4)} / 4`;
+    if (pomodoroPhase === 'short-break') return '5分の短い休憩';
+    return `${pomodoroLongBreakMinutes}分の長い休憩`;
+  }
+
+  function pomodoroStartLabel() {
+    if (pomodoroPhase === 'focus') return '25分集中を始める';
+    if (pomodoroPhase === 'short-break') return '5分休憩を始める';
+    return `${pomodoroLongBreakMinutes}分休憩を始める`;
+  }
+
+  function updatePomodoroUi() {
+    pomodoroSetup.hidden = isPomodoroMode;
+    pomodoroSession.hidden = !isPomodoroMode;
+    pomodoroSessionActions.hidden = !isPomodoroMode;
+    pomodoroEndButton.hidden = !isPomodoroMode;
+
+    if (!isPomodoroMode) {
+      pomodoroButton.textContent = '🍅 ポモドーロテクニックモード';
+      pomodoroCycleLabel.textContent = '集中と休憩のサイクル';
+      pomodoroStartButton.textContent = '🍅 25分集中を始める';
+      return;
+    }
+
+    const isBreak = pomodoroPhase !== 'focus';
+    pomodoroButton.textContent = isBreak
+      ? '🍅 ポモドーロ・休憩'
+      : `🍅 ポモドーロ・集中 ${Math.min(pomodoroCompleted + 1, 4)}/4`;
+    pomodoroCycleLabel.textContent = `${pomodoroCompleted} / 4 完了`;
+    pomodoroPhaseText.textContent = pomodoroPhaseLabel();
+    pomodoroTaskDisplay.hidden = !pomodoroTask;
+    pomodoroTaskDisplay.textContent = pomodoroTask;
+    pomodoroMessage.textContent = pomodoroStatusMessage;
+
+    pomodoroCycles.replaceChildren();
+    for (let index = 0; index < 4; index += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'pomodoro-cycle-dot';
+      dot.classList.toggle('is-complete', index < pomodoroCompleted);
+      dot.classList.toggle('is-current', pomodoroPhase === 'focus' && index === pomodoroCompleted);
+      dot.setAttribute('aria-label', `${index + 1}回目${index < pomodoroCompleted ? ' 完了' : ''}`);
+      pomodoroCycles.appendChild(dot);
+    }
+
+    if (pomodoroAwaitingStart) pomodoroPrimaryButton.textContent = pomodoroStartLabel();
+    else if (isRunning && timerMode === 'countdown') pomodoroPrimaryButton.textContent = '一時停止';
+    else pomodoroPrimaryButton.textContent = '再開';
+  }
+
+  function openPomodoro() {
+    if (!tutorialOverlay.hidden) closeTutorial();
+    updatePomodoroUi();
+    pomodoroOverlay.hidden = false;
+    body.classList.add('pomodoro-popup-open');
+    window.requestAnimationFrame(() => {
+      if (isPomodoroMode) pomodoroPrimaryButton.focus();
+      else pomodoroTaskInput.focus();
+    });
+  }
+
+  function closePomodoro() {
+    pomodoroOverlay.hidden = true;
+    body.classList.remove('pomodoro-popup-open');
+  }
+
+  function startPomodoroMode() {
+    const task = pomodoroTaskInput.value.trim();
+    pomodoroTask = task;
+    pomodoroLongBreakMinutes = Number(pomodoroLongBreakSelect.value) || 20;
+    pomodoroPhase = 'focus';
+    pomodoroCompleted = 0;
+    pomodoroAwaitingStart = false;
+    pomodoroStatusMessage = task
+      ? 'この25分は、選んだタスクだけに集中しましょう。'
+      : 'この25分は、いま取り組む作業だけに集中しましょう。';
+    isPomodoroMode = true;
+    setTime(pomodoroDurationSeconds());
+    startTimer();
+    closePomodoro();
+    updatePomodoroUi();
+  }
+
+  function startNextPomodoroPhase() {
+    pomodoroAwaitingStart = false;
+    pomodoroStatusMessage = pomodoroPhase === 'focus'
+      ? 'この25分は、選んだタスクだけに集中しましょう。'
+      : '作業から手を離して、しっかり脳を休ませましょう。';
+    setTime(pomodoroDurationSeconds());
+    startTimer();
+    closePomodoro();
+    updatePomodoroUi();
+  }
+
+  function togglePomodoroPrimary() {
+    if (!isPomodoroMode) {
+      startPomodoroMode();
+      return;
+    }
+    if (pomodoroAwaitingStart) {
+      startNextPomodoroPhase();
+      return;
+    }
+    if (isRunning && timerMode === 'countdown') {
+      pauseTimer();
+      pomodoroStatusMessage = '一時停止中です。準備ができたら再開してください。';
+      updatePomodoroUi();
+      return;
+    }
+    startTimer();
+    pomodoroStatusMessage = pomodoroPhase === 'focus'
+      ? '集中を再開しました。'
+      : '休憩を再開しました。';
+    closePomodoro();
+    updatePomodoroUi();
+  }
+
+  function deactivatePomodoroMode() {
+    isPomodoroMode = false;
+    pomodoroAwaitingStart = false;
+    pomodoroCompleted = 0;
+    pomodoroPhase = 'focus';
+    pomodoroStatusMessage = '';
+    closePomodoro();
+    updatePomodoroUi();
+  }
+
+  function stopPomodoroMode() {
+    deactivatePomodoroMode();
+    setTime(0);
+  }
+
+  function completePomodoroPhase() {
+    if (!isPomodoroMode) return;
+
+    if (pomodoroPhase === 'focus') {
+      pomodoroCompleted += 1;
+      if (pomodoroCompleted >= 4) {
+        pomodoroPhase = 'long-break';
+        pomodoroStatusMessage = `4回の集中を達成しました。${pomodoroLongBreakMinutes}分の長い休憩を取りましょう。`;
+      } else {
+        pomodoroPhase = 'short-break';
+        pomodoroStatusMessage = `${pomodoroCompleted}回目の集中が完了しました。キリが悪くても手を止め、5分休みましょう。`;
+      }
+    } else {
+      const completedLongBreak = pomodoroPhase === 'long-break';
+      if (completedLongBreak) pomodoroCompleted = 0;
+      pomodoroPhase = 'focus';
+      pomodoroStatusMessage = completedLongBreak
+        ? '1セット完了です。新しい4回のサイクルを始めましょう。'
+        : `休憩完了です。${pomodoroCompleted + 1}回目の集中へ進みましょう。`;
+    }
+
+    pomodoroAwaitingStart = true;
+    setTime(pomodoroDurationSeconds());
+    openPomodoro();
+    updatePomodoroUi();
   }
 
   function renderTimer() {
@@ -576,10 +761,15 @@
     digitalText.textContent = displayTime;
     const countdownRunning = isCountdown && isRunning;
     const stopwatchRunning = !isCountdown && isRunning;
-    timerEndDisplay.hidden = !countdownRunning;
+    const countdownEndLabel = isPomodoroMode && pomodoroPhase !== 'focus' ? '再開' : '終了';
     if (countdownRunning) {
-      timerEndTime.textContent = formatTimerEndTime(endAt);
-      renderClockInterval(countdownStartedAt, new Date(endAt));
+      renderClockInterval(countdownStartedAt, new Date(endAt), countdownEndLabel);
+    } else if (isCountdown && clockPreviewMode === 'break') {
+      const previewStartedAt = new Date();
+      renderClockInterval(previewStartedAt, makeBreakTarget(), '再開');
+    } else if (isCountdown && clockPreviewMode === 'countdown' && remainingMs > 0) {
+      const previewStartedAt = new Date();
+      renderClockInterval(previewStartedAt, new Date(previewStartedAt.getTime() + remainingMs), countdownEndLabel);
     } else {
       renderClockInterval(null, null);
       hideExtensionConfirmation();
@@ -599,6 +789,7 @@
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
     document.title = `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
     updateClocks();
+    updatePomodoroUi();
   }
 
   function formatResumeTime(target) {
@@ -625,7 +816,7 @@
     return minutes > 0 ? `${hours}時間＋${minutes}分` : `${hours}時間`;
   }
 
-  function renderClockInterval(startedAt, target) {
+  function renderClockInterval(startedAt, target, endLabel = '') {
     if (!startedAt || !target) {
       breakClockVisual.classList.remove('is-visible');
       return;
@@ -633,8 +824,10 @@
 
     const durationMs = Math.max(0, target.getTime() - startedAt.getTime());
     const durationMinutes = Math.max(0.01, durationMs / 60000);
-    const fullHours = Math.floor(durationMinutes / 60);
-    const shownMinutes = fullHours > 0 ? durationMinutes % 60 : durationMinutes;
+    const fullHours = Math.floor(Math.round(durationMinutes) / 60);
+    const shownMinutes = fullHours > 0
+      ? Math.max(0, durationMinutes - (fullHours * 60))
+      : durationMinutes;
     const startDegrees = ((startedAt.getMinutes() + (startedAt.getSeconds() / 60)) * 6) % 360;
     const endDegrees = ((target.getMinutes() + (target.getSeconds() / 60)) * 6) % 360;
 
@@ -661,13 +854,19 @@
     breakClockEnd.setAttribute('y1', endInner.y.toFixed(3));
     breakClockEnd.setAttribute('x2', endOuter.x.toFixed(3));
     breakClockEnd.setAttribute('y2', endOuter.y.toFixed(3));
+    const labelBase = clockPoint(endDegrees, 37);
+    const labelRadians = (endDegrees - 90) * (Math.PI / 180);
+    const labelX = labelBase.x - (Math.sin(labelRadians) * 6);
+    const labelY = labelBase.y + (Math.cos(labelRadians) * 6);
+    breakClockEndLabel.setAttribute('x', labelX.toFixed(3));
+    breakClockEndLabel.setAttribute('y', labelY.toFixed(3));
+    breakClockEndLabel.textContent = endLabel;
     breakClockVisual.classList.add('is-visible');
   }
 
   function renderBreakDisplay() {
     if (!isBreakMode || !breakTarget) return;
     body.classList.remove('is-stopwatch-mode');
-    timerEndDisplay.hidden = true;
     hideExtensionConfirmation();
     digitalText.hidden = true;
     breakDisplay.hidden = false;
@@ -676,15 +875,62 @@
     breakResumeText.textContent = formatResumeTime(breakTarget).replace(' 再開', '\n再開');
     startBreakButton.textContent = '休憩解除';
     startBreakButton.classList.add('break-stop');
-    renderClockInterval(breakStartedAt, breakTarget);
+    renderClockInterval(breakStartedAt, breakTarget, '再開');
     document.title = `${formatResumeTime(breakTarget)}｜ワークショップタイマー`;
   }
 
   function makeBreakTarget() {
+    if (
+      breakPresetTarget
+      && breakPresetTarget.getTime() > Date.now()
+      && breakPresetTarget.getHours() === Number(selBreakHour.value)
+      && breakPresetTarget.getMinutes() === Number(selBreakMin.value)
+    ) {
+      return new Date(breakPresetTarget.getTime());
+    }
+    breakPresetTarget = null;
     const target = new Date();
     target.setHours(Number(selBreakHour.value), Number(selBreakMin.value), 0, 0);
     if (target.getTime() <= Date.now()) target.setDate(target.getDate() + 1);
     return target;
+  }
+
+  function syncBreakSelectors(target) {
+    selBreakHour.value = String(target.getHours());
+    selBreakMin.value = String(target.getMinutes());
+  }
+
+  function previewSelectedBreakTime() {
+    clockPreviewMode = 'break';
+    const previewStartedAt = new Date();
+    renderClockInterval(previewStartedAt, makeBreakTarget(), '再開');
+  }
+
+  function setBreakMinutesFromNow(minutes) {
+    const target = new Date(Date.now() + (Math.max(1, minutes) * 60000));
+    breakPresetTarget = new Date(target.getTime());
+    syncBreakSelectors(target);
+    if (isBreakMode) startBreakDisplay();
+    else previewSelectedBreakTime();
+  }
+
+  function adjustBreakMinutes(minutes) {
+    const target = isBreakMode && breakTarget
+      ? new Date(breakTarget.getTime())
+      : makeBreakTarget();
+    target.setMinutes(target.getMinutes() + minutes);
+    if (target.getTime() <= Date.now()) {
+      target.setTime(Date.now() + 60000);
+    }
+    breakPresetTarget = new Date(target.getTime());
+    syncBreakSelectors(target);
+    clockPreviewMode = 'break';
+    if (isBreakMode) {
+      breakTarget = target;
+      renderBreakDisplay();
+    } else {
+      previewSelectedBreakTime();
+    }
   }
 
   function stopBreakTicker() {
@@ -705,7 +951,9 @@
     if (!isBreakMode) pauseTimer();
     ensureAudio();
     stopBreakTicker();
+    clockPreviewMode = 'break';
     breakTarget = makeBreakTarget();
+    breakPresetTarget = new Date(breakTarget.getTime());
     breakStartedAt = new Date();
     isBreakMode = true;
     breakTicker = window.setInterval(updateBreakDisplay, 1000);
@@ -717,6 +965,7 @@
     isBreakMode = false;
     breakTarget = null;
     breakStartedAt = null;
+    clockPreviewMode = timerMode === 'countdown' && remainingMs > 0 ? 'countdown' : null;
     renderClockInterval(null, null);
     breakDisplay.hidden = true;
     digitalText.hidden = false;
@@ -779,6 +1028,7 @@
     hasEnded = true;
     renderTimer();
     playAlarm();
+    completePomodoroPhase();
   }
 
   function tick() {
@@ -806,7 +1056,14 @@
       renderTimer();
       return;
     }
+    if (isPomodoroMode && pomodoroAwaitingStart) {
+      pomodoroAwaitingStart = false;
+      pomodoroStatusMessage = pomodoroPhase === 'focus'
+        ? 'この25分は、選んだタスクだけに集中しましょう。'
+        : '作業から手を離して、しっかり脳を休ませましょう。';
+    }
     ensureAudio();
+    clockPreviewMode = 'countdown';
     hasEnded = false;
     isRunning = true;
     const startingSeconds = secondsForDisplay();
@@ -836,6 +1093,7 @@
   }
 
   function startStopwatch() {
+    if (isPomodoroMode) stopPomodoroMode();
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'stopwatch') {
       pauseTimer();
@@ -844,6 +1102,7 @@
       hasEnded = false;
       clearAddHistory();
     }
+    clockPreviewMode = null;
     if (isRunning) return;
     isRunning = true;
     stopwatchStartedAt = Date.now() - stopwatchElapsedMs;
@@ -878,6 +1137,7 @@
     pauseTimer();
     timerMode = 'countdown';
     const safeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+    clockPreviewMode = 'countdown';
     lastSetSeconds = safeSeconds;
     remainingMs = safeSeconds * 1000;
     hasEnded = false;
@@ -887,9 +1147,11 @@
   }
 
   function previewManualTime() {
+    if (isPomodoroMode) deactivatePomodoroMode();
     if (isBreakMode) stopBreakDisplay();
     pauseTimer();
     timerMode = 'countdown';
+    clockPreviewMode = 'countdown';
     remainingMs = readManualSeconds() * 1000;
     hasEnded = false;
     clearAddHistory();
@@ -922,6 +1184,7 @@
     }
     const increment = Math.max(0, Number(seconds) || 0) * 1000;
     if (increment <= 0) return;
+    clockPreviewMode = 'countdown';
     addHistory.push(increment);
     if (isRunning) {
       endAt += increment;
@@ -947,6 +1210,7 @@
   function undoLastAdd() {
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') return;
+    clockPreviewMode = 'countdown';
     const decrement = addHistory.pop();
     if (decrement === undefined) return;
     if (isRunning) {
@@ -999,8 +1263,23 @@
     }
   }
 
+  function createClockNumbers(group) {
+    for (let hour = 1; hour <= 12; hour += 1) {
+      const point = clockPoint(hour * 30, 35.5);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', point.x.toFixed(3));
+      text.setAttribute('y', point.y.toFixed(3));
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.textContent = String(hour);
+      group.appendChild(text);
+    }
+  }
+
   createClockMarks(document.getElementById('left-clock-marks'), false);
   createClockMarks(document.getElementById('bg-clock-marks'), true);
+  createClockNumbers(document.getElementById('left-clock-numbers'));
+  createClockNumbers(document.getElementById('bg-clock-numbers'));
 
   const clockHands = [
     {
@@ -1089,10 +1368,16 @@
   playButton.addEventListener('click', toggleTimer);
   stopwatchButton.addEventListener('click', toggleStopwatch);
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
-  document.getElementById('btn-clear').addEventListener('click', clearTimer);
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (isPomodoroMode) stopPomodoroMode();
+    else clearTimer();
+  });
 
   document.querySelectorAll('.btn-preset').forEach((button) => {
-    button.addEventListener('click', () => setTime(Number(button.dataset.time)));
+    button.addEventListener('click', () => {
+      if (isPomodoroMode) stopPomodoroMode();
+      setTime(Number(button.dataset.time));
+    });
   });
 
   document.querySelectorAll('.btn-add').forEach((button) => {
@@ -1128,8 +1413,28 @@
 
   document.addEventListener('click', handleTutorialAction);
 
+  pomodoroButton.addEventListener('click', openPomodoro);
+  pomodoroCloseButton.addEventListener('click', closePomodoro);
+  pomodoroStartButton.addEventListener('click', startPomodoroMode);
+  pomodoroPrimaryButton.addEventListener('click', togglePomodoroPrimary);
+  pomodoroEndButton.addEventListener('click', stopPomodoroMode);
+  pomodoroOverlay.addEventListener('click', (event) => {
+    if (event.target === pomodoroOverlay) closePomodoro();
+  });
+  pomodoroTaskInput.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    startPomodoroMode();
+  });
+
   document.addEventListener('keydown', (event) => {
-    if (tutorialOverlay.hidden || event.key !== 'Escape') return;
+    if (event.key !== 'Escape') return;
+    if (!pomodoroOverlay.hidden) {
+      event.preventDefault();
+      closePomodoro();
+      return;
+    }
+    if (tutorialOverlay.hidden) return;
     event.preventDefault();
     closeTutorial();
   });
@@ -1139,16 +1444,28 @@
   });
 
   document.getElementById('btn-set-manual').addEventListener('click', () => {
-    setTime(readManualSeconds());
+    const manualSeconds = readManualSeconds();
+    if (isPomodoroMode) stopPomodoroMode();
+    setTime(manualSeconds);
   });
 
-  startBreakButton.addEventListener('click', toggleBreakDisplay);
+  startBreakButton.addEventListener('click', () => {
+    if (isPomodoroMode) stopPomodoroMode();
+    toggleBreakDisplay();
+  });
 
   [selBreakHour, selBreakMin].forEach((select) => {
     select.addEventListener('input', () => {
+      breakPresetTarget = null;
       if (isBreakMode) startBreakDisplay();
+      else previewSelectedBreakTime();
     });
   });
+
+  document.getElementById('btn-break-10').addEventListener('click', () => setBreakMinutesFromNow(10));
+  document.getElementById('btn-break-60').addEventListener('click', () => setBreakMinutesFromNow(60));
+  document.getElementById('btn-break-plus').addEventListener('click', () => adjustBreakMinutes(1));
+  document.getElementById('btn-break-minus').addEventListener('click', () => adjustBreakMinutes(-1));
 
   document.getElementById('chk-theme').addEventListener('change', (event) => {
     body.dataset.theme = event.target.checked ? 'dark' : 'light';
@@ -1161,6 +1478,14 @@
 
   document.getElementById('chk-bgclock').addEventListener('change', (event) => {
     bgClock.hidden = !event.target.checked;
+  });
+
+  document.getElementById('chk-digital').addEventListener('change', (event) => {
+    body.classList.toggle('digital-hidden', !event.target.checked);
+  });
+
+  document.getElementById('chk-clocknumbers').addEventListener('change', (event) => {
+    body.classList.toggle('show-clock-numbers', event.target.checked);
   });
 
   document.getElementById('slider-opacity').addEventListener('input', (event) => {
