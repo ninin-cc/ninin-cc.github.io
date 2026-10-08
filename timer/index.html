@@ -129,45 +129,51 @@
           <div class="compact-row time-settings-row">
             <div class="compact-group duration-group">
               <span class="compact-label">TIMER</span>
-              <div class="compact-time-input" aria-label="タイマー時間">
-                <label><select id="sel-hour" aria-label="時間"></select></label>
-                <span class="time-colon">:</span>
-                <label><select id="sel-min" aria-label="分"></select></label>
-                <span class="time-colon">:</span>
-                <label><select id="sel-sec" aria-label="秒"></select></label>
+              <div class="group-controls duration-controls">
+                <div class="compact-time-input" aria-label="タイマー時間">
+                  <label><select id="sel-hour" aria-label="時間"></select></label>
+                  <span class="time-colon">:</span>
+                  <label><select id="sel-min" aria-label="分"></select></label>
+                  <span class="time-colon">:</span>
+                  <label><select id="sel-sec" aria-label="秒"></select></label>
+                </div>
+                <button id="btn-set-manual" class="button compact-action set-button" type="button">セット</button>
               </div>
-              <button id="btn-set-manual" class="button compact-action set-button" type="button">セット</button>
             </div>
 
             <div class="compact-group break-group">
               <span class="compact-label">BREAK</span>
-              <div class="compact-time-input" aria-label="休憩終了時刻">
-                <label><select id="sel-break-hour" aria-label="再開する時"></select></label>
-                <span class="time-colon">:</span>
-                <label><select id="sel-break-min" aria-label="再開する分"></select></label>
-              </div>
-              <button id="btn-start-break" class="button compact-action break-start" type="button">休憩開始</button>
-              <div class="break-quick-buttons" aria-label="休憩時刻のクイック設定">
-                <button id="btn-break-10" class="button break-quick" type="button">10分</button>
-                <button id="btn-break-60" class="button break-quick" type="button">60分</button>
-                <button id="btn-break-plus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分後へ">＋1</button>
-                <button id="btn-break-minus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分前へ">−1</button>
+              <div class="group-controls break-controls-compact">
+                <div class="compact-time-input" aria-label="休憩終了時刻">
+                  <label><select id="sel-break-hour" aria-label="再開する時"></select></label>
+                  <span class="time-colon">:</span>
+                  <label><select id="sel-break-min" aria-label="再開する分"></select></label>
+                </div>
+                <button id="btn-start-break" class="button compact-action break-start" type="button">休憩開始</button>
+                <div class="break-quick-buttons" aria-label="休憩時刻のクイック設定">
+                  <button id="btn-break-10" class="button break-quick" type="button">10分</button>
+                  <button id="btn-break-60" class="button break-quick" type="button">60分</button>
+                  <button id="btn-break-plus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分後へ">＋1</button>
+                  <button id="btn-break-minus" class="button break-quick adjust" type="button" aria-label="休憩終了時刻を1分前へ">−1</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="utility-row compact-utility-row">
+          <div class="compact-group utility-row compact-utility-row">
             <span class="compact-label">VIEW</span>
-            <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
-            <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
-            <label class="toggle-chip"><input id="chk-clocknumbers" type="checkbox"><span>文字盤</span></label>
-            <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
-            <label class="range-control compact-range">背景濃さ
-              <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
-            </label>
-            <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
-            <button id="btn-hide-controls" class="button compact electron-only" type="button">パネルを隠す</button>
-            <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過</button>
+            <div class="group-controls view-controls">
+              <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
+              <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
+              <label class="toggle-chip"><input id="chk-clocknumbers" type="checkbox"><span>文字盤</span></label>
+              <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
+              <label class="range-control compact-range">背景濃さ
+                <input id="slider-opacity" type="range" min="0" max="0.5" step="0.05" value="0.15">
+              </label>
+              <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
+              <button id="btn-hide-controls" class="button compact electron-only" type="button">パネルを隠す</button>
+              <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過</button>
+            </div>
           </div>
 
           <p class="shortcut-help electron-only">

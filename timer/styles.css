@@ -947,6 +947,22 @@ input[type="range"] {
   gap: 6px;
 }
 
+.group-controls {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.duration-controls .compact-time-input {
+  flex: 1;
+}
+
+.view-controls {
+  flex-wrap: nowrap;
+}
+
 .compact-label {
   flex: 0 0 auto;
   color: var(--muted);
@@ -1698,6 +1714,50 @@ body.controls-hidden .left-clock-wrap {
 
 body.click-through .click-through-hint {
   display: block !important;
+}
+
+@media (max-width: 820px) {
+  .quick-settings-row,
+  .time-settings-row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+  }
+
+  .compact-group {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+  }
+
+  .preset-group > .compact-label,
+  .add-group > .compact-label,
+  .duration-group > .compact-label,
+  .break-group > .compact-label,
+  .compact-utility-row > .compact-label {
+    width: auto;
+    flex-basis: auto;
+    text-align: left;
+  }
+
+  .segmented-control,
+  .group-controls {
+    grid-column: 2;
+    width: 100%;
+  }
+
+  .break-controls-compact,
+  .view-controls {
+    flex-wrap: wrap;
+  }
+
+  .break-quick-buttons {
+    flex: 1 1 200px;
+  }
+
+  .break-quick-buttons .button {
+    flex: 1;
+  }
 }
 
 @media (max-width: 720px), (max-height: 600px) {
