@@ -1135,12 +1135,21 @@ body.controls-hidden .tutorial-launch {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.bottom-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   margin-top: 8px;
 }
 
 .purpose-accordion {
-  width: 100%;
-  margin-top: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 0;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 11px;
@@ -1148,7 +1157,7 @@ body.controls-hidden .tutorial-launch {
 
 .purpose-accordion summary {
   width: fit-content;
-  margin-left: auto;
+  margin-left: 0;
   padding: 7px 2px 4px;
   color: var(--muted);
   cursor: pointer;
@@ -1768,6 +1777,18 @@ body.click-through .click-through-hint {
 
   .compact-utility-row {
     flex-wrap: wrap;
+  }
+
+  .bottom-actions {
+    flex-wrap: wrap;
+  }
+
+  .purpose-accordion {
+    flex-basis: 100%;
+  }
+
+  .helper-actions {
+    margin-left: auto;
   }
 }
 
