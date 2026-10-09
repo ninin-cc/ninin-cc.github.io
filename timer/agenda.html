@@ -77,8 +77,27 @@
         <input id="agenda-window-title" class="agenda-title-input" type="text" maxlength="60" value="ワーク進行表" aria-label="進行表タイトル">
       </div>
       <div class="agenda-header-status">
-        <div id="run-status" class="run-status">進行中</div>
+        <div id="run-status" class="run-status is-paused">開始前</div>
         <p><span>全体残り</span><strong id="overall-remaining">60:00</strong></p>
+      </div>
+    </header>
+
+    <section class="timeline-section" aria-labelledby="timeline-title">
+      <div class="timeline-heading">
+        <h2 id="timeline-title">進行</h2>
+        <span id="elapsed-time">経過 00:00</span>
+      </div>
+      <ol id="agenda-list" class="agenda-list"></ol>
+    </section>
+
+    <footer class="agenda-controls">
+      <div class="agenda-control-buttons">
+        <button id="btn-prev" type="button">前へ</button>
+        <button id="btn-toggle" class="primary" type="button">スタート</button>
+        <button id="btn-next" type="button">次へ</button>
+        <button id="btn-restart" type="button">最初から</button>
+      </div>
+      <div class="agenda-live-tools">
         <fieldset class="agenda-live-theme" aria-label="配色テーマ">
           <label class="fun"><input type="radio" name="live-theme" value="fun" aria-label="ピンク・黄色・水色のテーマ"><span aria-hidden="true"></span></label>
           <label class="gentle"><input type="radio" name="live-theme" value="gentle" aria-label="コーラル・オレンジ・クリームのテーマ"><span aria-hidden="true"></span></label>
@@ -95,21 +114,6 @@
           <input id="agenda-panel-transparency" type="range" min="0" max="60" step="1" value="24">
         </label>
       </div>
-    </header>
-
-    <section class="timeline-section" aria-labelledby="timeline-title">
-      <div class="timeline-heading">
-        <h2 id="timeline-title">進行</h2>
-        <span id="elapsed-time">経過 00:00</span>
-      </div>
-      <ol id="agenda-list" class="agenda-list"></ol>
-    </section>
-
-    <footer class="agenda-controls">
-      <button id="btn-prev" type="button">前へ</button>
-      <button id="btn-toggle" class="primary" type="button">スタート</button>
-      <button id="btn-next" type="button">次へ</button>
-      <button id="btn-restart" type="button">最初から</button>
     </footer>
   </main>
 
