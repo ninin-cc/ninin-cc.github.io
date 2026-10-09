@@ -21,6 +21,10 @@
     "asar": true,
     "files": [
       "index.html",
+      "agenda.html",
+      "agenda.css",
+      "agenda.js",
+      "analytics.js",
       "styles.css",
       "renderer.js",
       "main.js",

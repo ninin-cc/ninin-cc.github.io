@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
   <title>ワークショップタイマー</title>
   <link rel="stylesheet" href="styles.css">
   <script src="analytics.js"></script>
@@ -164,6 +164,7 @@
             <span class="compact-label">VIEW</span>
             <div class="group-controls view-controls">
               <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
+              <label class="toggle-chip"><input id="chk-rightclock" type="checkbox" checked><span>右時計</span></label>
               <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
               <label class="toggle-chip"><input id="chk-clocknumbers" type="checkbox"><span>文字盤</span></label>
               <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
@@ -196,12 +197,94 @@
               </div>
             </details>
             <div class="helper-actions">
-              <button id="btn-pomodoro" class="pomodoro-launch" type="button" aria-haspopup="dialog">🍅 ポモドーロテクニックモード</button>
+              <button id="btn-agenda" class="agenda-launch" type="button">ワーク進行表</button>
+              <button id="btn-pomodoro" class="pomodoro-launch" type="button">🍅 ポモドーロテクニックモード</button>
               <button id="btn-tutorial" class="tutorial-launch" type="button" aria-haspopup="dialog">チュートリアル</button>
             </div>
           </div>
       </div>
 
+    </section>
+  </div>
+
+  <div id="agenda-overlay" class="agenda-overlay" role="dialog" aria-modal="true" aria-labelledby="agenda-title" hidden>
+    <section class="agenda-card">
+      <button id="btn-agenda-close" class="tutorial-close" type="button" aria-label="進行表の設定を閉じる">×</button>
+      <div class="agenda-heading">
+        <span class="agenda-mode-label">WORK AGENDA</span>
+        <span>時間を自由に組み立てて、別窓で進行</span>
+      </div>
+      <h2 id="agenda-title">ワーク進行表</h2>
+      <p class="agenda-lead">時間の長さに制限はありません。流れと分数を自由に組み立て、別ウィンドウに「いま・次・残り時間」を表示します。</p>
+
+      <label class="agenda-name-field" for="agenda-name">
+        <span>進行表名</span>
+        <input id="agenda-name" type="text" maxlength="60" value="ワークショップ" placeholder="例：チーム研修、90分ワーク">
+      </label>
+
+      <fieldset class="agenda-theme-picker">
+        <legend>基本テーマ</legend>
+        <label class="agenda-theme-option fun">
+          <input type="radio" name="agenda-theme" value="fun" aria-label="ピンク・黄色・水色のテーマ">
+          <span><i aria-hidden="true"></i></span>
+        </label>
+        <label class="agenda-theme-option gentle">
+          <input type="radio" name="agenda-theme" value="gentle" aria-label="コーラル・オレンジ・クリームのテーマ">
+          <span><i aria-hidden="true"></i></span>
+        </label>
+        <label class="agenda-theme-option steady">
+          <input type="radio" name="agenda-theme" value="steady" aria-label="青・青緑のテーマ" checked>
+          <span><i aria-hidden="true"></i></span>
+        </label>
+        <label class="agenda-theme-option healing">
+          <input type="radio" name="agenda-theme" value="healing" aria-label="緑・紫・水色のテーマ">
+          <span><i aria-hidden="true"></i></span>
+        </label>
+      </fieldset>
+
+      <section class="agenda-background-picker" aria-label="背景画像">
+        <div class="agenda-background-preview"><img id="agenda-background-preview" alt="" hidden></div>
+        <div>
+          <strong>背景画像</strong>
+          <span id="agenda-background-name">未設定</span>
+          <small>選んだ画像は保存せず、今回開く別窓だけで使用します</small>
+        </div>
+        <label class="button agenda-sub-action agenda-import" for="agenda-background-file">画像を選ぶ</label>
+        <input id="agenda-background-file" class="agenda-file-input" type="file" accept="image/*">
+        <button id="btn-agenda-background-clear" class="button agenda-sub-action" type="button" disabled>解除</button>
+      </section>
+
+      <section class="agenda-library" aria-label="進行表の保存と読み込み">
+        <div class="agenda-library-row">
+          <select id="agenda-saved" aria-label="保存した進行表">
+            <option value="">保存した進行表を選択</option>
+          </select>
+          <button id="btn-agenda-load" class="button agenda-sub-action" type="button" disabled>呼び出す</button>
+          <button id="btn-agenda-save" class="button agenda-sub-action save" type="button">記録する</button>
+          <button id="btn-agenda-delete" class="button agenda-sub-action danger" type="button" disabled>削除</button>
+        </div>
+        <div class="agenda-file-row">
+          <button id="btn-agenda-export" class="button agenda-sub-action" type="button">CSV書き出し</button>
+          <label class="button agenda-sub-action agenda-import" for="agenda-import-file">CSV読み込み</label>
+          <input id="agenda-import-file" class="agenda-file-input" type="file" accept=".csv,text/csv">
+          <span>進行表名・テーマ・項目・時間を同じ形式で再読み込みできます</span>
+        </div>
+      </section>
+
+      <div class="agenda-table-head" aria-hidden="true">
+        <span>内容</span><span>時間</span><span></span>
+      </div>
+      <div id="agenda-rows" class="agenda-rows"></div>
+
+      <div class="agenda-setup-footer">
+        <button id="btn-agenda-add" class="button agenda-add" type="button">＋ 項目を追加</button>
+        <p id="agenda-total" class="agenda-total" aria-live="polite">合計 60分</p>
+      </div>
+      <p id="agenda-note" class="agenda-note">各項目の分数を変更すると、合計時間へすぐ反映されます。</p>
+      <div class="agenda-actions">
+        <button id="btn-agenda-cancel" class="button agenda-cancel" type="button">キャンセル</button>
+        <button id="btn-agenda-open" class="button agenda-open" type="button">別窓で開始</button>
+      </div>
     </section>
   </div>
 

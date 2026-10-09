@@ -3,6 +3,11 @@
 
   const bridge = window.overlayBridge ?? null;
   const isElectron = Boolean(bridge);
+  const isStandalonePomodoro = new URLSearchParams(window.location.search).get('view') === 'pomodoro';
+  const mainWindowName = isStandalonePomodoro
+    ? ''
+    : (window.name || `ninin-timer-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+  if (mainWindowName) window.name = mainWindowName;
   const body = document.body;
   const root = document.documentElement;
   const digitalText = document.getElementById('digital-text');
@@ -31,6 +36,27 @@
   const tutorialBackButton = document.getElementById('btn-tutorial-back');
   const tutorialNextButton = document.getElementById('btn-tutorial-next');
   const tutorialCloseButton = document.getElementById('btn-tutorial-close');
+  const agendaButton = document.getElementById('btn-agenda');
+  const agendaOverlay = document.getElementById('agenda-overlay');
+  const agendaCloseButton = document.getElementById('btn-agenda-close');
+  const agendaCancelButton = document.getElementById('btn-agenda-cancel');
+  const agendaOpenButton = document.getElementById('btn-agenda-open');
+  const agendaAddButton = document.getElementById('btn-agenda-add');
+  const agendaRowsContainer = document.getElementById('agenda-rows');
+  const agendaTotal = document.getElementById('agenda-total');
+  const agendaNote = document.getElementById('agenda-note');
+  const agendaNameInput = document.getElementById('agenda-name');
+  const agendaSavedSelect = document.getElementById('agenda-saved');
+  const agendaLoadButton = document.getElementById('btn-agenda-load');
+  const agendaSaveButton = document.getElementById('btn-agenda-save');
+  const agendaDeleteButton = document.getElementById('btn-agenda-delete');
+  const agendaExportButton = document.getElementById('btn-agenda-export');
+  const agendaImportFile = document.getElementById('agenda-import-file');
+  const agendaThemeInputs = Array.from(document.querySelectorAll('input[name="agenda-theme"]'));
+  const agendaBackgroundFile = document.getElementById('agenda-background-file');
+  const agendaBackgroundPreview = document.getElementById('agenda-background-preview');
+  const agendaBackgroundName = document.getElementById('agenda-background-name');
+  const agendaBackgroundClearButton = document.getElementById('btn-agenda-background-clear');
   const pomodoroButton = document.getElementById('btn-pomodoro');
   const pomodoroOverlay = document.getElementById('pomodoro-overlay');
   const pomodoroCloseButton = document.getElementById('btn-pomodoro-close');
@@ -80,6 +106,7 @@
   let isResizing = false;
   let isClockResizing = false;
   let isBreakMode = false;
+  let isDigitalClockVisible = true;
   let breakTarget = null;
   let breakStartedAt = null;
   let breakTicker = null;
@@ -99,10 +126,26 @@
   let pomodoroLongBreakMinutes = 20;
   let pomodoroStatusMessage = '';
   let pomodoroBlockCount = 0;
+  let activeAgendaId = '';
+  let agendaWindow = null;
+  let pomodoroWindow = null;
+  let agendaBackgroundUrl = '';
+  let agendaBackgroundFileValue = null;
+  const agendaBackgroundUrls = new Set();
+  const launchedAgendaBackgroundUrls = new Set();
+  const agendaThemeIds = ['fun', 'gentle', 'steady', 'healing'];
+  const defaultAgendaItems = [
+    { title: 'オープニング・ゴール確認', minutes: 5 },
+    { title: 'テーマと進め方の説明', minutes: 10 },
+    { title: '個人・グループワーク', minutes: 20 },
+    { title: '共有・対話', minutes: 15 },
+    { title: 'まとめ・次の一歩', minutes: 10 }
+  ];
   const addHistory = [];
   const storageKeys = {
     topPaneHeight: 'workshopTimer.topPaneHeight',
-    leftClockWidth: 'workshopTimer.leftClockWidth'
+    leftClockWidth: 'workshopTimer.leftClockWidth',
+    agendas: 'workshopTimer.agendas.v1'
   };
 
   body.classList.add(isElectron ? 'electron-mode' : 'browser-mode');
@@ -585,6 +628,367 @@
     }
   }
 
+  function collectAgendaItems() {
+    return Array.from(agendaRowsContainer.querySelectorAll('.agenda-row')).map((row, index) => {
+      const title = row.querySelector('[data-agenda-title]').value.trim() || `項目 ${index + 1}`;
+      const rawMinutes = Number(row.querySelector('[data-agenda-minutes]').value);
+      const minutes = Math.min(1440, Math.max(1, Math.round(rawMinutes || 1)));
+      return { title, minutes };
+    });
+  }
+
+  function updateAgendaTotal() {
+    const total = collectAgendaItems().reduce((sum, item) => sum + item.minutes, 0);
+    const hours = Math.floor(total / 60);
+    const restMinutes = total % 60;
+    const readable = hours > 0
+      ? `（${hours}時間${restMinutes ? `${restMinutes}分` : ''}）`
+      : '';
+    agendaTotal.textContent = `合計 ${total}分 ${readable}`.trim();
+    agendaTotal.classList.remove('is-off-hour');
+    agendaOpenButton.disabled = total <= 0;
+  }
+
+  function addAgendaRow(item = { title: '', minutes: 5 }) {
+    const row = document.createElement('div');
+    row.className = 'agenda-row';
+
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.maxLength = 60;
+    titleInput.value = item.title;
+    titleInput.placeholder = '進行内容';
+    titleInput.setAttribute('data-agenda-title', '');
+    titleInput.setAttribute('aria-label', '進行内容');
+
+    const minutesInput = document.createElement('input');
+    minutesInput.type = 'number';
+    minutesInput.min = '1';
+    minutesInput.max = '1440';
+    minutesInput.step = '1';
+    minutesInput.value = String(item.minutes);
+    minutesInput.setAttribute('data-agenda-minutes', '');
+    minutesInput.setAttribute('aria-label', `${item.title || '進行項目'}の分数`);
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'agenda-remove';
+    removeButton.textContent = '×';
+    removeButton.setAttribute('aria-label', 'この項目を削除');
+    removeButton.addEventListener('click', () => {
+      if (agendaRowsContainer.children.length <= 1) return;
+      row.remove();
+      updateAgendaTotal();
+    });
+
+    titleInput.addEventListener('input', updateAgendaTotal);
+    minutesInput.addEventListener('input', updateAgendaTotal);
+    row.append(titleInput, minutesInput, removeButton);
+    agendaRowsContainer.appendChild(row);
+    updateAgendaTotal();
+  }
+
+  function replaceAgendaRows(items) {
+    agendaRowsContainer.replaceChildren();
+    (items.length ? items : [{ title: '', minutes: 5 }]).forEach(addAgendaRow);
+    updateAgendaTotal();
+  }
+
+  function resetAgendaRows() {
+    replaceAgendaRows(defaultAgendaItems);
+  }
+
+  function setAgendaNote(message, state = '') {
+    agendaNote.textContent = message;
+    agendaNote.classList.toggle('is-success', state === 'success');
+    agendaNote.classList.toggle('is-error', state === 'error');
+  }
+
+  function selectedAgendaTheme() {
+    const value = agendaThemeInputs.find((input) => input.checked)?.value;
+    return agendaThemeIds.includes(value) ? value : 'steady';
+  }
+
+  function setAgendaTheme(theme) {
+    const safeTheme = agendaThemeIds.includes(theme) ? theme : 'steady';
+    agendaThemeInputs.forEach((input) => {
+      input.checked = input.value === safeTheme;
+    });
+  }
+
+  function clearAgendaBackground() {
+    if (agendaBackgroundUrl && !launchedAgendaBackgroundUrls.has(agendaBackgroundUrl)) {
+      URL.revokeObjectURL(agendaBackgroundUrl);
+      agendaBackgroundUrls.delete(agendaBackgroundUrl);
+    }
+    agendaBackgroundUrl = '';
+    agendaBackgroundFileValue = null;
+    agendaBackgroundPreview.removeAttribute('src');
+    agendaBackgroundPreview.hidden = true;
+    agendaBackgroundName.textContent = '未設定';
+    agendaBackgroundClearButton.disabled = true;
+    agendaBackgroundFile.value = '';
+  }
+
+  function setAgendaBackgroundFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      setAgendaNote('画像ファイルを選択してください。', 'error');
+      agendaBackgroundFile.value = '';
+      return;
+    }
+    if (agendaBackgroundUrl && !launchedAgendaBackgroundUrls.has(agendaBackgroundUrl)) {
+      URL.revokeObjectURL(agendaBackgroundUrl);
+      agendaBackgroundUrls.delete(agendaBackgroundUrl);
+    }
+    agendaBackgroundUrl = URL.createObjectURL(file);
+    agendaBackgroundFileValue = file;
+    agendaBackgroundUrls.add(agendaBackgroundUrl);
+    agendaBackgroundPreview.src = agendaBackgroundUrl;
+    agendaBackgroundPreview.hidden = false;
+    agendaBackgroundName.textContent = file.name;
+    agendaBackgroundClearButton.disabled = false;
+    setAgendaNote('背景画像を設定しました。開く別窓に反映されます。', 'success');
+  }
+
+  function readSavedAgendas() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(storageKeys.agendas) || '[]');
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((agenda) => (
+        agenda && typeof agenda.id === 'string' && typeof agenda.name === 'string' && Array.isArray(agenda.items)
+      ));
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function writeSavedAgendas(agendas) {
+    try {
+      localStorage.setItem(storageKeys.agendas, JSON.stringify(agendas));
+      return true;
+    } catch (_error) {
+      setAgendaNote('この環境では進行表を保存できませんでした。CSV書き出しをご利用ください。', 'error');
+      return false;
+    }
+  }
+
+  function refreshSavedAgendas(selectedId = activeAgendaId) {
+    const agendas = readSavedAgendas().sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+    agendaSavedSelect.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = agendas.length ? '保存した進行表を選択' : '保存した進行表はありません';
+    agendaSavedSelect.appendChild(placeholder);
+    agendas.forEach((agenda) => {
+      const total = agenda.items.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
+      const option = document.createElement('option');
+      option.value = agenda.id;
+      option.textContent = `${agenda.name}（${total}分）`;
+      agendaSavedSelect.appendChild(option);
+    });
+    agendaSavedSelect.value = agendas.some((agenda) => agenda.id === selectedId) ? selectedId : '';
+    const hasSelection = Boolean(agendaSavedSelect.value);
+    agendaLoadButton.disabled = !hasSelection;
+    agendaDeleteButton.disabled = !hasSelection;
+  }
+
+  function saveAgenda() {
+    const name = agendaNameInput.value.trim() || 'ワーク進行表';
+    const items = collectAgendaItems();
+    const agendas = readSavedAgendas();
+    const now = Date.now();
+    let agenda = activeAgendaId ? agendas.find((entry) => entry.id === activeAgendaId) : null;
+    if (agenda) {
+      agenda.name = name;
+      agenda.items = items;
+      agenda.theme = selectedAgendaTheme();
+      agenda.updatedAt = now;
+    } else {
+      activeAgendaId = window.crypto?.randomUUID?.() || `agenda-${now}-${Math.random().toString(16).slice(2)}`;
+      agenda = { id: activeAgendaId, name, items, theme: selectedAgendaTheme(), updatedAt: now };
+      agendas.push(agenda);
+    }
+    if (!writeSavedAgendas(agendas)) return;
+    refreshSavedAgendas(activeAgendaId);
+    setAgendaNote(`「${name}」をこのブラウザに記録しました。`, 'success');
+  }
+
+  function loadSelectedAgenda() {
+    const selectedId = agendaSavedSelect.value;
+    const agenda = readSavedAgendas().find((entry) => entry.id === selectedId);
+    if (!agenda) return;
+    activeAgendaId = agenda.id;
+    agendaNameInput.value = agenda.name;
+    setAgendaTheme(agenda.theme);
+    replaceAgendaRows(agenda.items);
+    setAgendaNote(`「${agenda.name}」を呼び出しました。`, 'success');
+  }
+
+  function deleteSelectedAgenda() {
+    const selectedId = agendaSavedSelect.value;
+    const agendas = readSavedAgendas();
+    const agenda = agendas.find((entry) => entry.id === selectedId);
+    if (!agenda) return;
+    if (!window.confirm(`保存した「${agenda.name}」を削除しますか？`)) return;
+    if (!writeSavedAgendas(agendas.filter((entry) => entry.id !== selectedId))) return;
+    if (activeAgendaId === selectedId) activeAgendaId = '';
+    refreshSavedAgendas();
+    setAgendaNote(`「${agenda.name}」を削除しました。`);
+  }
+
+  function csvCell(value) {
+    const text = String(value ?? '');
+    return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  function exportAgendaCsv() {
+    const name = agendaNameInput.value.trim() || 'ワーク進行表';
+    const theme = selectedAgendaTheme();
+    const lines = [
+      ['進行表名', 'テーマ', '項目', '時間（分）'],
+      ...collectAgendaItems().map((item) => [name, theme, item.title, item.minutes])
+    ];
+    const csv = `\uFEFF${lines.map((row) => row.map(csvCell).join(',')).join('\r\n')}`;
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${name.replace(/[\\/:*?"<>|]/g, '_') || 'ワーク進行表'}.csv`;
+    anchor.hidden = true;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setAgendaNote('CSVを書き出しました。同じCSVを「CSV読み込み」から復元できます。', 'success');
+  }
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let quoted = false;
+    const source = String(text || '').replace(/^\uFEFF/, '');
+    for (let index = 0; index < source.length; index += 1) {
+      const character = source[index];
+      if (character === '"') {
+        if (quoted && source[index + 1] === '"') {
+          field += '"';
+          index += 1;
+        } else {
+          quoted = !quoted;
+        }
+      } else if (character === ',' && !quoted) {
+        row.push(field);
+        field = '';
+      } else if ((character === '\n' || character === '\r') && !quoted) {
+        if (character === '\r' && source[index + 1] === '\n') index += 1;
+        row.push(field);
+        if (row.some((cell) => cell !== '')) rows.push(row);
+        row = [];
+        field = '';
+      } else {
+        field += character;
+      }
+    }
+    row.push(field);
+    if (row.some((cell) => cell !== '')) rows.push(row);
+    return rows;
+  }
+
+  async function importAgendaCsv(file) {
+    try {
+      const rows = parseCsv(await file.text());
+      const header = (rows[0] || []).map((cell) => cell.trim());
+      const nameIndex = header.indexOf('進行表名');
+      const themeIndex = header.indexOf('テーマ');
+      const itemIndex = header.indexOf('項目');
+      const minutesIndex = header.indexOf('時間（分）');
+      if (nameIndex < 0 || itemIndex < 0 || minutesIndex < 0) {
+        throw new Error('header');
+      }
+      const items = rows.slice(1).map((row, index) => ({
+        title: String(row[itemIndex] || '').trim() || `項目 ${index + 1}`,
+        minutes: Math.min(1440, Math.max(1, Math.round(Number(row[minutesIndex]) || 1)))
+      }));
+      if (!items.length) throw new Error('empty');
+      activeAgendaId = '';
+      agendaNameInput.value = String(rows[1]?.[nameIndex] || 'ワーク進行表').trim() || 'ワーク進行表';
+      setAgendaTheme(themeIndex >= 0 ? String(rows[1]?.[themeIndex] || '') : 'steady');
+      replaceAgendaRows(items);
+      refreshSavedAgendas();
+      setAgendaNote('CSVを読み込みました。必要に応じて「記録する」でブラウザにも保存できます。', 'success');
+    } catch (_error) {
+      setAgendaNote('CSVを読み込めませんでした。この画面から書き出したCSVと同じ形式か確認してください。', 'error');
+    } finally {
+      agendaImportFile.value = '';
+    }
+  }
+
+  function openAgenda() {
+    if (!tutorialOverlay.hidden) closeTutorial();
+    if (!pomodoroOverlay.hidden) closePomodoro();
+    const agendaUrl = new URL('agenda.html', window.location.href);
+    agendaUrl.searchParams.set('view', 'settings');
+    agendaWindow = window.open(agendaUrl.toString(), '_blank');
+  }
+
+  function closeAgenda() {
+    agendaOverlay.hidden = true;
+    body.classList.remove('agenda-popup-open');
+    agendaButton.focus();
+  }
+
+  function openAgendaFromLocation() {
+    if (window.location.hash !== '#agenda-settings') return;
+    openAgenda();
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+  }
+
+  window.addEventListener('message', (event) => {
+    if (!agendaWindow || event.source !== agendaWindow) return;
+    if (event.data?.type === 'agenda-ready') {
+      if (agendaBackgroundFileValue) {
+        const targetOrigin = window.location.protocol === 'file:' ? '*' : window.location.origin;
+        agendaWindow.postMessage({ type: 'agenda-background', file: agendaBackgroundFileValue }, targetOrigin);
+      }
+      return;
+    }
+    if (event.data?.type !== 'open-agenda-settings') return;
+    if (agendaThemeIds.includes(event.data.theme)) setAgendaTheme(event.data.theme);
+    if (typeof event.data.title === 'string' && event.data.title.trim()) {
+      agendaNameInput.value = event.data.title.trim().slice(0, 60);
+    }
+    window.focus();
+    openAgenda();
+  });
+
+  function launchAgendaWindow() {
+    const items = collectAgendaItems();
+    if (!items.length) return;
+    const config = {
+      title: agendaNameInput.value.trim() || 'ワーク進行表',
+      items,
+      theme: selectedAgendaTheme(),
+      backgroundImageUrl: agendaBackgroundUrl,
+      returnTargetName: mainWindowName,
+      createdAt: Date.now()
+    };
+    const agendaUrl = new URL('agenda.html', window.location.href);
+    agendaUrl.searchParams.set('view', 'agenda');
+    agendaUrl.searchParams.set('run', String(config.createdAt));
+    agendaUrl.hash = encodeURIComponent(JSON.stringify(config));
+    agendaWindow = window.open(
+      agendaUrl.toString(),
+      '_blank'
+    );
+    if (!agendaWindow) {
+      setAgendaNote('別タブ／別ウィンドウを開けませんでした。ブラウザの新しい画面を開く許可を確認してください。', 'error');
+      return;
+    }
+    if (agendaBackgroundUrl) launchedAgendaBackgroundUrls.add(agendaBackgroundUrl);
+    setAgendaNote('進行表を別ウィンドウで開始しました。', 'success');
+    closeAgenda();
+  }
+
   function pomodoroDurationSeconds() {
     if (pomodoroPhase === 'focus') return 25 * 60;
     if (pomodoroPhase === 'short-break') return 5 * 60;
@@ -684,8 +1088,24 @@
   }
 
   function closePomodoro() {
+    if (isStandalonePomodoro) {
+      window.close();
+      return;
+    }
     pomodoroOverlay.hidden = true;
     body.classList.remove('pomodoro-popup-open');
+  }
+
+  function launchPomodoroWindow() {
+    const pomodoroUrl = new URL('index.html', window.location.href);
+    pomodoroUrl.searchParams.set('view', 'pomodoro');
+    pomodoroUrl.hash = '';
+    pomodoroWindow = window.open(pomodoroUrl.toString(), 'ninin-pomodoro');
+    if (!pomodoroWindow) {
+      window.alert('別タブ／別ウィンドウを開けませんでした。ブラウザの新しい画面を開く許可を確認してください。');
+      return;
+    }
+    pomodoroWindow.focus();
   }
 
   function startPomodoroMode() {
@@ -772,8 +1192,11 @@
         : `休憩完了です。${pomodoroCompleted + 1}回目の集中へ進みましょう。`;
     }
 
-    pomodoroAwaitingStart = true;
+    // 集中・休憩の区切りでは、次のフェーズへ自動的に移行する。
+    // 特に集中終了後は、操作を挟まずそのまま休憩を始める。
+    pomodoroAwaitingStart = false;
     setTime(pomodoroDurationSeconds());
+    startTimer();
     openPomodoro();
     updatePomodoroUi();
   }
@@ -786,7 +1209,7 @@
     const seconds = secondsForDisplay();
     const isCountdown = timerMode === 'countdown';
     const displayTime = isCountdown ? formatTime(seconds) : formatStopwatchTime(stopwatchElapsedMs);
-    digitalText.hidden = false;
+    digitalText.hidden = !isDigitalClockVisible;
     breakDisplay.hidden = true;
     digitalText.textContent = displayTime;
     const countdownRunning = isCountdown && isRunning;
@@ -817,7 +1240,9 @@
     stopwatchButton.classList.toggle('pause', stopwatchRunning);
     stopwatchButton.classList.toggle('stopwatch', !stopwatchRunning);
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
-    document.title = `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
+    document.title = isStandalonePomodoro
+      ? `${displayTime}｜${isPomodoroMode ? pomodoroPhaseLabel() : 'ポモドーロテクニック'}`
+      : `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
     updateClocks();
     updatePomodoroUi();
   }
@@ -998,7 +1423,7 @@
     clockPreviewMode = timerMode === 'countdown' && remainingMs > 0 ? 'countdown' : null;
     renderClockInterval(null, null);
     breakDisplay.hidden = true;
-    digitalText.hidden = false;
+    digitalText.hidden = !isDigitalClockVisible;
     startBreakButton.textContent = '休憩開始';
     startBreakButton.classList.remove('break-stop');
     renderTimer();
@@ -1443,7 +1868,39 @@
 
   document.addEventListener('click', handleTutorialAction);
 
-  pomodoroButton.addEventListener('click', openPomodoro);
+  resetAgendaRows();
+  refreshSavedAgendas();
+  agendaButton.addEventListener('click', openAgenda);
+  agendaCloseButton.addEventListener('click', closeAgenda);
+  agendaCancelButton.addEventListener('click', closeAgenda);
+  agendaAddButton.addEventListener('click', () => {
+    addAgendaRow();
+    agendaRowsContainer.lastElementChild?.querySelector('input')?.focus();
+  });
+  agendaSavedSelect.addEventListener('change', () => {
+    const hasSelection = Boolean(agendaSavedSelect.value);
+    agendaLoadButton.disabled = !hasSelection;
+    agendaDeleteButton.disabled = !hasSelection;
+  });
+  agendaLoadButton.addEventListener('click', loadSelectedAgenda);
+  agendaSaveButton.addEventListener('click', saveAgenda);
+  agendaDeleteButton.addEventListener('click', deleteSelectedAgenda);
+  agendaExportButton.addEventListener('click', exportAgendaCsv);
+  agendaImportFile.addEventListener('change', () => {
+    const [file] = agendaImportFile.files;
+    if (file) void importAgendaCsv(file);
+  });
+  agendaBackgroundFile.addEventListener('change', () => {
+    const [file] = agendaBackgroundFile.files;
+    if (file) setAgendaBackgroundFile(file);
+  });
+  agendaBackgroundClearButton.addEventListener('click', clearAgendaBackground);
+  agendaOpenButton.addEventListener('click', launchAgendaWindow);
+  agendaOverlay.addEventListener('click', (event) => {
+    if (event.target === agendaOverlay) closeAgenda();
+  });
+
+  pomodoroButton.addEventListener('click', launchPomodoroWindow);
   pomodoroCloseButton.addEventListener('click', closePomodoro);
   pomodoroStartButton.addEventListener('click', startPomodoroMode);
   pomodoroPrimaryButton.addEventListener('click', togglePomodoroPrimary);
@@ -1459,6 +1916,11 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    if (!agendaOverlay.hidden) {
+      event.preventDefault();
+      closeAgenda();
+      return;
+    }
     if (!pomodoroOverlay.hidden) {
       event.preventDefault();
       closePomodoro();
@@ -1468,6 +1930,12 @@
     event.preventDefault();
     closeTutorial();
   });
+
+  window.addEventListener('beforeunload', () => {
+    agendaBackgroundUrls.forEach((url) => URL.revokeObjectURL(url));
+  });
+
+  window.addEventListener('hashchange', openAgendaFromLocation);
 
   [selHour, selMin, selSec].forEach((select) => {
     select.addEventListener('input', previewManualTime);
@@ -1504,6 +1972,11 @@
   document.getElementById('chk-leftclock').addEventListener('change', (event) => {
     leftClockWrap.hidden = !event.target.checked;
     clockResizer.hidden = !event.target.checked;
+  });
+
+  document.getElementById('chk-rightclock').addEventListener('change', (event) => {
+    isDigitalClockVisible = event.target.checked;
+    if (!isBreakMode) digitalText.hidden = !isDigitalClockVisible;
   });
 
   document.getElementById('chk-bgclock').addEventListener('change', (event) => {
@@ -1568,5 +2041,11 @@
     bridge.getState().then(applyOverlayState);
   }
 
+  openAgendaFromLocation();
+  if (isStandalonePomodoro) {
+    body.classList.add('standalone-pomodoro');
+    document.title = 'ポモドーロテクニック｜Workshop Timer';
+    openPomodoro();
+  }
   renderTimer();
 })();

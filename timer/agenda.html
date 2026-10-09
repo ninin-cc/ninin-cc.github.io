@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>ワーク進行表</title>
+  <link rel="stylesheet" href="agenda.css">
+  <script src="analytics.js"></script>
+</head>
+<body>
+  <img id="agenda-background-image" class="agenda-background-image" alt="" hidden>
+  <div class="agenda-background-shade" aria-hidden="true"></div>
+
+  <section id="agenda-settings-view" class="agenda-settings-view" role="tabpanel" aria-labelledby="tab-agenda-settings">
+    <div class="agenda-setup-card">
+      <div class="agenda-setup-heading">
+        <div>
+          <p class="agenda-mode-label">WORK AGENDA</p>
+          <h1>ワーク進行表</h1>
+        </div>
+        <a class="agenda-back-link" href="index.html">← タイマーへ</a>
+      </div>
+      <p class="agenda-lead">流れと分数を自由に組み立てます。「進行画面へ」を押すと、このタブのまま進行表示へ切り替わります。</p>
+
+      <label class="agenda-name-field" for="agenda-name">
+        <span>進行表名</span>
+        <input id="agenda-name" type="text" maxlength="60" value="ワークショップ" placeholder="例：チーム研修、90分ワーク">
+      </label>
+
+      <fieldset class="agenda-theme-picker">
+        <legend>配色テーマ</legend>
+        <label class="agenda-theme-option fun"><input type="radio" name="agenda-theme" value="fun" aria-label="ピンク・黄色・水色のテーマ"><span><i aria-hidden="true"></i></span></label>
+        <label class="agenda-theme-option gentle"><input type="radio" name="agenda-theme" value="gentle" aria-label="コーラル・オレンジ・クリームのテーマ"><span><i aria-hidden="true"></i></span></label>
+        <label class="agenda-theme-option steady"><input type="radio" name="agenda-theme" value="steady" aria-label="青・青緑のテーマ" checked><span><i aria-hidden="true"></i></span></label>
+        <label class="agenda-theme-option healing"><input type="radio" name="agenda-theme" value="healing" aria-label="緑・紫・水色のテーマ"><span><i aria-hidden="true"></i></span></label>
+      </fieldset>
+
+      <section class="agenda-background-picker" aria-label="背景画像">
+        <div class="agenda-background-preview"><img id="agenda-background-preview" alt="" hidden></div>
+        <div><strong>背景画像</strong><span id="agenda-background-name">未設定</span><small>進行画面の背景に表示します</small></div>
+        <label class="agenda-setup-button agenda-sub-action" for="agenda-background-file">画像を選ぶ</label>
+        <input id="agenda-background-file" class="agenda-file-input" type="file" accept="image/*">
+        <button id="btn-agenda-background-clear" class="agenda-setup-button agenda-sub-action" type="button" disabled>解除</button>
+      </section>
+
+      <section class="agenda-library" aria-label="進行表の保存と読み込み">
+        <div class="agenda-library-row">
+          <select id="agenda-saved" aria-label="保存した進行表"><option value="">保存した進行表を選択</option></select>
+          <button id="btn-agenda-load" class="agenda-setup-button agenda-sub-action" type="button" disabled>呼び出す</button>
+          <button id="btn-agenda-save" class="agenda-setup-button agenda-sub-action save" type="button">記録する</button>
+          <button id="btn-agenda-delete" class="agenda-setup-button agenda-sub-action danger" type="button" disabled>削除</button>
+        </div>
+        <div class="agenda-file-row">
+          <button id="btn-agenda-export" class="agenda-setup-button agenda-sub-action" type="button">CSV書き出し</button>
+          <label class="agenda-setup-button agenda-sub-action" for="agenda-import-file">CSV読み込み</label>
+          <input id="agenda-import-file" class="agenda-file-input" type="file" accept=".csv,text/csv">
+          <span>同じ形式で再読み込みできます</span>
+        </div>
+      </section>
+
+      <div class="agenda-table-head" aria-hidden="true"><span>進行内容</span><span>分</span><span></span></div>
+      <div id="agenda-rows" class="agenda-rows"></div>
+      <div class="agenda-setup-footer">
+        <button id="btn-agenda-add" class="agenda-setup-button agenda-add" type="button">＋ 項目を追加</button>
+        <p id="agenda-total" class="agenda-total" aria-live="polite">合計 60分</p>
+      </div>
+      <p id="agenda-note" class="agenda-note">各項目の分数を変更すると、合計時間へすぐ反映されます。</p>
+      <button id="btn-agenda-apply" class="agenda-setup-button agenda-apply" type="button">進行画面へ</button>
+    </div>
+  </section>
+
+  <main id="agenda-progress-view" class="agenda-app" role="tabpanel" aria-labelledby="tab-agenda-progress" hidden>
+    <header class="agenda-header">
+      <div>
+        <p class="eyebrow">WORKSHOP AGENDA</p>
+        <input id="agenda-window-title" class="agenda-title-input" type="text" maxlength="60" value="ワーク進行表" aria-label="進行表タイトル">
+      </div>
+      <div class="agenda-header-status">
+        <div id="run-status" class="run-status">進行中</div>
+        <p><span>全体残り</span><strong id="overall-remaining">60:00</strong></p>
+        <fieldset class="agenda-live-theme" aria-label="配色テーマ">
+          <label class="fun"><input type="radio" name="live-theme" value="fun" aria-label="ピンク・黄色・水色のテーマ"><span aria-hidden="true"></span></label>
+          <label class="gentle"><input type="radio" name="live-theme" value="gentle" aria-label="コーラル・オレンジ・クリームのテーマ"><span aria-hidden="true"></span></label>
+          <label class="steady"><input type="radio" name="live-theme" value="steady" aria-label="青・青緑のテーマ"><span aria-hidden="true"></span></label>
+          <label class="healing"><input type="radio" name="live-theme" value="healing" aria-label="緑・紫・水色のテーマ"><span aria-hidden="true"></span></label>
+        </fieldset>
+        <div class="agenda-live-background">
+          <label for="agenda-live-background-file">背景画像</label>
+          <input id="agenda-live-background-file" type="file" accept="image/*">
+          <button id="btn-live-background-clear" type="button" disabled>解除</button>
+        </div>
+        <label class="agenda-live-transparency" for="agenda-panel-transparency">
+          <span>透過度 <output id="agenda-panel-transparency-value" for="agenda-panel-transparency">24%</output></span>
+          <input id="agenda-panel-transparency" type="range" min="0" max="60" step="1" value="24">
+        </label>
+      </div>
+    </header>
+
+    <section class="timeline-section" aria-labelledby="timeline-title">
+      <div class="timeline-heading">
+        <h2 id="timeline-title">進行</h2>
+        <span id="elapsed-time">経過 00:00</span>
+      </div>
+      <ol id="agenda-list" class="agenda-list"></ol>
+    </section>
+
+    <footer class="agenda-controls">
+      <button id="btn-prev" type="button">前へ</button>
+      <button id="btn-toggle" class="primary" type="button">スタート</button>
+      <button id="btn-next" type="button">次へ</button>
+      <button id="btn-restart" type="button">最初から</button>
+    </footer>
+  </main>
+
+  <nav class="agenda-view-tabs" role="tablist" aria-label="ワーク進行表の画面切り替え">
+    <button id="tab-agenda-settings" type="button" role="tab" aria-controls="agenda-settings-view">設定</button>
+    <button id="tab-agenda-progress" type="button" role="tab" aria-controls="agenda-progress-view">進行</button>
+  </nav>
+
+  <footer class="agenda-site-footer">
+    <a href="https://ninin-cc.github.io/i/" target="_blank" rel="noopener noreferrer">© 2026 ninin LLC. All Rights Reserved.</a>
+    <span aria-hidden="true">｜</span>
+    <a href="https://note.com/ninin2025/membership/join" target="_blank" rel="noopener noreferrer">© たべラボ</a>
+  </footer>
+  <script src="agenda.js"></script>
+  <script src="agenda-setup.js"></script>
+</body>
+</html>

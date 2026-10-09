@@ -4,6 +4,7 @@ const path = require('node:path');
 const { app, BrowserWindow, globalShortcut, ipcMain, shell } = require('electron');
 
 const NININ_URL = 'https://ninin-cc.github.io/i/';
+const TABE_LAB_URL = 'https://note.com/ninin2025/membership/join';
 
 let mainWindow = null;
 const overlayState = {
@@ -84,8 +85,47 @@ function createWindow() {
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url === NININ_URL) {
+    if (url === NININ_URL || url === TABE_LAB_URL) {
       void shell.openExternal(url).catch((error) => console.error('リンクを開けませんでした', error));
+      return { action: 'deny' };
+    }
+    if (url.startsWith('file:') && url.includes('/agenda.html')) {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          width: 520,
+          height: 760,
+          minWidth: 360,
+          minHeight: 480,
+          backgroundColor: '#eaf0f7',
+          alwaysOnTop: true,
+          autoHideMenuBar: true,
+          webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: true
+          }
+        }
+      };
+    }
+    if (url.startsWith('file:') && url.includes('index.html?view=pomodoro')) {
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          width: 620,
+          height: 760,
+          minWidth: 380,
+          minHeight: 520,
+          backgroundColor: '#111827',
+          alwaysOnTop: true,
+          autoHideMenuBar: true,
+          webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: true
+          }
+        }
+      };
     }
     return { action: 'deny' };
   });
