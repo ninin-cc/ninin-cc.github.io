@@ -55,8 +55,10 @@
         #designSettingsCard { padding: .65rem; }
         #designSettingsCard .design-color-box { padding: .5rem; }
         #colorPresetsContainer,
+        #textColorPresetsContainer,
         #borderColorPresetsContainer { gap: .35rem; }
         #colorPresetsContainer button,
+        #textColorPresetsContainer button,
         #borderColorPresetsContainer button {
             width: 1.3rem !important;
             height: 1.3rem !important;
@@ -84,6 +86,39 @@
         }
         #textEffectControl { order: 2; }
         #patternControl { order: 3; }
+        #visualBasicsControls > * { min-width: 0; }
+        #patternControl > label,
+        #textEffectControl > label {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: .68rem;
+            line-height: 1.2;
+        }
+        #patternControl select,
+        #textEffectControl select {
+            min-width: 0;
+            max-width: 100%;
+            padding-left: .55rem;
+            padding-right: 1.7rem;
+            font-size: .75rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        @media (min-width: 640px) {
+            #visualBasicsControls {
+                grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr) minmax(0, 1fr);
+                gap: .5rem;
+            }
+        }
+        @media (min-width: 768px) {
+            #patternControl select,
+            #textEffectControl select {
+                padding-top: .38rem;
+                padding-bottom: .38rem;
+                font-size: .72rem;
+            }
+        }
         .preview-color-layout {
             display: grid;
             grid-template-columns: minmax(4.75rem, 5.5rem) minmax(0, 1fr) minmax(4.75rem, 5.5rem);
@@ -102,6 +137,7 @@
             background: rgba(255, 255, 255, .97) !important;
         }
         .side-color-panel #colorPresetsContainer,
+        .side-color-panel #textColorPresetsContainer,
         .side-color-panel #borderColorPresetsContainer {
             display: grid;
             grid-template-columns: repeat(3, 1.3rem);
@@ -113,20 +149,9 @@
         .side-color-panel #textColorVal,
         .side-color-panel #borderColorVal,
         .side-color-panel #borderColor2Val { display: none; }
-        #backgroundColorPanel > .flex:first-child { display: block; text-align: center; }
-        #backgroundColorPanel > .mt-2 {
-            margin-top: .45rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            align-items: start;
-            gap: .35rem;
-        }
-        #backgroundColorPanel > .mt-2 button,
-        #backgroundColorPanel > .mt-2 #contrastStatus { grid-column: 1 / -1; }
-        #backgroundColorPanel > .mt-2 label { text-align: center; }
-        #backgroundColorPanel > .mt-2 label > span:last-child { justify-content: center; }
-        #backgroundColorPanel #suggestTextColorBtn { padding: .35rem .25rem; font-size: .625rem; }
-        #backgroundColorPanel #contrastStatus { padding: 0; text-align: center; font-size: .6rem; line-height: 1.2; }
+        #backgroundColorPanel .color-setting-group > .flex { display: block; text-align: center; }
+        #backgroundColorPanel .color-setting-group > label { display: block; margin-top: .4rem; text-align: center; }
+        #backgroundColorPanel .color-setting-group > label > span:last-child { justify-content: center; }
         #borderColorPanel > .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -150,6 +175,38 @@
         @media (max-width: 420px) {
             .preview-color-layout { grid-template-columns: 4.5rem minmax(0, 1fr) 4.5rem; gap: .3rem; }
         }
+        @media (max-width: 767px) {
+            body { padding-bottom: 1rem !important; }
+            .app-main { margin-top: .5rem; padding-left: .5rem; padding-right: .5rem; }
+            .workspace { align-items: stretch; gap: .75rem; }
+            .settings-card { order: 1; }
+            .preview-column { order: 2; }
+            .settings-panel { padding: .65rem; }
+            #textSettingsCard { padding: .65rem; }
+            #namePlacementControls > .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            #previewBasicsSlot #visualBasicsControls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            #previewBasicsSlot #visualBasicsControls > :first-child { grid-column: 1 / -1; }
+            .preview-shell { padding: .65rem; }
+            .preview-color-layout {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-areas:
+                    "preview preview"
+                    "border background";
+                align-items: start;
+                gap: .55rem;
+            }
+            #backgroundColorSlot { grid-area: background; }
+            .preview-canvas-column {
+                grid-area: preview;
+                width: 100%;
+                max-width: 22rem;
+                justify-self: center;
+            }
+            #borderColorSlot { grid-area: border; }
+            .preview-color-side { height: auto; }
+            .side-color-panel { height: auto; }
+            #previewImageControls { flex-wrap: wrap; gap: .5rem; }
+        }
         .preview-frame-compact canvas { touch-action: none; }
         .preview-frame-compact.has-image canvas { cursor: grab; }
         .preview-frame-compact.is-dragging canvas { cursor: grabbing; }
@@ -165,6 +222,10 @@
         }
         .safe-area.is-visible { opacity: 1; }
         .color-preset[aria-pressed="true"] {
+            box-shadow: 0 0 0 3px #fff, 0 0 0 6px #2563eb;
+            transform: scale(1.08);
+        }
+        .text-color-preset[aria-pressed="true"] {
             box-shadow: 0 0 0 3px #fff, 0 0 0 6px #2563eb;
             transform: scale(1.08);
         }
@@ -216,9 +277,14 @@
             .workspace { min-height: 0; align-items: flex-start; }
             .preview-column, .settings-card { height: auto; min-height: 0; }
             .preview-shell { height: auto; padding: .875rem; justify-content: flex-start; }
+            #textSettingsCard .text-base { font-size: .925rem; line-height: 1.25rem; }
+            #textSettingsCard .text-sm { font-size: .8rem; line-height: 1.1rem; }
+            #textSettingsCard .text-xs { font-size: .68rem; line-height: .95rem; }
+            #textSettingsCard .control,
+            #textSettingsCard select { font-size: .8rem; }
             .preview-frame-compact {
-                width: min(100%, 21rem);
-                max-width: 21rem;
+                width: min(100%, 23rem);
+                max-width: 23rem;
                 height: auto;
                 aspect-ratio: 1 / 1;
                 flex: 0 0 auto;
@@ -253,7 +319,7 @@
     <div class="workspace flex flex-col md:flex-row-reverse gap-4 items-stretch">
 
         <!-- 右側 (モバイル上部)：プレビュー領域 -->
-        <div class="preview-column w-full md:w-[44%] lg:w-[42%]">
+        <div class="preview-column w-full md:w-[46%] lg:w-[46%]">
             <div id="previewShell" class="preview-shell p-4 rounded-2xl shadow-xl shadow-slate-900/15 flex flex-col items-center justify-start text-white">
                 <div id="designSettingsSlot" class="hidden"></div>
                 <div class="mb-2 w-full flex items-center justify-between gap-3">
@@ -265,8 +331,8 @@
                 <div id="previewBasicsSlot" class="mb-2 w-full flex-none space-y-2 rounded-xl bg-white p-2 text-slate-800 shadow-sm"></div>
 
                 <div class="preview-color-layout">
-                    <aside id="backgroundColorSlot" class="preview-color-side" aria-label="背景色と文字色"></aside>
-                    <div class="flex min-w-0 flex-col items-center justify-center gap-1.5">
+                    <aside id="borderColorSlot" class="preview-color-side" aria-label="枠の色"></aside>
+                    <div class="preview-canvas-column flex min-w-0 flex-col items-center justify-center gap-1.5">
                         <div class="flex w-full items-center justify-between gap-2">
                             <p class="text-[10px] font-semibold text-blue-100/80">648 × 648 px・PNG形式</p>
                             <button id="undoPreviewBtn" type="button" disabled class="whitespace-nowrap rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-extrabold text-white shadow-sm transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-red-950/40 disabled:text-red-100/40">↶ 1つ前に戻る（0）</button>
@@ -282,7 +348,19 @@
                             PNGを保存
                         </button>
                     </div>
-                    <aside id="borderColorSlot" class="preview-color-side" aria-label="枠の色"></aside>
+                    <aside id="backgroundColorSlot" class="preview-color-side" aria-label="背景色と文字色"></aside>
+                </div>
+
+                <div class="mt-2 flex w-full flex-wrap items-center justify-center gap-2 rounded-xl bg-white/10 px-2 py-1.5 ring-1 ring-white/10" aria-label="Teamsでの縮小表示イメージ">
+                    <p class="mr-1 text-center text-[9px] font-semibold leading-tight text-blue-100/80">小さい表示で文字の見え方を確認</p>
+                    <figure class="flex items-center gap-1.5 rounded-lg bg-slate-950/45 px-2 py-1">
+                        <span class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-slate-700 ring-1 ring-white/30"><canvas id="teamsMeetingPreview" width="96" height="96" class="h-12 w-12"></canvas></span>
+                        <figcaption class="whitespace-nowrap text-[9px] font-semibold leading-tight text-blue-50">会議中<br><span class="font-normal text-blue-100/60">48px</span></figcaption>
+                    </figure>
+                    <figure class="flex items-center gap-1.5 rounded-lg bg-slate-950/45 px-2 py-1">
+                        <span class="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-slate-700 ring-1 ring-white/30"><canvas id="teamsChatPreview" width="64" height="64" class="h-8 w-8"></canvas></span>
+                        <figcaption class="whitespace-nowrap text-[9px] font-semibold leading-tight text-blue-50">チャット一覧<br><span class="font-normal text-blue-100/60">32px</span></figcaption>
+                    </figure>
                 </div>
 
                 <div id="previewImageControls" class="hidden mt-2 w-full flex items-center justify-center gap-4" aria-label="写真の表示位置を調整">
@@ -310,7 +388,7 @@
         </div>
 
         <!-- 左側 (モバイル下部)：コントロールパネル -->
-        <div class="settings-card app-card w-full md:w-[56%] lg:w-[58%] rounded-2xl border border-slate-200/80">
+        <div class="settings-card app-card w-full md:w-[54%] lg:w-[54%] rounded-2xl border border-slate-200/80">
             <!-- テキスト設定 -->
             <section id="panel-text" class="settings-panel is-active" aria-label="アイコン設定">
                 <div id="combinedSettingsGrid" class="grid grid-cols-1 gap-4 items-start">
@@ -322,7 +400,17 @@
                         </span>
                         <div class="min-w-0">
                             <h1 class="truncate text-base font-extrabold text-slate-900">プロフィールアイコンメーカー</h1>
-                            <p class="text-[11px] text-slate-500">まるいアイコンも四角いアイコンもブラウザだけでかんたん作成</p>
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p class="text-[11px] text-slate-500">まるいアイコンも四角いアイコンもブラウザだけでかんたん作成</p>
+                                <div class="flex shrink-0 items-center gap-1" aria-label="対応サービス">
+                                    <a href="https://www.microsoft.com/ja-jp/microsoft-teams/" target="_blank" rel="noopener noreferrer" title="Microsoft Teams" aria-label="Microsoft Teams公式サイトを開く" class="grid h-5 w-5 place-items-center overflow-hidden rounded bg-[#6264A7] shadow-sm transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"><svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true"><circle cx="15.5" cy="5" r="2.2" fill="#fff" opacity=".9"/><rect x="8" y="6" width="10" height="9" rx="2" fill="#7B83EB"/><rect x="2" y="4" width="10" height="11" rx="2" fill="#fff"/><path d="M4.2 6.6h5.6v1.5H7.9v4.5H6.1V8.1H4.2z" fill="#4F52B2"/></svg></a>
+                                    <a href="https://slack.com/intl/ja-jp/" target="_blank" rel="noopener noreferrer" title="Slack" aria-label="Slack公式サイトを開く" class="grid h-5 w-5 place-items-center rounded bg-white shadow-sm ring-1 ring-slate-200 transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"><img src="assets/slack-logo.png" alt="" class="h-4 w-4 object-contain" aria-hidden="true"></a>
+                                    <a href="https://x.com/" target="_blank" rel="noopener noreferrer" title="X" aria-label="X公式サイトを開く" class="grid h-5 w-5 place-items-center rounded bg-black shadow-sm transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"><svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M3 3l14 14M17 3L3 17"/></svg></a>
+                                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram公式サイトを開く" class="grid h-5 w-5 place-items-center rounded bg-gradient-to-br from-purple-600 via-pink-500 to-yellow-400 shadow-sm transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"><svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="#fff" stroke-width="1.7" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="4"/><circle cx="10" cy="10" r="3.4"/><circle cx="14.8" cy="5.2" r=".8" fill="#fff" stroke="none"/></svg></a>
+                                    <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn公式サイトを開く" class="grid h-5 w-5 place-items-center rounded bg-[#0A66C2] text-[10px] font-black leading-none text-white shadow-sm transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">in</a>
+                                    <a href="https://note.com/" target="_blank" rel="noopener noreferrer" title="note" aria-label="note公式サイトを開く" class="grid h-5 w-5 place-items-center overflow-hidden rounded bg-white shadow-sm ring-1 ring-slate-200 transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"><img src="assets/note-logo.png" alt="" class="h-5 w-5 object-contain" aria-hidden="true"></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button id="resetBtn" type="button" class="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">リセット</button>
@@ -496,18 +584,24 @@
                         </details>
 
                         <div id="backgroundColorPanel" class="side-color-panel design-color-box rounded-lg bg-slate-50 border border-slate-200 p-2.5">
-                            <div class="flex flex-wrap items-center gap-2">
+                            <section class="color-setting-group" aria-label="文字の色">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="mr-1 text-xs font-bold text-slate-600">文字の色</span>
+                                    <div class="flex flex-wrap gap-2" id="textColorPresetsContainer">
+                                    <button type="button" aria-label="文字をオレンジ" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#D83B01" style="background-color:#D83B01" title="オレンジ"></button><button type="button" aria-label="文字をネイビー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#1E3A5F" style="background-color:#1E3A5F" title="ネイビー"></button><button type="button" aria-label="文字をピンク" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#E3008C" style="background-color:#E3008C" title="ピンク"></button><button type="button" aria-label="文字を水色" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#38BDF8" style="background-color:#38BDF8" title="水色"></button><button type="button" aria-label="文字をM365 ブルー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#0078D4" style="background-color:#0078D4" title="M365 ブルー"></button><button type="button" aria-label="文字をティール" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#008272" style="background-color:#008272" title="ティール"></button><button type="button" aria-label="文字をグリーン" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#107C41" style="background-color:#107C41" title="グリーン"></button><button type="button" aria-label="文字をパープル" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#5C2D91" style="background-color:#5C2D91" title="パープル"></button><button type="button" aria-label="文字をレッド" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#D13438" style="background-color:#D13438" title="レッド"></button><button type="button" aria-label="文字をイエロー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#FFB900" style="background-color:#FFB900" title="イエロー"></button><button type="button" aria-label="文字をブラック" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 text-color-preset" data-color="#242424" style="background-color:#242424" title="ブラック"></button><button type="button" aria-label="文字を白" aria-pressed="true" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-300 text-color-preset" data-color="#FFFFFF" style="background-color:#FFFFFF" title="白"></button>
+                                    </div>
+                                </div>
+                                <label class="text-[11px] text-slate-500"><span class="block mb-1">カスタム</span><span class="flex items-center gap-1.5"><input type="color" id="textColor" value="#FFFFFF" class="w-9 h-9 p-1 border border-slate-300 rounded-lg cursor-pointer"><span id="textColorVal" class="text-xs font-mono">#FFFFFF</span></span></label>
+                            </section>
+                            <section class="color-setting-group mt-2 border-t border-slate-200 pt-2" aria-label="背景色">
+                                <div class="flex flex-wrap items-center gap-2">
                                 <span class="mr-1 text-xs font-bold text-slate-600">背景色</span>
                                 <div class="flex flex-wrap gap-2" id="colorPresetsContainer">
                                     <button type="button" aria-label="オレンジ" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#D83B01" style="background-color:#D83B01" title="オレンジ"></button><button type="button" aria-label="ネイビー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#1E3A5F" style="background-color:#1E3A5F" title="ネイビー"></button><button type="button" aria-label="ピンク" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#E3008C" style="background-color:#E3008C" title="ピンク"></button><button type="button" aria-label="水色" aria-pressed="true" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#38BDF8" style="background-color:#38BDF8" title="水色"></button><button type="button" aria-label="M365 ブルー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#0078D4" style="background-color:#0078D4" title="M365 ブルー"></button><button type="button" aria-label="ティール" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#008272" style="background-color:#008272" title="ティール"></button><button type="button" aria-label="グリーン" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#107C41" style="background-color:#107C41" title="グリーン"></button><button type="button" aria-label="パープル" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#5C2D91" style="background-color:#5C2D91" title="パープル"></button><button type="button" aria-label="レッド" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#D13438" style="background-color:#D13438" title="レッド"></button><button type="button" aria-label="イエロー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#FFB900" style="background-color:#FFB900" title="イエロー"></button><button type="button" aria-label="グレー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#7A7574" style="background-color:#7A7574" title="グレー"></button><button type="button" aria-label="ブラック" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#242424" style="background-color:#242424" title="ブラック"></button>
                                 </div>
-                            </div>
-                            <div class="mt-2 flex flex-wrap items-end gap-3">
+                                </div>
                                 <label class="text-[11px] text-slate-500"><span class="block mb-1">カスタム</span><span class="flex items-center gap-1.5"><input type="color" id="bgColor" value="#38BDF8" class="w-9 h-9 p-1 border border-slate-300 rounded-lg cursor-pointer"><span id="bgColorVal" class="text-xs font-mono">#38BDF8</span></span></label>
-                                <label class="text-[11px] text-slate-500"><span class="block mb-1">文字色</span><span class="flex items-center gap-1.5"><input type="color" id="textColor" value="#FFFFFF" class="w-9 h-9 p-1 border border-slate-300 rounded-lg cursor-pointer"><span id="textColorVal" class="text-xs font-mono">#FFFFFF</span></span></label>
-                                <button id="suggestTextColorBtn" type="button" class="px-2.5 py-2 text-xs font-bold text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg">読みやすい色</button>
-                                <span id="contrastStatus" class="pb-2 text-xs font-medium text-slate-500" aria-live="polite"></span>
-                            </div>
+                            </section>
                         </div>
 
                         <div id="borderColorPanel" class="side-color-panel design-color-box flex flex-col rounded-lg bg-slate-50 border border-slate-200 p-2.5">
@@ -535,7 +629,7 @@
                                 </div>
                             </div>
                             <div id="borderAngleWrap" class="order-3 mt-2">
-                                <label for="borderAngle" class="field-label text-xs font-bold text-slate-600 mb-1"><span>2色の分割角度</span><span id="borderAngleVal">45°</span></label>
+                                <label for="borderAngle" class="field-label text-xs font-bold text-slate-600 mb-1"><span>分割角度</span><span id="borderAngleVal">45°</span></label>
                                 <input type="range" id="borderAngle" min="0" max="360" step="1" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
                             </div>
                         </div>
@@ -573,8 +667,12 @@
     const STORAGE_VERSION = 3;
     const canvas = document.getElementById('iconCanvas');
     const ctx = canvas.getContext('2d');
+    const photoLayerCanvas = document.createElement('canvas');
+    const photoLayerCtx = photoLayerCanvas.getContext('2d');
     canvas.width = CANVAS_SIZE;
     canvas.height = CANVAS_SIZE;
+    photoLayerCanvas.width = CANVAS_SIZE;
+    photoLayerCanvas.height = CANVAS_SIZE;
 
     // 状態管理
     const DEFAULT_STATE = {
@@ -669,6 +767,7 @@
         arcSpreadBottomVal: document.getElementById('arcSpreadBottomVal'),
         patternSelect: document.getElementById('patternSelect'),
         colorPresets: document.querySelectorAll('.color-preset'),
+        textColorPresets: document.querySelectorAll('.text-color-preset'),
         borderColorPresets: document.querySelectorAll('.border-color-preset'),
         borderPresetTargetRadios: document.getElementsByName('borderPresetTarget'),
         borderPresetTarget2Label: document.getElementById('borderPresetTarget2Label'),
@@ -707,6 +806,8 @@
         previewMoveResetBtn: document.getElementById('previewMoveResetBtn'),
         previewMoveRightBtn: document.getElementById('previewMoveRightBtn'),
         previewMoveDownBtn: document.getElementById('previewMoveDownBtn'),
+        teamsMeetingPreview: document.getElementById('teamsMeetingPreview'),
+        teamsChatPreview: document.getElementById('teamsChatPreview'),
         downloadBtn: document.getElementById('downloadBtn'),
         resetBtn: document.getElementById('resetBtn'),
         resetConfirmModal: document.getElementById('resetConfirmModal'),
@@ -722,8 +823,6 @@
         nameCounter: document.getElementById('nameCounter'),
         roleCounter: document.getElementById('roleCounter'),
         roleCounter2: document.getElementById('roleCounter2'),
-        suggestTextColorBtn: document.getElementById('suggestTextColorBtn'),
-        contrastStatus: document.getElementById('contrastStatus'),
         toast: document.getElementById('toast'),
         settingsTabs: Array.from(document.querySelectorAll('.settings-tab')),
         settingsPanels: Array.from(document.querySelectorAll('.settings-panel')),
@@ -1093,50 +1192,11 @@
         els.roleCounter2.textContent = `${Array.from(state.role2).length}文字`;
     }
 
-    function hexToRgb(hex) {
-        const value = hex.replace('#', '');
-        if (!/^[0-9a-f]{6}$/i.test(value)) return { r: 0, g: 0, b: 0 };
-        return {
-            r: parseInt(value.slice(0, 2), 16),
-            g: parseInt(value.slice(2, 4), 16),
-            b: parseInt(value.slice(4, 6), 16)
-        };
-    }
-
-    function relativeLuminance(hex) {
-        const { r, g, b } = hexToRgb(hex);
-        const channels = [r, g, b].map(value => {
-            const channel = value / 255;
-            return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
-        });
-        return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
-    }
-
-    function getContrastRatio(colorA, colorB) {
-        const lighter = Math.max(relativeLuminance(colorA), relativeLuminance(colorB));
-        const darker = Math.min(relativeLuminance(colorA), relativeLuminance(colorB));
-        return (lighter + 0.05) / (darker + 0.05);
-    }
-
-    function getRecommendedTextColor() {
-        const whiteRatio = getContrastRatio('#FFFFFF', state.bgColor);
-        const darkRatio = getContrastRatio('#111827', state.bgColor);
-        return whiteRatio >= darkRatio ? '#FFFFFF' : '#111827';
-    }
-
-    function updateContrastStatus() {
-        if (state.bgImage) {
-            els.contrastStatus.textContent = '写真背景では文字の影がおすすめです';
-            els.contrastStatus.className = 'text-xs font-medium text-amber-600';
-            return;
-        }
-        const ratio = getContrastRatio(state.textColor, state.bgColor);
-        const isReadable = ratio >= 4.5;
-        els.contrastStatus.textContent = `${isReadable ? '読みやすい配色' : 'コントラスト弱め'}（${ratio.toFixed(1)}:1）`;
-        els.contrastStatus.className = `text-xs font-semibold ${isReadable ? 'text-emerald-600' : 'text-amber-600'}`;
-    }
-
     function updatePresetSelection() {
+        els.textColorPresets.forEach(btn => {
+            const selected = btn.dataset.color.toUpperCase() === state.textColor.toUpperCase();
+            btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
         els.colorPresets.forEach(btn => {
             const selected = btn.dataset.color.toUpperCase() === state.bgColor.toUpperCase();
             btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
@@ -1228,7 +1288,6 @@
         els.clearImageBtn.classList.toggle('hidden', !state.bgImage);
         updateCounters();
         updatePresetSelection();
-        updateContrastStatus();
     }
 
     function switchSettingsTab(tabName, moveFocus = false) {
@@ -1433,25 +1492,44 @@
         return gradient;
     }
 
-    function applyPhotoSharpen(amount) {
+    function applyPhotoSharpen(targetCtx, width, height, amount) {
         if (amount <= 0) return;
-        const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-        const output = imageData.data;
-        const source = new Uint8ClampedArray(output);
-        const strength = Math.min(0.85, amount / 120);
-        const row = CANVAS_SIZE * 4;
-        for (let y = 1; y < CANVAS_SIZE - 1; y++) {
-            for (let x = 1; x < CANVAS_SIZE - 1; x++) {
-                const index = (y * CANVAS_SIZE + x) * 4;
-                for (let channel = 0; channel < 3; channel++) {
-                    const center = source[index + channel];
-                    const neighbors = source[index - 4 + channel] + source[index + 4 + channel]
-                        + source[index - row + channel] + source[index + row + channel];
-                    output[index + channel] = center + strength * (center * 4 - neighbors);
+        try {
+            const imageData = targetCtx.getImageData(0, 0, width, height);
+            const output = imageData.data;
+            const source = new Uint8ClampedArray(output);
+            const strength = Math.min(0.85, amount / 120);
+            const row = width * 4;
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    const index = (y * width + x) * 4;
+                    for (let channel = 0; channel < 3; channel++) {
+                        const center = source[index + channel];
+                        const neighbors = source[index - 4 + channel] + source[index + 4 + channel]
+                            + source[index - row + channel] + source[index + row + channel];
+                        output[index + channel] = center + strength * (center * 4 - neighbors);
+                    }
                 }
             }
+            targetCtx.putImageData(imageData, 0, 0);
+        } catch (error) {
+            // file:// で画像の画素読み取りが制限されても、描画全体は中断しない。
+            if (error?.name !== 'SecurityError') console.warn('シャープ補正を簡易表示に切り替えました:', error);
         }
-        ctx.putImageData(imageData, 0, 0);
+    }
+
+    function updateTeamsPreviews() {
+        [els.teamsMeetingPreview, els.teamsChatPreview].forEach(previewCanvas => {
+            const previewCtx = previewCanvas.getContext('2d');
+            const previewFrame = previewCanvas.parentElement;
+            const isCircle = state.shape === 'circle';
+            previewFrame.classList.toggle('rounded-full', isCircle);
+            previewFrame.classList.toggle('rounded-none', !isCircle);
+            previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            previewCtx.imageSmoothingEnabled = true;
+            previewCtx.imageSmoothingQuality = 'high';
+            previewCtx.drawImage(canvas, 0, 0, previewCanvas.width, previewCanvas.height);
+        });
     }
 
     function renderCanvas() {
@@ -1490,28 +1568,31 @@
             const offsetX = centerX + (state.bgOffsetX / 100) * shiftLimitX;
             const offsetY = centerY + (state.bgOffsetY / 100) * shiftLimitY;
 
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
+            photoLayerCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+            photoLayerCtx.imageSmoothingEnabled = true;
+            photoLayerCtx.imageSmoothingQuality = 'high';
             const softBlur = state.photoSharpness < 0 ? Math.abs(state.photoSharpness) / 25 : 0;
+            const sharpContrast = state.photoSharpness > 0 ? 1 + state.photoSharpness * 0.002 : 1;
             const filterParts = [
                 `brightness(${state.photoBrightness}%)`,
-                `contrast(${state.photoContrast}%)`,
+                `contrast(${state.photoContrast * sharpContrast}%)`,
                 `hue-rotate(${state.photoHue}deg)`
             ];
             if (softBlur > 0) filterParts.push(`blur(${softBlur}px)`);
             if (state.photoFilter === 'sepia') filterParts.push('sepia(1)');
             if (state.photoFilter === 'grayscale') filterParts.push('grayscale(1)');
-            ctx.save();
-            ctx.filter = filterParts.join(' ');
+            photoLayerCtx.save();
+            photoLayerCtx.filter = filterParts.join(' ');
             if (state.bgFlipX) {
-                ctx.translate(offsetX + drawWidth, 0);
-                ctx.scale(-1, 1);
-                ctx.drawImage(state.bgImage, 0, offsetY, drawWidth, drawHeight);
+                photoLayerCtx.translate(offsetX + drawWidth, 0);
+                photoLayerCtx.scale(-1, 1);
+                photoLayerCtx.drawImage(state.bgImage, 0, offsetY, drawWidth, drawHeight);
             } else {
-                ctx.drawImage(state.bgImage, offsetX, offsetY, drawWidth, drawHeight);
+                photoLayerCtx.drawImage(state.bgImage, offsetX, offsetY, drawWidth, drawHeight);
             }
-            ctx.restore();
-            applyPhotoSharpen(state.photoSharpness);
+            photoLayerCtx.restore();
+            applyPhotoSharpen(photoLayerCtx, CANVAS_SIZE, CANVAS_SIZE, state.photoSharpness);
+            ctx.drawImage(photoLayerCanvas, 0, 0);
         } else {
             // 画像がない場合はパターンまたは単色
             if (state.pattern === 'none') {
@@ -1687,9 +1768,9 @@
         }
 
         ctx.restore();
+        updateTeamsPreviews();
         updateCounters();
         updatePresetSelection();
-        updateContrastStatus();
         persistState();
     }
 
@@ -1790,6 +1871,16 @@
     });
 
     // プリセットカラーボタンのイベント
+    els.textColorPresets.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.dataset.color;
+            state.textColor = color;
+            els.textColor.value = color;
+            els.textColorVal.textContent = color.toUpperCase();
+            renderCanvas();
+        });
+    });
+
     els.colorPresets.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const color = e.target.dataset.color;
@@ -1809,14 +1900,6 @@
     els.autoFit.addEventListener('change', (e) => {
         state.autoFit = e.target.checked;
         renderCanvas();
-    });
-
-    els.suggestTextColorBtn.addEventListener('click', () => {
-        state.textColor = getRecommendedTextColor();
-        els.textColor.value = state.textColor;
-        els.textColorVal.textContent = state.textColor;
-        renderCanvas();
-        showToast('読みやすい文字色を適用しました');
     });
 
     els.safeAreaBtn.addEventListener('click', () => {
