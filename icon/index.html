@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M365 プロフィールアイコンメーカー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            color-scheme: light;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(37, 99, 235, .09), transparent 32rem),
+                radial-gradient(circle at 92% 12%, rgba(14, 165, 233, .08), transparent 28rem),
+                #f8fafc;
+        }
+        .app-card {
+            background: rgba(255, 255, 255, .94);
+            box-shadow: 0 18px 55px -35px rgba(15, 23, 42, .35);
+        }
+        .section-kicker {
+            display: inline-flex;
+            width: 1.75rem;
+            height: 1.75rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: .625rem;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: .75rem;
+            font-weight: 800;
+        }
+        .field-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .control:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid rgba(59, 130, 246, .28);
+            outline-offset: 2px;
+        }
+        .preview-shell {
+            background: linear-gradient(145deg, #0f172a, #172554);
+            overflow: visible;
+        }
+        #designSettingsCard { color: #0f172a; }
+        #designSettingsCard { padding: .65rem; }
+        #designSettingsCard .design-color-box { padding: .5rem; }
+        #colorPresetsContainer,
+        #borderColorPresetsContainer { gap: .35rem; }
+        #colorPresetsContainer button,
+        #borderColorPresetsContainer button {
+            width: 1.3rem !important;
+            height: 1.3rem !important;
+        }
+        #designSettingsCard input[type="color"] {
+            width: 2rem;
+            height: 2rem;
+        }
+        #textSettingsCard label:has(input[name="layout"]) {
+            padding: .4rem .5rem;
+            border-radius: .65rem;
+        }
+        #textSettingsCard label:has(input[name="rolePlacement"]) {
+            padding: .5rem .65rem;
+            border-radius: .65rem;
+        }
+        #textSettingsCard .control {
+            padding-top: .5rem;
+            padding-bottom: .5rem;
+        }
+        #identityFields { order: -1; }
+        @media (min-width: 640px) {
+            #namePlacementSlot,
+            #rolePlacementSlot { min-height: 5rem; }
+        }
+        #textEffectControl { order: 2; }
+        #patternControl { order: 3; }
+        .preview-color-layout {
+            display: grid;
+            grid-template-columns: minmax(4.75rem, 5.5rem) minmax(0, 1fr) minmax(4.75rem, 5.5rem);
+            align-items: center;
+            gap: .45rem;
+            width: 100%;
+        }
+        .preview-color-side {
+            align-self: stretch;
+            min-width: 0;
+        }
+        .side-color-panel {
+            height: 100%;
+            padding: .4rem !important;
+            overflow: hidden;
+            background: rgba(255, 255, 255, .97) !important;
+        }
+        .side-color-panel #colorPresetsContainer,
+        .side-color-panel #borderColorPresetsContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 1.3rem);
+            justify-content: center;
+            gap: .3rem;
+            margin-top: .35rem;
+        }
+        .side-color-panel #bgColorVal,
+        .side-color-panel #textColorVal,
+        .side-color-panel #borderColorVal,
+        .side-color-panel #borderColor2Val { display: none; }
+        #backgroundColorPanel > .flex:first-child { display: block; text-align: center; }
+        #backgroundColorPanel > .mt-2 {
+            margin-top: .45rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+            gap: .35rem;
+        }
+        #backgroundColorPanel > .mt-2 button,
+        #backgroundColorPanel > .mt-2 #contrastStatus { grid-column: 1 / -1; }
+        #backgroundColorPanel > .mt-2 label { text-align: center; }
+        #backgroundColorPanel > .mt-2 label > span:last-child { justify-content: center; }
+        #backgroundColorPanel #suggestTextColorBtn { padding: .35rem .25rem; font-size: .625rem; }
+        #backgroundColorPanel #contrastStatus { padding: 0; text-align: center; font-size: .6rem; line-height: 1.2; }
+        #borderColorPanel > .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .35rem;
+        }
+        #borderColorPanel > .grid > label:first-child,
+        #borderColorPanel > .grid > div:last-child { grid-column: 1 / -1; }
+        #borderColorPanel select { padding: .3rem; font-size: .7rem; }
+        #borderColorPanel > .order-1 {
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: .35rem;
+        }
+        #borderColorPanel > .order-1 > span { text-align: center; font-size: .65rem; }
+        #borderColorPanel > .order-1 > .flex { justify-content: center; }
+        #borderAngleWrap { margin-top: .45rem; }
+        .side-color-panel .field-label { gap: .25rem; font-size: .625rem; }
+        .side-color-panel input[type="range"] { height: .35rem; }
+        @media (max-width: 420px) {
+            .preview-color-layout { grid-template-columns: 4.5rem minmax(0, 1fr) 4.5rem; gap: .3rem; }
+        }
+        .preview-frame-compact canvas { touch-action: none; }
+        .preview-frame-compact.has-image canvas { cursor: grab; }
+        .preview-frame-compact.is-dragging canvas { cursor: grabbing; }
+        .preview-frame-compact.is-name-dragging canvas { cursor: move; }
+        .safe-area {
+            position: absolute;
+            inset: 10%;
+            border: 2px dashed rgba(255,255,255,.7);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+        .safe-area.is-visible { opacity: 1; }
+        .color-preset[aria-pressed="true"] {
+            box-shadow: 0 0 0 3px #fff, 0 0 0 6px #2563eb;
+            transform: scale(1.08);
+        }
+        .border-color-preset[aria-pressed="true"] {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+            transform: scale(1.08);
+        }
+        .toast {
+            transform: translate(-50%, 1rem);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease, transform .2s ease;
+        }
+        .toast.is-visible {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+        .settings-tab {
+            position: relative;
+            flex: 1;
+            padding: .75rem .5rem;
+            color: #64748b;
+            font-size: .8125rem;
+            font-weight: 700;
+            transition: color .18s ease, background .18s ease;
+        }
+        .settings-tab:hover { color: #0f172a; background: #f8fafc; }
+        .settings-tab[aria-selected="true"] { color: #2563eb; background: #eff6ff; }
+        .settings-tab[aria-selected="true"]::after {
+            content: "";
+            position: absolute;
+            left: 22%;
+            right: 22%;
+            bottom: 0;
+            height: 3px;
+            border-radius: 999px 999px 0 0;
+            background: #2563eb;
+        }
+        .settings-panel { display: none; padding: 1rem 1.125rem 1.125rem; }
+        .settings-panel[hidden] { display: none; }
+        .settings-panel.is-active { display: block; animation: panel-in .18s ease-out; }
+        @keyframes panel-in {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (min-width: 768px) {
+            body { min-height: 100vh; overflow-y: auto; padding-bottom: 1rem !important; }
+            .app-main { padding-top: .625rem; padding-bottom: .625rem; }
+            .workspace { min-height: 0; align-items: flex-start; }
+            .preview-column, .settings-card { height: auto; min-height: 0; }
+            .preview-shell { height: auto; padding: .875rem; justify-content: flex-start; }
+            .preview-frame-compact {
+                width: min(100%, 21rem);
+                max-width: 21rem;
+                height: auto;
+                aspect-ratio: 1 / 1;
+                flex: 0 0 auto;
+            }
+            .settings-card, .settings-panel { height: auto; overflow: visible; }
+        }
+        /* プレビュー用キャンバスの透過背景（チェッカーボード） */
+        .checkerboard {
+            background-color: #F0F0F0;
+            background-image:
+                linear-gradient(45deg, #D1D5DB 25%, transparent 25%, transparent 75%, #D1D5DB 75%, #D1D5DB),
+                linear-gradient(45deg, #D1D5DB 25%, transparent 25%, transparent 75%, #D1D5DB 75%, #D1D5DB);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        /* スクロールバーの非表示（モバイル対応時用） */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans text-slate-800 pb-10">
+
+<main class="app-main max-w-7xl mx-auto px-3 sm:px-4 mt-3 md:mt-0">
+    <div class="workspace flex flex-col md:flex-row-reverse gap-4 items-stretch">
+
+        <!-- 右側 (モバイル上部)：プレビュー領域 -->
+        <div class="preview-column w-full md:w-[44%] lg:w-[42%]">
+            <div id="previewShell" class="preview-shell p-4 rounded-2xl shadow-xl shadow-slate-900/15 flex flex-col items-center justify-start text-white">
+                <div id="designSettingsSlot" class="hidden"></div>
+                <div class="mb-2 w-full flex items-center justify-between gap-3">
+                    <h2 class="flex items-center gap-2 text-sm font-bold tracking-wide"><span class="grid h-7 w-7 place-items-center rounded-lg bg-blue-500/20 text-blue-100">2</span><span>配色・ライブプレビュー</span></h2>
+                    <div class="flex items-center gap-1.5">
+                        <button id="safeAreaBtn" type="button" aria-pressed="false" class="text-xs font-semibold text-blue-100 hover:text-white bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-full transition-colors">安全領域</button>
+                    </div>
+                </div>
+                <div id="previewBasicsSlot" class="mb-2 w-full flex-none space-y-2 rounded-xl bg-white p-2 text-slate-800 shadow-sm"></div>
+
+                <div class="preview-color-layout">
+                    <aside id="backgroundColorSlot" class="preview-color-side" aria-label="背景色と文字色"></aside>
+                    <div class="flex min-w-0 flex-col items-center justify-center gap-1.5">
+                        <div class="flex w-full items-center justify-between gap-2">
+                            <p class="text-[10px] font-semibold text-blue-100/80">648 × 648 px・PNG形式</p>
+                            <button id="undoPreviewBtn" type="button" disabled class="whitespace-nowrap rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-extrabold text-white shadow-sm transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-red-950/40 disabled:text-red-100/40">↶ 1つ前に戻る（0）</button>
+                        </div>
+                        <div id="previewFrame" class="preview-frame-compact relative w-full aspect-square rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/15 checkerboard flex items-center justify-center transition-all">
+                            <canvas id="iconCanvas" class="w-full h-full object-contain" aria-label="アイコンプレビュー。名前をドラッグして位置を微調整できます" title="名前をドラッグして位置を微調整できます"></canvas>
+                            <div id="safeArea" class="safe-area" aria-hidden="true"></div>
+                        </div>
+                        <button id="downloadBtn" class="w-full py-2 px-3 bg-white hover:bg-blue-50 text-blue-700 text-sm font-extrabold rounded-xl shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            PNGを保存
+                        </button>
+                    </div>
+                    <aside id="borderColorSlot" class="preview-color-side" aria-label="枠の色"></aside>
+                </div>
+
+                <div id="previewImageControls" class="hidden mt-2 w-full flex items-center justify-center gap-4" aria-label="写真の表示位置を調整">
+                        <div class="flex items-center gap-1 rounded-xl bg-slate-950/70 p-1.5 text-white shadow-lg ring-1 ring-white/10">
+                            <button id="previewZoomOutBtn" type="button" aria-label="写真を縮小" title="写真を縮小" class="grid h-10 w-10 place-items-center rounded-lg bg-white/10 text-2xl font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">−</button>
+                            <span id="previewZoomVal" class="min-w-[3.25rem] text-center text-xs font-bold tabular-nums">100%</span>
+                            <button id="previewZoomInBtn" type="button" aria-label="写真を拡大" title="写真を拡大" class="grid h-10 w-10 place-items-center rounded-lg bg-white/10 text-2xl font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">＋</button>
+                        </div>
+                        <button id="previewFlipBtn" type="button" aria-label="写真を左右反転" aria-pressed="false" title="写真を左右反転" class="h-10 whitespace-nowrap rounded-xl bg-slate-950/70 px-3 text-xs font-bold text-white shadow-lg ring-1 ring-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white">↔ 左右反転</button>
+                        <div class="grid grid-cols-3 gap-1 rounded-xl bg-slate-950/70 p-1.5 text-white shadow-lg ring-1 ring-white/10">
+                            <span></span>
+                            <button id="previewMoveUpBtn" type="button" aria-label="写真を上へ移動" title="上へ" class="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-lg font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">↑</button>
+                            <span></span>
+                            <button id="previewMoveLeftBtn" type="button" aria-label="写真を左へ移動" title="左へ" class="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-lg font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">←</button>
+                            <button id="previewMoveResetBtn" type="button" aria-label="写真を中央に戻す" title="中央に戻す" class="grid h-9 w-9 place-items-center rounded-lg bg-blue-500/80 text-sm font-bold hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-white">●</button>
+                            <button id="previewMoveRightBtn" type="button" aria-label="写真を右へ移動" title="右へ" class="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-lg font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">→</button>
+                            <span></span>
+                            <button id="previewMoveDownBtn" type="button" aria-label="写真を下へ移動" title="下へ" class="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-lg font-bold hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white">↓</button>
+                            <span></span>
+                        </div>
+                </div>
+                <div id="previewImageAdjustmentsSlot" class="mt-2 w-full"></div>
+
+            </div>
+        </div>
+
+        <!-- 左側 (モバイル下部)：コントロールパネル -->
+        <div class="settings-card app-card w-full md:w-[56%] lg:w-[58%] rounded-2xl border border-slate-200/80">
+            <!-- テキスト設定 -->
+            <section id="panel-text" class="settings-panel is-active" aria-label="アイコン設定">
+                <div id="combinedSettingsGrid" class="grid grid-cols-1 gap-4 items-start">
+                <div id="textSettingsCard" class="rounded-xl border border-slate-200 bg-white p-3">
+                <div class="mb-3 flex items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
+                    <div class="flex min-w-0 items-center gap-2.5">
+                        <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                        <div class="min-w-0">
+                            <h1 class="truncate text-base font-extrabold text-slate-900">プロフィールアイコンメーカー</h1>
+                            <p class="text-[11px] text-slate-500">まるいアイコンも四角いアイコンもブラウザだけでかんたん作成</p>
+                        </div>
+                    </div>
+                    <button id="resetBtn" type="button" class="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">リセット</button>
+                </div>
+                <div class="flex items-center gap-3 mb-2"><span class="section-kicker">1</span><h3 class="text-base font-bold text-slate-900">文字とレイアウト</h3></div>
+                <div class="mb-3 space-y-1">
+                    <p class="rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-[10px] font-extrabold leading-snug text-emerald-800">🔒 サーバーへ情報や画像は一切送信されず、PCのローカル領域で作成ができますので、情報セキュリティの観点からも安心してご利用いただけます。</p>
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 rounded-lg border border-orange-300 bg-orange-100 px-2.5 py-1.5 text-[10px] leading-snug text-red-700">
+                        <span class="font-extrabold">👥 チームでデザインを統一できます</span>
+                        <span>色合い・枠・部署名などをURLで共有でき、チームで統一したデザインを簡単に利用できます。</span>
+                        <span class="font-extrabold">個人名と写真は共有されません。</span>
+                        <button id="shareLinkBtn" type="button" class="ml-auto shrink-0 rounded-md border border-orange-400 bg-orange-200 px-2.5 py-1 font-extrabold text-red-700 shadow-sm hover:bg-orange-300" title="名前と写真を除くデザイン設定をURLで共有">🔗 共有URL</button>
+                    </div>
+                </div>
+
+                <div id="textSettingsStack" class="flex flex-col gap-3">
+                    <div id="namePlacementControls">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">名前の配置</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                            <label class="cursor-pointer p-2.5 text-center border rounded-xl hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-blue-500">
+                                <input type="radio" name="layout" value="standard" checked class="sr-only">
+                                <span class="text-sm font-bold">中央</span><span class="block text-[11px] text-slate-500 mt-0.5">横書き</span>
+                            </label>
+                            <label class="cursor-pointer p-2.5 text-center border rounded-xl hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-blue-500">
+                                <input type="radio" name="layout" value="top" class="sr-only">
+                                <span class="text-sm font-bold">上寄せ</span><span class="block text-[11px] text-slate-500 mt-0.5">横書き</span>
+                            </label>
+                            <label class="cursor-pointer p-2.5 text-center border rounded-xl hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-blue-500">
+                                <input type="radio" name="layout" value="bottom" class="sr-only">
+                                <span class="text-sm font-bold">下寄せ</span><span class="block text-[11px] text-slate-500 mt-0.5">横書き</span>
+                            </label>
+                            <label class="cursor-pointer p-2.5 text-center border rounded-xl hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-blue-500">
+                                <input type="radio" name="layout" value="vertical-left" class="sr-only">
+                                <span class="text-sm font-bold">左寄せ</span><span class="block text-[11px] text-slate-500 mt-0.5">縦書き</span>
+                            </label>
+                            <label class="cursor-pointer p-2.5 text-center border rounded-xl hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-blue-500">
+                                <input type="radio" name="layout" value="vertical-right" class="sr-only">
+                                <span class="text-sm font-bold">右寄せ</span><span class="block text-[11px] text-slate-500 mt-0.5">縦書き</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="identityFields" class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <section class="space-y-2 rounded-xl border border-blue-200 bg-blue-50/40 p-2.5 sm:col-span-1" aria-label="名前設定">
+                            <p class="text-xs font-extrabold text-blue-700">名前設定</p>
+                            <div>
+                                <label for="nameInput" class="field-label text-sm font-medium text-slate-700 mb-1"><span>名前</span><span id="nameCounter" class="text-xs text-slate-400">7文字</span></label>
+                                <input type="text" id="nameInput" value="あいこんたろう" maxlength="24" autocomplete="off" class="control w-full px-3 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                            </div>
+                            <label for="nameFont" class="block text-xs font-medium text-slate-600">名前のフォント
+                                <select id="nameFont" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"><option value="default">標準（現在の書体）</option><option value="yu-gothic">游ゴシック</option><option value="biz-gothic">BIZ UDPゴシック</option><option value="meiryo">メイリオ</option><option value="yu-mincho">游明朝</option></select>
+                            </label>
+                            <div>
+                                <label for="nameSize" class="field-label text-xs font-medium text-slate-600 mb-1"><span>名前の大きさ</span><span id="nameSizeVal">120px</span></label>
+                                <input type="range" id="nameSize" min="40" max="250" value="120" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                            <div id="namePlacementSlot"></div>
+                        </section>
+
+                        <section class="space-y-2 rounded-xl border border-indigo-200 bg-indigo-50/35 p-2.5 sm:col-span-2" aria-label="所属名設定">
+                            <p class="text-xs font-extrabold text-indigo-700">所属名設定（上・下）</p>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="roleInput" class="field-label text-sm font-medium text-slate-700 mb-1"><span>所属名（上）</span><span id="roleCounter" class="text-xs text-slate-400">9文字</span></label>
+                                    <input type="text" id="roleInput" value="㈱アイコンメーカー" maxlength="32" autocomplete="off" placeholder="例：㈱アイコンメーカー" class="control w-full px-3 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="roleInput2" class="field-label text-sm font-medium text-slate-700 mb-1"><span>所属名（下）</span><span id="roleCounter2" class="text-xs text-slate-400">13文字</span></label>
+                                    <input type="text" id="roleInput2" value="アイコン設定部アイコン担当" maxlength="32" autocomplete="off" placeholder="例：アイコン設定部アイコン担当" class="control w-full px-3 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                </div>
+                            </div>
+                            <label for="roleFont" class="block text-xs font-medium text-slate-600">所属名のフォント（上・下共通）
+                                <select id="roleFont" class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"><option value="default">標準（現在の書体）</option><option value="yu-gothic">游ゴシック</option><option value="biz-gothic">BIZ UDPゴシック</option><option value="meiryo">メイリオ</option><option value="yu-mincho">游明朝</option></select>
+                            </label>
+                            <div>
+                                <label for="roleSize" class="field-label text-xs font-medium text-slate-600 mb-1"><span>所属名の大きさ（上・下共通）</span><span id="roleSizeVal">60px</span></label>
+                                <input type="range" id="roleSize" min="20" max="150" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                            <div id="rolePlacementSlot"></div>
+                        </section>
+                    </div>
+
+                    <div id="rolePlacementControls">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">部署名の配置</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2.5 border rounded-xl hover:bg-slate-50 [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="rolePlacement" value="above" checked class="w-4 h-4 text-blue-600">
+                                <span class="text-sm font-medium">名前の近く</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2.5 border rounded-xl hover:bg-slate-50 [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="rolePlacement" value="arc" class="w-4 h-4 text-blue-600">
+                                <span class="text-sm font-medium">枠の上・下</span>
+                            </label>
+                        </div>
+                        <div id="arcOptions" class="hidden mt-2 p-2 rounded-xl bg-blue-50/70 border border-blue-100 space-y-2">
+                            <p class="text-xs font-bold text-blue-700">円形は上下アーチ、正方形は上辺・下辺へ表示します</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="arcSpreadTop" class="field-label text-xs font-bold text-slate-700 mb-1.5"><span>上側の広がり</span><span id="arcSpreadTopVal" class="text-blue-600">120°</span></label>
+                                    <input type="range" id="arcSpreadTop" min="60" max="240" step="5" value="120" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                                </div>
+                                <div>
+                                    <label for="arcSpreadBottom" class="field-label text-xs font-bold text-slate-700 mb-1.5"><span>下側の広がり</span><span id="arcSpreadBottomVal" class="text-blue-600">160°</span></label>
+                                    <input type="range" id="arcSpreadBottom" min="60" max="240" step="5" value="160" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-blue-600">短い文字は控えめに、長い文字はしっかり広がりを調整します</p>
+                        </div>
+                    </div>
+
+                    <label class="flex items-start gap-2.5 p-2 rounded-xl bg-blue-50/70 border border-blue-100 cursor-pointer">
+                        <input type="checkbox" id="autoFit" checked class="mt-0.5 w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500">
+                        <span><span class="block text-sm font-semibold text-slate-800">長い文字を自動で収める</span><span class="block text-xs text-slate-500 mt-0.5">設定サイズを上限に、はみ出す場合だけ縮小します</span></span>
+                    </label>
+                </div>
+
+                </div>
+
+                <!-- 色・デザイン設定を同じタブ内に統合 -->
+                <div id="designSettingsCard" class="rounded-xl border border-slate-200 bg-white p-3">
+                    <div class="flex items-center gap-2.5 mb-2"><span class="section-kicker">2</span><div><h3 class="text-sm font-bold text-slate-900">配色</h3><p class="text-[10px] text-slate-500">背景・文字・枠の色を調整</p></div></div>
+
+                    <div class="space-y-2">
+                        <div id="visualBasicsControls" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div class="relative z-10 min-w-0 rounded-lg bg-slate-50 p-2">
+                                <div class="mb-1.5 flex items-center justify-between gap-1">
+                                    <label for="bgImageInput" class="cursor-pointer whitespace-nowrap rounded-lg bg-blue-600 px-2 py-1.5 text-[10px] font-extrabold text-white shadow-md shadow-blue-600/20 ring-2 ring-blue-200 hover:bg-blue-700">🖼️ 画像を設定</label>
+                                    <input type="file" id="bgImageInput" accept="image/*" class="sr-only">
+                                    <button id="clearImageBtn" type="button" class="hidden shrink-0 whitespace-nowrap rounded-md px-1 py-1 text-[9px] font-bold text-red-600 hover:bg-red-50">画像をクリア</button>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="shrink-0 whitespace-nowrap text-[10px] font-bold text-slate-600">形状</span>
+                                    <label class="flex cursor-pointer items-center gap-1 whitespace-nowrap"><input type="radio" name="shape" value="square" class="h-4 w-4 shrink-0 text-blue-600"><span>正方形</span></label>
+                                    <label class="flex cursor-pointer items-center gap-1 whitespace-nowrap"><input type="radio" name="shape" value="circle" checked class="h-4 w-4 shrink-0 text-blue-600"><span>丸</span></label>
+                                </div>
+                            </div>
+                            <div id="patternControl">
+                                <label for="patternSelect" class="block text-xs font-bold text-slate-700 mb-1">画像なし時の背景パターン</label>
+                                <select id="patternSelect" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                                    <option value="none">なし（単色）</option><option value="stripe-v">縦ストライプ</option><option value="stripe-d">斜めストライプ</option><option value="dots">ドット（水玉）</option><option value="grid">グリッド（方眼）</option><option value="check">市松模様</option><option value="wave">波紋（同心円）</option><option value="cross">クロス（十字）</option><option value="gradient-l">線形グラデーション</option><option value="gradient-r">円形グラデーション</option>
+                                </select>
+                                <p class="mt-1 whitespace-nowrap rounded bg-orange-50 px-1 py-1 text-[8px] font-semibold leading-none tracking-tight text-orange-700">🎨 背景画像なし時だけ適用</p>
+                            </div>
+                            <div id="textEffectControl">
+                                <label for="textEffect" class="block text-xs font-bold text-slate-600 mb-1">文字効果</label>
+                                <select id="textEffect" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                                    <option value="none">なし</option><option value="shadow">影</option><option value="glow">光彩（背景色）</option><option value="glow-white">光彩（白）</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <details id="imageControls" class="relative hidden overflow-hidden rounded-xl border border-blue-200 bg-blue-50/60 p-2" open>
+                            <summary class="cursor-pointer whitespace-nowrap pr-40 text-[11px] font-extrabold text-blue-800">背景画像の位置・色・質感を調整</summary>
+                            <span class="absolute right-2 top-1.5 flex gap-1"><button id="resetImagePositionBtn" type="button" class="rounded-md bg-white px-2 py-1 text-[10px] font-bold text-blue-700 shadow-sm">位置を戻す</button><button id="resetPhotoAdjustmentsBtn" type="button" class="rounded-md bg-white px-2 py-1 text-[10px] font-bold text-blue-700 shadow-sm">補正を戻す</button></span>
+                            <div class="mt-2 space-y-2">
+                                <div class="hidden" aria-hidden="true">
+                                    <select id="bgFit"><option value="cover">枠いっぱい</option><option value="contain">写真全体</option></select>
+                                    <span id="bgScaleVal">100%</span><input type="range" id="bgScale" min="1" max="3" step="0.05" value="1">
+                                    <span id="bgOffsetXVal">0</span><input type="range" id="bgOffsetX" min="-100" max="100" value="0">
+                                    <span id="bgOffsetYVal">0</span><input type="range" id="bgOffsetY" min="-100" max="100" value="0">
+                                </div>
+                                <div class="grid grid-cols-2 items-end gap-1.5 sm:grid-cols-5">
+                                    <div class="min-w-0"><label for="photoBrightness" class="field-label mb-0.5 whitespace-nowrap text-[9px] font-semibold text-slate-600"><span>明るさ</span><span id="photoBrightnessVal">100%</span></label><input type="range" id="photoBrightness" min="50" max="150" value="100" class="h-1 w-full min-w-0 appearance-none rounded-lg bg-blue-100 accent-blue-600"></div>
+                                    <div class="min-w-0"><label for="photoContrast" class="field-label mb-0.5 whitespace-nowrap text-[9px] font-semibold text-slate-600"><span>コントラスト</span><span id="photoContrastVal">100%</span></label><input type="range" id="photoContrast" min="50" max="150" value="100" class="h-1 w-full min-w-0 appearance-none rounded-lg bg-blue-100 accent-blue-600"></div>
+                                    <div class="min-w-0"><label for="photoHue" class="field-label mb-0.5 whitespace-nowrap text-[9px] font-semibold text-slate-600"><span>色調</span><span id="photoHueVal">0°</span></label><input type="range" id="photoHue" min="-180" max="180" value="0" class="h-1 w-full min-w-0 appearance-none rounded-lg bg-blue-100 accent-blue-600"></div>
+                                    <div class="min-w-0"><label for="photoSharpness" class="field-label mb-0.5 whitespace-nowrap text-[9px] font-semibold text-slate-600"><span>質感</span><span id="photoSharpnessVal">標準</span></label><input type="range" id="photoSharpness" min="-100" max="100" step="10" value="0" class="h-1 w-full min-w-0 appearance-none rounded-lg bg-blue-100 accent-blue-600"></div>
+                                    <label class="min-w-0 whitespace-nowrap text-[9px] font-semibold text-slate-600">フィルター<select id="photoFilter" class="mt-0.5 w-full min-w-0 max-w-full rounded-lg border border-slate-300 bg-white px-1.5 py-1 text-[9px]"><option value="none">なし</option><option value="sepia">セピア</option><option value="grayscale">モノクロ</option></select></label>
+                                </div>
+                                <p class="whitespace-nowrap text-[9px] leading-tight text-slate-500">プレビューをドラッグして移動できます。補正はPNGにも反映されます。</p>
+                            </div>
+                        </details>
+
+                        <div id="backgroundColorPanel" class="side-color-panel design-color-box rounded-lg bg-slate-50 border border-slate-200 p-2.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="mr-1 text-xs font-bold text-slate-600">背景色</span>
+                                <div class="flex flex-wrap gap-2" id="colorPresetsContainer">
+                                    <button type="button" aria-label="オレンジ" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#D83B01" style="background-color:#D83B01" title="オレンジ"></button><button type="button" aria-label="ネイビー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#1E3A5F" style="background-color:#1E3A5F" title="ネイビー"></button><button type="button" aria-label="ピンク" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#E3008C" style="background-color:#E3008C" title="ピンク"></button><button type="button" aria-label="水色" aria-pressed="true" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#38BDF8" style="background-color:#38BDF8" title="水色"></button><button type="button" aria-label="M365 ブルー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#0078D4" style="background-color:#0078D4" title="M365 ブルー"></button><button type="button" aria-label="ティール" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#008272" style="background-color:#008272" title="ティール"></button><button type="button" aria-label="グリーン" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#107C41" style="background-color:#107C41" title="グリーン"></button><button type="button" aria-label="パープル" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#5C2D91" style="background-color:#5C2D91" title="パープル"></button><button type="button" aria-label="レッド" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#D13438" style="background-color:#D13438" title="レッド"></button><button type="button" aria-label="イエロー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#FFB900" style="background-color:#FFB900" title="イエロー"></button><button type="button" aria-label="グレー" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#7A7574" style="background-color:#7A7574" title="グレー"></button><button type="button" aria-label="ブラック" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-slate-200 color-preset" data-color="#242424" style="background-color:#242424" title="ブラック"></button>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex flex-wrap items-end gap-3">
+                                <label class="text-[11px] text-slate-500"><span class="block mb-1">カスタム</span><span class="flex items-center gap-1.5"><input type="color" id="bgColor" value="#38BDF8" class="w-9 h-9 p-1 border border-slate-300 rounded-lg cursor-pointer"><span id="bgColorVal" class="text-xs font-mono">#38BDF8</span></span></label>
+                                <label class="text-[11px] text-slate-500"><span class="block mb-1">文字色</span><span class="flex items-center gap-1.5"><input type="color" id="textColor" value="#FFFFFF" class="w-9 h-9 p-1 border border-slate-300 rounded-lg cursor-pointer"><span id="textColorVal" class="text-xs font-mono">#FFFFFF</span></span></label>
+                                <button id="suggestTextColorBtn" type="button" class="px-2.5 py-2 text-xs font-bold text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg">読みやすい色</button>
+                                <span id="contrastStatus" class="pb-2 text-xs font-medium text-slate-500" aria-live="polite"></span>
+                            </div>
+                        </div>
+
+                        <div id="borderColorPanel" class="side-color-panel design-color-box flex flex-col rounded-lg bg-slate-50 border border-slate-200 p-2.5">
+                            <div class="order-2 mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
+                                <label class="text-xs font-bold text-slate-600">色数<select id="borderMode" class="mt-1 w-full px-2 py-2 border border-slate-300 rounded-lg bg-white text-sm"><option value="gradient">2色</option><option value="solid">1色</option></select></label>
+                                <label class="text-xs text-slate-500">枠色 1<span class="mt-1 flex items-center gap-1.5"><input type="color" id="borderColor" value="#0078D4" class="w-9 h-9 p-1 border border-slate-300 rounded-lg"><span id="borderColorVal" class="text-[11px] font-mono">#0078D4</span></span></label>
+                                <label id="borderColor2Wrap" class="text-xs text-slate-500">枠色 2<span class="mt-1 flex items-center gap-1.5"><input type="color" id="borderColor2" value="#38BDF8" class="w-9 h-9 p-1 border border-slate-300 rounded-lg"><span id="borderColor2Val" class="text-[11px] font-mono">#38BDF8</span></span></label>
+                                <div class="relative">
+                                    <label for="borderWidth" class="field-label text-xs font-bold text-slate-600 mb-1"><span>枠の太さ</span><span id="borderWidthVal">56px</span></label>
+                                    <input type="range" id="borderWidth" min="0" max="100" value="56" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                                    <div id="borderWidthLimitBubble" class="pointer-events-none fixed z-50 hidden w-56 rounded-xl bg-orange-500 px-3 py-2 text-[10px] font-bold leading-relaxed text-white shadow-xl" role="status" aria-live="polite">
+                                        枠に所属名があるときは、枠をこれ以上狭くできません
+                                        <span class="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45 bg-orange-500" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-1 flex flex-wrap items-center gap-2">
+                                <span class="text-xs font-bold text-slate-600">枠の色</span>
+                                <div class="flex rounded-lg border border-slate-200 bg-white p-0.5 text-[11px] font-bold">
+                                    <label class="cursor-pointer rounded-md px-2 py-1 text-slate-600 [&:has(input:checked)]:bg-blue-600 [&:has(input:checked)]:text-white"><input type="radio" name="borderPresetTarget" value="1" checked class="sr-only">色1</label>
+                                    <label id="borderPresetTarget2Label" class="cursor-pointer rounded-md px-2 py-1 text-slate-600 [&:has(input:checked)]:bg-blue-600 [&:has(input:checked)]:text-white"><input type="radio" name="borderPresetTarget" value="2" class="sr-only">色2</label>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5" id="borderColorPresetsContainer">
+                                    <button type="button" aria-label="枠にオレンジ" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#D83B01" style="background-color:#D83B01" title="オレンジ"></button><button type="button" aria-label="枠にネイビー" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#1E3A5F" style="background-color:#1E3A5F" title="ネイビー"></button><button type="button" aria-label="枠にピンク" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#E3008C" style="background-color:#E3008C" title="ピンク"></button><button type="button" aria-label="枠に水色" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#38BDF8" style="background-color:#38BDF8" title="水色"></button><button type="button" aria-label="枠にM365 ブルー" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#0078D4" style="background-color:#0078D4" title="M365 ブルー"></button><button type="button" aria-label="枠にティール" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#008272" style="background-color:#008272" title="ティール"></button><button type="button" aria-label="枠にグリーン" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#107C41" style="background-color:#107C41" title="グリーン"></button><button type="button" aria-label="枠にパープル" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#5C2D91" style="background-color:#5C2D91" title="パープル"></button><button type="button" aria-label="枠にレッド" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#D13438" style="background-color:#D13438" title="レッド"></button><button type="button" aria-label="枠にイエロー" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#FFB900" style="background-color:#FFB900" title="イエロー"></button><button type="button" aria-label="枠にグレー" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#7A7574" style="background-color:#7A7574" title="グレー"></button><button type="button" aria-label="枠にブラック" class="w-6 h-6 rounded-full border-2 border-white ring-1 ring-slate-200 border-color-preset" data-color="#242424" style="background-color:#242424" title="ブラック"></button>
+                                </div>
+                            </div>
+                            <div id="borderAngleWrap" class="order-3 mt-2">
+                                <label for="borderAngle" class="field-label text-xs font-bold text-slate-600 mb-1"><span>2色の分割角度</span><span id="borderAngleVal">45°</span></label>
+                                <input type="range" id="borderAngle" min="0" max="360" step="1" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+
+            <footer class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-slate-100 px-4 py-3 text-[10px] font-medium text-slate-400">
+                <a href="https://ninin-cc.github.io/i/" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-blue-600 hover:underline">© 2026 ninin LLC. All Rights Reserved.</a>
+                <a href="https://note.com/ninin2025/membership/join" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-blue-600 hover:underline">© たべラボ</a>
+            </footer>
+        </div>
+    </div>
+</main>
+
+<div id="resetConfirmModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="resetConfirmTitle">
+    <div class="w-full max-w-xs rounded-2xl bg-white p-4 text-center shadow-2xl">
+        <p id="resetConfirmTitle" class="text-base font-extrabold text-slate-900">リセットしますか？</p>
+        <p class="mt-1 text-xs text-slate-500">入力内容と画像設定が初期状態に戻ります。</p>
+        <div class="mt-4 grid grid-cols-2 gap-2">
+            <button id="resetNoBtn" type="button" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 hover:bg-slate-100">NO</button>
+            <button id="resetYesBtn" type="button" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-extrabold text-white hover:bg-red-700">YES</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast fixed z-50 left-1/2 bottom-6 bg-slate-900 text-white text-sm font-semibold px-4 py-3 rounded-xl shadow-2xl" role="status" aria-live="polite"></div>
+
+<script>
+    // 定数・キャンバス設定
+    const CANVAS_SIZE = 648; // M365推奨の高解像度サイズ
+    const MIN_ARC_BORDER_WIDTH = 40;
+    const STORAGE_KEY = 'm365-icon-maker-state';
+    const STORAGE_VERSION = 3;
+    const canvas = document.getElementById('iconCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = CANVAS_SIZE;
+    canvas.height = CANVAS_SIZE;
+
+    // 状態管理
+    const DEFAULT_STATE = {
+        name: 'あいこんたろう',
+        role: '㈱アイコンメーカー',
+        role2: 'アイコン設定部アイコン担当',
+        nameSize: 120,
+        nameOffsetX: 0,
+        nameOffsetY: 0,
+        roleSize: 60,
+        nameFont: 'default',
+        roleFont: 'default',
+        textColor: '#FFFFFF',
+        bgColor: '#38BDF8', // Light blue default
+        borderColor: '#0078D4',
+        borderColor2: '#38BDF8',
+        borderMode: 'gradient',
+        borderAngle: 45,
+        pattern: 'none',
+        shape: 'circle',
+        textEffect: 'shadow',
+        layout: 'bottom',
+        rolePlacement: 'arc',
+        arcPosition: 'top',
+        arcSpreadTop: 120,
+        arcSpreadBottom: 150,
+        borderWidth: 56,
+        autoFit: true,
+        bgFit: 'cover',
+        bgScale: 3,
+        bgOffsetX: -96,
+        bgOffsetY: 10,
+        bgFlipX: false,
+        photoBrightness: 100,
+        photoContrast: 100,
+        photoHue: 0,
+        photoSharpness: 0,
+        photoFilter: 'none',
+        bgPreset: 'wonder',
+        backgroundDefaultVersion: 2,
+        bgImage: null
+    };
+    const state = { ...DEFAULT_STATE };
+    const FONT_FAMILIES = {
+        default: '"Segoe UI", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif',
+        'yu-gothic': '"Yu Gothic", "YuGothic", "Meiryo", sans-serif',
+        'biz-gothic': '"BIZ UDPGothic", "BIZ UDゴシック", "Yu Gothic", sans-serif',
+        meiryo: '"Meiryo", "Meiryo UI", sans-serif',
+        'yu-mincho': '"Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif'
+    };
+    const getFontFamily = key => FONT_FAMILIES[key] || FONT_FAMILIES.default;
+    const DEFAULT_BACKGROUND_IMAGE = 'assets/profile-bg-characters.png';
+    const DEFAULT_BACKGROUND_PRESETS = {
+        nurturer: { label: 'ナーチャー', scale: 2.5, x: 100, y: -5 },
+        adapter: { label: 'アダプター', scale: 2.5, x: 42, y: -22 },
+        keeper: { label: 'キーパー', scale: 2.5, x: -27, y: 17 },
+        wonder: { label: 'ワンダー', scale: 3, x: -96, y: 10 }
+    };
+
+    // DOM要素の取得
+    const els = {
+        nameInput: document.getElementById('nameInput'),
+        roleInput: document.getElementById('roleInput'),
+        roleInput2: document.getElementById('roleInput2'),
+        nameSize: document.getElementById('nameSize'),
+        nameSizeVal: document.getElementById('nameSizeVal'),
+        nameFont: document.getElementById('nameFont'),
+        roleSize: document.getElementById('roleSize'),
+        roleSizeVal: document.getElementById('roleSizeVal'),
+        roleFont: document.getElementById('roleFont'),
+        textColor: document.getElementById('textColor'),
+        textColorVal: document.getElementById('textColorVal'),
+        bgColor: document.getElementById('bgColor'),
+        bgColorVal: document.getElementById('bgColorVal'),
+        borderColor: document.getElementById('borderColor'),
+        borderColorVal: document.getElementById('borderColorVal'),
+        borderColor2: document.getElementById('borderColor2'),
+        borderColor2Val: document.getElementById('borderColor2Val'),
+        borderColor2Wrap: document.getElementById('borderColor2Wrap'),
+        borderMode: document.getElementById('borderMode'),
+        borderAngle: document.getElementById('borderAngle'),
+        borderAngleVal: document.getElementById('borderAngleVal'),
+        borderAngleWrap: document.getElementById('borderAngleWrap'),
+        shapeRadios: document.getElementsByName('shape'),
+        layoutRadios: document.getElementsByName('layout'),
+        rolePlacementRadios: document.getElementsByName('rolePlacement'),
+        arcPositionRadios: document.getElementsByName('arcPosition'),
+        arcOptions: document.getElementById('arcOptions'),
+        arcSpreadTop: document.getElementById('arcSpreadTop'),
+        arcSpreadTopVal: document.getElementById('arcSpreadTopVal'),
+        arcSpreadBottom: document.getElementById('arcSpreadBottom'),
+        arcSpreadBottomVal: document.getElementById('arcSpreadBottomVal'),
+        patternSelect: document.getElementById('patternSelect'),
+        colorPresets: document.querySelectorAll('.color-preset'),
+        borderColorPresets: document.querySelectorAll('.border-color-preset'),
+        borderPresetTargetRadios: document.getElementsByName('borderPresetTarget'),
+        borderPresetTarget2Label: document.getElementById('borderPresetTarget2Label'),
+        textEffect: document.getElementById('textEffect'),
+        borderWidth: document.getElementById('borderWidth'),
+        borderWidthVal: document.getElementById('borderWidthVal'),
+        borderWidthLimitBubble: document.getElementById('borderWidthLimitBubble'),
+        bgImageInput: document.getElementById('bgImageInput'),
+        clearImageBtn: document.getElementById('clearImageBtn'),
+        imageControls: document.getElementById('imageControls'),
+        bgFit: document.getElementById('bgFit'),
+        bgScale: document.getElementById('bgScale'),
+        bgScaleVal: document.getElementById('bgScaleVal'),
+        bgOffsetX: document.getElementById('bgOffsetX'),
+        bgOffsetXVal: document.getElementById('bgOffsetXVal'),
+        bgOffsetY: document.getElementById('bgOffsetY'),
+        bgOffsetYVal: document.getElementById('bgOffsetYVal'),
+        photoBrightness: document.getElementById('photoBrightness'),
+        photoBrightnessVal: document.getElementById('photoBrightnessVal'),
+        photoContrast: document.getElementById('photoContrast'),
+        photoContrastVal: document.getElementById('photoContrastVal'),
+        photoHue: document.getElementById('photoHue'),
+        photoHueVal: document.getElementById('photoHueVal'),
+        photoSharpness: document.getElementById('photoSharpness'),
+        photoSharpnessVal: document.getElementById('photoSharpnessVal'),
+        photoFilter: document.getElementById('photoFilter'),
+        resetPhotoAdjustmentsBtn: document.getElementById('resetPhotoAdjustmentsBtn'),
+        resetImagePositionBtn: document.getElementById('resetImagePositionBtn'),
+        previewImageControls: document.getElementById('previewImageControls'),
+        previewZoomOutBtn: document.getElementById('previewZoomOutBtn'),
+        previewZoomInBtn: document.getElementById('previewZoomInBtn'),
+        previewFlipBtn: document.getElementById('previewFlipBtn'),
+        previewZoomVal: document.getElementById('previewZoomVal'),
+        previewMoveUpBtn: document.getElementById('previewMoveUpBtn'),
+        previewMoveLeftBtn: document.getElementById('previewMoveLeftBtn'),
+        previewMoveResetBtn: document.getElementById('previewMoveResetBtn'),
+        previewMoveRightBtn: document.getElementById('previewMoveRightBtn'),
+        previewMoveDownBtn: document.getElementById('previewMoveDownBtn'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        resetBtn: document.getElementById('resetBtn'),
+        resetConfirmModal: document.getElementById('resetConfirmModal'),
+        resetNoBtn: document.getElementById('resetNoBtn'),
+        resetYesBtn: document.getElementById('resetYesBtn'),
+        shareLinkBtn: document.getElementById('shareLinkBtn'),
+        previewShell: document.getElementById('previewShell'),
+        undoPreviewBtn: document.getElementById('undoPreviewBtn'),
+        safeAreaBtn: document.getElementById('safeAreaBtn'),
+        safeArea: document.getElementById('safeArea'),
+        previewFrame: document.getElementById('previewFrame'),
+        autoFit: document.getElementById('autoFit'),
+        nameCounter: document.getElementById('nameCounter'),
+        roleCounter: document.getElementById('roleCounter'),
+        roleCounter2: document.getElementById('roleCounter2'),
+        suggestTextColorBtn: document.getElementById('suggestTextColorBtn'),
+        contrastStatus: document.getElementById('contrastStatus'),
+        toast: document.getElementById('toast'),
+        settingsTabs: Array.from(document.querySelectorAll('.settings-tab')),
+        settingsPanels: Array.from(document.querySelectorAll('.settings-panel')),
+        combinedSettingsGrid: document.getElementById('combinedSettingsGrid'),
+        namePlacementSlot: document.getElementById('namePlacementSlot'),
+        rolePlacementSlot: document.getElementById('rolePlacementSlot'),
+        namePlacementControls: document.getElementById('namePlacementControls'),
+        rolePlacementControls: document.getElementById('rolePlacementControls'),
+        designSettingsSlot: document.getElementById('designSettingsSlot'),
+        backgroundColorSlot: document.getElementById('backgroundColorSlot'),
+        borderColorSlot: document.getElementById('borderColorSlot'),
+        backgroundColorPanel: document.getElementById('backgroundColorPanel'),
+        borderColorPanel: document.getElementById('borderColorPanel'),
+        previewBasicsSlot: document.getElementById('previewBasicsSlot'),
+        previewImageAdjustmentsSlot: document.getElementById('previewImageAdjustmentsSlot'),
+        visualBasicsControls: document.getElementById('visualBasicsControls'),
+        textSettingsCard: document.getElementById('textSettingsCard'),
+        designSettingsCard: document.getElementById('designSettingsCard')
+    };
+
+    // 色・デザインは、変更結果を見比べやすいようライブプレビュー側へ統合
+    els.designSettingsSlot.appendChild(els.designSettingsCard);
+    els.backgroundColorSlot.appendChild(els.backgroundColorPanel);
+    els.borderColorSlot.appendChild(els.borderColorPanel);
+    // 形状・背景画像・文字効果は、結果をすぐ見比べられるプレビュー直上へ配置
+    els.previewBasicsSlot.appendChild(els.visualBasicsControls);
+    // 写真の色・質感調整は、拡大・移動コントロールの下へ配置
+    els.previewImageAdjustmentsSlot.appendChild(els.imageControls);
+    els.namePlacementSlot.appendChild(els.namePlacementControls);
+    els.rolePlacementSlot.appendChild(els.rolePlacementControls);
+
+    let persistTimer;
+    let toastTimer;
+    let borderWidthLimitBubbleTimer;
+    let imageDrag = null;
+    let nameDrag = null;
+    let nameHitArea = null;
+    const PREVIEW_UNDO_LIMIT = 10;
+    let previewUndoStack = [];
+
+    function samePreviewState(left, right) {
+        const keys = Object.keys(DEFAULT_STATE);
+        return keys.every(key => left[key] === right[key]);
+    }
+
+    function updateUndoButton() {
+        const count = previewUndoStack.length;
+        els.undoPreviewBtn.disabled = count === 0;
+        els.undoPreviewBtn.textContent = `↶ 1つ前に戻る（${count}）`;
+        els.undoPreviewBtn.title = count ? `最大10回まで戻れます（残り${count}回）` : '戻せる変更はありません';
+    }
+
+    function capturePreviewUndo(event) {
+        const target = event.target;
+        const designArea = target.closest('#visualBasicsControls, #imageControls, #backgroundColorPanel, #borderColorPanel, #previewImageControls, #previewFrame');
+        if (!designArea) return;
+        const actionable = target.closest('input, select, button, canvas') || target.closest('label')?.querySelector('input');
+        if (!actionable) return;
+        const snapshot = { ...state };
+        const latest = previewUndoStack[previewUndoStack.length - 1];
+        if (latest && samePreviewState(latest, snapshot)) return;
+        previewUndoStack.push(snapshot);
+        if (previewUndoStack.length > PREVIEW_UNDO_LIMIT) previewUndoStack.shift();
+        updateUndoButton();
+    }
+
+    els.previewShell.addEventListener('pointerdown', capturePreviewUndo);
+    els.previewShell.addEventListener('focusin', capturePreviewUndo);
+
+    els.undoPreviewBtn.addEventListener('click', () => {
+        if (!previewUndoStack.length) return;
+        Object.assign(state, previewUndoStack.pop());
+        updateUndoButton();
+        els.bgImageInput.value = '';
+        syncControls();
+        renderCanvas();
+        showToast(`1つ前に戻しました（あと${previewUndoStack.length}回）`);
+    });
+
+    function persistState() {
+        clearTimeout(persistTimer);
+        persistTimer = setTimeout(() => {
+            try {
+                const { bgImage, ...serializableState } = state;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...serializableState, _storageVersion: STORAGE_VERSION }));
+            } catch (err) {
+                console.warn('設定を保存できませんでした:', err);
+            }
+        }, 180);
+    }
+
+    function restoreState() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+            if (saved && typeof saved === 'object') {
+                // 初期配色の更新時だけ、古い自動保存データを新しい標準色へ移行する
+                if (Number(saved._storageVersion) !== STORAGE_VERSION) {
+                    saved.name = DEFAULT_STATE.name;
+                    saved.role = DEFAULT_STATE.role;
+                    saved.role2 = DEFAULT_STATE.role2;
+                    saved.shape = DEFAULT_STATE.shape;
+                    saved.bgColor = DEFAULT_STATE.bgColor;
+                    saved.borderColor = DEFAULT_STATE.borderColor;
+                    saved.borderColor2 = DEFAULT_STATE.borderColor2;
+                    saved.borderMode = DEFAULT_STATE.borderMode;
+                    saved._storageVersion = STORAGE_VERSION;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+                }
+                delete saved._storageVersion;
+                if (saved.name === '山田 太郎') saved.name = DEFAULT_STATE.name;
+                if (!Object.prototype.hasOwnProperty.call(saved, 'role2')) {
+                    saved.role2 = saved.role === '営業部' ? DEFAULT_STATE.role2 : (saved.role || DEFAULT_STATE.role2);
+                    saved.role = DEFAULT_STATE.role;
+                }
+                if (!Object.prototype.hasOwnProperty.call(saved, 'borderMode')) {
+                    saved.borderMode = DEFAULT_STATE.borderMode;
+                    saved.borderAngle = DEFAULT_STATE.borderAngle;
+                    saved.borderColor2 = DEFAULT_STATE.borderColor2;
+                    if (Number(saved.borderWidth) === 0) saved.borderWidth = DEFAULT_STATE.borderWidth;
+                }
+                if (!Object.prototype.hasOwnProperty.call(saved, 'arcSpreadTop')) {
+                    const previousSpread = Number(saved.arcSpread) || DEFAULT_STATE.arcSpreadTop;
+                    saved.arcSpreadTop = previousSpread;
+                    saved.arcSpreadBottom = previousSpread;
+                }
+                if (!saved.borderColor) saved.borderColor = saved.bgColor || DEFAULT_STATE.borderColor;
+                if (!saved.borderColor2) saved.borderColor2 = DEFAULT_STATE.borderColor2;
+                if (Number(saved.backgroundDefaultVersion) !== DEFAULT_STATE.backgroundDefaultVersion) {
+                    saved.bgPreset = DEFAULT_STATE.bgPreset;
+                    saved.bgFlipX = false;
+                    saved.bgScale = DEFAULT_STATE.bgScale;
+                    saved.bgOffsetX = DEFAULT_STATE.bgOffsetX;
+                    saved.bgOffsetY = DEFAULT_STATE.bgOffsetY;
+                    saved.shape = DEFAULT_STATE.shape;
+                    saved.pattern = DEFAULT_STATE.pattern;
+                    saved.textEffect = DEFAULT_STATE.textEffect;
+                    saved.layout = DEFAULT_STATE.layout;
+                    saved.rolePlacement = DEFAULT_STATE.rolePlacement;
+                    saved.arcPosition = DEFAULT_STATE.arcPosition;
+                    saved.arcSpreadTop = DEFAULT_STATE.arcSpreadTop;
+                    saved.arcSpreadBottom = DEFAULT_STATE.arcSpreadBottom;
+                    saved.borderMode = DEFAULT_STATE.borderMode;
+                    saved.borderAngle = DEFAULT_STATE.borderAngle;
+                    saved.borderWidth = DEFAULT_STATE.borderWidth;
+                    saved.bgColor = DEFAULT_STATE.bgColor;
+                    saved.textColor = DEFAULT_STATE.textColor;
+                    saved.borderColor = DEFAULT_STATE.borderColor;
+                    saved.borderColor2 = DEFAULT_STATE.borderColor2;
+                    saved.autoFit = DEFAULT_STATE.autoFit;
+                    saved.backgroundDefaultVersion = DEFAULT_STATE.backgroundDefaultVersion;
+                }
+                Object.assign(state, saved, { bgImage: null });
+            }
+        } catch (err) {
+            console.warn('保存済み設定を読み込めませんでした:', err);
+        }
+        normalizeState();
+    }
+
+    function normalizeState() {
+        const allowedLayouts = ['standard', 'top', 'bottom', 'vertical-left', 'vertical-right'];
+        const allowedFonts = ['default', 'yu-gothic', 'biz-gothic', 'meiryo', 'yu-mincho'];
+        state.name = typeof state.name === 'string' ? state.name : DEFAULT_STATE.name;
+        state.nameOffsetX = Math.min(220, Math.max(-220, Number(state.nameOffsetX) || 0));
+        state.nameOffsetY = Math.min(220, Math.max(-220, Number(state.nameOffsetY) || 0));
+        state.role = typeof state.role === 'string' ? state.role : DEFAULT_STATE.role;
+        state.role2 = typeof state.role2 === 'string' ? state.role2 : DEFAULT_STATE.role2;
+        if (!allowedFonts.includes(state.nameFont)) state.nameFont = DEFAULT_STATE.nameFont;
+        if (!allowedFonts.includes(state.roleFont)) state.roleFont = DEFAULT_STATE.roleFont;
+        if (state.layout === 'pop') {
+            state.layout = 'vertical-left';
+            state.rolePlacement = 'arc';
+        }
+        if (!allowedLayouts.includes(state.layout)) state.layout = 'standard';
+        if (!['above', 'arc'].includes(state.rolePlacement)) state.rolePlacement = 'above';
+        if (!['top', 'bottom'].includes(state.arcPosition)) state.arcPosition = 'top';
+        state.arcSpreadTop = Math.min(240, Math.max(60, Number(state.arcSpreadTop) || DEFAULT_STATE.arcSpreadTop));
+        state.arcSpreadBottom = Math.min(240, Math.max(60, Number(state.arcSpreadBottom) || DEFAULT_STATE.arcSpreadBottom));
+        if (!['cover', 'contain'].includes(state.bgFit)) state.bgFit = 'cover';
+        if (!/^#[0-9A-F]{6}$/i.test(state.bgColor)) state.bgColor = DEFAULT_STATE.bgColor;
+        if (!/^#[0-9A-F]{6}$/i.test(state.textColor)) state.textColor = DEFAULT_STATE.textColor;
+        if (!/^#[0-9A-F]{6}$/i.test(state.borderColor)) state.borderColor = state.bgColor;
+        if (!/^#[0-9A-F]{6}$/i.test(state.borderColor2)) state.borderColor2 = DEFAULT_STATE.borderColor2;
+        if (!['solid', 'gradient'].includes(state.borderMode)) state.borderMode = 'gradient';
+        state.borderAngle = Math.min(360, Math.max(0, Number(state.borderAngle) || 0));
+        state.bgScale = Math.min(3, Math.max(1, Number(state.bgScale) || 1));
+        state.bgOffsetX = Math.min(100, Math.max(-100, Number(state.bgOffsetX) || 0));
+        state.bgOffsetY = Math.min(100, Math.max(-100, Number(state.bgOffsetY) || 0));
+        state.bgFlipX = Boolean(state.bgFlipX);
+        if (!Object.prototype.hasOwnProperty.call(DEFAULT_BACKGROUND_PRESETS, state.bgPreset)) state.bgPreset = null;
+        state.photoBrightness = Math.min(150, Math.max(50, Number(state.photoBrightness) || 100));
+        state.photoContrast = Math.min(150, Math.max(50, Number(state.photoContrast) || 100));
+        state.photoHue = Math.min(180, Math.max(-180, Number(state.photoHue) || 0));
+        state.photoSharpness = Math.min(100, Math.max(-100, Number(state.photoSharpness) || 0));
+        if (!['none', 'sepia', 'grayscale'].includes(state.photoFilter)) state.photoFilter = 'none';
+        if (state.rolePlacement === 'arc' && (state.role.trim() || state.role2.trim())) {
+            state.borderWidth = Math.max(MIN_ARC_BORDER_WIDTH, state.borderWidth);
+        }
+    }
+
+    function showToast(message) {
+        els.toast.textContent = message;
+        els.toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => els.toast.classList.remove('is-visible'), 2200);
+    }
+
+    function showBorderWidthLimitBubble() {
+        const rangeRect = els.borderWidth.getBoundingClientRect();
+        const bubbleWidth = 224;
+        const bubbleLeft = Math.min(window.innerWidth - bubbleWidth - 8, Math.max(8, rangeRect.right - bubbleWidth));
+        els.borderWidthLimitBubble.style.left = bubbleLeft + 'px';
+        els.borderWidthLimitBubble.style.top = Math.max(8, rangeRect.top - 66) + 'px';
+        els.borderWidthLimitBubble.classList.remove('hidden');
+        clearTimeout(borderWidthLimitBubbleTimer);
+        borderWidthLimitBubbleTimer = setTimeout(() => {
+            els.borderWidthLimitBubble.classList.add('hidden');
+        }, 2600);
+    }
+
+    function hasRoleOnBorder() {
+        return state.rolePlacement === 'arc' && Boolean(state.role.trim() || state.role2.trim());
+    }
+
+    function enforceRoleBorderMinimum(showBubble = false) {
+        if (!hasRoleOnBorder() || state.borderWidth >= MIN_ARC_BORDER_WIDTH) return false;
+        state.borderWidth = MIN_ARC_BORDER_WIDTH;
+        els.borderWidth.value = state.borderWidth;
+        els.borderWidthVal.textContent = state.borderWidth + 'px';
+        if (showBubble) showBorderWidthLimitBubble();
+        return true;
+    }
+
+    function encodeBase64Url(value) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = '';
+        bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+        return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    }
+
+    function decodeBase64Url(value) {
+        const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+        const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
+        const binary = atob(padded);
+        const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+    }
+
+    function createSharedDesignPayload() {
+        return {
+            v: 4,
+            d: state.role,
+            d2: state.role2,
+            bg: state.bgColor,
+            tx: state.textColor,
+            bd: state.borderColor,
+            b2: state.borderColor2,
+            bm: state.borderMode,
+            ba: state.borderAngle,
+            pt: state.pattern,
+            sh: state.shape,
+            ef: state.textEffect,
+            ly: state.layout,
+            rp: state.rolePlacement,
+            ap: state.arcPosition,
+            at: state.arcSpreadTop,
+            ab: state.arcSpreadBottom,
+            bw: state.borderWidth,
+            ns: state.nameSize,
+            rs: state.roleSize,
+            nf: state.nameFont,
+            rf: state.roleFont,
+            af: state.autoFit ? 1 : 0
+        };
+    }
+
+    function createSharedDesignUrl() {
+        const url = new URL(window.location.href);
+        url.hash = `design=${encodeBase64Url(JSON.stringify(createSharedDesignPayload()))}`;
+        return url.toString();
+    }
+
+    function loadSharedDesignFromUrl() {
+        try {
+            const encoded = new URLSearchParams(window.location.hash.slice(1)).get('design');
+            if (!encoded || encoded.length > 4096) return false;
+            const shared = JSON.parse(decodeBase64Url(encoded));
+            if (!shared || ![1, 2, 3, 4].includes(shared.v)) return false;
+
+            const allowedPatterns = ['none', 'stripe-v', 'stripe-d', 'dots', 'grid', 'check', 'wave', 'cross', 'gradient-l', 'gradient-r'];
+            const allowedShapes = ['square', 'circle'];
+            const allowedEffects = ['none', 'shadow', 'glow', 'glow-white'];
+            const allowedLayouts = ['standard', 'top', 'bottom', 'vertical-left', 'vertical-right'];
+            const allowedRolePlacements = ['above', 'arc'];
+            const allowedArcPositions = ['top', 'bottom'];
+            const allowedFonts = ['default', 'yu-gothic', 'biz-gothic', 'meiryo', 'yu-mincho'];
+            const clamp = (value, min, max, fallback) => {
+                const number = Number(value);
+                return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+            };
+            const color = (value, fallback) => /^#[0-9A-F]{6}$/i.test(String(value)) ? String(value).toUpperCase() : fallback;
+
+            if (shared.v === 1) {
+                state.role = DEFAULT_STATE.role;
+                state.role2 = typeof shared.d === 'string' ? Array.from(shared.d).slice(0, 32).join('') : state.role2;
+            } else {
+                state.role = typeof shared.d === 'string' ? Array.from(shared.d).slice(0, 32).join('') : state.role;
+                state.role2 = typeof shared.d2 === 'string' ? Array.from(shared.d2).slice(0, 32).join('') : state.role2;
+            }
+            state.bgColor = color(shared.bg, state.bgColor);
+            state.textColor = color(shared.tx, state.textColor);
+            state.borderColor = color(shared.bd, state.bgColor);
+            state.borderColor2 = color(shared.b2, state.borderColor2);
+            if (['solid', 'gradient'].includes(shared.bm)) state.borderMode = shared.bm;
+            state.borderAngle = clamp(shared.ba, 0, 360, state.borderAngle);
+            if (allowedPatterns.includes(shared.pt)) state.pattern = shared.pt;
+            if (allowedShapes.includes(shared.sh)) state.shape = shared.sh;
+            if (allowedEffects.includes(shared.ef)) state.textEffect = shared.ef;
+            if (allowedLayouts.includes(shared.ly)) state.layout = shared.ly;
+            if (allowedRolePlacements.includes(shared.rp)) state.rolePlacement = shared.rp;
+            if (allowedArcPositions.includes(shared.ap)) state.arcPosition = shared.ap;
+            if (shared.v >= 3) {
+                state.arcSpreadTop = clamp(shared.at, 60, 240, state.arcSpreadTop);
+                state.arcSpreadBottom = clamp(shared.ab, 60, 240, state.arcSpreadBottom);
+            } else {
+                const previousSpread = clamp(shared.as, 60, 240, state.arcSpreadTop);
+                state.arcSpreadTop = previousSpread;
+                state.arcSpreadBottom = previousSpread;
+            }
+            state.borderWidth = clamp(shared.bw, 0, 100, state.borderWidth);
+            state.nameSize = clamp(shared.ns, 40, 250, state.nameSize);
+            state.roleSize = clamp(shared.rs, 20, 150, state.roleSize);
+            if (shared.v >= 4 && allowedFonts.includes(shared.nf)) state.nameFont = shared.nf;
+            if (shared.v >= 4 && allowedFonts.includes(shared.rf)) state.roleFont = shared.rf;
+            state.autoFit = shared.af !== 0;
+            state.bgImage = null;
+            state.bgPreset = null;
+            state.bgFlipX = false;
+            normalizeState();
+            return true;
+        } catch (err) {
+            console.warn('共有デザインURLを読み込めませんでした:', err);
+            return false;
+        }
+    }
+
+    async function copyText(value) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(value);
+            return;
+        }
+        const textarea = document.createElement('textarea');
+        textarea.value = value;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!copied) throw new Error('copy command failed');
+    }
+
+    function updateCounters() {
+        els.nameCounter.textContent = `${Array.from(state.name).length}文字`;
+        els.roleCounter.textContent = `${Array.from(state.role).length}文字`;
+        els.roleCounter2.textContent = `${Array.from(state.role2).length}文字`;
+    }
+
+    function hexToRgb(hex) {
+        const value = hex.replace('#', '');
+        if (!/^[0-9a-f]{6}$/i.test(value)) return { r: 0, g: 0, b: 0 };
+        return {
+            r: parseInt(value.slice(0, 2), 16),
+            g: parseInt(value.slice(2, 4), 16),
+            b: parseInt(value.slice(4, 6), 16)
+        };
+    }
+
+    function relativeLuminance(hex) {
+        const { r, g, b } = hexToRgb(hex);
+        const channels = [r, g, b].map(value => {
+            const channel = value / 255;
+            return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+        });
+        return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+    }
+
+    function getContrastRatio(colorA, colorB) {
+        const lighter = Math.max(relativeLuminance(colorA), relativeLuminance(colorB));
+        const darker = Math.min(relativeLuminance(colorA), relativeLuminance(colorB));
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function getRecommendedTextColor() {
+        const whiteRatio = getContrastRatio('#FFFFFF', state.bgColor);
+        const darkRatio = getContrastRatio('#111827', state.bgColor);
+        return whiteRatio >= darkRatio ? '#FFFFFF' : '#111827';
+    }
+
+    function updateContrastStatus() {
+        if (state.bgImage) {
+            els.contrastStatus.textContent = '写真背景では文字の影がおすすめです';
+            els.contrastStatus.className = 'text-xs font-medium text-amber-600';
+            return;
+        }
+        const ratio = getContrastRatio(state.textColor, state.bgColor);
+        const isReadable = ratio >= 4.5;
+        els.contrastStatus.textContent = `${isReadable ? '読みやすい配色' : 'コントラスト弱め'}（${ratio.toFixed(1)}:1）`;
+        els.contrastStatus.className = `text-xs font-semibold ${isReadable ? 'text-emerald-600' : 'text-amber-600'}`;
+    }
+
+    function updatePresetSelection() {
+        els.colorPresets.forEach(btn => {
+            const selected = btn.dataset.color.toUpperCase() === state.bgColor.toUpperCase();
+            btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+            if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', btn.title || btn.dataset.color);
+        });
+        const selectedTarget = state.borderMode === 'solid'
+            ? '1'
+            : (Array.from(els.borderPresetTargetRadios).find(radio => radio.checked)?.value || '1');
+        const selectedBorderColor = selectedTarget === '2' ? state.borderColor2 : state.borderColor;
+        els.borderColorPresets.forEach(btn => {
+            const selected = btn.dataset.color.toUpperCase() === selectedBorderColor.toUpperCase();
+            btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
+    }
+
+    function fitFontSize(text, requestedSize, maxWidth, minimumSize, fontFamily = FONT_FAMILIES.default) {
+        if (!state.autoFit || !text) return requestedSize;
+        ctx.font = `bold ${requestedSize}px ${fontFamily}`;
+        const measured = ctx.measureText(text).width;
+        if (measured <= maxWidth) return requestedSize;
+        return Math.max(minimumSize, Math.floor(requestedSize * (maxWidth / measured)));
+    }
+
+    function syncImageControlValues() {
+        els.bgFit.value = state.bgFit;
+        els.bgScale.value = state.bgScale;
+        els.bgScaleVal.textContent = Math.round(state.bgScale * 100) + '%';
+        els.previewZoomVal.textContent = Math.round(state.bgScale * 100) + '%';
+        els.bgOffsetX.value = state.bgOffsetX;
+        els.bgOffsetXVal.textContent = Math.round(state.bgOffsetX);
+        els.bgOffsetY.value = state.bgOffsetY;
+        els.bgOffsetYVal.textContent = Math.round(state.bgOffsetY);
+        els.photoBrightness.value = state.photoBrightness;
+        els.photoBrightnessVal.textContent = Math.round(state.photoBrightness) + '%';
+        els.photoContrast.value = state.photoContrast;
+        els.photoContrastVal.textContent = Math.round(state.photoContrast) + '%';
+        els.photoHue.value = state.photoHue;
+        els.photoHueVal.textContent = Math.round(state.photoHue) + '°';
+        els.photoSharpness.value = state.photoSharpness;
+        els.photoSharpnessVal.textContent = state.photoSharpness === 0
+            ? '標準'
+            : `${state.photoSharpness < 0 ? 'ソフト' : 'シャープ'} ${Math.abs(state.photoSharpness)}`;
+        els.photoFilter.value = state.photoFilter;
+        els.previewFlipBtn.setAttribute('aria-pressed', String(state.bgFlipX));
+        els.previewFlipBtn.style.backgroundColor = state.bgFlipX ? '#2563EB' : '';
+    }
+
+    function syncControls() {
+        els.nameInput.value = state.name;
+        els.roleInput.value = state.role;
+        els.roleInput2.value = state.role2;
+        els.nameSize.value = state.nameSize;
+        els.nameSizeVal.textContent = state.nameSize + 'px';
+        els.nameFont.value = state.nameFont;
+        els.roleSize.value = state.roleSize;
+        els.roleSizeVal.textContent = state.roleSize + 'px';
+        els.roleFont.value = state.roleFont;
+        els.textColor.value = state.textColor;
+        els.textColorVal.textContent = state.textColor.toUpperCase();
+        els.bgColor.value = state.bgColor;
+        els.bgColorVal.textContent = state.bgColor.toUpperCase();
+        els.borderColor.value = state.borderColor;
+        els.borderColorVal.textContent = state.borderColor.toUpperCase();
+        els.borderColor2.value = state.borderColor2;
+        els.borderColor2Val.textContent = state.borderColor2.toUpperCase();
+        els.borderMode.value = state.borderMode;
+        els.borderAngle.value = state.borderAngle;
+        els.borderAngleVal.textContent = Math.round(state.borderAngle) + '°';
+        els.borderColor2Wrap.classList.toggle('hidden', state.borderMode === 'solid');
+        els.borderAngleWrap.classList.toggle('hidden', state.borderMode === 'solid');
+        els.borderPresetTarget2Label.classList.toggle('hidden', state.borderMode === 'solid');
+        if (state.borderMode === 'solid') els.borderPresetTargetRadios[0].checked = true;
+        els.patternSelect.value = state.pattern;
+        els.textEffect.value = state.textEffect;
+        els.borderWidth.value = state.borderWidth;
+        els.borderWidthVal.textContent = state.borderWidth + 'px';
+        els.autoFit.checked = state.autoFit;
+        els.shapeRadios.forEach(radio => { radio.checked = radio.value === state.shape; });
+        els.layoutRadios.forEach(radio => { radio.checked = radio.value === state.layout; });
+        els.rolePlacementRadios.forEach(radio => { radio.checked = radio.value === state.rolePlacement; });
+        els.arcOptions.classList.toggle('hidden', state.rolePlacement !== 'arc');
+        els.arcSpreadTop.value = state.arcSpreadTop;
+        els.arcSpreadTopVal.textContent = Math.round(state.arcSpreadTop) + '°';
+        els.arcSpreadBottom.value = state.arcSpreadBottom;
+        els.arcSpreadBottomVal.textContent = Math.round(state.arcSpreadBottom) + '°';
+        syncImageControlValues();
+        els.imageControls.classList.toggle('hidden', !state.bgImage);
+        els.previewImageControls.classList.toggle('hidden', !state.bgImage);
+        els.clearImageBtn.classList.toggle('hidden', !state.bgImage);
+        updateCounters();
+        updatePresetSelection();
+        updateContrastStatus();
+    }
+
+    function switchSettingsTab(tabName, moveFocus = false) {
+        els.settingsTabs.forEach(tab => {
+            const isActive = tab.dataset.tab === tabName;
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            tab.tabIndex = isActive ? 0 : -1;
+            if (isActive && moveFocus) tab.focus();
+        });
+        els.settingsPanels.forEach(panel => {
+            const isActive = panel.id === `panel-${tabName}`;
+            panel.hidden = !isActive;
+            panel.classList.toggle('is-active', isActive);
+        });
+    }
+
+    // 背景色に応じてパターンの色（白っぽくするか黒っぽくするか）を決定
+    function getOverlayColor(hex) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        const r = parseInt(hex.substring(0, 2), 16) || 0;
+        const g = parseInt(hex.substring(2, 4), 16) || 0;
+        const b = parseInt(hex.substring(4, 6), 16) || 0;
+        // YIQによる明度計算
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return (yiq >= 140) ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.25)';
+    }
+
+    // 背景パターンを描画する関数
+    function drawPattern(ctx, width, height, patternType, baseColor) {
+        // グラデーション以外はベース色を先に塗る
+        if (patternType !== 'gradient-l' && patternType !== 'gradient-r') {
+            ctx.fillStyle = baseColor;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        const overlay = getOverlayColor(baseColor);
+        ctx.fillStyle = overlay;
+        ctx.strokeStyle = overlay;
+
+        // パターンごとの描画ロジック
+        switch (patternType) {
+            case 'stripe-v':
+                for(let x = 0; x < width; x += 60) {
+                    ctx.fillRect(x, 0, 30, height);
+                }
+                break;
+            case 'stripe-d':
+                ctx.lineWidth = 30;
+                for(let i = -height; i < width + height; i += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i + height, height);
+                    ctx.stroke();
+                }
+                break;
+            case 'dots':
+                for(let y = 30; y < height + 60; y += 60) {
+                    for(let x = 30; x < width + 60; x += 60) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 15, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
+                break;
+            case 'grid':
+                ctx.lineWidth = 4;
+                for(let x = 0; x < width; x += 60) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+                }
+                for(let y = 0; y < height; y += 60) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+                }
+                break;
+            case 'check':
+                for(let y = 0; y < height; y += 60) {
+                    for(let x = 0; x < width; x += 60) {
+                        if ((Math.floor(x/60) + Math.floor(y/60)) % 2 === 0) {
+                            ctx.fillRect(x, y, 60, 60);
+                        }
+                    }
+                }
+                break;
+            case 'wave':
+                ctx.lineWidth = 10;
+                for(let r = 30; r < width; r += 60) {
+                    ctx.beginPath();
+                    ctx.arc(width/2, height/2, r, 0, Math.PI*2);
+                    ctx.stroke();
+                }
+                break;
+            case 'cross':
+                ctx.lineWidth = 8;
+                for(let y = 60; y < height; y += 120) {
+                    for(let x = 60; x < width; x += 120) {
+                        ctx.beginPath(); ctx.moveTo(x-20, y); ctx.lineTo(x+20, y); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(x, y-20); ctx.lineTo(x, y+20); ctx.stroke();
+                    }
+                }
+                break;
+            case 'gradient-l':
+                let gradL = ctx.createLinearGradient(0, 0, width, height);
+                gradL.addColorStop(0, baseColor);
+                gradL.addColorStop(1, overlay === 'rgba(0, 0, 0, 0.15)' ? '#DDDDDD' : '#222222');
+                ctx.fillStyle = gradL;
+                ctx.fillRect(0, 0, width, height);
+                break;
+            case 'gradient-r':
+                let gradR = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, width);
+                gradR.addColorStop(0, overlay === 'rgba(0, 0, 0, 0.15)' ? '#FFFFFF' : '#222222');
+                gradR.addColorStop(1, baseColor);
+                ctx.fillStyle = gradR;
+                ctx.fillRect(0, 0, width, height);
+                break;
+        }
+    }
+
+    function drawArcText(text, radius, requestedSize, fontFamily, position, spread) {
+        const targetAngle = spread * Math.PI / 180;
+        let fontSize = Math.min(requestedSize, Math.max(18, state.borderWidth * 0.58));
+        ctx.font = `bold ${fontSize}px ${fontFamily}`;
+        const chars = Array.from(text);
+        let widths = chars.map(char => ctx.measureText(char).width);
+        let charactersAngle = widths.reduce((sum, width) => sum + width / radius, 0);
+        let preferredSpacing = fontSize * 0.06 / radius;
+        let naturalAngle = charactersAngle + preferredSpacing * Math.max(0, chars.length - 1);
+
+        if (state.autoFit && naturalAngle > targetAngle * 0.94) {
+            fontSize = Math.max(12, Math.floor(fontSize * ((targetAngle * 0.94) / naturalAngle)));
+            ctx.font = `bold ${fontSize}px ${fontFamily}`;
+            widths = chars.map(char => ctx.measureText(char).width);
+            charactersAngle = widths.reduce((sum, width) => sum + width / radius, 0);
+            preferredSpacing = fontSize * 0.06 / radius;
+            naturalAngle = charactersAngle + preferredSpacing * Math.max(0, chars.length - 1);
+        }
+
+        // 短い文字でもスライダーが効くよう、自然な字間から指定角度へ25%だけ追従させる。
+        // 100%均等配置にはしないため、短い会社名が離れすぎることはない。
+        const availableAngle = Math.max(charactersAngle, targetAngle * 0.94);
+        const desiredAngle = naturalAngle >= availableAngle
+            ? availableAngle
+            : naturalAngle + (availableAngle - naturalAngle) * 0.25;
+        const spacingAngle = chars.length > 1
+            ? Math.max(0, (desiredAngle - charactersAngle) / (chars.length - 1))
+            : 0;
+        const totalAngle = charactersAngle + spacingAngle * Math.max(0, chars.length - 1);
+        const isBottom = position === 'bottom';
+        const centerAngle = isBottom ? Math.PI / 2 : -Math.PI / 2;
+        const direction = isBottom ? -1 : 1;
+
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        let currentAngle = centerAngle - direction * totalAngle / 2;
+        chars.forEach((char, index) => {
+            const charAngle = widths[index] / radius;
+            const drawAngle = currentAngle + direction * charAngle / 2;
+            const x = CANVAS_SIZE / 2 + Math.cos(drawAngle) * radius;
+            const y = CANVAS_SIZE / 2 + Math.sin(drawAngle) * radius;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(isBottom ? drawAngle - Math.PI / 2 : drawAngle + Math.PI / 2);
+            ctx.fillText(char, 0, 0);
+            ctx.restore();
+            currentAngle += direction * (charAngle + spacingAngle);
+        });
+        ctx.restore();
+    }
+
+    function drawStraightBorderText(text, requestedSize, fontFamily, position, spread) {
+        const maxWidth = CANVAS_SIZE * Math.min(0.9, Math.max(0.35, (spread / 240) * 0.9));
+        const maximumSize = Math.max(18, state.borderWidth * 0.58);
+        const fontSize = fitFontSize(text, Math.min(requestedSize, maximumSize), maxWidth, 12);
+        const edgeY = Math.max(fontSize / 2 + 4, state.borderWidth / 2);
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `bold ${fontSize}px ${fontFamily}`;
+        ctx.fillText(text, CANVAS_SIZE / 2, position === 'top' ? edgeY : CANVAS_SIZE - edgeY);
+        ctx.restore();
+    }
+
+    function createBorderPaint() {
+        if (state.borderMode === 'solid') return state.borderColor;
+        // 指定角度は2色の境界線の傾き。グラデーション軸は境界線に対して直角にする。
+        const angle = (state.borderAngle + 90) * Math.PI / 180;
+        const reach = CANVAS_SIZE * Math.SQRT2 / 2;
+        const dx = Math.cos(angle) * reach;
+        const dy = Math.sin(angle) * reach;
+        const gradient = ctx.createLinearGradient(
+            CANVAS_SIZE / 2 - dx,
+            CANVAS_SIZE / 2 - dy,
+            CANVAS_SIZE / 2 + dx,
+            CANVAS_SIZE / 2 + dy
+        );
+        gradient.addColorStop(0, state.borderColor);
+        gradient.addColorStop(0.42, state.borderColor);
+        gradient.addColorStop(0.58, state.borderColor2);
+        gradient.addColorStop(1, state.borderColor2);
+        return gradient;
+    }
+
+    function applyPhotoSharpen(amount) {
+        if (amount <= 0) return;
+        const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        const output = imageData.data;
+        const source = new Uint8ClampedArray(output);
+        const strength = Math.min(0.85, amount / 120);
+        const row = CANVAS_SIZE * 4;
+        for (let y = 1; y < CANVAS_SIZE - 1; y++) {
+            for (let x = 1; x < CANVAS_SIZE - 1; x++) {
+                const index = (y * CANVAS_SIZE + x) * 4;
+                for (let channel = 0; channel < 3; channel++) {
+                    const center = source[index + channel];
+                    const neighbors = source[index - 4 + channel] + source[index + 4 + channel]
+                        + source[index - row + channel] + source[index + row + channel];
+                    output[index + channel] = center + strength * (center * 4 - neighbors);
+                }
+            }
+        }
+        ctx.putImageData(imageData, 0, 0);
+    }
+
+    function renderCanvas() {
+        ctx.save();
+        nameHitArea = null;
+
+        els.previewFrame.classList.toggle('rounded-full', state.shape === 'circle');
+        els.previewFrame.classList.toggle('rounded-2xl', state.shape !== 'circle');
+        els.previewFrame.classList.toggle('has-image', Boolean(state.bgImage));
+
+        // キャンバスをクリア
+        ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+        // 形が「丸」の場合はクリッピング領域を作成
+        if (state.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+        }
+
+        // 背景の描画（画像優先、次にパターン・単色）
+        if (state.bgImage) {
+            ctx.fillStyle = state.bgColor;
+            ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+            const coverScale = Math.max(CANVAS_SIZE / state.bgImage.width, CANVAS_SIZE / state.bgImage.height);
+            const containScale = Math.min(CANVAS_SIZE / state.bgImage.width, CANVAS_SIZE / state.bgImage.height);
+            const fitScale = state.bgFit === 'contain' ? containScale : coverScale;
+            const drawWidth = state.bgImage.width * fitScale * state.bgScale;
+            const drawHeight = state.bgImage.height * fitScale * state.bgScale;
+            const centerX = (CANVAS_SIZE - drawWidth) / 2;
+            const centerY = (CANVAS_SIZE - drawHeight) / 2;
+            const shiftLimitX = Math.abs(CANVAS_SIZE - drawWidth) / 2;
+            const shiftLimitY = Math.abs(CANVAS_SIZE - drawHeight) / 2;
+            const offsetX = centerX + (state.bgOffsetX / 100) * shiftLimitX;
+            const offsetY = centerY + (state.bgOffsetY / 100) * shiftLimitY;
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            const softBlur = state.photoSharpness < 0 ? Math.abs(state.photoSharpness) / 25 : 0;
+            const filterParts = [
+                `brightness(${state.photoBrightness}%)`,
+                `contrast(${state.photoContrast}%)`,
+                `hue-rotate(${state.photoHue}deg)`
+            ];
+            if (softBlur > 0) filterParts.push(`blur(${softBlur}px)`);
+            if (state.photoFilter === 'sepia') filterParts.push('sepia(1)');
+            if (state.photoFilter === 'grayscale') filterParts.push('grayscale(1)');
+            ctx.save();
+            ctx.filter = filterParts.join(' ');
+            if (state.bgFlipX) {
+                ctx.translate(offsetX + drawWidth, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(state.bgImage, 0, offsetY, drawWidth, drawHeight);
+            } else {
+                ctx.drawImage(state.bgImage, offsetX, offsetY, drawWidth, drawHeight);
+            }
+            ctx.restore();
+            applyPhotoSharpen(state.photoSharpness);
+        } else {
+            // 画像がない場合はパターンまたは単色
+            if (state.pattern === 'none') {
+                ctx.fillStyle = state.bgColor;
+                ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+            } else {
+                drawPattern(ctx, CANVAS_SIZE, CANVAS_SIZE, state.pattern, state.bgColor);
+            }
+        }
+
+        // 外枠（ボーダー）の描画
+        if (state.borderWidth > 0) {
+            ctx.lineWidth = state.borderWidth * 2; // クリッピングされているため2倍で描画
+            ctx.strokeStyle = createBorderPaint();
+            if (state.shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0, Math.PI * 2);
+                ctx.stroke();
+            } else {
+                ctx.strokeRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+            }
+        }
+
+        // テキストの共通設定
+        ctx.fillStyle = state.textColor;
+
+        // エフェクト（影・光彩）の設定
+        if (state.textEffect === 'shadow') {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+        } else if (state.textEffect === 'glow') {
+            ctx.shadowColor = state.bgColor;
+            ctx.shadowBlur = 25; // 強いぼかしで光彩を表現
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        } else if (state.textEffect === 'glow-white') {
+            ctx.shadowColor = '#FFFFFF';
+            ctx.shadowBlur = 28;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        } else {
+            ctx.shadowColor = 'transparent';
+        }
+
+        const hasRole = state.role.trim().length > 0;
+        const hasRole2 = state.role2.trim().length > 0;
+        const hasName = state.name.trim().length > 0;
+        const nameFontFamily = getFontFamily(state.nameFont);
+        const roleFontFamily = getFontFamily(state.roleFont);
+        const contentMaxWidth = CANVAS_SIZE - Math.max(96, state.borderWidth * 2 + 72);
+        const roleLines = [state.role, state.role2].filter(text => text.trim().length > 0);
+        const showRoleNearName = roleLines.length > 0 && state.rolePlacement === 'above';
+
+        if (state.rolePlacement === 'arc') {
+            if (state.shape === 'circle') {
+                const arcRadius = CANVAS_SIZE / 2 - Math.max(18, state.borderWidth / 2);
+                if (hasRole) drawArcText(state.role, arcRadius, state.roleSize, roleFontFamily, 'top', state.arcSpreadTop);
+                if (hasRole2) drawArcText(state.role2, arcRadius, state.roleSize, roleFontFamily, 'bottom', state.arcSpreadBottom);
+            } else {
+                if (hasRole) drawStraightBorderText(state.role, state.roleSize, roleFontFamily, 'top', state.arcSpreadTop);
+                if (hasRole2) drawStraightBorderText(state.role2, state.roleSize, roleFontFamily, 'bottom', state.arcSpreadBottom);
+            }
+        }
+
+        if (state.layout === 'standard' || state.layout === 'top' || state.layout === 'bottom') {
+            // --- 横書きレイアウト ---
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const gap = 20;
+            const fittedRoleSizes = roleLines.map(text => fitFontSize(text, state.roleSize, contentMaxWidth, 18, roleFontFamily));
+            const fittedNameSize = fitFontSize(state.name, state.nameSize, contentMaxWidth, 28, nameFontFamily);
+            let roleHeight = showRoleNearName
+                ? fittedRoleSizes.reduce((sum, size) => sum + size, 0) + Math.max(0, roleLines.length - 1) * 8
+                : 0;
+            let nameHeight = hasName ? fittedNameSize : 0;
+
+            let totalHeight = roleHeight + nameHeight + (showRoleNearName && hasName ? gap : 0);
+            const visualOffset = totalHeight * 0.05;
+
+            const edgePadding = state.rolePlacement === 'arc'
+                ? Math.max(110, state.borderWidth + Math.min(state.roleSize, state.borderWidth * 0.58) + 34)
+                : Math.max(42, state.borderWidth + 26);
+            let startY = state.layout === 'bottom'
+                ? CANVAS_SIZE - edgePadding - totalHeight
+                : state.layout === 'top'
+                    ? edgePadding
+                    : (CANVAS_SIZE - totalHeight) / 2 + visualOffset;
+
+            if (showRoleNearName) {
+                let roleY = startY;
+                roleLines.forEach((text, index) => {
+                    const lineSize = fittedRoleSizes[index];
+                    ctx.font = `bold ${lineSize}px ${roleFontFamily}`;
+                    roleY += lineSize / 2;
+                    ctx.fillText(text, CANVAS_SIZE / 2, roleY);
+                    roleY += lineSize / 2 + 8;
+                });
+                startY += roleHeight + gap;
+            }
+
+            if (hasName) {
+                ctx.font = `bold ${fittedNameSize}px ${nameFontFamily}`;
+                const nameX = CANVAS_SIZE / 2 + state.nameOffsetX;
+                const nameY = startY + nameHeight / 2 + state.nameOffsetY;
+                const measuredNameWidth = ctx.measureText(state.name).width;
+                nameHitArea = {
+                    x: nameX - measuredNameWidth / 2 - 18,
+                    y: nameY - fittedNameSize / 2 - 18,
+                    width: measuredNameWidth + 36,
+                    height: fittedNameSize + 36
+                };
+                ctx.fillText(state.name, nameX, nameY);
+            }
+        } else if (state.layout === 'vertical-left' || state.layout === 'vertical-right') {
+            // --- 左寄せ・右寄せの縦書きレイアウト ---
+            if (showRoleNearName) {
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                let roleY = Math.max(state.borderWidth + state.roleSize / 2, state.roleSize / 2 + 22);
+                roleLines.forEach(text => {
+                    const fittedRoleSize = fitFontSize(text, state.roleSize, contentMaxWidth, 18, roleFontFamily);
+                    ctx.font = `bold ${fittedRoleSize}px ${roleFontFamily}`;
+                    ctx.fillText(text, CANVAS_SIZE / 2, roleY);
+                    roleY += fittedRoleSize + 6;
+                });
+            }
+
+            if (hasName) {
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const chars = state.name.split('');
+                const availableHeight = CANVAS_SIZE - Math.max(80, state.borderWidth * 2 + 48);
+                const fittedPopSize = state.autoFit
+                    ? Math.max(26, Math.min(state.nameSize, Math.floor(availableHeight / Math.max(chars.length * 0.9, 1))))
+                    : state.nameSize;
+                ctx.font = `bold ${fittedPopSize}px ${nameFontFamily}`;
+
+                const sidePadding = Math.max(state.borderWidth + 28, CANVAS_SIZE * 0.1);
+                const xPos = state.layout === 'vertical-left'
+                    ? sidePadding + fittedPopSize / 2
+                    : CANVAS_SIZE - sidePadding - fittedPopSize / 2;
+
+                // Y座標 (縦書きの全体の高さを計算して中央揃え)
+                const lineHeight = fittedPopSize * 0.9; // 少し詰めて配置
+                const totalHeight = lineHeight * (chars.length > 0 ? chars.length - 1 : 0); // 中心から中心の距離
+                const adjustedX = xPos + state.nameOffsetX;
+                let yPos = CANVAS_SIZE / 2 - totalHeight / 2 + state.nameOffsetY;
+                nameHitArea = {
+                    x: adjustedX - fittedPopSize / 2 - 18,
+                    y: yPos - fittedPopSize / 2 - 18,
+                    width: fittedPopSize + 36,
+                    height: totalHeight + fittedPopSize + 36
+                };
+
+                // 回転させる記号
+                const rotateChars = ['ー', '（', '）', '「', '」', '＝', '-', '~', '～', '(', ')'];
+
+                for (let i = 0; i < chars.length; i++) {
+                    const char = chars[i];
+                    ctx.save();
+                    ctx.translate(adjustedX, yPos);
+                    if (rotateChars.includes(char)) {
+                        ctx.rotate(Math.PI / 2);
+                    }
+                    ctx.fillText(char, 0, 0);
+                    ctx.restore();
+                    yPos += lineHeight;
+                }
+            }
+        }
+
+        ctx.restore();
+        updateCounters();
+        updatePresetSelection();
+        updateContrastStatus();
+        persistState();
+    }
+
+    els.settingsTabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
+        tab.addEventListener('keydown', (event) => {
+            if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+            event.preventDefault();
+            const direction = event.key === 'ArrowRight' ? 1 : -1;
+            const nextIndex = (index + direction + els.settingsTabs.length) % els.settingsTabs.length;
+            switchSettingsTab(els.settingsTabs[nextIndex].dataset.tab, true);
+        });
+    });
+
+    els.nameInput.addEventListener('input', (e) => { state.name = e.target.value; renderCanvas(); });
+    els.roleInput.addEventListener('input', (e) => {
+        state.role = e.target.value;
+        enforceRoleBorderMinimum(true);
+        renderCanvas();
+    });
+    els.roleInput2.addEventListener('input', (e) => {
+        state.role2 = e.target.value;
+        enforceRoleBorderMinimum(true);
+        renderCanvas();
+    });
+    els.nameSize.addEventListener('input', (e) => { state.nameSize = parseInt(e.target.value); els.nameSizeVal.textContent = state.nameSize + 'px'; renderCanvas(); });
+    els.roleSize.addEventListener('input', (e) => { state.roleSize = parseInt(e.target.value); els.roleSizeVal.textContent = state.roleSize + 'px'; renderCanvas(); });
+    els.nameFont.addEventListener('change', (e) => { state.nameFont = e.target.value; renderCanvas(); });
+    els.roleFont.addEventListener('change', (e) => { state.roleFont = e.target.value; renderCanvas(); });
+
+    els.textColor.addEventListener('input', (e) => {
+        state.textColor = e.target.value;
+        els.textColorVal.textContent = state.textColor.toUpperCase();
+        renderCanvas();
+    });
+
+    els.bgColor.addEventListener('input', (e) => {
+        const borderWasSynced = state.borderColor.toUpperCase() === state.bgColor.toUpperCase();
+        state.bgColor = e.target.value;
+        els.bgColorVal.textContent = state.bgColor.toUpperCase();
+        if (borderWasSynced) {
+            state.borderColor = state.bgColor;
+            els.borderColor.value = state.borderColor;
+            els.borderColorVal.textContent = state.borderColor.toUpperCase();
+        }
+        renderCanvas();
+    });
+
+    els.borderColor.addEventListener('input', (e) => {
+        state.borderColor = e.target.value;
+        els.borderColorVal.textContent = state.borderColor.toUpperCase();
+        renderCanvas();
+    });
+
+    els.borderColor2.addEventListener('input', (e) => {
+        state.borderColor2 = e.target.value;
+        els.borderColor2Val.textContent = state.borderColor2.toUpperCase();
+        renderCanvas();
+    });
+
+    els.borderPresetTargetRadios.forEach(radio => {
+        radio.addEventListener('change', updatePresetSelection);
+    });
+
+    els.borderColorPresets.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selectedTarget = state.borderMode === 'solid'
+                ? '1'
+                : (Array.from(els.borderPresetTargetRadios).find(radio => radio.checked)?.value || '1');
+            const color = btn.dataset.color;
+            if (selectedTarget === '2') {
+                state.borderColor2 = color;
+                els.borderColor2.value = color;
+                els.borderColor2Val.textContent = color.toUpperCase();
+            } else {
+                state.borderColor = color;
+                els.borderColor.value = color;
+                els.borderColorVal.textContent = color.toUpperCase();
+            }
+            renderCanvas();
+        });
+    });
+
+    els.borderMode.addEventListener('change', (e) => {
+        state.borderMode = e.target.value;
+        const useOneColor = state.borderMode === 'solid';
+        els.borderColor2Wrap.classList.toggle('hidden', useOneColor);
+        els.borderAngleWrap.classList.toggle('hidden', useOneColor);
+        els.borderPresetTarget2Label.classList.toggle('hidden', useOneColor);
+        if (useOneColor) els.borderPresetTargetRadios[0].checked = true;
+        renderCanvas();
+    });
+
+    els.borderAngle.addEventListener('input', (e) => {
+        state.borderAngle = parseInt(e.target.value);
+        els.borderAngleVal.textContent = state.borderAngle + '°';
+        renderCanvas();
+    });
+
+    // プリセットカラーボタンのイベント
+    els.colorPresets.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const color = e.target.dataset.color;
+            const borderWasSynced = state.borderColor.toUpperCase() === state.bgColor.toUpperCase();
+            state.bgColor = color;
+            els.bgColor.value = color; // カラーピッカーのUIも同期
+            els.bgColorVal.textContent = color.toUpperCase();
+            if (borderWasSynced) {
+                state.borderColor = color;
+                els.borderColor.value = color;
+                els.borderColorVal.textContent = color.toUpperCase();
+            }
+            renderCanvas();
+        });
+    });
+
+    els.autoFit.addEventListener('change', (e) => {
+        state.autoFit = e.target.checked;
+        renderCanvas();
+    });
+
+    els.suggestTextColorBtn.addEventListener('click', () => {
+        state.textColor = getRecommendedTextColor();
+        els.textColor.value = state.textColor;
+        els.textColorVal.textContent = state.textColor;
+        renderCanvas();
+        showToast('読みやすい文字色を適用しました');
+    });
+
+    els.safeAreaBtn.addEventListener('click', () => {
+        const isVisible = els.safeArea.classList.toggle('is-visible');
+        els.safeAreaBtn.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
+        els.safeAreaBtn.textContent = isVisible ? '安全領域を隠す' : '安全領域を表示';
+    });
+
+    els.shareLinkBtn.addEventListener('click', async () => {
+        try {
+            await copyText(createSharedDesignUrl());
+            showToast(window.location.protocol === 'file:'
+                ? '共有URLをコピーしました（公開後のURLで利用）'
+                : '部署デザインの共有URLをコピーしました');
+        } catch (err) {
+            console.error('共有URLのコピーに失敗しました:', err);
+            showToast('URLをコピーできませんでした');
+        }
+    });
+
+    els.shapeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                state.shape = e.target.value;
+                renderCanvas();
+            }
+        });
+    });
+
+    // パターンの変更イベント
+    els.patternSelect.addEventListener('change', (e) => {
+        state.pattern = e.target.value;
+        renderCanvas();
+    });
+
+    els.textEffect.addEventListener('change', (e) => {
+        state.textEffect = e.target.value;
+        renderCanvas();
+    });
+
+    els.borderWidth.addEventListener('input', (e) => {
+        const requestedWidth = parseInt(e.target.value);
+        state.borderWidth = requestedWidth;
+        if (hasRoleOnBorder() && requestedWidth < MIN_ARC_BORDER_WIDTH) {
+            enforceRoleBorderMinimum(true);
+        } else {
+            els.borderWidthLimitBubble.classList.add('hidden');
+        }
+        e.target.value = state.borderWidth;
+        els.borderWidthVal.textContent = state.borderWidth + 'px';
+        renderCanvas();
+    });
+
+    els.layoutRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                state.layout = e.target.value;
+                renderCanvas();
+            }
+        });
+    });
+
+    els.rolePlacementRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!e.target.checked) return;
+            state.rolePlacement = e.target.value;
+            const useArc = state.rolePlacement === 'arc';
+            els.arcOptions.classList.toggle('hidden', !useArc);
+            if (useArc) {
+                if (state.role.trim() || state.role2.trim()) {
+                    state.borderWidth = Math.max(56, state.borderWidth);
+                }
+                els.borderWidth.value = state.borderWidth;
+                els.borderWidthVal.textContent = state.borderWidth + 'px';
+                showToast(state.shape === 'circle' ? '上下アーチを設定しました' : '枠の上辺・下辺に設定しました');
+            }
+            renderCanvas();
+        });
+    });
+
+    els.arcPositionRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!e.target.checked) return;
+            state.arcPosition = e.target.value;
+            renderCanvas();
+        });
+    });
+
+    els.arcSpreadTop.addEventListener('input', (e) => {
+        state.arcSpreadTop = parseInt(e.target.value);
+        els.arcSpreadTopVal.textContent = state.arcSpreadTop + '°';
+        renderCanvas();
+    });
+
+    els.arcSpreadBottom.addEventListener('input', (e) => {
+        state.arcSpreadBottom = parseInt(e.target.value);
+        els.arcSpreadBottomVal.textContent = state.arcSpreadBottom + '°';
+        renderCanvas();
+    });
+
+    els.bgFit.addEventListener('change', (e) => {
+        state.bgFit = e.target.value;
+        renderCanvas();
+    });
+
+    els.bgScale.addEventListener('input', (e) => {
+        state.bgScale = parseFloat(e.target.value);
+        syncImageControlValues();
+        renderCanvas();
+    });
+
+    els.bgOffsetX.addEventListener('input', (e) => {
+        state.bgOffsetX = parseInt(e.target.value);
+        syncImageControlValues();
+        renderCanvas();
+    });
+
+    els.bgOffsetY.addEventListener('input', (e) => {
+        state.bgOffsetY = parseInt(e.target.value);
+        syncImageControlValues();
+        renderCanvas();
+    });
+
+    ['photoBrightness', 'photoContrast', 'photoHue', 'photoSharpness'].forEach(key => {
+        els[key].addEventListener('input', (e) => {
+            state[key] = parseInt(e.target.value);
+            syncImageControlValues();
+            renderCanvas();
+        });
+    });
+
+    els.photoFilter.addEventListener('change', (e) => {
+        state.photoFilter = e.target.value;
+        renderCanvas();
+    });
+
+    els.resetPhotoAdjustmentsBtn.addEventListener('click', () => {
+        state.photoBrightness = DEFAULT_STATE.photoBrightness;
+        state.photoContrast = DEFAULT_STATE.photoContrast;
+        state.photoHue = DEFAULT_STATE.photoHue;
+        state.photoSharpness = DEFAULT_STATE.photoSharpness;
+        state.photoFilter = DEFAULT_STATE.photoFilter;
+        syncImageControlValues();
+        renderCanvas();
+        showToast('写真の補正を標準に戻しました');
+    });
+
+    function resetImagePosition(showMessage = true) {
+        state.bgFit = 'cover';
+        state.bgScale = 1;
+        state.bgOffsetX = 0;
+        state.bgOffsetY = 0;
+        state.bgPreset = null;
+        syncImageControlValues();
+        renderCanvas();
+        if (showMessage) showToast('写真の位置を中央に戻しました');
+    }
+
+    function adjustPreviewImage({ scale = 0, x = 0, y = 0 }) {
+        state.bgScale = Math.min(3, Math.max(1, Math.round((state.bgScale + scale) * 20) / 20));
+        state.bgOffsetX = Math.min(100, Math.max(-100, state.bgOffsetX + x));
+        state.bgOffsetY = Math.min(100, Math.max(-100, state.bgOffsetY + y));
+        state.bgPreset = null;
+        syncImageControlValues();
+        renderCanvas();
+    }
+
+    function applyDefaultBackgroundPreset(presetKey, showMessage = true) {
+        const preset = DEFAULT_BACKGROUND_PRESETS[presetKey];
+        if (!preset) return;
+        const img = new Image();
+        img.onload = () => {
+            state.bgImage = img;
+            state.bgPreset = presetKey;
+            state.bgFit = 'cover';
+            state.bgScale = preset.scale;
+            state.bgOffsetX = preset.x;
+            state.bgOffsetY = preset.y;
+            state.bgFlipX = false;
+            els.bgImageInput.value = '';
+            els.imageControls.classList.remove('hidden');
+            els.imageControls.open = true;
+            els.previewImageControls.classList.remove('hidden');
+            if (state.textEffect === 'none') state.textEffect = 'shadow';
+            syncControls();
+            renderCanvas();
+            if (showMessage) showToast(`${preset.label}の背景を選びました`);
+        };
+        img.onerror = () => showToast('標準背景を読み込めませんでした');
+        img.src = DEFAULT_BACKGROUND_IMAGE;
+    }
+
+    els.resetImagePositionBtn.addEventListener('click', () => resetImagePosition());
+    els.previewMoveResetBtn.addEventListener('click', () => resetImagePosition());
+    els.previewZoomOutBtn.addEventListener('click', () => adjustPreviewImage({ scale: -0.1 }));
+    els.previewZoomInBtn.addEventListener('click', () => adjustPreviewImage({ scale: 0.1 }));
+    els.previewMoveUpBtn.addEventListener('click', () => adjustPreviewImage({ y: -10 }));
+    els.previewMoveLeftBtn.addEventListener('click', () => adjustPreviewImage({ x: -10 }));
+    els.previewMoveRightBtn.addEventListener('click', () => adjustPreviewImage({ x: 10 }));
+    els.previewMoveDownBtn.addEventListener('click', () => adjustPreviewImage({ y: 10 }));
+    els.previewFlipBtn.addEventListener('click', () => {
+        if (!state.bgImage) return;
+        state.bgFlipX = !state.bgFlipX;
+        syncImageControlValues();
+        renderCanvas();
+        showToast(state.bgFlipX ? '写真を左右反転しました' : '左右反転を解除しました');
+    });
+    // 背景画像の読み込み処理
+    els.bgImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                state.bgImage = img;
+                state.bgPreset = null;
+                state.bgFit = 'cover';
+                state.bgScale = 1;
+                state.bgOffsetX = 0;
+                state.bgOffsetY = 0;
+                state.bgFlipX = false;
+                els.clearImageBtn.classList.remove('hidden');
+                els.imageControls.classList.remove('hidden');
+                els.imageControls.open = true;
+                els.previewImageControls.classList.remove('hidden');
+                syncImageControlValues();
+
+                // 画像アップロード時は見やすくするために自動でエフェクトを付ける
+                if (state.textEffect === 'none') {
+                    state.textEffect = 'shadow';
+                    els.textEffect.value = 'shadow';
+                }
+                renderCanvas();
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // 背景画像のクリア処理
+    els.clearImageBtn.addEventListener('click', () => {
+        els.bgImageInput.value = '';
+        state.bgImage = null;
+        state.bgPreset = null;
+        state.bgFlipX = false;
+        els.clearImageBtn.classList.add('hidden');
+        els.imageControls.classList.add('hidden');
+        els.previewImageControls.classList.add('hidden');
+        renderCanvas();
+    });
+
+    function getCanvasPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: ((event.clientX - rect.left) / rect.width) * CANVAS_SIZE,
+            y: ((event.clientY - rect.top) / rect.height) * CANVAS_SIZE
+        };
+    }
+
+    function isPointOnName(point) {
+        return Boolean(nameHitArea
+            && point.x >= nameHitArea.x
+            && point.x <= nameHitArea.x + nameHitArea.width
+            && point.y >= nameHitArea.y
+            && point.y <= nameHitArea.y + nameHitArea.height);
+    }
+
+    canvas.addEventListener('pointerdown', (event) => {
+        const point = getCanvasPoint(event);
+        if (isPointOnName(point)) {
+            nameDrag = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                offsetX: state.nameOffsetX,
+                offsetY: state.nameOffsetY
+            };
+            canvas.setPointerCapture(event.pointerId);
+            els.previewFrame.classList.add('is-name-dragging');
+            canvas.style.cursor = 'move';
+            event.preventDefault();
+            return;
+        }
+
+        if (!state.bgImage) return;
+        imageDrag = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            offsetX: state.bgOffsetX,
+            offsetY: state.bgOffsetY
+        };
+        canvas.setPointerCapture(event.pointerId);
+        els.previewFrame.classList.add('is-dragging');
+        canvas.style.cursor = 'grabbing';
+        event.preventDefault();
+    });
+
+    canvas.addEventListener('pointermove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+
+        if (nameDrag && nameDrag.pointerId === event.pointerId) {
+            const deltaX = ((event.clientX - nameDrag.startX) / rect.width) * CANVAS_SIZE;
+            const deltaY = ((event.clientY - nameDrag.startY) / rect.height) * CANVAS_SIZE;
+            state.nameOffsetX = Math.max(-220, Math.min(220, nameDrag.offsetX + deltaX));
+            state.nameOffsetY = Math.max(-220, Math.min(220, nameDrag.offsetY + deltaY));
+            renderCanvas();
+            event.preventDefault();
+            return;
+        }
+
+        if (imageDrag && imageDrag.pointerId === event.pointerId) {
+            const deltaX = ((event.clientX - imageDrag.startX) / rect.width) * 200;
+            const deltaY = ((event.clientY - imageDrag.startY) / rect.height) * 200;
+            state.bgOffsetX = Math.max(-100, Math.min(100, imageDrag.offsetX + deltaX));
+            state.bgOffsetY = Math.max(-100, Math.min(100, imageDrag.offsetY + deltaY));
+            syncImageControlValues();
+            renderCanvas();
+            event.preventDefault();
+            return;
+        }
+
+        canvas.style.cursor = isPointOnName(getCanvasPoint(event))
+            ? 'move'
+            : (state.bgImage ? 'grab' : 'default');
+    });
+
+    function endCanvasDrag(event) {
+        if (nameDrag && nameDrag.pointerId === event.pointerId) {
+            nameDrag = null;
+            els.previewFrame.classList.remove('is-name-dragging');
+        }
+        if (imageDrag && imageDrag.pointerId === event.pointerId) {
+            imageDrag = null;
+            els.previewFrame.classList.remove('is-dragging');
+        }
+        canvas.style.cursor = isPointOnName(getCanvasPoint(event))
+            ? 'move'
+            : (state.bgImage ? 'grab' : 'default');
+    }
+
+    canvas.addEventListener('pointerup', endCanvasDrag);
+    canvas.addEventListener('pointercancel', endCanvasDrag);
+    canvas.addEventListener('pointerleave', () => {
+        if (!nameDrag && !imageDrag) canvas.style.cursor = state.bgImage ? 'grab' : 'default';
+    });
+
+    function closeResetConfirm() {
+        els.resetConfirmModal.classList.add('hidden');
+        els.resetConfirmModal.classList.remove('flex');
+        els.resetBtn.focus();
+    }
+
+    function resetAllSettings() {
+        Object.assign(state, DEFAULT_STATE);
+        previewUndoStack = [];
+        updateUndoButton();
+        els.bgImageInput.value = '';
+        els.clearImageBtn.classList.add('hidden');
+        syncControls();
+        renderCanvas();
+        if (state.bgPreset) applyDefaultBackgroundPreset(state.bgPreset, false);
+        showToast('初期設定に戻しました');
+    }
+
+    els.resetBtn.addEventListener('click', () => {
+        els.resetConfirmModal.classList.remove('hidden');
+        els.resetConfirmModal.classList.add('flex');
+        els.resetNoBtn.focus();
+    });
+
+    els.resetNoBtn.addEventListener('click', closeResetConfirm);
+    els.resetYesBtn.addEventListener('click', () => {
+        closeResetConfirm();
+        resetAllSettings();
+    });
+    els.resetConfirmModal.addEventListener('click', (event) => {
+        if (event.target === els.resetConfirmModal) closeResetConfirm();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !els.resetConfirmModal.classList.contains('hidden')) closeResetConfirm();
+    });
+
+    // ダウンロード処理
+    els.downloadBtn.addEventListener('click', () => {
+        try {
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            const safeName = (state.name.trim() || 'icon')
+                .replace(/[\\/:*?"<>|]/g, '_')
+                .replace(/\s+/g, '_')
+                .slice(0, 40);
+            link.download = `m365_profile_${safeName}.png`;
+            link.href = dataUrl;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('PNG画像を保存しました');
+        } catch (err) {
+            console.error("ダウンロードエラー:", err);
+            alert("画像のダウンロードに失敗しました。");
+        }
+    });
+
+    // 初期描画の実行
+    window.addEventListener('load', () => {
+        restoreState();
+        const loadedSharedDesign = loadSharedDesignFromUrl();
+        syncControls();
+        switchSettingsTab('text');
+        renderCanvas();
+        if (loadedSharedDesign) {
+            showToast('共有された部署デザインを読み込みました');
+        } else if (state.bgPreset) {
+            applyDefaultBackgroundPreset(state.bgPreset, false);
+        }
+    });
+</script>
+</body>
+</html>
