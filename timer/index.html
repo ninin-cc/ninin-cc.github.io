@@ -96,15 +96,16 @@
           <button id="btn-toggle-play" class="button primary" type="button">▶ タイマー開始</button>
           <button id="btn-reset" class="button warning" type="button">リセット</button>
           <button id="btn-clear" class="button danger" type="button">クリア</button>
-          <button id="btn-stopwatch" class="button stopwatch" type="button">⏱ ストップウォッチ開始</button>
+          <button id="btn-stopwatch" class="button stopwatch" type="button">ストップウォッチ
+開始</button>
         </div>
       </div>
 
       <div class="settings-content">
           <div class="compact-row quick-settings-row">
             <div class="compact-group add-group">
-              <span class="compact-label">ADD</span>
-              <div class="segmented-control">
+              <span id="adjustment-label" class="compact-label">設定</span>
+              <div id="adjustment-controls" class="segmented-control" aria-label="タイマー時間の設定">
                 <button id="btn-subtract-minute" class="button segment subtract" type="button" title="表示時間を1分減らす" aria-label="表示時間を1分減らす">−1</button>
                 <button id="btn-undo-add" class="button segment undo" type="button" title="直前の時間調整を戻す" aria-label="直前の時間調整を戻す" disabled>↶</button>
                 <button class="button segment add btn-add" type="button" data-add="60">＋1</button>

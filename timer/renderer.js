@@ -17,6 +17,8 @@
   const leftClockWrap = document.getElementById('left-clock-wrap');
   const clockResizer = document.getElementById('clock-resizer');
   const bgClock = document.getElementById('bg-clock');
+  const leftClockCheckbox = document.getElementById('chk-leftclock');
+  const rightClockCheckbox = document.getElementById('chk-rightclock');
   const selHour = document.getElementById('sel-hour');
   const selMin = document.getElementById('sel-min');
   const selSec = document.getElementById('sel-sec');
@@ -24,6 +26,8 @@
   const stopwatchButton = document.getElementById('btn-stopwatch');
   const subtractMinuteButton = document.getElementById('btn-subtract-minute');
   const undoAddButton = document.getElementById('btn-undo-add');
+  const adjustmentLabel = document.getElementById('adjustment-label');
+  const adjustmentControls = document.getElementById('adjustment-controls');
   const extensionConfirm = document.getElementById('extension-confirm');
   const extensionQuestion = document.getElementById('extension-question');
   const extensionYesButton = document.getElementById('btn-extension-yes');
@@ -1237,7 +1241,9 @@
     playButton.textContent = countdownRunning ? 'Ⅱ タイマー停止' : '▶ タイマー開始';
     playButton.classList.toggle('pause', countdownRunning);
     playButton.classList.toggle('primary', isCountdown && !countdownRunning);
-    stopwatchButton.textContent = stopwatchRunning ? 'Ⅱ ストップウォッチ停止' : '⏱ ストップウォッチ開始';
+    adjustmentLabel.textContent = countdownRunning ? '延長' : '設定';
+    adjustmentControls.setAttribute('aria-label', countdownRunning ? '実行中のタイマーを延長' : 'タイマー時間の設定');
+    stopwatchButton.textContent = stopwatchRunning ? 'ストップウォッチ\n停止' : 'ストップウォッチ\n開始';
     stopwatchButton.classList.toggle('pause', stopwatchRunning);
     stopwatchButton.classList.toggle('stopwatch', !stopwatchRunning);
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
@@ -1993,15 +1999,20 @@
     body.dataset.theme = event.target.checked ? 'dark' : 'light';
   });
 
-  document.getElementById('chk-leftclock').addEventListener('change', (event) => {
-    leftClockWrap.hidden = !event.target.checked;
-    clockResizer.hidden = !event.target.checked;
-  });
+  function syncClockVisibility() {
+    const showLeftClock = leftClockCheckbox.checked;
+    const showRightClock = rightClockCheckbox.checked;
 
-  document.getElementById('chk-rightclock').addEventListener('change', (event) => {
-    isDigitalClockVisible = event.target.checked;
-    if (!isBreakMode) digitalText.hidden = !isDigitalClockVisible;
-  });
+    isDigitalClockVisible = showRightClock;
+    leftClockWrap.hidden = !showLeftClock;
+    timerStage.hidden = !showRightClock;
+    clockResizer.hidden = !(showLeftClock && showRightClock);
+    body.classList.toggle('right-clock-hidden', !showRightClock);
+    if (!isBreakMode) digitalText.hidden = !showRightClock;
+  }
+
+  leftClockCheckbox.addEventListener('change', syncClockVisibility);
+  rightClockCheckbox.addEventListener('change', syncClockVisibility);
 
   document.getElementById('chk-bgclock').addEventListener('change', (event) => {
     bgClock.hidden = !event.target.checked;
@@ -2065,6 +2076,7 @@
     bridge.getState().then(applyOverlayState);
   }
 
+  syncClockVisibility();
   openAgendaFromLocation();
   if (isStandalonePomodoro) {
     body.classList.add('standalone-pomodoro');
