@@ -10,6 +10,7 @@
   if (mainWindowName) window.name = mainWindowName;
   const body = document.body;
   const root = document.documentElement;
+  const tr = (value) => window.TimerI18n?.translate(value) ?? value;
   const digitalText = document.getElementById('digital-text');
   const timerStage = document.getElementById('timer-stage');
   const topPane = document.getElementById('top-pane');
@@ -500,7 +501,7 @@
   }
 
   function setTutorialInstruction(message, success = false) {
-    tutorialInstruction.textContent = message;
+    tutorialInstruction.textContent = tr(message);
     tutorialInstruction.classList.toggle('is-success', success);
   }
 
@@ -519,12 +520,12 @@
     tutorialPhase = step.phase ?? null;
     applyTutorialSetup(step.setup);
     tutorialProgress.textContent = `${tutorialIndex + 1} / ${tutorialSteps.length}`;
-    tutorialTitle.textContent = step.title;
-    tutorialDescription.textContent = step.description;
+    tutorialTitle.textContent = tr(step.title);
+    tutorialDescription.textContent = tr(step.description);
     setTutorialInstruction(step.instruction ?? '「次へ」で進みます');
     tutorialBackButton.disabled = tutorialIndex === 0;
     tutorialNextButton.disabled = !tutorialStepComplete;
-    tutorialNextButton.textContent = tutorialIndex === tutorialSteps.length - 1 ? '完了' : '次へ';
+    tutorialNextButton.textContent = tr(tutorialIndex === tutorialSteps.length - 1 ? '完了' : '次へ');
     setTutorialTarget(step.selector);
   }
 
@@ -834,7 +835,7 @@
     const agendas = readSavedAgendas();
     const agenda = agendas.find((entry) => entry.id === selectedId);
     if (!agenda) return;
-    if (!window.confirm(`保存した「${agenda.name}」を削除しますか？`)) return;
+    if (!window.confirm(tr(`保存した「${agenda.name}」を削除しますか？`))) return;
     if (!writeSavedAgendas(agendas.filter((entry) => entry.id !== selectedId))) return;
     if (activeAgendaId === selectedId) activeAgendaId = '';
     refreshSavedAgendas();
@@ -1107,7 +1108,7 @@
     pomodoroUrl.hash = '';
     pomodoroWindow = window.open(pomodoroUrl.toString(), 'ninin-pomodoro');
     if (!pomodoroWindow) {
-      window.alert('別タブ／別ウィンドウを開けませんでした。ブラウザの新しい画面を開く許可を確認してください。');
+      window.alert(tr('別タブ／別ウィンドウを開けませんでした。ブラウザの新しい画面を開く許可を確認してください。'));
       return;
     }
     pomodoroWindow.focus();
@@ -1238,6 +1239,7 @@
     timerStage.classList.toggle('is-warning', isCountdown && seconds > 60 && seconds <= 120);
     timerStage.classList.toggle('is-urgent', isCountdown && seconds > 0 && seconds <= 60);
     timerStage.classList.toggle('is-ended', isCountdown && hasEnded);
+    body.classList.toggle('timer-ended', isCountdown && hasEnded);
     playButton.textContent = countdownRunning ? 'Ⅱ タイマー停止' : '▶ タイマー開始';
     playButton.classList.toggle('pause', countdownRunning);
     playButton.classList.toggle('primary', isCountdown && !countdownRunning);
@@ -1330,6 +1332,7 @@
   function renderBreakDisplay() {
     if (!isBreakMode || !breakTarget) return;
     body.classList.remove('is-stopwatch-mode');
+    body.classList.remove('timer-ended');
     hideExtensionConfirmation();
     digitalText.hidden = true;
     breakDisplay.hidden = false;
@@ -2084,4 +2087,5 @@
     openPomodoro();
   }
   renderTimer();
+  window.TimerI18n?.apply(document.documentElement);
 })();

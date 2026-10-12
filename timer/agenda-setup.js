@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const tr = (value) => window.TimerI18n?.translate(value) ?? value;
+
   const app = window.agendaApp;
   if (!app) return;
 
@@ -179,7 +181,7 @@
 
   function deleteAgenda() {
     const entry = readSaved().find((item) => item.id === savedSelect.value);
-    if (!entry || !window.confirm(`保存した「${entry.name}」を削除しますか？`)) return;
+    if (!entry || !window.confirm(tr(`保存した「${entry.name}」を削除しますか？`))) return;
     if (!writeSaved(readSaved().filter((item) => item.id !== entry.id))) return;
     if (activeAgendaId === entry.id) activeAgendaId = '';
     refreshSaved();
@@ -333,4 +335,5 @@
   setTheme(initial.theme);
   replaceRows(initial.items?.length ? initial.items : defaultItems);
   refreshSaved();
+  window.TimerI18n?.apply(document.documentElement);
 })();

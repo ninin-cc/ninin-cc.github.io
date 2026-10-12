@@ -554,6 +554,41 @@ body.digital-hidden .break-display {
   animation: flash-red 1s infinite;
 }
 
+@keyframes flash-analog-dial {
+  0%, 100% {
+    stroke: #ef4444;
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.72));
+  }
+  50% {
+    stroke: #991b1b;
+    opacity: 0.42;
+    filter: drop-shadow(0 0 1px rgba(153, 27, 27, 0.25));
+  }
+}
+
+@keyframes flash-analog-numbers {
+  0%, 100% {
+    fill: #ef4444;
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.72));
+  }
+  50% {
+    fill: #991b1b;
+    opacity: 0.42;
+    filter: none;
+  }
+}
+
+body.timer-ended .left-clock-wrap .clock-face,
+body.timer-ended .left-clock-wrap .clock-marks {
+  animation: flash-analog-dial 1s ease-in-out infinite;
+}
+
+body.timer-ended .left-clock-wrap .clock-numbers {
+  animation: flash-analog-numbers 1s ease-in-out infinite;
+}
+
 .click-through-hint {
   position: absolute;
   z-index: 4;
@@ -1004,6 +1039,19 @@ input[type="range"] {
 
 .view-controls {
   flex-wrap: nowrap;
+}
+
+.language-toggle {
+  min-width: 44px;
+  border-color: #94a3b8;
+  color: #334155;
+  background: #f8fafc;
+  letter-spacing: 0.04em;
+}
+
+body[data-theme="dark"] .language-toggle {
+  color: #e2e8f0;
+  background: #1e293b;
 }
 
 .compact-label {
@@ -2649,5 +2697,16 @@ body.click-through .click-through-hint {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  body.timer-ended .left-clock-wrap .clock-face,
+  body.timer-ended .left-clock-wrap .clock-marks {
+    animation: none;
+    stroke: #ef4444;
+  }
+
+  body.timer-ended .left-clock-wrap .clock-numbers {
+    animation: none;
+    fill: #ef4444;
   }
 }
