@@ -68,7 +68,7 @@
         </svg>
 
         <div id="extension-confirm" class="extension-confirm" role="dialog" aria-modal="true" aria-labelledby="extension-question" hidden>
-          <p id="extension-question" class="extension-question">＋3分 延長しますか？</p>
+          <p id="extension-question" class="extension-question">時間を延長しますか？</p>
           <div class="extension-actions">
             <button id="btn-extension-yes" class="button extension-yes" type="button">YES</button>
             <button id="btn-extension-no" class="button extension-no" type="button">NO</button>
@@ -102,26 +102,16 @@
 
       <div class="settings-content">
           <div class="compact-row quick-settings-row">
-            <div class="compact-group preset-group">
-              <span class="compact-label">PRESET</span>
-              <div class="segmented-control">
-                <button class="button segment subtle btn-preset" type="button" data-time="60">1分</button>
-                <button class="button segment subtle btn-preset" type="button" data-time="180">3分</button>
-                <button class="button segment subtle btn-preset" type="button" data-time="300">5分</button>
-                <button class="button segment subtle btn-preset" type="button" data-time="360">6分</button>
-                <button class="button segment subtle btn-preset" type="button" data-time="600">10分</button>
-                <button class="button segment subtle btn-preset" type="button" data-time="900">15分</button>
-              </div>
-            </div>
-
             <div class="compact-group add-group">
               <span class="compact-label">ADD</span>
               <div class="segmented-control">
-                <button id="btn-undo-add" class="button segment undo" type="button" title="直前の時間追加を戻す" aria-label="直前の時間追加を戻す" disabled>↶</button>
+                <button id="btn-subtract-minute" class="button segment subtract" type="button" title="表示時間を1分減らす" aria-label="表示時間を1分減らす">−1</button>
+                <button id="btn-undo-add" class="button segment undo" type="button" title="直前の時間調整を戻す" aria-label="直前の時間調整を戻す" disabled>↶</button>
                 <button class="button segment add btn-add" type="button" data-add="60">＋1</button>
                 <button class="button segment add btn-add" type="button" data-add="120">＋2</button>
-                <button class="button segment add btn-add" type="button" data-add="180">＋3</button>
+                <button class="button segment add btn-add" type="button" data-add="300">＋5</button>
                 <button class="button segment add btn-add" type="button" data-add="600">＋10</button>
+                <button class="button segment add btn-add" type="button" data-add="1800">＋30</button>
               </div>
             </div>
           </div>
@@ -197,6 +187,7 @@
               </div>
             </details>
             <div class="helper-actions">
+              <a class="icon-maker-launch" href="https://ninin-cc.github.io/icon/index.html" target="_blank" rel="noopener noreferrer">プロフィールアイコンメーカー</a>
               <button id="btn-agenda" class="agenda-launch" type="button">ワーク進行表</button>
               <button id="btn-pomodoro" class="pomodoro-launch" type="button">🍅 ポモドーロテクニックモード</button>
               <button id="btn-tutorial" class="tutorial-launch" type="button" aria-haspopup="dialog">チュートリアル</button>

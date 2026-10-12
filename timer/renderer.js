@@ -22,6 +22,7 @@
   const selSec = document.getElementById('sel-sec');
   const playButton = document.getElementById('btn-toggle-play');
   const stopwatchButton = document.getElementById('btn-stopwatch');
+  const subtractMinuteButton = document.getElementById('btn-subtract-minute');
   const undoAddButton = document.getElementById('btn-undo-add');
   const extensionConfirm = document.getElementById('extension-confirm');
   const extensionQuestion = document.getElementById('extension-question');
@@ -157,11 +158,11 @@
       instruction: '練習中の内容は、終了すると元の状態へ戻ります。'
     },
     {
-      title: 'プリセットで1分を選ぶ',
-      description: 'よく使う時間はPRESETからワンクリックで設定できます。まずは実際に1分を選んでみましょう。',
-      instruction: '「1分」を押してください',
-      selector: '.preset-group',
-      action: 'preset-60',
+      title: 'ADDで1分を設定する',
+      description: 'ADDは表示中の時間へ加算します。まずは空の状態から「＋1」を押して、1分を設定してみましょう。',
+      instruction: '「＋1」を押してください',
+      selector: '.add-group',
+      action: 'add-initial',
       setup: 'empty-countdown'
     },
     {
@@ -189,8 +190,8 @@
     },
     {
       title: '停止中のADDを試す',
-      description: '停止中のADDは、表示中の時間へそのまま加算します。＋3で増やしたあと、左端の↶で元に戻してみましょう。',
-      instruction: 'まず「＋3」を押してください',
+      description: '停止中のADDは、表示中の時間へそのまま加算します。＋5で増やしたあと、↶で元に戻してみましょう。',
+      instruction: 'まず「＋5」を押してください',
       selector: '.add-group',
       action: 'add-stopped',
       setup: 'ready-countdown',
@@ -198,7 +199,7 @@
     },
     {
       title: '実行中のADDで延長する',
-      description: '実行中にADDを押すと確認画面が開きます。開始、＋3、YESの順に操作して、残り時間と終了位置が延びる様子を見てみましょう。',
+      description: '実行中にADDを押すと確認画面が開きます。開始、＋2、YESの順に操作して、残り時間と終了位置が延びる様子を見てみましょう。',
       instruction: 'まず「タイマー開始」を押してください',
       selector: '#btn-toggle-play',
       action: 'add-running',
@@ -554,23 +555,23 @@
     const button = event.target.closest('button');
     if (!button || !step.action) return;
 
-    if (step.action === 'preset-60' && button.matches('.btn-preset') && button.dataset.time !== '60') {
-      rejectTutorialAction(event, '練習では「1分」を押してください');
+    if (step.action === 'add-initial' && button.closest('.add-group') && (!button.matches('.btn-add') || button.dataset.add !== '60')) {
+      rejectTutorialAction(event, '練習では「＋1」を押してください');
       return;
     }
 
     if (step.action === 'add-stopped' && button.closest('.add-group')) {
-      if (tutorialPhase === 'add' && (!button.matches('.btn-add') || button.dataset.add !== '180')) {
-        rejectTutorialAction(event, '練習では「＋3」を押してください');
+      if (tutorialPhase === 'add' && (!button.matches('.btn-add') || button.dataset.add !== '300')) {
+        rejectTutorialAction(event, '練習では「＋5」を押してください');
       } else if (tutorialPhase === 'undo' && button !== undoAddButton) {
-        rejectTutorialAction(event, '左端の「↶」を押してください');
+        rejectTutorialAction(event, '「↶」を押してください');
       }
       return;
     }
 
     if (step.action === 'add-running' && tutorialPhase === 'add' && button.closest('.add-group')) {
-      if (!button.matches('.btn-add') || button.dataset.add !== '180') {
-        rejectTutorialAction(event, '練習では「＋3」を押してください');
+      if (!button.matches('.btn-add') || button.dataset.add !== '120') {
+        rejectTutorialAction(event, '練習では「＋2」を押してください');
       }
       return;
     }
@@ -586,7 +587,7 @@
     const button = event.target.closest('button');
     if (!button || tutorialStepComplete) return;
 
-    if (step.action === 'preset-60' && button.matches('.btn-preset[data-time="60"]')) {
+    if (step.action === 'add-initial' && button.matches('.btn-add[data-add="60"]')) {
       completeTutorialStep('できました。大きな表示とTIMER欄が01:00に変わりました。', '#timer-stage');
       return;
     }
@@ -602,9 +603,9 @@
     }
 
     if (step.action === 'add-stopped') {
-      if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="180"]')) {
+      if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="300"]')) {
         tutorialPhase = 'undo';
-        setTutorialInstruction('01:00から04:00になりました。次に左端の「↶」を押してください', true);
+        setTutorialInstruction('01:00から06:00になりました。次に「↶」を押してください', true);
         setTutorialTarget('.add-group');
       } else if (tutorialPhase === 'undo' && button === undoAddButton) {
         completeTutorialStep('元の01:00へ戻りました。↶は直前の追加だけを取り消します。', '#timer-stage');
@@ -615,15 +616,15 @@
     if (step.action === 'add-running') {
       if (tutorialPhase === 'start' && button === playButton && timerMode === 'countdown' && isRunning) {
         tutorialPhase = 'add';
-        setTutorialInstruction('タイマーが動きました。次に「＋3」を押してください', true);
+        setTutorialInstruction('タイマーが動きました。次に「＋2」を押してください', true);
         setTutorialTarget('.add-group');
-      } else if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="180"]') && !extensionConfirm.hidden) {
+      } else if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="120"]') && !extensionConfirm.hidden) {
         tutorialPhase = 'confirm';
         setTutorialInstruction('確認画面が出ました。「YES」を押してください');
         setTutorialTarget('#timer-stage');
       } else if (tutorialPhase === 'confirm' && button === extensionYesButton && extensionConfirm.hidden) {
         tutorialPhase = 'done';
-        completeTutorialStep('延長できました。残り時間と、時計の「終了」位置が3分ぶん延びています。', '#left-clock-wrap');
+        completeTutorialStep('延長できました。残り時間と、時計の「終了」位置が2分ぶん延びています。', '#left-clock-wrap');
       }
     }
   }
@@ -1240,6 +1241,7 @@
     stopwatchButton.classList.toggle('pause', stopwatchRunning);
     stopwatchButton.classList.toggle('stopwatch', !stopwatchRunning);
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
+    subtractMinuteButton.disabled = !isCountdown || seconds <= 0;
     document.title = isStandalonePomodoro
       ? `${displayTime}｜${isPomodoroMode ? pomodoroPhaseLabel() : 'ポモドーロテクニック'}`
       : `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
@@ -1662,6 +1664,34 @@
     applyAddTime(safeSeconds);
   }
 
+  function subtractTime(seconds) {
+    if (isBreakMode) stopBreakDisplay();
+    if (timerMode !== 'countdown') {
+      pauseTimer();
+      timerMode = 'countdown';
+    }
+    const requested = Math.max(0, Number(seconds) || 0) * 1000;
+    const current = isRunning ? Math.max(0, endAt - Date.now()) : remainingMs;
+    const decrement = Math.min(requested, current);
+    if (decrement <= 0) return;
+    clockPreviewMode = 'countdown';
+    addHistory.push(-decrement);
+    if (isRunning) {
+      endAt -= decrement;
+      remainingMs = Math.max(0, endAt - Date.now());
+      if (remainingMs <= 0) {
+        remainingMs = 0;
+        isRunning = false;
+        stopTicker();
+      }
+    } else {
+      remainingMs = Math.max(0, remainingMs - decrement);
+    }
+    hasEnded = false;
+    syncManualSelectors(secondsForDisplay());
+    renderTimer();
+  }
+
   function undoLastAdd() {
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') return;
@@ -1828,17 +1858,11 @@
     else clearTimer();
   });
 
-  document.querySelectorAll('.btn-preset').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (isPomodoroMode) stopPomodoroMode();
-      setTime(Number(button.dataset.time));
-    });
-  });
-
   document.querySelectorAll('.btn-add').forEach((button) => {
     button.addEventListener('click', () => addTime(Number(button.dataset.add)));
   });
 
+  subtractMinuteButton.addEventListener('click', () => subtractTime(60));
   undoAddButton.addEventListener('click', undoLastAdd);
 
   extensionYesButton.addEventListener('click', () => {
