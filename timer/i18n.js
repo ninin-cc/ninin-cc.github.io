@@ -13,7 +13,9 @@
 
   const phrases = new Map(Object.entries({
     'ワークショップタイマー': 'Workshop Timer',
+    '無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用': 'Free Workshop Timer | Teams, Slack & Microsoft 365',
     'ワーク進行表': 'Workshop Agenda',
+    '無料のワーク進行表｜研修・会議・チームビルディングの時間管理': 'Free Workshop Agenda | Time Management for Training and Meetings',
     'ワークショップ': 'Workshop',
     'ポモドーロテクニック｜Workshop Timer': 'Pomodoro Technique | Workshop Timer',
     'ウインドウ操作': 'Window controls',

@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const searchDocumentTitle = '無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用';
+
   const bridge = window.overlayBridge ?? null;
   const isElectron = Boolean(bridge);
   const isStandalonePomodoro = new URLSearchParams(window.location.search).get('view') === 'pomodoro';
@@ -1250,9 +1252,13 @@
     stopwatchButton.classList.toggle('stopwatch', !stopwatchRunning);
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
     subtractMinuteButton.disabled = !isCountdown || seconds <= 0;
-    document.title = isStandalonePomodoro
-      ? `${displayTime}｜${isPomodoroMode ? pomodoroPhaseLabel() : 'ポモドーロテクニック'}`
-      : `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
+    if (isStandalonePomodoro) {
+      document.title = `${displayTime}｜${isPomodoroMode ? pomodoroPhaseLabel() : 'ポモドーロテクニック'}`;
+    } else if (seconds > 0 || isRunning || hasEnded) {
+      document.title = `${displayTime}｜${isCountdown ? 'タイマー' : 'ストップウォッチ'}｜ワークショップタイマー`;
+    } else {
+      document.title = tr(searchDocumentTitle);
+    }
     updateClocks();
     updatePomodoroUi();
   }

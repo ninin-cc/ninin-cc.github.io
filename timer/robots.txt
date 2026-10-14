@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ninin-cc.github.io/timer/sitemap.xml

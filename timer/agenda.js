@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const searchDocumentTitle = '無料のワーク進行表｜研修・会議・チームビルディングの時間管理';
+
   const fallbackItems = [
     { title: 'オープニング・ゴール確認', minutes: 5 },
     { title: 'テーマと進め方の説明', minutes: 10 },
@@ -271,7 +273,11 @@
       row.querySelector('[data-adjust="plus"]').disabled = rowItem.minutes >= 1440;
       renderMinuteBlocks(row, rowItem.minutes, remainingBlocks, isCurrent && isRunning);
     });
-    if (!settingsView.hidden) document.title = `設定｜${config.title || 'ワーク進行表'}`;
+    if (!settingsView.hidden) {
+      document.title = config.title === 'ワーク進行表'
+        ? (window.TimerI18n?.translate(searchDocumentTitle) ?? searchDocumentTitle)
+        : `設定｜${config.title}`;
+    }
   }
 
   function toggleRun() {
