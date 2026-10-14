@@ -22,7 +22,7 @@
             labelJa: 'おふとんなんよ',
             labelEn: 'Ofuton Nanyo',
             characters: [
-                { id: 'ofuton-nanyo', labelJa: 'おふとんなんよ', labelEn: 'Ofuton Nanyo', stamps: series(folders.ofutonNanyo, 'ofuton-nanyo', 11, 'おふとんなんよ', 'Ofuton Nanyo') },
+                { id: 'ofuton-nanyo', labelJa: 'おふとんなんよ', labelEn: 'Ofuton Nanyo', stamps: series(folders.ofutonNanyo, 'ofuton-nanyo', 15, 'おふとんなんよ', 'Ofuton Nanyo') },
                 { id: 'azuki', labelJa: 'あずきさん', labelEn: 'Azuki-san', stamps: series(folders.ofutonNanyo, 'azuki', 7, 'あずきさん', 'Azuki-san') },
                 { id: 'kesepasa', labelJa: 'ケセパサ', labelEn: 'Kesepasa', stamps: series(folders.ofutonNanyo, 'kesepasa', 7, 'ケセパサ', 'Kesepasa') },
                 { id: 'towelket-c', labelJa: 'タオル・けっと・シー', labelEn: 'Towel Ketto C', stamps: series(folders.ofutonNanyo, 'towelket-c', 8, 'タオル・けっと・シー', 'Towel Ketto C') },
