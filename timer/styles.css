@@ -13,6 +13,7 @@
   --coral: #ff7f50;
   --orange: #fb923c;
   --red: #ef4444;
+  --ui-scale: 1;
 }
 
 * {
@@ -94,11 +95,106 @@ body.electron-mode {
 }
 
 .app-shell {
-  width: 100vw;
-  height: 100vh;
+  width: calc(100vw / var(--ui-scale));
+  height: calc(100vh / var(--ui-scale));
   display: flex;
   flex-direction: column;
   background: transparent;
+  transform: scale(var(--ui-scale));
+  transform-origin: left top;
+}
+
+/* 縮小時に増えた論理上の余白は時計表示へ渡し、操作部の下に空白を残さない。 */
+.app-shell.is-compact-scale .top-pane {
+  flex-grow: 1;
+}
+
+.app-shell.is-compact-scale .controls {
+  flex-grow: 0;
+}
+
+.ui-scale-controls {
+  position: fixed;
+  top: 7px;
+  left: 7px;
+  z-index: 240;
+  display: flex;
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.52);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  opacity: 0.4;
+  backdrop-filter: blur(6px);
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.ui-scale-controls:hover,
+.ui-scale-controls:focus-within {
+  opacity: 0.96;
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.ui-scale-controls button {
+  width: 25px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: #334155;
+  background: transparent;
+  cursor: pointer;
+  font: 700 17px/1 ui-sans-serif, system-ui, sans-serif;
+}
+
+.ui-scale-controls .compact-window-button {
+  width: 29px;
+  margin-left: 1px;
+  border-left: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+}
+
+.ui-scale-controls button:hover,
+.ui-scale-controls button:focus-visible {
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.22);
+  outline: none;
+}
+
+.ui-scale-controls button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.32);
+}
+
+.ui-scale-controls button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+body.electron-mode .ui-scale-controls {
+  top: 44px;
+}
+
+body[data-theme="dark"] .ui-scale-controls {
+  border-color: rgba(148, 163, 184, 0.24);
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+body[data-theme="dark"] .ui-scale-controls:hover,
+body[data-theme="dark"] .ui-scale-controls:focus-within {
+  background: rgba(15, 23, 42, 0.88);
+}
+
+body[data-theme="dark"] .ui-scale-controls button {
+  color: #cbd5e1;
+}
+
+body[data-theme="dark"] .ui-scale-controls button:hover,
+body[data-theme="dark"] .ui-scale-controls button:focus-visible {
+  color: #ffffff;
+  background: rgba(148, 163, 184, 0.2);
 }
 
 .electron-only {
@@ -201,10 +297,10 @@ label {
 
 .left-clock-wrap {
   position: relative;
-  width: clamp(130px, 25vw, 420px);
-  flex: 0 0 clamp(130px, 25vw, 420px);
+  width: calc((100% - 12px) / 2);
+  flex: 0 0 calc((100% - 12px) / 2);
   min-width: 100px;
-  max-width: 50vw;
+  max-width: calc(100% - 84px);
   padding: 12px;
   overflow: hidden;
   display: flex;

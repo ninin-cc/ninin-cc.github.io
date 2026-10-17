@@ -149,8 +149,27 @@ ipcMain.handle('overlay:set-always-on-top', (_event, enabled) => setAlwaysOnTop(
 ipcMain.handle('overlay:set-minimum-height', (_event, height) => {
   if (!mainWindow || mainWindow.isDestroyed()) return 300;
   const safeHeight = Math.min(1400, Math.max(180, Math.round(Number(height) || 300)));
-  mainWindow.setMinimumSize(520, safeHeight);
+  mainWindow.setMinimumSize(280, safeHeight);
   return safeHeight;
+});
+ipcMain.handle('overlay:set-minimum-size', (_event, width, height) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return { width: 280, height: 300 };
+  const safeWidth = Math.min(1800, Math.max(280, Math.round(Number(width) || 280)));
+  const safeHeight = Math.min(1400, Math.max(180, Math.round(Number(height) || 300)));
+  mainWindow.setMinimumSize(safeWidth, safeHeight);
+  return { width: safeWidth, height: safeHeight };
+});
+ipcMain.handle('overlay:resize-by-scale', (_event, ratio, minWidth, minHeight) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return null;
+  const safeRatio = Math.min(2, Math.max(0.5, Number(ratio) || 1));
+  const safeMinWidth = Math.min(1800, Math.max(280, Math.round(Number(minWidth) || 280)));
+  const safeMinHeight = Math.min(1400, Math.max(180, Math.round(Number(minHeight) || 180)));
+  const [currentWidth, currentHeight] = mainWindow.getSize();
+  const nextWidth = Math.max(safeMinWidth, Math.round(currentWidth * safeRatio));
+  const nextHeight = Math.max(safeMinHeight, Math.round(currentHeight * safeRatio));
+  mainWindow.setMinimumSize(safeMinWidth, safeMinHeight);
+  mainWindow.setSize(nextWidth, nextHeight, true);
+  return { width: nextWidth, height: nextHeight };
 });
 ipcMain.handle('overlay:toggle-fullscreen', () => {
   if (!mainWindow || mainWindow.isDestroyed()) return false;

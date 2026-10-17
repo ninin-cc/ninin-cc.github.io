@@ -22,6 +22,11 @@
     '最前面表示を切り替え': 'Toggle always-on-top',
     '全画面表示を切り替え': 'Toggle fullscreen',
     '最小化': 'Minimize',
+    '全体表示の拡大・縮小': 'Page zoom controls',
+    '全体を縮小': 'Zoom out',
+    '全体を拡大': 'Zoom in',
+    'コンパクト別窓で開く': 'Open compact window',
+    '通常画面へ戻る': 'Return to regular view',
     '固定': 'Pin',
     '全画面': 'Fullscreen',
     '終了': 'Finish',
@@ -266,6 +271,8 @@
     if ((match = value.match(/^「(.+)」を呼び出しました。$/))) return `Loaded “${match[1]}”.`;
     if ((match = value.match(/^「(.+)」を削除しました。$/))) return `Deleted “${match[1]}”.`;
     if ((match = value.match(/^(.+)（(\d+)分）$/))) return `${match[1]} (${match[2]} min)`;
+    if ((match = value.match(/^全体を縮小（現在\s*(\d+)%）$/))) return `Zoom out (current: ${match[1]}%)`;
+    if ((match = value.match(/^全体を拡大（現在\s*(\d+)%）$/))) return `Zoom in (current: ${match[1]}%)`;
     if ((match = value.match(/^(\d+)分・(.+)$/))) return `${match[1]} min · ${match[2]}`;
     if ((match = value.match(/^(\d+)分の短い休憩$/))) return `${match[1]}-minute short break`;
     if ((match = value.match(/^(\d+)分の長い休憩$/))) return `${match[1]}-minute long break`;

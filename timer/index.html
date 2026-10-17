@@ -25,6 +25,11 @@
   <script src="analytics.js"></script>
 </head>
 <body data-theme="light">
+  <div class="ui-scale-controls no-drag" role="group" aria-label="全体表示の拡大・縮小">
+    <button id="btn-ui-zoom-out" type="button" aria-label="全体を縮小" title="全体を縮小">−</button>
+    <button id="btn-ui-zoom-in" type="button" aria-label="全体を拡大" title="全体を拡大">＋</button>
+    <button id="btn-compact-window" class="browser-only compact-window-button" type="button" aria-label="コンパクト別窓で開く" title="コンパクト別窓で開く">↗</button>
+  </div>
   <div id="app" class="app-shell">
     <header id="titlebar" class="titlebar electron-only" aria-label="ウインドウ操作">
       <div class="drag-region">

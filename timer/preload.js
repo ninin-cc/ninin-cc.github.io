@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('overlayBridge', {
   setClickThrough: (enabled) => ipcRenderer.invoke('overlay:set-click-through', Boolean(enabled)),
   setAlwaysOnTop: (enabled) => ipcRenderer.invoke('overlay:set-always-on-top', Boolean(enabled)),
   setMinimumHeight: (height) => ipcRenderer.invoke('overlay:set-minimum-height', Number(height)),
+  setMinimumSize: (width, height) => ipcRenderer.invoke('overlay:set-minimum-size', Number(width), Number(height)),
+  resizeByScale: (ratio, minWidth, minHeight) => ipcRenderer.invoke('overlay:resize-by-scale', Number(ratio), Number(minWidth), Number(minHeight)),
   toggleFullscreen: () => ipcRenderer.invoke('overlay:toggle-fullscreen'),
   minimize: () => ipcRenderer.send('overlay:minimize'),
   close: () => ipcRenderer.send('overlay:close'),

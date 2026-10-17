@@ -5,14 +5,20 @@
 
   const bridge = window.overlayBridge ?? null;
   const isElectron = Boolean(bridge);
-  const isStandalonePomodoro = new URLSearchParams(window.location.search).get('view') === 'pomodoro';
+  const pageParams = new URLSearchParams(window.location.search);
+  const isStandalonePomodoro = pageParams.get('view') === 'pomodoro';
+  const isCompactBrowserWindow = !isElectron && pageParams.get('compact') === '1';
   const mainWindowName = isStandalonePomodoro
     ? ''
     : (window.name || `ninin-timer-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
   if (mainWindowName) window.name = mainWindowName;
   const body = document.body;
   const root = document.documentElement;
+  const appShell = document.getElementById('app');
   const tr = (value) => window.TimerI18n?.translate(value) ?? value;
+  const uiZoomOutButton = document.getElementById('btn-ui-zoom-out');
+  const uiZoomInButton = document.getElementById('btn-ui-zoom-in');
+  const compactWindowButton = document.getElementById('btn-compact-window');
   const digitalText = document.getElementById('digital-text');
   const timerStage = document.getElementById('timer-stage');
   const topPane = document.getElementById('top-pane');
@@ -153,8 +159,15 @@
   const storageKeys = {
     topPaneHeight: 'workshopTimer.topPaneHeight',
     leftClockWidth: 'workshopTimer.leftClockWidth',
+    leftClockRatio: 'workshopTimer.leftClockRatio',
+    uiScale: 'workshopTimer.uiScale',
     agendas: 'workshopTimer.agendas.v1'
   };
+  const uiScaleMin = 0.5;
+  const uiScaleMax = 1.3;
+  const uiScaleStep = 0.1;
+  let uiScale = 1;
+  let leftClockRatio = 0.5;
 
   body.classList.add(isElectron ? 'electron-mode' : 'browser-mode');
 
@@ -265,15 +278,123 @@
     }
   }
 
+  function applyUiScale(nextScale, persist = false) {
+    uiScale = Math.min(uiScaleMax, Math.max(uiScaleMin, Math.round(nextScale * 10) / 10));
+    root.style.setProperty('--ui-scale', String(uiScale));
+    appShell.classList.toggle('is-compact-scale', uiScale < 1);
+    const percent = Math.round(uiScale * 100);
+    uiZoomOutButton.disabled = uiScale <= uiScaleMin;
+    uiZoomInButton.disabled = uiScale >= uiScaleMax;
+    uiZoomOutButton.title = `全体を縮小（現在 ${percent}%）`;
+    uiZoomInButton.title = `全体を拡大（現在 ${percent}%）`;
+    if (persist) {
+      try { window.localStorage.setItem(storageKeys.uiScale, String(uiScale)); } catch {}
+    }
+    window.requestAnimationFrame(() => {
+      syncMinimumWindowSize();
+      if (!leftClockWrap.hidden) {
+        applyLeftClockRatio(leftClockRatio, false);
+      }
+    });
+  }
+
+  function resizeMainWindow(previousScale, nextScale) {
+    if (!previousScale || previousScale === nextScale) return;
+    const ratio = nextScale / previousScale;
+    const minimumWidth = Math.max(280, Math.round(520 * nextScale));
+    const minimumHeight = Math.max(180, Math.round(360 * nextScale));
+    if (bridge?.resizeByScale) {
+      void bridge.resizeByScale(ratio, minimumWidth, minimumHeight);
+      return;
+    }
+    try {
+      window.resizeTo(
+        Math.max(minimumWidth, Math.round(window.outerWidth * ratio)),
+        Math.max(minimumHeight, Math.round(window.outerHeight * ratio))
+      );
+    } catch {}
+  }
+
+  function compactWindowSize(scale = uiScale) {
+    const availableWidth = Math.max(280, window.screen?.availWidth || 1280);
+    const availableHeight = Math.max(360, window.screen?.availHeight || 800);
+    return {
+      width: Math.min(availableWidth, Math.max(280, Math.round(520 * scale))),
+      height: Math.min(availableHeight, Math.max(360, Math.round(900 * scale)))
+    };
+  }
+
+  function openCompactBrowserWindow() {
+    const compactUrl = new URL(window.location.href);
+    compactUrl.searchParams.set('compact', '1');
+    const { width, height } = compactWindowSize();
+    const popup = window.open(
+      compactUrl.href,
+      'ninin-timer-compact',
+      `popup=yes,resizable=yes,scrollbars=no,width=${width},height=${height}`
+    );
+    popup?.focus();
+  }
+
+  if (compactWindowButton) {
+    if (isCompactBrowserWindow) {
+      compactWindowButton.textContent = '↙';
+      compactWindowButton.setAttribute('aria-label', '通常画面へ戻る');
+      compactWindowButton.title = '通常画面へ戻る';
+    }
+    compactWindowButton.addEventListener('click', () => {
+      if (!isCompactBrowserWindow) {
+        openCompactBrowserWindow();
+        return;
+      }
+      if (window.opener && !window.opener.closed) {
+        window.opener.focus();
+        window.close();
+        return;
+      }
+      const regularUrl = new URL(window.location.href);
+      regularUrl.searchParams.delete('compact');
+      window.location.href = regularUrl.href;
+    });
+  }
+
+  applyUiScale(readStoredNumber(storageKeys.uiScale) ?? 1);
+
+  uiZoomOutButton.addEventListener('click', () => {
+    const previousScale = uiScale;
+    const nextScale = uiScale - uiScaleStep;
+    applyUiScale(nextScale, true);
+    resizeMainWindow(previousScale, uiScale);
+    keepDividerVisible();
+  });
+
+  uiZoomInButton.addEventListener('click', () => {
+    const previousScale = uiScale;
+    applyUiScale(uiScale + uiScaleStep, true);
+    resizeMainWindow(previousScale, uiScale);
+    keepDividerVisible();
+  });
+
+  function syncMinimumWindowSize() {
+    if (!bridge?.setMinimumSize) return;
+    if (controlsHidden) {
+      void bridge.setMinimumSize(280, 180);
+      return;
+    }
+    const titlebarHeight = isElectron ? 38 : 0;
+    const topHeight = Number.parseFloat(topPane.style.height) || topPane.offsetHeight;
+    const dividerHeight = Math.max(11, resizer.offsetHeight);
+    const minimumWidth = Math.max(280, Math.round(520 * uiScale));
+    const minimumHeight = Math.max(180, Math.round((titlebarHeight + topHeight + dividerHeight + 1) * uiScale));
+    void bridge.setMinimumSize(minimumWidth, minimumHeight);
+  }
+
   function applyTopPaneHeight(height, persist = false) {
     const safeHeight = Math.max(120, Math.round(height));
     topPane.style.height = `${safeHeight}px`;
     topPane.style.flexBasis = `${safeHeight}px`;
     if (persist) storeNumber(storageKeys.topPaneHeight, safeHeight);
-    if (bridge?.setMinimumHeight && !controlsHidden) {
-      const dividerHeight = Math.max(11, resizer.getBoundingClientRect().height);
-      void bridge.setMinimumHeight(38 + safeHeight + dividerHeight + 1);
-    }
+    syncMinimumWindowSize();
   }
 
   function keepDividerVisible() {
@@ -281,26 +402,45 @@
     if (isElectron) return;
     const titlebarHeight = isElectron ? 38 : 0;
     const dividerHeight = Math.max(11, resizer.getBoundingClientRect().height);
-    const maximum = Math.max(120, window.innerHeight - titlebarHeight - dividerHeight - 1);
-    const current = Number.parseFloat(topPane.style.height) || topPane.getBoundingClientRect().height;
+    const maximum = Math.max(120, appShell.clientHeight - titlebarHeight - dividerHeight - 1);
+    const current = Number.parseFloat(topPane.style.height) || (topPane.getBoundingClientRect().height / uiScale);
     if (current > maximum) applyTopPaneHeight(maximum, false);
   }
 
-  function applyLeftClockWidth(width, persist = false) {
-    const maximum = Math.max(100, Math.min(window.innerWidth * 0.5, topPane.clientWidth - 180));
-    const safeWidth = Math.min(maximum, Math.max(100, Math.round(width)));
+  function applyLeftClockRatio(ratio, persist = false) {
+    const dividerWidth = Math.max(12, clockResizer.offsetWidth);
+    const minimumRightArea = 72;
+    const availableWidth = Math.max(1, topPane.clientWidth - dividerWidth);
+    const minimumRatio = Math.min(0.5, 100 / availableWidth);
+    const maximumRatio = Math.max(minimumRatio, 1 - (minimumRightArea / availableWidth));
+    const requestedRatio = Math.min(0.99, Math.max(0.01, Number(ratio) || 0.5));
+    const renderedRatio = Math.min(maximumRatio, Math.max(minimumRatio, requestedRatio));
+    const safeWidth = Math.round(availableWidth * renderedRatio);
+    leftClockRatio = requestedRatio;
     leftClockWrap.style.width = `${safeWidth}px`;
     leftClockWrap.style.flexBasis = `${safeWidth}px`;
-    if (persist) storeNumber(storageKeys.leftClockWidth, safeWidth);
+    if (persist) {
+      try { window.localStorage.setItem(storageKeys.leftClockRatio, String(requestedRatio)); } catch {}
+    }
   }
 
   window.requestAnimationFrame(() => {
-    applyTopPaneHeight(readStoredNumber(storageKeys.topPaneHeight) ?? topPane.getBoundingClientRect().height);
-    applyLeftClockWidth(readStoredNumber(storageKeys.leftClockWidth) ?? leftClockWrap.getBoundingClientRect().width);
+    applyTopPaneHeight(readStoredNumber(storageKeys.topPaneHeight) ?? (topPane.getBoundingClientRect().height / uiScale));
+    const dividerWidth = Math.max(12, clockResizer.offsetWidth);
+    const availableWidth = Math.max(1, topPane.clientWidth - dividerWidth);
+    const storedRatio = readStoredNumber(storageKeys.leftClockRatio);
+    const legacyWidth = readStoredNumber(storageKeys.leftClockWidth);
+    const initialRatio = storedRatio ?? (legacyWidth ? legacyWidth / availableWidth : 0.5);
+    applyLeftClockRatio(initialRatio, storedRatio === null && legacyWidth !== null);
     keepDividerVisible();
   });
 
-  window.addEventListener('resize', keepDividerVisible);
+  window.addEventListener('resize', () => {
+    keepDividerVisible();
+    if (!leftClockWrap.hidden) {
+      applyLeftClockRatio(leftClockRatio, false);
+    }
+  });
 
   function addOptions(select, max) {
     for (let value = 0; value <= max; value += 1) {
@@ -1816,10 +1956,11 @@
     controlsHidden = Boolean(hidden);
     body.classList.toggle('controls-hidden', controlsHidden);
     if (!controlsHidden) {
-      const current = Number.parseFloat(topPane.style.height) || topPane.getBoundingClientRect().height;
+      const current = Number.parseFloat(topPane.style.height) || (topPane.getBoundingClientRect().height / uiScale);
       applyTopPaneHeight(current, false);
       keepDividerVisible();
     }
+    syncMinimumWindowSize();
   }
 
   async function setClickThrough(enabled) {
@@ -2046,14 +2187,17 @@
   window.addEventListener('pointermove', (event) => {
     if (isResizing && !controlsHidden) {
       const titlebarHeight = isElectron ? 38 : 0;
-      const relativeY = event.clientY - titlebarHeight;
-      const maximum = Math.max(120, window.innerHeight - titlebarHeight - 86);
+      const relativeY = (event.clientY - topPane.getBoundingClientRect().top) / uiScale;
+      const maximum = Math.max(120, appShell.clientHeight - titlebarHeight - 86);
       applyTopPaneHeight(Math.min(maximum, relativeY), true);
     }
 
     if (isClockResizing && !leftClockWrap.hidden) {
       const paneLeft = topPane.getBoundingClientRect().left;
-      applyLeftClockWidth(event.clientX - paneLeft, true);
+      const dividerWidth = Math.max(12, clockResizer.offsetWidth);
+      const availableWidth = Math.max(1, topPane.clientWidth - dividerWidth);
+      const logicalX = (event.clientX - paneLeft) / uiScale;
+      applyLeftClockRatio(logicalX / availableWidth, true);
     }
   });
 
