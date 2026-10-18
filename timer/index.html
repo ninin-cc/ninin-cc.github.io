@@ -29,6 +29,7 @@
     <button id="btn-ui-zoom-out" type="button" aria-label="全体を縮小" title="全体を縮小">−</button>
     <button id="btn-ui-zoom-in" type="button" aria-label="全体を拡大" title="全体を拡大">＋</button>
     <button id="btn-compact-window" class="browser-only compact-window-button" type="button" aria-label="コンパクト別窓で開く" title="コンパクト別窓で開く">↗</button>
+    <output id="ui-scale-value" class="ui-scale-value" aria-live="polite">100%</output>
   </div>
   <div id="app" class="app-shell">
     <header id="titlebar" class="titlebar electron-only" aria-label="ウインドウ操作">
@@ -74,6 +75,14 @@
       </div>
 
       <section id="timer-stage" class="timer-stage" aria-label="カウントダウンタイマー">
+        <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
+          <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
+          <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
+          <button id="btn-stage-play" type="button" aria-label="タイマーを開始・停止" title="タイマーを開始・停止">▶</button>
+          <button id="btn-stage-clear" type="button" aria-label="タイマーをクリア" title="クリア">C</button>
+          <button id="btn-stage-reset" type="button" aria-label="タイマーをリセット" title="リセット">R</button>
+          <button id="btn-stage-stopwatch" type="button" aria-label="ストップウォッチを開始・停止" title="ストップウォッチを開始・停止">⏱</button>
+        </div>
         <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
           <g id="bg-clock-marks" class="clock-marks"></g>

@@ -156,6 +156,24 @@ body.electron-mode {
   font-size: 14px;
 }
 
+.ui-scale-value {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  width: 100%;
+  color: currentColor;
+  opacity: 0.62;
+  pointer-events: none;
+  text-align: center;
+  font: 700 9px/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.78);
+}
+
+body[data-theme="dark"] .ui-scale-value {
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.82);
+}
+
 .ui-scale-controls button:hover,
 .ui-scale-controls button:focus-visible {
   color: #0f172a;
@@ -493,6 +511,78 @@ body[data-theme="light"] .break-clock-badge text {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.stage-quick-controls {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 12;
+  max-width: calc(100% - 18px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  border-radius: 9px;
+  background: rgba(248, 250, 252, 0.54);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  opacity: 0.48;
+  backdrop-filter: blur(6px);
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.stage-quick-controls:hover,
+.stage-quick-controls:focus-within {
+  opacity: 0.96;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.stage-quick-controls button {
+  width: 27px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: #334155;
+  background: transparent;
+  cursor: pointer;
+  font: 800 12px/1 ui-sans-serif, system-ui, sans-serif;
+}
+
+.stage-quick-controls button:hover,
+.stage-quick-controls button:focus-visible,
+.stage-quick-controls button.is-active {
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.24);
+  outline: none;
+}
+
+.stage-quick-controls button:disabled {
+  opacity: 0.24;
+  cursor: default;
+}
+
+body[data-theme="dark"] .stage-quick-controls {
+  border-color: rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.52);
+}
+
+body[data-theme="dark"] .stage-quick-controls:hover,
+body[data-theme="dark"] .stage-quick-controls:focus-within {
+  background: rgba(15, 23, 42, 0.88);
+}
+
+body[data-theme="dark"] .stage-quick-controls button {
+  color: #cbd5e1;
+}
+
+body[data-theme="dark"] .stage-quick-controls button:hover,
+body[data-theme="dark"] .stage-quick-controls button:focus-visible,
+body[data-theme="dark"] .stage-quick-controls button.is-active {
+  color: #ffffff;
+  background: rgba(148, 163, 184, 0.2);
 }
 
 body.right-clock-hidden .left-clock-wrap:not([hidden]) {

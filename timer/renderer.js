@@ -18,6 +18,7 @@
   const tr = (value) => window.TimerI18n?.translate(value) ?? value;
   const uiZoomOutButton = document.getElementById('btn-ui-zoom-out');
   const uiZoomInButton = document.getElementById('btn-ui-zoom-in');
+  const uiScaleValue = document.getElementById('ui-scale-value');
   const compactWindowButton = document.getElementById('btn-compact-window');
   const digitalText = document.getElementById('digital-text');
   const timerStage = document.getElementById('timer-stage');
@@ -26,6 +27,12 @@
   const leftClockWrap = document.getElementById('left-clock-wrap');
   const clockResizer = document.getElementById('clock-resizer');
   const bgClock = document.getElementById('bg-clock');
+  const stagePlusButton = document.getElementById('btn-stage-plus');
+  const stageMinusButton = document.getElementById('btn-stage-minus');
+  const stagePlayButton = document.getElementById('btn-stage-play');
+  const stageClearButton = document.getElementById('btn-stage-clear');
+  const stageResetButton = document.getElementById('btn-stage-reset');
+  const stageStopwatchButton = document.getElementById('btn-stage-stopwatch');
   const leftClockCheckbox = document.getElementById('chk-leftclock');
   const rightClockCheckbox = document.getElementById('chk-rightclock');
   const selHour = document.getElementById('sel-hour');
@@ -285,6 +292,7 @@
     const percent = Math.round(uiScale * 100);
     uiZoomOutButton.disabled = uiScale <= uiScaleMin;
     uiZoomInButton.disabled = uiScale >= uiScaleMax;
+    uiScaleValue.textContent = `${percent}%`;
     uiZoomOutButton.title = `全体を縮小（現在 ${percent}%）`;
     uiZoomInButton.title = `全体を拡大（現在 ${percent}%）`;
     if (persist) {
@@ -1392,6 +1400,14 @@
     stopwatchButton.classList.toggle('stopwatch', !stopwatchRunning);
     undoAddButton.disabled = !isCountdown || addHistory.length === 0;
     subtractMinuteButton.disabled = !isCountdown || seconds <= 0;
+    stagePlayButton.textContent = countdownRunning ? 'Ⅱ' : '▶';
+    stagePlayButton.classList.toggle('is-active', countdownRunning);
+    stagePlayButton.setAttribute('aria-label', countdownRunning ? 'タイマーを停止' : 'タイマーを開始');
+    stagePlayButton.title = countdownRunning ? 'タイマー停止' : 'タイマー開始';
+    stageStopwatchButton.classList.toggle('is-active', stopwatchRunning);
+    stageStopwatchButton.setAttribute('aria-label', stopwatchRunning ? 'ストップウォッチを停止' : 'ストップウォッチを開始');
+    stageStopwatchButton.title = stopwatchRunning ? 'ストップウォッチ停止' : 'ストップウォッチ開始';
+    stageMinusButton.disabled = !isCountdown || seconds <= 0;
     if (isStandalonePomodoro) {
       document.title = `${displayTime}｜${isPomodoroMode ? pomodoroPhaseLabel() : 'ポモドーロテクニック'}`;
     } else if (seconds > 0 || isRunning || hasEnded) {
@@ -2008,6 +2024,15 @@
 
   playButton.addEventListener('click', toggleTimer);
   stopwatchButton.addEventListener('click', toggleStopwatch);
+  stagePlusButton.addEventListener('click', () => addTime(60));
+  stageMinusButton.addEventListener('click', () => subtractTime(60));
+  stagePlayButton.addEventListener('click', toggleTimer);
+  stageResetButton.addEventListener('click', resetTimer);
+  stageClearButton.addEventListener('click', () => {
+    if (isPomodoroMode) stopPomodoroMode();
+    else clearTimer();
+  });
+  stageStopwatchButton.addEventListener('click', toggleStopwatch);
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
   document.getElementById('btn-clear').addEventListener('click', () => {
     if (isPomodoroMode) stopPomodoroMode();
