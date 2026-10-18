@@ -585,6 +585,66 @@ body[data-theme="dark"] .stage-quick-controls button.is-active {
   background: rgba(148, 163, 184, 0.2);
 }
 
+.stage-volume-control {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  z-index: 12;
+  width: min(126px, calc(100% - 18px));
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  border-radius: 9px;
+  color: #334155;
+  background: rgba(248, 250, 252, 0.54);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  opacity: 0.48;
+  backdrop-filter: blur(6px);
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.stage-volume-control:hover,
+.stage-volume-control:focus-within {
+  opacity: 0.96;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.stage-volume-icon {
+  flex: 0 0 auto;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.stage-volume-control input[type="range"] {
+  min-width: 0;
+  height: 14px;
+  flex: 1 1 auto;
+  accent-color: #64748b;
+  cursor: pointer;
+}
+
+.stage-volume-control output {
+  width: 28px;
+  flex: 0 0 28px;
+  text-align: right;
+  font: 750 8px/1 ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+body[data-theme="dark"] .stage-volume-control {
+  border-color: rgba(148, 163, 184, 0.24);
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.52);
+}
+
+body[data-theme="dark"] .stage-volume-control:hover,
+body[data-theme="dark"] .stage-volume-control:focus-within {
+  background: rgba(15, 23, 42, 0.88);
+}
+
 body.right-clock-hidden .left-clock-wrap:not([hidden]) {
   display: flex;
   width: 100%;

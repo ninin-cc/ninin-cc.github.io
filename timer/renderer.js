@@ -33,6 +33,9 @@
   const stageClearButton = document.getElementById('btn-stage-clear');
   const stageResetButton = document.getElementById('btn-stage-reset');
   const stageStopwatchButton = document.getElementById('btn-stage-stopwatch');
+  const timerVolumeSlider = document.getElementById('timer-volume');
+  const timerVolumeIcon = document.getElementById('timer-volume-icon');
+  const timerVolumeValue = document.getElementById('timer-volume-value');
   const leftClockCheckbox = document.getElementById('chk-leftclock');
   const rightClockCheckbox = document.getElementById('chk-rightclock');
   const selHour = document.getElementById('sel-hour');
@@ -121,6 +124,7 @@
   let isRunning = false;
   let hasEnded = false;
   let audioContext = null;
+  let alarmVolume = 1;
   let isPinned = true;
   let isClickThrough = false;
   let controlsHidden = false;
@@ -167,6 +171,7 @@
     topPaneHeight: 'workshopTimer.topPaneHeight',
     leftClockWidth: 'workshopTimer.leftClockWidth',
     leftClockRatio: 'workshopTimer.leftClockRatio',
+    alarmVolume: 'workshopTimer.alarmVolume',
     uiScale: 'workshopTimer.uiScale',
     agendas: 'workshopTimer.agendas.v1'
   };
@@ -285,6 +290,15 @@
     }
   }
 
+  function applyAlarmVolume(percent, persist = false) {
+    const safePercent = Math.min(100, Math.max(0, Math.round(Number(percent) || 0)));
+    alarmVolume = safePercent / 100;
+    timerVolumeSlider.value = String(safePercent);
+    timerVolumeValue.textContent = `${safePercent}%`;
+    timerVolumeIcon.textContent = safePercent === 0 ? '🔇' : safePercent < 50 ? '🔉' : '🔊';
+    if (persist) storeNumber(storageKeys.alarmVolume, safePercent);
+  }
+
   function applyUiScale(nextScale, persist = false) {
     uiScale = Math.min(uiScaleMax, Math.max(uiScaleMin, Math.round(nextScale * 10) / 10));
     root.style.setProperty('--ui-scale', String(uiScale));
@@ -367,6 +381,7 @@
   }
 
   applyUiScale(readStoredNumber(storageKeys.uiScale) ?? 1);
+  applyAlarmVolume(readStoredNumber(storageKeys.alarmVolume) ?? 100);
 
   uiZoomOutButton.addEventListener('click', () => {
     const previousScale = uiScale;
@@ -1624,7 +1639,7 @@
     oscillator.type = 'sine';
     oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(0.45, start + 0.04);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, 0.45 * alarmVolume), start + 0.04);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     oscillator.connect(gain);
     gain.connect(ctx.destination);
@@ -1633,6 +1648,7 @@
   }
 
   function playAlarm() {
+    if (alarmVolume <= 0) return;
     const ctx = ensureAudio();
     if (!ctx) return;
     const base = ctx.currentTime + 0.02;
@@ -2033,6 +2049,7 @@
     else clearTimer();
   });
   stageStopwatchButton.addEventListener('click', toggleStopwatch);
+  timerVolumeSlider.addEventListener('input', (event) => applyAlarmVolume(event.target.value, true));
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
   document.getElementById('btn-clear').addEventListener('click', () => {
     if (isPomodoroMode) stopPomodoroMode();

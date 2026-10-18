@@ -42,6 +42,7 @@
     'タイマーをクリア': 'Clear the timer',
     'タイマーをリセット': 'Reset the timer',
     'ストップウォッチを開始・停止': 'Start or pause the stopwatch',
+    'タイマー通知音の音量': 'Timer alert volume',
     'ストップウォッチを開始': 'Start the stopwatch',
     'ストップウォッチを停止': 'Pause the stopwatch',
     'ストップウォッチ開始': 'Start Stopwatch',

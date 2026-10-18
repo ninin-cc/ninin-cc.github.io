@@ -83,6 +83,11 @@
           <button id="btn-stage-reset" type="button" aria-label="タイマーをリセット" title="リセット">R</button>
           <button id="btn-stage-stopwatch" type="button" aria-label="ストップウォッチを開始・停止" title="ストップウォッチを開始・停止">⏱</button>
         </div>
+        <label class="stage-volume-control" for="timer-volume" title="タイマー通知音の音量">
+          <span id="timer-volume-icon" class="stage-volume-icon" aria-hidden="true">🔊</span>
+          <input id="timer-volume" type="range" min="0" max="100" step="5" value="100" aria-label="タイマー通知音の音量">
+          <output id="timer-volume-value" for="timer-volume">100%</output>
+        </label>
         <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
           <g id="bg-clock-marks" class="clock-marks"></g>
