@@ -67,7 +67,7 @@
           <line id="left-hand-second" x1="50" y1="52" x2="50" y2="10" class="clock-hand second"></line>
           <circle cx="50" cy="50" r="2.6" class="clock-pin"></circle>
         </svg>
-
+        <div id="analog-timer-preview" class="analog-timer-preview" role="status" aria-live="polite" aria-hidden="true">00:00</div>
       </aside>
 
       <div id="clock-resizer" class="clock-resizer" role="separator" aria-label="アナログ時計とデジタル表示の幅を変更" aria-orientation="vertical">
@@ -75,19 +75,6 @@
       </div>
 
       <section id="timer-stage" class="timer-stage" aria-label="カウントダウンタイマー">
-        <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
-          <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
-          <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
-          <button id="btn-stage-play" type="button" aria-label="タイマーを開始・停止" title="タイマーを開始・停止">▶</button>
-          <button id="btn-stage-clear" type="button" aria-label="タイマーをクリア" title="クリア">C</button>
-          <button id="btn-stage-reset" type="button" aria-label="タイマーをリセット" title="リセット">R</button>
-          <button id="btn-stage-stopwatch" type="button" aria-label="ストップウォッチを開始・停止" title="ストップウォッチを開始・停止">⏱</button>
-        </div>
-        <label class="stage-volume-control" for="timer-volume" title="タイマー通知音の音量">
-          <span id="timer-volume-icon" class="stage-volume-icon" aria-hidden="true">🔊</span>
-          <input id="timer-volume" type="range" min="0" max="100" step="5" value="100" aria-label="タイマー通知音の音量">
-          <output id="timer-volume-value" for="timer-volume">100%</output>
-        </label>
         <svg id="bg-clock" class="background-clock" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
           <g id="bg-clock-marks" class="clock-marks"></g>
@@ -102,14 +89,6 @@
           <text id="digital-text" x="50%" y="53%" dominant-baseline="middle" text-anchor="middle">00:00</text>
         </svg>
 
-        <div id="extension-confirm" class="extension-confirm" role="dialog" aria-modal="true" aria-labelledby="extension-question" hidden>
-          <p id="extension-question" class="extension-question">時間を延長しますか？</p>
-          <div class="extension-actions">
-            <button id="btn-extension-yes" class="button extension-yes" type="button">YES</button>
-            <button id="btn-extension-no" class="button extension-no" type="button">NO</button>
-          </div>
-        </div>
-
         <div id="break-display" class="break-display" role="status" aria-live="polite" hidden>
           <span id="break-title" class="break-title">休憩中</span>
           <span id="break-resume-text" class="break-resume-text">13:20 再開</span>
@@ -118,6 +97,29 @@
           クリック透過中 — Ctrl + Shift + T で操作に戻る
         </div>
       </section>
+      <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
+        <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
+        <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
+        <button id="btn-stage-play" type="button" aria-label="タイマーを開始・停止" title="タイマーを開始・停止">▶</button>
+        <button id="btn-stage-clear" type="button" aria-label="タイマーをクリア" title="クリア">C</button>
+        <button id="btn-stage-reset" type="button" aria-label="タイマーをリセット" title="リセット">R</button>
+        <button id="btn-stage-stopwatch" type="button" aria-label="ストップウォッチを開始・停止" title="ストップウォッチを開始・停止">⏱</button>
+        <button id="btn-mode-switch" class="stage-mode-switch" type="button" aria-label="ポモドーロテクニックモードを開く" title="ポモドーロテクニックモードを開く">🍅</button>
+      </div>
+      <div class="stage-volume-control" title="タイマー通知音の音量">
+        <button id="timer-volume-icon" class="stage-volume-icon" type="button" aria-label="ミュートにする" aria-pressed="false" title="ミュートにする">🔊</button>
+        <input id="timer-volume" type="range" min="0" max="100" step="5" value="100" aria-label="タイマー通知音の音量">
+        <output id="timer-volume-value" for="timer-volume">100%</output>
+        <button id="btn-sound-settings" class="stage-sound-settings" type="button" aria-label="通知音と繰り返しを設定" aria-controls="sound-settings-popover" aria-expanded="false" title="通知音と繰り返しを設定">⚙</button>
+      </div>
+      <div id="extension-confirm" class="extension-confirm" role="dialog" aria-modal="true" aria-labelledby="extension-question" hidden>
+        <p id="extension-question" class="extension-question">時間を延長しますか？</p>
+        <div class="extension-actions">
+          <button id="btn-extension-yes" class="button extension-yes" type="button">YES</button>
+          <button id="btn-extension-no" class="button extension-no" type="button">NO</button>
+        </div>
+      </div>
+      <div id="timer-repeat-status" class="timer-repeat-status" role="status" aria-live="polite" hidden></div>
     </main>
 
     <div id="resizer" class="resizer" role="separator" aria-label="表示領域の高さを変更" aria-orientation="horizontal">
@@ -234,6 +236,77 @@
 
     </section>
   </div>
+
+  <section id="sound-settings-popover" class="sound-settings-popover" role="dialog" aria-modal="false" aria-labelledby="sound-settings-title" hidden>
+    <header class="sound-settings-heading">
+      <div>
+        <span class="sound-settings-kicker">ALERT</span>
+        <h2 id="sound-settings-title">通知とリピート</h2>
+      </div>
+      <button id="btn-sound-settings-close" class="sound-settings-close" type="button" aria-label="通知設定を閉じる">×</button>
+    </header>
+
+    <div class="sound-settings-primary">
+      <label for="alarm-sound-select">終了音</label>
+      <select id="alarm-sound-select">
+        <option value="gentle">やさしいチャイム</option>
+        <option value="metallophone">メタロフォン</option>
+        <option value="xylophone">ザイロフォン</option>
+        <option value="orchestra">オーケストラ</option>
+        <option value="set-chime">セットチャイム</option>
+        <option value="clear-chime">クリアチャイム</option>
+        <option value="bell-high">高いベル</option>
+        <option value="bell-low">低いベル</option>
+        <option value="alarm-clock">目覚まし時計</option>
+        <option value="alert">アラーム音</option>
+        <option value="vibration">バイブレーション</option>
+      </select>
+      <button id="btn-alarm-preview" class="sound-preview-button" type="button">▶ 試聴</button>
+    </div>
+
+    <div class="sound-settings-grid">
+      <label for="alarm-play-mode">
+        <span>鳴らし方</span>
+        <select id="alarm-play-mode">
+          <option value="once">1回</option>
+          <option value="triple" selected>3回</option>
+          <option value="continuous">停止するまで</option>
+        </select>
+      </label>
+      <label for="timer-repeat-count">
+        <span>タイマー繰り返し</span>
+        <select id="timer-repeat-count">
+          <option value="off" selected>OFF</option>
+          <option value="2">2回</option>
+          <option value="3">3回</option>
+          <option value="5">5回</option>
+          <option value="infinite">無制限</option>
+        </select>
+      </label>
+      <label for="timer-repeat-interval">
+        <span>開始までの間隔</span>
+        <select id="timer-repeat-interval" disabled>
+          <option value="0">すぐ開始</option>
+          <option value="10">10秒</option>
+          <option value="30">30秒</option>
+          <option value="60">1分</option>
+          <option value="180">3分</option>
+          <option value="300">5分</option>
+          <option value="600">10分</option>
+        </select>
+      </label>
+      <label for="timer-prealert">
+        <span>予告音</span>
+        <select id="timer-prealert">
+          <option value="off" selected>OFF</option>
+          <option value="60">終了1分前</option>
+          <option value="10">終了10秒前</option>
+          <option value="both">1分前＋10秒前</option>
+        </select>
+      </label>
+    </div>
+    <p class="sound-settings-note">設定はこのブラウザに自動保存されます。</p>
+  </section>
 
   <div id="agenda-overlay" class="agenda-overlay" role="dialog" aria-modal="true" aria-labelledby="agenda-title" hidden>
     <section class="agenda-card">

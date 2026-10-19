@@ -7,6 +7,7 @@
   const isElectron = Boolean(bridge);
   const pageParams = new URLSearchParams(window.location.search);
   const isStandalonePomodoro = pageParams.get('view') === 'pomodoro';
+  const shouldAutoStartPomodoro = isStandalonePomodoro && pageParams.get('autostart') === '1';
   const isCompactBrowserWindow = !isElectron && pageParams.get('compact') === '1';
   const mainWindowName = isStandalonePomodoro
     ? ''
@@ -25,6 +26,7 @@
   const topPane = document.getElementById('top-pane');
   const resizer = document.getElementById('resizer');
   const leftClockWrap = document.getElementById('left-clock-wrap');
+  const analogTimerPreview = document.getElementById('analog-timer-preview');
   const clockResizer = document.getElementById('clock-resizer');
   const bgClock = document.getElementById('bg-clock');
   const stagePlusButton = document.getElementById('btn-stage-plus');
@@ -33,9 +35,20 @@
   const stageClearButton = document.getElementById('btn-stage-clear');
   const stageResetButton = document.getElementById('btn-stage-reset');
   const stageStopwatchButton = document.getElementById('btn-stage-stopwatch');
+  const modeSwitchButton = document.getElementById('btn-mode-switch');
   const timerVolumeSlider = document.getElementById('timer-volume');
   const timerVolumeIcon = document.getElementById('timer-volume-icon');
   const timerVolumeValue = document.getElementById('timer-volume-value');
+  const soundSettingsButton = document.getElementById('btn-sound-settings');
+  const soundSettingsPopover = document.getElementById('sound-settings-popover');
+  const soundSettingsCloseButton = document.getElementById('btn-sound-settings-close');
+  const alarmSoundSelect = document.getElementById('alarm-sound-select');
+  const alarmPlayModeSelect = document.getElementById('alarm-play-mode');
+  const timerRepeatCountSelect = document.getElementById('timer-repeat-count');
+  const timerRepeatIntervalSelect = document.getElementById('timer-repeat-interval');
+  const timerPreAlertSelect = document.getElementById('timer-prealert');
+  const alarmPreviewButton = document.getElementById('btn-alarm-preview');
+  const timerRepeatStatus = document.getElementById('timer-repeat-status');
   const leftClockCheckbox = document.getElementById('chk-leftclock');
   const rightClockCheckbox = document.getElementById('chk-rightclock');
   const selHour = document.getElementById('sel-hour');
@@ -125,6 +138,21 @@
   let hasEnded = false;
   let audioContext = null;
   let alarmVolume = 1;
+  let alarmVolumeBeforeMute = 100;
+  let alarmSoundPreset = 'gentle';
+  let alarmPlayMode = 'triple';
+  let timerRepeatCount = 'off';
+  let timerRepeatIntervalSeconds = 0;
+  let timerPreAlertMode = 'off';
+  let alarmLoopTimer = null;
+  let alarmAutoStopTimer = null;
+  let repeatRestartTimer = null;
+  let repeatStatusTicker = null;
+  let repeatRestartAt = 0;
+  let timerRepeatCompleted = 0;
+  let repeatDurationSeconds = 0;
+  let repeatCycleActive = false;
+  let suppressAlarm = false;
   let isPinned = true;
   let isClickThrough = false;
   let controlsHidden = false;
@@ -137,6 +165,10 @@
   let breakTicker = null;
   let breakPresetTarget = null;
   let clockPreviewMode = null;
+  let analogTimerPreviewTimeout = null;
+  const activeAlarmOscillators = new Set();
+  const preAlertsFired = new Set();
+  const preAlertEligible = new Set();
   let pendingAddSeconds = 0;
   let tutorialIndex = 0;
   let tutorialTarget = null;
@@ -154,6 +186,7 @@
   let activeAgendaId = '';
   let agendaWindow = null;
   let pomodoroWindow = null;
+  let compactWindowRef = null;
   let agendaBackgroundUrl = '';
   let agendaBackgroundFileValue = null;
   const agendaBackgroundUrls = new Set();
@@ -172,9 +205,73 @@
     leftClockWidth: 'workshopTimer.leftClockWidth',
     leftClockRatio: 'workshopTimer.leftClockRatio',
     alarmVolume: 'workshopTimer.alarmVolume',
+    alarmVolumeBeforeMute: 'workshopTimer.alarmVolumeBeforeMute',
+    alarmSoundPreset: 'workshopTimer.alarmSoundPreset',
+    alarmPlayMode: 'workshopTimer.alarmPlayMode',
+    timerRepeatCount: 'workshopTimer.timerRepeatCount',
+    timerRepeatInterval: 'workshopTimer.timerRepeatInterval',
+    timerPreAlert: 'workshopTimer.timerPreAlert',
     uiScale: 'workshopTimer.uiScale',
     agendas: 'workshopTimer.agendas.v1'
   };
+  const alarmSoundPatterns = Object.freeze({
+    gentle: [
+      { frequency: 659.25, at: 0, duration: 0.34, type: 'sine', gain: 0.78 },
+      { frequency: 783.99, at: 0.36, duration: 0.34, type: 'sine', gain: 0.72 },
+      { frequency: 1046.5, at: 0.72, duration: 0.95, type: 'sine', gain: 0.68 }
+    ],
+    metallophone: [
+      { frequency: 523.25, at: 0, duration: 0.7, type: 'triangle', gain: 0.76 },
+      { frequency: 659.25, at: 0.24, duration: 0.72, type: 'triangle', gain: 0.72 },
+      { frequency: 783.99, at: 0.48, duration: 1.0, type: 'triangle', gain: 0.7 }
+    ],
+    xylophone: [
+      { frequency: 783.99, at: 0, duration: 0.18, type: 'triangle', gain: 0.82 },
+      { frequency: 987.77, at: 0.22, duration: 0.18, type: 'triangle', gain: 0.78 },
+      { frequency: 1174.66, at: 0.44, duration: 0.32, type: 'triangle', gain: 0.72 }
+    ],
+    orchestra: [
+      { frequency: 261.63, at: 0, duration: 1.25, type: 'sine', gain: 0.44 },
+      { frequency: 329.63, at: 0, duration: 1.25, type: 'sine', gain: 0.38 },
+      { frequency: 392.0, at: 0, duration: 1.25, type: 'sine', gain: 0.36 },
+      { frequency: 523.25, at: 0.54, duration: 1.05, type: 'triangle', gain: 0.36 }
+    ],
+    'set-chime': [
+      { frequency: 523.25, at: 0, duration: 0.3, type: 'sine', gain: 0.72 },
+      { frequency: 659.25, at: 0.28, duration: 0.3, type: 'sine', gain: 0.72 },
+      { frequency: 783.99, at: 0.56, duration: 0.72, type: 'sine', gain: 0.68 }
+    ],
+    'clear-chime': [
+      { frequency: 1046.5, at: 0, duration: 0.28, type: 'sine', gain: 0.68 },
+      { frequency: 783.99, at: 0.27, duration: 0.28, type: 'sine', gain: 0.7 },
+      { frequency: 659.25, at: 0.54, duration: 0.7, type: 'sine', gain: 0.72 }
+    ],
+    'bell-high': [
+      { frequency: 1318.51, at: 0, duration: 1.15, type: 'sine', gain: 0.66 },
+      { frequency: 2637.02, at: 0, duration: 0.62, type: 'sine', gain: 0.18 }
+    ],
+    'bell-low': [
+      { frequency: 392.0, at: 0, duration: 1.45, type: 'sine', gain: 0.72 },
+      { frequency: 784.0, at: 0, duration: 0.82, type: 'sine', gain: 0.2 }
+    ],
+    'alarm-clock': [
+      { frequency: 880, at: 0, duration: 0.18, type: 'square', gain: 0.44 },
+      { frequency: 880, at: 0.26, duration: 0.18, type: 'square', gain: 0.44 },
+      { frequency: 880, at: 0.52, duration: 0.18, type: 'square', gain: 0.44 },
+      { frequency: 880, at: 0.78, duration: 0.18, type: 'square', gain: 0.44 }
+    ],
+    alert: [
+      { frequency: 740, at: 0, duration: 0.28, type: 'sawtooth', gain: 0.34 },
+      { frequency: 988, at: 0.32, duration: 0.28, type: 'sawtooth', gain: 0.32 },
+      { frequency: 740, at: 0.64, duration: 0.28, type: 'sawtooth', gain: 0.34 },
+      { frequency: 988, at: 0.96, duration: 0.42, type: 'sawtooth', gain: 0.32 }
+    ]
+  });
+  const validAlarmSounds = new Set([...Object.keys(alarmSoundPatterns), 'vibration']);
+  const validAlarmPlayModes = new Set(['once', 'triple', 'continuous']);
+  const validTimerRepeatCounts = new Set(['off', '2', '3', '5', 'infinite']);
+  const validTimerIntervals = new Set(['0', '10', '30', '60', '180', '300', '600']);
+  const validPreAlertModes = new Set(['off', '60', '10', 'both']);
   const uiScaleMin = 0.5;
   const uiScaleMax = 1.3;
   const uiScaleStep = 0.1;
@@ -290,13 +387,78 @@
     }
   }
 
+  function readStoredChoice(key, allowedValues, fallback) {
+    try {
+      const value = window.localStorage.getItem(key);
+      return allowedValues.has(value) ? value : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function storeChoice(key, value) {
+    try {
+      window.localStorage.setItem(key, String(value));
+    } catch {
+      // 設定は保存できなくても、現在の画面ではそのまま利用できる。
+    }
+  }
+
   function applyAlarmVolume(percent, persist = false) {
     const safePercent = Math.min(100, Math.max(0, Math.round(Number(percent) || 0)));
     alarmVolume = safePercent / 100;
+    if (safePercent > 0) alarmVolumeBeforeMute = safePercent;
     timerVolumeSlider.value = String(safePercent);
     timerVolumeValue.textContent = `${safePercent}%`;
     timerVolumeIcon.textContent = safePercent === 0 ? '🔇' : safePercent < 50 ? '🔉' : '🔊';
-    if (persist) storeNumber(storageKeys.alarmVolume, safePercent);
+    const isMuted = safePercent === 0;
+    timerVolumeIcon.setAttribute('aria-pressed', String(isMuted));
+    timerVolumeIcon.setAttribute('aria-label', isMuted ? '元の音量に戻す' : 'ミュートにする');
+    timerVolumeIcon.title = isMuted ? '元の音量に戻す' : 'ミュートにする';
+    if (isMuted) stopAlarm();
+    if (persist) {
+      storeNumber(storageKeys.alarmVolume, safePercent);
+      if (!isMuted) storeNumber(storageKeys.alarmVolumeBeforeMute, alarmVolumeBeforeMute);
+    }
+  }
+
+  function syncNotificationSettingsUi() {
+    alarmSoundSelect.value = alarmSoundPreset;
+    alarmPlayModeSelect.value = alarmPlayMode;
+    timerRepeatCountSelect.value = timerRepeatCount;
+    timerRepeatIntervalSelect.value = String(timerRepeatIntervalSeconds);
+    timerRepeatIntervalSelect.disabled = timerRepeatCount === 'off';
+    timerPreAlertSelect.value = timerPreAlertMode;
+  }
+
+  function positionSoundSettingsPopover() {
+    if (soundSettingsPopover.hidden) return;
+    const triggerRect = soundSettingsButton.getBoundingClientRect();
+    const panelRect = soundSettingsPopover.getBoundingClientRect();
+    const margin = 8;
+    const left = Math.min(
+      Math.max(margin, triggerRect.right - panelRect.width),
+      Math.max(margin, window.innerWidth - panelRect.width - margin)
+    );
+    const preferredTop = triggerRect.top - panelRect.height - 8;
+    const top = preferredTop >= margin
+      ? preferredTop
+      : Math.min(window.innerHeight - panelRect.height - margin, triggerRect.bottom + 8);
+    soundSettingsPopover.style.left = `${Math.round(left)}px`;
+    soundSettingsPopover.style.top = `${Math.max(margin, Math.round(top))}px`;
+  }
+
+  function openSoundSettings() {
+    soundSettingsPopover.hidden = false;
+    soundSettingsButton.setAttribute('aria-expanded', 'true');
+    window.requestAnimationFrame(positionSoundSettingsPopover);
+  }
+
+  function closeSoundSettings({ restoreFocus = false } = {}) {
+    if (soundSettingsPopover.hidden) return;
+    soundSettingsPopover.hidden = true;
+    soundSettingsButton.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) soundSettingsButton.focus();
   }
 
   function applyUiScale(nextScale, persist = false) {
@@ -317,6 +479,7 @@
       if (!leftClockWrap.hidden) {
         applyLeftClockRatio(leftClockRatio, false);
       }
+      positionSoundSettingsPopover();
     });
   }
 
@@ -346,16 +509,141 @@
     };
   }
 
+  function captureWindowTransferState() {
+    const now = Date.now();
+    return {
+      version: 1,
+      createdAt: now,
+      timerMode,
+      isRunning,
+      remainingMs: timerMode === 'countdown' && isRunning ? Math.max(0, endAt - now) : remainingMs,
+      endAt: timerMode === 'countdown' && isRunning ? endAt : 0,
+      countdownStartedAt: countdownStartedAt?.getTime() || 0,
+      stopwatchElapsedMs: timerMode === 'stopwatch' && isRunning
+        ? Math.max(0, now - stopwatchStartedAt)
+        : stopwatchElapsedMs,
+      stopwatchStartedAt: timerMode === 'stopwatch' && isRunning ? stopwatchStartedAt : 0,
+      lastSetSeconds,
+      hasEnded,
+      clockPreviewMode,
+      timerRepeatCompleted,
+      repeatDurationSeconds,
+      repeatCycleActive,
+      preAlertsFired: [...preAlertsFired],
+      preAlertEligible: [...preAlertEligible],
+      addHistory: [...addHistory],
+      manualValues: [selHour.value, selMin.value, selSec.value],
+      breakValues: [selBreakHour.value, selBreakMin.value],
+      isBreakMode,
+      breakTargetAt: breakTarget?.getTime() || 0,
+      breakStartedAt: breakStartedAt?.getTime() || 0
+    };
+  }
+
+  function restoreWindowTransferState() {
+    if (!isCompactBrowserWindow) return false;
+    const token = pageParams.get('transfer');
+    if (!token) return false;
+    const transferKey = `workshopTimer.windowTransfer.${token}`;
+    let saved = null;
+    try {
+      saved = JSON.parse(window.localStorage.getItem(transferKey) || 'null');
+      window.localStorage.removeItem(transferKey);
+    } catch {}
+    try {
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete('transfer');
+      window.history.replaceState(null, '', cleanUrl.href);
+    } catch {}
+    if (!saved || saved.version !== 1) return false;
+
+    stopTicker();
+    stopBreakTicker();
+    hideExtensionConfirmation();
+    const now = Date.now();
+    timerMode = saved.timerMode === 'stopwatch' ? 'stopwatch' : 'countdown';
+    lastSetSeconds = Math.max(0, Number(saved.lastSetSeconds) || 0);
+    hasEnded = Boolean(saved.hasEnded);
+    clockPreviewMode = saved.clockPreviewMode || null;
+    timerRepeatCompleted = Math.max(0, Number(saved.timerRepeatCompleted) || 0);
+    repeatDurationSeconds = Math.max(0, Number(saved.repeatDurationSeconds) || 0);
+    repeatCycleActive = Boolean(saved.repeatCycleActive);
+    preAlertsFired.clear();
+    if (Array.isArray(saved.preAlertsFired)) saved.preAlertsFired.forEach((value) => preAlertsFired.add(Number(value)));
+    preAlertEligible.clear();
+    if (Array.isArray(saved.preAlertEligible)) saved.preAlertEligible.forEach((value) => preAlertEligible.add(Number(value)));
+    addHistory.length = 0;
+    if (Array.isArray(saved.addHistory)) addHistory.push(...saved.addHistory.map(Number).filter(Number.isFinite));
+    if (Array.isArray(saved.manualValues) && saved.manualValues.length === 3) {
+      [selHour.value, selMin.value, selSec.value] = saved.manualValues;
+    }
+    if (Array.isArray(saved.breakValues) && saved.breakValues.length === 2) {
+      [selBreakHour.value, selBreakMin.value] = saved.breakValues;
+    }
+
+    isBreakMode = false;
+    breakTarget = null;
+    breakStartedAt = null;
+    if (saved.isBreakMode && Number(saved.breakTargetAt) > now) {
+      isRunning = false;
+      isBreakMode = true;
+      breakTarget = new Date(Number(saved.breakTargetAt));
+      breakStartedAt = Number(saved.breakStartedAt) > 0 ? new Date(Number(saved.breakStartedAt)) : new Date(now);
+      breakTicker = window.setInterval(updateBreakDisplay, 1000);
+      renderBreakDisplay();
+      return true;
+    }
+
+    if (timerMode === 'stopwatch') {
+      stopwatchElapsedMs = Math.max(0, Number(saved.stopwatchElapsedMs) || 0);
+      isRunning = Boolean(saved.isRunning);
+      if (isRunning) {
+        stopwatchStartedAt = Number(saved.stopwatchStartedAt) > 0
+          ? Number(saved.stopwatchStartedAt)
+          : now - stopwatchElapsedMs;
+        stopwatchElapsedMs = Math.max(0, now - stopwatchStartedAt);
+        ticker = window.setInterval(tick, 10);
+      }
+    } else {
+      endAt = Math.max(0, Number(saved.endAt) || 0);
+      remainingMs = saved.isRunning && endAt > 0
+        ? Math.max(0, endAt - now)
+        : Math.max(0, Number(saved.remainingMs) || 0);
+      countdownStartedAt = Number(saved.countdownStartedAt) > 0
+        ? new Date(Number(saved.countdownStartedAt))
+        : null;
+      isRunning = Boolean(saved.isRunning) && remainingMs > 0;
+      if (isRunning) ticker = window.setInterval(tick, 100);
+      else if (saved.isRunning && remainingMs <= 0) hasEnded = true;
+    }
+    renderTimer();
+    return true;
+  }
+
   function openCompactBrowserWindow() {
     const compactUrl = new URL(window.location.href);
     compactUrl.searchParams.set('compact', '1');
+    const transferToken = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const transferKey = `workshopTimer.windowTransfer.${transferToken}`;
+    try {
+      window.localStorage.setItem(transferKey, JSON.stringify(captureWindowTransferState()));
+      compactUrl.searchParams.set('transfer', transferToken);
+    } catch {}
     const { width, height } = compactWindowSize();
-    const popup = window.open(
+    compactWindowRef = window.open(
       compactUrl.href,
       'ninin-timer-compact',
       `popup=yes,resizable=yes,scrollbars=no,width=${width},height=${height}`
     );
-    popup?.focus();
+    if (compactWindowRef) {
+      suppressAlarm = true;
+      compactWindowRef.focus();
+    } else {
+      try { window.localStorage.removeItem(transferKey); } catch {}
+    }
+    window.setTimeout(() => {
+      try { window.localStorage.removeItem(transferKey); } catch {}
+    }, 30000);
   }
 
   if (compactWindowButton) {
@@ -370,6 +658,7 @@
         return;
       }
       if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({ type: 'ninin-timer-compact-closed' }, '*');
         window.opener.focus();
         window.close();
         return;
@@ -381,7 +670,14 @@
   }
 
   applyUiScale(readStoredNumber(storageKeys.uiScale) ?? 1);
+  alarmVolumeBeforeMute = readStoredNumber(storageKeys.alarmVolumeBeforeMute) ?? 100;
   applyAlarmVolume(readStoredNumber(storageKeys.alarmVolume) ?? 100);
+  alarmSoundPreset = readStoredChoice(storageKeys.alarmSoundPreset, validAlarmSounds, 'gentle');
+  alarmPlayMode = readStoredChoice(storageKeys.alarmPlayMode, validAlarmPlayModes, 'triple');
+  timerRepeatCount = readStoredChoice(storageKeys.timerRepeatCount, validTimerRepeatCounts, 'off');
+  timerRepeatIntervalSeconds = Number(readStoredChoice(storageKeys.timerRepeatInterval, validTimerIntervals, '0'));
+  timerPreAlertMode = readStoredChoice(storageKeys.timerPreAlert, validPreAlertModes, 'off');
+  syncNotificationSettingsUi();
 
   uiZoomOutButton.addEventListener('click', () => {
     const previousScale = uiScale;
@@ -511,6 +807,31 @@
     const hours = Math.floor(totalMinutes / 60);
     const tail = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
     return hours > 0 ? `${String(hours).padStart(2, '0')}:${tail}` : tail;
+  }
+
+  function hideAnalogTimerPreview() {
+    if (analogTimerPreviewTimeout !== null) {
+      window.clearTimeout(analogTimerPreviewTimeout);
+      analogTimerPreviewTimeout = null;
+    }
+    analogTimerPreview.classList.remove('is-visible');
+    analogTimerPreview.setAttribute('aria-hidden', 'true');
+  }
+
+  function showAnalogTimerPreview(duration = 2800) {
+    const canShow = !rightClockCheckbox.checked
+      && leftClockCheckbox.checked
+      && !isBreakMode
+      && timerMode === 'countdown';
+    if (!canShow) {
+      hideAnalogTimerPreview();
+      return;
+    }
+    analogTimerPreview.textContent = formatTime(secondsForDisplay());
+    analogTimerPreview.classList.add('is-visible');
+    analogTimerPreview.setAttribute('aria-hidden', 'false');
+    if (analogTimerPreviewTimeout !== null) window.clearTimeout(analogTimerPreviewTimeout);
+    analogTimerPreviewTimeout = window.setTimeout(hideAnalogTimerPreview, duration);
   }
 
   function hideExtensionConfirmation() {
@@ -1267,9 +1588,11 @@
     body.classList.remove('pomodoro-popup-open');
   }
 
-  function launchPomodoroWindow() {
+  function launchPomodoroWindow({ autoStart = false } = {}) {
     const pomodoroUrl = new URL('index.html', window.location.href);
     pomodoroUrl.searchParams.set('view', 'pomodoro');
+    if (autoStart) pomodoroUrl.searchParams.set('autostart', '1');
+    else pomodoroUrl.searchParams.delete('autostart');
     pomodoroUrl.hash = '';
     pomodoroWindow = window.open(pomodoroUrl.toString(), 'ninin-pomodoro');
     if (!pomodoroWindow) {
@@ -1367,7 +1690,7 @@
     // 特に集中終了後は、操作を挟まずそのまま休憩を始める。
     pomodoroAwaitingStart = false;
     setTime(pomodoroDurationSeconds());
-    startTimer();
+    startTimer({ preserveAlarm: true, preserveRepeat: true });
     openPomodoro();
     updatePomodoroUi();
   }
@@ -1380,6 +1703,7 @@
     const seconds = secondsForDisplay();
     const isCountdown = timerMode === 'countdown';
     const displayTime = isCountdown ? formatTime(seconds) : formatStopwatchTime(stopwatchElapsedMs);
+    if (!isCountdown) hideAnalogTimerPreview();
     digitalText.hidden = !isDigitalClockVisible;
     breakDisplay.hidden = true;
     digitalText.textContent = displayTime;
@@ -1508,6 +1832,7 @@
 
   function renderBreakDisplay() {
     if (!isBreakMode || !breakTarget) return;
+    hideAnalogTimerPreview();
     body.classList.remove('is-stopwatch-mode');
     body.classList.remove('timer-ended');
     hideExtensionConfirmation();
@@ -1591,6 +1916,8 @@
   }
 
   function startBreakDisplay() {
+    stopAlarm();
+    cancelTimerRepeat(true);
     if (!isBreakMode) pauseTimer();
     ensureAudio();
     stopBreakTicker();
@@ -1633,31 +1960,207 @@
     return audioContext;
   }
 
-  function playTone(ctx, frequency, start, duration) {
+  function stopAlarm() {
+    if (alarmLoopTimer !== null) {
+      window.clearTimeout(alarmLoopTimer);
+      alarmLoopTimer = null;
+    }
+    if (alarmAutoStopTimer !== null) {
+      window.clearTimeout(alarmAutoStopTimer);
+      alarmAutoStopTimer = null;
+    }
+    activeAlarmOscillators.forEach((oscillator) => {
+      try { oscillator.stop(); } catch {}
+    });
+    activeAlarmOscillators.clear();
+    try { navigator.vibrate?.(0); } catch {}
+  }
+
+  function playTone(ctx, frequency, start, duration, type = 'sine', gainScale = 1) {
     const oscillator = ctx.createOscillator();
     const gain = ctx.createGain();
-    oscillator.type = 'sine';
+    oscillator.type = type;
     oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, 0.45 * alarmVolume), start + 0.04);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, 0.45 * alarmVolume * gainScale), start + 0.035);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     oscillator.connect(gain);
     gain.connect(ctx.destination);
+    activeAlarmOscillators.add(oscillator);
+    oscillator.addEventListener('ended', () => activeAlarmOscillators.delete(oscillator), { once: true });
     oscillator.start(start);
     oscillator.stop(start + duration);
   }
 
-  function playAlarm() {
-    if (alarmVolume <= 0) return;
-    const ctx = ensureAudio();
-    if (!ctx) return;
-    const base = ctx.currentTime + 0.02;
-    for (let repeat = 0; repeat < 3; repeat += 1) {
-      const offset = base + (repeat * 2);
-      playTone(ctx, 659.25, offset, 0.38);
-      playTone(ctx, 659.25, offset + 0.4, 0.38);
-      playTone(ctx, 1046.5, offset + 0.8, 1.15);
+  function playAlarmPattern(preset = alarmSoundPreset, startTime = null, gainScale = 1) {
+    if (preset === 'vibration') {
+      try { navigator.vibrate?.([180, 90, 180]); } catch {}
+      return 0.55;
     }
+    const ctx = ensureAudio();
+    if (!ctx) return 0;
+    const pattern = alarmSoundPatterns[preset] || alarmSoundPatterns.gentle;
+    const base = startTime ?? (ctx.currentTime + 0.02);
+    let duration = 0;
+    pattern.forEach((tone) => {
+      playTone(
+        ctx,
+        tone.frequency,
+        base + tone.at,
+        tone.duration,
+        tone.type,
+        tone.gain * gainScale
+      );
+      duration = Math.max(duration, tone.at + tone.duration);
+    });
+    return duration;
+  }
+
+  function playAlarm({ autoStopAfterMs = 0 } = {}) {
+    stopAlarm();
+    if (suppressAlarm || alarmVolume <= 0) return;
+
+    if (alarmSoundPreset === 'vibration') {
+      const vibrationPattern = alarmPlayMode === 'once'
+        ? [260]
+        : [260, 180, 260, 180, 420];
+      try { navigator.vibrate?.(vibrationPattern); } catch {}
+      if (alarmPlayMode === 'continuous') {
+        const vibrateAgain = () => {
+          try { navigator.vibrate?.(vibrationPattern); } catch {}
+          alarmLoopTimer = window.setTimeout(vibrateAgain, 1700);
+        };
+        alarmLoopTimer = window.setTimeout(vibrateAgain, 1700);
+      }
+    } else {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const firstStart = ctx.currentTime + 0.02;
+      const patternDuration = playAlarmPattern(alarmSoundPreset, firstStart);
+      const cycleSeconds = Math.max(0.8, patternDuration + 0.55);
+      if (alarmPlayMode === 'triple') {
+        playAlarmPattern(alarmSoundPreset, firstStart + cycleSeconds);
+        playAlarmPattern(alarmSoundPreset, firstStart + (cycleSeconds * 2));
+      } else if (alarmPlayMode === 'continuous') {
+        const playAgain = () => {
+          const activeContext = ensureAudio();
+          if (!activeContext || alarmVolume <= 0) return;
+          playAlarmPattern(alarmSoundPreset, activeContext.currentTime + 0.02);
+          alarmLoopTimer = window.setTimeout(playAgain, cycleSeconds * 1000);
+        };
+        alarmLoopTimer = window.setTimeout(playAgain, cycleSeconds * 1000);
+      }
+    }
+
+    if (autoStopAfterMs > 0) {
+      alarmAutoStopTimer = window.setTimeout(stopAlarm, autoStopAfterMs);
+    }
+  }
+
+  function previewAlarm() {
+    stopAlarm();
+    if (alarmVolume <= 0) return;
+    playAlarmPattern(alarmSoundPreset);
+  }
+
+  function configuredPreAlertThresholds() {
+    if (timerPreAlertMode === 'both') return [60, 10];
+    if (timerPreAlertMode === '60') return [60];
+    if (timerPreAlertMode === '10') return [10];
+    return [];
+  }
+
+  function refreshPreAlertEligibility() {
+    const seconds = secondsForDisplay();
+    preAlertEligible.clear();
+    [60, 10].forEach((threshold) => {
+      if (seconds > threshold) {
+        preAlertEligible.add(threshold);
+        preAlertsFired.delete(threshold);
+      }
+    });
+  }
+
+  function maybePlayPreAlert(seconds) {
+    if (suppressAlarm || alarmVolume <= 0 || !isRunning || timerMode !== 'countdown') return;
+    configuredPreAlertThresholds().forEach((threshold) => {
+      if (!preAlertEligible.has(threshold) || seconds > threshold || preAlertsFired.has(threshold)) return;
+      preAlertsFired.add(threshold);
+      if (alarmSoundPreset === 'vibration') {
+        try { navigator.vibrate?.([90, 80, 90]); } catch {}
+        return;
+      }
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const start = ctx.currentTime + 0.02;
+      playTone(ctx, threshold === 60 ? 659.25 : 880, start, 0.18, 'sine', 0.34);
+      playTone(ctx, threshold === 60 ? 783.99 : 1046.5, start + 0.22, 0.28, 'sine', 0.32);
+    });
+  }
+
+  function repeatLimit() {
+    if (timerRepeatCount === 'infinite') return Number.POSITIVE_INFINITY;
+    const parsed = Number(timerRepeatCount);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function hideTimerRepeatStatus() {
+    timerRepeatStatus.hidden = true;
+    timerRepeatStatus.textContent = '';
+  }
+
+  function updateTimerRepeatStatus() {
+    if (repeatRestartTimer === null || repeatRestartAt <= 0) {
+      hideTimerRepeatStatus();
+      return;
+    }
+    const remainingSeconds = Math.max(0, Math.ceil((repeatRestartAt - Date.now()) / 1000));
+    const total = repeatLimit();
+    const progress = Number.isFinite(total)
+      ? `${timerRepeatCompleted}/${total} 完了`
+      : `${timerRepeatCompleted}回 完了`;
+    timerRepeatStatus.textContent = `次の開始まで ${formatTime(remainingSeconds)} ・ ${progress}`;
+    timerRepeatStatus.hidden = false;
+  }
+
+  function cancelTimerRepeat(resetProgress = true) {
+    if (repeatRestartTimer !== null) window.clearTimeout(repeatRestartTimer);
+    if (repeatStatusTicker !== null) window.clearInterval(repeatStatusTicker);
+    repeatRestartTimer = null;
+    repeatStatusTicker = null;
+    repeatRestartAt = 0;
+    hideTimerRepeatStatus();
+    if (resetProgress) {
+      timerRepeatCompleted = 0;
+      repeatDurationSeconds = 0;
+      repeatCycleActive = false;
+    }
+  }
+
+  function scheduleTimerRepeat() {
+    const limit = repeatLimit();
+    if (limit <= 0 || repeatDurationSeconds <= 0) return false;
+    timerRepeatCompleted += 1;
+    if (Number.isFinite(limit) && timerRepeatCompleted >= limit) return false;
+
+    repeatCycleActive = true;
+    const intervalMs = Math.max(0, timerRepeatIntervalSeconds) * 1000;
+    repeatRestartAt = Date.now() + intervalMs;
+    const restart = () => {
+      if (repeatStatusTicker !== null) window.clearInterval(repeatStatusTicker);
+      repeatRestartTimer = null;
+      repeatStatusTicker = null;
+      repeatRestartAt = 0;
+      hideTimerRepeatStatus();
+      const keepFiniteAlarm = alarmPlayMode !== 'continuous';
+      if (!keepFiniteAlarm) stopAlarm();
+      setTime(repeatDurationSeconds, { preserveRepeat: true });
+      startTimer({ preserveAlarm: keepFiniteAlarm, preserveRepeat: true });
+    };
+    repeatRestartTimer = window.setTimeout(restart, intervalMs);
+    repeatStatusTicker = window.setInterval(updateTimerRepeatStatus, 250);
+    updateTimerRepeatStatus();
+    return true;
   }
 
   function stopTicker() {
@@ -1671,8 +2174,12 @@
     isRunning = false;
     hasEnded = true;
     renderTimer();
-    playAlarm();
-    completePomodoroPhase();
+    playAlarm({ autoStopAfterMs: isPomodoroMode && alarmPlayMode === 'continuous' ? 6000 : 0 });
+    if (isPomodoroMode) {
+      completePomodoroPhase();
+      return;
+    }
+    if (!scheduleTimerRepeat()) repeatCycleActive = false;
   }
 
   function tick() {
@@ -1687,10 +2194,20 @@
       finishTimer();
       return;
     }
+    maybePlayPreAlert(Math.ceil(remainingMs / 1000));
     renderTimer();
   }
 
-  function startTimer() {
+  function startTimer({ preserveAlarm = false, preserveRepeat = false } = {}) {
+    if (!preserveAlarm) stopAlarm();
+    if (repeatRestartTimer !== null && !preserveRepeat) {
+      const interruptedRepeatDuration = repeatDurationSeconds || lastSetSeconds;
+      cancelTimerRepeat(true);
+      if (remainingMs <= 0 && interruptedRepeatDuration > 0) {
+        remainingMs = interruptedRepeatDuration * 1000;
+        syncManualSelectors(interruptedRepeatDuration);
+      }
+    }
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') {
       pauseTimer();
@@ -1711,6 +2228,11 @@
     hasEnded = false;
     isRunning = true;
     const startingSeconds = secondsForDisplay();
+    if (!isPomodoroMode && !repeatCycleActive) {
+      timerRepeatCompleted = 0;
+      repeatDurationSeconds = startingSeconds;
+      repeatCycleActive = true;
+    }
     const now = Date.now();
     const nextClockSecond = (Math.floor(now / 1000) + 1) * 1000;
     countdownStartedAt = new Date(now);
@@ -1737,6 +2259,8 @@
   }
 
   function startStopwatch() {
+    stopAlarm();
+    cancelTimerRepeat(true);
     if (isPomodoroMode) stopPomodoroMode();
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'stopwatch') {
@@ -1776,7 +2300,8 @@
     addHistory.length = 0;
   }
 
-  function setTime(totalSeconds) {
+  function setTime(totalSeconds, { preserveRepeat = false } = {}) {
+    if (!preserveRepeat) cancelTimerRepeat(true);
     if (isBreakMode) stopBreakDisplay();
     pauseTimer();
     timerMode = 'countdown';
@@ -1787,10 +2312,14 @@
     hasEnded = false;
     clearAddHistory();
     syncManualSelectors(safeSeconds);
+    preAlertsFired.clear();
+    refreshPreAlertEligibility();
     renderTimer();
   }
 
   function previewManualTime() {
+    stopAlarm();
+    cancelTimerRepeat(true);
     if (isPomodoroMode) deactivatePomodoroMode();
     if (isBreakMode) stopBreakDisplay();
     pauseTimer();
@@ -1799,7 +2328,10 @@
     remainingMs = readManualSeconds() * 1000;
     hasEnded = false;
     clearAddHistory();
+    preAlertsFired.clear();
+    refreshPreAlertEligibility();
     renderTimer();
+    showAnalogTimerPreview();
   }
 
   function formatAddDuration(totalSeconds) {
@@ -1821,6 +2353,8 @@
   }
 
   function applyAddTime(seconds) {
+    stopAlarm();
+    if (!isRunning) cancelTimerRepeat(true);
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') {
       pauseTimer();
@@ -1838,7 +2372,9 @@
     }
     hasEnded = false;
     syncManualSelectors(secondsForDisplay());
+    refreshPreAlertEligibility();
     renderTimer();
+    showAnalogTimerPreview();
   }
 
   function addTime(seconds) {
@@ -1852,6 +2388,8 @@
   }
 
   function subtractTime(seconds) {
+    stopAlarm();
+    if (!isRunning) cancelTimerRepeat(true);
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') {
       pauseTimer();
@@ -1877,9 +2415,12 @@
     hasEnded = false;
     syncManualSelectors(secondsForDisplay());
     renderTimer();
+    showAnalogTimerPreview();
   }
 
   function undoLastAdd() {
+    stopAlarm();
+    if (!isRunning) cancelTimerRepeat(true);
     if (isBreakMode) stopBreakDisplay();
     if (timerMode !== 'countdown') return;
     clockPreviewMode = 'countdown';
@@ -1899,26 +2440,33 @@
     hasEnded = false;
     syncManualSelectors(secondsForDisplay());
     renderTimer();
+    showAnalogTimerPreview();
   }
 
   function resetTimer() {
+    stopAlarm();
     if (timerMode === 'stopwatch') {
       pauseTimer();
       stopwatchElapsedMs = 0;
       renderTimer();
+      hideAnalogTimerPreview();
       return;
     }
     setTime(lastSetSeconds);
+    showAnalogTimerPreview();
   }
 
   function clearTimer() {
+    stopAlarm();
     if (timerMode === 'stopwatch') {
       pauseTimer();
       stopwatchElapsedMs = 0;
       renderTimer();
+      hideAnalogTimerPreview();
       return;
     }
     setTime(0);
+    showAnalogTimerPreview();
   }
 
   function createClockMarks(group, background) {
@@ -1986,6 +2534,7 @@
 
   function setControlsHidden(hidden) {
     controlsHidden = Boolean(hidden);
+    if (controlsHidden) closeSoundSettings();
     body.classList.toggle('controls-hidden', controlsHidden);
     if (!controlsHidden) {
       const current = Number.parseFloat(topPane.style.height) || (topPane.getBoundingClientRect().height / uiScale);
@@ -2049,7 +2598,54 @@
     else clearTimer();
   });
   stageStopwatchButton.addEventListener('click', toggleStopwatch);
+  modeSwitchButton.addEventListener('click', () => launchPomodoroWindow({ autoStart: true }));
   timerVolumeSlider.addEventListener('input', (event) => applyAlarmVolume(event.target.value, true));
+  timerVolumeIcon.addEventListener('click', () => {
+    if (alarmVolume > 0) {
+      storeNumber(storageKeys.alarmVolumeBeforeMute, alarmVolumeBeforeMute);
+      applyAlarmVolume(0, true);
+    } else {
+      applyAlarmVolume(alarmVolumeBeforeMute || 100, true);
+    }
+  });
+  soundSettingsButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (soundSettingsPopover.hidden) openSoundSettings();
+    else closeSoundSettings({ restoreFocus: true });
+  });
+  soundSettingsCloseButton.addEventListener('click', () => closeSoundSettings({ restoreFocus: true }));
+  soundSettingsPopover.addEventListener('click', (event) => event.stopPropagation());
+  document.addEventListener('click', () => closeSoundSettings());
+  window.addEventListener('resize', positionSoundSettingsPopover);
+  alarmPreviewButton.addEventListener('click', previewAlarm);
+  alarmSoundSelect.addEventListener('change', () => {
+    stopAlarm();
+    alarmSoundPreset = validAlarmSounds.has(alarmSoundSelect.value) ? alarmSoundSelect.value : 'gentle';
+    storeChoice(storageKeys.alarmSoundPreset, alarmSoundPreset);
+  });
+  alarmPlayModeSelect.addEventListener('change', () => {
+    stopAlarm();
+    alarmPlayMode = validAlarmPlayModes.has(alarmPlayModeSelect.value) ? alarmPlayModeSelect.value : 'triple';
+    storeChoice(storageKeys.alarmPlayMode, alarmPlayMode);
+  });
+  timerRepeatCountSelect.addEventListener('change', () => {
+    if (repeatRestartTimer !== null) cancelTimerRepeat(true);
+    timerRepeatCount = validTimerRepeatCounts.has(timerRepeatCountSelect.value) ? timerRepeatCountSelect.value : 'off';
+    timerRepeatIntervalSelect.disabled = timerRepeatCount === 'off';
+    if (timerRepeatCount === 'off') cancelTimerRepeat(true);
+    storeChoice(storageKeys.timerRepeatCount, timerRepeatCount);
+  });
+  timerRepeatIntervalSelect.addEventListener('change', () => {
+    if (repeatRestartTimer !== null) cancelTimerRepeat(true);
+    const selected = validTimerIntervals.has(timerRepeatIntervalSelect.value) ? timerRepeatIntervalSelect.value : '0';
+    timerRepeatIntervalSeconds = Number(selected);
+    storeChoice(storageKeys.timerRepeatInterval, selected);
+  });
+  timerPreAlertSelect.addEventListener('change', () => {
+    timerPreAlertMode = validPreAlertModes.has(timerPreAlertSelect.value) ? timerPreAlertSelect.value : 'off';
+    refreshPreAlertEligibility();
+    storeChoice(storageKeys.timerPreAlert, timerPreAlertMode);
+  });
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
   document.getElementById('btn-clear').addEventListener('click', () => {
     if (isPomodoroMode) stopPomodoroMode();
@@ -2122,7 +2718,7 @@
     if (event.target === agendaOverlay) closeAgenda();
   });
 
-  pomodoroButton.addEventListener('click', launchPomodoroWindow);
+  pomodoroButton.addEventListener('click', () => launchPomodoroWindow());
   pomodoroCloseButton.addEventListener('click', closePomodoro);
   pomodoroStartButton.addEventListener('click', startPomodoroMode);
   pomodoroPrimaryButton.addEventListener('click', togglePomodoroPrimary);
@@ -2138,6 +2734,11 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    if (!soundSettingsPopover.hidden) {
+      event.preventDefault();
+      closeSoundSettings({ restoreFocus: true });
+      return;
+    }
     if (!agendaOverlay.hidden) {
       event.preventDefault();
       closeAgenda();
@@ -2167,6 +2768,7 @@
     const manualSeconds = readManualSeconds();
     if (isPomodoroMode) stopPomodoroMode();
     setTime(manualSeconds);
+    showAnalogTimerPreview();
   });
 
   startBreakButton.addEventListener('click', () => {
@@ -2201,6 +2803,7 @@
     clockResizer.hidden = !(showLeftClock && showRightClock);
     body.classList.toggle('right-clock-hidden', !showRightClock);
     if (!isBreakMode) digitalText.hidden = !showRightClock;
+    if (showRightClock || !showLeftClock) hideAnalogTimerPreview();
   }
 
   leftClockCheckbox.addEventListener('change', syncClockVisibility);
@@ -2250,6 +2853,24 @@
     body.style.userSelect = '';
   });
 
+  window.addEventListener('message', (event) => {
+    if (event.source !== compactWindowRef) return;
+    if (event.data?.type === 'ninin-timer-compact-ready') {
+      suppressAlarm = true;
+    } else if (event.data?.type === 'ninin-timer-compact-closed') {
+      suppressAlarm = false;
+      if (compactWindowRef?.closed) compactWindowRef = null;
+    }
+  });
+
+  if (isCompactBrowserWindow) {
+    window.addEventListener('pagehide', () => {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({ type: 'ninin-timer-compact-closed' }, '*');
+      }
+    });
+  }
+
   clockResizer.addEventListener('pointerdown', (event) => {
     isClockResizing = true;
     clockResizer.classList.add('is-active');
@@ -2277,7 +2898,16 @@
     body.classList.add('standalone-pomodoro');
     document.title = 'ポモドーロテクニック｜Workshop Timer';
     openPomodoro();
+    if (shouldAutoStartPomodoro) {
+      const cleanPomodoroUrl = new URL(window.location.href);
+      cleanPomodoroUrl.searchParams.delete('autostart');
+      window.history.replaceState(null, '', cleanPomodoroUrl.href);
+      startPomodoroMode();
+    }
   }
-  renderTimer();
+  if (!restoreWindowTransferState()) renderTimer();
+  if (isCompactBrowserWindow && window.opener && !window.opener.closed) {
+    window.opener.postMessage({ type: 'ninin-timer-compact-ready' }, '*');
+  }
   window.TimerI18n?.apply(document.documentElement);
 })();

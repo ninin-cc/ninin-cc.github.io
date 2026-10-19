@@ -42,7 +42,41 @@
     'タイマーをクリア': 'Clear the timer',
     'タイマーをリセット': 'Reset the timer',
     'ストップウォッチを開始・停止': 'Start or pause the stopwatch',
+    'ポモドーロテクニックモードを開く': 'Open Pomodoro Technique mode',
     'タイマー通知音の音量': 'Timer alert volume',
+    '通知音と繰り返しを設定': 'Alert and repeat settings',
+    '通知設定を閉じる': 'Close alert settings',
+    '通知とリピート': 'Alerts & Repeats',
+    '終了音': 'End sound',
+    'やさしいチャイム': 'Gentle Chime',
+    'メタロフォン': 'Metallophone',
+    'ザイロフォン': 'Xylophone',
+    'オーケストラ': 'Orchestra',
+    'セットチャイム': 'Set Chime',
+    'クリアチャイム': 'Clear Chime',
+    '高いベル': 'High Bell',
+    '低いベル': 'Low Bell',
+    '目覚まし時計': 'Alarm Clock',
+    'アラーム音': 'Alert',
+    'バイブレーション': 'Vibration',
+    '▶ 試聴': '▶ Preview',
+    '鳴らし方': 'Alert pattern',
+    '1回': 'Once',
+    '2回': '2 runs',
+    '3回': '3 runs',
+    '5回': '5 runs',
+    '停止するまで': 'Until stopped',
+    'タイマー繰り返し': 'Repeat timer',
+    '無制限': 'Unlimited',
+    '開始までの間隔': 'Restart interval',
+    'すぐ開始': 'Start immediately',
+    '予告音': 'Advance alert',
+    '終了1分前': '1 minute before',
+    '終了10秒前': '10 seconds before',
+    '1分前＋10秒前': '1 minute + 10 seconds before',
+    '設定はこのブラウザに自動保存されます。': 'Settings are saved automatically in this browser.',
+    'ミュートにする': 'Mute',
+    '元の音量に戻す': 'Restore previous volume',
     'ストップウォッチを開始': 'Start the stopwatch',
     'ストップウォッチを停止': 'Pause the stopwatch',
     'ストップウォッチ開始': 'Start Stopwatch',
@@ -255,7 +289,10 @@
 
   function translateDynamic(value) {
     let match;
+    if ((match = value.match(/^(\d+)秒$/))) return `${match[1]} sec`;
     if ((match = value.match(/^(\d+)分$/))) return `${match[1]} min`;
+    if ((match = value.match(/^次の開始まで\s+(.+)\s+・\s+(\d+)\/(\d+)\s+完了$/))) return `Next start in ${match[1]} · ${match[2]}/${match[3]} complete`;
+    if ((match = value.match(/^次の開始まで\s+(.+)\s+・\s+(\d+)回\s+完了$/))) return `Next start in ${match[1]} · ${match[2]} complete`;
     if ((match = value.match(/^合計\s*(\d+)分(?:\s*（(\d+)時間(?:(\d+)分)?）)?$/))) {
       const readable = match[2] ? ` (${match[2]} hr${match[3] ? ` ${match[3]} min` : ''})` : '';
       return `Total ${match[1]} min${readable}`;
