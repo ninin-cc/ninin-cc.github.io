@@ -13,7 +13,7 @@
 
   const phrases = new Map(Object.entries({
     'ワークショップタイマー': 'Workshop Timer',
-    '無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用': 'Free Workshop Timer | Teams, Slack & Microsoft 365',
+    'タイマー｜ワークショップ・研修・学習効率化に最適': 'Timer | Ideal for Workshops, Training, and Efficient Learning',
     'ワーク進行表': 'Workshop Agenda',
     '無料のワーク進行表｜研修・会議・チームビルディングの時間管理': 'Free Workshop Agenda | Time Management for Training and Meetings',
     'ワークショップ': 'Workshop',
@@ -41,8 +41,15 @@
     'タイマーを停止': 'Pause the timer',
     'タイマーをクリア': 'Clear the timer',
     'タイマーをリセット': 'Reset the timer',
+    'タイマーを開始時の時間に戻す': 'Restore the timer to its starting duration',
+    '開始時の時間に戻す': 'Restore starting duration',
+    'タイマーを0にする': 'Clear the timer to zero',
+    '0にする': 'Clear to zero',
     'ストップウォッチを開始・停止': 'Start or pause the stopwatch',
-    'ポモドーロテクニックモードを開く': 'Open Pomodoro Technique mode',
+    'クイックポモドーロを開始': 'Start Quick Pomodoro',
+    '25分集中と5分休憩をすぐ開始': 'Start 25-minute focus and 5-minute breaks now',
+    '☕ 5分休憩中': '☕ 5-minute break',
+    '☕ 5分休憩・一時停止中': '☕ 5-minute break · Paused',
     'タイマー通知音の音量': 'Timer alert volume',
     '通知音と繰り返しを設定': 'Alert and repeat settings',
     '通知設定を閉じる': 'Close alert settings',
@@ -84,6 +91,9 @@
     '＋1分': '+1 minute',
     '−1分': '-1 minute',
     '表示領域の高さを変更': 'Resize display height',
+    '設定パネルの拡大・縮小': 'Resize settings panel',
+    '表示を縮小': 'Shrink view',
+    '表示を拡大': 'Expand view',
     'タイマー操作': 'Timer controls',
     '時間を延長しますか？': 'Extend the timer?',
     '休憩中': 'On Break',
@@ -291,6 +301,8 @@
     let match;
     if ((match = value.match(/^(\d+)秒$/))) return `${match[1]} sec`;
     if ((match = value.match(/^(\d+)分$/))) return `${match[1]} min`;
+    if ((match = value.match(/^🍅 25分ワーク中・(\d+)回目$/))) return `🍅 25-minute focus · Session ${match[1]}`;
+    if ((match = value.match(/^🍅 25分ワーク・(\d+)回目・一時停止中$/))) return `🍅 25-minute focus · Session ${match[1]} · Paused`;
     if ((match = value.match(/^次の開始まで\s+(.+)\s+・\s+(\d+)\/(\d+)\s+完了$/))) return `Next start in ${match[1]} · ${match[2]}/${match[3]} complete`;
     if ((match = value.match(/^次の開始まで\s+(.+)\s+・\s+(\d+)回\s+完了$/))) return `Next start in ${match[1]} · ${match[2]} complete`;
     if ((match = value.match(/^合計\s*(\d+)分(?:\s*（(\d+)時間(?:(\d+)分)?）)?$/))) {

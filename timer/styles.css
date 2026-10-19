@@ -555,6 +555,75 @@ body[data-theme="light"] .break-clock-badge text {
   overflow: hidden;
 }
 
+.stage-collapse-controls {
+  position: absolute;
+  left: 9px;
+  bottom: 9px;
+  z-index: 12;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.54);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  opacity: 0.42;
+  backdrop-filter: blur(6px);
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.stage-collapse-controls:hover,
+.stage-collapse-controls:focus-within {
+  opacity: 0.96;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.stage-collapse-controls button {
+  width: 26px;
+  height: 24px;
+  padding: 3px;
+  border: 0;
+  border-radius: 6px;
+  color: #475569;
+  background: transparent;
+  cursor: pointer;
+  font: 700 16px/1 system-ui, sans-serif;
+}
+
+.stage-collapse-controls button:hover,
+.stage-collapse-controls button:focus-visible,
+.stage-collapse-controls button:active {
+  color: #0f172a;
+  background: rgba(148, 163, 184, 0.24);
+  outline: none;
+}
+
+.stage-collapse-controls button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+body[data-theme="dark"] .stage-collapse-controls {
+  border-color: rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.52);
+}
+
+body[data-theme="dark"] .stage-collapse-controls:hover,
+body[data-theme="dark"] .stage-collapse-controls:focus-within {
+  background: rgba(15, 23, 42, 0.88);
+}
+
+body[data-theme="dark"] .stage-collapse-controls button {
+  color: #cbd5e1;
+}
+
+body[data-theme="dark"] .stage-collapse-controls button:hover,
+body[data-theme="dark"] .stage-collapse-controls button:focus-visible,
+body[data-theme="dark"] .stage-collapse-controls button:active {
+  color: #ffffff;
+  background: rgba(148, 163, 184, 0.2);
+}
+
 .stage-quick-controls {
   position: absolute;
   top: 9px;
@@ -936,12 +1005,60 @@ body[data-theme="dark"] .timer-repeat-status {
   background: rgba(30, 58, 138, 0.82);
 }
 
+.quick-pomodoro-status {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  z-index: 11;
+  max-width: calc(100% - 330px);
+  padding: 5px 11px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 999px;
+  color: #991b1b;
+  background: rgba(254, 242, 242, 0.92);
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.12);
+  transform: translateX(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(9px, 1.5vmin, 12px);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.quick-pomodoro-status.is-break {
+  border-color: rgba(14, 116, 144, 0.3);
+  color: #155e75;
+  background: rgba(236, 254, 255, 0.92);
+}
+
+body[data-theme="dark"] .quick-pomodoro-status {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fee2e2;
+  background: rgba(127, 29, 29, 0.84);
+}
+
+body[data-theme="dark"] .quick-pomodoro-status.is-break {
+  border-color: rgba(34, 211, 238, 0.38);
+  color: #cffafe;
+  background: rgba(22, 78, 99, 0.86);
+}
+
 @media (max-width: 520px) {
   .sound-settings-grid {
     grid-template-columns: 1fr;
   }
 
   .timer-repeat-status {
+    left: 9px;
+    right: 9px;
+    max-width: none;
+    transform: none;
+    text-align: center;
+  }
+
+  .quick-pomodoro-status {
     left: 9px;
     right: 9px;
     max-width: none;
@@ -1190,6 +1307,32 @@ body.timer-ended .left-clock-wrap .clock-numbers {
   margin: 6px auto 0;
   padding: 8px 0 0;
   border-top: 1px solid var(--line);
+}
+
+body.collapse-from-timer .time-settings-row,
+body.collapse-from-timer .compact-utility-row,
+body.collapse-from-timer .shortcut-help,
+body.collapse-from-timer .copyright,
+body.collapse-from-timer .bottom-actions,
+body.collapse-from-view .compact-utility-row,
+body.collapse-from-view .shortcut-help,
+body.collapse-from-view .copyright,
+body.collapse-from-view .bottom-actions {
+  display: none !important;
+}
+
+body.collapse-to-clock .controls,
+body.collapse-to-clock .resizer {
+  display: none !important;
+}
+
+body.control-sections-collapsed .controls {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+body.control-sections-collapsed .app-shell.is-compact-scale .top-pane {
+  flex-grow: 0;
 }
 
 .control-row {
@@ -1659,6 +1802,12 @@ body[data-theme="dark"] .add-group > .compact-label {
   line-height: 1;
 }
 
+.segmented-control .button.segment:not(.undo) {
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
 .compact-time-input {
   min-width: 0;
   height: 32px;
@@ -1794,6 +1943,7 @@ body[data-theme="light"] .toggle-chip:has(input:checked) {
 body.controls-hidden .titlebar,
 body.controls-hidden .controls,
 body.controls-hidden .resizer,
+body.controls-hidden .stage-collapse-controls,
 body.controls-hidden .icon-maker-launch,
 body.controls-hidden .agenda-launch,
 body.controls-hidden .pomodoro-launch,

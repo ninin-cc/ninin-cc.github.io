@@ -1,13 +1,12 @@
 (() => {
   'use strict';
 
-  const searchDocumentTitle = '無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用';
+  const searchDocumentTitle = 'タイマー｜ワークショップ・研修・学習効率化に最適';
 
   const bridge = window.overlayBridge ?? null;
   const isElectron = Boolean(bridge);
   const pageParams = new URLSearchParams(window.location.search);
   const isStandalonePomodoro = pageParams.get('view') === 'pomodoro';
-  const shouldAutoStartPomodoro = isStandalonePomodoro && pageParams.get('autostart') === '1';
   const isCompactBrowserWindow = !isElectron && pageParams.get('compact') === '1';
   const mainWindowName = isStandalonePomodoro
     ? ''
@@ -36,6 +35,9 @@
   const stageResetButton = document.getElementById('btn-stage-reset');
   const stageStopwatchButton = document.getElementById('btn-stage-stopwatch');
   const modeSwitchButton = document.getElementById('btn-mode-switch');
+  const windowShrinkButton = document.getElementById('btn-window-shrink');
+  const windowExpandButton = document.getElementById('btn-window-expand');
+  const quickPomodoroStatus = document.getElementById('quick-pomodoro-status');
   const timerVolumeSlider = document.getElementById('timer-volume');
   const timerVolumeIcon = document.getElementById('timer-volume-icon');
   const timerVolumeValue = document.getElementById('timer-volume-value');
@@ -131,6 +133,7 @@
   let stopwatchStartedAt = 0;
   let timerMode = 'countdown';
   let lastSetSeconds = 0;
+  let hasStartedCurrentCountdown = false;
   let endAt = 0;
   let countdownStartedAt = null;
   let ticker = null;
@@ -156,6 +159,11 @@
   let isPinned = true;
   let isClickThrough = false;
   let controlsHidden = false;
+  let controlCollapseScope = 'none';
+  let expandedWindowOuterHeight = 0;
+  let expandedTopPaneHeightStyle = '';
+  let expandedTopPaneFlexBasisStyle = '';
+  let collapseResizeFrame = 0;
   let isResizing = false;
   let isClockResizing = false;
   let isBreakMode = false;
@@ -176,6 +184,7 @@
   let tutorialPhase = null;
   let tutorialSavedState = null;
   let isPomodoroMode = false;
+  let isQuickPomodoroMode = false;
   let pomodoroPhase = 'focus';
   let pomodoroCompleted = 0;
   let pomodoroAwaitingStart = false;
@@ -211,6 +220,7 @@
     timerRepeatCount: 'workshopTimer.timerRepeatCount',
     timerRepeatInterval: 'workshopTimer.timerRepeatInterval',
     timerPreAlert: 'workshopTimer.timerPreAlert',
+    controlCollapseScope: 'workshopTimer.controlCollapseScope',
     uiScale: 'workshopTimer.uiScale',
     agendas: 'workshopTimer.agendas.v1'
   };
@@ -272,6 +282,7 @@
   const validTimerRepeatCounts = new Set(['off', '2', '3', '5', 'infinite']);
   const validTimerIntervals = new Set(['0', '10', '30', '60', '180', '300', '600']);
   const validPreAlertModes = new Set(['off', '60', '10', 'both']);
+  const validControlCollapseScopes = new Set(['none', 'view', 'timer', 'clock']);
   const uiScaleMin = 0.5;
   const uiScaleMax = 1.3;
   const uiScaleStep = 0.1;
@@ -461,6 +472,84 @@
     if (restoreFocus) soundSettingsButton.focus();
   }
 
+  function applyControlCollapseScope(scope, persist = false) {
+    const previousScope = controlCollapseScope;
+    const nextScope = validControlCollapseScopes.has(scope) ? scope : 'none';
+    if (previousScope === 'none' && nextScope !== 'none') {
+      expandedWindowOuterHeight = window.outerHeight;
+      expandedTopPaneHeightStyle = topPane.style.height;
+      expandedTopPaneFlexBasisStyle = topPane.style.flexBasis;
+      const displayedTopPaneHeight = topPane.getBoundingClientRect().height / uiScale;
+      applyTopPaneHeight(displayedTopPaneHeight, false);
+    }
+    controlCollapseScope = nextScope;
+    const timerCollapsed = controlCollapseScope === 'timer';
+    const viewCollapsed = controlCollapseScope === 'view';
+    const clockOnly = controlCollapseScope === 'clock';
+    body.classList.toggle('collapse-from-timer', timerCollapsed);
+    body.classList.toggle('collapse-from-view', viewCollapsed);
+    body.classList.toggle('collapse-to-clock', clockOnly);
+    body.classList.toggle('control-sections-collapsed', timerCollapsed || viewCollapsed || clockOnly);
+    windowShrinkButton.disabled = clockOnly;
+    windowExpandButton.disabled = controlCollapseScope === 'none';
+    windowShrinkButton.setAttribute('aria-label', tr('表示を縮小'));
+    windowShrinkButton.title = tr('表示を縮小');
+    windowExpandButton.setAttribute('aria-label', tr('表示を拡大'));
+    windowExpandButton.title = tr('表示を拡大');
+    if (persist) {
+      try { window.localStorage.removeItem(storageKeys.controlCollapseScope); } catch {}
+    }
+    if (collapseResizeFrame) window.cancelAnimationFrame(collapseResizeFrame);
+    collapseResizeFrame = window.requestAnimationFrame(() => {
+      collapseResizeFrame = 0;
+      if (controlCollapseScope === 'none') {
+        topPane.style.height = expandedTopPaneHeightStyle;
+        topPane.style.flexBasis = expandedTopPaneFlexBasisStyle;
+        syncMinimumWindowSize();
+        if (expandedWindowOuterHeight > 0) resizeWindowToHeight(expandedWindowOuterHeight);
+        expandedWindowOuterHeight = 0;
+        expandedTopPaneHeightStyle = '';
+        expandedTopPaneFlexBasisStyle = '';
+        window.requestAnimationFrame(keepDividerVisible);
+        return;
+      }
+      syncMinimumWindowSize();
+      resizeWindowToHeight(measureCollapsedWindowHeight());
+    });
+  }
+
+  function shrinkControlSections() {
+    if (controlCollapseScope === 'none') applyControlCollapseScope('view', true);
+    else if (controlCollapseScope === 'view') applyControlCollapseScope('timer', true);
+    else if (controlCollapseScope === 'timer') applyControlCollapseScope('clock', true);
+  }
+
+  function expandControlSections() {
+    if (controlCollapseScope === 'clock') applyControlCollapseScope('timer', true);
+    else if (controlCollapseScope === 'timer') applyControlCollapseScope('view', true);
+    else if (controlCollapseScope === 'view') applyControlCollapseScope('none', true);
+  }
+
+  function measureCollapsedWindowHeight() {
+    const browserChromeHeight = Math.max(0, window.outerHeight - window.innerHeight);
+    const titlebarHeight = document.getElementById('titlebar')?.getBoundingClientRect().height || 0;
+    const topPaneHeight = topPane.getBoundingClientRect().height;
+    const dividerHeight = resizer.getBoundingClientRect().height;
+    const controlsHeight = document.getElementById('controls').getBoundingClientRect().height;
+    return Math.ceil(browserChromeHeight + titlebarHeight + topPaneHeight + dividerHeight + controlsHeight + 2);
+  }
+
+  function resizeWindowToHeight(targetHeight) {
+    const safeHeight = Math.max(180, Math.round(Number(targetHeight) || window.outerHeight));
+    if (bridge?.resizeToHeight) {
+      void bridge.resizeToHeight(safeHeight);
+      return;
+    }
+    try {
+      window.resizeTo(window.outerWidth, safeHeight);
+    } catch {}
+  }
+
   function applyUiScale(nextScale, persist = false) {
     uiScale = Math.min(uiScaleMax, Math.max(uiScaleMin, Math.round(nextScale * 10) / 10));
     root.style.setProperty('--ui-scale', String(uiScale));
@@ -524,6 +613,7 @@
         : stopwatchElapsedMs,
       stopwatchStartedAt: timerMode === 'stopwatch' && isRunning ? stopwatchStartedAt : 0,
       lastSetSeconds,
+      hasStartedCurrentCountdown,
       hasEnded,
       clockPreviewMode,
       timerRepeatCompleted,
@@ -563,6 +653,9 @@
     const now = Date.now();
     timerMode = saved.timerMode === 'stopwatch' ? 'stopwatch' : 'countdown';
     lastSetSeconds = Math.max(0, Number(saved.lastSetSeconds) || 0);
+    hasStartedCurrentCountdown = typeof saved.hasStartedCurrentCountdown === 'boolean'
+      ? saved.hasStartedCurrentCountdown
+      : Boolean(saved.isRunning && saved.timerMode !== 'stopwatch');
     hasEnded = Boolean(saved.hasEnded);
     clockPreviewMode = saved.clockPreviewMode || null;
     timerRepeatCompleted = Math.max(0, Number(saved.timerRepeatCompleted) || 0);
@@ -678,6 +771,7 @@
   timerRepeatIntervalSeconds = Number(readStoredChoice(storageKeys.timerRepeatInterval, validTimerIntervals, '0'));
   timerPreAlertMode = readStoredChoice(storageKeys.timerPreAlert, validPreAlertModes, 'off');
   syncNotificationSettingsUi();
+  applyControlCollapseScope('none');
 
   uiZoomOutButton.addEventListener('click', () => {
     const previousScale = uiScale;
@@ -702,7 +796,7 @@
     }
     const titlebarHeight = isElectron ? 38 : 0;
     const topHeight = Number.parseFloat(topPane.style.height) || topPane.offsetHeight;
-    const dividerHeight = Math.max(11, resizer.offsetHeight);
+    const dividerHeight = controlCollapseScope === 'clock' ? 0 : Math.max(11, resizer.offsetHeight);
     const minimumWidth = Math.max(280, Math.round(520 * uiScale));
     const minimumHeight = Math.max(180, Math.round((titlebarHeight + topHeight + dividerHeight + 1) * uiScale));
     void bridge.setMinimumSize(minimumWidth, minimumHeight);
@@ -717,7 +811,7 @@
   }
 
   function keepDividerVisible() {
-    if (controlsHidden) return;
+    if (controlsHidden || controlCollapseScope === 'clock') return;
     if (isElectron) return;
     const titlebarHeight = isElectron ? 38 : 0;
     const dividerHeight = Math.max(11, resizer.getBoundingClientRect().height);
@@ -857,6 +951,7 @@
       remainingMs: frozenRemainingMs,
       stopwatchElapsedMs: frozenStopwatchMs,
       lastSetSeconds,
+      hasStartedCurrentCountdown,
       isRunning,
       hasEnded,
       countdownElapsedMs: countdownStartedAt ? Math.max(0, now - countdownStartedAt.getTime()) : 0,
@@ -885,6 +980,7 @@
     remainingMs = 0;
     stopwatchElapsedMs = 0;
     lastSetSeconds = 0;
+    hasStartedCurrentCountdown = false;
     endAt = 0;
     countdownStartedAt = null;
     hasEnded = false;
@@ -907,6 +1003,7 @@
     remainingMs = saved.remainingMs;
     stopwatchElapsedMs = saved.stopwatchElapsedMs;
     lastSetSeconds = saved.lastSetSeconds;
+    hasStartedCurrentCountdown = Boolean(saved.hasStartedCurrentCountdown);
     hasEnded = saved.hasEnded;
     isRunning = false;
     isBreakMode = false;
@@ -1528,7 +1625,43 @@
     });
   }
 
+  function updateQuickPomodoroStatus() {
+    const isQuick = isPomodoroMode && isQuickPomodoroMode;
+    quickPomodoroStatus.hidden = !isQuick;
+    modeSwitchButton.classList.toggle('is-active', isQuick);
+    modeSwitchButton.setAttribute('aria-pressed', String(isQuick));
+    if (!isQuick) {
+      quickPomodoroStatus.textContent = '';
+      quickPomodoroStatus.classList.remove('is-break');
+      return;
+    }
+
+    const isBreak = pomodoroPhase !== 'focus';
+    quickPomodoroStatus.classList.toggle('is-break', isBreak);
+    if (isBreak) {
+      quickPomodoroStatus.textContent = isRunning ? '☕ 5分休憩中' : '☕ 5分休憩・一時停止中';
+    } else {
+      const session = pomodoroCompleted + 1;
+      quickPomodoroStatus.textContent = isRunning
+        ? `🍅 25分ワーク中・${session}回目`
+        : `🍅 25分ワーク・${session}回目・一時停止中`;
+    }
+  }
+
   function updatePomodoroUi() {
+    updateQuickPomodoroStatus();
+    if (isQuickPomodoroMode) {
+      pomodoroSetup.hidden = false;
+      pomodoroSession.hidden = true;
+      pomodoroSessionActions.hidden = true;
+      pomodoroEndButton.hidden = true;
+      pomodoroButton.textContent = '🍅 ポモドーロテクニックモード';
+      pomodoroCycleLabel.textContent = '集中と休憩のサイクル';
+      pomodoroStartButton.textContent = '🍅 25分集中を始める';
+      pomodoroMinuteBlocks.replaceChildren();
+      pomodoroBlockCount = 0;
+      return;
+    }
     pomodoroSetup.hidden = isPomodoroMode;
     pomodoroSession.hidden = !isPomodoroMode;
     pomodoroSessionActions.hidden = !isPomodoroMode;
@@ -1588,11 +1721,9 @@
     body.classList.remove('pomodoro-popup-open');
   }
 
-  function launchPomodoroWindow({ autoStart = false } = {}) {
+  function launchPomodoroWindow() {
     const pomodoroUrl = new URL('index.html', window.location.href);
     pomodoroUrl.searchParams.set('view', 'pomodoro');
-    if (autoStart) pomodoroUrl.searchParams.set('autostart', '1');
-    else pomodoroUrl.searchParams.delete('autostart');
     pomodoroUrl.hash = '';
     pomodoroWindow = window.open(pomodoroUrl.toString(), 'ninin-pomodoro');
     if (!pomodoroWindow) {
@@ -1600,6 +1731,24 @@
       return;
     }
     pomodoroWindow.focus();
+  }
+
+  function startQuickPomodoroMode() {
+    stopAlarm();
+    cancelTimerRepeat(true);
+    if (!tutorialOverlay.hidden) closeTutorial();
+    if (isBreakMode) stopBreakDisplay();
+    if (isPomodoroMode) deactivatePomodoroMode();
+    pomodoroTask = '';
+    pomodoroPhase = 'focus';
+    pomodoroCompleted = 0;
+    pomodoroAwaitingStart = false;
+    pomodoroStatusMessage = '25分のワークと5分の休憩を自動で繰り返します。';
+    isPomodoroMode = true;
+    isQuickPomodoroMode = true;
+    setTime(25 * 60);
+    startTimer();
+    updatePomodoroUi();
   }
 
   function startPomodoroMode() {
@@ -1613,6 +1762,7 @@
       ? 'この25分は、選んだタスクだけに集中しましょう。'
       : 'この25分は、いま取り組む作業だけに集中しましょう。';
     isPomodoroMode = true;
+    isQuickPomodoroMode = false;
     setTime(pomodoroDurationSeconds());
     startTimer();
     updatePomodoroUi();
@@ -1652,6 +1802,7 @@
 
   function deactivatePomodoroMode() {
     isPomodoroMode = false;
+    isQuickPomodoroMode = false;
     pomodoroAwaitingStart = false;
     pomodoroCompleted = 0;
     pomodoroPhase = 'focus';
@@ -1667,6 +1818,22 @@
 
   function completePomodoroPhase() {
     if (!isPomodoroMode) return;
+
+    if (isQuickPomodoroMode) {
+      if (pomodoroPhase === 'focus') {
+        pomodoroCompleted += 1;
+        pomodoroPhase = 'short-break';
+        pomodoroStatusMessage = `${pomodoroCompleted}回目のワークが完了しました。5分休憩します。`;
+      } else {
+        pomodoroPhase = 'focus';
+        pomodoroStatusMessage = `${pomodoroCompleted + 1}回目の25分ワークを開始します。`;
+      }
+      pomodoroAwaitingStart = false;
+      setTime(pomodoroDurationSeconds());
+      startTimer({ preserveAlarm: true, preserveRepeat: true });
+      updatePomodoroUi();
+      return;
+    }
 
     if (pomodoroPhase === 'focus') {
       pomodoroCompleted += 1;
@@ -2228,6 +2395,10 @@
     hasEnded = false;
     isRunning = true;
     const startingSeconds = secondsForDisplay();
+    if (!hasStartedCurrentCountdown) {
+      lastSetSeconds = startingSeconds;
+      hasStartedCurrentCountdown = true;
+    }
     if (!isPomodoroMode && !repeatCycleActive) {
       timerRepeatCompleted = 0;
       repeatDurationSeconds = startingSeconds;
@@ -2308,6 +2479,7 @@
     const safeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
     clockPreviewMode = 'countdown';
     lastSetSeconds = safeSeconds;
+    hasStartedCurrentCountdown = false;
     remainingMs = safeSeconds * 1000;
     hasEnded = false;
     clearAddHistory();
@@ -2326,6 +2498,7 @@
     timerMode = 'countdown';
     clockPreviewMode = 'countdown';
     remainingMs = readManualSeconds() * 1000;
+    hasStartedCurrentCountdown = false;
     hasEnded = false;
     clearAddHistory();
     preAlertsFired.clear();
@@ -2362,6 +2535,7 @@
     }
     const increment = Math.max(0, Number(seconds) || 0) * 1000;
     if (increment <= 0) return;
+    if (!isRunning && (hasEnded || remainingMs <= 0)) hasStartedCurrentCountdown = false;
     clockPreviewMode = 'countdown';
     addHistory.push(increment);
     if (isRunning) {
@@ -2399,6 +2573,7 @@
     const current = isRunning ? Math.max(0, endAt - Date.now()) : remainingMs;
     const decrement = Math.min(requested, current);
     if (decrement <= 0) return;
+    if (!isRunning && hasEnded) hasStartedCurrentCountdown = false;
     clockPreviewMode = 'countdown';
     addHistory.push(-decrement);
     if (isRunning) {
@@ -2598,7 +2773,9 @@
     else clearTimer();
   });
   stageStopwatchButton.addEventListener('click', toggleStopwatch);
-  modeSwitchButton.addEventListener('click', () => launchPomodoroWindow({ autoStart: true }));
+  windowShrinkButton.addEventListener('click', shrinkControlSections);
+  windowExpandButton.addEventListener('click', expandControlSections);
+  modeSwitchButton.addEventListener('click', startQuickPomodoroMode);
   timerVolumeSlider.addEventListener('input', (event) => applyAlarmVolume(event.target.value, true));
   timerVolumeIcon.addEventListener('click', () => {
     if (alarmVolume > 0) {
@@ -2718,7 +2895,7 @@
     if (event.target === agendaOverlay) closeAgenda();
   });
 
-  pomodoroButton.addEventListener('click', () => launchPomodoroWindow());
+  pomodoroButton.addEventListener('click', launchPomodoroWindow);
   pomodoroCloseButton.addEventListener('click', closePomodoro);
   pomodoroStartButton.addEventListener('click', startPomodoroMode);
   pomodoroPrimaryButton.addEventListener('click', togglePomodoroPrimary);
@@ -2898,12 +3075,6 @@
     body.classList.add('standalone-pomodoro');
     document.title = 'ポモドーロテクニック｜Workshop Timer';
     openPomodoro();
-    if (shouldAutoStartPomodoro) {
-      const cleanPomodoroUrl = new URL(window.location.href);
-      cleanPomodoroUrl.searchParams.delete('autostart');
-      window.history.replaceState(null, '', cleanPomodoroUrl.href);
-      startPomodoroMode();
-    }
   }
   if (!restoreWindowTransferState()) renderTimer();
   if (isCompactBrowserWindow && window.opener && !window.opener.closed) {

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用</title>
-  <meta name="description" content="登録・サインイン不要、広告なしで簡単・お手軽に使える無料のワークショップタイマー。Microsoft 365、Teams、Slackの会議や画面共有、研修、チームビルディング、心理的安全性を扱う対話、ポモドーロ学習の時間管理に。入力した進行表は外部サーバーへ保存せず、情報セキュリティに配慮しています。">
-  <meta name="keywords" content="ワークショップタイマー,無料タイマー,無登録,広告なし,サインイン不要,情報セキュリティ,安心,簡単,お手軽,Microsoft 365,M365,Microsoft Teams,Teams,Slack,オンライン会議,画面共有,研修,ファシリテーション,チームビルディング,心理的安全性,ポモドーロ,時間管理">
+  <title>タイマー｜ワークショップ・研修・学習効率化に最適</title>
+  <meta name="description" content="ワークショップ、研修、学習の時間管理を直感的に支援するタイマー。登録・サインイン不要、広告なしで、アナログ時計、ポモドーロ、ワーク進行表をすぐに使えます。">
+  <meta name="keywords" content="タイマー,ワークショップタイマー,研修タイマー,学習タイマー,無料タイマー,無登録,広告なし,サインイン不要,アナログ時計,ポモドーロ,ワーク進行表,ファシリテーション,時間管理,学習効率化">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta name="application-name" content="Workshop Timer">
   <meta name="author" content="ninin LLC">
@@ -15,12 +15,12 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ja_JP">
   <meta property="og:site_name" content="Workshop Timer">
-  <meta property="og:title" content="無料ワークショップタイマー｜Teams・Slack・Microsoft 365で活用">
+  <meta property="og:title" content="タイマー｜ワークショップ・研修・学習効率化に最適">
   <meta property="og:description" content="無登録・サインイン不要、広告なし。研修、チームビルディング、心理的安全性を扱うワークショップの進行を支える無料タイマーです。">
   <meta property="og:url" content="https://ninin-cc.github.io/timer/">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="無料ワークショップタイマー｜Workshop Timer">
-  <meta name="twitter:description" content="Teams・Slack・Microsoft 365の会議や研修に。無登録・広告なしで使える無料タイマー。">
+  <meta name="twitter:title" content="タイマー｜ワークショップ・研修・学習効率化に最適">
+  <meta name="twitter:description" content="ワークショップ、研修、学習の時間管理に。無登録・広告なしですぐ使えるタイマー。">
   <link rel="stylesheet" href="styles.css">
   <script src="analytics.js"></script>
 </head>
@@ -97,14 +97,18 @@
           クリック透過中 — Ctrl + Shift + T で操作に戻る
         </div>
       </section>
+      <div class="stage-collapse-controls" role="group" aria-label="設定パネルの拡大・縮小">
+        <button id="btn-window-shrink" type="button" aria-label="表示を縮小" title="表示を縮小">−</button>
+        <button id="btn-window-expand" type="button" aria-label="表示を拡大" title="表示を拡大" disabled>＋</button>
+      </div>
       <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
         <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
         <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
         <button id="btn-stage-play" type="button" aria-label="タイマーを開始・停止" title="タイマーを開始・停止">▶</button>
-        <button id="btn-stage-clear" type="button" aria-label="タイマーをクリア" title="クリア">C</button>
-        <button id="btn-stage-reset" type="button" aria-label="タイマーをリセット" title="リセット">R</button>
+        <button id="btn-stage-reset" type="button" aria-label="タイマーを開始時の時間に戻す" title="開始時の時間に戻す">R</button>
+        <button id="btn-stage-clear" type="button" aria-label="タイマーを0にする" title="0にする">C</button>
         <button id="btn-stage-stopwatch" type="button" aria-label="ストップウォッチを開始・停止" title="ストップウォッチを開始・停止">⏱</button>
-        <button id="btn-mode-switch" class="stage-mode-switch" type="button" aria-label="ポモドーロテクニックモードを開く" title="ポモドーロテクニックモードを開く">🍅</button>
+        <button id="btn-mode-switch" class="stage-mode-switch" type="button" aria-label="クイックポモドーロを開始" aria-pressed="false" title="25分集中と5分休憩をすぐ開始">🍅</button>
       </div>
       <div class="stage-volume-control" title="タイマー通知音の音量">
         <button id="timer-volume-icon" class="stage-volume-icon" type="button" aria-label="ミュートにする" aria-pressed="false" title="ミュートにする">🔊</button>
@@ -120,6 +124,7 @@
         </div>
       </div>
       <div id="timer-repeat-status" class="timer-repeat-status" role="status" aria-live="polite" hidden></div>
+      <div id="quick-pomodoro-status" class="quick-pomodoro-status" role="status" aria-live="polite" hidden></div>
     </main>
 
     <div id="resizer" class="resizer" role="separator" aria-label="表示領域の高さを変更" aria-orientation="horizontal">
@@ -131,8 +136,8 @@
         <span class="row-label">MAIN</span>
         <div class="button-grid four">
           <button id="btn-toggle-play" class="button primary" type="button">▶ タイマー開始</button>
-          <button id="btn-reset" class="button warning" type="button">リセット</button>
-          <button id="btn-clear" class="button danger" type="button">クリア</button>
+          <button id="btn-reset" class="button warning" type="button" aria-label="タイマーを開始時の時間に戻す" title="開始時の時間に戻す">リセット</button>
+          <button id="btn-clear" class="button danger" type="button" aria-label="タイマーを0にする" title="0にする">クリア</button>
           <button id="btn-stopwatch" class="button stopwatch" type="button">ストップウォッチ
 開始</button>
         </div>

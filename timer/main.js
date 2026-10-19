@@ -171,6 +171,15 @@ ipcMain.handle('overlay:resize-by-scale', (_event, ratio, minWidth, minHeight) =
   mainWindow.setSize(nextWidth, nextHeight, true);
   return { width: nextWidth, height: nextHeight };
 });
+ipcMain.handle('overlay:resize-to-height', (event, height) => {
+  const targetWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!targetWindow || targetWindow.isDestroyed()) return null;
+  const [currentWidth] = targetWindow.getSize();
+  const [, minimumHeight] = targetWindow.getMinimumSize();
+  const safeHeight = Math.min(1600, Math.max(minimumHeight, Math.round(Number(height) || minimumHeight)));
+  targetWindow.setSize(currentWidth, safeHeight, true);
+  return { width: currentWidth, height: safeHeight };
+});
 ipcMain.handle('overlay:toggle-fullscreen', () => {
   if (!mainWindow || mainWindow.isDestroyed()) return false;
   const nextValue = !mainWindow.isFullScreen();
