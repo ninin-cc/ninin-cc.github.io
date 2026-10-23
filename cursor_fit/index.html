@@ -326,6 +326,188 @@
       background: #f7fafc;
     }
 
+    /* トップ画面：端末内の記録 */
+    .top-history-panel,
+    .top-settings-guide {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .top-section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .top-section-heading h2 {
+      font-size: 0.98rem;
+      font-weight: 800;
+    }
+
+    .top-section-heading p {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .history-clear-btn {
+      flex: 0 0 auto;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text-secondary);
+      padding: 5px 9px;
+      font: 700 0.68rem/1 var(--font-sans);
+      cursor: pointer;
+    }
+
+    .history-clear-btn:hover { background: #f8fafc; }
+
+    .top-history-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px 12px 12px;
+    }
+
+    .history-card {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .history-card h3 {
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .history-card ol {
+      list-style: none;
+      display: grid;
+      gap: 4px;
+    }
+
+    .history-card li {
+      overflow: hidden;
+      color: var(--text-secondary);
+      font-size: 0.71rem;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-card time {
+      color: var(--text-muted);
+      margin-right: 5px;
+    }
+
+    .history-highscore {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      margin-bottom: 5px;
+      color: #7c3aed;
+    }
+
+    .history-highscore strong {
+      font: 900 1.35rem/1 Consolas, monospace;
+    }
+
+    .history-highscore span { font-size: 0.68rem; font-weight: 800; }
+
+    .history-empty {
+      color: var(--text-muted) !important;
+      font-style: italic;
+    }
+
+    /* トップ画面：コンパクト設定ガイド */
+    .top-settings-grid {
+      display: grid;
+      grid-template-columns: minmax(250px, 1.25fr) repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+      align-items: stretch;
+    }
+
+    .top-settings-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 7px;
+      padding: 4px 8px;
+      color: var(--text-secondary);
+      font-size: 0.76rem;
+    }
+
+    .top-settings-copy strong { color: var(--text-primary); }
+
+    kbd {
+      display: inline-block;
+      min-width: 24px;
+      padding: 2px 6px;
+      border: 1px solid #94a3b8;
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      background: #ffffff;
+      color: #0f172a;
+      font: 800 0.72rem/1.4 var(--font-sans);
+      text-align: center;
+    }
+
+    .top-settings-shot {
+      overflow: hidden;
+      border: 1px solid #dbe3ee;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .top-settings-shot button {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--text-primary);
+      text-align: left;
+      cursor: zoom-in;
+    }
+
+    .top-settings-shot img {
+      width: 110px;
+      height: 100%;
+      min-height: 92px;
+      object-fit: cover;
+      object-position: top left;
+    }
+
+    .top-settings-shot span {
+      align-self: center;
+      padding: 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .top-settings-shot small {
+      display: block;
+      margin-top: 3px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .top-settings-shot button:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: -3px;
+    }
+
     .medical-disclaimer {
       font-size: 0.72rem;
       color: var(--text-muted);
@@ -1538,6 +1720,12 @@
         grid-template-columns: 1fr;
       }
 
+      .top-history-grid { grid-template-columns: 1fr; }
+
+      .top-settings-grid { grid-template-columns: 1fr 1fr; }
+
+      .top-settings-copy { grid-column: 1 / -1; }
+
       .win11-guide-heading {
         flex-direction: column;
       }
@@ -1573,6 +1761,14 @@
       }
 
       .title-badge { font-size: 0.68rem; }
+
+      .top-section-heading { align-items: flex-start; }
+
+      .top-section-heading > div p { margin-top: 2px; }
+
+      .top-settings-grid { grid-template-columns: 1fr; }
+
+      .top-settings-copy { grid-column: auto; }
 
       .stage-hud {
         height: 110px;
@@ -1729,6 +1925,58 @@
           <button type="button" id="btn-start-game" class="btn-game">ゲームの説明へ</button>
         </article>
 
+      </section>
+
+      <section class="top-history-panel" aria-labelledby="history-heading">
+        <div class="top-section-heading">
+          <div>
+            <h2 id="history-heading">これまでの記録</h2>
+            <p>この端末のブラウザー内だけに保存します</p>
+          </div>
+          <button type="button" id="btn-clear-history" class="history-clear-btn">記録を消去</button>
+        </div>
+        <div class="top-history-grid">
+          <article class="history-card">
+            <h3>おすすめ設定診断</h3>
+            <ol id="history-mode-a"><li class="history-empty">まだ診断結果はありません</li></ol>
+          </article>
+          <article class="history-card">
+            <h3>ポインター発見テスト</h3>
+            <ol id="history-mode-b"><li class="history-empty">まだテスト結果はありません</li></ol>
+          </article>
+          <article class="history-card">
+            <h3>ポインター迎撃ゲーム</h3>
+            <div class="history-highscore"><span>HIGH SCORE</span><strong id="history-game-highscore">---</strong></div>
+            <ol id="history-game"><li class="history-empty">まだゲーム記録はありません</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="top-settings-guide" aria-labelledby="top-settings-heading">
+        <div class="top-section-heading">
+          <div>
+            <h2 id="top-settings-heading">Windowsでマウスポインターを変更する</h2>
+            <p>色やサイズはいつでも元に戻せます</p>
+          </div>
+        </div>
+        <div class="top-settings-grid">
+          <div class="top-settings-copy">
+            <div><kbd>Windows</kbd> ＋ <kbd>U</kbd> を同時に押して、<strong>アクセシビリティ</strong>を開きます。</div>
+            <div><strong>「マウス ポインターとタッチ」</strong>を選び、ポインターの<strong>スタイル・色・サイズ</strong>を変更します。</div>
+          </div>
+          <figure class="top-settings-shot">
+            <button type="button" data-settings-preview="./assets/windows-accessibility-overview.png" data-settings-caption="アクセシビリティ画面：マウス ポインターとタッチを選択" aria-label="アクセシビリティ画面の画像を拡大して確認">
+              <img src="./assets/windows-accessibility-overview.png" alt="Windows 11のアクセシビリティ一覧" loading="lazy">
+              <span>1. 項目を選ぶ<small>マウス ポインターとタッチ</small></span>
+            </button>
+          </figure>
+          <figure class="top-settings-shot">
+            <button type="button" data-settings-preview="./assets/windows-mouse-pointer-settings.png" data-settings-caption="マウス ポインターとタッチ画面：スタイル、色、サイズを変更" aria-label="マウス ポインター設定画面の画像を拡大して確認">
+              <img src="./assets/windows-mouse-pointer-settings.png" alt="Windows 11のマウスポインター設定画面" loading="lazy">
+              <span>2. 見え方を調整<small>スタイル・色・サイズ</small></span>
+            </button>
+          </figure>
+        </div>
       </section>
 
       <footer class="medical-disclaimer">
@@ -2519,6 +2767,11 @@
         inputLostCount: document.getElementById("input-lost-count"),
         btnStartA: document.getElementById("btn-start-mode-a"),
         btnStartB: document.getElementById("btn-start-mode-b"),
+        btnClearHistory: document.getElementById("btn-clear-history"),
+        historyModeA: document.getElementById("history-mode-a"),
+        historyModeB: document.getElementById("history-mode-b"),
+        historyGame: document.getElementById("history-game"),
+        historyGameHighscore: document.getElementById("history-game-highscore"),
         btnColorFound: document.getElementById("btn-color-found"),
         btnStartSizeStep: document.getElementById("btn-start-size-step"),
         btnStartColorStep: document.getElementById("btn-start-color-step"),
@@ -2575,6 +2828,107 @@
         resetMsgMain: document.getElementById("reset-msg-main"),
         resetMsgSub: document.getElementById("reset-msg-sub")
       };
+
+      /* ==========================================
+         トップ画面の記録（ブラウザー内だけに保存）
+         ========================================== */
+      const HISTORY_STORAGE_KEY = "cursor-fit-history-v1";
+
+      function createEmptyHistory() {
+        return { modeA: [], modeB: [], game: [], gameHighScore: null };
+      }
+
+      function loadHistory() {
+        const empty = createEmptyHistory();
+        try {
+          const parsed = JSON.parse(window.localStorage.getItem(HISTORY_STORAGE_KEY) || "null");
+          if (!parsed || typeof parsed !== "object") return empty;
+          return {
+            modeA: Array.isArray(parsed.modeA) ? parsed.modeA.slice(0, 12) : [],
+            modeB: Array.isArray(parsed.modeB) ? parsed.modeB.slice(0, 12) : [],
+            game: Array.isArray(parsed.game) ? parsed.game.slice(0, 12) : [],
+            gameHighScore: parsed.gameHighScore && Number.isFinite(Number(parsed.gameHighScore.score))
+              ? parsed.gameHighScore
+              : null
+          };
+        } catch (error) {
+          return empty;
+        }
+      }
+
+      let cursorFitHistory = loadHistory();
+
+      function saveHistory() {
+        try {
+          window.localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(cursorFitHistory));
+        } catch (error) {
+          // プライベートブラウズ等で保存できない場合も、現在の画面内では記録を表示する
+        }
+      }
+
+      function formatHistoryDate(isoString) {
+        const date = new Date(isoString);
+        if (!Number.isFinite(date.getTime())) return "今回";
+        return (date.getMonth() + 1) + "/" + date.getDate() + " " +
+          String(date.getHours()).padStart(2, "0") + ":" + String(date.getMinutes()).padStart(2, "0");
+      }
+
+      function renderHistoryList(element, records, formatRecord, emptyText) {
+        element.replaceChildren();
+        if (!records.length) {
+          const emptyItem = document.createElement("li");
+          emptyItem.className = "history-empty";
+          emptyItem.textContent = emptyText;
+          element.appendChild(emptyItem);
+          return;
+        }
+        records.slice(0, 3).forEach(function (record) {
+          const item = document.createElement("li");
+          const time = document.createElement("time");
+          time.dateTime = record.at || "";
+          time.textContent = formatHistoryDate(record.at);
+          item.appendChild(time);
+          item.appendChild(document.createTextNode(formatRecord(record)));
+          item.title = time.textContent + " " + formatRecord(record);
+          element.appendChild(item);
+        });
+      }
+
+      function renderTopHistory() {
+        renderHistoryList(
+          dom.historyModeA,
+          cursorFitHistory.modeA,
+          function (record) { return record.color + " × " + record.size + "px（最速 " + formatSec(record.fastestMs) + "）"; },
+          "まだ診断結果はありません"
+        );
+        renderHistoryList(
+          dom.historyModeB,
+          cursorFitHistory.modeB,
+          function (record) { return record.score + "点・" + record.tier + "（平均 " + formatSec(record.singleAvgMs) + "）"; },
+          "まだテスト結果はありません"
+        );
+        renderHistoryList(
+          dom.historyGame,
+          cursorFitHistory.game,
+          function (record) { return "RANK " + record.rank + "・" + Number(record.score).toLocaleString("ja-JP") + "・撃破 " + record.destroyed; },
+          "まだゲーム記録はありません"
+        );
+        dom.historyGameHighscore.textContent = cursorFitHistory.gameHighScore
+          ? Number(cursorFitHistory.gameHighScore.score).toLocaleString("ja-JP")
+          : "---";
+      }
+
+      function addHistoryRecord(type, record) {
+        cursorFitHistory[type].unshift(record);
+        cursorFitHistory[type] = cursorFitHistory[type].slice(0, 12);
+        if (type === "game" && (!cursorFitHistory.gameHighScore || record.score > cursorFitHistory.gameHighScore.score)) {
+          cursorFitHistory.gameHighScore = record;
+        }
+        saveHistory();
+        renderTopHistory();
+      }
+
+      renderTopHistory();
 
       /* ==========================================
          乱数ユーティリティ（シード対応）
@@ -3541,6 +3895,14 @@
           colorTbody.appendChild(tr);
         });
 
+        addHistoryRecord("modeA", {
+          at: new Date().toISOString(),
+          color: bestColorRec.name,
+          size: bestSizeRec.size,
+          fastestMs: bestSizeRec.ms,
+          colorMs: bestColorRec.ms,
+          reductionRate: Number(reductionRatio.toFixed(1))
+        });
         switchView("resultA");
       }
 
@@ -4097,6 +4459,13 @@
           tbody.appendChild(tr);
         });
 
+        addHistoryRecord("modeB", {
+          at: new Date().toISOString(),
+          score: clampedScore,
+          tier: tier.title,
+          singleAvgMs: Math.round(singleAvgMs),
+          multiAvgPerItemMs: Math.round(multiAvgPerItemMs)
+        });
         switchView("resultB");
       }
 
@@ -6481,6 +6850,15 @@
         dom.btnGamePause.disabled = true;
         const accuracy = gameState.shots > 0 ? Math.round((gameState.hits / gameState.shots) * 100) : 0;
         const rank = getGameRank(gameState.score, accuracy);
+        const destroyedCount = gameState.directKills + gameState.powerKills + (gameState.boss.defeated ? 1 : 0);
+        addHistoryRecord("game", {
+          at: new Date().toISOString(),
+          score: Math.round(gameState.score),
+          rank: rank,
+          accuracy: accuracy,
+          destroyed: destroyedCount,
+          maxCombo: gameState.maxCombo
+        });
         drawGameScene();
         dom.gameBossHud.hidden = true;
         const bossSummary = gameState.boss.defeated
@@ -6496,7 +6874,7 @@
           "命中率 " + accuracy + "% ／ " + bossSummary + " ／ 武器Lv合計 " + Object.values(gameState.weaponLevels).reduce(function (sum, level) { return sum + level; }, 0) + "/" + maximumWeaponLevelTotal + " ／ 特殊攻撃 " + gameState.powerKills + "体 ／ 見逃し " + gameState.escaped + "個。スコアは診断結果には使用されません。";
         dom.gameResultRank.textContent = rank;
         dom.gameResultScore.textContent = Math.round(gameState.score).toLocaleString("ja-JP");
-        dom.gameResultHits.textContent = String(gameState.directKills + gameState.powerKills + (gameState.boss.defeated ? 1 : 0));
+        dom.gameResultHits.textContent = String(destroyedCount);
         dom.gameResultCombo.textContent = String(gameState.maxCombo);
         dom.gameResultStats.hidden = false;
         dom.btnGamePrimary.textContent = "もう一度遊ぶ";
@@ -6528,6 +6906,12 @@
          ========================================== */
       dom.btnStartA.addEventListener("click", startModeA);
       dom.btnStartB.addEventListener("click", startModeB);
+      dom.btnClearHistory.addEventListener("click", function () {
+        if (!window.confirm("この端末に保存された診断・テスト・ゲームの記録をすべて消去しますか？")) return;
+        cursorFitHistory = createEmptyHistory();
+        saveHistory();
+        renderTopHistory();
+      });
       dom.btnColorFound.addEventListener("click", handleColorFoundAction);
       dom.btnStartSizeStep.addEventListener("click", beginModeASizeStep);
       dom.btnStartColorStep.addEventListener("click", beginModeAColorStep);
