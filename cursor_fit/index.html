@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cursor Fit — 見え方を、自分で確かめて選ぶ。ポインター発見力診断</title>
+  <meta name="description" content="ポインターの見つけやすいサイズと色を診断し、発見テストやポインター迎撃ゲームに挑戦できるCursor Fit。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cursor Fit — ポインター発見力診断">
+  <meta property="og:description" content="見え方を、自分で確かめて選ぶ。診断・発見テスト・ポインター迎撃ゲーム。">
+  <meta property="og:url" content="https://ninin-cc.github.io/cursor_fit/">
+  <meta property="og:image" content="https://ninin-cc.github.io/cursor_fit/assets/cursor-strike-card-background.png">
+  <meta property="og:image:alt" content="Cursor Fit ポインター迎撃ゲームの画面">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cursor Fit — ポインター発見力診断">
+  <meta name="twitter:description" content="見え方を、自分で確かめて選ぶ。診断・発見テスト・ポインター迎撃ゲーム。">
+  <meta name="twitter:image" content="https://ninin-cc.github.io/cursor_fit/assets/cursor-strike-card-background.png">
   <style>
     :root {
       --bg-main: #f4f6f9;
@@ -38,7 +49,8 @@
     }
 
     body.testing-active,
-    body.game-active {
+    body.game-active,
+    body.mole-active {
       overflow: hidden !important;
       height: 100vh;
       width: 100vw;
@@ -182,12 +194,14 @@
       color: var(--text-muted);
     }
 
-    /* 3つのモード選択カード */
+    /* モード選択カード */
     .modes-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
+
+    .temporarily-hidden { display: none !important; }
 
     .mode-card {
       background: var(--bg-card);
@@ -222,6 +236,11 @@
       box-shadow: 0 14px 30px rgba(30, 27, 75, 0.24);
     }
 
+    .mode-card.mode-mole {
+      border-top: 4px solid #d97706;
+      background: linear-gradient(145deg, #fffaf0, #fffbeb 55%, #fef3c7);
+    }
+
 
     .mode-tag {
       display: inline-block;
@@ -245,6 +264,24 @@
     .mode-game .mode-tag {
       background: #fbbf24;
       color: #1f2937;
+    }
+
+    .mode-mole .mode-tag {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .btn-mole {
+      appearance: none;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      background: #d97706;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .mode-card.mode-game p {
@@ -426,6 +463,30 @@
       color: var(--text-muted) !important;
       font-style: italic;
     }
+
+    .history-story-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+      padding-top: 9px;
+      border-top: 1px solid #dbe4ef;
+    }
+
+    .history-story-links[hidden] { display: none; }
+
+    .history-story-link {
+      flex: 1 1 132px;
+      border: 1px solid #8b5cf6;
+      border-radius: 6px;
+      background: #f5f3ff;
+      color: #5b21b6;
+      padding: 7px 8px;
+      font: 800 0.7rem/1.25 var(--font-sans);
+      cursor: pointer;
+    }
+
+    .history-story-link:hover { background: #ede9fe; }
 
     /* トップ画面：コンパクト設定ガイド */
     .top-settings-grid {
@@ -860,6 +921,15 @@
 
     #black-reset-overlay.active {
       display: flex;
+    }
+
+    #black-reset-overlay.click-to-start {
+      cursor: pointer;
+    }
+
+    #black-reset-overlay.click-to-start:focus-visible {
+      outline: 5px solid #facc15;
+      outline-offset: -8px;
     }
 
     .reset-msg-main {
@@ -1348,6 +1418,165 @@
       display: block;
     }
 
+    /* モグラたたき診断：30穴から同色ターゲットを複数探索 */
+    .mole-shell {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      min-height: 640px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255,255,255,0.82), rgba(240,249,255,0.78)),
+        repeating-linear-gradient(90deg, transparent 0 119px, rgba(14,116,144,0.08) 120px),
+        linear-gradient(135deg, #dbeafe, #fef3c7);
+    }
+
+    .mole-hud {
+      position: relative;
+      z-index: 4;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.94);
+      border-bottom: 1px solid #cbd5e1;
+      box-shadow: 0 8px 24px rgba(15,23,42,0.1);
+    }
+
+    .mole-hud h2 { font-size: 1.15rem; font-weight: 900; }
+    .mole-hud p { color: var(--text-secondary); font-size: 0.8rem; }
+    .mole-hud-stats { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .mole-stat {
+      min-width: 94px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      text-align: center;
+    }
+    .mole-stat span { display: block; color: var(--text-muted); font: 800 0.62rem/1.2 Consolas, monospace; }
+    .mole-stat strong { color: #92400e; font: 900 1rem/1.3 Consolas, monospace; }
+
+    .mole-field {
+      position: absolute;
+      inset: 76px 0 0;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-rows: repeat(5, minmax(0, 1fr));
+      gap: clamp(7px, 1.3vw, 22px);
+      padding: clamp(18px, 3.2vh, 42px) clamp(20px, 5vw, 96px);
+      background:
+        linear-gradient(rgba(15,23,42,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .mole-hole {
+      position: relative;
+      appearance: none;
+      border: 0;
+      min-width: 0;
+      background: transparent;
+      cursor: crosshair;
+      overflow: visible;
+    }
+
+    .mole-hole::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 8%;
+      height: 28%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 42%, #020617 0 36%, #334155 62%, #64748b 74%, transparent 76%);
+      box-shadow: 0 9px 13px rgba(15,23,42,0.26);
+    }
+
+    .mole-target {
+      --mole-color: #22d3ee;
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      bottom: 18%;
+      width: clamp(34px, 4.2vw, 70px);
+      aspect-ratio: 0.9;
+      transform: translate(-50%, 70%) scale(0.55);
+      opacity: 0;
+      border-radius: 48% 48% 38% 38%;
+      background: var(--mole-color);
+      box-shadow: 0 0 0 3px rgba(15,23,42,0.85), 0 0 22px color-mix(in srgb, var(--mole-color) 72%, transparent);
+      transition: transform 0.2s cubic-bezier(.2,.85,.25,1.25), opacity 0.12s ease;
+      pointer-events: none;
+    }
+
+    .mole-target::before,
+    .mole-target::after {
+      content: "";
+      position: absolute;
+      top: 25%;
+      width: 11%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #0f172a;
+    }
+    .mole-target::before { left: 25%; }
+    .mole-target::after { right: 25%; }
+
+    .mole-hole.active .mole-target {
+      transform: translate(-50%, 0) scale(1);
+      opacity: 1;
+    }
+
+    .mole-hole.hit .mole-target { transform: translate(-50%, 35%) scale(0.7); opacity: 0; }
+    .mole-hole:focus-visible { outline: 4px solid #2563eb; outline-offset: 2px; border-radius: 12px; }
+
+    .mole-overlay {
+      position: absolute;
+      z-index: 6;
+      inset: 76px 0 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(15,23,42,0.48);
+      backdrop-filter: blur(3px);
+    }
+    .mole-overlay[hidden] { display: none; }
+
+    .mole-panel {
+      width: min(720px, 94vw);
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding: 26px;
+      border: 2px solid #f59e0b;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.97);
+      box-shadow: 0 24px 70px rgba(15,23,42,0.3);
+      text-align: center;
+    }
+    .mole-panel h3 { margin: 7px 0; font-size: clamp(1.45rem, 3vw, 2rem); }
+    .mole-panel p { color: var(--text-secondary); }
+    .mole-practice-badge { display: inline-block; padding: 4px 11px; border-radius: 999px; background: #fef3c7; color: #92400e; font-weight: 900; }
+    .mole-color-preview { display: inline-block; width: 34px; height: 34px; margin: 10px; border: 3px solid #0f172a; border-radius: 50%; vertical-align: middle; }
+    .mole-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    .mole-result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+    .mole-result-box { padding: 12px; border-radius: 10px; background: #fff7ed; border: 1px solid #fed7aa; }
+    .mole-result-box span { display: block; color: #9a3412; font-size: 0.68rem; font-weight: 800; }
+    .mole-result-box strong { display: block; margin-top: 3px; font-size: 1.25rem; }
+    .mole-log { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 0.78rem; }
+    .mole-log th, .mole-log td { padding: 7px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+
+    @media (max-width: 800px) {
+      .mole-hud { padding: 8px 10px; }
+      .mole-hud p { display: none; }
+      .mole-stat { min-width: 68px; padding: 5px; }
+      .mole-field { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(6, 1fr); padding: 18px 12px; }
+      .mole-result-grid { grid-template-columns: 1fr; }
+    }
+
     .game-shell {
       position: fixed;
       inset: 0;
@@ -1555,6 +1784,12 @@
       box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.22), 0 24px 80px rgba(0, 0, 0, 0.55), 0 0 42px rgba(34, 211, 238, 0.15);
     }
 
+    .game-panel.result-active {
+      width: min(900px, 94vw);
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+    }
+
     .game-eyebrow {
       display: inline-block;
       margin-bottom: 10px;
@@ -1627,12 +1862,13 @@
 
     .game-result-stats {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
       margin: 20px 0 4px;
     }
 
     .game-result-stats[hidden] { display: none; }
+    .game-rules[hidden] { display: none; }
 
     .game-result-stat {
       padding: 12px 8px;
@@ -1654,6 +1890,199 @@
       font-family: Consolas, monospace;
       font-size: 1.45rem;
       margin-top: 3px;
+    }
+
+    .game-result-capture {
+      overflow: hidden;
+      margin: 16px auto 4px;
+      border: 1px solid rgba(103, 232, 249, 0.48);
+      border-radius: 10px;
+      background: #020617;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.36);
+    }
+
+    .game-result-capture[hidden],
+    .game-share-actions[hidden] { display: none; }
+
+    .game-result-capture img {
+      display: block;
+      width: 100%;
+      max-height: 240px;
+      object-fit: cover;
+    }
+
+    .game-result-capture figcaption {
+      padding: 6px 10px;
+      color: #bae6fd;
+      font: 800 0.68rem/1.4 Consolas, monospace;
+      letter-spacing: 0.06em;
+    }
+
+    .game-share-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .game-share-status {
+      width: 100%;
+      min-height: 1.2em;
+      color: #a5f3fc;
+      font-size: 0.72rem;
+    }
+
+    /* ボス撃破後の、真剣にくだらない宇宙活劇 */
+    .game-story-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 26%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 18%, rgba(125,211,252,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 42% 78%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
+        radial-gradient(circle at 84% 66%, rgba(196,181,253,0.85) 0 1px, transparent 2px),
+        #01030b;
+      background-size: 97px 83px, 137px 113px, 173px 149px, 211px 181px, auto;
+      color: #fde047;
+    }
+
+    .game-story-overlay[hidden] { display: none; }
+
+    .game-prologue-overlay {
+      z-index: 21;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(255,255,255,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 68% 26%, rgba(125,211,252,0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 36% 76%, rgba(255,255,255,0.72) 0 1px, transparent 2px),
+        radial-gradient(circle at 88% 64%, rgba(196,181,253,0.85) 0 1px, transparent 2px),
+        radial-gradient(circle at 50% 42%, #172554 0, #070b25 31%, #01030b 72%);
+      background-size: 89px 79px, 131px 109px, 167px 143px, 223px 187px, auto;
+    }
+
+    .game-prologue-overlay::after {
+      background: radial-gradient(circle at 50% 38%, transparent 0 18%, rgba(1, 3, 11, 0.26) 50%, rgba(1, 3, 11, 0.94) 100%);
+    }
+
+    .game-story-crawl.game-prologue-crawl {
+      left: 9%;
+      width: 82%;
+      line-height: 1.9;
+      animation-duration: 36s;
+    }
+
+    .game-story-crawl.game-prologue-crawl p {
+      margin-bottom: 2.25em;
+    }
+
+    .game-prologue-note {
+      position: absolute;
+      left: 22px;
+      bottom: 20px;
+      z-index: 3;
+      color: #bae6fd;
+      font: 800 0.68rem/1.45 Consolas, monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .game-story-capture {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.2;
+      filter: saturate(1.25) contrast(1.15);
+    }
+
+    .game-story-overlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 38%, transparent 0 20%, rgba(1, 3, 11, 0.44) 55%, rgba(1, 3, 11, 0.96) 100%);
+      pointer-events: none;
+    }
+
+    .game-story-ui {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 22px 20px;
+      perspective: 430px;
+    }
+
+    .game-story-kicker {
+      color: #7dd3fc;
+      font: 900 0.75rem/1 Consolas, monospace;
+      letter-spacing: 0.24em;
+    }
+
+    .game-story-title {
+      margin-top: 8px;
+      color: #fde047;
+      font-size: clamp(1.45rem, 4vw, 3rem);
+      line-height: 1.05;
+      text-align: center;
+      text-shadow: 0 0 24px rgba(250, 204, 21, 0.38);
+    }
+
+    .game-story-cast {
+      margin-top: 7px;
+      color: #bae6fd;
+      font: 800 clamp(0.66rem, 1.15vw, 0.86rem)/1.4 Consolas, monospace;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    .game-story-window {
+      position: relative;
+      width: min(780px, 92vw);
+      height: min(62vh, 620px);
+      overflow: hidden;
+      margin-top: 8px;
+      transform-origin: 50% 100%;
+      transform: rotateX(22deg);
+    }
+
+    .game-story-crawl {
+      position: absolute;
+      top: 78%;
+      left: 7%;
+      width: 86%;
+      color: #fde047;
+      font-size: clamp(1rem, 2.15vw, 1.65rem);
+      font-weight: 800;
+      line-height: 1.65;
+      text-align: justify;
+      text-shadow: 0 2px 8px #000000;
+      animation: cursor-story-crawl 18s linear forwards;
+    }
+
+    .game-story-crawl p { margin-bottom: 1.25em; }
+
+    .game-story-crawl.game-epilogue-crawl {
+      line-height: 1.9;
+      animation-duration: 42s;
+    }
+
+    .game-story-crawl.game-epilogue-crawl p { margin-bottom: 2.1em; }
+
+    @keyframes cursor-story-crawl {
+      from { transform: translateY(0) scale(1); }
+      to { transform: translateY(-128%) scale(0.72); }
+    }
+
+    .game-story-continue {
+      position: absolute;
+      right: 22px;
+      bottom: 18px;
+      z-index: 3;
     }
 
     .game-wave-banner {
@@ -1706,6 +2135,15 @@
     @media (prefers-reduced-motion: reduce) {
       .game-wave-banner.show { animation: none; opacity: 1; }
       .game-announcer, .btn-game { transition: none; }
+      .game-story-window {
+        overflow-y: auto;
+        transform: none;
+      }
+      .game-story-crawl {
+        position: static;
+        animation: none;
+        transform: none;
+      }
     }
 
     /* レスポンシブ調整 */
@@ -1843,6 +2281,12 @@
         padding: 22px 18px;
       }
 
+      .game-result-capture img { max-height: 180px; }
+
+      .game-story-ui { padding-top: 22px; }
+
+      .game-story-window { height: 66vh; }
+
       .game-rules,
       .game-result-stats {
         grid-template-columns: 1fr 1fr;
@@ -1896,7 +2340,7 @@
         </div>
       </details>
 
-      <!-- 3つのモード選択 -->
+      <!-- 4つのモード選択 -->
       <section class="modes-grid" aria-label="診断モードの選択">
         <!-- モードA -->
         <article class="mode-card mode-a">
@@ -1925,6 +2369,15 @@
           <button type="button" id="btn-start-game" class="btn-game">ゲームの説明へ</button>
         </article>
 
+        <!-- モードD：30穴のモグラたたき診断 -->
+        <article class="mode-card mode-mole temporarily-hidden" aria-hidden="true">
+          <div>
+            <span class="mode-tag">モードD</span>
+            <h2>モグラたたき診断</h2>
+          </div>
+          <button type="button" id="btn-start-mole" class="btn-mole">診断の説明へ</button>
+        </article>
+
       </section>
 
       <section class="top-history-panel" aria-labelledby="history-heading">
@@ -1947,7 +2400,16 @@
           <article class="history-card">
             <h3>ポインター迎撃ゲーム</h3>
             <div class="history-highscore"><span>HIGH SCORE</span><strong id="history-game-highscore">---</strong></div>
+            <div class="history-highscore"><span>BEST CLEAR TIME</span><strong id="history-game-best-time">---</strong></div>
             <ol id="history-game"><li class="history-empty">まだゲーム記録はありません</li></ol>
+            <div id="history-story-links" class="history-story-links" hidden>
+              <button type="button" id="btn-replay-prologue" class="history-story-link">📖 プロローグを読む</button>
+              <button type="button" id="btn-replay-epilogue" class="history-story-link">📖 エピローグを読む</button>
+            </div>
+          </article>
+          <article class="history-card temporarily-hidden" aria-hidden="true">
+            <h3>モグラたたき診断</h3>
+            <ol id="history-mole"><li class="history-empty">まだ診断結果はありません</li></ol>
           </article>
         </div>
       </section>
@@ -2029,7 +2491,7 @@
     </div>
 
     <!-- 7. 黒画面による次問題の説明 -->
-    <div id="black-reset-overlay" role="dialog" aria-modal="true" aria-labelledby="reset-msg-main" aria-describedby="reset-msg-sub">
+    <div id="black-reset-overlay" role="dialog" aria-modal="true" aria-labelledby="reset-msg-main" aria-describedby="reset-msg-sub" tabindex="-1">
       <p id="reset-msg-main" class="reset-msg-main">視線をリセット</p>
       <p id="reset-msg-sub" class="reset-msg-sub">次のポインターを探してください</p>
       <button type="button" id="btn-start-size-step" class="reset-start-btn" hidden>
@@ -2041,6 +2503,48 @@
       <button type="button" id="btn-next-question" class="reset-start-btn" hidden>
         準備ができたら始める
       </button>
+    </div>
+  </section>
+
+  <!-- モードD：モグラたたき診断 -->
+  <section id="view-mole" class="view-section" aria-label="モグラたたき診断">
+    <div class="mole-shell">
+      <header class="mole-hud">
+        <div>
+          <h2>モグラたたき診断</h2>
+          <p>30個の穴から、同じ色のモグラを全部見つけてクリック</p>
+        </div>
+        <div class="mole-hud-stats">
+          <div class="mole-stat"><span>ROUND</span><strong id="mole-round">練習</strong></div>
+          <div class="mole-stat"><span>REMAIN</span><strong id="mole-remaining">0 / 0</strong></div>
+          <div class="mole-stat"><span>MISS</span><strong id="mole-misses">0</strong></div>
+          <button type="button" id="btn-mole-exit" class="btn-outline">終了</button>
+        </div>
+      </header>
+      <div id="mole-field" class="mole-field" aria-label="30個のモグラ穴"></div>
+      <div id="mole-overlay" class="mole-overlay">
+        <div class="mole-panel">
+          <span id="mole-badge" class="mole-practice-badge">色・周辺視野チェック</span>
+          <h3 id="mole-title">30穴 モグラたたき診断</h3>
+          <div id="mole-color-preview" class="mole-color-preview" style="--mole-color:#22d3ee; background:#22d3ee;" hidden></div>
+          <p id="mole-description">30個の穴から同時に現れる単色のモグラを、すべてクリックしてください。6色を各5体ずつ測り、見つけやすい色・1体あたりの発見時間・空振りを診断します。</p>
+          <div id="mole-result-content" hidden>
+            <div class="mole-result-grid">
+              <div class="mole-result-box"><span>見つけやすい色</span><strong id="mole-result-color">—</strong></div>
+              <div class="mole-result-box"><span>平均発見時間</span><strong id="mole-result-average">—</strong></div>
+              <div class="mole-result-box"><span>空振り</span><strong id="mole-result-misses">—</strong></div>
+            </div>
+            <table class="mole-log">
+              <thead><tr><th>色</th><th>5体の合計</th><th>1体平均</th><th>空振り</th></tr></thead>
+              <tbody id="mole-result-tbody"></tbody>
+            </table>
+          </div>
+          <div class="mole-actions">
+            <button type="button" id="btn-mole-primary" class="btn-mole">練習問題を始める</button>
+            <button type="button" id="btn-mole-top" class="btn-outline">トップへ戻る</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2071,7 +2575,7 @@
         <div class="game-hud-group center">
           <span class="game-stat">
             <span class="game-stat-label">TIME</span>
-            <strong id="game-time" class="game-stat-value">60.0</strong>
+            <strong id="game-time" class="game-stat-value">0.0</strong>
           </span>
           <span class="game-stat">
             <span class="game-stat-label">STAGE</span>
@@ -2088,6 +2592,7 @@
         </div>
         <div class="game-hud-group right">
           <button type="button" id="btn-game-sound" class="game-hud-btn" aria-pressed="false">🔇 効果音</button>
+          <button type="button" id="btn-game-skip-practice-live" class="game-hud-btn" hidden>練習をスキップ</button>
           <button type="button" id="btn-game-pause" class="game-hud-btn">一時停止 (P)</button>
           <button type="button" id="btn-game-exit" class="game-hud-btn">ゲームを終了</button>
         </div>
@@ -2108,27 +2613,86 @@
 
       <div id="game-overlay" class="game-overlay">
         <div class="game-panel">
-          <span id="game-overlay-eyebrow" class="game-eyebrow">ARCADE MODE / 100 SEC</span>
+          <span id="game-overlay-eyebrow" class="game-eyebrow">ARCADE MODE / NO TIME LIMIT</span>
           <h2 id="game-overlay-title">ポインター迎撃作戦</h2>
           <p id="game-overlay-description">
             同じアイテムを取るたびマウス武器が段階強化されます。武器は上書きされず、すべて重複して発動します。
           </p>
-          <div class="game-rules">
+          <div id="game-rules" class="game-rules">
             <div class="game-rule"><strong>STAGE 1　◎ ×5</strong>取得ごとに爆発範囲が拡大</div>
             <div class="game-rule"><strong>STAGE 2　L ×9</strong>延長→右→左→上→十字回転レーザー</div>
             <div class="game-rule"><strong>STAGE 3　H ×10</strong>画面内に出せる追尾ミサイル上限UP</div>
-            <div class="game-rule"><strong>STAGE 5　???</strong>倒したと思ってからが本番。次の姿は戦って確かめる</div>
+            <div class="game-rule"><strong>💗 LIFE</strong>クリックでライフを1回復（最大5）</div>
+            <div class="game-rule"><strong>STAGE 5　???</strong>赤黒い回転十字レーザーを回避。大型爆弾は必ず炸裂し、子弾だけ迎撃可能</div>
           </div>
+          <figure id="game-result-capture" class="game-result-capture" hidden>
+            <img id="game-result-screenshot" alt="ポインター迎撃ゲーム終了時の戦闘画面">
+            <figcaption id="game-result-capture-caption">MISSION ARCHIVE</figcaption>
+          </figure>
           <div id="game-result-stats" class="game-result-stats" hidden>
             <div class="game-result-stat"><span>RANK</span><strong id="game-result-rank">A</strong></div>
             <div class="game-result-stat"><span>SCORE</span><strong id="game-result-score">0</strong></div>
+            <div class="game-result-stat"><span id="game-result-time-label">CLEAR TIME</span><strong id="game-result-time">0.0s</strong></div>
             <div class="game-result-stat"><span>DESTROYED</span><strong id="game-result-hits">0</strong></div>
             <div class="game-result-stat"><span>MAX COMBO</span><strong id="game-result-combo">0</strong></div>
           </div>
+          <div id="game-share-actions" class="game-share-actions" hidden>
+            <button type="button" id="btn-game-share" class="game-secondary-btn">📤 結果を共有</button>
+            <button type="button" id="btn-game-share-x" class="game-secondary-btn">X に画像つきで投稿</button>
+            <span id="game-share-status" class="game-share-status" role="status" aria-live="polite"></span>
+          </div>
           <div class="game-overlay-actions">
             <button type="button" id="btn-game-primary" class="btn-game">練習を始める</button>
+            <button type="button" id="btn-game-skip-practice" class="game-secondary-btn">練習をスキップして本番へ</button>
             <button type="button" id="btn-game-top" class="game-secondary-btn">トップへ戻る</button>
           </div>
+        </div>
+      </div>
+
+      <div id="game-prologue-overlay" class="game-story-overlay game-prologue-overlay" role="dialog" aria-modal="true" aria-labelledby="game-prologue-title" hidden>
+        <div class="game-story-ui">
+          <span class="game-story-kicker">OFFICE SPACE OPERA / PROLOGUE</span>
+          <h2 id="game-prologue-title" class="game-story-title">カーソル見失い帝国の逆襲（予定）</h2>
+          <p class="game-story-cast">ローガン ／ キンシランシ ／ ヨーク・ミエン ／ ヨーク・ミエル ／ ツカ・レメン</p>
+          <div class="game-story-window">
+            <div id="game-prologue-crawl" class="game-story-crawl game-prologue-crawl">
+              <p>ほんの少し前、かなり近いオフィスで――。</p>
+              <p>銀河の業務資料は、暗黒組織「カーソル見失い帝国」の支配下にあった。奴らは文字、グラフ、そして午後の会議に紛れ、ポインターを見失わせては人々の集中力を奪っていた。</p>
+              <p>帝国の最終兵器は《未保存のExcel》。ひとたび起動すれば、三時間分の作業と、担当者のやる気が宇宙の彼方へ消えるという。</p>
+              <p>これに立ち向かう宇宙マウス艦《クリック号》。艦長ローガンは「作戦は単純だ。見つけて、クリックする」と宣言した。整備主任キンシランシは黙って説明書を上下逆さまに持った。</p>
+              <p>索敵士ヨーク・ミエンと照準士ヨーク・ミエルは、敵が見えるか見えないかで今日も議論中。通信士ツカ・レメンだけは、すでに退勤連絡の下書きを完成させていた。</p>
+              <p>五人の前に現れるのは、合体し、分離し、回転し、ついには魔王へ進化するカーソル集合体。武器は爆発、レーザー、ホーミング。そして、たまに落ちてくる💗。</p>
+              <p>さあ、ポインターを迎撃し、《未保存のExcel》を守れ。</p>
+              <p>この戦いの結末は、やがて宇宙で最も重い一つの問いへとつながる。</p>
+              <p>「……このファイル、保存した？」</p>
+            </div>
+          </div>
+          <p class="game-prologue-note">物語のあとに操作説明と練習があります</p>
+          <button type="button" id="btn-game-prologue-continue" class="game-secondary-btn game-story-continue">プロローグをスキップして作戦説明へ</button>
+        </div>
+      </div>
+
+      <div id="game-story-overlay" class="game-story-overlay" role="dialog" aria-modal="true" aria-labelledby="game-story-title" hidden>
+        <img id="game-story-capture" class="game-story-capture" alt="撃破直後のゲーム画面">
+        <div class="game-story-ui">
+          <span class="game-story-kicker">OFFICE SPACE OPERA / EPISODE 0.1</span>
+          <h2 id="game-story-title" class="game-story-title">失われしポインターと未保存のExcel</h2>
+          <p class="game-story-cast">ローガン ／ キンシランシ ／ ヨーク・ミエン ／ ヨーク・ミエル ／ ツカ・レメン</p>
+          <div class="game-story-window">
+            <div id="game-story-crawl" class="game-story-crawl game-epilogue-crawl">
+              <p>ほんの少し前、かなり近いオフィスで――。</p>
+              <p>暗黒組織「カーソル見失い帝国」は、究極業務兵器《未保存のExcel》を起動。銀河中の集中力と、午後3時のおやつを奪おうとしていた。</p>
+              <p>最後の希望は、宇宙マウス艦《クリック号》。艦長ローガンは真顔で「ダブルクリックだ」と命じ、整備主任キンシランシは説明書を読まずに「たぶん右クリックです」と答えた。</p>
+              <p>索敵士ヨーク・ミエンは「敵がよく見えん！」と報告。一方、照準士ヨーク・ミエルは「いや、よく見える！」と反論。会議はまとまらなかったが、レーザーだけはまともに発射された。</p>
+              <p>通信士ツカ・レメンは、開戦からずっと「今日はもう帰りたい」と発信し続けていた。敵には届かなかったが、総務には届いた。</p>
+              <p>五人は爆発、レーザー、そして妙に賢いホーミングを重ね、五つの姿を持つ異次元魔王カーソルへ立ち向かった。</p>
+              <p>長い戦いの末、魔王は消滅。会議資料に平和が戻り、すべてのポインターは見つけやすい場所へ帰っていった。</p>
+              <p>しかし、そのとき誰かが気づいた。</p>
+              <p>ローガンが静かに尋ねた。「……このファイル、保存した？」ツカ・レメンは深く息を吸い、宇宙で最も重い一言を返した。「してません」</p>
+              <p>次回――《Ctrl＋Sの覚醒》。たぶん続かない。</p>
+            </div>
+          </div>
+          <button type="button" id="btn-game-story-continue" class="game-secondary-btn game-story-continue">結果を見る</button>
         </div>
       </div>
     </div>
@@ -2672,11 +3236,11 @@
           active: false,
           defeated: false,
           form: 1,
-          formHpValues: [70, 80, 90, 105, 315],
-          formHp: 70,
-          formMaxHp: 70,
-          hp: 660,
-          maxHp: 660,
+          formHpValues: [85, 100, 110, 135, 405],
+          formHp: 85,
+          formMaxHp: 85,
+          hp: 835,
+          maxHp: 835,
           x: 960,
           y: -140,
           age: 0,
@@ -2690,6 +3254,9 @@
           evilWaveAge: -1,
           bombTimer: 3.4,
           bombsLaunched: 0,
+          crossLaserCooldown: 6.4,
+          crossLaserAge: -1,
+          crossLaserAngle: -Math.PI / 7,
           transitionTimer: 0,
           hitFlash: 0,
           laserCooldown: 0,
@@ -2699,11 +3266,11 @@
       }
 
       const gameState = {
-        phase: "idle", // idle | intro | practice | ready | playing | paused | ended
+        phase: "idle", // idle | prologue | intro | practice | ready | playing | paused | ended
         rafId: null,
         lastFrameAt: 0,
         elapsedMs: 0,
-        durationMs: 100000,
+        durationMs: null,
         spawnAccumulator: 0,
         nextEnemyId: 1,
         enemies: [],
@@ -2748,6 +3315,9 @@
         audioContext: null,
         announcerTimer: null,
         waveBannerTimer: null,
+        storyTimer: null,
+        lastScreenshot: "",
+        lastResult: null,
         reducedMotion: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
       };
 
@@ -2757,6 +3327,7 @@
       const views = {
         top: document.getElementById("view-top"),
         stage: document.getElementById("view-stage"),
+        mole: document.getElementById("view-mole"),
         game: document.getElementById("view-game"),
         resultA: document.getElementById("view-result-a"),
         resultB: document.getElementById("view-result-b")
@@ -2767,11 +3338,17 @@
         inputLostCount: document.getElementById("input-lost-count"),
         btnStartA: document.getElementById("btn-start-mode-a"),
         btnStartB: document.getElementById("btn-start-mode-b"),
+        btnStartMole: document.getElementById("btn-start-mole"),
         btnClearHistory: document.getElementById("btn-clear-history"),
         historyModeA: document.getElementById("history-mode-a"),
         historyModeB: document.getElementById("history-mode-b"),
         historyGame: document.getElementById("history-game"),
         historyGameHighscore: document.getElementById("history-game-highscore"),
+        historyGameBestTime: document.getElementById("history-game-best-time"),
+        historyStoryLinks: document.getElementById("history-story-links"),
+        btnReplayPrologue: document.getElementById("btn-replay-prologue"),
+        btnReplayEpilogue: document.getElementById("btn-replay-epilogue"),
+        historyMole: document.getElementById("history-mole"),
         btnColorFound: document.getElementById("btn-color-found"),
         btnStartSizeStep: document.getElementById("btn-start-size-step"),
         btnStartColorStep: document.getElementById("btn-start-color-step"),
@@ -2779,6 +3356,24 @@
         practiceBadge: document.getElementById("practice-badge"),
         btnShowHint: document.getElementById("btn-show-hint"),
         btnAbortStage: document.getElementById("btn-abort-stage"),
+
+        moleField: document.getElementById("mole-field"),
+        moleOverlay: document.getElementById("mole-overlay"),
+        moleBadge: document.getElementById("mole-badge"),
+        moleTitle: document.getElementById("mole-title"),
+        moleDescription: document.getElementById("mole-description"),
+        moleColorPreview: document.getElementById("mole-color-preview"),
+        moleResultContent: document.getElementById("mole-result-content"),
+        moleResultColor: document.getElementById("mole-result-color"),
+        moleResultAverage: document.getElementById("mole-result-average"),
+        moleResultMisses: document.getElementById("mole-result-misses"),
+        moleResultTbody: document.getElementById("mole-result-tbody"),
+        moleRound: document.getElementById("mole-round"),
+        moleRemaining: document.getElementById("mole-remaining"),
+        moleMisses: document.getElementById("mole-misses"),
+        btnMolePrimary: document.getElementById("btn-mole-primary"),
+        btnMoleTop: document.getElementById("btn-mole-top"),
+        btnMoleExit: document.getElementById("btn-mole-exit"),
 
         btnStartGame: document.getElementById("btn-start-game"),
         gameShell: document.getElementById("game-shell"),
@@ -2798,6 +3393,7 @@
         gameBossHealthTrack: document.getElementById("game-boss-health-track"),
         gameBossHealthFill: document.getElementById("game-boss-health-fill"),
         btnGameSound: document.getElementById("btn-game-sound"),
+        btnGameSkipPracticeLive: document.getElementById("btn-game-skip-practice-live"),
         btnGamePause: document.getElementById("btn-game-pause"),
         btnGameExit: document.getElementById("btn-game-exit"),
         gameWaveBanner: document.getElementById("game-wave-banner"),
@@ -2806,12 +3402,31 @@
         gameOverlayEyebrow: document.getElementById("game-overlay-eyebrow"),
         gameOverlayTitle: document.getElementById("game-overlay-title"),
         gameOverlayDescription: document.getElementById("game-overlay-description"),
+        gamePrologueOverlay: document.getElementById("game-prologue-overlay"),
+        gamePrologueCrawl: document.getElementById("game-prologue-crawl"),
+        btnGamePrologueContinue: document.getElementById("btn-game-prologue-continue"),
+        gamePanel: document.querySelector(".game-panel"),
+        gameRules: document.getElementById("game-rules"),
+        gameResultCapture: document.getElementById("game-result-capture"),
+        gameResultScreenshot: document.getElementById("game-result-screenshot"),
+        gameResultCaptureCaption: document.getElementById("game-result-capture-caption"),
         gameResultStats: document.getElementById("game-result-stats"),
         gameResultRank: document.getElementById("game-result-rank"),
         gameResultScore: document.getElementById("game-result-score"),
+        gameResultTimeLabel: document.getElementById("game-result-time-label"),
+        gameResultTime: document.getElementById("game-result-time"),
         gameResultHits: document.getElementById("game-result-hits"),
         gameResultCombo: document.getElementById("game-result-combo"),
+        gameShareActions: document.getElementById("game-share-actions"),
+        btnGameShare: document.getElementById("btn-game-share"),
+        btnGameShareX: document.getElementById("btn-game-share-x"),
+        gameShareStatus: document.getElementById("game-share-status"),
+        gameStoryOverlay: document.getElementById("game-story-overlay"),
+        gameStoryCapture: document.getElementById("game-story-capture"),
+        gameStoryCrawl: document.getElementById("game-story-crawl"),
+        btnGameStoryContinue: document.getElementById("btn-game-story-continue"),
         btnGamePrimary: document.getElementById("btn-game-primary"),
+        btnGameSkipPractice: document.getElementById("btn-game-skip-practice"),
         btnGameTop: document.getElementById("btn-game-top"),
 
         hudModeBadge: document.getElementById("hud-mode-badge"),
@@ -2833,9 +3448,10 @@
          トップ画面の記録（ブラウザー内だけに保存）
          ========================================== */
       const HISTORY_STORAGE_KEY = "cursor-fit-history-v1";
+      const CURSOR_FIT_PUBLIC_URL = "https://ninin-cc.github.io/cursor_fit/";
 
       function createEmptyHistory() {
-        return { modeA: [], modeB: [], game: [], gameHighScore: null };
+        return { modeA: [], modeB: [], game: [], mole: [], gameHighScore: null, gameBestTime: null };
       }
 
       function loadHistory() {
@@ -2843,13 +3459,21 @@
         try {
           const parsed = JSON.parse(window.localStorage.getItem(HISTORY_STORAGE_KEY) || "null");
           if (!parsed || typeof parsed !== "object") return empty;
+          const gameRecords = Array.isArray(parsed.game) ? parsed.game.slice(0, 12) : [];
+          const migratedBestTime = gameRecords
+            .filter(function (record) { return record.cleared && Number(record.elapsedSeconds) > 0; })
+            .sort(function (a, b) { return Number(a.elapsedSeconds) - Number(b.elapsedSeconds); })[0] || null;
           return {
             modeA: Array.isArray(parsed.modeA) ? parsed.modeA.slice(0, 12) : [],
             modeB: Array.isArray(parsed.modeB) ? parsed.modeB.slice(0, 12) : [],
-            game: Array.isArray(parsed.game) ? parsed.game.slice(0, 12) : [],
+            game: gameRecords,
+            mole: Array.isArray(parsed.mole) ? parsed.mole.slice(0, 12) : [],
             gameHighScore: parsed.gameHighScore && Number.isFinite(Number(parsed.gameHighScore.score))
               ? parsed.gameHighScore
-              : null
+              : null,
+            gameBestTime: parsed.gameBestTime && parsed.gameBestTime.cleared && Number(parsed.gameBestTime.elapsedSeconds) > 0
+              ? parsed.gameBestTime
+              : migratedBestTime
           };
         } catch (error) {
           return empty;
@@ -2910,12 +3534,29 @@
         renderHistoryList(
           dom.historyGame,
           cursorFitHistory.game,
-          function (record) { return "RANK " + record.rank + "・" + Number(record.score).toLocaleString("ja-JP") + "・撃破 " + record.destroyed; },
+          function (record) {
+            const timeLabel = Number.isFinite(Number(record.elapsedSeconds))
+              ? (record.cleared ? "CLEAR " : "PLAY ") + Number(record.elapsedSeconds).toFixed(1) + "秒"
+              : "撃破 " + record.destroyed;
+            return "RANK " + record.rank + "・" + Number(record.score).toLocaleString("ja-JP") + "・" + timeLabel;
+          },
           "まだゲーム記録はありません"
+        );
+        renderHistoryList(
+          dom.historyMole,
+          cursorFitHistory.mole,
+          function (record) {
+            return record.bestColor + "・平均 " + Number(record.averageMs).toFixed(0) + "ms/体・空振り " + record.misses;
+          },
+          "まだ診断結果はありません"
         );
         dom.historyGameHighscore.textContent = cursorFitHistory.gameHighScore
           ? Number(cursorFitHistory.gameHighScore.score).toLocaleString("ja-JP")
           : "---";
+        dom.historyGameBestTime.textContent = cursorFitHistory.gameBestTime
+          ? Number(cursorFitHistory.gameBestTime.elapsedSeconds).toFixed(1) + "秒"
+          : "---";
+        dom.historyStoryLinks.hidden = !cursorFitHistory.game.some(function (record) { return record.cleared; });
       }
 
       function addHistoryRecord(type, record) {
@@ -2923,6 +3564,10 @@
         cursorFitHistory[type] = cursorFitHistory[type].slice(0, 12);
         if (type === "game" && (!cursorFitHistory.gameHighScore || record.score > cursorFitHistory.gameHighScore.score)) {
           cursorFitHistory.gameHighScore = record;
+        }
+        if (type === "game" && record.cleared && Number(record.elapsedSeconds) > 0 &&
+          (!cursorFitHistory.gameBestTime || Number(record.elapsedSeconds) < Number(cursorFitHistory.gameBestTime.elapsedSeconds))) {
+          cursorFitHistory.gameBestTime = record;
         }
         saveHistory();
         renderTopHistory();
@@ -2986,6 +3631,7 @@
         });
         document.body.classList.toggle("testing-active", targetKey === "stage");
         document.body.classList.toggle("game-active", targetKey === "game");
+        document.body.classList.toggle("mole-active", targetKey === "mole");
         window.scrollTo(0, 0);
       }
 
@@ -3309,13 +3955,16 @@
 
         dom.practiceBadge.hidden = true;
         dom.resetMsgMain.textContent = options.main || "次の問題です";
-        dom.resetMsgSub.textContent = options.instruction || getNextQuestionInstruction();
+        dom.resetMsgSub.textContent = (options.instruction || getNextQuestionInstruction()) +
+          "\n準備ができたら、画面のどこかをクリックしてください。";
         dom.btnNextQuestion.textContent = options.buttonLabel || "準備ができたら始める";
-        dom.btnNextQuestion.hidden = false;
+        dom.btnNextQuestion.hidden = true;
+        dom.blackOverlay.classList.add("click-to-start");
+        dom.blackOverlay.tabIndex = 0;
         dom.blackOverlay.classList.add("active");
 
         requestAnimationFrame(function () {
-          dom.btnNextQuestion.focus({ preventScroll: true });
+          dom.blackOverlay.focus({ preventScroll: true });
         });
       }
 
@@ -3324,6 +3973,8 @@
         const nextCallback = state.pendingNextQuestion;
         state.pendingNextQuestion = null;
         dom.btnNextQuestion.hidden = true;
+        dom.blackOverlay.classList.remove("click-to-start");
+        dom.blackOverlay.tabIndex = -1;
         dom.blackOverlay.classList.remove("active");
         state.inBlackReset = false;
 
@@ -4470,8 +5121,269 @@
       }
 
       /* ==========================================
+         モードD：30穴 モグラたたき診断
+         - 練習3体（記録なし）
+         - 6色 × 各5体を同時探索
+         - 色別の1体平均時間と空振りを比較
+         ========================================== */
+      const MOLE_COLORS = [
+        { key: "white", name: "白", hex: "#ffffff" },
+        { key: "yellow", name: "黄色", hex: "#fde047" },
+        { key: "cyan", name: "シアン", hex: "#22d3ee" },
+        { key: "lime", name: "ライム", hex: "#a3e635" },
+        { key: "magenta", name: "マゼンタ", hex: "#f472b6" },
+        { key: "orange", name: "オレンジ", hex: "#fb923c" }
+      ];
+
+      const moleState = {
+        phase: "idle",
+        colorOrder: [],
+        roundIndex: 0,
+        activeIndices: new Set(),
+        remaining: 0,
+        totalInRound: 0,
+        misses: 0,
+        roundMisses: 0,
+        roundStartedAt: 0,
+        currentColor: null,
+        records: []
+      };
+
+      function initializeMoleField() {
+        if (dom.moleField.children.length === 30) return;
+        dom.moleField.replaceChildren();
+        for (let i = 0; i < 30; i++) {
+          const hole = document.createElement("button");
+          hole.type = "button";
+          hole.className = "mole-hole";
+          hole.dataset.index = String(i);
+          hole.setAttribute("aria-label", "穴 " + (i + 1) + "：モグラはいません");
+          const target = document.createElement("span");
+          target.className = "mole-target";
+          target.setAttribute("aria-hidden", "true");
+          hole.appendChild(target);
+          hole.addEventListener("click", function () { handleMoleHoleClick(i, hole); });
+          dom.moleField.appendChild(hole);
+        }
+      }
+
+      function clearMoleTargets() {
+        moleState.activeIndices.clear();
+        Array.from(dom.moleField.children).forEach(function (hole, index) {
+          hole.classList.remove("active", "hit");
+          hole.setAttribute("aria-label", "穴 " + (index + 1) + "：モグラはいません");
+        });
+      }
+
+      function updateMoleHud() {
+        dom.moleRound.textContent = moleState.phase === "practice"
+          ? "練習"
+          : moleState.records.length + 1 + " / " + MOLE_COLORS.length;
+        dom.moleRemaining.textContent = moleState.remaining + " / " + moleState.totalInRound;
+        dom.moleMisses.textContent = String(moleState.misses);
+      }
+
+      function setMoleOverlay(badge, title, description, buttonText, color) {
+        dom.moleBadge.textContent = badge;
+        dom.moleTitle.textContent = title;
+        dom.moleDescription.textContent = description;
+        dom.btnMolePrimary.textContent = buttonText;
+        dom.moleColorPreview.hidden = !color;
+        if (color) {
+          dom.moleColorPreview.style.background = color.hex;
+          dom.moleColorPreview.style.setProperty("--mole-color", color.hex);
+          dom.moleColorPreview.setAttribute("aria-label", color.name + "の色見本");
+        }
+        dom.moleOverlay.hidden = false;
+      }
+
+      function showMoleIntro() {
+        clearAllTimers();
+        state.isRunning = false;
+        state.activeMode = "MOLE";
+        moleState.phase = "intro";
+        moleState.records = [];
+        moleState.misses = 0;
+        moleState.roundIndex = 0;
+        initializeMoleField();
+        clearMoleTargets();
+        dom.moleResultContent.hidden = true;
+        setMoleOverlay(
+          "色・周辺視野チェック",
+          "30穴 モグラたたき診断",
+          "30個の穴から同時に現れる単色のモグラを、すべてクリックしてください。最初に『練習問題』を3体行い、その後は6色を各5体ずつ測ります。色ごとの発見速度と空振りから、見つけやすい色を確認します。",
+          "練習問題を始める",
+          null
+        );
+        updateMoleHud();
+        switchView("mole");
+        requestAnimationFrame(function () { dom.btnMolePrimary.focus({ preventScroll: true }); });
+      }
+
+      function showMoleTargets(count, color, phase) {
+        clearMoleTargets();
+        moleState.phase = phase;
+        moleState.currentColor = color;
+        moleState.totalInRound = count;
+        moleState.remaining = count;
+        moleState.roundMisses = 0;
+        const indices = shuffleArray(Array.from({ length: 30 }, function (_, index) { return index; })).slice(0, count);
+        indices.forEach(function (index) {
+          moleState.activeIndices.add(index);
+          const hole = dom.moleField.children[index];
+          hole.classList.add("active");
+          hole.querySelector(".mole-target").style.setProperty("--mole-color", color.hex);
+          hole.setAttribute("aria-label", "穴 " + (index + 1) + "：" + color.name + "のモグラ。クリックしてください");
+        });
+        moleState.roundStartedAt = performance.now();
+        dom.moleOverlay.hidden = true;
+        updateMoleHud();
+      }
+
+      function startMolePractice() {
+        showMoleTargets(3, { key: "practice", name: "練習用ターコイズ", hex: "#22d3ee" }, "practice");
+      }
+
+      function prepareMoleRound() {
+        const color = moleState.colorOrder[moleState.roundIndex];
+        moleState.phase = "roundReady";
+        setMoleOverlay(
+          "本番 " + (moleState.roundIndex + 1) + " / " + MOLE_COLORS.length,
+          "次は「" + color.name + "」のモグラ",
+          "30個の穴から、同時に現れる" + color.name + "のモグラ5体をすべてクリックしてください。空の穴を押すと空振りとして記録します。",
+          "準備ができたら始める",
+          color
+        );
+        updateMoleHud();
+      }
+
+      function startMoleDiagnosis() {
+        moleState.colorOrder = shuffleArray(MOLE_COLORS);
+        moleState.records = [];
+        moleState.misses = 0;
+        moleState.roundIndex = 0;
+        prepareMoleRound();
+      }
+
+      function startCurrentMoleRound() {
+        showMoleTargets(5, moleState.colorOrder[moleState.roundIndex], "testing");
+      }
+
+      function handleMoleHoleClick(index, hole) {
+        if (moleState.phase !== "practice" && moleState.phase !== "testing") return;
+        if (!moleState.activeIndices.has(index)) {
+          moleState.misses++;
+          moleState.roundMisses++;
+          dom.moleMisses.textContent = String(moleState.misses);
+          hole.animate([
+            { transform: "translateX(0)" },
+            { transform: "translateX(-5px)" },
+            { transform: "translateX(5px)" },
+            { transform: "translateX(0)" }
+          ], { duration: 180 });
+          return;
+        }
+
+        moleState.activeIndices.delete(index);
+        moleState.remaining--;
+        hole.classList.remove("active");
+        hole.classList.add("hit");
+        hole.setAttribute("aria-label", "穴 " + (index + 1) + "：発見済み");
+        updateMoleHud();
+        if (moleState.remaining > 0) return;
+
+        const elapsedMs = Math.max(50, Math.round(performance.now() - moleState.roundStartedAt));
+        clearMoleTargets();
+        if (moleState.phase === "practice") {
+          moleState.phase = "practiceDone";
+          setMoleOverlay(
+            "練習問題 完了",
+            "操作はばっちりです",
+            "ここから本番です。色が変わる前に毎回説明を表示します。本番は6色・合計30体で、練習の記録は結果に含まれません。",
+            "本番の説明へ",
+            null
+          );
+          return;
+        }
+
+        moleState.records.push({
+          key: moleState.currentColor.key,
+          name: moleState.currentColor.name,
+          hex: moleState.currentColor.hex,
+          totalMs: elapsedMs,
+          averageMs: elapsedMs / moleState.totalInRound,
+          misses: moleState.roundMisses
+        });
+        moleState.roundIndex++;
+        if (moleState.roundIndex < moleState.colorOrder.length) prepareMoleRound();
+        else finishMoleDiagnosis();
+      }
+
+      function finishMoleDiagnosis() {
+        moleState.phase = "result";
+        state.isRunning = false;
+        clearMoleTargets();
+        const ranked = moleState.records.slice().sort(function (a, b) {
+          return (a.averageMs + a.misses * 250) - (b.averageMs + b.misses * 250);
+        });
+        const best = ranked[0];
+        const averageMs = moleState.records.reduce(function (sum, record) { return sum + record.totalMs; }, 0) / 30;
+        dom.moleResultColor.textContent = best.name;
+        dom.moleResultColor.style.color = best.hex === "#ffffff" ? "#334155" : best.hex;
+        dom.moleResultAverage.textContent = Math.round(averageMs) + " ms/体";
+        dom.moleResultMisses.textContent = moleState.misses + " 回";
+        dom.moleResultTbody.replaceChildren();
+        moleState.records.forEach(function (record) {
+          const tr = document.createElement("tr");
+          const colorCell = document.createElement("td");
+          const chip = document.createElement("span");
+          chip.className = "color-chip";
+          chip.style.backgroundColor = record.hex;
+          colorCell.appendChild(chip);
+          colorCell.appendChild(document.createTextNode(record.name));
+          [colorCell, record.totalMs + " ms", Math.round(record.averageMs) + " ms", record.misses + " 回"].forEach(function (value) {
+            const td = value instanceof HTMLElement ? value : document.createElement("td");
+            if (!(value instanceof HTMLElement)) td.textContent = value;
+            tr.appendChild(td);
+          });
+          dom.moleResultTbody.appendChild(tr);
+        });
+        dom.moleResultContent.hidden = false;
+        addHistoryRecord("mole", {
+          at: new Date().toISOString(),
+          bestColor: best.name,
+          bestHex: best.hex,
+          averageMs: Math.round(averageMs),
+          misses: moleState.misses
+        });
+        setMoleOverlay(
+          "診断結果",
+          "見つけやすかった色は「" + best.name + "」",
+          "30穴の周辺視野探索では、発見時間と空振りを合わせると「" + best.name + "」が最も安定していました。実際のポインター設定でも候補として試してください。",
+          "もう一度診断する",
+          best
+        );
+        dom.moleResultContent.hidden = false;
+      }
+
+      function handleMolePrimaryAction() {
+        if (moleState.phase === "intro") startMolePractice();
+        else if (moleState.phase === "practiceDone") startMoleDiagnosis();
+        else if (moleState.phase === "roundReady") startCurrentMoleRound();
+        else if (moleState.phase === "result") showMoleIntro();
+      }
+
+      function exitMoleToTop() {
+        clearMoleTargets();
+        moleState.phase = "idle";
+        state.activeMode = null;
+        switchView("top");
+        requestAnimationFrame(function () { dom.btnStartMole.focus({ preventScroll: true }); });
+      }
+
+      /* ==========================================
          15. ポインター迎撃ゲーム
-         - 診断とは独立した100秒スコアアタック
+         - 診断とは独立した、時間無制限のスコア＆クリアタイムアタック
          - Canvas 1枚と requestAnimationFrame 1本で管理
          ========================================== */
       const gameContext = dom.gameCanvas.getContext("2d");
@@ -4481,6 +5393,7 @@
         laser: { stage: 2, maxLevel: 9, symbol: "L", name: "LASER", color: "#00f5ff", dark: "#083344" },
         homing: { stage: 3, maxLevel: 10, symbol: "H", name: "HOMING", color: "#fbbf24", dark: "#451a03" }
       };
+      const GAME_HEART_ITEM = { symbol: "💗", name: "LIFE RECOVERY", color: "#fb7185", dark: "#4c0519" };
       const GAME_BOSS_FORMS = [
         { name: "ARCANE CORE", japanese: "魔法核", color: "#c084fc", dark: "#312e81", phase: "ARCANE CIRCLE" },
         { name: "SHADOW SWARM", japanese: "暗黒群体", color: "#a855f7", dark: "#09090b", phase: "SHADOW SWARM" },
@@ -4517,6 +5430,10 @@
           clearTimeout(gameState.practiceCompleteTimer);
           gameState.practiceCompleteTimer = null;
         }
+        if (gameState.storyTimer !== null) {
+          clearTimeout(gameState.storyTimer);
+          gameState.storyTimer = null;
+        }
         gameState.enemies = [];
         gameState.powerUps = [];
         gameState.powerEffects = [];
@@ -4529,6 +5446,10 @@
         dom.gameAnnouncer.classList.remove("show");
         dom.gameWaveBanner.classList.remove("show");
         dom.gameBossHud.hidden = true;
+        dom.gamePrologueOverlay.hidden = true;
+        dom.gameStoryOverlay.hidden = true;
+        dom.btnGameSkipPractice.hidden = true;
+        dom.btnGameSkipPracticeLive.hidden = true;
       }
 
       function buildGameDocumentTemplate(type) {
@@ -4775,6 +5696,15 @@
         gameState.wave = 1;
         gameState.backgroundOffset = 0;
         gameState.laserAngle = 0;
+        gameState.lastScreenshot = "";
+        gameState.lastResult = null;
+        dom.gameResultScreenshot.removeAttribute("src");
+        dom.gameStoryCapture.removeAttribute("src");
+        dom.gameResultCapture.hidden = true;
+        dom.gameShareActions.hidden = true;
+        dom.gameShareStatus.textContent = "";
+        dom.gamePanel.classList.remove("result-active");
+        dom.gameRules.hidden = false;
         initializeGameBackgroundDocuments();
         updateGameHud();
         updateGameBossHud();
@@ -4786,7 +5716,7 @@
 
       function updateGameHud() {
         const accuracy = gameState.shots > 0 ? Math.round((gameState.hits / gameState.shots) * 100) : 100;
-        const remainingSeconds = Math.max(0, (gameState.durationMs - gameState.elapsedMs) / 1000);
+        const elapsedSeconds = Math.max(0, gameState.elapsedMs / 1000);
         const abilityLabels = [];
         const abilityNames = [];
         if (gameState.abilities.blast) {
@@ -4806,7 +5736,7 @@
         dom.gameCombo.classList.toggle("hot", gameState.combo >= 5);
         dom.gameAbilities.textContent = abilityLabels.length ? abilityLabels.join(" + ") : "—";
         dom.gameAbilities.setAttribute("aria-label", abilityNames.length ? "装備中：" + abilityNames.join("、") : "装備なし");
-        dom.gameTime.textContent = remainingSeconds.toFixed(1);
+        dom.gameTime.textContent = elapsedSeconds.toFixed(1);
         dom.gameWave.textContent = gameState.wave + " / 5";
         dom.gameLives.textContent = "♥".repeat(Math.max(0, gameState.lives)) + "♡".repeat(Math.max(0, 5 - gameState.lives));
         dom.gameAccuracy.textContent = accuracy + "%";
@@ -4897,25 +5827,79 @@
         oscillator.stop(now + duration);
       }
 
+      function restartStoryCrawl(element) {
+        element.style.animation = "none";
+        void element.offsetHeight;
+        element.style.animation = "";
+      }
+
+      function exitStoryReplayToTop() {
+        clearGameRuntime();
+        gameState.phase = "idle";
+        state.activeMode = null;
+        dom.btnGamePrologueContinue.textContent = "プロローグをスキップして作戦説明へ";
+        dom.btnGameStoryContinue.textContent = "結果を見る";
+        switchView("top");
+        requestAnimationFrame(function () { dom.btnReplayPrologue.focus({ preventScroll: true }); });
+      }
+
+      function showStoryReplay(kind) {
+        clearGameRuntime();
+        state.activeMode = "GAME";
+        switchView("game");
+        resizeGameCanvas();
+        drawGameScene();
+        dom.gameOverlay.hidden = true;
+
+        if (kind === "prologue") {
+          gameState.phase = "prologueReplay";
+          dom.btnGamePrologueContinue.textContent = "履歴へ戻る";
+          dom.gamePrologueOverlay.hidden = false;
+          restartStoryCrawl(dom.gamePrologueCrawl);
+          requestAnimationFrame(function () { dom.btnGamePrologueContinue.focus({ preventScroll: true }); });
+          return;
+        }
+
+        gameState.phase = "epilogueReplay";
+        dom.btnGameStoryContinue.textContent = "履歴へ戻る";
+        dom.gameStoryCapture.src = gameState.lastScreenshot || "assets/cursor-strike-card-background.png";
+        dom.gameStoryOverlay.hidden = false;
+        restartStoryCrawl(dom.gameStoryCrawl);
+        requestAnimationFrame(function () { dom.btnGameStoryContinue.focus({ preventScroll: true }); });
+      }
+
       function showGameIntro() {
         clearAllTimers();
         state.isRunning = false;
         state.activeMode = "GAME";
         clearGameRuntime();
-        gameState.phase = "intro";
+        gameState.phase = "prologue";
         switchView("game");
         resizeGameCanvas();
         resetGameSession();
         drawGameScene();
 
-        dom.gameOverlayEyebrow.textContent = "ARCADE MODE / 100 SEC";
+        dom.gameOverlayEyebrow.textContent = "ARCADE MODE / NO TIME LIMIT";
         dom.gameOverlayTitle.textContent = "ポインター迎撃作戦";
         dom.gameOverlayDescription.textContent =
-          "100秒・5ライフのスコアアタックです。流れる資料画面でポインターをクリックして迎撃します。最初に記録されない練習を行い、白いポインターと爆発アイテム『◎』を試します。本番のSTAGE 5は長期決戦。魔王の攻撃は自機への接触でも、画面下への見逃しでもダメージになります。ゲームのスコアは診断結果には使用しません。";
+          "時間制限なし・5ライフのスコア＆クリアタイムアタックです。TIMEは0秒から増え、魔王を倒すまでの秒数がもう一つの成績になります。流れる資料画面でポインターをクリックして迎撃します。最初に記録されない練習を行い、白いポインターと爆発アイテム『◎』を試します。💗はライフを1回復。本番のSTAGE 5は長期決戦で、赤黒い回転十字レーザーも出現します。大型爆弾は必ず炸裂し、その後の小型ポインター弾だけを迎撃できます。ゲームのスコアは診断結果には使用しません。";
         dom.gameResultStats.hidden = true;
         dom.btnGamePrimary.textContent = "練習を始める";
         dom.btnGamePause.disabled = true;
+        dom.gameOverlay.hidden = true;
+        dom.gamePrologueOverlay.hidden = false;
+        dom.btnGamePrologueContinue.textContent = "プロローグをスキップして作戦説明へ";
+        restartStoryCrawl(dom.gamePrologueCrawl);
+        dom.btnGameSkipPractice.hidden = false;
+        dom.btnGameSkipPracticeLive.hidden = true;
+        requestAnimationFrame(function () { dom.btnGamePrologueContinue.focus({ preventScroll: true }); });
+      }
+
+      function showGameInstructions() {
+        gameState.phase = "intro";
+        dom.gamePrologueOverlay.hidden = true;
         dom.gameOverlay.hidden = false;
+        dom.btnGameSkipPractice.hidden = false;
         requestAnimationFrame(function () { dom.btnGamePrimary.focus({ preventScroll: true }); });
       }
 
@@ -4925,6 +5909,7 @@
         gameState.practiceStep = "enemy";
         dom.gameOverlay.hidden = true;
         dom.btnGamePause.disabled = true;
+        dom.btnGameSkipPracticeLive.hidden = false;
         spawnGameEnemy(true);
         gameState.lastFrameAt = performance.now();
         announceGame("練習①　白いポインターをクリック", 1800);
@@ -4932,7 +5917,7 @@
         gameState.rafId = requestAnimationFrame(runGameFrame);
       }
 
-      function completeGamePractice() {
+      function completeGamePractice(skipped) {
         stopGameLoop();
         gameState.enemies = [];
         gameState.powerUps = [];
@@ -4943,10 +5928,12 @@
         gameState.abilities = { blast: false, laser: false, homing: false };
         gameState.weaponLevels = { blast: 0, laser: 0, homing: 0 };
         gameState.phase = "ready";
+        dom.btnGameSkipPractice.hidden = true;
+        dom.btnGameSkipPracticeLive.hidden = true;
         updateGameHud();
         drawGameScene();
-        dom.gameOverlayEyebrow.textContent = "PRACTICE CLEAR / 記録なし";
-        dom.gameOverlayTitle.textContent = "練習完了！";
+        dom.gameOverlayEyebrow.textContent = skipped ? "PRACTICE SKIPPED / 記録なし" : "PRACTICE CLEAR / 記録なし";
+        dom.gameOverlayTitle.textContent = skipped ? "練習をスキップしました" : "練習完了！";
         dom.gameOverlayDescription.textContent =
           "本番では同じアイテムを取るたび強化されます。レーザーは延長後に右・左・上へ増え、最後は十字に回転します。ホーミングは画面内の同時存在上限が最大10発まで増えます。STAGE 5では、体力を削り切った後に何が起きるかを確かめてください。";
         dom.gameResultStats.hidden = true;
@@ -4955,12 +5942,19 @@
         requestAnimationFrame(function () { dom.btnGamePrimary.focus({ preventScroll: true }); });
       }
 
+      function skipGamePractice() {
+        if (gameState.phase !== "intro" && gameState.phase !== "practice") return;
+        completeGamePractice(true);
+      }
+
       function startMainGame() {
         resetGameSession();
         gameState.phase = "countdown";
         gameState.countdownMs = 3000;
         gameState.lastFrameAt = performance.now();
         dom.gameOverlay.hidden = true;
+        dom.btnGameSkipPractice.hidden = true;
+        dom.btnGameSkipPracticeLive.hidden = true;
         dom.btnGamePause.disabled = true;
         dom.btnGamePause.textContent = "一時停止 (P)";
         dom.gameCanvas.focus({ preventScroll: true });
@@ -5013,10 +6007,10 @@
       }
 
       function spawnGamePowerUp(x, y, type, isPractice) {
-        const weapon = GAME_WEAPONS[type];
+        const weapon = type === "heart" ? GAME_HEART_ITEM : GAME_WEAPONS[type];
         if (!weapon) return;
         const size = isPractice ? 34 : 30;
-        const nextLevel = Math.min(weapon.maxLevel, (gameState.weaponLevels[type] || 0) + 1);
+        const nextLevel = type === "heart" ? null : Math.min(weapon.maxLevel, (gameState.weaponLevels[type] || 0) + 1);
         gameState.powerUps.push({
           id: gameState.nextPowerUpId++,
           type: type,
@@ -5036,7 +6030,7 @@
           life: 1.15,
           maxLife: 1.15,
           color: weapon.color,
-          text: weapon.name + " LV." + nextLevel + " ▼"
+          text: type === "heart" ? "💗 LIFE +1 ▼" : weapon.name + " LV." + nextLevel + " ▼"
         });
       }
 
@@ -5059,7 +6053,16 @@
       }
 
       function maybeDropGamePowerUp(enemy) {
-        if (gameState.phase !== "playing" || gameState.powerUps.length >= 1) return;
+        if (gameState.phase !== "playing" || gameState.powerUps.length >= 2) return;
+        if (gameState.lives < 5 && !gameState.powerUps.some(function (item) { return item.type === "heart"; })) {
+          const heartChance = gameState.boss.active
+            ? (gameState.lives <= 2 ? 0.42 : 0.24)
+            : (gameState.lives <= 2 ? 0.2 : 0.08);
+          if (Math.random() < heartChance) {
+            spawnGamePowerUp(enemy.x, enemy.y, "heart", false);
+            return;
+          }
+        }
         const type = getPendingStageWeapon();
         if (!type) return;
         spawnGamePowerUp(enemy.x, enemy.y, type, false);
@@ -5203,7 +6206,8 @@
         if (gameState.missiles.length >= missileCapacity) return false;
         const bossActive = Boolean(gameState.boss && gameState.boss.active);
         const bossTargets = bossActive ? getGameBossHitTargets() : [];
-        const target = bossActive ? null : gameState.enemies.slice().sort(function (a, b) {
+        const targetableEnemies = gameState.enemies.filter(function (enemy) { return !enemy.bossBomb; });
+        const target = bossActive ? null : targetableEnemies.slice().sort(function (a, b) {
           return Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y);
         })[0] || null;
         const missileSlot = gameState.missiles.length;
@@ -5235,12 +6239,13 @@
             missile.targetKind = "enemy";
             target = gameState.enemies.find(function (enemy) { return enemy.id === missile.targetId; });
           }
-          if (!target && gameState.enemies.length > 0) {
-            target = gameState.enemies.reduce(function (nearest, enemy) {
+          const targetableEnemies = gameState.enemies.filter(function (enemy) { return !enemy.bossBomb; });
+          if (!target && targetableEnemies.length > 0) {
+            target = targetableEnemies.reduce(function (nearest, enemy) {
               return Math.hypot(enemy.x - missile.x, enemy.y - missile.y) < Math.hypot(nearest.x - missile.x, nearest.y - missile.y)
                 ? enemy
                 : nearest;
-            }, gameState.enemies[0]);
+            }, targetableEnemies[0]);
             missile.targetId = target.id;
           }
 
@@ -5269,6 +6274,7 @@
           let impactEnemy = null;
           let impactDistance = Infinity;
           if (missile.targetKind !== "boss") gameState.enemies.forEach(function (enemy) {
+            if (enemy.bossBomb) return;
             const distance = Math.hypot(enemy.x - missile.x, enemy.y - missile.y);
             const hitRadius = Math.max(18, enemy.size * 0.72 + 9);
             if (distance <= hitRadius && distance < impactDistance) {
@@ -5554,7 +6560,7 @@
           bombFuse: 1.05
         });
         boss.bombsLaunched++;
-        announceGame("CURSOR BOMB!　破裂前にクリックで破壊！", 900);
+        announceGame("CURSOR BOMB!　大型爆弾は必ず炸裂。子弾を撃ち落とせ！", 1100);
         playGameTone(96, 0.28, "sawtooth", 0.05);
         return true;
       }
@@ -5596,6 +6602,41 @@
         playGameTone(72, 0.38, "square", 0.065);
       }
 
+      function updateGameBossCrossLaser(dt) {
+        const boss = gameState.boss;
+        if (!boss.active || boss.form !== 5 || boss.transitionTimer > 0) {
+          boss.crossLaserAge = -1;
+          return;
+        }
+        if (boss.crossLaserAge < 0) {
+          boss.crossLaserCooldown -= dt;
+          if (boss.crossLaserCooldown <= 0) {
+            boss.crossLaserAge = 0;
+            boss.crossLaserAngle = -Math.PI / 7 + (boss.bombsLaunched % 3) * 0.17;
+            announceGame("DANGER!　魔王の全画面・回転十字レーザー！", 1500);
+            playGameTone(62, 0.65, "sawtooth", 0.07);
+          }
+          return;
+        }
+        boss.crossLaserAge += dt;
+        if (!gameState.reducedMotion) boss.crossLaserAngle += dt * 0.2;
+        if (boss.crossLaserAge >= 6.2) {
+          boss.crossLaserAge = -1;
+          boss.crossLaserCooldown = 7.8;
+          return;
+        }
+        if (boss.crossLaserAge < 1.35 || boss.crossLaserAge > 5.85 || !gameState.mouseActive) return;
+        const dx = gameState.mouseX - boss.x;
+        const dy = gameState.mouseY - boss.y;
+        const cosine = Math.cos(boss.crossLaserAngle);
+        const sine = Math.sin(boss.crossLaserAngle);
+        const localX = dx * cosine + dy * sine;
+        const localY = -dx * sine + dy * cosine;
+        if (Math.min(Math.abs(localX), Math.abs(localY)) <= 25) {
+          damageGamePlayerFromBoss("HIT!　回転十字レーザーが自機を直撃", gameState.mouseX, gameState.mouseY);
+        }
+      }
+
       function updateGameBoss(dt) {
         const boss = gameState.boss;
         if (boss.defeated) {
@@ -5613,6 +6654,8 @@
           boss.evilWaveAge += dt;
           if (boss.evilWaveAge > 1.65) boss.evilWaveAge = -1;
         }
+        updateGameBossCrossLaser(dt);
+        if (gameState.phase === "ended") return;
 
         const targetYByForm = [0.22, 0.19, 0.255, 0.22, 0.245];
         const targetY = Math.max(175, Math.min(285, gameState.height * targetYByForm[boss.form - 1]));
@@ -5705,13 +6748,14 @@
       function getGameLaserSegments() {
         if (!gameState.abilities.laser || !gameState.mouseActive) return [];
         const level = Math.max(1, Math.min(GAME_WEAPONS.laser.maxLevel, gameState.weaponLevels.laser));
-        const maximumLength = gameState.height * 0.5;
+        const maximumVerticalLength = gameState.height * 0.5;
+        const maximumHorizontalLength = gameState.width * 0.25;
         const directions = [
-          { dx: 0, dy: 1, length: maximumLength * (Math.min(level, 5) / 5) }
+          { dx: 0, dy: 1, length: maximumVerticalLength * (Math.min(level, 5) / 5) }
         ];
-        if (level >= 6) directions.push({ dx: 1, dy: 0, length: maximumLength });
-        if (level >= 7) directions.push({ dx: -1, dy: 0, length: maximumLength });
-        if (level >= 8) directions.push({ dx: 0, dy: -1, length: maximumLength });
+        if (level >= 6) directions.push({ dx: 1, dy: 0, length: maximumHorizontalLength });
+        if (level >= 7) directions.push({ dx: -1, dy: 0, length: maximumHorizontalLength });
+        if (level >= 8) directions.push({ dx: 0, dy: -1, length: maximumVerticalLength });
 
         const rotation = level >= 9 && !gameState.reducedMotion ? gameState.laserAngle : 0;
         const cosine = Math.cos(rotation);
@@ -5798,6 +6842,8 @@
         boss.evilWaveTimer = boss.form === 5 ? 2.8 : 5.2;
         boss.bombTimer = boss.form === 5 ? 1.8 : 3.4;
         boss.bombsLaunched = 0;
+        boss.crossLaserCooldown = boss.form === 5 ? 3.8 : 6.4;
+        boss.crossLaserAge = -1;
         boss.phase = "EVOLVE";
         boss.previousPhase = "";
         boss.minionsLaunched = 0;
@@ -5891,7 +6937,11 @@
           if (gameState.phase === "playing" && enemy.bossMinion && gameState.mouseActive) {
             const playerHitRadius = 17 + enemy.size * 0.68;
             if (Math.hypot(enemy.x - gameState.mouseX, enemy.y - gameState.mouseY) <= playerHitRadius) {
-              gameState.enemies.splice(i, 1);
+              if (enemy.bossBomb) {
+                detonateGameBossCursorBomb(i, enemy);
+              } else {
+                gameState.enemies.splice(i, 1);
+              }
               damageGamePlayerFromBoss(
                 enemy.bossBullet ? "HIT!　カーソル弾幕が自機に命中" : enemy.bossBomb ? "HIT!　カーソル爆弾が自機に命中" : "HIT!　魔王の攻撃が自機に命中",
                 enemy.x,
@@ -6342,7 +7392,7 @@
 
       function drawGamePowerUp(item) {
         const ctx = gameContext;
-        const weapon = GAME_WEAPONS[item.type] || GAME_WEAPONS.blast;
+        const weapon = item.type === "heart" ? GAME_HEART_ITEM : (GAME_WEAPONS[item.type] || GAME_WEAPONS.blast);
         const color = weapon.color;
         const dark = weapon.dark;
         const pulse = gameState.reducedMotion ? 1 : 1 + Math.sin(item.age * 6) * 0.09;
@@ -6377,7 +7427,53 @@
         ctx.shadowBlur = 10;
         ctx.font = "900 10px Consolas, monospace";
         ctx.fillStyle = color;
-        ctx.fillText("LV." + item.targetLevel + "/" + weapon.maxLevel, 0, radius + 15);
+        ctx.fillText(item.type === "heart" ? "LIFE +1" : "LV." + item.targetLevel + "/" + weapon.maxLevel, 0, radius + 15);
+        ctx.restore();
+      }
+
+      function drawGameBossCrossLaser() {
+        const boss = gameState.boss;
+        if (!boss.active || boss.form !== 5 || boss.crossLaserAge < 0) return;
+        const ctx = gameContext;
+        const warning = boss.crossLaserAge < 1.35;
+        const fadeOut = boss.crossLaserAge > 5.55 ? Math.max(0, (6.2 - boss.crossLaserAge) / 0.65) : 1;
+        const length = Math.hypot(gameState.width, gameState.height) * 1.25;
+        const pulse = gameState.reducedMotion ? 1 : 0.82 + Math.sin(boss.crossLaserAge * 18) * 0.18;
+        ctx.save();
+        ctx.translate(boss.x, boss.y);
+        ctx.rotate(boss.crossLaserAngle);
+        ctx.globalAlpha = fadeOut * (warning ? 0.5 + pulse * 0.25 : 0.96);
+        ctx.globalCompositeOperation = "source-over";
+        [0, Math.PI / 2].forEach(function (angle) {
+          ctx.save();
+          ctx.rotate(angle);
+          ctx.shadowColor = "#ef4444";
+          ctx.shadowBlur = warning ? 14 : 34;
+          ctx.strokeStyle = warning ? "rgba(239,68,68,0.82)" : "rgba(0,0,0,0.96)";
+          ctx.lineWidth = warning ? 5 : 62;
+          ctx.setLineDash(warning ? [18, 14] : []);
+          ctx.beginPath();
+          ctx.moveTo(-length, 0);
+          ctx.lineTo(length, 0);
+          ctx.stroke();
+          if (!warning) {
+            ctx.setLineDash([]);
+            ctx.strokeStyle = "rgba(185,28,28,0.98)";
+            ctx.lineWidth = 36 * pulse;
+            ctx.stroke();
+            ctx.strokeStyle = "rgba(0,0,0,0.9)";
+            ctx.lineWidth = 12;
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+        ctx.setLineDash([]);
+        ctx.strokeStyle = warning ? "#fca5a5" : "#ef4444";
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 22;
+        ctx.beginPath();
+        ctx.arc(0, 0, warning ? 74 + pulse * 15 : 48, 0, Math.PI * 2);
+        ctx.stroke();
         ctx.restore();
       }
 
@@ -6528,6 +7624,7 @@
         }
         drawGameBackground(safeDt);
         drawGamePersistentLaser();
+        drawGameBossCrossLaser();
         drawGameBoss();
         gameState.enemies.forEach(function (enemy) {
           if (enemy.bossBomb) drawGameCursorBomb(enemy);
@@ -6593,7 +7690,7 @@
             gameState.wave = nextWave;
             if (nextWave === 2) {
               showGameWaveBanner("STAGE 2 / LASER UNLOCK");
-              announceGame("Lを取るたび延長→右→左→上→十字回転（最大Lv.9）", 2300);
+              announceGame("Lで延長→右・左は各画面幅1/4→上→十字回転（最大Lv.9）", 2500);
             } else if (nextWave === 3) {
               showGameWaveBanner("STAGE 3 / HOMING UNLOCK");
               announceGame("Hを取るたび画面内の追尾ミサイル上限＋1（最大10発）", 2400);
@@ -6608,10 +7705,6 @@
           updateGameEntities(dt);
           if (gameState.phase !== "playing") return;
           updateGameHud();
-          if (gameState.elapsedMs >= gameState.durationMs && !gameState.boss.defeated) {
-            endShootingGame("TIME UP");
-            return;
-          }
         }
 
         drawGameScene(dt);
@@ -6625,6 +7718,7 @@
         let points = 0;
         for (let i = gameState.enemies.length - 1; i >= 0; i--) {
           const enemy = gameState.enemies[i];
+          if (enemy.bossBomb) continue;
           if (!predicate(enemy)) continue;
           gameState.enemies.splice(i, 1);
           createGameBurst(enemy.x, enemy.y, enemy.bonus ? "#fde047" : "#67e8f9", enemy.bonus ? 24 : 13);
@@ -6660,6 +7754,17 @@
         if (!item) return;
         gameState.powerUps.splice(index, 1);
         const isPracticeItem = item.practice && gameState.phase === "practice";
+        if (item.type === "heart") {
+          const previousLives = gameState.lives;
+          gameState.lives = Math.min(5, gameState.lives + 1);
+          if (gameState.lives > previousLives) gameState.powerUpsCollected++;
+          createGameBurst(item.x, item.y, GAME_HEART_ITEM.color, 30);
+          gameState.floatingTexts.push({ x: item.x, y: item.y - 12, life: 1.2, maxLife: 1.2, color: "#fda4af", text: "💗 LIFE RECOVERED!　" + gameState.lives + "/5" });
+          announceGame("💗 LIFE RECOVERED!　ライフ " + gameState.lives + "/5", 1500);
+          playGameTone(1040, 0.28, "triangle", 0.055);
+          updateGameHud();
+          return;
+        }
         const weapon = GAME_WEAPONS[item.type];
         if (!weapon) return;
         const previousLevel = gameState.weaponLevels[item.type] || 0;
@@ -6674,8 +7779,8 @@
           levelUpMessage = "HOMING LIMIT UP!　画面内 " + nextLevel + "/" + weapon.maxLevel + "発";
         } else if (item.type === "laser") {
           if (nextLevel <= 5) levelUpMessage = "LASER LENGTH UP!　下方向 " + nextLevel + "/5";
-          if (nextLevel === 6) levelUpMessage = "RIGHT LASER ADDED!　右レーザー追加";
-          if (nextLevel === 7) levelUpMessage = "LEFT LASER ADDED!　左レーザー追加";
+          if (nextLevel === 6) levelUpMessage = "RIGHT LASER ADDED!　右へ画面幅の1/4";
+          if (nextLevel === 7) levelUpMessage = "LEFT LASER ADDED!　左右合計で画面幅の1/2";
           if (nextLevel === 8) levelUpMessage = "UP LASER ADDED!　上レーザー追加";
           if (nextLevel === 9) levelUpMessage = "ROTATING CROSS LASER!　十字レーザー回転";
         }
@@ -6691,6 +7796,13 @@
       function hitGameEnemy(index) {
         const enemy = gameState.enemies[index];
         if (!enemy) return;
+        if (enemy.bossBomb) {
+          gameState.hits++;
+          announceGame("大型爆弾に着火！　炸裂後の小型ポインターを迎撃！", 1000);
+          detonateGameBossCursorBomb(index, enemy);
+          updateGameHud();
+          return;
+        }
         gameState.enemies.splice(index, 1);
         createGameBurst(enemy.x, enemy.y, enemy.color, enemy.bonus ? 28 : 16);
         gameState.shake = enemy.bonus && !gameState.reducedMotion ? 6 : 2;
@@ -6843,6 +7955,136 @@
         return "D";
       }
 
+      function captureGameResultImage() {
+        try {
+          return dom.gameCanvas.toDataURL("image/png");
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function revealGameResult() {
+        if (gameState.storyTimer !== null) {
+          clearTimeout(gameState.storyTimer);
+          gameState.storyTimer = null;
+        }
+        dom.gameStoryOverlay.hidden = true;
+        dom.gameOverlay.hidden = false;
+        requestAnimationFrame(function () { dom.btnGamePrimary.focus({ preventScroll: true }); });
+      }
+
+      function showVictoryStory() {
+        dom.gameOverlay.hidden = true;
+        dom.gameStoryOverlay.hidden = false;
+        if (gameState.lastScreenshot) {
+          dom.gameStoryCapture.src = gameState.lastScreenshot;
+        }
+        dom.btnGameStoryContinue.textContent = "結果を見る";
+        restartStoryCrawl(dom.gameStoryCrawl);
+        requestAnimationFrame(function () { dom.btnGameStoryContinue.focus({ preventScroll: true }); });
+        gameState.storyTimer = setTimeout(revealGameResult, gameState.reducedMotion ? 12000 : 44000);
+      }
+
+      function buildGameShareText() {
+        const result = gameState.lastResult;
+        if (!result) return "Cursor Fit ポインター迎撃ゲームに挑戦しました。";
+        const mission = result.cleared ? "異次元魔王カーソル撃破！" : "ポインター迎撃作戦に挑戦！";
+        return "🖱️ " + mission + "\n" +
+          "RANK " + result.rank + " / SCORE " + result.score.toLocaleString("ja-JP") +
+          " / TIME " + result.elapsedSeconds.toFixed(1) + "秒\n" +
+          CURSOR_FIT_PUBLIC_URL + "\n" +
+          "#CursorFit #ポインター迎撃ゲーム";
+      }
+
+      async function getGameScreenshotFile() {
+        if (!gameState.lastScreenshot) return null;
+        const imageBlob = await (await fetch(gameState.lastScreenshot)).blob();
+        return new File([imageBlob], "cursor-fit-result.png", { type: "image/png" });
+      }
+
+      function downloadGameResultImage() {
+        if (!gameState.lastScreenshot) return false;
+        const link = document.createElement("a");
+        link.href = gameState.lastScreenshot;
+        link.download = "cursor-fit-result.png";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        return true;
+      }
+
+      async function copyGameShareText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+
+      async function shareGameResult() {
+        const text = buildGameShareText();
+        const shareData = { title: "Cursor Fit ポインター迎撃ゲーム", text: text };
+        try {
+          if (navigator.share) {
+            if (gameState.lastScreenshot && navigator.canShare) {
+              const imageFile = await getGameScreenshotFile();
+              const withImage = Object.assign({}, shareData, { files: [imageFile] });
+              if (navigator.canShare(withImage)) {
+                await navigator.share(withImage);
+                dom.gameShareStatus.textContent = "戦闘画面つきで共有しました。";
+                return;
+              }
+            }
+            await navigator.share(shareData);
+            dom.gameShareStatus.textContent = "結果を共有しました。";
+            return;
+          }
+          await copyGameShareText(text);
+          dom.gameShareStatus.textContent = "投稿文をコピーしました。SNSに貼り付けてください。";
+        } catch (error) {
+          if (error && error.name === "AbortError") return;
+          try {
+            await copyGameShareText(text);
+            dom.gameShareStatus.textContent = "投稿文をコピーしました。SNSに貼り付けてください。";
+          } catch (copyError) {
+            dom.gameShareStatus.textContent = "共有できませんでした。スコアを手動でコピーしてください。";
+          }
+        }
+      }
+
+      async function shareGameResultOnX() {
+        const text = buildGameShareText();
+        if (navigator.share && navigator.canShare && gameState.lastScreenshot) {
+          try {
+            const imageFile = await getGameScreenshotFile();
+            const shareData = { title: "Cursor Fit ポインター迎撃ゲーム", text: text, files: [imageFile] };
+            if (navigator.canShare(shareData)) {
+              dom.gameShareStatus.textContent = "共有先でXを選ぶと、結果画像と本文を投稿できます。";
+              await navigator.share(shareData);
+              dom.gameShareStatus.textContent = "結果画像つきで共有しました。";
+              return;
+            }
+          } catch (error) {
+            if (error && error.name === "AbortError") return;
+          }
+        }
+
+        const imageSaved = downloadGameResultImage();
+        copyGameShareText(text).catch(function () {});
+        const shareUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+        window.open(shareUrl, "_blank", "noopener,noreferrer");
+        dom.gameShareStatus.textContent = imageSaved
+          ? "結果画像を保存し、本文をコピーしました。Xで画像を追加してください。"
+          : "本文をコピーしてXを開きました。";
+      }
+
       function endShootingGame(reason) {
         if (gameState.phase === "ended") return;
         stopGameLoop();
@@ -6851,15 +8093,30 @@
         const accuracy = gameState.shots > 0 ? Math.round((gameState.hits / gameState.shots) * 100) : 0;
         const rank = getGameRank(gameState.score, accuracy);
         const destroyedCount = gameState.directKills + gameState.powerKills + (gameState.boss.defeated ? 1 : 0);
+        const elapsedSeconds = Math.max(0, gameState.elapsedMs / 1000);
+        const finalScore = Math.round(gameState.score);
+        const cleared = Boolean(gameState.boss.defeated);
         addHistoryRecord("game", {
           at: new Date().toISOString(),
-          score: Math.round(gameState.score),
+          score: finalScore,
           rank: rank,
           accuracy: accuracy,
           destroyed: destroyedCount,
-          maxCombo: gameState.maxCombo
+          maxCombo: gameState.maxCombo,
+          elapsedSeconds: Number(elapsedSeconds.toFixed(1)),
+          cleared: cleared
         });
         drawGameScene();
+        gameState.lastScreenshot = captureGameResultImage();
+        gameState.lastResult = {
+          rank: rank,
+          score: finalScore,
+          accuracy: accuracy,
+          destroyed: destroyedCount,
+          maxCombo: gameState.maxCombo,
+          elapsedSeconds: elapsedSeconds,
+          cleared: cleared
+        };
         dom.gameBossHud.hidden = true;
         const bossSummary = gameState.boss.defeated
           ? "ボス撃破 成功"
@@ -6872,14 +8129,26 @@
         const maximumWeaponLevelTotal = Object.values(GAME_WEAPONS).reduce(function (sum, weapon) { return sum + weapon.maxLevel; }, 0);
         dom.gameOverlayDescription.textContent =
           "命中率 " + accuracy + "% ／ " + bossSummary + " ／ 武器Lv合計 " + Object.values(gameState.weaponLevels).reduce(function (sum, level) { return sum + level; }, 0) + "/" + maximumWeaponLevelTotal + " ／ 特殊攻撃 " + gameState.powerKills + "体 ／ 見逃し " + gameState.escaped + "個。スコアは診断結果には使用されません。";
+        dom.gamePanel.classList.add("result-active");
+        dom.gameRules.hidden = true;
+        if (gameState.lastScreenshot) {
+          dom.gameResultScreenshot.src = gameState.lastScreenshot;
+          dom.gameResultCapture.hidden = false;
+        }
+        dom.gameResultCaptureCaption.textContent =
+          "MISSION ARCHIVE / SCORE " + finalScore.toLocaleString("ja-JP") + " / TIME " + elapsedSeconds.toFixed(1) + " SEC";
         dom.gameResultRank.textContent = rank;
-        dom.gameResultScore.textContent = Math.round(gameState.score).toLocaleString("ja-JP");
+        dom.gameResultScore.textContent = finalScore.toLocaleString("ja-JP");
+        dom.gameResultTimeLabel.textContent = cleared ? "CLEAR TIME" : "PLAY TIME";
+        dom.gameResultTime.textContent = elapsedSeconds.toFixed(1) + "s";
         dom.gameResultHits.textContent = String(destroyedCount);
         dom.gameResultCombo.textContent = String(gameState.maxCombo);
         dom.gameResultStats.hidden = false;
+        dom.gameShareActions.hidden = false;
+        dom.gameShareStatus.textContent = "";
         dom.btnGamePrimary.textContent = "もう一度遊ぶ";
-        dom.gameOverlay.hidden = false;
-        requestAnimationFrame(function () { dom.btnGamePrimary.focus({ preventScroll: true }); });
+        if (cleared) showVictoryStory();
+        else revealGameResult();
       }
 
       function exitShootingGameToTop() {
@@ -6906,6 +8175,7 @@
          ========================================== */
       dom.btnStartA.addEventListener("click", startModeA);
       dom.btnStartB.addEventListener("click", startModeB);
+      dom.btnStartMole.addEventListener("click", showMoleIntro);
       dom.btnClearHistory.addEventListener("click", function () {
         if (!window.confirm("この端末に保存された診断・テスト・ゲームの記録をすべて消去しますか？")) return;
         cursorFitHistory = createEmptyHistory();
@@ -6916,9 +8186,23 @@
       dom.btnStartSizeStep.addEventListener("click", beginModeASizeStep);
       dom.btnStartColorStep.addEventListener("click", beginModeAColorStep);
       dom.btnNextQuestion.addEventListener("click", beginPendingNextQuestion);
+      dom.blackOverlay.addEventListener("click", function () {
+        if (state.inBlackReset && typeof state.pendingNextQuestion === "function") beginPendingNextQuestion();
+      });
+      dom.blackOverlay.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        if (!state.inBlackReset || typeof state.pendingNextQuestion !== "function") return;
+        event.preventDefault();
+        beginPendingNextQuestion();
+      });
       dom.btnShowHint.addEventListener("click", triggerPointerHint);
       dom.btnAbortStage.addEventListener("click", abortDiagnosisToTop);
+      dom.btnMolePrimary.addEventListener("click", handleMolePrimaryAction);
+      dom.btnMoleTop.addEventListener("click", exitMoleToTop);
+      dom.btnMoleExit.addEventListener("click", exitMoleToTop);
       dom.btnStartGame.addEventListener("click", showGameIntro);
+      dom.btnReplayPrologue.addEventListener("click", function () { showStoryReplay("prologue"); });
+      dom.btnReplayEpilogue.addEventListener("click", function () { showStoryReplay("epilogue"); });
       const settingsImageDialog = document.getElementById("settings-image-dialog");
       const settingsDialogImage = document.getElementById("settings-dialog-image");
       const settingsDialogCaption = document.getElementById("settings-dialog-caption");
@@ -6950,7 +8234,19 @@
       dom.gameShell.addEventListener("pointerleave", function () { gameState.mouseActive = false; });
       dom.gameCanvas.addEventListener("click", handleGameCanvasClick);
       dom.btnGamePrimary.addEventListener("click", handleGamePrimaryAction);
+      dom.btnGamePrologueContinue.addEventListener("click", function () {
+        if (gameState.phase === "prologueReplay") exitStoryReplayToTop();
+        else showGameInstructions();
+      });
+      dom.btnGameSkipPractice.addEventListener("click", skipGamePractice);
+      dom.btnGameSkipPracticeLive.addEventListener("click", skipGamePractice);
       dom.btnGameTop.addEventListener("click", exitShootingGameToTop);
+      dom.btnGameStoryContinue.addEventListener("click", function () {
+        if (gameState.phase === "epilogueReplay") exitStoryReplayToTop();
+        else revealGameResult();
+      });
+      dom.btnGameShare.addEventListener("click", shareGameResult);
+      dom.btnGameShareX.addEventListener("click", shareGameResultOnX);
       dom.btnGameExit.addEventListener("click", exitShootingGameToTop);
       dom.btnGamePause.addEventListener("click", toggleGamePause);
       dom.btnGameSound.addEventListener("click", toggleGameSound);
@@ -6975,6 +8271,13 @@
 
       // ゲームは Esc で終了、P で一時停止。診断は Esc で終了、H でヒント。
       window.addEventListener("keydown", function (ev) {
+        if (state.activeMode === "MOLE") {
+          if (ev.key === "Escape") {
+            ev.preventDefault();
+            exitMoleToTop();
+          }
+          return;
+        }
         if (state.activeMode === "GAME") {
           if (ev.key === "Escape") {
             ev.preventDefault();
