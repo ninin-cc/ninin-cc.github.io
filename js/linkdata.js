@@ -74,9 +74,12 @@ const linkData = [
     },
     {
         name: "ぎっしー｜春日部キャリア部 部長",
+        certification: "🌈RIESM™アンバサダー / AMB-0007",
+        location: "埼玉県",
+        workshopCount: 0,
         avatar: { src: "./img/link/gissy.webp" },
         title: "春日部キャリア部 部長",
-        tags: ["tabelab"],
+        tags: ["tabelab", "riesm"],
         desc: "「このままでいいのかな？」春日部でキャリアに悩むあなたのためのコミュニティ「#春日部キャリア部」。毎週月曜、対話の場で強みを発見し、複業やスキルUPに挑戦しませんか？安心安全な場で仲間と共に一歩踏み出すあなたを全力で応援します。武里駅近くの「わたしの基地」で開催中。",
         links: { 
             note: "https://note.com/gissy0721",
