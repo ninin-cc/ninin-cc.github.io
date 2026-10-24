@@ -408,7 +408,7 @@
         </div>
 
         <!-- アフターフォロー：RIESM™セッション50分（単体） -->
-        <div id="riesm-session" class="mb-12 w-full max-w-2xl mx-auto fade-in scroll-mt-6" style="animation-delay: 0.5s;">
+        <div id="riesm-session" class="mb-12 w-full max-w-2xl mx-auto fade-in" style="animation-delay: 0.5s; scroll-margin-top: 12px;">
             <div class="flex items-center justify-center space-x-4 mb-6">
                 <div class="h-px bg-stone-200 flex-grow"></div>
                 <h3 class="text-sm font-bold text-stone-500 tracking-widest">受検後のサポート</h3>
@@ -553,6 +553,20 @@
                 // URLから目印を消して、元のきれいなURLに戻しておく
                 history.replaceState(null, '', window.location.pathname);
             }
+        });
+
+        // 画像などの読み込みでレイアウトが変わっても、セッション位置を正確に表示する
+        window.addEventListener('load', () => {
+            if (window.location.hash !== '#riesm-session') return;
+
+            const session = document.getElementById('riesm-session');
+            if (!session) return;
+
+            const alignSession = () => session.scrollIntoView({ block: 'start', behavior: 'auto' });
+            requestAnimationFrame(() => {
+                alignSession();
+                window.setTimeout(alignSession, 250);
+            });
         });
     </script>
 </body>
