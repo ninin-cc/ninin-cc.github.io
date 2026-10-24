@@ -449,6 +449,20 @@
             border-color: rgba(30, 58, 138, 0.12);
             box-shadow: inset 4px 0 0 rgba(244, 114, 182, 0.56);
         }
+        .riesm-intro-title {
+            font-size: clamp(1rem, calc((100vw - 4rem) / 13.4), 2.25rem);
+            line-height: 1.25;
+            letter-spacing: -0.05em;
+            white-space: nowrap;
+        }
+        @media (max-width: 639px) {
+            .riesm-ambassador-panel > img,
+            .riesm-ambassador-panel > div:first-child {
+                width: 4rem;
+                height: 4rem;
+                flex: 0 0 4rem;
+            }
+        }
         .riesm-flow-list {
             position: relative;
             display: grid;
@@ -512,6 +526,16 @@
             height: 2px;
             background: #78716c;
             transform: rotate(-7deg);
+        }
+        .riesm-price-grid {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            column-gap: 1rem;
+            row-gap: 1.25rem;
+            align-items: start;
+        }
+        .riesm-price-grid .riesm-price-note {
+            grid-column: 1 / -1;
         }
         .riesm-comment-scroll {
             max-height: calc(1.65em * 4);
@@ -1445,6 +1469,36 @@
                     '</footer>';
             }
 
+            function fitSingleLineText(element) {
+                if (!element) return;
+
+                const minSize = Number(element.dataset.minSize || 8);
+                const maxSize = Number(element.dataset.maxSize || 18);
+                let low = minSize;
+                let high = maxSize;
+
+                element.style.whiteSpace = 'nowrap';
+                element.style.fontSize = maxSize + 'px';
+
+                if (element.scrollWidth <= element.clientWidth) return;
+
+                while (high - low > 0.1) {
+                    const middle = (low + high) / 2;
+                    element.style.fontSize = middle + 'px';
+                    if (element.scrollWidth <= element.clientWidth) {
+                        low = middle;
+                    } else {
+                        high = middle;
+                    }
+                }
+
+                element.style.fontSize = low.toFixed(2) + 'px';
+            }
+
+            function fitRiesmAmbassadorText() {
+                document.querySelectorAll('[data-fit-single-line]').forEach(fitSingleLineText);
+            }
+
             function renderRiesmIntroductionPage(member) {
                 const ambassadorName = getAmbassadorDisplayName(member);
                 const cardHref = 'touroku.html?' + encodeURIComponent(getRegistrationAlias(member.registrationCode));
@@ -1464,26 +1518,26 @@
                                     '<img src="https://ninin-cc.github.io/img/riesm.png" alt="🌈RIESM™（リズム）" class="h-auto min-w-0 w-36 sm:w-48">' +
                                     '<span class="shrink-0 rounded-full bg-blue-950 px-2.5 py-1.5 text-[10px] font-black text-white shadow-sm sm:px-3 sm:text-xs">紹介者ページ</span>' +
                                 '</div>' +
-                                '<h1 class="mt-5 text-2xl font-black leading-[1.45] tracking-tight text-stone-900 sm:text-4xl sm:leading-tight">【自分を知り、相手を知る】</h1>' +
-                                '<p class="mt-3 max-w-2xl text-base font-black leading-[1.75] text-stone-800 sm:mt-4 sm:text-2xl sm:leading-relaxed">“興味の蛇口”と 使いやすい“モード”から見つめる</p>' +
-                                '<p class="mt-2 max-w-2xl text-xs font-bold leading-6 text-stone-500 sm:text-base sm:leading-7">よりよい関係性を築くためのアプローチ「🌈RIESM™（リズム）」</p>' +
-                                '<section class="riesm-ambassador-panel mt-6 flex items-center gap-3 rounded-2xl border p-3 sm:mt-10 sm:gap-4 sm:p-4">' +
+                                '<h1 class="riesm-intro-title mt-4 font-black text-stone-900 sm:mt-5">【自分を知り、相手を知る】</h1>' +
+                                '<p data-fit-single-line data-min-size="9" data-max-size="24" class="mt-3 max-w-2xl font-black leading-[1.65] tracking-[-0.025em] text-stone-800 sm:mt-4">“興味の蛇口”と 使いやすい“モード”から見つめる</p>' +
+                                '<p data-fit-single-line data-min-size="8" data-max-size="16" class="mt-2 max-w-2xl font-bold leading-7 tracking-[-0.02em] text-stone-500">よりよい関係性を築くためのアプローチ</p>' +
+                                '<section class="riesm-ambassador-panel mt-5 flex items-center gap-3 rounded-2xl border p-3 sm:mt-10 sm:gap-4 sm:p-4">' +
                                     renderLicenseAvatar(member) +
                                     '<div class="min-w-0">' +
-                                        '<p class="text-base font-black leading-snug text-stone-900 sm:text-lg">' + escapeHtml(ambassadorName) + 'さんからのご紹介</p>' +
-                                        '<p class="mt-1 break-words text-xs font-bold leading-5 text-stone-500 sm:text-sm">🌈RIESM™アンバサダー｜' + escapeHtml(member.registrationCode) + '</p>' +
+                                        '<p data-fit-single-line data-min-size="10" data-max-size="18" class="font-black leading-snug text-stone-900">' + escapeHtml(ambassadorName) + 'さんからのご紹介</p>' +
+                                        '<p data-fit-single-line data-min-size="8" data-max-size="14" class="mt-1 font-bold leading-5 tracking-[-0.02em] text-stone-500">🌈RIESM™アンバサダー｜' + escapeHtml(member.registrationCode) + '</p>' +
                                     '</div>' +
                                 '</section>' +
-                                '<section class="mt-8 grid gap-5 border-t border-stone-200 pt-8 sm:grid-cols-2 sm:gap-8">' +
+                                '<section class="riesm-price-grid mt-8 border-t border-stone-200 pt-8 sm:gap-8">' +
                                     '<div>' +
-                                        '<p class="text-sm font-bold text-orange-500">通常価格</p>' +
-                                        '<p class="riesm-intro-price-old mt-2 text-2xl font-black text-stone-900">¥5,000</p>' +
+                                        '<p class="text-xs font-bold text-orange-500 sm:text-sm">通常価格</p>' +
+                                        '<p class="riesm-intro-price-old mt-1 text-xl font-black text-stone-900 sm:mt-2 sm:text-2xl">¥5,000</p>' +
                                     '</div>' +
                                     '<div>' +
-                                        '<p class="text-sm font-bold text-pink-600">紹介価格</p>' +
-                                        '<p class="mt-2 text-2xl font-black text-stone-900">¥3,000</p>' +
+                                        '<p class="text-xs font-bold text-pink-600 sm:text-sm">紹介価格</p>' +
+                                        '<p class="mt-1 text-xl font-black text-stone-900 sm:mt-2 sm:text-2xl">¥3,000</p>' +
                                     '</div>' +
-                                    '<p class="sm:col-span-2 rounded-lg bg-orange-50/70 px-3 py-2 text-center text-[11px] font-bold text-orange-800">表示価格は、2027年3月31日までの導入支援価格です。</p>' +
+                                    '<p class="riesm-price-note rounded-lg bg-orange-50/70 px-3 py-2 text-center text-[11px] font-bold text-orange-800">表示価格は、2027年3月31日までの導入支援価格です。</p>' +
                                 '</section>' +
                                 '<section class="mt-9 border-t border-stone-200 pt-8" aria-labelledby="riesm-flow-title">' +
                                     '<p class="text-[9px] font-black uppercase tracking-[0.2em] text-blue-950/45">Payment → Assessment → Report</p>' +
@@ -1508,7 +1562,14 @@
                         '<p>合同会社ninin consulting ＆ counseling</p>' +
                         '<p>© 2025 ninin LLC. All Rights Reserved.</p>' +
                     '</footer>';
+
+                requestAnimationFrame(fitRiesmAmbassadorText);
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(fitRiesmAmbassadorText);
+                }
             }
+
+            window.addEventListener('resize', fitRiesmAmbassadorText);
 
             function updateFilterButtons() {
                 const requestedCode = getRequestRegistrationCode();
