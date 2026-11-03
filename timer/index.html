@@ -102,8 +102,8 @@
         <button id="btn-window-expand" type="button" aria-label="表示を拡大" title="表示を拡大" disabled>＋</button>
       </div>
       <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
-        <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
         <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
+        <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
         <button id="btn-stage-play" type="button" aria-label="タイマーを開始・停止" title="タイマーを開始・停止">▶</button>
         <button id="btn-stage-reset" type="button" aria-label="タイマーを開始時の時間に戻す" title="開始時の時間に戻す">R</button>
         <button id="btn-stage-clear" type="button" aria-label="タイマーを0にする" title="0にする">C</button>
@@ -203,6 +203,9 @@
               <label class="toggle-chip"><input id="chk-theme" type="checkbox"><span>ダーク</span></label>
               <label class="range-control compact-range">背景濃さ
                 <input id="slider-opacity" type="range" min="0" max="1" step="0.05" value="0.15" aria-label="背景時計の濃さ">
+              </label>
+              <label class="range-control compact-range">操作濃さ
+                <input id="slider-quick-opacity" type="range" min="0" max="100" step="5" value="20" aria-label="簡易操作パネルの濃さ">
               </label>
               <button id="btn-browser-fullscreen" class="button compact browser-only" type="button">全画面</button>
               <button id="btn-hide-controls" class="button compact electron-only" type="button">パネルを隠す</button>

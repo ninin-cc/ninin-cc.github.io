@@ -19,6 +19,7 @@
   const uiZoomOutButton = document.getElementById('btn-ui-zoom-out');
   const uiZoomInButton = document.getElementById('btn-ui-zoom-in');
   const uiScaleValue = document.getElementById('ui-scale-value');
+  const quickControlsOpacitySlider = document.getElementById('slider-quick-opacity');
   const compactWindowButton = document.getElementById('btn-compact-window');
   const digitalText = document.getElementById('digital-text');
   const timerStage = document.getElementById('timer-stage');
@@ -222,6 +223,7 @@
     timerPreAlert: 'workshopTimer.timerPreAlert',
     controlCollapseScope: 'workshopTimer.controlCollapseScope',
     uiScale: 'workshopTimer.uiScale',
+    quickControlsOpacity: 'workshopTimer.quickControlsOpacity',
     agendas: 'workshopTimer.agendas.v1'
   };
   const alarmSoundPatterns = Object.freeze({
@@ -368,8 +370,8 @@
     {
       title: '表示を見やすく整える',
       description: isElectron
-        ? '左時計、背景時計、文字盤、テーマ、背景濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
-        : '左時計、背景時計、文字盤、テーマ、背景濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
+        ? '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
+        : '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
       instruction: '設定を確認したら「次へ」を押します',
       selector: '.compact-utility-row'
     },
@@ -572,6 +574,16 @@
     });
   }
 
+  function applyQuickControlsOpacity(nextValue, persist = false) {
+    const numericValue = Number(nextValue);
+    const percentage = Number.isFinite(numericValue)
+      ? Math.min(100, Math.max(0, Math.round(numericValue)))
+      : 20;
+    quickControlsOpacitySlider.value = String(percentage);
+    root.style.setProperty('--quick-controls-opacity', String(percentage / 100));
+    if (persist) storeNumber(storageKeys.quickControlsOpacity, percentage);
+  }
+
   function resizeMainWindow(previousScale, nextScale) {
     if (!previousScale || previousScale === nextScale) return;
     const ratio = nextScale / previousScale;
@@ -763,6 +775,7 @@
   }
 
   applyUiScale(readStoredNumber(storageKeys.uiScale) ?? 1);
+  applyQuickControlsOpacity(readStoredNumber(storageKeys.quickControlsOpacity) ?? 20);
   alarmVolumeBeforeMute = readStoredNumber(storageKeys.alarmVolumeBeforeMute) ?? 100;
   applyAlarmVolume(readStoredNumber(storageKeys.alarmVolume) ?? 100);
   alarmSoundPreset = readStoredChoice(storageKeys.alarmSoundPreset, validAlarmSounds, 'gentle');
@@ -2996,6 +3009,10 @@
 
   document.getElementById('slider-opacity').addEventListener('input', (event) => {
     root.style.setProperty('--clock-opacity', event.target.value);
+  });
+
+  quickControlsOpacitySlider.addEventListener('input', (event) => {
+    applyQuickControlsOpacity(event.target.value, true);
   });
 
   document.getElementById('btn-browser-fullscreen').addEventListener('click', toggleFullscreen);

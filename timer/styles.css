@@ -14,6 +14,7 @@
   --orange: #fb923c;
   --red: #ef4444;
   --ui-scale: 1;
+  --quick-controls-opacity: 0.2;
 }
 
 * {
@@ -125,7 +126,7 @@ body.electron-mode {
   border-radius: 8px;
   background: rgba(248, 250, 252, 0.52);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  opacity: 0.4;
+  opacity: var(--quick-controls-opacity);
   backdrop-filter: blur(6px);
   transition: opacity 160ms ease, background-color 160ms ease;
 }
@@ -639,7 +640,7 @@ body[data-theme="dark"] .stage-collapse-controls button:active {
   border-radius: 9px;
   background: rgba(248, 250, 252, 0.54);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  opacity: 0.48;
+  opacity: var(--quick-controls-opacity);
   backdrop-filter: blur(6px);
   transition: opacity 160ms ease, background-color 160ms ease;
 }
