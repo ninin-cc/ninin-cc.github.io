@@ -1211,7 +1211,7 @@ body.digital-hidden .break-display {
 }
 
 .timer-stage.is-urgent #digital-text {
-  fill: var(--coral);
+  fill: var(--red);
 }
 
 @keyframes flash-red {

@@ -150,6 +150,7 @@
   let timerPreAlertMode = 'off';
   let alarmLoopTimer = null;
   let alarmAutoStopTimer = null;
+  let dismissibleAlarmActive = false;
   let repeatRestartTimer = null;
   let repeatStatusTicker = null;
   let repeatRestartAt = 0;
@@ -1905,7 +1906,7 @@
     body.classList.toggle('is-stopwatch-mode', !isCountdown);
     timerStage.classList.toggle('is-stopwatch', !isCountdown);
     timerStage.classList.toggle('is-stopwatch-hours', !isCountdown && stopwatchElapsedMs >= 3600000);
-    timerStage.classList.toggle('is-warning', isCountdown && seconds > 60 && seconds <= 120);
+    timerStage.classList.toggle('is-warning', isCountdown && seconds > 60 && seconds <= 180);
     timerStage.classList.toggle('is-urgent', isCountdown && seconds > 0 && seconds <= 60);
     timerStage.classList.toggle('is-ended', isCountdown && hasEnded);
     body.classList.toggle('timer-ended', isCountdown && hasEnded);
@@ -2091,7 +2092,7 @@
     if (Date.now() >= breakTarget.getTime()) {
       stopBreakTicker();
       stopBreakDisplay();
-      playAlarm();
+      playAlarm({ dismissOnClick: true });
     }
   }
 
@@ -2141,6 +2142,7 @@
   }
 
   function stopAlarm() {
+    dismissibleAlarmActive = false;
     if (alarmLoopTimer !== null) {
       window.clearTimeout(alarmLoopTimer);
       alarmLoopTimer = null;
@@ -2196,9 +2198,10 @@
     return duration;
   }
 
-  function playAlarm({ autoStopAfterMs = 0 } = {}) {
+  function playAlarm({ autoStopAfterMs = 0, dismissOnClick = false } = {}) {
     stopAlarm();
     if (suppressAlarm || alarmVolume <= 0) return;
+    dismissibleAlarmActive = Boolean(dismissOnClick);
 
     if (alarmSoundPreset === 'vibration') {
       const vibrationPattern = alarmPlayMode === 'once'
@@ -2354,7 +2357,10 @@
     isRunning = false;
     hasEnded = true;
     renderTimer();
-    playAlarm({ autoStopAfterMs: isPomodoroMode && alarmPlayMode === 'continuous' ? 6000 : 0 });
+    playAlarm({
+      autoStopAfterMs: isPomodoroMode && alarmPlayMode === 'continuous' ? 6000 : 0,
+      dismissOnClick: true
+    });
     if (isPomodoroMode) {
       completePomodoroPhase();
       return;
@@ -2805,6 +2811,9 @@
   });
   soundSettingsCloseButton.addEventListener('click', () => closeSoundSettings({ restoreFocus: true }));
   soundSettingsPopover.addEventListener('click', (event) => event.stopPropagation());
+  window.addEventListener('pointerdown', () => {
+    if (dismissibleAlarmActive) stopAlarm();
+  }, true);
   document.addEventListener('click', () => closeSoundSettings());
   window.addEventListener('resize', positionSoundSettingsPopover);
   alarmPreviewButton.addEventListener('click', previewAlarm);
