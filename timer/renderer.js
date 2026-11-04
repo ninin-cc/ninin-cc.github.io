@@ -20,6 +20,51 @@
   const uiZoomInButton = document.getElementById('btn-ui-zoom-in');
   const uiScaleValue = document.getElementById('ui-scale-value');
   const quickControlsOpacitySlider = document.getElementById('slider-quick-opacity');
+  const timerBackgroundImageButton = document.getElementById('btn-timer-background-image');
+  const timerBackgroundClearButton = document.getElementById('btn-timer-background-clear');
+  const timerBackgroundPlaceButton = document.getElementById('btn-background-place');
+  const timerBackgroundFileInput = document.getElementById('timer-background-file');
+  const timerBackgroundLayer = document.getElementById('timer-background-layer');
+  const backgroundPlacementLock = document.getElementById('background-placement-lock');
+  const backgroundPlacementToolbar = document.getElementById('background-placement-toolbar');
+  const backgroundPlacementZoom = document.getElementById('background-placement-zoom');
+  const backgroundPlacementOpacity = document.getElementById('background-placement-opacity');
+  const backgroundPlacementResetButton = document.getElementById('btn-background-placement-reset');
+  const backgroundPlacementCancelButton = document.getElementById('btn-background-placement-cancel');
+  const backgroundPlacementDoneButton = document.getElementById('btn-background-placement-done');
+  const timerLogoImageButton = document.getElementById('btn-timer-logo-image');
+  const timerLogoClearButton = document.getElementById('btn-timer-logo-clear');
+  const timerLogoPlaceButton = document.getElementById('btn-logo-place');
+  const timerLogoFileInput = document.getElementById('timer-logo-file');
+  const timerLocalLogoCard = document.getElementById('timer-local-logo-card');
+  const timerLocalLogo = document.getElementById('timer-local-logo');
+  const logoResizeHandle = document.getElementById('logo-resize-handle');
+  const logoNearSizeControls = document.getElementById('logo-near-size-controls');
+  const logoNearSmallerButton = document.getElementById('btn-logo-near-smaller');
+  const logoNearLargerButton = document.getElementById('btn-logo-near-larger');
+  const logoPlacementLock = document.getElementById('logo-placement-lock');
+  const logoPlacementToolbar = document.getElementById('logo-placement-toolbar');
+  const logoPlacementEditButton = document.getElementById('btn-logo-placement-edit');
+  const logoPlacementCancelButton = document.getElementById('btn-logo-placement-cancel');
+  const logoPlacementDoneButton = document.getElementById('btn-logo-placement-done');
+  const logoPlacementShape = document.getElementById('logo-placement-shape');
+  const logoPlacementSize = document.getElementById('logo-placement-size');
+  const logoPlacementZoom = document.getElementById('logo-placement-zoom');
+  const logoPlacementGuideText = document.getElementById('logo-placement-guide-text');
+  const backgroundImageOpacitySlider = document.getElementById('slider-background-image-opacity');
+  const logoEditorOverlay = document.getElementById('logo-editor-overlay');
+  const logoEditorCloseButton = document.getElementById('btn-logo-editor-close');
+  const logoEditorCancelButton = document.getElementById('btn-logo-editor-cancel');
+  const logoEditorApplyButton = document.getElementById('btn-logo-editor-apply');
+  const logoCropPreview = document.getElementById('logo-crop-preview');
+  const logoEditorImage = document.getElementById('logo-editor-image');
+  const logoShapeSelect = document.getElementById('logo-shape-select');
+  const logoSizeSlider = document.getElementById('logo-size-slider');
+  const logoSizeValue = document.getElementById('logo-size-value');
+  const logoZoomSlider = document.getElementById('logo-zoom-slider');
+  const logoZoomValue = document.getElementById('logo-zoom-value');
+  const logoPositionX = document.getElementById('logo-position-x');
+  const logoPositionY = document.getElementById('logo-position-y');
   const compactWindowButton = document.getElementById('btn-compact-window');
   const digitalText = document.getElementById('digital-text');
   const timerStage = document.getElementById('timer-stage');
@@ -198,6 +243,18 @@
   let agendaWindow = null;
   let pomodoroWindow = null;
   let compactWindowRef = null;
+  let timerBackgroundObjectUrl = '';
+  let backgroundDisplay = { zoom: 1, positionX: 50, positionY: 50 };
+  let backgroundPlacementSnapshot = null;
+  let backgroundPlacementDrag = null;
+  let timerLogoObjectUrl = '';
+  let logoDisplay = { shape: 'wide', size: 160, zoom: 1, cropX: 0, cropY: 0, x: 14, y: 12 };
+  let logoEditorDraft = null;
+  let logoCropDrag = null;
+  let logoDirectDrag = null;
+  let logoResizeDrag = null;
+  let logoPlacementSnapshot = null;
+  let logoPlacementCropMode = false;
   let agendaBackgroundUrl = '';
   let agendaBackgroundFileValue = null;
   const agendaBackgroundUrls = new Set();
@@ -225,8 +282,13 @@
     controlCollapseScope: 'workshopTimer.controlCollapseScope',
     uiScale: 'workshopTimer.uiScale',
     quickControlsOpacity: 'workshopTimer.quickControlsOpacity',
+    backgroundImageOpacity: 'workshopTimer.backgroundImageOpacity',
+    backgroundDisplay: 'workshopTimer.backgroundDisplay.v1',
+    logoDisplay: 'workshopTimer.logoDisplay.v1',
     agendas: 'workshopTimer.agendas.v1'
   };
+  const brandAssetDatabaseName = 'workshopTimer.brandAssets.v1';
+  const brandAssetStoreName = 'assets';
   const alarmSoundPatterns = Object.freeze({
     gentle: [
       { frequency: 659.25, at: 0, duration: 0.34, type: 'sine', gain: 0.78 },
@@ -371,8 +433,8 @@
     {
       title: '表示を見やすく整える',
       description: isElectron
-        ? '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
-        : '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。全画面ボタンで発表画面いっぱいに表示できます。',
+        ? '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。BRANDでは端末内の背景画像や会社ロゴを設定できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
+        : '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。BRANDでは端末内の背景画像や会社ロゴを設定できます。全画面ボタンで発表画面いっぱいに表示できます。',
       instruction: '設定を確認したら「次へ」を押します',
       selector: '.compact-utility-row'
     },
@@ -416,6 +478,89 @@
     } catch {
       // 設定は保存できなくても、現在の画面ではそのまま利用できる。
     }
+  }
+
+  function readStoredObject(key) {
+    try {
+      const value = JSON.parse(window.localStorage.getItem(key) || 'null');
+      return value && typeof value === 'object' ? value : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function storeObject(key, value) {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // 保存容量やブラウザ設定により保存できない場合も、現在の画面では利用を継続する。
+    }
+  }
+
+  function removeStoredValue(key) {
+    try { window.localStorage.removeItem(key); } catch {}
+  }
+
+  function openBrandAssetDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) {
+        reject(new Error('IndexedDB is unavailable'));
+        return;
+      }
+      const request = window.indexedDB.open(brandAssetDatabaseName, 1);
+      request.onupgradeneeded = () => {
+        const database = request.result;
+        if (!database.objectStoreNames.contains(brandAssetStoreName)) {
+          database.createObjectStore(brandAssetStoreName);
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('Unable to open IndexedDB'));
+    });
+  }
+
+  async function writeBrandAsset(key, value) {
+    try {
+      const database = await openBrandAssetDatabase();
+      await new Promise((resolve, reject) => {
+        const transaction = database.transaction(brandAssetStoreName, 'readwrite');
+        transaction.objectStore(brandAssetStoreName).put(value, key);
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+      database.close();
+    } catch {
+      // 画像保存に失敗しても現在のセッションでは表示を継続する。
+    }
+  }
+
+  async function readBrandAsset(key) {
+    try {
+      const database = await openBrandAssetDatabase();
+      const value = await new Promise((resolve, reject) => {
+        const transaction = database.transaction(brandAssetStoreName, 'readonly');
+        const request = transaction.objectStore(brandAssetStoreName).get(key);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+      database.close();
+      return value;
+    } catch {
+      return null;
+    }
+  }
+
+  async function deleteBrandAsset(key) {
+    try {
+      const database = await openBrandAssetDatabase();
+      await new Promise((resolve, reject) => {
+        const transaction = database.transaction(brandAssetStoreName, 'readwrite');
+        transaction.objectStore(brandAssetStoreName).delete(key);
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+      database.close();
+    } catch {}
   }
 
   function applyAlarmVolume(percent, persist = false) {
@@ -583,6 +728,325 @@
     quickControlsOpacitySlider.value = String(percentage);
     root.style.setProperty('--quick-controls-opacity', String(percentage / 100));
     if (persist) storeNumber(storageKeys.quickControlsOpacity, percentage);
+  }
+
+  function applyBackgroundImageOpacity(nextValue, persist = false) {
+    const numericValue = Number(nextValue);
+    const percentage = Number.isFinite(numericValue)
+      ? Math.min(100, Math.max(0, Math.round(numericValue)))
+      : 75;
+    backgroundImageOpacitySlider.value = String(percentage);
+    root.style.setProperty('--timer-background-opacity', String(percentage / 100));
+    if (persist) storeNumber(storageKeys.backgroundImageOpacity, percentage);
+  }
+
+  function clampLogoValue(value, minimum, maximum, fallback) {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return fallback;
+    return Math.min(maximum, Math.max(minimum, numericValue));
+  }
+
+  function positionLogoNearSizeControls() {
+    if (logoNearSizeControls.hidden || !isLogoPlacementActive()) return;
+    window.requestAnimationFrame(() => {
+      if (logoNearSizeControls.hidden || !isLogoPlacementActive()) return;
+      const paneRect = topPane.getBoundingClientRect();
+      const logoRect = timerLocalLogoCard.getBoundingClientRect();
+      const scaleX = topPane.clientWidth / Math.max(1, paneRect.width);
+      const scaleY = topPane.clientHeight / Math.max(1, paneRect.height);
+      const logoLeft = (logoRect.left - paneRect.left) * scaleX;
+      const logoRight = (logoRect.right - paneRect.left) * scaleX;
+      const logoCenterY = ((logoRect.top + logoRect.bottom) / 2 - paneRect.top) * scaleY;
+      const controlWidth = logoNearSizeControls.offsetWidth;
+      const controlHeight = logoNearSizeControls.offsetHeight;
+      let left = logoRight + 8;
+      if (left + controlWidth > topPane.clientWidth - 8) left = logoLeft - controlWidth - 8;
+      left = Math.max(8, Math.min(topPane.clientWidth - controlWidth - 8, left));
+      const top = Math.max(8, Math.min(topPane.clientHeight - controlHeight - 8, logoCenterY - controlHeight / 2));
+      logoNearSizeControls.style.left = `${left}px`;
+      logoNearSizeControls.style.top = `${top}px`;
+    });
+  }
+
+  function applyLogoDisplay(display = logoDisplay) {
+    const shape = ['wide', 'rectangle', 'square', 'circle'].includes(display.shape) ? display.shape : 'wide';
+    const aspect = shape === 'wide' ? '3 / 1' : shape === 'rectangle' ? '2 / 1' : '1 / 1';
+    timerLocalLogoCard.classList.remove('shape-wide', 'shape-rectangle', 'shape-square', 'shape-circle');
+    timerLocalLogoCard.classList.add(`shape-${shape}`);
+    timerLocalLogoCard.style.setProperty('--logo-aspect', aspect);
+    timerLocalLogoCard.style.setProperty('--logo-size', `${clampLogoValue(display.size, 70, 320, 160)}px`);
+    timerLocalLogoCard.style.setProperty('--logo-zoom', String(clampLogoValue(display.zoom, 1, 4, 1)));
+    timerLocalLogoCard.style.setProperty('--logo-crop-x', String(clampLogoValue(display.cropX, -50, 50, 0)));
+    timerLocalLogoCard.style.setProperty('--logo-crop-y', String(clampLogoValue(display.cropY, -50, 50, 0)));
+    timerLocalLogoCard.style.setProperty('--logo-x', String(clampLogoValue(display.x, 3, 97, 14)));
+    timerLocalLogoCard.style.setProperty('--logo-y', String(clampLogoValue(display.y, 3, 97, 12)));
+    positionLogoNearSizeControls();
+  }
+
+  function syncLogoEditorPreview() {
+    if (!logoEditorDraft) return;
+    const shape = ['wide', 'rectangle', 'square', 'circle'].includes(logoEditorDraft.shape)
+      ? logoEditorDraft.shape
+      : 'wide';
+    logoCropPreview.classList.remove('shape-wide', 'shape-rectangle', 'shape-square', 'shape-circle');
+    logoCropPreview.classList.add(`shape-${shape}`);
+    logoCropPreview.style.setProperty('--editor-logo-zoom', String(logoEditorDraft.zoom));
+    logoCropPreview.style.setProperty('--editor-crop-x', String(logoEditorDraft.cropX));
+    logoCropPreview.style.setProperty('--editor-crop-y', String(logoEditorDraft.cropY));
+    logoShapeSelect.value = shape;
+    logoSizeSlider.value = String(Math.round(logoEditorDraft.size));
+    logoSizeValue.value = `${Math.round(logoEditorDraft.size)}px`;
+    logoSizeValue.textContent = logoSizeValue.value;
+    logoZoomSlider.value = String(Math.round(logoEditorDraft.zoom * 100));
+    logoZoomValue.value = `${Math.round(logoEditorDraft.zoom * 100)}%`;
+    logoZoomValue.textContent = logoZoomValue.value;
+    logoPositionX.value = String(Math.round(logoEditorDraft.x));
+    logoPositionY.value = String(Math.round(logoEditorDraft.y));
+  }
+
+  function openLogoEditor() {
+    if (!timerLogoObjectUrl) return;
+    logoEditorDraft = { ...logoDisplay };
+    logoEditorImage.src = timerLogoObjectUrl;
+    syncLogoEditorPreview();
+    logoEditorOverlay.hidden = false;
+    window.requestAnimationFrame(() => logoCropPreview.focus());
+  }
+
+  function closeLogoEditor(shouldApply = false) {
+    if (shouldApply && logoEditorDraft) {
+      logoDisplay = { ...logoEditorDraft };
+      applyLogoDisplay();
+    }
+    logoEditorDraft = null;
+    logoCropDrag = null;
+    logoEditorOverlay.hidden = true;
+  }
+
+  function isLogoPlacementActive() {
+    return body.classList.contains('logo-placement-active');
+  }
+
+  function syncLogoPlacementControls() {
+    logoPlacementShape.value = logoDisplay.shape;
+    logoPlacementSize.value = String(Math.round(logoDisplay.size));
+    logoPlacementZoom.value = String(Math.round(logoDisplay.zoom * 100));
+    logoPlacementEditButton.setAttribute('aria-pressed', String(logoPlacementCropMode));
+    body.classList.toggle('logo-crop-position-mode', logoPlacementCropMode);
+    logoPlacementGuideText.textContent = tr(logoPlacementCropMode
+      ? 'ロゴ内の画像をドラッグしてトリミング位置を調整・ホイールで拡大縮小'
+      : 'ドラッグで移動・右下の丸でサイズ変更');
+  }
+
+  function startLogoPlacement() {
+    if (!timerLogoObjectUrl || isLogoPlacementActive() || isBackgroundPlacementActive()) return;
+    logoPlacementSnapshot = { ...logoDisplay };
+    body.classList.add('logo-placement-active');
+    logoPlacementLock.hidden = false;
+    logoPlacementToolbar.hidden = false;
+    logoResizeHandle.hidden = false;
+    logoNearSizeControls.hidden = false;
+    logoPlacementCropMode = false;
+    syncLogoPlacementControls();
+    positionLogoNearSizeControls();
+    timerLocalLogoCard.setAttribute('aria-label', tr('ロゴをドラッグして配置'));
+    window.requestAnimationFrame(() => logoPlacementDoneButton.focus());
+  }
+
+  function finishLogoPlacement(shouldKeep = true) {
+    if (!isLogoPlacementActive()) return;
+    if (!shouldKeep && logoPlacementSnapshot) {
+      logoDisplay = { ...logoPlacementSnapshot };
+      applyLogoDisplay();
+    }
+    body.classList.remove('logo-placement-active');
+    body.classList.remove('logo-crop-position-mode');
+    logoPlacementLock.hidden = true;
+    logoPlacementToolbar.hidden = true;
+    logoResizeHandle.hidden = true;
+    logoNearSizeControls.hidden = true;
+    logoDirectDrag = null;
+    logoResizeDrag = null;
+    logoPlacementSnapshot = null;
+    logoPlacementCropMode = false;
+    if (shouldKeep) storeObject(storageKeys.logoDisplay, logoDisplay);
+    timerLocalLogoCard.removeAttribute('aria-label');
+    timerLogoPlaceButton.focus();
+  }
+
+  function editLogoFromPlacement() {
+    logoPlacementCropMode = !logoPlacementCropMode;
+    syncLogoPlacementControls();
+  }
+
+  function logoShapeRatio(shape) {
+    if (shape === 'wide') return 3;
+    if (shape === 'rectangle') return 2;
+    return 1;
+  }
+
+  function isSupportedLocalImage(file) {
+    if (!file) return false;
+    return file.type.startsWith('image/') || /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(file.name);
+  }
+
+  function localImageCssUrl(url) {
+    return `url("${String(url).replace(/["\\]/g, '\\$&')}")`;
+  }
+
+  function applyBackgroundDisplay() {
+    timerBackgroundLayer.style.setProperty('--background-zoom', String(clampLogoValue(backgroundDisplay.zoom, 1, 3, 1)));
+    timerBackgroundLayer.style.setProperty('--background-position-x', `${clampLogoValue(backgroundDisplay.positionX, 0, 100, 50)}%`);
+    timerBackgroundLayer.style.setProperty('--background-position-y', `${clampLogoValue(backgroundDisplay.positionY, 0, 100, 50)}%`);
+  }
+
+  function isBackgroundPlacementActive() {
+    return body.classList.contains('background-placement-active');
+  }
+
+  function syncBackgroundPlacementControls() {
+    backgroundPlacementZoom.value = String(Math.round(backgroundDisplay.zoom * 100));
+    backgroundPlacementOpacity.value = backgroundImageOpacitySlider.value;
+  }
+
+  function startBackgroundPlacement() {
+    if (!timerBackgroundObjectUrl || isBackgroundPlacementActive() || isLogoPlacementActive()) return;
+    backgroundPlacementSnapshot = {
+      display: { ...backgroundDisplay },
+      opacity: Number(backgroundImageOpacitySlider.value)
+    };
+    body.classList.add('background-placement-active');
+    backgroundPlacementLock.hidden = false;
+    backgroundPlacementToolbar.hidden = false;
+    syncBackgroundPlacementControls();
+    window.requestAnimationFrame(() => backgroundPlacementDoneButton.focus());
+  }
+
+  function finishBackgroundPlacement(shouldKeep = true) {
+    if (!isBackgroundPlacementActive()) return;
+    if (!shouldKeep && backgroundPlacementSnapshot) {
+      backgroundDisplay = { ...backgroundPlacementSnapshot.display };
+      applyBackgroundDisplay();
+      applyBackgroundImageOpacity(backgroundPlacementSnapshot.opacity, true);
+    }
+    body.classList.remove('background-placement-active');
+    backgroundPlacementLock.hidden = true;
+    backgroundPlacementToolbar.hidden = true;
+    backgroundPlacementDrag = null;
+    backgroundPlacementSnapshot = null;
+    if (shouldKeep) storeObject(storageKeys.backgroundDisplay, backgroundDisplay);
+    timerBackgroundPlaceButton.focus();
+  }
+
+  function showInvalidLocalImageMessage() {
+    window.alert(tr('画像ファイルを選択してください。'));
+  }
+
+  function clearTimerBackgroundImage() {
+    if (isBackgroundPlacementActive()) finishBackgroundPlacement(false);
+    if (timerBackgroundObjectUrl) URL.revokeObjectURL(timerBackgroundObjectUrl);
+    timerBackgroundObjectUrl = '';
+    timerBackgroundLayer.removeAttribute('src');
+    timerBackgroundLayer.hidden = true;
+    topPane.classList.remove('has-local-background');
+    timerBackgroundImageButton.classList.remove('has-image');
+    timerBackgroundImageButton.textContent = tr('背景画像を選択');
+    timerBackgroundImageButton.title = tr('端末内の背景画像を選択。サーバーには保存されません');
+    timerBackgroundClearButton.disabled = true;
+    timerBackgroundPlaceButton.disabled = true;
+    timerBackgroundFileInput.value = '';
+    removeStoredValue(storageKeys.backgroundDisplay);
+    void deleteBrandAsset('background');
+  }
+
+  function setTimerBackgroundImage(file, options = {}) {
+    if (!isSupportedLocalImage(file)) {
+      showInvalidLocalImageMessage();
+      return;
+    }
+    const { persist = true, openPlacement = true, display = null } = options;
+    if (timerBackgroundObjectUrl) URL.revokeObjectURL(timerBackgroundObjectUrl);
+    timerBackgroundObjectUrl = URL.createObjectURL(file);
+    backgroundDisplay = { zoom: 1, positionX: 50, positionY: 50, ...(display || {}) };
+    timerBackgroundLayer.src = timerBackgroundObjectUrl;
+    timerBackgroundLayer.hidden = false;
+    applyBackgroundDisplay();
+    topPane.classList.add('has-local-background');
+    timerBackgroundImageButton.classList.add('has-image');
+    timerBackgroundImageButton.textContent = tr('背景画像を変更');
+    timerBackgroundImageButton.title = `${file.name || tr('保存済みの背景画像')}｜${tr('クリックして変更')}`;
+    timerBackgroundClearButton.disabled = false;
+    timerBackgroundPlaceButton.disabled = false;
+    if (persist) {
+      storeObject(storageKeys.backgroundDisplay, backgroundDisplay);
+      void writeBrandAsset('background', file);
+    }
+    if (openPlacement) startBackgroundPlacement();
+  }
+
+  function clearTimerLogoImage() {
+    if (isLogoPlacementActive()) finishLogoPlacement(false);
+    if (timerLogoObjectUrl) URL.revokeObjectURL(timerLogoObjectUrl);
+    timerLogoObjectUrl = '';
+    timerLocalLogo.removeAttribute('src');
+    logoEditorImage.removeAttribute('src');
+    closeLogoEditor(false);
+    timerLocalLogoCard.hidden = true;
+    timerLocalLogoCard.setAttribute('aria-hidden', 'true');
+    timerLogoImageButton.classList.remove('has-image');
+    timerLogoImageButton.textContent = tr('ロゴを選択');
+    timerLogoImageButton.title = tr('端末内のロゴ画像を選択。サーバーには保存されません');
+    timerLogoClearButton.disabled = true;
+    timerLogoPlaceButton.disabled = true;
+    timerLogoFileInput.value = '';
+    removeStoredValue(storageKeys.logoDisplay);
+    void deleteBrandAsset('logo');
+  }
+
+  function setTimerLogoImage(file, options = {}) {
+    if (!isSupportedLocalImage(file)) {
+      showInvalidLocalImageMessage();
+      return;
+    }
+    const { persist = true, openPlacement = true, display = null } = options;
+    if (timerLogoObjectUrl) URL.revokeObjectURL(timerLogoObjectUrl);
+    timerLogoObjectUrl = URL.createObjectURL(file);
+    timerLocalLogo.src = timerLogoObjectUrl;
+    logoDisplay = { shape: 'wide', size: 160, zoom: 1, cropX: 0, cropY: 0, x: 14, y: 12, ...(display || {}) };
+    applyLogoDisplay();
+    timerLocalLogoCard.hidden = false;
+    timerLocalLogoCard.setAttribute('aria-hidden', 'false');
+    timerLogoImageButton.classList.add('has-image');
+    timerLogoImageButton.textContent = tr('ロゴを変更');
+    timerLogoImageButton.title = `${file.name || tr('保存済みのロゴ画像')}｜${tr('クリックして変更')}`;
+    timerLogoClearButton.disabled = false;
+    timerLogoPlaceButton.disabled = false;
+    if (persist) {
+      storeObject(storageKeys.logoDisplay, logoDisplay);
+      void writeBrandAsset('logo', file);
+    }
+    if (openPlacement) startLogoPlacement();
+  }
+
+  async function restoreBrandAssets() {
+    const [storedBackground, storedLogo] = await Promise.all([
+      readBrandAsset('background'),
+      readBrandAsset('logo')
+    ]);
+    if (storedBackground instanceof Blob && isSupportedLocalImage(storedBackground)) {
+      setTimerBackgroundImage(storedBackground, {
+        persist: false,
+        openPlacement: false,
+        display: readStoredObject(storageKeys.backgroundDisplay)
+      });
+    }
+    if (storedLogo instanceof Blob && isSupportedLocalImage(storedLogo)) {
+      setTimerLogoImage(storedLogo, {
+        persist: false,
+        openPlacement: false,
+        display: readStoredObject(storageKeys.logoDisplay)
+      });
+    }
   }
 
   function resizeMainWindow(previousScale, nextScale) {
@@ -777,6 +1241,8 @@
 
   applyUiScale(readStoredNumber(storageKeys.uiScale) ?? 1);
   applyQuickControlsOpacity(readStoredNumber(storageKeys.quickControlsOpacity) ?? 20);
+  applyBackgroundImageOpacity(readStoredNumber(storageKeys.backgroundImageOpacity) ?? 75);
+  void restoreBrandAssets();
   alarmVolumeBeforeMute = readStoredNumber(storageKeys.alarmVolumeBeforeMute) ?? 100;
   applyAlarmVolume(readStoredNumber(storageKeys.alarmVolume) ?? 100);
   alarmSoundPreset = readStoredChoice(storageKeys.alarmSoundPreset, validAlarmSounds, 'gentle');
@@ -2769,6 +3235,7 @@
   }
 
   function runCommand(command) {
+    if (isLogoPlacementActive() || isBackgroundPlacementActive()) return;
     switch (command) {
       case 'toggle-timer': toggleTimer(); break;
       case 'reset': resetTimer(); break;
@@ -2933,6 +3400,21 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    if (!logoEditorOverlay.hidden) {
+      event.preventDefault();
+      closeLogoEditor(false);
+      return;
+    }
+    if (isLogoPlacementActive()) {
+      event.preventDefault();
+      finishLogoPlacement(false);
+      return;
+    }
+    if (isBackgroundPlacementActive()) {
+      event.preventDefault();
+      finishBackgroundPlacement(false);
+      return;
+    }
     if (!soundSettingsPopover.hidden) {
       event.preventDefault();
       closeSoundSettings({ restoreFocus: true });
@@ -3024,6 +3506,248 @@
     applyQuickControlsOpacity(event.target.value, true);
   });
 
+  backgroundImageOpacitySlider.addEventListener('input', (event) => {
+    applyBackgroundImageOpacity(event.target.value, true);
+    if (isBackgroundPlacementActive()) syncBackgroundPlacementControls();
+  });
+
+  timerBackgroundImageButton.addEventListener('click', () => timerBackgroundFileInput.click());
+  timerBackgroundPlaceButton.addEventListener('click', startBackgroundPlacement);
+  timerBackgroundClearButton.addEventListener('click', clearTimerBackgroundImage);
+  timerBackgroundFileInput.addEventListener('change', () => {
+    const [file] = timerBackgroundFileInput.files || [];
+    if (file) setTimerBackgroundImage(file);
+    timerBackgroundFileInput.value = '';
+  });
+  backgroundPlacementZoom.addEventListener('input', (event) => {
+    if (!isBackgroundPlacementActive()) return;
+    backgroundDisplay.zoom = clampLogoValue(Number(event.target.value) / 100, 1, 3, 1);
+    applyBackgroundDisplay();
+  });
+  backgroundPlacementOpacity.addEventListener('input', (event) => {
+    if (!isBackgroundPlacementActive()) return;
+    applyBackgroundImageOpacity(event.target.value, true);
+  });
+  backgroundPlacementResetButton.addEventListener('click', () => {
+    if (!isBackgroundPlacementActive()) return;
+    backgroundDisplay = { zoom: 1, positionX: 50, positionY: 50 };
+    applyBackgroundDisplay();
+    syncBackgroundPlacementControls();
+  });
+  backgroundPlacementCancelButton.addEventListener('click', () => finishBackgroundPlacement(false));
+  backgroundPlacementDoneButton.addEventListener('click', () => finishBackgroundPlacement(true));
+  backgroundPlacementLock.addEventListener('pointerdown', (event) => {
+    if (!isBackgroundPlacementActive()) return;
+    backgroundPlacementDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      positionX: backgroundDisplay.positionX,
+      positionY: backgroundDisplay.positionY
+    };
+    backgroundPlacementLock.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+  backgroundPlacementLock.addEventListener('pointermove', (event) => {
+    if (!backgroundPlacementDrag || backgroundPlacementDrag.pointerId !== event.pointerId) return;
+    const rect = topPane.getBoundingClientRect();
+    backgroundDisplay.positionX = clampLogoValue(backgroundPlacementDrag.positionX - ((event.clientX - backgroundPlacementDrag.startX) / Math.max(1, rect.width)) * 100, 0, 100, 50);
+    backgroundDisplay.positionY = clampLogoValue(backgroundPlacementDrag.positionY - ((event.clientY - backgroundPlacementDrag.startY) / Math.max(1, rect.height)) * 100, 0, 100, 50);
+    applyBackgroundDisplay();
+  });
+  backgroundPlacementLock.addEventListener('pointerup', (event) => {
+    if (backgroundPlacementDrag?.pointerId === event.pointerId) backgroundPlacementDrag = null;
+  });
+  backgroundPlacementLock.addEventListener('pointercancel', () => { backgroundPlacementDrag = null; });
+  backgroundPlacementLock.addEventListener('wheel', (event) => {
+    if (!isBackgroundPlacementActive()) return;
+    event.preventDefault();
+    backgroundDisplay.zoom = clampLogoValue(backgroundDisplay.zoom + (event.deltaY < 0 ? 0.1 : -0.1), 1, 3, 1);
+    applyBackgroundDisplay();
+    syncBackgroundPlacementControls();
+  }, { passive: false });
+  timerLogoImageButton.addEventListener('click', () => timerLogoFileInput.click());
+  timerLogoPlaceButton.addEventListener('click', startLogoPlacement);
+  timerLogoClearButton.addEventListener('click', clearTimerLogoImage);
+  timerLogoFileInput.addEventListener('change', () => {
+    const [file] = timerLogoFileInput.files || [];
+    if (file) setTimerLogoImage(file);
+    timerLogoFileInput.value = '';
+  });
+
+  logoEditorCloseButton.addEventListener('click', () => closeLogoEditor(false));
+  logoEditorCancelButton.addEventListener('click', () => closeLogoEditor(false));
+  logoEditorApplyButton.addEventListener('click', () => {
+    closeLogoEditor(true);
+    startLogoPlacement();
+  });
+  logoPlacementEditButton.addEventListener('click', editLogoFromPlacement);
+  logoPlacementCancelButton.addEventListener('click', () => finishLogoPlacement(false));
+  logoPlacementDoneButton.addEventListener('click', () => finishLogoPlacement(true));
+  logoNearSmallerButton.addEventListener('click', () => {
+    if (!isLogoPlacementActive()) return;
+    logoDisplay.size = clampLogoValue(logoDisplay.size - 10, 70, 320, 160);
+    applyLogoDisplay();
+    syncLogoPlacementControls();
+  });
+  logoNearLargerButton.addEventListener('click', () => {
+    if (!isLogoPlacementActive()) return;
+    logoDisplay.size = clampLogoValue(logoDisplay.size + 10, 70, 320, 160);
+    applyLogoDisplay();
+    syncLogoPlacementControls();
+  });
+  logoPlacementShape.addEventListener('change', (event) => {
+    if (!isLogoPlacementActive()) return;
+    logoDisplay.shape = event.target.value;
+    applyLogoDisplay();
+    syncLogoPlacementControls();
+  });
+  logoPlacementSize.addEventListener('input', (event) => {
+    if (!isLogoPlacementActive()) return;
+    logoDisplay.size = clampLogoValue(event.target.value, 70, 320, 160);
+    applyLogoDisplay();
+  });
+  logoPlacementZoom.addEventListener('input', (event) => {
+    if (!isLogoPlacementActive()) return;
+    logoDisplay.zoom = clampLogoValue(Number(event.target.value) / 100, 1, 4, 1);
+    applyLogoDisplay();
+  });
+  logoEditorOverlay.addEventListener('pointerdown', (event) => {
+    if (event.target === logoEditorOverlay) closeLogoEditor(false);
+  });
+
+  logoShapeSelect.addEventListener('change', (event) => {
+    if (!logoEditorDraft) return;
+    logoEditorDraft.shape = event.target.value;
+    syncLogoEditorPreview();
+  });
+  logoSizeSlider.addEventListener('input', (event) => {
+    if (!logoEditorDraft) return;
+    logoEditorDraft.size = clampLogoValue(event.target.value, 70, 320, 160);
+    syncLogoEditorPreview();
+  });
+  logoZoomSlider.addEventListener('input', (event) => {
+    if (!logoEditorDraft) return;
+    logoEditorDraft.zoom = clampLogoValue(Number(event.target.value) / 100, 1, 4, 1);
+    syncLogoEditorPreview();
+  });
+  logoPositionX.addEventListener('input', (event) => {
+    if (!logoEditorDraft) return;
+    logoEditorDraft.x = clampLogoValue(event.target.value, 3, 97, 14);
+  });
+  logoPositionY.addEventListener('input', (event) => {
+    if (!logoEditorDraft) return;
+    logoEditorDraft.y = clampLogoValue(event.target.value, 3, 97, 12);
+  });
+
+  logoCropPreview.addEventListener('pointerdown', (event) => {
+    if (!logoEditorDraft) return;
+    logoCropDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      cropX: logoEditorDraft.cropX,
+      cropY: logoEditorDraft.cropY
+    };
+    logoCropPreview.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+  logoCropPreview.addEventListener('pointermove', (event) => {
+    if (!logoCropDrag || logoCropDrag.pointerId !== event.pointerId || !logoEditorDraft) return;
+    const rect = logoCropPreview.getBoundingClientRect();
+    logoEditorDraft.cropX = clampLogoValue(logoCropDrag.cropX + ((event.clientX - logoCropDrag.startX) / Math.max(1, rect.width)) * 100, -50, 50, 0);
+    logoEditorDraft.cropY = clampLogoValue(logoCropDrag.cropY + ((event.clientY - logoCropDrag.startY) / Math.max(1, rect.height)) * 100, -50, 50, 0);
+    syncLogoEditorPreview();
+  });
+  logoCropPreview.addEventListener('pointerup', (event) => {
+    if (logoCropDrag?.pointerId === event.pointerId) logoCropDrag = null;
+  });
+  logoCropPreview.addEventListener('pointercancel', () => { logoCropDrag = null; });
+  logoCropPreview.addEventListener('wheel', (event) => {
+    if (!logoEditorDraft) return;
+    event.preventDefault();
+    logoEditorDraft.zoom = clampLogoValue(logoEditorDraft.zoom + (event.deltaY < 0 ? 0.1 : -0.1), 1, 4, 1);
+    syncLogoEditorPreview();
+  }, { passive: false });
+
+  timerLocalLogoCard.addEventListener('pointerdown', (event) => {
+    if (!timerLogoObjectUrl || !isLogoPlacementActive() || event.target === logoResizeHandle) return;
+    logoDirectDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+      mode: logoPlacementCropMode ? 'crop' : 'place',
+      cropX: logoDisplay.cropX,
+      cropY: logoDisplay.cropY
+    };
+    timerLocalLogoCard.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+  timerLocalLogoCard.addEventListener('pointermove', (event) => {
+    if (!logoDirectDrag || logoDirectDrag.pointerId !== event.pointerId) return;
+    const rect = topPane.getBoundingClientRect();
+    if (Math.hypot(event.clientX - logoDirectDrag.startX, event.clientY - logoDirectDrag.startY) > 3) {
+      logoDirectDrag.moved = true;
+    }
+    if (!logoDirectDrag.moved) return;
+    if (logoDirectDrag.mode === 'crop') {
+      const logoRect = timerLocalLogoCard.getBoundingClientRect();
+      logoDisplay.cropX = clampLogoValue(logoDirectDrag.cropX + ((event.clientX - logoDirectDrag.startX) / Math.max(1, logoRect.width)) * 100, -50, 50, 0);
+      logoDisplay.cropY = clampLogoValue(logoDirectDrag.cropY + ((event.clientY - logoDirectDrag.startY) / Math.max(1, logoRect.height)) * 100, -50, 50, 0);
+      applyLogoDisplay();
+      return;
+    }
+    logoDisplay.x = clampLogoValue(((event.clientX - rect.left) / Math.max(1, rect.width)) * 100, 3, 97, 14);
+    logoDisplay.y = clampLogoValue(((event.clientY - rect.top) / Math.max(1, rect.height)) * 100, 3, 97, 12);
+    applyLogoDisplay();
+  });
+  timerLocalLogoCard.addEventListener('pointerup', (event) => {
+    if (!logoDirectDrag || logoDirectDrag.pointerId !== event.pointerId) return;
+    logoDirectDrag = null;
+  });
+  timerLocalLogoCard.addEventListener('pointercancel', () => { logoDirectDrag = null; });
+  timerLocalLogoCard.addEventListener('click', () => {
+    if (!isLogoPlacementActive()) startLogoPlacement();
+  });
+  timerLocalLogoCard.addEventListener('wheel', (event) => {
+    if (!isLogoPlacementActive() || !logoPlacementCropMode) return;
+    event.preventDefault();
+    logoDisplay.zoom = clampLogoValue(logoDisplay.zoom + (event.deltaY < 0 ? 0.1 : -0.1), 1, 4, 1);
+    applyLogoDisplay();
+    syncLogoPlacementControls();
+  }, { passive: false });
+
+  logoResizeHandle.addEventListener('pointerdown', (event) => {
+    if (!isLogoPlacementActive()) return;
+    event.stopPropagation();
+    event.preventDefault();
+    logoResizeDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      size: logoDisplay.size,
+      ratio: logoShapeRatio(logoDisplay.shape)
+    };
+    logoResizeHandle.setPointerCapture(event.pointerId);
+  });
+  logoResizeHandle.addEventListener('pointermove', (event) => {
+    if (!logoResizeDrag || logoResizeDrag.pointerId !== event.pointerId) return;
+    event.stopPropagation();
+    const horizontalChange = event.clientX - logoResizeDrag.startX;
+    const verticalChange = (event.clientY - logoResizeDrag.startY) * logoResizeDrag.ratio;
+    const combinedChange = (horizontalChange + verticalChange) / 2;
+    logoDisplay.size = clampLogoValue(logoResizeDrag.size + combinedChange * 2, 70, 320, 160);
+    applyLogoDisplay();
+    syncLogoPlacementControls();
+  });
+  logoResizeHandle.addEventListener('pointerup', (event) => {
+    if (logoResizeDrag?.pointerId === event.pointerId) logoResizeDrag = null;
+    event.stopPropagation();
+  });
+  logoResizeHandle.addEventListener('pointercancel', () => { logoResizeDrag = null; });
+  window.addEventListener('resize', positionLogoNearSizeControls);
+
   document.getElementById('btn-browser-fullscreen').addEventListener('click', toggleFullscreen);
 
   resizer.addEventListener('pointerdown', (event) => {
@@ -3073,6 +3797,11 @@
       }
     });
   }
+
+  window.addEventListener('pagehide', () => {
+    if (timerBackgroundObjectUrl) URL.revokeObjectURL(timerBackgroundObjectUrl);
+    if (timerLogoObjectUrl) URL.revokeObjectURL(timerLogoObjectUrl);
+  });
 
   clockResizer.addEventListener('pointerdown', (event) => {
     isClockResizing = true;

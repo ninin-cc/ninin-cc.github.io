@@ -25,12 +25,6 @@
   <script src="analytics.js"></script>
 </head>
 <body data-theme="light">
-  <div class="ui-scale-controls no-drag" role="group" aria-label="全体表示の拡大・縮小">
-    <button id="btn-ui-zoom-out" type="button" aria-label="全体を縮小" title="全体を縮小">−</button>
-    <button id="btn-ui-zoom-in" type="button" aria-label="全体を拡大" title="全体を拡大">＋</button>
-    <button id="btn-compact-window" class="browser-only compact-window-button" type="button" aria-label="コンパクト別窓で開く" title="コンパクト別窓で開く">↗</button>
-    <output id="ui-scale-value" class="ui-scale-value" aria-live="polite">100%</output>
-  </div>
   <div id="app" class="app-shell">
     <header id="titlebar" class="titlebar electron-only" aria-label="ウインドウ操作">
       <div class="drag-region">
@@ -47,6 +41,61 @@
     </header>
 
     <main id="top-pane" class="top-pane">
+      <img id="timer-background-layer" class="timer-background-layer" alt="" hidden>
+      <div class="corner-display-controls no-drag">
+        <div class="ui-scale-controls" role="group" aria-label="全体表示の拡大・縮小">
+          <button id="btn-ui-zoom-out" type="button" aria-label="全体を縮小" title="全体を縮小">−</button>
+          <button id="btn-ui-zoom-in" type="button" aria-label="全体を拡大" title="全体を拡大">＋</button>
+          <button id="btn-compact-window" class="browser-only compact-window-button" type="button" aria-label="コンパクト別窓で開く" title="コンパクト別窓で開く">↗</button>
+          <output id="ui-scale-value" class="ui-scale-value" aria-live="polite">100%</output>
+        </div>
+        <div class="stage-collapse-controls" role="group" aria-label="設定パネルの拡大・縮小">
+          <button id="btn-window-shrink" type="button" aria-label="表示を縮小" title="表示を縮小">−</button>
+          <button id="btn-window-expand" type="button" aria-label="表示を拡大" title="表示を拡大" disabled>＋</button>
+        </div>
+      </div>
+      <div id="timer-local-logo-card" class="timer-local-logo-card" hidden aria-hidden="true">
+        <img id="timer-local-logo" class="timer-local-logo" alt="">
+        <button id="logo-resize-handle" class="logo-resize-handle" type="button" aria-label="ロゴのサイズを変更" title="ドラッグしてサイズ変更" hidden></button>
+      </div>
+      <div id="logo-near-size-controls" class="logo-near-size-controls" role="group" aria-label="ロゴの拡大・縮小" hidden>
+        <button id="btn-logo-near-smaller" type="button" aria-label="ロゴを縮小" title="ロゴを縮小">−</button>
+        <button id="btn-logo-near-larger" type="button" aria-label="ロゴを拡大" title="ロゴを拡大">＋</button>
+      </div>
+      <div id="logo-placement-lock" class="logo-placement-lock" hidden aria-hidden="true"></div>
+      <div id="logo-placement-toolbar" class="logo-placement-toolbar" hidden role="toolbar" aria-label="ロゴ配置モード">
+        <span class="logo-placement-guide"><strong>ロゴ配置モード</strong><small id="logo-placement-guide-text">ドラッグで移動・右下の丸でサイズ変更</small></span>
+        <label class="logo-placement-control">形
+          <select id="logo-placement-shape" aria-label="ロゴの形">
+            <option value="wide">3:1</option>
+            <option value="rectangle">2:1</option>
+            <option value="square">1:1</option>
+            <option value="circle">○</option>
+          </select>
+        </label>
+        <label class="logo-placement-control logo-placement-slider">大きさ
+          <input id="logo-placement-size" type="range" min="70" max="320" step="5" value="160" aria-label="ロゴの大きさ">
+        </label>
+        <label class="logo-placement-control logo-placement-slider">画像拡大
+          <input id="logo-placement-zoom" type="range" min="100" max="400" step="5" value="100" aria-label="ロゴ画像の拡大率">
+        </label>
+        <button id="btn-logo-placement-edit" class="button compact" type="button" aria-pressed="false">画像位置</button>
+        <button id="btn-logo-placement-cancel" class="button compact" type="button">キャンセル</button>
+        <button id="btn-logo-placement-done" class="button compact primary" type="button">配置完了</button>
+      </div>
+      <div id="background-placement-lock" class="background-placement-lock" hidden aria-hidden="true"></div>
+      <div id="background-placement-toolbar" class="background-placement-toolbar" hidden role="toolbar" aria-label="背景画像調整モード">
+        <span class="background-placement-guide"><strong>背景画像調整</strong><small>画面をドラッグして表示位置を変更</small></span>
+        <label class="background-placement-control background-placement-slider">拡大
+          <input id="background-placement-zoom" type="range" min="100" max="300" step="5" value="100" aria-label="背景画像の拡大率">
+        </label>
+        <label class="background-placement-control background-placement-slider">濃さ
+          <input id="background-placement-opacity" type="range" min="0" max="100" step="5" value="75" aria-label="背景画像の濃さ">
+        </label>
+        <button id="btn-background-placement-reset" class="button compact" type="button">中央に戻す</button>
+        <button id="btn-background-placement-cancel" class="button compact" type="button">キャンセル</button>
+        <button id="btn-background-placement-done" class="button compact primary" type="button">調整完了</button>
+      </div>
       <aside id="left-clock-wrap" class="left-clock-wrap" aria-label="現在時刻">
         <svg class="clock-svg" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="47" class="clock-face"></circle>
@@ -97,10 +146,6 @@
           クリック透過中 — Ctrl + Shift + T で操作に戻る
         </div>
       </section>
-      <div class="stage-collapse-controls" role="group" aria-label="設定パネルの拡大・縮小">
-        <button id="btn-window-shrink" type="button" aria-label="表示を縮小" title="表示を縮小">−</button>
-        <button id="btn-window-expand" type="button" aria-label="表示を拡大" title="表示を拡大" disabled>＋</button>
-      </div>
       <div class="stage-quick-controls" role="group" aria-label="タイマーのクイック操作">
         <button id="btn-stage-minus" type="button" aria-label="タイマーを1分減らす" title="−1分">−</button>
         <button id="btn-stage-plus" type="button" aria-label="タイマーを1分追加" title="＋1分">＋</button>
@@ -211,6 +256,28 @@
               <button id="btn-hide-controls" class="button compact electron-only" type="button">パネルを隠す</button>
               <button id="btn-click-through" class="button compact accent electron-only" type="button">クリック透過</button>
               <button class="button compact language-toggle" type="button" data-i18n-ignore aria-label="Switch to English">EN</button>
+            </div>
+          </div>
+
+          <div class="compact-group brand-settings-row">
+            <span class="compact-label">BRAND</span>
+            <div class="group-controls brand-controls">
+              <div class="local-asset-actions">
+                <button id="btn-timer-background-image" class="button compact local-asset-pick" type="button" title="端末内の背景画像を選択。サーバーには保存されません">背景画像を選択</button>
+                <button id="btn-background-place" class="button compact local-asset-place" type="button" disabled>調整</button>
+                <button id="btn-timer-background-clear" class="button compact local-asset-clear" type="button" aria-label="背景画像を解除" title="背景画像を解除" disabled>×</button>
+              </div>
+              <div class="local-asset-actions">
+                <button id="btn-timer-logo-image" class="button compact local-asset-pick" type="button" title="端末内のロゴ画像を選択。サーバーには保存されません">ロゴを選択</button>
+                <button id="btn-logo-place" class="button compact local-asset-place" type="button" disabled>配置</button>
+                <button id="btn-timer-logo-clear" class="button compact local-asset-clear" type="button" aria-label="ロゴを解除" title="ロゴを解除" disabled>×</button>
+              </div>
+              <label class="range-control compact-range">画像濃さ
+                <input id="slider-background-image-opacity" type="range" min="0" max="100" step="5" value="75" aria-label="背景画像の濃さ">
+              </label>
+              <span class="local-only-note">端末内のみ・サーバー保存なし</span>
+              <input id="timer-background-file" type="file" accept="image/*" hidden>
+              <input id="timer-logo-file" type="file" accept="image/*" hidden>
             </div>
           </div>
 
@@ -469,6 +536,49 @@
       <div class="tutorial-actions">
         <button id="btn-tutorial-back" class="button tutorial-back" type="button">戻る</button>
         <button id="btn-tutorial-next" class="button tutorial-next" type="button">次へ</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="logo-editor-overlay" class="logo-editor-overlay" hidden>
+    <section class="logo-editor-panel" role="dialog" aria-modal="true" aria-labelledby="logo-editor-title">
+      <header class="logo-editor-heading">
+        <div>
+          <span class="logo-editor-kicker">BRAND</span>
+          <h2 id="logo-editor-title">ロゴの表示を調整</h2>
+        </div>
+        <button id="btn-logo-editor-close" class="logo-editor-close" type="button" aria-label="ロゴ編集を閉じる">×</button>
+      </header>
+      <p class="logo-editor-help">画像をドラッグしてトリミング位置を調整。マウスホイールでも拡大・縮小できます。</p>
+      <div id="logo-crop-preview" class="logo-crop-preview shape-wide" tabindex="0" aria-label="ロゴのトリミングプレビュー">
+        <img id="logo-editor-image" alt="">
+      </div>
+      <div class="logo-editor-settings">
+        <label>フォルム
+          <select id="logo-shape-select">
+            <option value="wide">横長 3:1</option>
+            <option value="rectangle">長方形 2:1</option>
+            <option value="square">正方形 1:1</option>
+            <option value="circle">円形</option>
+          </select>
+        </label>
+        <label>表示サイズ
+          <span class="logo-editor-range"><input id="logo-size-slider" type="range" min="70" max="320" step="5" value="160"><output id="logo-size-value" for="logo-size-slider">160px</output></span>
+        </label>
+        <label>画像の拡大率
+          <span class="logo-editor-range"><input id="logo-zoom-slider" type="range" min="100" max="400" step="5" value="100"><output id="logo-zoom-value" for="logo-zoom-slider">100%</output></span>
+        </label>
+        <label>左右位置
+          <input id="logo-position-x" type="range" min="3" max="97" step="1" value="14">
+        </label>
+        <label>上下位置
+          <input id="logo-position-y" type="range" min="3" max="97" step="1" value="12">
+        </label>
+      </div>
+      <p class="logo-editor-note">表示後のロゴは、時計上で直接ドラッグして移動できます。クリックすると再編集できます。</p>
+      <div class="logo-editor-actions">
+        <button id="btn-logo-editor-cancel" class="button" type="button">キャンセル</button>
+        <button id="btn-logo-editor-apply" class="button primary" type="button">適用</button>
       </div>
     </section>
   </div>
