@@ -927,7 +927,7 @@ body[data-theme="light"] .break-clock-badge text {
   border-radius: 8px;
   background: rgba(248, 250, 252, 0.54);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  opacity: 0.42;
+  opacity: var(--quick-controls-opacity);
   backdrop-filter: blur(6px);
   transition: opacity 160ms ease, background-color 160ms ease;
 }
@@ -1085,7 +1085,7 @@ body[data-theme="dark"] .stage-quick-controls button.is-active {
   color: #334155;
   background: rgba(248, 250, 252, 0.54);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  opacity: 0.48;
+  opacity: var(--quick-controls-opacity);
   backdrop-filter: blur(6px);
   transition: opacity 160ms ease, background-color 160ms ease;
 }
@@ -1659,6 +1659,37 @@ body.timer-ended .left-clock-wrap .clock-numbers {
   background: var(--muted);
 }
 
+.row-expand-handle {
+  width: 48px;
+  height: 24px;
+  min-height: 24px;
+  flex: 0 0 24px;
+  align-self: flex-start;
+  margin: 2px 0 2px clamp(12px, 4vw, 46px);
+  padding: 0;
+  border: 1px solid rgba(100, 116, 139, 0.26);
+  border-radius: 0 0 9px 9px;
+  color: var(--muted);
+  background: var(--glass);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  font: 800 12px/1 system-ui, sans-serif;
+  opacity: 0.72;
+  transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.row-expand-handle[hidden] {
+  display: none;
+}
+
+.row-expand-handle:hover,
+.row-expand-handle:focus-visible {
+  color: #2563eb;
+  background: var(--button-hover);
+  opacity: 1;
+  outline: none;
+}
+
 .controls {
   min-height: 0;
   flex: 1 1 auto;
@@ -1675,6 +1706,13 @@ body.timer-ended .left-clock-wrap .clock-numbers {
   border-top: 1px solid var(--line);
 }
 
+body.collapse-from-settings .quick-settings-row,
+body.collapse-from-settings .time-settings-row,
+body.collapse-from-settings .compact-utility-row,
+body.collapse-from-settings .brand-settings-row,
+body.collapse-from-settings .shortcut-help,
+body.collapse-from-settings .copyright,
+body.collapse-from-settings .bottom-actions,
 body.collapse-from-timer .time-settings-row,
 body.collapse-from-timer .compact-utility-row,
 body.collapse-from-timer .brand-settings-row,
@@ -1685,7 +1723,11 @@ body.collapse-from-view .compact-utility-row,
 body.collapse-from-view .brand-settings-row,
 body.collapse-from-view .shortcut-help,
 body.collapse-from-view .copyright,
-body.collapse-from-view .bottom-actions {
+body.collapse-from-view .bottom-actions,
+body.collapse-from-brand .brand-settings-row,
+body.collapse-from-brand .shortcut-help,
+body.collapse-from-brand .copyright,
+body.collapse-from-brand .bottom-actions {
   display: none !important;
 }
 
@@ -1720,6 +1762,50 @@ body.control-sections-collapsed .app-shell.is-compact-scale .top-pane {
   letter-spacing: 0.16em;
   text-align: right;
 }
+
+.section-toggle {
+  appearance: none;
+  min-height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.15;
+}
+
+.row-label.section-toggle {
+  justify-content: flex-end;
+}
+
+.compact-label.section-toggle {
+  justify-content: flex-start;
+}
+
+.section-toggle-arrow {
+  display: inline-block;
+  color: #64748b;
+  font-size: 8px;
+  letter-spacing: 0;
+  transition: transform 150ms ease, color 150ms ease;
+}
+
+.section-toggle:hover .section-toggle-arrow,
+.section-toggle:focus-visible .section-toggle-arrow {
+  color: #2563eb;
+}
+
+.section-toggle:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid rgba(37, 99, 235, 0.3);
+  outline-offset: 2px;
+}
+
 
 .button-grid {
   flex: 1;
@@ -2561,6 +2647,7 @@ body[data-theme="light"] .toggle-chip:has(input:checked) {
 body.controls-hidden .titlebar,
 body.controls-hidden .controls,
 body.controls-hidden .resizer,
+body.controls-hidden .row-expand-handle,
 body.controls-hidden .stage-collapse-controls,
 body.controls-hidden .icon-maker-launch,
 body.controls-hidden .agenda-launch,

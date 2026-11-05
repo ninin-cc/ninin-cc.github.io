@@ -176,10 +176,12 @@
       <span></span><span></span><span></span>
     </div>
 
+    <button id="btn-row-expand-handle" class="row-expand-handle" type="button" aria-label="次の行を開く" title="次の行を開く" hidden>▼</button>
+
     <section id="controls" class="controls" aria-label="タイマー操作">
       <div class="control-row main-controls">
-        <span class="row-label">MAIN</span>
-        <div class="button-grid four">
+        <button class="row-label section-toggle" type="button" data-collapse-scope="clock" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span>MAIN</span></button>
+        <div id="main-action-controls" class="button-grid four">
           <button id="btn-toggle-play" class="button primary" type="button">▶ タイマー開始</button>
           <button id="btn-reset" class="button warning" type="button" aria-label="タイマーを開始時の時間に戻す" title="開始時の時間に戻す">リセット</button>
           <button id="btn-clear" class="button danger" type="button" aria-label="タイマーを0にする" title="0にする">クリア</button>
@@ -191,7 +193,7 @@
       <div class="settings-content">
           <div class="compact-row quick-settings-row">
             <div class="compact-group add-group">
-              <span id="adjustment-label" class="compact-label">設定</span>
+              <button class="compact-label section-toggle" type="button" data-collapse-scope="settings" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span id="adjustment-label">設定</span></button>
               <div id="adjustment-controls" class="segmented-control" aria-label="タイマー時間の設定">
                 <button id="btn-subtract-minute" class="button segment subtract" type="button" title="表示時間を1分減らす" aria-label="表示時間を1分減らす">−1</button>
                 <button id="btn-undo-add" class="button segment undo" type="button" title="直前の時間調整を戻す" aria-label="直前の時間調整を戻す" disabled>↶</button>
@@ -206,8 +208,8 @@
 
           <div class="compact-row time-settings-row">
             <div class="compact-group duration-group">
-              <span class="compact-label">TIMER</span>
-              <div class="group-controls duration-controls">
+              <button class="compact-label section-toggle" type="button" data-collapse-scope="timer" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span>TIMER</span></button>
+              <div id="timer-duration-controls" class="group-controls duration-controls">
                 <div class="compact-time-input" aria-label="タイマー時間">
                   <label><select id="sel-hour" aria-label="時間"></select></label>
                   <span class="time-colon">:</span>
@@ -220,8 +222,8 @@
             </div>
 
             <div class="compact-group break-group">
-              <span class="compact-label">BREAK</span>
-              <div class="group-controls break-controls-compact">
+              <button class="compact-label section-toggle" type="button" data-collapse-scope="timer" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span>BREAK</span></button>
+              <div id="break-controls" class="group-controls break-controls-compact">
                 <div class="compact-time-input" aria-label="休憩終了時刻">
                   <label><select id="sel-break-hour" aria-label="再開する時"></select></label>
                   <span class="time-colon">:</span>
@@ -239,8 +241,8 @@
           </div>
 
           <div class="compact-group utility-row compact-utility-row">
-            <span class="compact-label">VIEW</span>
-            <div class="group-controls view-controls">
+            <button class="compact-label section-toggle" type="button" data-collapse-scope="view" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span>VIEW</span></button>
+            <div id="view-controls" class="group-controls view-controls">
               <label class="toggle-chip"><input id="chk-leftclock" type="checkbox" checked><span>左時計</span></label>
               <label class="toggle-chip"><input id="chk-rightclock" type="checkbox" checked><span>右時計</span></label>
               <label class="toggle-chip"><input id="chk-bgclock" type="checkbox" checked><span>背景時計</span></label>
@@ -260,8 +262,8 @@
           </div>
 
           <div class="compact-group brand-settings-row">
-            <span class="compact-label">BRAND</span>
-            <div class="group-controls brand-controls">
+            <button class="compact-label section-toggle" type="button" data-collapse-scope="brand" aria-label="この行から下を折り畳む" title="この行から下を折り畳む"><span class="section-toggle-arrow" aria-hidden="true">▲</span><span>BRAND</span></button>
+            <div id="brand-controls" class="group-controls brand-controls">
               <div class="local-asset-actions">
                 <button id="btn-timer-background-image" class="button compact local-asset-pick" type="button" title="端末内の背景画像を選択。サーバーには保存されません">背景画像を選択</button>
                 <button id="btn-background-place" class="button compact local-asset-place" type="button" disabled>調整</button>

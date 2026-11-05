@@ -20,6 +20,7 @@
   const uiZoomInButton = document.getElementById('btn-ui-zoom-in');
   const uiScaleValue = document.getElementById('ui-scale-value');
   const quickControlsOpacitySlider = document.getElementById('slider-quick-opacity');
+  const sectionToggleButtons = Array.from(document.querySelectorAll('.section-toggle[data-collapse-scope]'));
   const timerBackgroundImageButton = document.getElementById('btn-timer-background-image');
   const timerBackgroundClearButton = document.getElementById('btn-timer-background-clear');
   const timerBackgroundPlaceButton = document.getElementById('btn-background-place');
@@ -83,6 +84,11 @@
   const modeSwitchButton = document.getElementById('btn-mode-switch');
   const windowShrinkButton = document.getElementById('btn-window-shrink');
   const windowExpandButton = document.getElementById('btn-window-expand');
+  const rowExpandHandle = document.getElementById('btn-row-expand-handle');
+  const mainControlsRow = document.querySelector('.main-controls');
+  const quickSettingsRow = document.querySelector('.quick-settings-row');
+  const timeSettingsRow = document.querySelector('.time-settings-row');
+  const viewSettingsRow = document.querySelector('.compact-utility-row');
   const quickPomodoroStatus = document.getElementById('quick-pomodoro-status');
   const timerVolumeSlider = document.getElementById('timer-volume');
   const timerVolumeIcon = document.getElementById('timer-volume-icon');
@@ -347,7 +353,8 @@
   const validTimerRepeatCounts = new Set(['off', '2', '3', '5', 'infinite']);
   const validTimerIntervals = new Set(['0', '10', '30', '60', '180', '300', '600']);
   const validPreAlertModes = new Set(['off', '60', '10', 'both']);
-  const validControlCollapseScopes = new Set(['none', 'view', 'timer', 'clock']);
+  const controlCollapseOrder = ['none', 'brand', 'view', 'timer', 'settings', 'clock'];
+  const validControlCollapseScopes = new Set(controlCollapseOrder);
   const uiScaleMin = 0.5;
   const uiScaleMax = 1.3;
   const uiScaleStep = 0.1;
@@ -501,6 +508,7 @@
     try { window.localStorage.removeItem(key); } catch {}
   }
 
+
   function openBrandAssetDatabase() {
     return new Promise((resolve, reject) => {
       if (!window.indexedDB) {
@@ -631,15 +639,22 @@
       applyTopPaneHeight(displayedTopPaneHeight, false);
     }
     controlCollapseScope = nextScope;
+    const settingsCollapsed = controlCollapseScope === 'settings';
     const timerCollapsed = controlCollapseScope === 'timer';
     const viewCollapsed = controlCollapseScope === 'view';
+    const brandCollapsed = controlCollapseScope === 'brand';
     const clockOnly = controlCollapseScope === 'clock';
+    body.classList.toggle('collapse-from-settings', settingsCollapsed);
     body.classList.toggle('collapse-from-timer', timerCollapsed);
     body.classList.toggle('collapse-from-view', viewCollapsed);
+    body.classList.toggle('collapse-from-brand', brandCollapsed);
     body.classList.toggle('collapse-to-clock', clockOnly);
-    body.classList.toggle('control-sections-collapsed', timerCollapsed || viewCollapsed || clockOnly);
+    body.classList.toggle('control-sections-collapsed', controlCollapseScope !== 'none');
     windowShrinkButton.disabled = clockOnly;
     windowExpandButton.disabled = controlCollapseScope === 'none';
+    positionRowExpandHandle(controlCollapseScope);
+    rowExpandHandle.setAttribute('aria-label', tr('次の行を開く'));
+    rowExpandHandle.title = tr('次の行を開く');
     windowShrinkButton.setAttribute('aria-label', tr('表示を縮小'));
     windowShrinkButton.title = tr('表示を縮小');
     windowExpandButton.setAttribute('aria-label', tr('表示を拡大'));
@@ -666,16 +681,34 @@
     });
   }
 
+  function positionRowExpandHandle(scope) {
+    if (scope === 'none') {
+      rowExpandHandle.hidden = true;
+      return;
+    }
+    const anchor = scope === 'brand'
+      ? viewSettingsRow
+      : scope === 'view'
+        ? timeSettingsRow
+        : scope === 'timer'
+          ? quickSettingsRow
+          : scope === 'settings'
+            ? mainControlsRow
+            : resizer;
+    anchor?.insertAdjacentElement('afterend', rowExpandHandle);
+    rowExpandHandle.hidden = false;
+  }
+
   function shrinkControlSections() {
-    if (controlCollapseScope === 'none') applyControlCollapseScope('view', true);
-    else if (controlCollapseScope === 'view') applyControlCollapseScope('timer', true);
-    else if (controlCollapseScope === 'timer') applyControlCollapseScope('clock', true);
+    const currentIndex = controlCollapseOrder.indexOf(controlCollapseScope);
+    const nextScope = controlCollapseOrder[Math.min(controlCollapseOrder.length - 1, currentIndex + 1)];
+    applyControlCollapseScope(nextScope, true);
   }
 
   function expandControlSections() {
-    if (controlCollapseScope === 'clock') applyControlCollapseScope('timer', true);
-    else if (controlCollapseScope === 'timer') applyControlCollapseScope('view', true);
-    else if (controlCollapseScope === 'view') applyControlCollapseScope('none', true);
+    const currentIndex = controlCollapseOrder.indexOf(controlCollapseScope);
+    const nextScope = controlCollapseOrder[Math.max(0, currentIndex - 1)];
+    applyControlCollapseScope(nextScope, true);
   }
 
   function measureCollapsedWindowHeight() {
@@ -683,8 +716,12 @@
     const titlebarHeight = document.getElementById('titlebar')?.getBoundingClientRect().height || 0;
     const topPaneHeight = topPane.getBoundingClientRect().height;
     const dividerHeight = resizer.getBoundingClientRect().height;
-    const controlsHeight = document.getElementById('controls').getBoundingClientRect().height;
-    return Math.ceil(browserChromeHeight + titlebarHeight + topPaneHeight + dividerHeight + controlsHeight + 2);
+    const controlsElement = document.getElementById('controls');
+    const expandHandleHeight = rowExpandHandle.hidden || controlsElement.contains(rowExpandHandle)
+      ? 0
+      : rowExpandHandle.getBoundingClientRect().height + 4;
+    const controlsHeight = controlsElement.getBoundingClientRect().height;
+    return Math.ceil(browserChromeHeight + titlebarHeight + topPaneHeight + dividerHeight + expandHandleHeight + controlsHeight + 2);
   }
 
   function resizeWindowToHeight(targetHeight) {
@@ -3261,6 +3298,12 @@
   stageStopwatchButton.addEventListener('click', toggleStopwatch);
   windowShrinkButton.addEventListener('click', shrinkControlSections);
   windowExpandButton.addEventListener('click', expandControlSections);
+  rowExpandHandle.addEventListener('click', expandControlSections);
+  sectionToggleButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      applyControlCollapseScope(button.dataset.collapseScope || 'none', true);
+    });
+  });
   modeSwitchButton.addEventListener('click', startQuickPomodoroMode);
   timerVolumeSlider.addEventListener('input', (event) => applyAlarmVolume(event.target.value, true));
   timerVolumeIcon.addEventListener('click', () => {
