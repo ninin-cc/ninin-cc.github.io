@@ -3639,7 +3639,27 @@ body.standalone-pomodoro .pomodoro-card {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(2, 6, 23, 0.58);
+  pointer-events: none;
+  background: rgba(2, 6, 23, 0.34);
+}
+
+.tutorial-overlay.has-target {
+  background: transparent;
+}
+
+.tutorial-overlay.has-target::before {
+  content: "";
+  position: fixed;
+  left: var(--tutorial-target-left);
+  top: var(--tutorial-target-top);
+  width: var(--tutorial-target-width);
+  height: var(--tutorial-target-height);
+  border: 3px solid #60a5fa;
+  border-radius: 13px;
+  box-shadow:
+    0 0 0 9999px rgba(2, 6, 23, 0.58),
+    0 0 28px 8px rgba(96, 165, 250, 0.72);
+  pointer-events: none;
 }
 
 .tutorial-card {
@@ -3654,14 +3674,17 @@ body.standalone-pomodoro .pomodoro-card {
   color: #ffffff;
   background: #0f172a;
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.62);
+  pointer-events: auto;
 }
 
 .tutorial-overlay.card-top .tutorial-card {
   top: max(16px, env(safe-area-inset-top));
+  max-height: min(48vh, 430px);
 }
 
 .tutorial-overlay.card-bottom .tutorial-card {
   bottom: max(16px, env(safe-area-inset-bottom));
+  max-height: min(48vh, 430px);
 }
 
 .tutorial-overlay.is-centered .tutorial-card {
@@ -3776,9 +3799,16 @@ body.standalone-pomodoro .pomodoro-card {
 
 .tutorial-target {
   position: relative !important;
-  z-index: 210 !important;
   border-radius: 10px;
-  box-shadow: 0 0 0 4px #60a5fa, 0 0 28px 8px rgba(96, 165, 250, 0.75) !important;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.9) !important;
+}
+
+body.tutorial-action-step #app {
+  pointer-events: none;
+}
+
+body.tutorial-action-step #app .tutorial-target {
+  pointer-events: auto;
 }
 
 body.tutorial-active .tutorial-launch {

@@ -366,12 +366,18 @@
   const tutorialSteps = [
     {
       title: 'まず、画面の役割を知る',
-      description: '左は現在時刻、右はタイマー表示、下は操作エリアです。実際にボタンを押しながら、基本操作を順番に練習します。',
+      description: '左は現在時刻、右はタイマー表示、下は詳細な操作エリアです。時計の間の縦バーと、その下の横バーはドラッグして表示割合を調整できます。',
       instruction: '練習中の内容は、終了すると元の状態へ戻ります。'
     },
     {
-      title: 'ADDで1分を設定する',
-      description: 'ADDは表示中の時間へ加算します。まずは空の状態から「＋1」を押して、1分を設定してみましょう。',
+      title: '時計の上だけでも操作できる',
+      description: '右上の簡易操作は、−1分、＋1分、開始／停止、リセット、クリア、ストップウォッチです。🍅は25分集中と5分休憩の自動サイクルをすぐ開始します。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '.stage-quick-controls'
+    },
+    {
+      title: '「設定」で1分を入れる',
+      description: '「設定」の＋ボタンは表示中の時間へ加算します。まずは空の状態から「＋1」を押して、1分を設定してみましょう。',
       instruction: '「＋1」を押してください',
       selector: '.add-group',
       action: 'add-initial',
@@ -401,8 +407,8 @@
       setup: 'running-countdown'
     },
     {
-      title: '停止中のADDを試す',
-      description: '停止中のADDは、表示中の時間へそのまま加算します。＋5で増やしたあと、↶で元に戻してみましょう。',
+      title: '停止中の時間調整を試す',
+      description: '停止中の＋ボタンは、表示中の時間へそのまま加算します。＋5で増やしたあと、↶で元に戻してみましょう。',
       instruction: 'まず「＋5」を押してください',
       selector: '.add-group',
       action: 'add-stopped',
@@ -410,8 +416,8 @@
       phase: 'add'
     },
     {
-      title: '実行中のADDで延長する',
-      description: '実行中にADDを押すと確認画面が開きます。開始、＋2、YESの順に操作して、残り時間と終了位置が延びる様子を見てみましょう。',
+      title: '実行中のタイマーを延長する',
+      description: '実行中に＋ボタンを押すと延長確認が開きます。開始、＋2、YESの順に操作して、残り時間と終了位置が延びる様子を見てみましょう。',
       instruction: 'まず「タイマー開始」を押してください',
       selector: '#btn-toggle-play',
       action: 'add-running',
@@ -438,18 +444,48 @@
       selector: '#btn-stopwatch'
     },
     {
-      title: '表示を見やすく整える',
+      title: '通知音を使いやすく整える',
+      description: '時計右下で音量を調整できます。スピーカーを押すとミュート／元の音量を切り替え、⚙では終了音、鳴らし方、繰り返し回数、再開間隔、予告音を設定できます。終了音は画面のどこかを押すと止まります。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '.stage-volume-control'
+    },
+    {
+      title: 'VIEWで表示を見やすく整える',
       description: isElectron
-        ? '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。BRANDでは端末内の背景画像や会社ロゴを設定できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。'
-        : '左時計、背景時計、文字盤、テーマ、背景濃さ、簡易操作の濃さを変更できます。BRANDでは端末内の背景画像や会社ロゴを設定できます。全画面ボタンで発表画面いっぱいに表示できます。',
+        ? '左時計・右時計・背景時計・文字盤・ダーク表示を切り替え、時計や簡易操作の濃さも調整できます。パネル非表示やクリック透過で、PowerPointの上へ自然に重ねられます。ENで英語表示へ切り替えられます。'
+        : '左時計・右時計・背景時計・文字盤・ダーク表示を切り替え、時計や簡易操作の濃さも調整できます。全画面表示と日本語／英語の切り替えにも対応しています。',
       instruction: '設定を確認したら「次へ」を押します',
       selector: '.compact-utility-row'
     },
     {
-      title: '表示サイズを調整して完了',
-      description: '横バーで表示部の高さ、時計の間にある縦バーでアナログ時計の幅を調整できます。「完了」で練習前の状態へ戻ります。',
-      instruction: 'これで基本操作は完了です',
+      title: '背景画像とロゴで画面を整える',
+      description: 'BRANDでは端末内の画像を背景や会社ロゴとして設定できます。背景の位置・拡大率・濃さ、ロゴの位置・形・大きさ・トリミングを画面上で調整できます。画像はサーバーへ送られず、このブラウザ内に保存されます。',
+      instruction: '設定を確認したら「次へ」を押します',
+      selector: '.brand-settings-row'
+    },
+    {
+      title: '時計の大きさと左右比率を調整する',
+      description: '横バーで時計表示部の高さ、時計の間にある縦バーで左右の幅を割合で変更できます。左右どちらかの時計だけを表示した場合も、簡易操作は時計上に残ります。',
+      instruction: 'バーの位置を確認したら「次へ」を押します',
       selector: '#resizer'
+    },
+    {
+      title: '必要な範囲だけ表示する',
+      description: '左下の−／＋で操作エリアを3段階に縮小・展開できます。各行左の▲はその行から下を畳み、直下に現れる▼で一段ずつ戻せます。表示倍率の−／＋は時計を含む全体を拡大縮小し、↗は現在のタイマー状態を引き継いだ別窓を開きます。',
+      instruction: '場所を確認したら「次へ」を押します',
+      selector: '.corner-display-controls'
+    },
+    {
+      title: '目的に合わせたモードを使う',
+      description: 'ワーク進行表は内容と分数を組み立てて保存・CSV入出力でき、進行画面を別タブで使えます。下の🍅ポモドーロテクニックモードではタスクや長い休憩を選んで開始できます。',
+      instruction: 'これで現在の主な機能の案内は完了です',
+      selector: '.helper-actions'
+    },
+    {
+      title: 'チュートリアル完了',
+      description: 'タイマー、休憩、ストップウォッチ、表示調整、ブランド設定、ワーク進行表、ポモドーロを用途に合わせて使い分けられます。「完了」で練習前のタイマー状態へ戻ります。',
+      instruction: 'これで基本操作は完了です',
+      selector: '#timer-stage'
     }
   ];
 
@@ -1453,6 +1489,21 @@
   function clearTutorialTarget() {
     if (tutorialTarget) tutorialTarget.classList.remove('tutorial-target');
     tutorialTarget = null;
+    tutorialOverlay.classList.remove('has-target');
+  }
+
+  function updateTutorialSpotlight(target) {
+    if (!target) {
+      tutorialOverlay.classList.remove('has-target');
+      return;
+    }
+    const rect = target.getBoundingClientRect();
+    const padding = 7;
+    tutorialOverlay.style.setProperty('--tutorial-target-left', `${Math.max(4, rect.left - padding)}px`);
+    tutorialOverlay.style.setProperty('--tutorial-target-top', `${Math.max(4, rect.top - padding)}px`);
+    tutorialOverlay.style.setProperty('--tutorial-target-width', `${Math.max(24, Math.min(window.innerWidth - 8, rect.width + (padding * 2)))}px`);
+    tutorialOverlay.style.setProperty('--tutorial-target-height', `${Math.max(24, Math.min(window.innerHeight - 8, rect.height + (padding * 2)))}px`);
+    tutorialOverlay.classList.add('has-target');
   }
 
   function captureTutorialState() {
@@ -1477,6 +1528,7 @@
       breakValues: [selBreakHour.value, selBreakMin.value],
       breakPresetRemainingMs: breakPresetTarget ? Math.max(1000, breakPresetTarget.getTime() - now) : 0,
       clockPreviewMode,
+      controlCollapseScope,
       isBreakMode,
       breakRemainingMs: breakTarget ? Math.max(1000, breakTarget.getTime() - now) : 0,
       breakElapsedMs: breakStartedAt ? Math.max(0, now - breakStartedAt.getTime()) : 0
@@ -1502,6 +1554,7 @@
     countdownStartedAt = null;
     hasEnded = false;
     clearAddHistory();
+    applyControlCollapseScope('none');
     syncManualSelectors(0);
     startBreakButton.textContent = '休憩開始';
     startBreakButton.classList.remove('break-stop');
@@ -1542,6 +1595,7 @@
       breakTarget = new Date(now + saved.breakRemainingMs);
       breakTicker = window.setInterval(updateBreakDisplay, 1000);
       renderBreakDisplay();
+      applyControlCollapseScope(saved.controlCollapseScope ?? 'none');
       return;
     }
 
@@ -1561,15 +1615,18 @@
         : null;
     }
     renderTimer();
+    applyControlCollapseScope(saved.controlCollapseScope ?? 'none');
   }
 
   function positionTutorialCard(target) {
     tutorialOverlay.classList.remove('is-centered', 'card-top', 'card-bottom');
     if (!target) {
       tutorialOverlay.classList.add('is-centered');
+      updateTutorialSpotlight(null);
       return;
     }
     const rect = target.getBoundingClientRect();
+    updateTutorialSpotlight(target);
     tutorialOverlay.classList.add(rect.top + (rect.height / 2) > window.innerHeight / 2 ? 'card-top' : 'card-bottom');
   }
 
@@ -1618,6 +1675,7 @@
     const step = tutorialSteps[tutorialIndex];
     tutorialStepComplete = !step.action;
     tutorialPhase = step.phase ?? null;
+    body.classList.toggle('tutorial-action-step', Boolean(step.action));
     applyTutorialSetup(step.setup);
     tutorialProgress.textContent = `${tutorialIndex + 1} / ${tutorialSteps.length}`;
     tutorialTitle.textContent = tr(step.title);
@@ -1643,7 +1701,7 @@
   function closeTutorial() {
     clearTutorialTarget();
     tutorialOverlay.hidden = true;
-    body.classList.remove('tutorial-active');
+    body.classList.remove('tutorial-active', 'tutorial-action-step');
     restoreTutorialState();
     tutorialButton.focus();
   }
