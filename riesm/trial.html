@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1T35THNDV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Z1T35THNDV');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="🌈RIESM™を実際に体験いただく方向けのトライアル受検案内ページです。受検方法、受検後の流れ、注意事項をご案内します。">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>🌈RIESM™ トライアル受検のご案内｜ninin</title>
+    <link rel="icon" href="https://ninin-cc.github.io/img/ninin.png" type="image/png">
+    <style>
+        :root {
+            --navy: #172554;
+            --navy-soft: #29376b;
+            --sky: #7dd3fc;
+            --sky-pale: #eef9ff;
+            --pink: #ec4899;
+            --pink-pale: #fff1f7;
+            --orange: #f97316;
+            --orange-pale: #fff7ed;
+            --ink: #1c1917;
+            --muted: #6b7280;
+            --line: rgba(23, 37, 84, 0.12);
+            --paper: rgba(255, 255, 255, 0.94);
+            --shadow: 0 22px 60px rgba(23, 37, 84, 0.11);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+            line-height: 1.75;
+            background:
+                radial-gradient(circle at 4% 5%, rgba(125, 211, 252, 0.2), transparent 24rem),
+                radial-gradient(circle at 98% 18%, rgba(236, 72, 153, 0.11), transparent 24rem),
+                radial-gradient(circle at 84% 90%, rgba(249, 115, 22, 0.12), transparent 26rem),
+                #fbfaf8;
+        }
+
+        body.is-locked { overflow: hidden; }
+        body.is-locked .page-shell { visibility: hidden; }
+
+        .password-gate {
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            display: grid;
+            padding: 20px;
+            place-items: center;
+            overflow-y: auto;
+            background:
+                radial-gradient(circle at 8% 8%, rgba(125, 211, 252, 0.32), transparent 24rem),
+                radial-gradient(circle at 92% 18%, rgba(236, 72, 153, 0.18), transparent 23rem),
+                radial-gradient(circle at 82% 92%, rgba(249, 115, 22, 0.2), transparent 25rem),
+                #fbfaf8;
+        }
+
+        body.is-unlocked .password-gate { display: none; }
+
+        .password-card {
+            position: relative;
+            width: min(100%, 430px);
+            overflow: hidden;
+            padding: 30px;
+            border: 1px solid rgba(23, 37, 84, 0.13);
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .password-card::before {
+            position: absolute;
+            inset: 0 0 auto;
+            height: 5px;
+            background: linear-gradient(90deg, var(--orange), var(--pink), var(--navy), var(--sky));
+            content: "";
+        }
+
+        .password-logo {
+            width: min(100%, 210px);
+            margin: 0 auto;
+        }
+
+        .password-kicker {
+            margin: 22px 0 0;
+            color: var(--navy-soft);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .password-card h1 {
+            margin: 5px 0 0;
+            font-size: 25px;
+            letter-spacing: -0.03em;
+        }
+
+        .password-description {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .password-form { margin-top: 22px; text-align: left; }
+
+        .password-form label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--navy);
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .password-input {
+            width: 100%;
+            height: 52px;
+            padding: 0 14px;
+            border: 1px solid rgba(23, 37, 84, 0.2);
+            border-radius: 13px;
+            outline: none;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-size: 17px;
+            letter-spacing: 0.08em;
+        }
+
+        .password-input:focus {
+            border-color: var(--navy);
+            box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.32);
+        }
+
+        .password-submit {
+            width: 100%;
+            min-height: 52px;
+            margin-top: 12px;
+            border: 0;
+            border-radius: 13px;
+            background: var(--navy);
+            color: #fff;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #0f172a;
+        }
+
+        .password-submit:hover { background: var(--navy-soft); }
+        .password-submit:active { transform: translateY(4px); box-shadow: 0 1px 0 #0f172a; }
+
+        .password-error {
+            min-height: 1.7em;
+            margin: 10px 0 0;
+            color: #be123c;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        a { color: inherit; }
+        img { display: block; max-width: 100%; }
+        button, a { -webkit-tap-highlight-color: transparent; }
+
+        .page-shell {
+            width: min(100% - 32px, 920px);
+            margin: 0 auto;
+            padding: 24px 0 56px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+            color: #78716c;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .brand-name { color: var(--navy); letter-spacing: 0.08em; }
+
+        .recipient-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 12px;
+            border: 1px solid rgba(23, 37, 84, 0.12);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.82);
+            color: var(--navy);
+            box-shadow: 0 5px 16px rgba(23, 37, 84, 0.06);
+        }
+
+        .recipient-badge::before {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--pink);
+            content: "";
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(24px, 5vw, 54px);
+            border: 1px solid var(--line);
+            border-radius: 32px;
+            background:
+                linear-gradient(135deg, rgba(238, 249, 255, 0.96), rgba(255, 241, 247, 0.72) 54%, rgba(255, 247, 237, 0.8));
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before {
+            position: absolute;
+            inset: 0 0 auto;
+            height: 5px;
+            background: linear-gradient(90deg, var(--orange), var(--pink), var(--navy), var(--sky));
+            content: "";
+        }
+
+        .hero::after {
+            position: absolute;
+            right: -0.1em;
+            bottom: -0.48em;
+            color: rgba(23, 37, 84, 0.035);
+            font-family: Georgia, serif;
+            font-size: clamp(13rem, 42vw, 25rem);
+            font-weight: 700;
+            line-height: 1;
+            content: "R";
+            pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .riesm-logo {
+            width: clamp(160px, 32vw, 230px);
+            height: auto;
+            border-radius: 2px;
+        }
+
+        .paid-badge {
+            flex: none;
+            padding: 8px 13px;
+            border-radius: 999px;
+            background: var(--navy);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+        }
+
+        .eyebrow {
+            margin: 26px 0 0;
+            color: var(--navy-soft);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 7px 0 0;
+            font-size: clamp(27px, 5.4vw, 48px);
+            line-height: 1.28;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-lead {
+            max-width: 660px;
+            margin: 14px 0 0;
+            color: #57534e;
+            font-size: clamp(14px, 2.2vw, 17px);
+            font-weight: 700;
+        }
+
+        .start-panel {
+            margin-top: 28px;
+            padding: 20px;
+            border: 1px solid rgba(23, 37, 84, 0.11);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.87);
+            box-shadow: 0 13px 34px rgba(23, 37, 84, 0.09);
+        }
+
+        .start-label {
+            margin: 0 0 10px;
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+        }
+
+        .assessment-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 68px;
+            padding: 16px 22px;
+            border: 2px solid var(--navy);
+            border-radius: 15px;
+            background: #fff;
+            color: var(--navy);
+            font-size: clamp(18px, 3.2vw, 23px);
+            font-weight: 900;
+            line-height: 1.35;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 6px 0 var(--navy);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .assessment-button:hover {
+            transform: translateY(-2px);
+            background: var(--sky-pale);
+            box-shadow: 0 8px 0 var(--navy);
+        }
+
+        .assessment-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 var(--navy);
+        }
+
+        .assessment-button[aria-disabled="true"] {
+            cursor: not-allowed;
+            opacity: 0.56;
+            transform: none;
+            box-shadow: 0 4px 0 #9ca3af;
+        }
+
+        .button-arrow { font-size: 1.25em; }
+
+        .start-note {
+            margin: 13px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.65;
+            text-align: center;
+        }
+
+        .start-note.is-pending {
+            color: #9a3412;
+            font-weight: 700;
+        }
+
+        .section {
+            margin-top: 24px;
+            padding: clamp(22px, 4vw, 38px);
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            background: var(--paper);
+            box-shadow: 0 12px 38px rgba(23, 37, 84, 0.055);
+        }
+
+        .section-kicker {
+            margin: 0;
+            color: var(--navy-soft);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            margin: 4px 0 0;
+            font-size: clamp(21px, 4vw, 30px);
+            line-height: 1.4;
+            letter-spacing: -0.025em;
+        }
+
+        .section-intro {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .check-card {
+            min-width: 0;
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .check-icon {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--sky-pale);
+            color: var(--navy);
+            font-size: 17px;
+        }
+
+        .check-card:nth-child(2) .check-icon { background: var(--pink-pale); }
+        .check-card:nth-child(3) .check-icon { background: var(--orange-pale); }
+
+        .check-card h3 {
+            margin: 10px 0 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .check-card p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.65;
+        }
+
+        .answer-purpose {
+            margin-top: 18px;
+            padding: 13px 16px;
+            border-left: 4px solid var(--pink);
+            border-radius: 0 14px 14px 0;
+            background: var(--pink-pale);
+            color: #831843;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .answer-purpose strong { color: #db2777; }
+
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .answer-card {
+            position: relative;
+            min-width: 0;
+            padding: 18px 16px 16px;
+            border: 1px solid rgba(236, 72, 153, 0.18);
+            border-radius: 18px;
+            background: linear-gradient(145deg, #fff, #fff9fc);
+        }
+
+        .answer-number {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--pink);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .answer-card h3 {
+            margin: 10px 0 0;
+            font-size: 15px;
+            line-height: 1.45;
+        }
+
+        .answer-card p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.72;
+        }
+
+        .scale-panel {
+            margin-top: 16px;
+            padding: 20px;
+            border: 1px solid rgba(23, 37, 84, 0.12);
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--sky-pale), #fff 48%, var(--orange-pale));
+        }
+
+        .scale-panel h3 { margin: 0; font-size: 17px; }
+
+        .scale-explanation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            color: #57534e;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .scale-explanation span:last-child { text-align: right; }
+
+        .scale-dots {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .scale-dots::before {
+            position: absolute;
+            top: 50%;
+            right: 7%;
+            left: 7%;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--orange), #facc15, #86efac, var(--sky), var(--navy));
+            content: "";
+            transform: translateY(-50%);
+        }
+
+        .scale-dot {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            justify-self: center;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 900;
+            box-shadow: 0 2px 9px rgba(23, 37, 84, 0.17);
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .device-card {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .device-card h4 { margin: 0; color: var(--navy); font-size: 12px; }
+        .device-card p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+
+        .device-order {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            color: #57534e;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .device-order span {
+            display: grid;
+            width: 24px;
+            height: 24px;
+            place-items: center;
+            border: 1px solid rgba(23, 37, 84, 0.18);
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .device-order.is-vertical {
+            width: 24px;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .answer-warning {
+            position: relative;
+            margin-top: 14px;
+            padding: 13px 15px 13px 44px;
+            border: 1px solid rgba(249, 115, 22, 0.22);
+            border-radius: 15px;
+            background: var(--orange-pale);
+            color: #9a3412;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.7;
+        }
+
+        .answer-warning::before {
+            position: absolute;
+            top: 14px;
+            left: 15px;
+            display: grid;
+            width: 20px;
+            height: 20px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--orange);
+            color: #fff;
+            content: "!";
+        }
+
+        .reference-details {
+            margin-top: 16px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .reference-details summary {
+            cursor: pointer;
+            padding: 13px 16px;
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .reference-images {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            padding: 0 14px 14px;
+        }
+
+        .reference-images figure { min-width: 0; margin: 0; }
+        .reference-images img { width: 100%; border: 1px solid #e7e5e4; border-radius: 12px; }
+        .reference-images figcaption { margin-top: 5px; color: var(--muted); font-size: 9px; text-align: center; }
+
+        .answer-images {
+            display: grid;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .answer-scale-copy {
+            padding: 17px 18px;
+            border: 1px solid rgba(23, 37, 84, 0.12);
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--sky-pale), #fff 58%, var(--orange-pale));
+        }
+
+        .answer-scale-copy h3 {
+            margin: 0;
+            font-size: clamp(17px, 3vw, 21px);
+            line-height: 1.45;
+        }
+
+        .answer-scale-copy .answer-warning { margin-bottom: 0; }
+
+        .answer-figure {
+            min-width: 0;
+            margin: 0;
+        }
+
+        .answer-figure.is-portrait {
+            width: min(100%, 680px);
+            margin-inline: auto;
+        }
+
+        .answer-figure a {
+            display: block;
+            border-radius: 18px;
+            outline: none;
+        }
+
+        .answer-figure a:focus-visible {
+            box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.65);
+        }
+
+        .answer-figure img {
+            width: 100%;
+            height: auto;
+            border: 1px solid rgba(23, 37, 84, 0.12);
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 12px 30px rgba(23, 37, 84, 0.08);
+        }
+
+        .answer-figure figcaption {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+
+        .flow {
+            position: relative;
+            display: grid;
+            gap: 9px;
+            margin: 20px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flow::before {
+            position: absolute;
+            top: 27px;
+            bottom: 27px;
+            left: 16px;
+            width: 1px;
+            background: linear-gradient(180deg, #bbf7d0 0%, #6ee7b7 34%, #22c55e 68%, #047857 100%);
+            opacity: 0.58;
+            content: "";
+        }
+
+        .flow-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: 32px minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+            padding: 13px 15px;
+            border: 1px solid rgba(120, 113, 108, 0.14);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.76);
+        }
+
+        .flow-number {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            width: 32px;
+            height: 32px;
+            place-items: center;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .flow-item:nth-child(1) .flow-number { background: #bbf7d0; color: #14532d; }
+        .flow-item:nth-child(2) .flow-number { background: #6ee7b7; color: #064e3b; }
+        .flow-item:nth-child(3) .flow-number { background: #34d399; color: #064e3b; }
+        .flow-item:nth-child(4) .flow-number { background: #16a34a; }
+        .flow-item:nth-child(5) .flow-number { background: #047857; }
+        .flow-item.is-current { border-color: rgba(16, 185, 129, 0.32); background: rgba(236, 253, 245, 0.72); }
+
+        .flow-copy { min-width: 0; }
+
+        .flow-heading {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-heading h3 {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .flow-state {
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .flow-item.is-current .flow-state { background: #d1fae5; color: #047857; }
+
+        .flow-copy p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .mail-card {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 1fr);
+            gap: 10px 18px;
+            margin-top: 20px;
+            padding: 18px;
+            border: 1px solid rgba(23, 37, 84, 0.1);
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--sky-pale), #fff);
+            font-size: 12px;
+        }
+
+        .mail-card dt { color: var(--navy); font-weight: 900; }
+        .mail-card dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+
+        .mail-info-figure {
+            width: min(100%, 660px);
+            margin: 18px auto 0;
+        }
+
+        .mail-info-figure img {
+            width: 100%;
+            height: auto;
+            border: 1px solid rgba(23, 37, 84, 0.12);
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .mail-info-figure figcaption {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 9px;
+            text-align: center;
+        }
+
+        .email-tools {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        .email-canvas {
+            display: block;
+            width: 190px;
+            max-width: 100%;
+            height: 27px;
+        }
+
+        .email-copy-button {
+            padding: 5px 9px;
+            border: 1px solid rgba(23, 37, 84, 0.17);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--navy);
+            font: inherit;
+            font-size: 9px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .email-copy-button:hover { background: var(--sky-pale); }
+
+        .email-copy-button.is-light {
+            border-color: rgba(255, 255, 255, 0.42);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .email-copy-button.is-light:hover { background: rgba(255, 255, 255, 0.18); }
+
+        .email-status {
+            color: #047857;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .notice-list {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .notice-list li {
+            position: relative;
+            padding: 13px 15px 13px 44px;
+            border: 1px solid rgba(23, 37, 84, 0.1);
+            border-radius: 15px;
+            background: #fff;
+            color: #57534e;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .notice-list li::before {
+            position: absolute;
+            top: 14px;
+            left: 15px;
+            display: grid;
+            width: 20px;
+            height: 20px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--orange-pale);
+            color: var(--orange);
+            font-size: 12px;
+            font-weight: 900;
+            content: "!";
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .support-card {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .support-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(23, 37, 84, 0.08); }
+
+        .support-card-button {
+            width: 100%;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .support-card-label {
+            color: var(--pink);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+        }
+
+        .support-card h3 { margin: 5px 0 0; font-size: 15px; }
+        .support-card p { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+        .support-card-link { margin-top: auto; padding-top: 12px; color: var(--navy); font-size: 11px; font-weight: 900; }
+
+        .bottom-cta {
+            margin-top: 24px;
+            padding: 25px;
+            border-radius: 24px;
+            background: var(--navy);
+            color: #fff;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .bottom-cta h2 { margin: 0; color: #fff; }
+        .bottom-cta p { margin: 7px 0 17px; color: rgba(255, 255, 255, 0.72); font-size: 12px; }
+
+        .bottom-cta .assessment-button {
+            max-width: 620px;
+            margin: 0 auto;
+            border-color: #fff;
+            color: var(--navy);
+            box-shadow: 0 6px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        .contact-line {
+            margin: 18px 0 0;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 11px;
+        }
+
+        .contact-line a { color: #fff; font-weight: 800; }
+
+        .contact-email {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 6px;
+        }
+
+        .contact-email .email-status { color: #bae6fd; }
+
+        footer {
+            padding: 24px 10px 0;
+            color: #a8a29e;
+            font-size: 10px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        @media (max-width: 680px) {
+            .password-gate { padding: 13px; }
+            .password-card { padding: 25px 18px 22px; border-radius: 23px; }
+            .password-logo { width: 175px; }
+            .password-card h1 { font-size: 22px; }
+            .page-shell { width: min(100% - 22px, 920px); padding-top: 14px; }
+            .topbar { gap: 8px; }
+            .recipient-badge { padding: 6px 9px; font-size: 10px; }
+            .hero { padding: 22px 17px 25px; border-radius: 24px; }
+            .hero-head { gap: 10px; align-items: center; }
+            .riesm-logo { width: min(45vw, 165px); }
+            .paid-badge { padding: 6px 9px; font-size: 9px; }
+            .eyebrow { margin-top: 20px; font-size: 9px; }
+            h1 { font-size: clamp(25px, 8.2vw, 36px); }
+            .hero-lead { font-size: 13px; }
+            .start-panel { padding: 14px; border-radius: 18px; }
+            .assessment-button { min-height: 61px; padding: 14px 12px; font-size: 17px; }
+            .section { margin-top: 16px; padding: 20px 16px; border-radius: 22px; }
+            .check-grid { grid-template-columns: 1fr; gap: 8px; }
+            .check-card { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 11px; padding: 13px; }
+            .check-card h3 { margin: 1px 0 0; }
+            .check-card p { grid-column: 2; margin-top: 2px; }
+            .answer-grid { grid-template-columns: 1fr; gap: 8px; }
+            .answer-card { display: grid; grid-template-columns: 30px minmax(0, 1fr); column-gap: 10px; padding: 13px; }
+            .answer-card h3 { margin: 3px 0 0; }
+            .answer-card p { grid-column: 2; margin-top: 3px; }
+            .scale-panel { padding: 16px 12px; }
+            .scale-explanation { font-size: 9px; }
+            .scale-dots { gap: 4px; }
+            .scale-dot { width: 30px; height: 30px; }
+            .device-grid { grid-template-columns: 1fr; }
+            .reference-images { grid-template-columns: 1fr; }
+            .flow-item { grid-template-columns: 32px minmax(0, 1fr); gap: 10px; padding: 12px 11px; }
+            .flow::before { left: 16px; }
+            .flow-number { width: 32px; height: 32px; }
+            .flow-heading h3 { font-size: 13px; }
+            .mail-card { grid-template-columns: 1fr; gap: 2px; padding: 15px; }
+            .mail-card dd + dt { margin-top: 8px; }
+            .support-grid { grid-template-columns: 1fr; }
+            .bottom-cta { padding: 22px 14px; border-radius: 22px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { transition: none !important; }
+        }
+    </style>
+</head>
+<!-- 受検用URLは、ページ末尾の ASSESSMENT_URL に設定してください。 -->
+<body class="is-locked">
+    <section id="password-gate" class="password-gate" role="dialog" aria-modal="true" aria-labelledby="password-title">
+        <div class="password-card">
+            <img class="password-logo" src="https://ninin-cc.github.io/img/riesm.png" alt="🌈RIESM™（リズム）">
+            <p class="password-kicker">For Trial Participants</p>
+            <h1 id="password-title">トライアル受検案内ページ</h1>
+            <p class="password-description">nininからご案内したパスワードを入力してください。</p>
+            <form id="password-form" class="password-form" novalidate>
+                <label for="password-input">パスワード</label>
+                <input id="password-input" class="password-input" type="password" name="password" autocomplete="current-password" required>
+                <button class="password-submit" type="submit">ページを開く</button>
+                <p id="password-error" class="password-error" aria-live="polite"></p>
+            </form>
+        </div>
+    </section>
+
+    <div id="protected-content" class="page-shell" inert>
+        <div class="topbar">
+            <span class="brand-name">ninin consulting &amp; counseling</span>
+        <span class="recipient-badge">トライアルをご利用の方へ</span>
+        </div>
+
+        <main>
+            <section class="hero" aria-labelledby="page-title">
+                <div class="hero-content">
+                    <div class="hero-head">
+                        <img class="riesm-logo" src="https://ninin-cc.github.io/img/riesm.png" alt="🌈RIESM™（リズム）">
+          <span class="paid-badge">トライアル受検</span>
+                    </div>
+                    <p class="eyebrow">Trial Assessment Information</p>
+                    <h1 id="page-title">🌈RIESM™<br>トライアル受検のご案内</h1>
+        <p class="hero-lead">🌈RIESM™がどのようなアセスメントかを、実際に体験していただくためのトライアルです。まずはご自身の結果を通して、内容や活用の可能性をゆっくりお確かめください。</p>
+
+                    <div class="start-panel">
+                        <p class="start-label">準備ができたら、こちらから</p>
+                        <a id="assessment-link" class="assessment-button" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+                            <span>🌈RIESM™のトライアル受検をはじめる</span>
+                            <span class="button-arrow" aria-hidden="true">→</span>
+                        </a>
+                        <p id="assessment-note" class="start-note is-pending">受検用URLを設定すると、こちらから受検画面へ進めます。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="answer-title">
+                <p class="section-kicker">How to Answer</p>
+                <h2 id="answer-title">回答するときのポイント</h2>
+                <p class="answer-purpose">このアセスメントは、あなたの<strong>「今の気持ちや傾向を明確にする」</strong>ことを目的としています。</p>
+                <p class="section-intro">画像をタップすると、大きな画面で確認できます。</p>
+
+                <div class="answer-images">
+                    <figure class="answer-figure is-portrait">
+                        <a href="./img/answer-points.png" target="_blank" rel="noopener noreferrer">
+                            <img src="./img/answer-points.png" alt="RIESMアセスメント回答時のポイント。今の素直な気持ちで直感的に答え、回答後に修正せず、迷った場合は3または気持ちの傾きに応じて2・4を選びます。">
+                        </a>
+                        <figcaption>タップして拡大｜回答時のポイント</figcaption>
+                    </figure>
+                    <div class="answer-scale-copy">
+                        <h3>5段階で回答します</h3>
+                        <p class="answer-warning"><strong>注意事項：</strong>PC／スマートフォンなどの端末によって、選択肢の並び方が異なります。逆の評価で答えないよう、回答を始める前に「1」と「5」の意味と並び順を必ずご確認ください。</p>
+                    </div>
+                    <figure class="answer-figure">
+                        <a href="./img/answer-scale.png" target="_blank" rel="noopener noreferrer">
+                            <img src="./img/answer-scale.png" alt="5段階回答の注意。1はまったくあてはまらない、5はおおいにあてはまる。PCは横並び、スマートフォンは縦並びで上から1から5の順です。">
+                        </a>
+                        <figcaption>タップして拡大｜5段階評価と端末ごとの表示</figcaption>
+                    </figure>
+                </div>
+
+                <div class="sr-only">
+                    <h3>回答時のポイント</h3>
+                    <p>このアセスメントは、あなたの今の気持ちや傾向を明確にすることを目的としています。理想ではなくご自身の素直な気持ちで、各問いに5秒程度を目安に直感的に回答してください。一度答えたものを後から遡って修正しないでください。どちらとも言えない場合は3で構いませんが、少しでも肯定または否定へ気持ちが傾く場合は2や4などを選んでください。</p>
+                    <h3>5段階の回答方法</h3>
+                    <p>1はまったくあてはまらない、5はおおいにあてはまる、という5段階で回答します。パソコンでは選択肢が横並び、スマートフォンでは縦並びで上から1、2、3、4、5の順に表示されます。逆の評価で答えないよう、回答前に並び順を確認してください。</p>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="flow-title">
+                <p class="section-kicker">Trial → Assessment → Report</p>
+                <h2 id="flow-title">受検の流れ</h2>
+                <ol class="flow">
+                    <li class="flow-item is-complete">
+                        <span class="flow-number">1</span>
+                        <div class="flow-copy">
+                            <div class="flow-heading"><h3>トライアル受検のご案内</h3><span class="flow-state">ご案内済み</span></div>
+                            <p>導入検討のためのトライアル受検をご案内しています。</p>
+                        </div>
+                    </li>
+                    <li class="flow-item is-current">
+                        <span class="flow-number">2</span>
+                        <div class="flow-copy">
+                            <div class="flow-heading"><h3>受検用URLから回答</h3><span class="flow-state">今ここ</span></div>
+                            <p>このページ上部のボタンから受検画面を開き、ご自身の感覚に近い回答を選んでください。</p>
+                        </div>
+                    </li>
+                    <li class="flow-item">
+                        <span class="flow-number">3</span>
+                        <div class="flow-copy">
+                            <div class="flow-heading"><h3>目安として1週間以内に実施</h3></div>
+                            <p>受検期限はありません。ご都合のよいタイミングで実施いただけます。</p>
+                        </div>
+                    </li>
+                    <li class="flow-item">
+                        <span class="flow-number">4</span>
+                        <div class="flow-copy">
+                            <div class="flow-heading"><h3>受検後1週間以内にレポートをお届け</h3></div>
+                            <p>回答内容をもとに作成した個性診断レポートを、PDFファイルでメール送信します。</p>
+                        </div>
+                    </li>
+                    <li class="flow-item">
+                        <span class="flow-number">5</span>
+                        <div class="flow-copy">
+                            <div class="flow-heading"><h3>レポートの振り返り</h3></div>
+                            <p>レポートの振り返りと、🌈RIESM™の活用方法についてセッションを行います。そのほか、会社・組織での活用方法、実施人数、説明会や結果の活用についても柔軟にご相談いただけます。</p>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="section" aria-labelledby="mail-title">
+                <p class="section-kicker">Report Delivery</p>
+                <h2 id="mail-title">レポート送付メール</h2>
+                <p class="section-intro">受検後、1週間以内を目安に次の内容でお送りします。</p>
+                <figure class="mail-info-figure">
+                    <img src="./img/report-mail-info.png" alt="レポート送付メールの案内。送信元はinfo dot ninin at gmail dot com、件名は個性診断レポート RIESMの結果をお送りします、添付は個性診断レポートPDFファイルです。">
+                    <figcaption>レポート送付メールの送信元・件名・添付内容</figcaption>
+                </figure>
+            </section>
+
+            <section class="section" aria-labelledby="notice-title">
+                <p class="section-kicker">Important Notes</p>
+                <h2 id="notice-title">大切なご案内</h2>
+                <ul class="notice-list">
+                    <li>この受検用URLと受検画面の内容は、nininからご案内を受けたご本人以外へ共有しないでください。</li>
+                    <li>受検時には、ご本人の感覚に近い回答をお選びください。周囲の方が代理で回答することはお控えください。</li>
+                    <li>レポートは個人情報を含みます。保存・転送・印刷を行う際は、お取り扱いにご注意ください。</li>
+                    <li>メールが届かない場合は、迷惑メールフォルダをご確認のうえ、申込時のメールアドレスからお問い合わせください。</li>
+                </ul>
+            </section>
+
+            <section class="section" aria-labelledby="support-title">
+                <p class="section-kicker">After Support</p>
+                <h2 id="support-title">トライアル受検後のご相談</h2>
+                <div class="support-grid">
+                    <button class="support-card support-card-button" type="button" data-email-compose data-email-subject="【RIESM】レポート振り返り・活用セッションのご相談">
+                        <span class="support-card-label">REPORT REVIEW SESSION</span>
+                        <h3>レポート振り返り・活用セッション</h3>
+                        <p>トライアル結果を一緒に振り返り、🌈RIESM™を日常や会社・組織でどのように活かすかを整理します。</p>
+                        <span class="support-card-link">セッションについて相談する →</span>
+                    </button>
+                    <button class="support-card support-card-button" type="button" data-email-compose data-email-subject="【RIESM】団体・グループ受検のご相談">
+                        <span class="support-card-label">GROUP SUPPORT</span>
+                        <h3>団体・グループでの受検</h3>
+                        <p>個別説明会など、ご希望や人数に合わせて柔軟に対応します。メールでお気軽にご相談ください。</p>
+                        <span class="support-card-link">メールで相談する →</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="check-title">
+                <p class="section-kicker">Before You Start</p>
+                <h2 id="check-title">受検前にご確認ください</h2>
+                <p class="section-intro">ご自身のペースで、落ち着いて回答できる環境をご用意ください。</p>
+                <div class="check-grid">
+                    <article class="check-card">
+                        <span class="check-icon" aria-hidden="true">⌁</span>
+                        <h3>安定した通信環境で</h3>
+                        <p>スマートフォン・タブレット・パソコンから受検できます。通信が安定した場所でお進みください。</p>
+                    </article>
+                    <article class="check-card">
+                        <span class="check-icon" aria-hidden="true">◷</span>
+                        <h3>時間に余裕のあるときに</h3>
+                        <p>落ち着いて回答できる時間を確保し、ご自身に近いと感じる選択肢をお選びください。</p>
+                    </article>
+                    <article class="check-card">
+                        <span class="check-icon" aria-hidden="true">✓</span>
+                        <h3>期限はありません</h3>
+                        <p>目安として1週間以内をご案内していますが、受検期限はありません。ご都合のよい時に実施ください。</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="bottom-cta" aria-labelledby="bottom-cta-title">
+                <h2 id="bottom-cta-title">準備ができましたら、トライアル受検をはじめましょう</h2>
+                <p>ご自身のペースで、落ち着いてお進みください。</p>
+                <a id="assessment-link-bottom" class="assessment-button" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+                    <span>🌈RIESM™のトライアル受検をはじめる</span>
+                    <span class="button-arrow" aria-hidden="true">→</span>
+                </a>
+                <div class="contact-line">
+                    <span>ご不明な点は、下記アドレスまでご連絡ください。</span>
+                    <div class="contact-email">
+                        <canvas class="email-canvas" role="img" aria-label="info dot ninin at gmail dot com" data-email-color="#ffffff"></canvas>
+                        <button class="email-copy-button is-light" type="button" data-copy-email>アドレスをコピー</button>
+                        <span class="email-status" aria-live="polite"></span>
+                    </div>
+                    <noscript>info.ninin [at] gmail.com</noscript>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div>合同会社ninin consulting &amp; counseling</div>
+            <div>© ninin LLC. All Rights Reserved.</div>
+        </footer>
+    </div>
+
+    <script>
+        const PASSWORD_HASH = 'a4813012fb4f721ecf3b3471a840495449c6119e713f3e7eadb61c82159895ff';
+        const PASSWORD_SESSION_KEY = 'riesm-trial-access-v1';
+        const passwordGate = document.getElementById('password-gate');
+        const passwordForm = document.getElementById('password-form');
+        const passwordInput = document.getElementById('password-input');
+        const passwordError = document.getElementById('password-error');
+        const protectedContent = document.getElementById('protected-content');
+
+        function unlockProtectedPage() {
+            document.body.classList.remove('is-locked');
+            document.body.classList.add('is-unlocked');
+            protectedContent.removeAttribute('inert');
+            passwordGate.setAttribute('aria-hidden', 'true');
+            protectedContent.querySelector('a, button, input, [tabindex]')?.focus({ preventScroll: true });
+        }
+
+        async function hashPassword(value) {
+            const bytes = new TextEncoder().encode(value);
+            const digest = await crypto.subtle.digest('SHA-256', bytes);
+            return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        if (sessionStorage.getItem(PASSWORD_SESSION_KEY) === 'granted') {
+            unlockProtectedPage();
+        } else {
+            window.requestAnimationFrame(() => passwordInput.focus());
+        }
+
+        passwordForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            passwordError.textContent = '';
+
+            if (!passwordInput.value) {
+                passwordError.textContent = 'パスワードを入力してください。';
+                passwordInput.focus();
+                return;
+            }
+
+            try {
+                const inputHash = await hashPassword(passwordInput.value);
+                if (inputHash === PASSWORD_HASH) {
+                    sessionStorage.setItem(PASSWORD_SESSION_KEY, 'granted');
+                    passwordInput.value = '';
+                    unlockProtectedPage();
+                    return;
+                }
+                passwordError.textContent = 'パスワードが違います。もう一度ご確認ください。';
+                passwordInput.select();
+            } catch (error) {
+                passwordError.textContent = 'このブラウザでは認証できません。別のブラウザでお試しください。';
+            }
+        });
+
+        const EMAIL_LOCAL_PARTS = ['info', '.ninin'];
+        const EMAIL_DOMAIN_PARTS = ['gmail', '.com'];
+
+        function getContactEmail() {
+            return EMAIL_LOCAL_PARTS.join('') + String.fromCharCode(64) + EMAIL_DOMAIN_PARTS.join('');
+        }
+
+        function drawEmailCanvases() {
+            const visibleAddress = EMAIL_LOCAL_PARTS.join('') + '  @  ' + EMAIL_DOMAIN_PARTS.join('');
+            document.querySelectorAll('.email-canvas').forEach((canvas) => {
+                const ratio = Math.max(1, window.devicePixelRatio || 1);
+                const cssWidth = 190;
+                const cssHeight = 27;
+                canvas.width = cssWidth * ratio;
+                canvas.height = cssHeight * ratio;
+                canvas.style.width = cssWidth + 'px';
+                canvas.style.height = cssHeight + 'px';
+
+                const context = canvas.getContext('2d');
+                if (!context) return;
+                context.scale(ratio, ratio);
+                context.clearRect(0, 0, cssWidth, cssHeight);
+                context.fillStyle = canvas.dataset.emailColor || '#172554';
+                context.font = '700 14px "Yu Gothic", Meiryo, sans-serif';
+                context.textBaseline = 'middle';
+                context.fillText(visibleAddress, 1, cssHeight / 2);
+            });
+        }
+
+        async function copyContactEmail(button) {
+            const address = getContactEmail();
+            const status = button.parentElement ? button.parentElement.querySelector('.email-status') : null;
+            try {
+                await navigator.clipboard.writeText(address);
+            } catch (error) {
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                textArea.setAttribute('readonly', '');
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                textArea.remove();
+            }
+            if (status) {
+                status.textContent = 'コピーしました';
+                window.setTimeout(() => { status.textContent = ''; }, 2200);
+            }
+        }
+
+        drawEmailCanvases();
+        window.addEventListener('resize', drawEmailCanvases);
+
+        document.querySelectorAll('[data-copy-email]').forEach((button) => {
+            button.addEventListener('click', () => copyContactEmail(button));
+        });
+
+        document.querySelectorAll('[data-email-compose]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const subject = button.dataset.emailSubject || 'RIESMについてのお問い合わせ';
+                window.location.href = 'mail' + 'to:' + getContactEmail() + '?subject=' + encodeURIComponent(subject);
+            });
+        });
+
+        // 受検用URLを下記の引用符内に設定してください。
+        // 例: const ASSESSMENT_URL = 'https://example.com/assessment';
+        const ASSESSMENT_URL = 'https://forms.gle/Gct7GQL9Nnh3ectJA';
+
+        const assessmentLinks = [
+            document.getElementById('assessment-link'),
+            document.getElementById('assessment-link-bottom')
+        ].filter(Boolean);
+        const assessmentNote = document.getElementById('assessment-note');
+
+        function isSafeAssessmentUrl(value) {
+            try {
+                const url = new URL(value);
+                return url.protocol === 'https:';
+            } catch (error) {
+                return false;
+            }
+        }
+
+        if (isSafeAssessmentUrl(ASSESSMENT_URL)) {
+            assessmentLinks.forEach((link) => {
+                link.href = ASSESSMENT_URL;
+                link.removeAttribute('aria-disabled');
+            });
+            if (assessmentNote) {
+                assessmentNote.textContent = 'ボタンを押すと、受検画面が新しいタブで開きます。';
+                assessmentNote.classList.remove('is-pending');
+            }
+        } else {
+            assessmentLinks.forEach((link) => {
+                link.addEventListener('click', (event) => event.preventDefault());
+            });
+        }
+    </script>
+</body>
+</html>
