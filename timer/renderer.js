@@ -1784,7 +1784,7 @@
       } else if (tutorialPhase === 'add' && button.matches('.btn-add[data-add="120"]') && !extensionConfirm.hidden) {
         tutorialPhase = 'confirm';
         setTutorialInstruction('確認画面が出ました。「YES」を押してください');
-        setTutorialTarget('#timer-stage');
+        setTutorialTarget('#extension-confirm');
       } else if (tutorialPhase === 'confirm' && button === extensionYesButton && extensionConfirm.hidden) {
         tutorialPhase = 'done';
         completeTutorialStep('延長できました。残り時間と、時計の「終了」位置が2分ぶん延びています。', '#left-clock-wrap');
